@@ -1,0 +1,52 @@
+import { Canvas, Source } from '@storybook/addon-docs/blocks';
+import { HassConnect } from '../components/HassConnect';
+
+# useHass()
+
+This hook should be used inside the context of <HassConnect /> and not outside of it otherwise it will not have access to
+the authenticated home assistant API.
+
+### Example Usage
+
+```ts
+function Child() {
+  const { getEntity } = useHass();
+  const light = getEntity('light.something');
+  // can now access all properties relating to the light
+  return light ? light.name : 'Unknown';
+}
+function App() {
+  return <HassConnect hassUrl="http://homeassistant.local:8123">
+    <Child />
+  </HassConnect>
+}
+
+```
+
+### Calling a service
+
+
+
+```ts
+import { useCallback } from 'react';
+function Child() {
+  const { callService } = useHass();
+  const light = getEntity('light.living_room');
+  const setLivingRoomLightState = useCallback((service) => {
+    callService('light', service, {
+      entity_id: 'light.living_room'
+    });
+  }, [callService]);
+  // can now access all properties relating to the light
+  return <button onClick={() => {
+    // could also simply just be "toggle" here
+    setLivingRoomLightState(light.state === 'off' ? 'turn_on' : 'turn_off');
+  }}></button>
+}
+function App() {
+  return <HassConnect hassUrl="http://homeassistant.local:8123">
+    <Child />
+  </HassConnect>
+}
+
+```
