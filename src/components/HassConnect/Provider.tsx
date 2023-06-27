@@ -116,8 +116,10 @@ export function HassProvider({
       async loadTokens() {
         try {
           const tokens = JSON.parse(localStorage.hassTokens);
+          const { origin: inputOrigin } = new URL(hassUrl);
+          const { origin: tokenOrigin } = new URL(tokens.hassUrl);
           // abort the authentication if the token url doesn't match
-          if (!hassUrl !== tokens.hassUrl) return null;
+          if (inputOrigin !== tokenOrigin) return null;
           return tokens;
         } catch (err) {
           if (err instanceof Error) {

@@ -6,7 +6,7 @@ import { HassEntity } from "home-assistant-js-websocket";
 export function useEntity(entity: string) {
   const { getEntity, lastUpdated } = useHass();
   const matchedEntity = getEntity(entity);
-  const [$entity, setEntity] = useState<HassEntity | null>(matchedEntity);
+  const [$entity, setEntity] = useState<HassEntity>(matchedEntity);
 
   useEffect(() => {
     const foundEntity = getEntity(entity);
