@@ -1,5 +1,5 @@
 import { ReactNode, ReactElement } from "react";
-import { HassProvider } from './Provider';
+import { HassProvider } from "./Provider";
 
 export type HassConnectProps = {
   /** Any react node to render when authenticated */
@@ -8,7 +8,7 @@ export type HassConnectProps = {
   hassUrl: string;
   /** Any react node to render when not authenticated */
   fallback?: ReactNode;
-}
+};
 
 export const HassConnect = ({
   children,
@@ -16,9 +16,13 @@ export const HassConnect = ({
   fallback = null,
 }: HassConnectProps): ReactElement => {
   if (!hassUrl) {
-    return <>{`Provide the hassUrl prop with the url to your home assistant instance.`}</>;
+    return (
+      <>{`Provide the hassUrl prop with the url to your home assistant instance.`}</>
+    );
   }
-  return <HassProvider hassUrl={hassUrl}>
-    {(ready) => ready ? children : fallback}
-  </HassProvider>
+  return (
+    <HassProvider hassUrl={hassUrl}>
+      {(ready) => (ready ? children : fallback)}
+    </HassProvider>
+  );
 };

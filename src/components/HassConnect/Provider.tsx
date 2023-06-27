@@ -1,4 +1,10 @@
-import React, { createContext, useState, useEffect, useCallback, useRef } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
 import {
   // types
   Connection,
@@ -22,7 +28,7 @@ import {
   getConfig as _getConfig,
   getUser as _getUser,
 } from "home-assistant-js-websocket";
-import { useDebouncedCallback } from 'use-debounce';
+import { useDebouncedCallback } from "use-debounce";
 
 interface CallServiceArgs {
   domain: string;
@@ -50,7 +56,9 @@ export interface HassContextProps {
   lastUpdated: Date;
 }
 
-export const HassContext = createContext<HassContextProps>({} as HassContextProps);
+export const HassContext = createContext<HassContextProps>(
+  {} as HassContextProps
+);
 
 interface HassProviderProps {
   children: (ready: boolean) => React.ReactNode;
@@ -58,7 +66,11 @@ interface HassProviderProps {
   throttle?: number;
 }
 
-export function HassProvider({ children, hassUrl, throttle = 150 }: HassProviderProps) {
+export function HassProvider({
+  children,
+  hassUrl,
+  throttle = 150,
+}: HassProviderProps) {
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [ready, setReady] = useState(false);
@@ -66,24 +78,38 @@ export function HassProvider({ children, hassUrl, throttle = 150 }: HassProvider
   const unsubscribe = useRef<UnsubscribeFunc | null>(null);
   const [_entities, setEntities] = useState<HassEntities>({});
   const [error, setError] = useState<string | null>(null);
-  const getStates = useCallback(async () => connection === null ? null : await _getStates(connection), [connection]);
-  const getServices = useCallback(async () => connection === null ? null : await _getServices(connection), [connection]);
-  const getConfig = useCallback(async () => connection === null ? null : await _getConfig(connection), [connection]);
-  const getUser = useCallback(async () => connection === null ? null : await _getUser(connection), [connection]);
-  const getAllEntities = useCallback(() => _entities, [_entities]);
-  const getEntity = useCallback((entity: string) => {
-    const found = _entities[entity];
-    if (!found) throw new Error(`Entity ${entity} not found`);
-    return found;
-  }, [_entities]);
-  const setEntitiesDebounce = useDebouncedCallback<(entities: HassEntities) => void>(
-    (entities) => {
-      setEntities(entities);
-      setLastUpdated(new Date());
-      if (!ready) setReady(true);
-    },
-    throttle
+  const getStates = useCallback(
+    async () => (connection === null ? null : await _getStates(connection)),
+    [connection]
   );
+  const getServices = useCallback(
+    async () => (connection === null ? null : await _getServices(connection)),
+    [connection]
+  );
+  const getConfig = useCallback(
+    async () => (connection === null ? null : await _getConfig(connection)),
+    [connection]
+  );
+  const getUser = useCallback(
+    async () => (connection === null ? null : await _getUser(connection)),
+    [connection]
+  );
+  const getAllEntities = useCallback(() => _entities, [_entities]);
+  const getEntity = useCallback(
+    (entity: string) => {
+      const found = _entities[entity];
+      if (!found) throw new Error(`Entity ${entity} not found`);
+      return found;
+    },
+    [_entities]
+  );
+  const setEntitiesDebounce = useDebouncedCallback<
+    (entities: HassEntities) => void
+  >((entities) => {
+    setEntities(entities);
+    setLastUpdated(new Date());
+    if (!ready) setReady(true);
+  }, throttle);
   const getAuthOptions = useCallback(
     (hassUrl: string): AuthOptions => ({
       hassUrl,
@@ -106,23 +132,26 @@ export function HassProvider({ children, hassUrl, throttle = 150 }: HassProvider
     []
   );
 
-  const callService = useCallback(async <T = unknown>({
-    domain,
-    service,
-    serviceData,
-    target,
-  }: CallServiceArgs) => {
-    if (connection && ready) {
-      return (await _callService(
-        connection,
-        domain,
-        service,
-        serviceData,
-        target
-      )) as T;
-    }
-    return false;
-  }, [connection, ready]);
+  const callService = useCallback(
+    async <T = unknown,>({
+      domain,
+      service,
+      serviceData,
+      target,
+    }: CallServiceArgs) => {
+      if (connection && ready) {
+        return (await _callService(
+          connection,
+          domain,
+          service,
+          serviceData,
+          target
+        )) as T;
+      }
+      return false;
+    },
+    [connection, ready]
+  );
 
   useEffect(() => {
     // when the hassUrl changes, reset some properties
@@ -134,7 +163,7 @@ export function HassProvider({ children, hassUrl, throttle = 150 }: HassProvider
       unsubscribe.current();
       unsubscribe.current = null;
     }
-  }, [hassUrl])
+  }, [hassUrl]);
 
   useEffect(() => {
     if (connection === null) return;
@@ -153,9 +182,8 @@ export function HassProvider({ children, hassUrl, throttle = 150 }: HassProvider
     };
   }, [connection, setEntitiesDebounce]);
 
-
   const authenticate = useCallback(async () => {
-    if (typeof hassUrl !== 'string') return;
+    if (typeof hassUrl !== "string") return;
     if (error !== null) setError(null);
     try {
       auth.current = await getAuth(getAuthOptions(hassUrl));
@@ -174,7 +202,7 @@ export function HassProvider({ children, hassUrl, throttle = 150 }: HassProvider
     }
     const connection = await createConnection({ auth: auth.current });
     setConnection(connection);
-  }, [getAuthOptions, hassUrl, error])
+  }, [getAuthOptions, hassUrl, error]);
 
   useEffect(() => {
     if (!ready) {
@@ -186,7 +214,14 @@ export function HassProvider({ children, hassUrl, throttle = 150 }: HassProvider
         }
       }
     }
-  }, [authenticate, getAuthOptions, hassUrl, ready, setConnection, setEntitiesDebounce]);
+  }, [
+    authenticate,
+    getAuthOptions,
+    hassUrl,
+    ready,
+    setConnection,
+    setEntitiesDebounce,
+  ]);
 
   return (
     <HassContext.Provider
