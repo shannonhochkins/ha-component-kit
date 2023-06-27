@@ -1,7 +1,7 @@
-import { Canvas, Source } from '@storybook/addon-docs/blocks';
-import { HassConnect } from '../components/HassConnect';
+import { Canvas, Source } from '@storybook/blocks';
+import { HassConnect } from '../../components/HassConnect';
 
-# useHass()
+# useEntity()
 
 This hook should be used inside the context of <HassConnect /> and not outside of it otherwise it will not have access to
 the authenticated home assistant API.
@@ -13,10 +13,10 @@ function Child() {
   const { getEntity } = useHass();
   const light = getEntity('light.something');
   // can now access all properties relating to the light
-  return light ? light.name : 'Unknown';
+  return light.state;
 }
 function App() {
-  return <HassConnect hassUrl="http://homeassistant.local:8123">
+  return <HassConnect hassUrl="http://homeassistant.local:1234">
     <Child />
   </HassConnect>
 }
@@ -24,8 +24,6 @@ function App() {
 ```
 
 ### Calling a service
-
-
 
 ```ts
 import { useCallback } from 'react';

@@ -12,8 +12,9 @@
     "LICENSE"
   ],
   "scripts": {
-    "start": "vite",
-    "prebuild": "rm -rf ./dist",
+    "start": "npm run storybook",
+    "dev": "vite",
+    "prebuild": "rm -rf ./dist && npm run prettier",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
@@ -22,10 +23,9 @@
     "build:storybook": "storybook build"
   },
   "dependencies": {
-    "home-assistant-js-websocket": "^8.0.1",
-    "lodash": "^4.17.21",
     "react": ">=16.x",
     "react-dom": ">=16.x",
+    "use-debounce": "^9.0.4",
     "zustand": "^4.3.8"
   },
   "peerDependencies": {
@@ -33,6 +33,9 @@
     "react-dom": ">=16.x"
   },
   "devDependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.13.6",
     "@storybook/addon-essentials": "^7.0.23",
     "@storybook/addon-interactions": "^7.0.23",
     "@storybook/addon-links": "^7.0.23",
@@ -52,8 +55,11 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
     "eslint-plugin-storybook": "^0.6.12",
+    "home-assistant-js-websocket": "^8.0.1",
     "prettier": "^2.8.8",
     "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "storybook": "^7.0.23",
     "typescript": "^5.0.2",
     "vite": "^4.3.9",

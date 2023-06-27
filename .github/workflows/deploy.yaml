@@ -15,4 +15,4 @@ jobs:
       uses: bitovi/github-actions-react-to-ghp@v1.2.0
       with:
         path: storybook-static
-        build_command: npm run build-storybook
+        build_command: npm run build:storybook
