@@ -18,6 +18,7 @@ const config: StorybookConfig = {
   core: {
     builder: '@storybook/builder-vite', // 👈 The builder enabled here.
   },
+  staticDirs: ['../static'],
   framework: {
     name: "@storybook/react-vite",
     options: {},

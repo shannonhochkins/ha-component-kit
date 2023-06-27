@@ -1,16 +1,27 @@
 {
   "name": "ha-component-kit",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "type": "module",
+  "keywords": ["react", "homeassistant", "component", "library", "api"],
+  "description": "A collection of React components for Home Assistant to easily communicate with the Home Assistant WebSocket API.",
   "main": "dist/ha-component-kit.umd.js",
   "module": "dist/ha-component-kit.es.js",
   "types": "dist/index.d.ts",
   "author": "Shannon Hochkins",
+  "license": "ISC",
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shannonhochkins/ha-component-kit"
+  },
+  "bugs": {
+    "url": "https://github.com/shannonhochkins/ha-component-kit/issues"
+  },
+  "homepage": "https://shannonhochkins.github.io/ha-component-kit",
   "scripts": {
     "start": "npm run storybook",
     "dev": "vite",

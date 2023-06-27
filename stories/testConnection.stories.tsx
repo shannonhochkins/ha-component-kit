@@ -1,6 +1,7 @@
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { HassConnect } from './';
-import { HassContext } from './Provider';
+import { HassConnect } from '../src/components/HassConnect';
+import { HassContext } from '../src/components/HassConnect/Provider';
 import { useContext, useState, useEffect, useMemo } from 'react';
 import type { HassEntity } from "home-assistant-js-websocket";
 import { TextField, Button, Grid, FormHelperText, Select, MenuItem, FormControl, InputLabel, SelectChangeEvent, Typography } from '@mui/material';
