@@ -26,5 +26,7 @@ export default defineConfig(configEnv => ({
       include: ['./src}/**/*.{ts,tsx}'],
       linters: [new EsLinter({ configEnv })],
     }),
-    dts()],
+    dts({
+      outputDir: 'dist/types',
+    })],
 }));
