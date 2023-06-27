@@ -1,6 +1,6 @@
 {
   "name": "ha-component-kit",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "type": "module",
   "keywords": ["react", "homeassistant", "component", "library", "api"],
   "description": "A collection of React components for Home Assistant to easily communicate with the Home Assistant WebSocket API.",

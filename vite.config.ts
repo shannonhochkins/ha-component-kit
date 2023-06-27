@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import react from '@vitejs/plugin-react';
 import EsLint from 'vite-plugin-linter';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 const { EsLinter, linterPlugin } = EsLint
 
@@ -21,7 +20,6 @@ export default defineConfig(configEnv => ({
   },
   plugins: [
     react(),
-    tsconfigPaths(),
     linterPlugin({
       include: ['./src}/**/*.{ts,tsx}'],
       linters: [new EsLinter({ configEnv })],

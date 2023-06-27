@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { HassContext } from "@components/HassConnect/Provider";
-import type { HassContextProps } from "@components/HassConnect/Provider";
+import { HassContext } from "../../components/HassConnect/Provider";
+import type { HassContextProps } from "../../components/HassConnect/Provider";
 
 export function useHass(): HassContextProps {
   const context = useContext(HassContext);

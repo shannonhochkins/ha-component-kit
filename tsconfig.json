@@ -21,11 +21,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
-    "paths": {
-      "@root": ["src"],
-      "@components/*": ["src/components/*"],
-      "@hooks": ["src/hooks/"],
-    }
   },
   "include": ["src", ".d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
