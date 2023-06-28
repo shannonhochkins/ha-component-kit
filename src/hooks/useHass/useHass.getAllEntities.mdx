@@ -1,0 +1,23 @@
+import { Canvas, Source, Meta, ArgsTable } from '@storybook/blocks';
+import { HassConnect } from '../../components/HassConnect';
+import { useHass } from './';
+
+
+<Meta title="HOOKS/useHass/getAllEntities" />
+
+# getAllEntities()
+
+This will return every entity available in your home assistant instance as an object with the entity id as the key prefixed with the domain associated with it.
+
+### Definition
+<Source language="ts" code={`getAllEntities()`} />
+
+
+### Example Usage
+
+```ts
+function GetEntitiesExample() {
+  const { getAllEntities } = useHass();
+  const entities = getAllEntities();
+  return <p>You have {Object.keys(entities).length} entities</p>
+}

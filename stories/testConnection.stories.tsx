@@ -1,41 +1,18 @@
 import React from 'react';
+import { Story, Canvas } from '@storybook/blocks';
 import type { Meta, StoryObj } from '@storybook/react';
 import { HassConnect } from '../src/components/HassConnect';
 import { HassContext } from '../src/components/HassConnect/Provider';
 import { useContext, useState, useEffect, useMemo } from 'react';
 import type { HassEntity } from "home-assistant-js-websocket";
 import { TextField, Button, Grid, FormHelperText, Select, MenuItem, FormControl, InputLabel, SelectChangeEvent, Typography } from '@mui/material';
-export default {
-  title: 'Test Connection',
-  component: HassConnect,
-  args: {
-    fallback: null,
-    hassUrl: undefined,
-  },
-  argTypes: {
-    hassUrl: {
-      name: 'hassUrl',
-      type: { name: 'string', required: true },
-      control: 'text',
-    },
-  },
-  parameters: {
-    docs: {
-      controls: {
-        exclude: ['style']
-      },
-    },
-  },
-} satisfies Meta<typeof HassConnect>;
-
-type Story = StoryObj<typeof ExampleSetup>;
 
 interface DataByType {
   [key: string]: HassEntity[];
 }
 
 function UseData() {
-  const { getAllEntities } = useContext(HassContext);
+  const { getAllEntities, getStates, getConfig, getUser, getServices } = useContext(HassContext);
   const entities = getAllEntities();
   const hasEntities = useMemo(() => Object.keys(entities).length > 0, [entities]);
   const [service, setService] = useState<string | null>(null);
@@ -49,6 +26,25 @@ function UseData() {
       ],
     }
   }, {});
+
+  useEffect(() => {
+    async function fetchData() {
+      const results = await Promise.all([
+        getStates(),
+        getConfig(),
+        getUser(),
+        getServices(),
+      ]);
+      const formatted = ['getStates', 'getConfig', 'getUser', 'getServices'].reduce((acc, key, index) => {
+        return {
+          ...acc,
+          [key]: results[index],
+        };
+      }, {});
+      console.log('Additional Instance Information', formatted);
+    }
+    fetchData();
+  }, [getConfig, getServices, getStates, getUser])
 
   if (!hasEntities) {
     return <Typography component="h2">No entities found</Typography>
@@ -100,7 +96,7 @@ function UseData() {
 
 
 
-function ExampleSetup() {
+function Template() {
   const storedHassUrl = localStorage.getItem('hassUrl');
   const [hassUrl, setHassUrl] = useState<string>(storedHassUrl || '');
   const [ready, setReady] = useState<boolean>(false);
@@ -118,43 +114,52 @@ function ExampleSetup() {
     }
   }, [storedHassUrl]);
   return <>
-    <Grid container>
-      <Grid item>
-        <FormControl id="service-label" style={{
-            width: 300,
-          }}>
-          <TextField size="small" onChange={e => setHassUrl(e.target.value)} label="Home Assistant URL" variant="outlined" value={hassUrl} />
-          <FormHelperText>Enter your Home Assistant URL, can be any hosted URL</FormHelperText>
-        </FormControl>
-        
-      </Grid>  
-      <Grid item>
-        <Button style={{
-          marginLeft: 10,
-          marginTop: 1
-        }} onClick={() => {
-          if (ready) {
-            setReady(false);
-            localStorage.setItem('hassUrl', '');
-          } else {
-            setReady(true);
-            localStorage.setItem('hassUrl', hassUrl);
-          }
-        }} variant='outlined'>{ready ? 'CLEAR' : 'ATTEMPT LOGIN'}</Button>
+      <Grid container>
+        <Grid item>
+          <FormControl id="service-label" style={{
+              width: 300,
+            }}>
+            <TextField size="small" onChange={e => setHassUrl(e.target.value)} label="Home Assistant URL" variant="outlined" value={hassUrl} />
+            <FormHelperText>Enter your Home Assistant URL, can be any https URL</FormHelperText>
+          </FormControl>
+          
+        </Grid>  
+        <Grid item>
+          <Button style={{
+            marginLeft: 10,
+            marginTop: 1
+          }} onClick={() => {
+            if (ready) {
+              setReady(false);
+              localStorage.setItem('hassUrl', '');
+            } else {
+              setReady(true);
+              localStorage.setItem('hassUrl', hassUrl);
+            }
+          }} variant='outlined'>{ready ? 'CLEAR' : 'ATTEMPT LOGIN'}</Button>
+        </Grid>
       </Grid>
-    </Grid>
-    
-    {ready && <HassConnect hassUrl={hassUrl}>
-      <UseData />
-    </HassConnect>}
-  </>;
+      {ready && <HassConnect hassUrl={hassUrl}>
+        <UseData />
+        <br />
+        Now that you're connected, have a look at your developer console to see more formatted information
+        about your HA instance.
+      </HassConnect>}
+    </>;
 }
 
-
-export const Example: Story = {
-  render: ExampleSetup,
+export default {
+  title: 'INTRODUCTION/TestConnection',
+  component: HassConnect,
   parameters: {
-    controls: { disable: true },
-    actions: { disable: true },
-  }
-};
+    layout: 'centered'
+  },
+} satisfies Meta<typeof HassConnect>;
+
+export type Story = StoryObj<typeof Template>;
+
+export const Playground = Template.bind({});
+
+
+
+

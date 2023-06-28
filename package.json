@@ -2,7 +2,13 @@
   "name": "ha-component-kit",
   "version": "0.1.11",
   "type": "module",
-  "keywords": ["react", "homeassistant", "component", "library", "api"],
+  "keywords": [
+    "react",
+    "homeassistant",
+    "component",
+    "library",
+    "api"
+  ],
   "description": "A collection of React components for Home Assistant to easily communicate with the Home Assistant WebSocket API.",
   "main": "dist/ha-component-kit.umd.js",
   "module": "dist/ha-component-kit.es.js",
@@ -31,7 +37,8 @@
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "storybook": "storybook dev -p 6006",
     "build:types": "tsc --project tsconfig.build.json",
-    "build:storybook": "storybook build"
+    "build:storybook": "storybook build",
+    "build:api-types": "npx tsx ./scripts/api-type-generator.ts && npx prettier --write ./src/hooks/useApi/index.ts"
   },
   "dependencies": {
     "react": ">=16.x",
@@ -72,6 +79,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "storybook": "^7.0.23",
+    "ts-node": "^10.9.1",
     "typescript": "^5.0.2",
     "vite": "^4.3.9",
     "vite-plugin-dts": "^2.3.0",

@@ -1,0 +1,32 @@
+import { Canvas, Source, Meta, ArgsTable } from '@storybook/blocks';
+import { HassConnect } from '../../components/HassConnect';
+import { useHass } from './';
+
+
+<Meta title="HOOKS/useHass/getUser" />
+
+# getUser()
+This will return all information about your current user of your home assistant instance, this is all typed with typescript
+so you'll have access to what's available on the object with the `HassUser` type.
+
+This may be useful if you want to extract the name or perform different UI updates based on the role of the logged in user.
+
+### Definition
+<Source language="ts" code={`await getUser()`} />
+
+
+### Example Usage
+
+```ts
+function GetUserExample() {
+  const { getUser } = useHass();
+  const [user, setUser] = useState<HassUser | null>(null);
+  useEffect(() => {
+    async function fetchUser() {
+      const user = await getUser();
+      setUser(user);
+    }
+    fetchUser();
+  }, [])
+  return <p>{JSON.stringify(user, null, 2)}</p>
+}

@@ -1,49 +1,31 @@
-import { Canvas, Source } from '@storybook/blocks';
+import { Canvas, Source, Meta } from '@storybook/blocks';
 import { HassConnect } from '../../components/HassConnect';
 
-# useEntity()
 
-This hook should be used inside the context of <HassConnect /> and not outside of it otherwise it will not have access to
+<Meta title="HOOKS/useEntity" />
+
+# useEntity()
+This hook is designed to retrieve an entity and return all it's information.
+
+This is a memoized wrapper for the getEntity helper from `useHass()` allowing your component to only update
+when the entity actually changes.
+
+**Note:** This hook should be used inside the context of <HassConnect /> and not outside of it otherwise it will not have access to
 the authenticated home assistant API.
+
+
 
 ### Example Usage
 
 ```ts
-function Child() {
-  const { getEntity } = useHass();
-  const light = getEntity('light.something');
+function Office() {
+  const lightStrip = useEntity('light.office_striplight');
   // can now access all properties relating to the light
-  return light.state;
+  return lightStrip.state;
 }
 function App() {
   return <HassConnect hassUrl="http://homeassistant.local:1234">
-    <Child />
-  </HassConnect>
-}
-
-```
-
-### Calling a service
-
-```ts
-import { useCallback } from 'react';
-function Child() {
-  const { callService } = useHass();
-  const light = getEntity('light.living_room');
-  const setLivingRoomLightState = useCallback((service) => {
-    callService('light', service, {
-      entity_id: 'light.living_room'
-    });
-  }, [callService]);
-  // can now access all properties relating to the light
-  return <button onClick={() => {
-    // could also simply just be "toggle" here
-    setLivingRoomLightState(light.state === 'off' ? 'turn_on' : 'turn_off');
-  }}></button>
-}
-function App() {
-  return <HassConnect hassUrl="http://homeassistant.local:8123">
-    <Child />
+    <Office />
   </HassConnect>
 }
 

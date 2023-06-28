@@ -9,23 +9,3 @@ Install dependencies required in your react project
 ```bash
   npm i home-assistant-js-websocket ha-component-kit react react-dom
 ```
-
-# Description
-This component will show the Home Assistant login form you're used to seeing normally, once logged in you shouldn't see
-this again unless you clear device storage, once authenticated it will render the child components of HassConnect and provide access to the api.
-
-### HassConnect Example
-
-This is a top level component that takes care of the Authentication logic for you and all you have to do is login like you normally would.
-
-<i><b>Note: </b>You will have to login on each device as HassConnect will store tokens per device.</i>
-
-<Source language="ts" code={`
-<HassConnect hassUrl="http://homeassistant.local:1234">
-    // this will only render when authentication has passed
-    <SomeComponent />
-</HassConnect>
-`} />
-
-### Props
-<ArgTypes of={HassConnect} />

@@ -1,0 +1,26 @@
+
+
+import { Canvas, Source } from '@storybook/blocks';
+import { ArgsTable } from '@storybook/addon-docs';
+import { HassConnect } from './';
+import * as HassConnectStory from './HassConnect.stories';
+
+# Description
+This component will show the Home Assistant login form you're used to seeing normally when logging into HA, once logged in you shouldn't see
+this again unless you clear device storage, once authenticated it will render the child components of HassConnect and provide access to the api.
+
+
+## How to connect
+
+This is a top level component that takes care of the Authentication logic for you and all you have to do is login like you normally would.
+
+<i><b>Note: </b>You will have to login on each device as HassConnect will store tokens per device.</i>
+
+## Example Usage
+
+<Source code={`<HassConnect hassUrl="http://homeassistant.local:1234" fallback={<>Loading...</>}>
+    <div>Will render once connected and authenticated</div>
+</HassConnect>`} />
+
+## ```<HassConnect />``` Props
+<ArgsTable of={HassConnect} />

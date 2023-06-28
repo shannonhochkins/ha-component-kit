@@ -8,12 +8,13 @@ const config: StorybookConfig = {
     "../src/**/*.mdx",
     "../stories/**/*.mdx",
     "../stories/*.mdx",
+    "../stories/*.stories.@(ts|tsx)",
     "../src/**/*.stories.@(ts|tsx)"
   ],
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@storybook/addon-interactions",
+    "@storybook/addon-interactions"
   ],
   core: {
     builder: '@storybook/builder-vite', // 👈 The builder enabled here.

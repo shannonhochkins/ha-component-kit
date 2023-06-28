@@ -1,0 +1,32 @@
+import { Canvas, Source, Meta, ArgsTable } from '@storybook/blocks';
+import { HassConnect } from '../../components/HassConnect';
+import { useHass } from './';
+
+
+<Meta title="HOOKS/useHass/getServices" />
+
+# getServices()
+This will return all information about your services of your home assistant instance, this is all typed with typescript
+so you'll have access to what's available on the object with the `HassServices` type.
+
+This is useful to know which domains/services you have available to use with `callService`.
+
+### Definition
+<Source language="ts" code={`await getServices()`} />
+
+
+### Example Usage
+
+```ts
+function GetServicesExample() {
+  const { getServices } = useHass();
+  const [services, setServices] = useState<HassServices | null>(null);
+  useEffect(() => {
+    async function fetchServices() {
+      const services = await getServices();
+      setServices(services);
+    }
+    fetchServices();
+  }, [])
+  return <p>{JSON.stringify(services, null, 2)}</p>
+}

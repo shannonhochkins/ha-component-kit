@@ -38,21 +38,32 @@ interface CallServiceArgs {
 }
 
 export interface HassContextProps {
+  /** The connection object from home-assistant-js-websocket */
   connection: Connection | null;
+  /** This is an internal function, no need to use this */
   setConnection: (connection: Connection) => void;
+  /** will retrieve a HassEntity from the context */
   getEntity: (entity: string) => HassEntity;
+  /** will retrieve all HassEntities from the context */
   getAllEntities: () => HassEntities;
+  /** will call a service for home assistant */
   callService: ({
     domain,
     service,
     serviceData,
     target,
   }: CallServiceArgs) => void;
+  /** will retrieve all the HassEntities states */
   getStates: () => Promise<HassEntity[] | null>;
+  /** will retrieve all the HassServices */
   getServices: () => Promise<HassServices | null>;
+  /** will retrieve HassConfig */
   getConfig: () => Promise<HassConfig | null>;
+  /** will retrieve HassUser */
   getUser: () => Promise<HassUser | null>;
+  /** This is an internal value, no need to use this */
   ready: boolean;
+  /** The last time the context object was updated */
   lastUpdated: Date;
 }
 

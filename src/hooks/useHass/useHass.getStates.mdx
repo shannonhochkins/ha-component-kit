@@ -1,0 +1,30 @@
+import { Canvas, Source, Meta, ArgsTable } from '@storybook/blocks';
+import { HassConnect } from '../../components/HassConnect';
+import { useHass } from './';
+
+
+<Meta title="HOOKS/useHass/getStates" />
+
+# getStates()
+This will return all information about your entities with state values of your home assistant instance, this is all typed with typescript
+so you'll have access to what's available on the object with the `HassEntity[]` type.
+
+### Definition
+<Source language="ts" code={`await getStates()`} />
+
+
+### Example Usage
+
+```ts
+function GetStatesExample() {
+  const { getStates } = useHass();
+  const [states, setStates] = useState<HassEntity[] | null>(null);
+  useEffect(() => {
+    async function fetchStates() {
+      const states = await getStates();
+      setStates(states);
+    }
+    fetchStates();
+  }, [])
+  return <p>{JSON.stringify(states, null, 2)}</p>
+}

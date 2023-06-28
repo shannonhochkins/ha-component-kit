@@ -1,0 +1,23 @@
+import { Canvas, Source, Meta, ArgsTable } from '@storybook/blocks';
+import { HassConnect } from '../../components/HassConnect';
+import { useHass } from './';
+
+
+<Meta title="HOOKS/useHass/getEntity" />
+
+# getEntity()
+This will retrurn an entity directly from the context, however I suggest you use the `useEntity` hook instead as this
+is a memoized version of `getEntity` and will trigger re-renders when the entity changes.
+
+### Definition
+<Source language="ts" code={`getEntity(entity: string)`} />
+
+
+### Example Usage
+
+```ts
+function GetEntityExample() {
+  const { getEntity } = useHass();
+  const officeSwitch = getEntity('switch.office_wall_switch')
+  return <p>{JSON.stringify(officeSwitch, null, 2)}</p>
+}
