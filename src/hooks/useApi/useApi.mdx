@@ -11,6 +11,8 @@ easier to trigger services programmatically.
 **Note:** There's extensive types available for typescript developers to make it very easy to develop and call actions with the available types for different
 services, if a service isn't available in the types or the params are different / incorrect to what you're expecting you can extend these [here](/docs/advanced-extend-api--docs).
 
+This hook should be used inside the context of `<HassConnect />` and not outside of it otherwise it will not have access to
+the authenticated home assistant API.
 
 ### Example Usage
 

@@ -129,6 +129,7 @@ export function HassProvider({
       hassUrl,
       async loadTokens() {
         try {
+          console.log('xx', localStorage.hassTokens);
           const tokens = JSON.parse(localStorage.hassTokens);
           const { origin: inputOrigin } = new URL(hassUrl);
           const { origin: tokenOrigin } = new URL(tokens.hassUrl);
@@ -217,6 +218,7 @@ export function HassProvider({
         auth.current.refreshAccessToken();
       }
     } catch (err) {
+      console.log('err', err);
       if (err === ERR_HASS_HOST_REQUIRED) {
         auth.current = await getAuth(getAuthOptions(hassUrl));
       } else {
