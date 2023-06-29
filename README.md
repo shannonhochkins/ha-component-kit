@@ -8,7 +8,7 @@ This is still a **WIP** and is subject to change, I will be making changes to th
 
 ### Get Started
 
-There's a storybook page setup [here](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started.
+There's a detailed [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started.
 
 
 ### Local Development / Contribution
