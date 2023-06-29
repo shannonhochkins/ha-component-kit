@@ -16,11 +16,9 @@
   "module": "dist/ha-component-kit.es.js",
   "types": "dist/types/index.d.ts",
   "author": "Shannon Hochkins",
-  "license": "ISC",
   "files": [
     "dist",
-    "README.md",
-    "LICENSE"
+    "README.md"
   ],
   "repository": {
     "type": "git",
@@ -34,11 +32,10 @@
     "start": "npm run storybook",
     "dev": "vite",
     "prebuild": "rm -rf ./dist && npm run prettier",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && cp README.md dist/",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "storybook": "storybook dev -p 6006",
-    "build:types": "tsc --project tsconfig.build.json",
     "build:storybook": "storybook build",
     "build:ha-types": "npx tsx ./scripts/ha-types.ts && npx prettier --write './src/types/supported-services.d.ts'"
   },
