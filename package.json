@@ -1,6 +1,6 @@
 {
   "name": "ha-component-kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "keywords": [
     "react",
@@ -16,9 +16,11 @@
   "module": "dist/ha-component-kit.es.js",
   "types": "dist/types/index.d.ts",
   "author": "Shannon Hochkins",
+  "license": "ISC",
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENCE"
   ],
   "repository": {
     "type": "git",
@@ -32,7 +34,8 @@
     "start": "npm run storybook",
     "dev": "vite",
     "prebuild": "rm -rf ./dist && npm run prettier",
-    "build": "tsc && vite build && cp README.md dist/",
+    "build": "tsc && vite build",
+    "postbuild": "cp README.md dist/ && cp LICENCE dist/",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "storybook": "storybook dev -p 6006",
