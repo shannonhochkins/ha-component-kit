@@ -6,26 +6,27 @@ import packageJson from './package.json';
 const { EsLinter, linterPlugin } = EsLint
 
 // https://vitejs.dev/config/
-export default defineConfig(configEnv => ({
-  build: {
-    lib: {
-      entry: 'src/index.ts',
-      name: 'haComponentKit',
-      formats: ['es', 'umd'],
-      fileName: (format) => `ha-component-kit.${format}.js`,
+export default defineConfig(configEnv => {
+  const isBuildStorybook = process.env.BUILD_STORYBOOK === 'true';
+  return {
+    build: {
+      lib: {
+        entry: 'src/index.ts',
+        name: 'haComponentKit',
+        formats: ['es', 'umd'],
+        fileName: (format) => `ha-component-kit.${format}.js`,
+      },
+      rollupOptions: {
+        external: [...Object.keys(packageJson.peerDependencies)],
+      },
     },
-    rollupOptions: {
-      external: [...Object.keys(packageJson.peerDependencies)],
-    },
-  },
-  plugins: [
-    react(),
-    linterPlugin({
-      include: ['./src}/**/*.{ts,tsx}'],
-      linters: [new EsLinter({ configEnv })],
-    }),
-    dts({
-      outputDir: 'dist/types',
-      rollupTypes: true,
-    })],
-}));
+    plugins: [
+      react(),
+      linterPlugin({
+        include: ['./src}/**/*.{ts,tsx}'],
+        linters: [new EsLinter({ configEnv })],
+      }),
+      ...(isBuildStorybook ? [] : [dts({ outputDir: 'dist/types', rollupTypes: true })]),
+    ],
+  }
+});

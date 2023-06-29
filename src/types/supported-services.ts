@@ -1,5 +1,6 @@
 // this is an auto generated file, do not change this manually
 // see scripts/README.md for more information
+
 export type ServiceFunction<Data = object> = (
   entity: string,
   data?: Data
@@ -16,7 +17,6 @@ export type ServiceData<
 > = SupportedServices[T][M] extends ServiceFunction<infer Params>
   ? Params
   : never;
-
 export interface SupportedServices {
   persistentNotification: {
     // Show a notification in the frontend.
