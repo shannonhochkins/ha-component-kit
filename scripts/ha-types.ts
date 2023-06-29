@@ -80,7 +80,7 @@ const generateInterface = () => {
 
 const main = () => {
   const services = generateInterface();
-  fs.writeFileSync('./src/types/supported-services.d.ts', services);
+  fs.writeFileSync('./src/types/supported-services.ts', services);
   console.log('Interfaces successfully generated!');
 }
 

@@ -5,7 +5,6 @@ import { HassConnect } from "../src/components/HassConnect";
 import { HassContext } from "../src/components/HassConnect/Provider";
 import { useContext, useState, useEffect, useMemo } from "react";
 import type {
-  HassEntity,
   HassServices,
   HassEntities,
 } from "home-assistant-js-websocket";
