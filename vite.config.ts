@@ -26,5 +26,6 @@ export default defineConfig(configEnv => ({
     }),
     dts({
       outputDir: 'dist/types',
+      rollupTypes: true,
     })],
 }));

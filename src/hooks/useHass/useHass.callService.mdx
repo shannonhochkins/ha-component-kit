@@ -1,4 +1,5 @@
 import { Canvas, Source, Meta, ArgsTable } from '@storybook/blocks';
+import LinkTo from '@storybook/addon-links/react';
 import { HassConnect } from '../../components/HassConnect';
 import { useHass } from './';
 
@@ -8,11 +9,12 @@ import { useHass } from './';
 # callService()
 The call service helper will allow you to trigger any action in home assistant.
 
-If you have the developer tools enabled in home assistant, click on this, then services.
-
-Here you'll see a dropdown list, if you open this you'll see there's a "sub title" under each dropdown option, eg "climate.turn_on", in this particular example, "climate" is the domain and "turn_on" is the service.
+If you have typescript, there's full intellisense on a large range of domains/service/data, if not, you can use developer tools enabled in home assistant,
+navigate to this inside your instance, here you'll see a dropdown list and if you open this you'll see there's a "sub title" under each dropdown option, eg "climate.turn_on", in this particular example, "climate" is the domain and "turn_on" is the service.
 
 This is an easy way to visualize all the available domains/service for your home assistant instance.
+
+Additionally you could also use the [Playground](/story/introduction-testconnection--playground) to show you what's available.
 
 ### Definition
 <Source language="ts" code={`callService({
@@ -23,7 +25,7 @@ This is an easy way to visualize all the available domains/service for your home
     entity_id?: string | string[];
     device_id?: string | string[];
     area_id?: string | string[];
-  }
+  } | string | string[] // if a string or string[] is passed it's automatically mapped back to entity_id
 })`} />
 
 ### Example Usage

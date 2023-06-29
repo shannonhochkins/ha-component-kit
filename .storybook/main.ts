@@ -3,7 +3,7 @@ import { mergeConfig } from 'vite';
 import path from 'path';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-const config: StorybookConfig = {
+export default {
   stories: [
     "../src/**/*.mdx",
     "../stories/**/*.mdx",
@@ -14,7 +14,7 @@ const config: StorybookConfig = {
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@storybook/addon-interactions"
+    "@storybook/addon-interactions",
   ],
   core: {
     builder: '@storybook/builder-vite', // 👈 The builder enabled here.
@@ -44,5 +44,4 @@ const config: StorybookConfig = {
     
     return config;
   },
-};
-export default config;
+} satisfies StorybookConfig;

@@ -1,6 +1,15 @@
 import type { Preview } from "@storybook/react";
+import { CssBaseline } from '@mui/material';
+import React from "react";
 
-const preview: Preview = {
+export default {
+  decorators: [
+    (Story) => {
+      return <CssBaseline>
+      <Story />
+    </CssBaseline>
+    },
+  ],
   parameters: {
     actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
@@ -8,7 +17,7 @@ const preview: Preview = {
         color: /(background|color)$/i,
         date: /Date$/,
       },
-    },
+    },    
     options: {
       storySort: (a, b) => {
         // Split the ID into parts on '/'
@@ -21,7 +30,7 @@ const preview: Preview = {
 
 
         // Define the order
-        const order = ['INTRODUCTION', 'HOOKS', 'COMPONENTS'];
+        const order = ['INTRODUCTION', 'HOOKS', 'COMPONENTS', 'ADVANCED'];
 
         // Compare the top-level titles based on the order array
         const aTopLevelOrder = order.indexOf(aTopLevel);
@@ -45,6 +54,5 @@ const preview: Preview = {
       },
     }
   },
-};
+} satisfies Preview;
 
-export default preview;

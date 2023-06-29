@@ -1,110 +1,256 @@
-import React from 'react';
-import { Story, Canvas } from '@storybook/blocks';
-import type { Meta, StoryObj } from '@storybook/react';
-import { HassConnect } from '../src/components/HassConnect';
-import { HassContext } from '../src/components/HassConnect/Provider';
-import { useContext, useState, useEffect, useMemo } from 'react';
-import type { HassEntity } from "home-assistant-js-websocket";
-import { TextField, Button, Grid, FormHelperText, Select, MenuItem, FormControl, InputLabel, SelectChangeEvent, Typography } from '@mui/material';
+import React from "react";
+import { Story, Source } from "@storybook/blocks";
+import type { Meta, StoryObj } from "@storybook/react";
+import { HassConnect } from "../src/components/HassConnect";
+import { HassContext } from "../src/components/HassConnect/Provider";
+import { useContext, useState, useEffect, useMemo } from "react";
+import type {
+  HassEntity,
+  HassServices,
+  HassEntities,
+} from "home-assistant-js-websocket";
+import { useHass } from "../src/hooks";
+import { upperFirst, snakeCase, camelCase } from "lodash";
+import {
+  TextField,
+  Button,
+  Grid,
+  FormHelperText,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  SelectChangeEvent,
+} from "@mui/material";
 
-interface DataByType {
-  [key: string]: HassEntity[];
+interface ApiTesterProps {
+  domains: HassServices;
+  entities: HassEntities;
+}
+
+function ApiTester({ domains, entities }: ApiTesterProps) {
+  const { callService } = useHass();
+  const [domain, setDomain] = useState<string>("light");
+  const [service, setService] = useState<string>("");
+  const [entity, setEntity] = useState<string>("");
+  const availableEntities = useMemo(() => {
+    // filter the entities that are prefixed with the domain,
+    return Object.entries(entities)
+      .filter(([key]) => {
+        return key.startsWith(domain);
+      })
+      .map(([key, value]) => {
+        return {
+          label:
+            value?.attributes?.friendly_name || key.replace(`${domain}.`, ""),
+          value: key,
+        };
+      });
+  }, [entities, domain]);
+  return (
+    <Grid container direction="column" gap={2}>
+      <Grid item>
+        <h2
+          style={{
+            marginTop: 20,
+          }}
+        >
+          Service Tester
+        </h2>
+        <p>The options here are reflective or your home assistant instance.</p>
+        <p>Pick your domain, then entity, then the service to test.</p>
+        <p>
+          <b>Note: </b> Some services may not have an entity to pick as a
+          service might directly relate to an entity, or you don't have any
+          entities for the service, keep note that a lot of these services have
+          "data" that can be sent which is all typed in typescript for ease of
+          use.
+        </p>
+      </Grid>
+      <Grid container gap={2} wrap="nowrap">
+        <Grid item xs={3}>
+          <FormControl size="small" id="domain-label" fullWidth>
+            <InputLabel>Domain</InputLabel>
+            <Select
+              size="small"
+              label="Domain"
+              labelId="domain-label"
+              id="domain"
+              value={domain}
+              onChange={(e: SelectChangeEvent) => {
+                const value = e.target.value;
+                setDomain(value);
+                setService('');
+                setEntity('');
+              }}
+            >
+              {Object.keys(domains)
+                .sort()
+                .map((d) => {
+                  return (
+                    <MenuItem key={d} value={d}>
+                      {d}
+                    </MenuItem>
+                  );
+                })}
+            </Select>
+            <FormHelperText>Pick your domain</FormHelperText>
+          </FormControl>
+        </Grid>
+        {domain && (
+          <Grid item xs={3}>
+            <FormControl size="small" id="entity-label" fullWidth>
+              <InputLabel>Entity</InputLabel>
+              <Select
+                size="small"
+                label="Entity"
+                labelId="entity-label"
+                id="entity"
+                value={entity}
+                onChange={(e: SelectChangeEvent) => {
+                  const value = e.target.value;
+                  setEntity(value);
+                  setService('');
+                }}
+              >
+                {availableEntities
+                  .sort((a, b) => a.label.localeCompare(b.label))
+                  .map((e) => {
+                    return (
+                      <MenuItem key={e.value} value={e.value}>
+                        {e.label}
+                      </MenuItem>
+                    );
+                  })}
+              </Select>
+              <FormHelperText>Pick your domain</FormHelperText>
+            </FormControl>
+          </Grid>
+        )}
+        {domain && entity && (
+          <Grid item xs={3}>
+            <FormControl size="small" id="service-label" fullWidth>
+              <InputLabel>Service</InputLabel>
+              <Select
+                size="small"
+                label="Service"
+                labelId="service-label"
+                id="service"
+                value={service}
+                onChange={(e: SelectChangeEvent) => {
+                  // casting to light as we don't even know the value and light is the default
+                  const value = e.target.value;
+                  setService(value);
+                }}
+              >
+                {Object.keys(domains[domain])
+                  .sort()
+                  .map((d) => {
+                    return (
+                      <MenuItem key={d} value={d}>
+                        {d}
+                      </MenuItem>
+                    );
+                  })}
+              </Select>
+              <FormHelperText>Pick your service</FormHelperText>
+            </FormControl>
+          </Grid>
+        )}
+        {domain && entity && service && (
+          <Grid item xs={3}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                callService({
+                  // @ts-expect-error we don't know the actual value as it's dynamic from the user
+                  domain,
+                  // @ts-expect-error same as above
+                  service,
+                  target: entity,
+                });
+              }}
+            >
+              Call Service
+            </Button>
+          </Grid>
+        )}
+      </Grid>
+      {domain && entity && service && (
+        <Grid item>
+          <h3>Example Usage with callService</h3>
+          <p>This simply exports a button that will {camelCase(service)} the {camelCase(domain)} when pressed!</p>
+          <Source
+            language="ts"
+            code={`
+      export function Test${upperFirst(camelCase(domain))}{
+        const { callService } = useHass();
+        return <button onClick={() => {
+          callService({
+            domain: '${snakeCase(domain)}',
+            service: '${snakeCase(service)}',
+            target: '${entity}',
+          })
+        }}
+      }`}
+          />
+        </Grid>
+      )}
+      {domain && entity && service && (
+        <Grid item>
+          <h3>Example Usage with useApi hook</h3>
+          <p>This simply exports a button that will {camelCase(service)} the {camelCase(domain)} when pressed!</p>
+          <Source
+            language="ts"
+            code={`
+      export function Test${upperFirst(camelCase(domain))}{
+        const { ${camelCase(service)} } = useApi('${camelCase(domain)}');
+        return <button onClick={() => {
+          ${camelCase(service)}('${entity}');
+        }}
+      }`}
+          />
+        </Grid>
+      )}
+    </Grid>
+  );
 }
 
 function UseData() {
-  const { getAllEntities, getStates, getConfig, getUser, getServices } = useContext(HassContext);
+  const { getAllEntities, getServices } = useContext(HassContext);
   const entities = getAllEntities();
-  const hasEntities = useMemo(() => Object.keys(entities).length > 0, [entities]);
-  const [service, setService] = useState<string | null>(null);
-  const dataByType = Object.entries(entities).reduce<DataByType>((acc, [key, entity]) => {
-    const group = key.split('.')[0];
-    return {
-      ...acc,
-      [group]: [
-        ...(acc[group] || []),
-        entity,
-      ],
-    }
-  }, {});
-
+  const [services, setServices] = useState<HassServices | null>(null);
+  const hasEntities = useMemo(
+    () => Object.keys(entities).length > 0,
+    [entities]
+  );
   useEffect(() => {
     async function fetchData() {
-      const results = await Promise.all([
-        getStates(),
-        getConfig(),
-        getUser(),
-        getServices(),
-      ]);
-      const formatted = ['getStates', 'getConfig', 'getUser', 'getServices'].reduce((acc, key, index) => {
-        return {
-          ...acc,
-          [key]: results[index],
-        };
-      }, {});
-      console.log('Additional Instance Information', formatted);
+      const services = await getServices();
+      // purposely casting the type here. We know that the keys of services are the same as SupportedServices
+      setServices(services);
     }
     fetchData();
-  }, [getConfig, getServices, getStates, getUser])
+  }, [getServices]);
 
   if (!hasEntities) {
-    return <Typography component="h2">No entities found</Typography>
+    return <h3>No entities found</h3>;
   }
-  return <>
-    <Grid container direction="column" gap={2}>
-      <Grid item style={{
-        marginTop: 20
-      }}>
-        <Typography component="h2">Your Services & Entities</Typography>
-      </Grid>
-      <Grid item>
-        <FormControl id="service-label" style={{
-            width: 300,
-          }}>
-          <InputLabel>Service</InputLabel>
-          <Select label="Service" labelId="service-label" id="service" onChange={(e: SelectChangeEvent) => {
-            setService(e.target.value);
-          }}>
-            {Object.keys(dataByType).map(service => {
-              return <MenuItem key={service} value={service}>{service}</MenuItem>
-            })}
-          </Select>
-          <FormHelperText>Pick your service</FormHelperText>
-        </FormControl>
-      </Grid>
-      
-      {service && <>
-        <Grid item>
-        <FormControl style={{
-            width: 300,
-          }}>
-            <InputLabel>Entities for {service}</InputLabel>
-            <Select label={`Entities for ${service}`}>
-              {dataByType[service].map(entity => {
-                return <MenuItem key={entity.entity_id} value={entity.entity_id}>{entity.attributes.friendly_name}</MenuItem>
-              })}
-            </Select>
-            <FormHelperText>Pick your entity for {service}</FormHelperText>
-          </FormControl>
-      </Grid>
-      
-      </>}
-    
-
-    </Grid>
-  </>
+  return (
+    <>{services && <ApiTester entities={entities} domains={services} />}</>
+  );
 }
 
-
-
 function Template() {
-  const storedHassUrl = localStorage.getItem('hassUrl');
-  const [hassUrl, setHassUrl] = useState<string>(storedHassUrl || '');
+  const storedHassUrl = localStorage.getItem("hassUrl");
+  const [hassUrl, setHassUrl] = useState<string>(storedHassUrl || "");
   const [ready, setReady] = useState<boolean>(false);
 
   useEffect(() => {
     if (!hassUrl) {
       setReady(false);
-      localStorage.setItem('hassUrl', '');
+      localStorage.setItem("hassUrl", "");
     }
   }, [hassUrl]);
 
@@ -113,53 +259,65 @@ function Template() {
       setReady(true);
     }
   }, [storedHassUrl]);
-  return <>
-      <Grid container>
+  return (
+    <>
+      <h2>Playground</h2>
+      <Grid container alignItems="start" gap={2}>
         <Grid item>
-          <FormControl id="service-label" style={{
-              width: 300,
-            }}>
-            <TextField size="small" onChange={e => setHassUrl(e.target.value)} label="Home Assistant URL" variant="outlined" value={hassUrl} />
-            <FormHelperText>Enter your Home Assistant URL, can be any https URL</FormHelperText>
+          <FormControl
+            size="small"
+            id="service-label"
+            style={{
+              width: 450,
+            }}
+          >
+            <TextField
+              size="small"
+              onChange={(e) => setHassUrl(e.target.value)}
+              label="Home Assistant URL"
+              variant="outlined"
+              value={hassUrl}
+            />
+            <FormHelperText>
+              Enter your Home Assistant URL, can be any https URL
+            </FormHelperText>
           </FormControl>
-          
-        </Grid>  
+        </Grid>
         <Grid item>
-          <Button style={{
-            marginLeft: 10,
-            marginTop: 1
-          }} onClick={() => {
-            if (ready) {
-              setReady(false);
-              localStorage.setItem('hassUrl', '');
-            } else {
-              setReady(true);
-              localStorage.setItem('hassUrl', hassUrl);
-            }
-          }} variant='outlined'>{ready ? 'CLEAR' : 'ATTEMPT LOGIN'}</Button>
+          <Button
+            onClick={() => {
+              if (ready) {
+                setReady(false);
+                localStorage.setItem("hassUrl", "");
+              } else {
+                setReady(true);
+                localStorage.setItem("hassUrl", hassUrl);
+              }
+            }}
+            variant="outlined"
+          >
+            {ready ? "CLEAR" : "ATTEMPT LOGIN"}
+          </Button>
         </Grid>
       </Grid>
-      {ready && <HassConnect hassUrl={hassUrl}>
-        <UseData />
-        <br />
-        Now that you're connected, have a look at your developer console to see more formatted information
-        about your HA instance.
-      </HassConnect>}
-    </>;
+      {ready && (
+        <HassConnect hassUrl={hassUrl}>
+          <UseData />
+        </HassConnect>
+      )}
+    </>
+  );
 }
 
 export default {
-  title: 'INTRODUCTION/TestConnection',
+  title: "INTRODUCTION/TestConnection",
   component: HassConnect,
   parameters: {
-    layout: 'centered'
+    layout: "centered",
+    width: "100%",
   },
 } satisfies Meta<typeof HassConnect>;
 
 export type Story = StoryObj<typeof Template>;
 
 export const Playground = Template.bind({});
-
-
-
-

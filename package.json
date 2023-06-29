@@ -1,10 +1,12 @@
 {
   "name": "ha-component-kit",
-  "version": "0.1.11",
+  "version": "1.0.0",
   "type": "module",
   "keywords": [
     "react",
     "homeassistant",
+    "home-assistant",
+    "home-automation",
     "component",
     "library",
     "api"
@@ -38,11 +40,9 @@
     "storybook": "storybook dev -p 6006",
     "build:types": "tsc --project tsconfig.build.json",
     "build:storybook": "storybook build",
-    "build:api-types": "npx tsx ./scripts/api-type-generator.ts && npx prettier --write ./src/hooks/useApi/index.ts"
+    "build:ha-types": "npx tsx ./scripts/ha-types.ts && npx prettier --write './src/types/supported-services.d.ts'"
   },
   "dependencies": {
-    "react": ">=16.x",
-    "react-dom": ">=16.x",
     "use-debounce": "^9.0.4",
     "zustand": "^4.3.8"
   },
@@ -51,7 +51,6 @@
     "react-dom": ">=16.x"
   },
   "devDependencies": {
-    "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.13.6",
     "@storybook/addon-essentials": "^7.0.23",
@@ -80,6 +79,7 @@
     "react-dom": "^18.2.0",
     "storybook": "^7.0.23",
     "ts-node": "^10.9.1",
+    "type-fest": "^3.12.0",
     "typescript": "^5.0.2",
     "vite": "^4.3.9",
     "vite-plugin-dts": "^2.3.0",

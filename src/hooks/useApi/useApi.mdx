@@ -1,0 +1,32 @@
+import { Canvas, Source, Meta } from '@storybook/blocks';
+import { HassConnect } from '../../components/HassConnect';
+
+
+<Meta title="HOOKS/useApi" />
+
+# useApi()
+This hook is designed to make it easy to make api calls programmatically.
+
+This is a memoized wrapper for the [callService()](/docs/hooks-usehass-callservice--docs) helper from [useHass()](/docs/hooks-usehass--docs) to make it
+easier to trigger services programmatically.
+
+**Note:** There's extensive types available for typescript developers to make it very easy to develop and call actions with the available types for different
+services, if a service isn't available in the types or the params are different / incorrect to what you're expecting you can extend these [here](/docs/advanced-extend-api--docs).
+
+
+
+### Example Usage
+
+```ts
+import { HassConnect, useApi } from 'ha-component-kit';
+function UseApiExample() {
+  const lightService = useApi('light');
+  return <button onClick={() => lightService.toggle('light.some_light_entity')} >TOGGLE LIGHT</button>
+}
+function App() {
+  return <HassConnect hassUrl="http://localhost:1234">
+    <UseApiExample />
+  </HassConnect>
+}
+
+```

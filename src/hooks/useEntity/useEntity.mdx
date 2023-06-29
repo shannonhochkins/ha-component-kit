@@ -18,13 +18,14 @@ the authenticated home assistant API.
 ### Example Usage
 
 ```ts
+import { HassConnect, useEntity } from 'ha-component-kit';
 function Office() {
   const lightStrip = useEntity('light.office_striplight');
   // can now access all properties relating to the light
   return lightStrip.state;
 }
 function App() {
-  return <HassConnect hassUrl="http://homeassistant.local:1234">
+  return <HassConnect hassUrl="http://localhost:1234">
     <Office />
   </HassConnect>
 }

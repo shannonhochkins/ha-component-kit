@@ -29,12 +29,18 @@ import {
   getUser as _getUser,
 } from "home-assistant-js-websocket";
 import { useDebouncedCallback } from "use-debounce";
+import { isArray, snakeCase } from "lodash";
+import {
+  ServiceData,
+  DomainName,
+  DomainService,
+} from "../../types/supported-services";
 
-interface CallServiceArgs {
-  domain: string;
-  service: string;
-  serviceData?: object;
-  target?: HassServiceTarget;
+interface CallServiceArgs<T extends DomainName, M extends DomainService<T>> {
+  domain: T;
+  service: M;
+  serviceData?: ServiceData<T, M>;
+  target?: HassServiceTarget | string | string[];
 }
 
 export interface HassContextProps {
@@ -47,12 +53,9 @@ export interface HassContextProps {
   /** will retrieve all HassEntities from the context */
   getAllEntities: () => HassEntities;
   /** will call a service for home assistant */
-  callService: ({
-    domain,
-    service,
-    serviceData,
-    target,
-  }: CallServiceArgs) => void;
+  callService: <T extends DomainName, M extends DomainService<T>>(
+    args: CallServiceArgs<T, M>
+  ) => void;
   /** will retrieve all the HassEntities states */
   getStates: () => Promise<HassEntity[] | null>;
   /** will retrieve all the HassServices */
@@ -146,20 +149,30 @@ export function HassProvider({
   );
 
   const callService = useCallback(
-    async <T = unknown,>({
+    async <T extends DomainName, M extends DomainService<T>>({
       domain,
       service,
       serviceData,
-      target,
-    }: CallServiceArgs) => {
+      target: _target,
+    }: CallServiceArgs<T, M>) => {
+      const target =
+        typeof _target === "string" || isArray(_target)
+          ? {
+              entity_id: _target,
+            }
+          : _target;
+      if (typeof service !== "string") {
+        throw new Error("service must be a string");
+      }
       if (connection && ready) {
-        return (await _callService(
+        return await _callService(
           connection,
-          domain,
-          service,
-          serviceData,
+          snakeCase(domain),
+          snakeCase(service),
+          // purposely cast here as we know it's correct
+          serviceData as object,
           target
-        )) as T;
+        );
       }
       return false;
     },

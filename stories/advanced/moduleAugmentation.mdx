@@ -1,0 +1,33 @@
+import { Canvas, Source, ArgTypes, Meta } from '@storybook/blocks';
+
+<Meta title="ADVANCED/Extend API" />
+
+# Extending the API Types
+There's quite a lot already available and predefined under the SupportedServices interface, however if there'same
+something you'd like to add you can easily use module augmentation to extend the definition from this package.
+
+Example, if you have a domain called "zigbee", a service called "toggle", additionally if the default params i've provided
+don't match what you're expecting, you can overwrite them here by redeclaring them.
+
+```ts
+  import { SupportedServices, ServiceFunction } from 'ha-component-kit';
+  declare module 'ha-component-kit' {
+    interface SupportedServices {
+      // domain level grouping
+      zigbee: {
+        // toggle a zigbee device
+        toggle: ServiceFunction<{
+          // description for param 1
+          param1: string;
+          // description for param 2
+          param2?: string;
+        }>;
+        // Remove a notification from the frontend.
+        turnOff: ServiceFunction<{
+          // description for param 1
+          param1: string;
+        }>;
+      };
+    }
+  }
+```

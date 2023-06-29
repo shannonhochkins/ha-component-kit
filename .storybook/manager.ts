@@ -2,7 +2,6 @@ import { create } from '@storybook/theming/create';
 
 const theme = create({
     base: 'light',
-    fontBase: '"Public Sans", sans-serif',
     brandUrl: 'https://www.npmjs.com/package/ha-component-kit',
     brandImage: process.env.NODE_ENV === 'production' ? '/ha-component-kit/logo.png' : '/logo.png',
     brandTarget: '_self'
@@ -14,7 +13,6 @@ addons.setConfig({
     panelPosition: 'right',
     theme
 });
-
 const layout = localStorage.getItem('storybook-layout');
 if (layout) {
   let storybookConfig = JSON.parse(layout);

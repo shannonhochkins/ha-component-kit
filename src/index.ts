@@ -2,5 +2,6 @@
 export { HassConnect } from "./components/HassConnect";
 export type { HassConnectProps } from "./components/HassConnect";
 // hooks
-export { useHass } from "./hooks";
-export { useEntity } from "./hooks";
+export * from "./hooks";
+// supported services
+export type * from "./types/supported-services";
