@@ -21,7 +21,7 @@ function Template(args: Args) {
 const Page = () => (<>
   <Title />
   <Description />
-  <p>The `<ThemeProvider />` can be used as is with no props and you'll have access to all available css variables defined under the importable type `ThemeParams` from `ha-component-kit`;</p>
+  <p>The ThemeProvider can be used as is with no props and you'll have access to all available css variables defined under the importable type `ThemeParams` from `ha-component-kit`;</p>
   <p>The css variables take the input theme object (which is of type `ThemeParams`) and converts the keys & nested keys to kebab case to access easily.</p>
   <h3>Example:</h3>
   <Source code={`

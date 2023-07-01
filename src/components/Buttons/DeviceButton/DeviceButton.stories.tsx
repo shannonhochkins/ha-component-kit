@@ -9,10 +9,10 @@ function Template(args: Args) {
   return (
     <div>
         <h2>DeviceButton</h2>
-        <p></p>
+        <p>This is a work in progress, will have a working example this week some time! (todays date is 1/07/2023)</p>
         <ThemeProvider />
         <DeviceButton domain="light" service="toggle" entity="light.light_office_downlight_1" />
-        <Source code={`<DeviceButton domain="light" service="toggle" target="light.light_office_downlight_1" />`} language="tsx" />
+        <Source code={`<DeviceButton domain="light" service="toggle" entity="light.light_office_downlight_1" />`} language="tsx" />
     </div>
   );
 }
