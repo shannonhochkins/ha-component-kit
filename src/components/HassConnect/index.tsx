@@ -20,6 +20,7 @@ export const HassConnect = ({
       <>{`Provide the hassUrl prop with the url to your home assistant instance.`}</>
     );
   }
+  console.log('hassUrl', hassUrl);
   return (
     <HassProvider hassUrl={hassUrl}>
       {(ready) => (ready ? children : fallback)}

@@ -15,6 +15,7 @@ export default {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
+    "@storybook/addon-controls",
   ],
   core: {
     builder: '@storybook/builder-vite', // 👈 The builder enabled here.
@@ -25,7 +26,7 @@ export default {
     options: {},
   },
   docs: {
-    autodocs: "tag",
+    autodocs: true
   },
   /**
    * A option exposed by storybook-builder-vite for customising the Vite config.

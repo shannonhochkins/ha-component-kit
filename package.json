@@ -41,16 +41,15 @@
     "build:storybook": "BUILD_STORYBOOK=true storybook build",
     "build:ha-types": "npx tsx ./scripts/ha-types.ts && npx prettier --write './src/types/supported-services.ts'"
   },
-  "dependencies": {
-    "use-debounce": "^9.0.4"
-  },
   "peerDependencies": {
     "react": ">=16.x",
     "react-dom": ">=16.x"
   },
   "devDependencies": {
+    "@emotion/babel-plugin": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.13.6",
+    "@storybook/addon-controls": "^7.0.24",
     "@storybook/addon-essentials": "^7.0.23",
     "@storybook/addon-interactions": "^7.0.23",
     "@storybook/addon-links": "^7.0.23",

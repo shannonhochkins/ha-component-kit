@@ -1,5 +1,6 @@
 // this is an auto generated file, do not change this manually
 // see scripts/README.md for more information
+import { HassServiceTarget } from "home-assistant-js-websocket";
 
 export type ServiceFunction<Data = object> = (
   entity: string,
@@ -9,8 +10,9 @@ export type ServiceFunction<Data = object> = (
 export type DomainName = Exclude<keyof SupportedServices, symbol>;
 export type DomainService<T extends DomainName> = Exclude<
   keyof SupportedServices[T],
-  symbol
+  symbol | number
 >;
+export type Target = HassServiceTarget | string | string[];
 export type ServiceData<
   T extends DomainName,
   M extends DomainService<T>

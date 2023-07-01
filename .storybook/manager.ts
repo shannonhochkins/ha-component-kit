@@ -1,10 +1,10 @@
 import { create } from '@storybook/theming/create';
 
 const theme = create({
-    base: 'light',
+    base: 'dark',
     brandUrl: 'https://www.npmjs.com/package/ha-component-kit',
     brandImage: process.env.NODE_ENV === 'production' ? '/ha-component-kit/logo.png' : '/logo.png',
-    brandTarget: '_self'
+    brandTarget: '_self',
 });
 
 import { addons } from '@storybook/manager-api';

@@ -1,11 +1,11 @@
 import { useMemo } from "react";
-import type { HassServiceTarget } from "home-assistant-js-websocket";
 import { useHass } from "../useHass";
 import {
   SupportedServices,
   DomainService,
   DomainName,
   ServiceData,
+  Target,
 } from "../../types/supported-services";
 
 export function useApi<T extends DomainName>(domain: T) {
@@ -21,7 +21,7 @@ export function useApi<T extends DomainName>(domain: T) {
           // service is a string here, so we can assert it as S
           const service = serviceInput as S;
           return function (
-            target: HassServiceTarget,
+            target: Target,
             serviceData?: ServiceData<T, S>
           ) {
             callService({

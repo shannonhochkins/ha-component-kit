@@ -13,7 +13,6 @@ import {
   HassConfig,
   HassUser,
   HassServices,
-  HassServiceTarget,
   getAuthOptions as AuthOptions,
   ERR_HASS_HOST_REQUIRED,
   Auth,
@@ -28,19 +27,20 @@ import {
   getConfig as _getConfig,
   getUser as _getUser,
 } from "home-assistant-js-websocket";
-import { useDebouncedCallback } from "use-debounce";
 import { isArray, snakeCase } from "lodash";
+import { useDebouncedCallback } from '../../hooks';
 import {
   ServiceData,
   DomainName,
   DomainService,
+  Target,
 } from "../../types/supported-services";
 
 interface CallServiceArgs<T extends DomainName, M extends DomainService<T>> {
   domain: T;
   service: M;
   serviceData?: ServiceData<T, M>;
-  target?: HassServiceTarget | string | string[];
+  target?: Target;
 }
 
 export interface HassContextProps {
@@ -125,27 +125,28 @@ export function HassProvider({
     if (!ready) setReady(true);
   }, throttle);
   const getAuthOptions = useCallback(
-    (hassUrl: string): AuthOptions => ({
-      hassUrl,
-      async loadTokens() {
-        try {
-          console.log('xx', localStorage.hassTokens);
-          const tokens = JSON.parse(localStorage.hassTokens);
-          const { origin: inputOrigin } = new URL(hassUrl);
-          const { origin: tokenOrigin } = new URL(tokens.hassUrl);
-          // abort the authentication if the token url doesn't match
-          if (inputOrigin !== tokenOrigin) return null;
-          return tokens;
-        } catch (err) {
-          if (err instanceof Error) {
-            setError(err.message);
+    (hassUrl: string): AuthOptions => {
+      const { origin: inputOrigin } = new URL(hassUrl);
+      return {
+        hassUrl: inputOrigin,
+        async loadTokens() {
+          try {
+            const tokens = JSON.parse(localStorage.hassTokens);
+            const { origin: tokenOrigin } = new URL(tokens.hassUrl);
+            // abort the authentication if the token url doesn't match
+            if (inputOrigin !== tokenOrigin) return null;
+            return tokens;
+          } catch (err) {
+            if (err instanceof Error) {
+              setError(err.message);
+            }
           }
-        }
-      },
-      saveTokens: (tokens) => {
-        localStorage.hassTokens = JSON.stringify(tokens);
-      },
-    }),
+        },
+        saveTokens: (tokens) => {
+          localStorage.hassTokens = JSON.stringify(tokens);
+        },
+      };
+    },
     []
   );
 
@@ -215,10 +216,9 @@ export function HassProvider({
     try {
       auth.current = await getAuth(getAuthOptions(hassUrl));
       if (auth.current.expired) {
-        auth.current.refreshAccessToken();
+        return auth.current.refreshAccessToken();
       }
     } catch (err) {
-      console.log('err', err);
       if (err === ERR_HASS_HOST_REQUIRED) {
         auth.current = await getAuth(getAuthOptions(hassUrl));
       } else {
@@ -230,7 +230,7 @@ export function HassProvider({
     }
     const connection = await createConnection({ auth: auth.current });
     setConnection(connection);
-  }, [getAuthOptions, hassUrl, error]);
+  }, [getAuthOptions]);
 
   useEffect(() => {
     if (!ready) {
@@ -244,11 +244,7 @@ export function HassProvider({
     }
   }, [
     authenticate,
-    getAuthOptions,
-    hassUrl,
     ready,
-    setConnection,
-    setEntitiesDebounce,
   ]);
 
   return (

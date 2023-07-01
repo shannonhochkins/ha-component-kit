@@ -1,4 +1,10 @@
 import type { Preview } from "@storybook/react";
+import {
+  ArgsTable,
+  Description,
+  Primary,
+  Title,
+} from '@storybook/addon-docs';
 import { CssBaseline } from '@mui/material';
 import React from "react";
 
@@ -6,7 +12,11 @@ export default {
   decorators: [
     (Story) => {
       return <CssBaseline>
-      <Story />
+        <div style={{
+          padding: '2rem'
+        }}>
+        <Story />
+      </div>
     </CssBaseline>
     },
   ],
@@ -52,7 +62,7 @@ export default {
         // If neither story is in the order array, compare alphabetically
         return aTopLevel.localeCompare(bTopLevel);
       },
-    }
+    },
   },
 } satisfies Preview;
 

@@ -77,10 +77,10 @@ function ApiTester({ domains, entities }: ApiTesterProps) {
               id="domain"
               value={domain}
               onChange={(e: SelectChangeEvent) => {
-                const value = e.target.value;
-                setDomain(value);
-                setService('');
-                setEntity('');
+                const value = e.target.value;                
+                  setDomain(value);
+                  setService('');
+                  setEntity('');
               }}
             >
               {Object.keys(domains)
@@ -243,21 +243,19 @@ function UseData() {
 
 function Template() {
   const storedHassUrl = localStorage.getItem("hassUrl");
-  const [hassUrl, setHassUrl] = useState<string>(storedHassUrl || "");
-  const [ready, setReady] = useState<boolean>(false);
+  const storedHassTokens = localStorage.getItem("hassTokens");
+  const isAuthRedirect = window.location.href.includes("auth_callback");
+  const [error, setError]  = useState<string>("");
+  const [hassUrl, setHassUrl] = useState<string>(storedHassTokens === null && !isAuthRedirect ? "" : storedHassUrl || '');
+  const [value, setValue] = useState<string>(storedHassUrl || "");
+  const [ready, setReady] = useState<boolean>(isAuthRedirect || storedHassTokens !== null);
 
   useEffect(() => {
-    if (!hassUrl) {
+    if (!value) {
       setReady(false);
       localStorage.setItem("hassUrl", "");
     }
-  }, [hassUrl]);
-
-  useEffect(() => {
-    if (storedHassUrl) {
-      setReady(true);
-    }
-  }, [storedHassUrl]);
+  }, [value]);
   return (
     <>
       <h2>Playground</h2>
@@ -272,38 +270,50 @@ function Template() {
           >
             <TextField
               size="small"
-              onChange={(e) => setHassUrl(e.target.value)}
+              onChange={(e) => {
+                setValue(e.target.value);
+              }}
               label="Home Assistant URL"
               variant="outlined"
-              value={hassUrl}
+              value={value}
             />
-            <FormHelperText>
-              Enter your Home Assistant URL, can be any https URL
+            <FormHelperText error={!!error}>
+              {error ? error : `Enter your Home Assistant URL, can be any https URL`}
             </FormHelperText>
           </FormControl>
         </Grid>
         <Grid item>
           <Button
+            disabled={!value}
             onClick={() => {
+              setError('');
               if (ready) {
                 setReady(false);
+                localStorage.removeItem('hassTokens');
                 localStorage.setItem("hassUrl", "");
+                setHassUrl('');
               } else {
-                setReady(true);
-                localStorage.setItem("hassUrl", hassUrl);
+                try {
+                  const { origin } = new URL(value);
+                  setHassUrl(origin);
+                  setReady(true);
+                  localStorage.setItem("hassUrl", value);
+                } catch (e) {
+                  setHassUrl('');
+                  setError(e.message);
+                }
+                
               }
             }}
             variant="outlined"
           >
-            {ready ? "CLEAR" : "ATTEMPT LOGIN"}
+            {ready ? "RESET" : "ATTEMPT LOGIN"}
           </Button>
         </Grid>
       </Grid>
-      {ready && (
-        <HassConnect hassUrl={hassUrl}>
+        {ready && <HassConnect hassUrl={hassUrl}>
           <UseData />
-        </HassConnect>
-      )}
+        </HassConnect>}
     </>
   );
 }
@@ -314,6 +324,11 @@ export default {
   parameters: {
     layout: "centered",
     width: "100%",
+    docs: {
+      description: {
+        component: `Provide your home assistant origin url and it will connect if a valid url is provided, eg http://localhost:8123, if it fails to connect, refresh the page and ensure the url is correct.`
+      }
+    }
   },
 } satisfies Meta<typeof HassConnect>;
 

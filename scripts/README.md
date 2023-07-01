@@ -7,3 +7,7 @@ maintained manually.
 However, if your home assistant instance is very different to what i have already exported, this script should generate the types for you.
 
 The services file was generated from the `getServices` response under the useHass hook, you can call this and replace it to generate your own set of types to use with your project.
+
+```bash
+  npm run build:
+```
