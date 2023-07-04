@@ -127,7 +127,7 @@ export interface SceneCardProps {
   serviceData?: ServiceData<"scene", DomainService<"scene">>;
 }
 
-/** The SceneCard is a simple to use component to make it easy to control and a scene. */
+/** The SceneCard is a simple to use component to make it easy to trigger and a scene. */
 export function SceneCard({
   entity,
   title,

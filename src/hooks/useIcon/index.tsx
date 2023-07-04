@@ -121,7 +121,7 @@ export function useIconByDomain<D extends DomainName>(
   if (iconName === null) {
     return null;
   }
-  return <StyledIcon {...iconProps} icon={iconProps?.icon || iconName} />;
+  return <StyledIcon icon={iconName} {...iconProps} />;
 }
 
 export function useIcon(
@@ -130,7 +130,7 @@ export function useIcon(
 ) {
   const Icon = useMemo(() => {
     if (icon === null) return null;
-    return <StyledIcon {...iconProps} icon={icon || "octicon:info-24"} />;
+    return <StyledIcon icon={icon || "octicon:info-24"} {...iconProps} />;
   }, [icon, iconProps]);
   return Icon;
 }
@@ -145,7 +145,7 @@ export function useIconByEntity(
     if (!icon) {
       return null;
     }
-    return <StyledIcon {...iconProps} icon={icon} />;
+    return <StyledIcon icon={icon} {...iconProps} />;
   }, [iconProps, entity]);
   return Icon;
 }
