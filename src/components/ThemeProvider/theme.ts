@@ -23,7 +23,7 @@ export interface ThemeParams {
     };
     sceneCard: {
       width: string;
-    }
+    };
   };
 }
 

@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import TimeAgo from 'javascript-time-ago';
+import TimeAgo from "javascript-time-ago";
 // English.
-import en from 'javascript-time-ago/locale/en'
+import en from "javascript-time-ago/locale/en";
 
 TimeAgo.addDefaultLocale(en);
 // Create formatter (English).
-const timeAgo = new TimeAgo('en-US');
+const timeAgo = new TimeAgo("en-US");
 
 interface TimeDifference {
   active: boolean;
@@ -17,7 +17,7 @@ export function useTimeDifference(dateString: string) {
 
   const timer = useRef<NodeJS.Timeout | null>(null);
   const formatted = timeAgo.format(formattedDateString);
-  const active = formatted === 'just now';
+  const active = formatted === "just now";
   const [difference, setDifference] = useState<TimeDifference>({
     formatted,
     active,
@@ -26,7 +26,7 @@ export function useTimeDifference(dateString: string) {
   // Effect for initial setup and when dateString changes
   useEffect(() => {
     const formatted = timeAgo.format(formattedDateString);
-    const active = formatted === 'just now';
+    const active = formatted === "just now";
     setDifference({
       formatted,
       active,
@@ -57,4 +57,3 @@ export function useTimeDifference(dateString: string) {
 
   return useMemo(() => difference, [difference]);
 }
-

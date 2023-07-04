@@ -1,6 +1,11 @@
 import { Source } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, Group, SceneCard, SceneCardProps } from "ha-component-kit";
+import {
+  ThemeProvider,
+  Group,
+  SceneCard,
+  SceneCardProps,
+} from "ha-component-kit";
 import { HassConnect } from "@stories/HassConnectFake";
 // @ts-expect-error - Don't have types for jsx-to-string
 import jsxToString from "jsx-to-string";

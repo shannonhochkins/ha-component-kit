@@ -7,7 +7,14 @@ import type {
   DomainService,
   ServiceData,
 } from "@typings/supported-services";
-import { useEntity, useIconByDomain, useIcon, useApi, useIconByEntity, useTimeDifference } from "@hooks";
+import {
+  useEntity,
+  useIconByDomain,
+  useIcon,
+  useApi,
+  useIconByEntity,
+  useTimeDifference,
+} from "@hooks";
 import { Ripples } from "../../Shared/Ripple";
 
 export const StyledButtonCard = styled.button`
@@ -84,7 +91,7 @@ const Title = styled.div`
 const Subtitle = styled.div`
   color: var(--ha-secondary-color);
   font-size: 0.6rem;
-  margin-top:4px;
+  margin-top: 4px;
 `;
 const Description = styled.div`
   margin-top: 4px;

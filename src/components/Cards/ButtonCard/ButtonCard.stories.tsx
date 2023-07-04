@@ -35,9 +35,10 @@ function ExampleDocs() {
         device, the code below is all you need to control your device.
       </p>
       <p>
-        This will automatically extract the friendly name, icon, last updated, state and group
-        of the entity to render the ButtonCard below, if there's no icon linked in home assistant it will
-        use a predefined default by domain.
+        This will automatically extract the friendly name, icon, last updated,
+        state and group of the entity to render the ButtonCard below, if there's
+        no icon linked in home assistant it will use a predefined default by
+        domain.
       </p>
       <Template />
       <h3>Source Code</h3>

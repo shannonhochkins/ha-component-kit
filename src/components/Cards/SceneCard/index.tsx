@@ -1,14 +1,15 @@
-
-
-
 import { useCallback } from "react";
 import styled from "@emotion/styled";
 import { HassEntity } from "home-assistant-js-websocket";
-import type {
-  DomainService,
-  ServiceData,
-} from "@typings/supported-services";
-import { useEntity, useIconByDomain, useIcon, useIconByEntity, useTimeDifference, useApi } from "@hooks";
+import type { DomainService, ServiceData } from "@typings/supported-services";
+import {
+  useEntity,
+  useIconByDomain,
+  useIcon,
+  useIconByEntity,
+  useTimeDifference,
+  useApi,
+} from "@hooks";
 import { Ripples } from "../../Shared/Ripple";
 
 export const StyledSceneCard = styled.button`
@@ -50,7 +51,7 @@ const ToggleState = styled.div`
   position: absolute;
   top: 5px;
   left: 0;
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: center;
 `;
@@ -82,15 +83,21 @@ const Toggle = styled.div<ToggleProps>`
         ? "translate3d(calc(-100% - 5px), 0, 0)"
         : "translate3d(calc(0% + 5px), 0, 0)"};
     svg {
-      color: ${props => props.active ? "var(--ha-primary-active)" : "var(--ha-primary-inactive)"};
+      color: ${(props) =>
+        props.active
+          ? "var(--ha-primary-active)"
+          : "var(--ha-primary-inactive)"};
       font-size: 40px;
     }
   }
   ${ToggleMessage} {
     transition: var(--ha-transition-duration) var(--ha-easing);
     transition-property: justify-content, color;
-    justify-content: ${props => props.active ? `flex-start` : `flex-end`};
-    color: ${props => !props.active ? "var(--ha-secondary-color)" : "var(--ha-primary-inactive)"};
+    justify-content: ${(props) => (props.active ? `flex-start` : `flex-end`)};
+    color: ${(props) =>
+      !props.active
+        ? "var(--ha-secondary-color)"
+        : "var(--ha-primary-inactive)"};
   }
 `;
 
@@ -117,7 +124,7 @@ export interface SceneCardProps {
   /** the onClick handler is called when the card is pressed  */
   onClick?: (scene: HassEntity) => void;
   /** The data to pass to the scene service */
-  serviceData?: ServiceData<'scene', DomainService<'scene'>>;
+  serviceData?: ServiceData<"scene", DomainService<"scene">>;
 }
 
 /** The SceneCard is a simple to use component to make it easy to control and a scene. */
@@ -128,17 +135,17 @@ export function SceneCard({
   serviceData,
   ...rest
 }: SceneCardProps) {
-  const sceneService = useApi('scene');
+  const sceneService = useApi("scene");
   const scene = useEntity(entity);
-  const { active, formatted }  = useTimeDifference(scene.state);
+  const { active, formatted } = useTimeDifference(scene.state);
   const entityIcon = useIconByEntity(entity);
-  const domainIcon = useIconByDomain('scene');
-  const powerIcon = useIcon('mdi:power');
-  const arrowIcon = useIcon('mingcute:arrows-right-line', {
+  const domainIcon = useIconByDomain("scene");
+  const powerIcon = useIcon("mdi:power");
+  const arrowIcon = useIcon("mingcute:arrows-right-line", {
     style: {
       fontSize: "16px",
-    }
-  })
+    },
+  });
   const useApiHandler = useCallback(() => {
     // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
     sceneService.turnOn(entity, serviceData);
@@ -148,21 +155,23 @@ export function SceneCard({
   return (
     <Ripples borderRadius="1rem">
       <StyledSceneCard {...rest} onClick={useApiHandler}>
-          <LayoutBetween>
-            <Description>{title || scene.attributes.friendly_name || entity}</Description>
-            {entityIcon || domainIcon}
-          </LayoutBetween>
-          <Gap />
-          <LayoutBetween>
-            <Title>{formatted}</Title>
-            <Toggle active={active}>
-              <ToggleState>
-                {powerIcon}
-              </ToggleState>
-              <ToggleMessage>{active ? 'Success...' : `Start scene`} {!active && arrowIcon}</ToggleMessage>
-            </Toggle>
-          </LayoutBetween>
-        </StyledSceneCard>
+        <LayoutBetween>
+          <Description>
+            {title || scene.attributes.friendly_name || entity}
+          </Description>
+          {entityIcon || domainIcon}
+        </LayoutBetween>
+        <Gap />
+        <LayoutBetween>
+          <Title>{formatted}</Title>
+          <Toggle active={active}>
+            <ToggleState>{powerIcon}</ToggleState>
+            <ToggleMessage>
+              {active ? "Success..." : `Start scene`} {!active && arrowIcon}
+            </ToggleMessage>
+          </Toggle>
+        </LayoutBetween>
+      </StyledSceneCard>
     </Ripples>
   );
 }
