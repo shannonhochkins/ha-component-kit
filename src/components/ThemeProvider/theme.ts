@@ -1,47 +1,51 @@
-
-
 export interface ThemeParams {
   background: string;
   color: string;
   font: {
     family: string;
     size: string | number;
-  },
+  };
   primary: {
     background: string;
     color: string;
-  },
+    active: string;
+    inactive: string;
+  };
   secondary: {
     background: string;
     color: string;
-  },
+    active: string;
+    inactive: string;
+  };
   device: {
-    button: {
-      maxWidth: string;
-    }
-  }
+    buttonCard: {
+      width: string;
+    };
+  };
 }
 
 export const theme: ThemeParams = {
-  background: '#212121',
-  color: '#fefefe',
+  background: "#212121",
+  color: "#fefefe",
   font: {
-    size: '1rem',
-    family: '"Roboto","Helvetica","Arial",sans-serif'
+    size: "1rem",
+    family: '"Roboto","Helvetica","Arial",sans-serif',
   },
   primary: {
-    background: '#313131',
-    color: '#fefefe',
+    background: "#313131",
+    color: "#fefefe",
+    active: "#f0c039",
+    inactive: "#464646",
   },
   secondary: {
-    background: '#464646',
-    color: '#7c7c7c',
+    background: "#464646",
+    color: "#7c7c7c",
+    active: "#887a50",
+    inactive: "#464646",
   },
   device: {
-    button: {
-      maxWidth: '100px',
-    }
-  }
+    buttonCard: {
+      width: "120px",
+    },
+  },
 };
-
-

@@ -1,0 +1,1 @@
+import { ThemeProvider } from 'ha-component-kit';

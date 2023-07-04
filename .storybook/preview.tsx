@@ -1,27 +1,39 @@
 import type { Preview } from "@storybook/react";
-import {
-  ArgsTable,
-  Description,
-  Primary,
-  Title,
-} from '@storybook/addon-docs';
-import { CssBaseline } from '@mui/material';
+import { Title, Description, Primary, ArgTypes } from "@storybook/blocks";
 import React from "react";
+import { withThemeFromJSXProvider } from '@storybook/addon-styling';
+import { Global, css } from '@emotion/react';
+
+const GlobalStyles = () => (
+  <Global
+    styles={css`
+      .docs-story {
+        background-color: var(--ha-background);
+        font-family: var(--ha-font-family);
+        font-size: var(--ha-font-size);
+        color: var(--ha-color);
+      }
+    `}
+  />
+);
 
 export default {
   decorators: [
     (Story) => {
-      return <CssBaseline>
-        <div style={{
+      return <div style={{
           padding: '2rem'
         }}>
         <Story />
       </div>
-    </CssBaseline>
     },
+    withThemeFromJSXProvider({
+      GlobalStyles, // Adds your GlobalStyles component to all stories
+    }),
   ],
+
   parameters: {
     actions: { argTypesRegex: "^on[A-Z].*" },
+    layout: 'centered',
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -63,6 +75,15 @@ export default {
         return aTopLevel.localeCompare(bTopLevel);
       },
     },
+    docs: {
+      page: () => (<>
+        <Title />
+        <Description />
+        <Primary />
+        <h2>Component Props</h2>
+        <ArgTypes />
+      </>),
+    }
   },
 } satisfies Preview;
 

@@ -20,6 +20,8 @@ import {
   FormControl,
   InputLabel,
   SelectChangeEvent,
+  CssBaseline,
+  Alert
 } from "@mui/material";
 
 interface ApiTesterProps {
@@ -36,18 +38,25 @@ function ApiTester({ domains, entities }: ApiTesterProps) {
     // filter the entities that are prefixed with the domain,
     return Object.entries(entities)
       .filter(([key]) => {
-        return key.startsWith(domain);
+        return `${key}`.startsWith(domain);
       })
       .map(([key, value]) => {
         return {
           label:
-            value?.attributes?.friendly_name || key.replace(`${domain}.`, ""),
+            value?.attributes?.friendly_name || `${key}`.replace(`${domain}.`, ""),
           value: key,
         };
       });
   }, [entities, domain]);
   return (
     <Grid container direction="column" gap={2}>
+      <Grid item>
+        <Alert style={{
+          marginTop: 20
+        }} severity="success">
+          You've authenticated successfully!
+        </Alert>
+      </Grid>
       <Grid item>
         <h2
           style={{
@@ -258,6 +267,7 @@ function Template() {
   }, [value]);
   return (
     <>
+      <CssBaseline />
       <h2>Playground</h2>
       <Grid container alignItems="start" gap={2}>
         <Grid item>
@@ -300,9 +310,10 @@ function Template() {
                   localStorage.setItem("hassUrl", value);
                 } catch (e) {
                   setHassUrl('');
-                  setError(e.message);
+                  if (e instanceof Error) {
+                    setError(e.message);
+                  }
                 }
-                
               }
             }}
             variant="outlined"
@@ -321,6 +332,7 @@ function Template() {
 export default {
   title: "INTRODUCTION/TestConnection",
   component: HassConnect,
+  tags: ["autodocs"],
   parameters: {
     layout: "centered",
     width: "100%",

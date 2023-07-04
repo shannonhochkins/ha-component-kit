@@ -6,7 +6,6 @@ export type ServiceFunction<Data = object> = (
   entity: string,
   data?: Data
 ) => void;
-
 export type DomainName = Exclude<keyof SupportedServices, symbol>;
 export type DomainService<T extends DomainName> = Exclude<
   keyof SupportedServices[T],

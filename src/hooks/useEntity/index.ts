@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { useHass } from "../useHass";
 import { isEqual } from "lodash";
 import { HassEntity } from "home-assistant-js-websocket";
+import { useHass } from "@hooks";
+
 export function useEntity(entity: string) {
   const { getEntity, lastUpdated } = useHass();
   const matchedEntity = getEntity(entity);

@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import { useHass } from "../useHass";
+import { useHass } from "@hooks";
 import {
   SupportedServices,
   DomainService,
   DomainName,
   ServiceData,
   Target,
-} from "../../types/supported-services";
+} from "@typings/supported-services";
 
 export function useApi<T extends DomainName>(domain: T) {
   const { callService } = useHass();
@@ -20,10 +20,7 @@ export function useApi<T extends DomainName>(domain: T) {
           }
           // service is a string here, so we can assert it as S
           const service = serviceInput as S;
-          return function (
-            target: Target,
-            serviceData?: ServiceData<T, S>
-          ) {
+          return function (target: Target, serviceData?: ServiceData<T, S>) {
             callService({
               domain,
               service,

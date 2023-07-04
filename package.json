@@ -1,6 +1,6 @@
 {
   "name": "ha-component-kit",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "type": "module",
   "keywords": [
     "react",
@@ -15,12 +15,20 @@
   "main": "dist/ha-component-kit.umd.js",
   "module": "dist/ha-component-kit.es.js",
   "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/ha-component-kit.es.js",
+      "require": "./dist/ha-component-kit.umd.js",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
   "author": "Shannon Hochkins <mail@shannonhochkins.com>",
   "license": "ISC",
   "files": [
     "dist",
     "README.md",
-    "LICENCE.md"
+    "LICENCE.md",
+    "CHANGELOG.md"
   ],
   "repository": {
     "type": "git",
@@ -42,21 +50,31 @@
     "build:ha-types": "npx tsx ./scripts/ha-types.ts && npx prettier --write './src/types/supported-services.ts'"
   },
   "peerDependencies": {
+    "@emotion/react": ">=10.x",
+    "@emotion/styled": ">=10.x",
+    "@iconify/react": ">=4.x",
+    "home-assistant-js-websocket": ">=8.x",
+    "lodash": ">=4.x",
     "react": ">=16.x",
-    "react-dom": ">=16.x"
+    "react-dom": ">=16.x",
+    "use-debounce": ">=9.x"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.11.0",
+    "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.13.6",
     "@storybook/addon-controls": "^7.0.24",
-    "@storybook/addon-essentials": "^7.0.23",
-    "@storybook/addon-interactions": "^7.0.23",
-    "@storybook/addon-links": "^7.0.23",
-    "@storybook/blocks": "^7.0.23",
-    "@storybook/builder-vite": "^7.0.23",
-    "@storybook/react": "^7.0.23",
-    "@storybook/react-vite": "^7.0.23",
+    "@storybook/addon-docs": "^7.0.24",
+    "@storybook/addon-essentials": "^7.0.25",
+    "@storybook/addon-interactions": "^7.0.25",
+    "@storybook/addon-links": "^7.0.25",
+    "@storybook/addon-mdx-gfm": "^7.0.24",
+    "@storybook/addon-styling": "^1.3.2",
+    "@storybook/blocks": "^7.0.25",
+    "@storybook/builder-vite": "^7.0.24",
+    "@storybook/react": "^7.0.25",
+    "@storybook/react-vite": "^7.0.25",
     "@storybook/testing-library": "^0.0.14-next.2",
     "@types/lodash": "^4.14.195",
     "@types/node": "^20.3.1",
@@ -69,12 +87,13 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
     "eslint-plugin-storybook": "^0.6.12",
-    "home-assistant-js-websocket": "^8.0.1",
+    "home-assistant-js-websocket": "^8.1.0",
+    "jsx-to-string": "^1.4.0",
     "prettier": "^2.8.8",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "storybook": "^7.0.23",
+    "storybook": "^7.0.25",
     "ts-node": "^10.9.1",
     "type-fest": "^3.12.0",
     "typescript": "^5.0.2",

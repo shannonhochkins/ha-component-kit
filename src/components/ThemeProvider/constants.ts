@@ -1,1 +1,1 @@
-export const NAMESPACE = 'ha';
+export const NAMESPACE = "ha";

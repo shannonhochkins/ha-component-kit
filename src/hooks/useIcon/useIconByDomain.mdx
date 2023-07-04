@@ -1,0 +1,47 @@
+import { Meta } from '@storybook/blocks';
+import { useIconByDomain } from './';
+
+<Meta title="HOOKS/useIconByDomain" />
+
+# useIconByDomain()
+This hook will retrieve an icon by domain from a predefined list of icons.
+
+### Example Usage
+
+```ts
+import { useIconByDomain } from 'ha-component-kit';
+function IconExample() {
+  const icon = useIconByDomain('light');
+  return <div>{icon}</div>
+}
+```
+
+## Outputs
+
+<div>{useIconByDomain('light')}</div>
+
+## Custom Props
+
+If you want to provide props that the Icon component that [@iconify/react](https://iconify.design/docs/icon-components/react/) supports, pass it as the second parameter.
+This example will change the color to red and the size to 40px.
+```ts
+import { useIconByDomain } from 'ha-component-kit';
+function IconExample() {
+  const icon = useIconByDomain('mediaPlayer', {
+    color: 'red',
+    style: {
+      fontSize: 40
+    }
+  });
+  return <div>{icon}</div>
+}
+```
+
+## Outputs
+
+<div>{useIconByDomain('mediaPlayer', {
+    color: 'red',
+    style: {
+      fontSize: 40
+    }
+})}</div>

@@ -12,25 +12,26 @@ react functionality to build out your application/dashboard.
 If you want to quickly see how this works, the [Playground](/story/introduction-testconnection--playground) will help you visualize what this package is capable of.
 
 ## Simple Installation Steps
-Install dependencies required in your react project
+Install the package in your react project
 
 ```bash
-  npm i home-assistant-js-websocket ha-component-kit react react-dom
+  npm i ha-component-kit
 ```
 
-Then simply wrap your root component (usally App.tsx) with the [HassConnect](/story/components-hassconnect--default) component.
+Then simply wrap your root component (usally App.tsx) with the [HassConnect](/story/components-hassconnect--default) component, don't forget to include the "ThemeProvider" to get the default theme.
 
 ```tsx
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { HassConnect } from 'ha-component-kit';
+import { HassConnect, ThemeProvider } from 'ha-component-kit';
 // TODO: replace this with your home assistant url
 const HASS_URL = 'http://localhost:8123';
 function App() {
   return <HassConnect hassUrl={HASS_URL}>
-    <Root />
+    <ThemeProvider />
+    <p>Will render when connected!</p>
   </HassConnect>
-};
+}
 
 const root = createRoot(document.getElementById('root'));
 
@@ -70,6 +71,7 @@ const HASS_URL = 'http://localhost:8123';
 function App() {
   return (
     <HassConnect hassUrl={HASS_URL}>
+      <ThemeProvider />
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />

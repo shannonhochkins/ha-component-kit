@@ -28,13 +28,13 @@ import {
   getUser as _getUser,
 } from "home-assistant-js-websocket";
 import { isArray, snakeCase } from "lodash";
-import { useDebouncedCallback } from '../../hooks';
+import { useDebouncedCallback } from "use-debounce";
 import {
   ServiceData,
   DomainName,
   DomainService,
   Target,
-} from "../../types/supported-services";
+} from "@typings/supported-services";
 
 interface CallServiceArgs<T extends DomainName, M extends DomainService<T>> {
   domain: T;
@@ -124,31 +124,28 @@ export function HassProvider({
     setLastUpdated(new Date());
     if (!ready) setReady(true);
   }, throttle);
-  const getAuthOptions = useCallback(
-    (hassUrl: string): AuthOptions => {
-      const { origin: inputOrigin } = new URL(hassUrl);
-      return {
-        hassUrl: inputOrigin,
-        async loadTokens() {
-          try {
-            const tokens = JSON.parse(localStorage.hassTokens);
-            const { origin: tokenOrigin } = new URL(tokens.hassUrl);
-            // abort the authentication if the token url doesn't match
-            if (inputOrigin !== tokenOrigin) return null;
-            return tokens;
-          } catch (err) {
-            if (err instanceof Error) {
-              setError(err.message);
-            }
+  const getAuthOptions = useCallback((hassUrl: string): AuthOptions => {
+    const { origin: inputOrigin } = new URL(hassUrl);
+    return {
+      hassUrl: inputOrigin,
+      async loadTokens() {
+        try {
+          const tokens = JSON.parse(localStorage.hassTokens);
+          const { origin: tokenOrigin } = new URL(tokens.hassUrl);
+          // abort the authentication if the token url doesn't match
+          if (inputOrigin !== tokenOrigin) return null;
+          return tokens;
+        } catch (err) {
+          if (err instanceof Error) {
+            setError(err.message);
           }
-        },
-        saveTokens: (tokens) => {
-          localStorage.hassTokens = JSON.stringify(tokens);
-        },
-      };
-    },
-    []
-  );
+        }
+      },
+      saveTokens: (tokens) => {
+        localStorage.hassTokens = JSON.stringify(tokens);
+      },
+    };
+  }, []);
 
   const callService = useCallback(
     async <T extends DomainName, M extends DomainService<T>>({
@@ -242,10 +239,7 @@ export function HassProvider({
         }
       }
     }
-  }, [
-    authenticate,
-    ready,
-  ]);
+  }, [authenticate, ready]);
 
   return (
     <HassContext.Provider
