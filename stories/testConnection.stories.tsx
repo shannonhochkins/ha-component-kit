@@ -1,4 +1,3 @@
-import React from "react";
 import { Story, Source } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 import { HassConnect } from "../src/components/HassConnect";
