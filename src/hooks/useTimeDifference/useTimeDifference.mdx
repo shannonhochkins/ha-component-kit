@@ -1,0 +1,28 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="HOOKS/useTimeDifference" />
+
+# useTimeDifference()
+###### `useIconByDomain(dateString: string)`
+This hook will return an object containing:
+- formatted - a formatted readable string comparing the date to now, eg "1 minute ago, 2 days ago, 1 week ago"
+- active - a boolean indicating if the formatted value is "just now"
+
+This hook should be used inside the context of `<HassConnect />` and not outside of it otherwise it will not have access to
+the authenticated home assistant API.
+
+### Example Usage
+
+```ts
+import { HassConnect, useTimeDifference, useEntity } from 'ha-component-kit';
+function LastUpdated() {
+  const entity = useEntity('light.something');
+  const { formatted, active } = useTimeDifference(entity.last_updated);
+  // can now access all properties relating to the light
+  return formatted;
+}
+function App() {
+  return <HassConnect hassUrl="http://localhost:1234">
+    <LastUpdated />
+  </HassConnect>
+}

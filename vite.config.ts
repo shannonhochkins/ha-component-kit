@@ -44,6 +44,7 @@ export default defineConfig(configEnv => {
             'react-is': 'react-is',
             'use-debounce': 'use-debounce',
             'home-assistant-js-websocket': 'home-assistant-js-websocket',
+            'javascript-time-ago': 'javascript-time-ago'
           }
         }
       },

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { StyledButtonCard } from "@components/Buttons/ButtonCard";
+import { StyledButtonCard } from "@components/Cards/ButtonCard";
 
 const GroupInner = styled.div`
   display: flex;

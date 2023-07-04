@@ -21,6 +21,9 @@ export interface ThemeParams {
     buttonCard: {
       width: string;
     };
+    sceneCard: {
+      width: string;
+    }
   };
 }
 
@@ -46,6 +49,9 @@ export const theme: ThemeParams = {
   device: {
     buttonCard: {
       width: "120px",
+    },
+    sceneCard: {
+      width: "240px",
     },
   },
 };

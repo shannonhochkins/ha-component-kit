@@ -25,6 +25,7 @@
       "@stories/*": ["./stories/*"],
       "@hooks": ["./src/hooks"],
       "@components/*": ["./src/components/*"],
+      "@utils/*": ["./src/utils/*"],
       "@typings/*": ["./src/types/*"],
     }
   },

@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import styled from "@emotion/styled";
 import { Icon, IconProps } from "@iconify/react";
 import type { DomainName } from "@typings/supported-services";
+import { useEntity } from "../useEntity";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const StyledIcon = styled(Icon)`
@@ -14,7 +15,7 @@ function assertNever(value: never): never {
 
 export function useIconByDomain<D extends DomainName>(
   domain: D,
-  iconProps?: IconProps
+  iconProps?: Omit<IconProps, 'icon'>
 ) {
   const iconName = useMemo(() => {
     switch (domain) {
@@ -123,15 +124,32 @@ export function useIconByDomain<D extends DomainName>(
   return <StyledIcon {...iconProps} icon={iconProps?.icon || iconName} />;
 }
 
-export function useIcon(icon: string | null, iconProps?: IconProps) {
+export function useIcon(icon: string | null, iconProps?: Omit<IconProps, 'icon'>) {
   const Icon = useMemo(() => {
     if (icon === null) return null;
     return (
       <StyledIcon
         {...iconProps}
-        icon={iconProps?.icon || icon || "octicon:info-24"}
+        icon={icon || "octicon:info-24"}
       />
     );
   }, [icon, iconProps]);
+  return Icon;
+}
+
+export function useIconByEntity(_entity: string, iconProps?: Omit<IconProps, 'icon'>) {
+  const entity = useEntity(_entity);
+  const Icon = useMemo(() => {
+    const icon = entity.attributes.icon;
+    if (!icon) {
+      return null;
+    }
+    return (
+      <StyledIcon
+        {...iconProps}
+        icon={icon}
+      />
+    );
+  }, [iconProps, entity]);
   return Icon;
 }

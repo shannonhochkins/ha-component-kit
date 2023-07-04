@@ -2,8 +2,11 @@
 export { HassConnect } from "./components/HassConnect";
 export type { HassConnectProps } from "./components/HassConnect";
 // ButtonCard
-export { ButtonCard } from "./components/Buttons/ButtonCard";
-export type { DeviceButtonProps } from "./components/Buttons/ButtonCard";
+export { ButtonCard } from "./components/Cards/ButtonCard";
+export type { ButtonCardProps } from "./components/Cards/ButtonCard";
+// SceneCard
+export { SceneCard } from "./components/Cards/SceneCard";
+export type { SceneCardProps } from "./components/Cards/SceneCard";
 // Group
 export { Group } from "./components/Group";
 export type { GroupProps } from "./components/Group";

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { HassEntity } from "home-assistant-js-websocket";
 import { lowerCase, startCase } from "lodash";
@@ -7,7 +7,7 @@ import type {
   DomainService,
   ServiceData,
 } from "@typings/supported-services";
-import { useEntity, useIconByDomain, useIcon, useApi } from "@hooks";
+import { useEntity, useIconByDomain, useIcon, useApi, useIconByEntity, useTimeDifference } from "@hooks";
 import { Ripples } from "../../Shared/Ripple";
 
 export const StyledButtonCard = styled.button`
@@ -81,7 +81,13 @@ const Title = styled.div`
   color: var(--ha-secondary-color);
   font-size: 0.7rem;
 `;
+const Subtitle = styled.div`
+  color: var(--ha-secondary-color);
+  font-size: 0.6rem;
+  margin-top:4px;
+`;
 const Description = styled.div`
+  margin-top: 4px;
   color: var(--ha-primary-color);
   font-size: 0.9rem;
 `;
@@ -107,7 +113,7 @@ export interface ServiceProps<D extends DomainName> extends BaseProps {
   /** the onClick handler is called when the button is pressed after the api service is called automatically.  */
   onClick?: (entity: HassEntity) => void;
 }
-export interface DeviceButtonProps<D extends DomainName>
+export interface ButtonCardProps<D extends DomainName>
   extends Partial<ServiceProps<D>> {
   /** Optional active param, By default this is updated via home assistant */
   active?: boolean;
@@ -127,9 +133,11 @@ function ServiceButton<D extends DomainName>({
 }: ServiceProps<D>) {
   const api = useApi(domain);
   const entity = useEntity(_entity);
-  const icon = useIconByDomain(domain, {
-    icon: _icon || "",
-  });
+  const icon = useIconByDomain(domain);
+  const entityIcon = useIconByEntity(_entity);
+  const difference = useTimeDifference(entity.last_updated);
+
+  const inputIcon = useIcon(_icon || null);
   const useApiHandler = useCallback(() => {
     // @ts-expect-error - at this point we don't actually know the service
     // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
@@ -148,13 +156,14 @@ function ServiceButton<D extends DomainName>({
   return (
     <StyledButtonCard onClick={useApiHandler}>
       <LayoutBetween>
-        {icon}
+        {inputIcon || entityIcon || icon}
         <Toggle active={entity.state === "on"}>
           <ToggleState />
         </Toggle>
       </LayoutBetween>
       <Title>{title}</Title>
       <Description>{description}</Description>
+      <Subtitle>{difference.formatted}</Subtitle>
     </StyledButtonCard>
   );
 }
@@ -164,7 +173,7 @@ export function ButtonCard<D extends DomainName>({
   entity,
   domain,
   ...rest
-}: DeviceButtonProps<D>) {
+}: ButtonCardProps<D>) {
   const isServiceButton = useMemo(() => {
     return [service, domain, entity].every(
       (value) => typeof value !== "undefined"

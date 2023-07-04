@@ -193,6 +193,7 @@ export function HassProvider({
   useEffect(() => {
     if (connection === null) return;
     unsubscribe.current = subscribeEntities(connection, ($entities) => {
+      console.log('_entities', $entities);
       setEntitiesDebounce($entities);
     });
     if (location.search.includes("auth_callback=1")) {

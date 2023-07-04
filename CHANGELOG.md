@@ -1,4 +1,11 @@
 
+
+# v1.0.5
+##### released - 04/07/2023
+- Adding "SceneCard" component to trigger scenes
+- Adding "useTimeDifference" hook to get the "time ago" value from the entities
+- Integrated the useTimeDifference hook into the ButtonCard and SceneCard
+- Added "useEntityIcon" hook to retrieve the icon used in home assistant if set, this is also linked to the SceneCard and ButtonCard
 # v1.0.5
 ##### released - 04/07/2023
 - Fixed bug with typing exports in package.json
