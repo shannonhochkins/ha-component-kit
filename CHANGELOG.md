@@ -1,5 +1,11 @@
 
 
+# v.1.0.6
+##### released - 04/07/2023
+
+- Simple changes to the "fake" entities for storybook to render different times
+- Adjusted the useTimeDifference hook to have all the same "now" values.
+
 # v1.0.5
 ##### released - 04/07/2023
 - Adding "SceneCard" component to trigger scenes

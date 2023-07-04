@@ -29,6 +29,21 @@ interface HassProviderProps {
   throttle?: number;
 }
 
+// Current time
+const now = new Date();
+
+// Subtracting 1 day
+const oneDayAgo = new Date(now);
+oneDayAgo.setDate(now.getDate() - 1);
+
+// Subtracting 2 minutes
+const twoMinutesAgo = new Date(now);
+twoMinutesAgo.setMinutes(now.getMinutes() - 2);
+
+// Subtracting 2 hours
+const twoHoursAgo = new Date(now);
+twoHoursAgo.setHours(now.getHours() - 2);
+
 const ENTITIES: HassEntities = {
   'light.fake_light': {
     attributes: {
@@ -37,8 +52,8 @@ const ENTITIES: HassEntities = {
     },
     state: 'on',
     entity_id: 'light.fake_light',
-    last_changed: new Date().toISOString(),
-    last_updated: new Date().toISOString(),
+    last_changed: twoHoursAgo.toISOString(),
+    last_updated: twoHoursAgo.toISOString(),
     context: {
       id: '',
       user_id: null,
@@ -51,8 +66,8 @@ const ENTITIES: HassEntities = {
     },
     state: 'off',
     entity_id: 'switch.fake_gaming_switch',
-    last_changed: new Date().toISOString(),
-    last_updated: new Date().toISOString(),
+    last_changed: twoMinutesAgo.toISOString(),
+    last_updated: twoMinutesAgo.toISOString(),
     context: {
       id: '',
       user_id: null,
@@ -65,8 +80,8 @@ const ENTITIES: HassEntities = {
     },
     state: 'off',
     entity_id: 'media_player.fake_tv',
-    last_changed: new Date().toISOString(),
-    last_updated: new Date().toISOString(),
+    last_changed: oneDayAgo.toDateString(),
+    last_updated: oneDayAgo.toDateString(),
     context: {
       id: '',
       user_id: null,
@@ -75,7 +90,7 @@ const ENTITIES: HassEntities = {
   },
   'scene.good_morning': {
     entity_id: "scene.goodmorning",
-    state: "2023-07-04T05:12:47.585217+00:00",
+    state: oneDayAgo.toISOString(),
     attributes: {
         entity_id: [
             "light.all_office_lights_2"
@@ -89,10 +104,11 @@ const ENTITIES: HassEntities = {
         parent_id: null,
         user_id: null
     },
-    last_changed: "2023-07-04T05:29:10.851Z",
-    last_updated: "2023-07-04T05:29:10.851Z"
+    last_changed: oneDayAgo.toISOString(),
+    last_updated: oneDayAgo.toISOString()
 }
 }
+
 
 function HassProvider({
   children,
@@ -122,9 +138,10 @@ function HassProvider({
       target,
     }: CallServiceArgs<T, M>) => {
       if (typeof target !== 'string') return;
+      const now = new Date().toISOString();
       const dates = {
-        last_changed: new Date().toISOString(),
-        last_updated: new Date().toISOString(),
+        last_changed: now,
+        last_updated: now,
       }
       if (domain === 'scene') {
         return setEntities({
@@ -132,7 +149,7 @@ function HassProvider({
           [target]: {
             ...entities[target],
             ...dates,
-            state: new Date().toISOString()
+            state: now
           }
         });
       }

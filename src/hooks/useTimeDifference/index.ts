@@ -3,7 +3,17 @@ import TimeAgo from "javascript-time-ago";
 // English.
 import en from "javascript-time-ago/locale/en";
 
-TimeAgo.addDefaultLocale(en);
+TimeAgo.addDefaultLocale({
+  ...en,
+  now: {
+    now: {
+      // too account for odd time differences, we set these to all be the same
+      current: "just now",
+      future: "just now",
+      past: "just now",
+    },
+  },
+});
 // Create formatter (English).
 const timeAgo = new TimeAgo("en-US");
 
