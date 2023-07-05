@@ -2,6 +2,8 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  useRef,
+  useEffect,
 } from "react";
 import {
   // types
@@ -43,6 +45,9 @@ twoMinutesAgo.setMinutes(now.getMinutes() - 2);
 // Subtracting 2 hours
 const twoHoursAgo = new Date(now);
 twoHoursAgo.setHours(now.getHours() - 2);
+
+// formatted time based on now
+const formatted = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
 
 const ENTITIES: HassEntities = {
   'light.fake_light': {
@@ -106,6 +111,56 @@ const ENTITIES: HassEntities = {
     },
     last_changed: oneDayAgo.toISOString(),
     last_updated: oneDayAgo.toISOString()
+  },
+  'sensor.time': {
+    entity_id: "sensor.time",
+    state: formatted,
+    attributes: {
+        icon: "mdi:clock",
+        friendly_name: "Time"
+    },
+    context: {
+        id: "01H4JAXGF1RTA2MJGGPGAGM7VD",
+        parent_id: null,
+        user_id: null
+    },
+    last_changed: now.toISOString(),
+    last_updated: now.toISOString()
+  },
+  'climate.air_conditioner': {
+    entity_id: "climate.air_conditioner",
+    state: "off",
+    attributes: {
+        hvac_modes: [
+            "fan_only",
+            "dry",
+            "cool",
+            "heat",
+            "heat_cool",
+            "off"
+        ],
+        min_temp: 7,
+        max_temp: 35,
+        target_temp_step: 1,
+        fan_modes: [
+            "Low",
+            "Mid",
+            "High"
+        ],
+        current_temperature: 24,
+        temperature: 25,
+        fan_mode: "High",
+        hvac_action: "off",
+        friendly_name: "Air Conditioner",
+        supported_features: 9
+    },
+    context: {
+        id: "01H4J3SQV4JJX4KF6G28K2AADY",
+        parent_id: null,
+        user_id: null
+    },
+    last_changed: oneDayAgo.toDateString(),
+    last_updated: oneDayAgo.toDateString()
 }
 }
 
@@ -115,7 +170,8 @@ function HassProvider({
 }: HassProviderProps) {
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated] = useState<Date>(new Date());
-  const [entities, setEntities] = useState<HassEntities>(ENTITIES)
+  const [entities, setEntities] = useState<HassEntities>(ENTITIES);
+  const clock = useRef<NodeJS.Timer | null>(null);
   const [ready] = useState(true);
   const getStates = async () => null;
   const getServices = async () => null;
@@ -136,6 +192,7 @@ function HassProvider({
       service,
       domain,
       target,
+      serviceData
     }: CallServiceArgs<T, M>) => {
       if (typeof target !== 'string') return;
       const now = new Date().toISOString();
@@ -150,6 +207,24 @@ function HassProvider({
             ...entities[target],
             ...dates,
             state: now
+          }
+        });
+      }
+      if (domain === 'climate') {
+        console.log('serviceData', serviceData)
+        return setEntities({
+          ...entities,
+          [target]: {
+            ...entities[target],
+            attributes: {
+              ...entities[target].attributes,
+              ...serviceData || {},
+              // @ts-expect-error - purposely casting here so i don't have to setup manual types for fake data
+              hvac_action: serviceData?.hvac_mode || entities[target].state
+            },
+            ...dates,
+            // @ts-expect-error - purposely casting here so i don't have to setup manual types for fake data
+            state: serviceData?.hvac_mode || entities[target].state
           }
         });
       }
@@ -185,6 +260,25 @@ function HassProvider({
     },
     [entities]
   );
+
+  useEffect(() => {
+    clock.current = setInterval(() => {
+      const now = new Date();
+      const formatted = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+      const dates = {
+        last_changed: now.toISOString(),
+        last_updated: now.toISOString(),
+      }
+      setEntities({
+        ...entities,
+        ['sensor.time']: {
+          ...entities['sensor.time'],
+          ...dates,
+          state: formatted
+        }
+      });
+    }, 60000);
+  })
 
   return (
     <HassContext.Provider

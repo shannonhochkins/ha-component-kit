@@ -113,7 +113,7 @@ const Title = styled.div`
   font-size: 0.7rem;
 `;
 const Description = styled.div`
-  color: var(--ha-primary-color);
+  color: var(--ha-primary-active);
   font-size: 0.9rem;
 `;
 export interface SceneCardProps {

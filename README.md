@@ -4,6 +4,8 @@ This package is designed to be a template for creating custom dashboards for Hom
 
 [![npm version](https://badge.fury.io/js/ha-component-kit.svg)](https://badge.fury.io/js/ha-component-kit)
 
+If you like anything here, be sure to 🌟 my repo!
+
 It provides components for you to use to create your own custom react Home Assistant dashboard.
 
 ### Get Started
@@ -11,12 +13,12 @@ It provides components for you to use to create your own custom react Home Assis
 There's detailed [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started, a quick rundown to get you started:
 
 
-1. You must install the package:
+1. Install the [ha-component-kit](https://www.npmjs.com/package/ha-component-kit) package:
 
 ```bash
 npm i ha-component-kit
 ```
-2. import the required components to authenticate with Home Assistant:
+2. Import the required components to authenticate with Home Assistant:
 
 ```ts
 import { HassConnect, ThemeProvider } from 'ha-component-kit';

@@ -20,13 +20,7 @@ export default defineConfig(configEnv => {
       },
       rollupOptions: {
         external:[
-          ...Object.keys(packageJson.peerDependencies),
-          'react/jsx-runtime',
-          '@emotion/cache',
-          'react-is',
-          '@emotion/utils',
-          '@emotion/serialize',
-          '@mui/material'
+          /node_modules/
         ],
         output: {
           globals: {
@@ -43,6 +37,7 @@ export default defineConfig(configEnv => {
             '@emotion/serialize': '@emotion/serialize',
             'react-is': 'react-is',
             'use-debounce': 'use-debounce',
+            'react-thermostat': 'react-thermostat',
             'home-assistant-js-websocket': 'home-assistant-js-websocket',
             'javascript-time-ago': 'javascript-time-ago'
           }

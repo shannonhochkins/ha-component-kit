@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import TimeAgo from "javascript-time-ago";
 // English.
 import en from "javascript-time-ago/locale/en";
+import { useEntity } from "@hooks";
 
 TimeAgo.addDefaultLocale({
   ...en,
@@ -21,9 +22,15 @@ interface TimeDifference {
   active: boolean;
   formatted: string;
 }
-
+/** This hook will return the "last updated" time based on the date string provided, this will automatically update based on the home assistant time sensor, which updated every minute */
 export function useTimeDifference(dateString: string) {
-  const formattedDateString = useMemo(() => new Date(dateString), [dateString]);
+  const timeSensor = useEntity("sensor.time");
+  // we want this to update based on the time tick from the sensor
+  const formattedDateString = useMemo(
+    () => new Date(dateString),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dateString, timeSensor]
+  );
 
   const timer = useRef<NodeJS.Timeout | null>(null);
   const formatted = timeAgo.format(formattedDateString);

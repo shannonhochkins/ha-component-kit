@@ -4,9 +4,13 @@ import { Meta } from '@storybook/blocks';
 
 # useTimeDifference()
 ###### `useIconByDomain(dateString: string)`
+
 This hook will return an object containing:
-- formatted - a formatted readable string comparing the date to now, eg "1 minute ago, 2 days ago, 1 week ago"
-- active - a boolean indicating if the formatted value is "just now"
+- `formatted` - a formatted readable string comparing the date to now, eg "1 minute ago, 2 days ago, 1 week ago"
+- `active`- a boolean indicating if the formatted value is "just now"
+
+This is automatically updated based on the `sensor.time` home assistant sensor which updates every minute, it will also update if the entity changes state causing
+the date string to update if you've passed the `entity.last_updated` or `entity.last_changed` value.
 
 This hook should be used inside the context of `<HassConnect />` and not outside of it otherwise it will not have access to
 the authenticated home assistant API.
