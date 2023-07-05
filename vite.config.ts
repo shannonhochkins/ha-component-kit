@@ -20,7 +20,13 @@ export default defineConfig(configEnv => {
       },
       rollupOptions: {
         external:[
-          /node_modules/
+          ...Object.keys(packageJson.peerDependencies),
+          'react/jsx-runtime',
+          '@emotion/cache',
+          'react-is',
+          '@emotion/utils',
+          '@emotion/serialize',
+          '@mui/material',
         ],
         output: {
           globals: {

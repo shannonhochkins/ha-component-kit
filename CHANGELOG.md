@@ -1,3 +1,7 @@
+# v.1.0.9
+##### released - 06/07/2023
+- Fixing bug with externals :|
+
 # v.1.0.8
 ##### released - 05/07/2023
 - Reducing output size by defining externals for vite export

@@ -1,6 +1,6 @@
 {
   "name": "ha-component-kit",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "type": "module",
   "keywords": [
     "react",
@@ -46,7 +46,7 @@
     "start": "npm run storybook",
     "dev": "vite",
     "prebuild": "rm -rf ./dist && npm run prettier",
-    "build": "NODE_ENV=production tsc && vite build",
+    "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "storybook": "storybook dev -p 6006",
