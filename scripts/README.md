@@ -11,3 +11,10 @@ The services file was generated from the `getServices` response under the useHas
 ```bash
   npm run build:
 ```
+
+## Sync HA helpers
+
+Home assistant clearly has a bunch of code for the UI that generates color pickers and converts light colour to css colors etc. To save us time and to enforce accuracy on the conversion of hass entities to valid colour values, we'll reuse what they're using in the UI.
+
+```
+npm run sync-ha-helpers

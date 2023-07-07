@@ -16,7 +16,7 @@ TimeAgo.addDefaultLocale({
   },
 });
 // Create formatter (English).
-const timeAgo = new TimeAgo("en-US");
+export const timeAgo = new TimeAgo("en-US");
 
 interface TimeDifference {
   active: boolean;

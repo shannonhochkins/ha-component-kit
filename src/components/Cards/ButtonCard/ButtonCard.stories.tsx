@@ -7,20 +7,18 @@ import jsxToString from "jsx-to-string";
 
 function Template() {
   return (
-    <HassConnect hassUrl="fake">
+    <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
       <Group title="Examples">
-        <ButtonCard domain="light" service="toggle" entity="light.fake_light" />
         <ButtonCard
-          domain="switch"
-          service="toggle"
-          entity="switch.fake_gaming_switch"
+          service="setTemperature"
+          entity="climate.air_conditioner"
+          serviceData={{
+            temperature: 25,
+          }}
         />
-        <ButtonCard
-          domain="mediaPlayer"
-          service="toggle"
-          entity="media_player.fake_tv"
-        />
+        <ButtonCard service="toggle" entity="light.fake_light" />
+        <ButtonCard service="toggle" entity="media_player.fake_tv" />
       </Group>
     </HassConnect>
   );
@@ -36,9 +34,9 @@ function ExampleDocs() {
       </p>
       <p>
         This will automatically extract the friendly name, icon, last updated,
-        state and group of the entity to render the ButtonCard below, if there's
-        no icon linked in home assistant it will use a predefined default by
-        domain.
+        state, light color and group of the entity to render the ButtonCard
+        below, if there's no icon linked in home assistant it will use a
+        predefined default by domain.
       </p>
       <Template />
       <h3>Source Code</h3>
@@ -53,7 +51,7 @@ function ExampleDocs() {
 
 function Render(args: Args) {
   return (
-    <HassConnect hassUrl="fake">
+    <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
       <ButtonCard {...args} />
     </HassConnect>
@@ -71,21 +69,23 @@ export default {
     title: { control: "text" },
   },
 } satisfies Meta<typeof ButtonCard>;
-export type LightStory = StoryObj<typeof ButtonCard<"light">>;
+export type LightStory = StoryObj<
+  typeof ButtonCard<"light.fake_light", "toggle">
+>;
 export const LightExample: LightStory = {
   render: Render,
   args: {
     service: "toggle",
-    domain: "light",
     entity: "light.fake_light",
   },
 };
-export type SwitchStory = StoryObj<typeof ButtonCard<"switch">>;
+export type SwitchStory = StoryObj<
+  typeof ButtonCard<"switch.fake_gaming_switch", "toggle">
+>;
 export const SwitchExample: SwitchStory = {
   render: Render,
   args: {
     service: "toggle",
-    domain: "switch",
     entity: "switch.fake_gaming_switch",
   },
 };

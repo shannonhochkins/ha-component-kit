@@ -26,7 +26,7 @@
       "@hooks": ["./src/hooks"],
       "@components/*": ["./src/components/*"],
       "@utils/*": ["./src/utils/*"],
-      "@typings/*": ["./src/types/*"],
+      "@typings": ["./src/types"],
     }
   },
   "include": ["src", "stories", "./.d.ts", "package.json"],

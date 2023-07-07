@@ -4,7 +4,7 @@ import { HassConnect } from "@stories/HassConnectFake";
 
 function Render(args: SceneCardProps) {
   return (
-    <HassConnect hassUrl="fake">
+    <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
       <SceneCard {...args} />
     </HassConnect>

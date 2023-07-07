@@ -2,20 +2,16 @@ import { useCallback, useMemo } from "react";
 import styled from "@emotion/styled";
 import { HassEntity } from "home-assistant-js-websocket";
 import { lowerCase, startCase } from "lodash";
-import type {
-  DomainName,
-  DomainService,
-  ServiceData,
-} from "@typings/supported-services";
+import type { EntityToServices, ServiceData } from "@typings";
 import {
   useEntity,
   useIconByDomain,
   useIcon,
   useApi,
   useIconByEntity,
-  useTimeDifference,
 } from "@hooks";
 import { Ripples } from "../../Shared/Ripple";
+import { computeDomain } from "@utils/computeDomain";
 
 export const StyledButtonCard = styled.button`
   all: unset;
@@ -76,6 +72,41 @@ const Toggle = styled.div<ToggleProps>`
   }
 `;
 
+const Fab = styled.div<{
+  rgbaColor: string;
+  rgbColor: string;
+  brightness: string;
+}>`
+  border-radius: 100%;
+  padding: 6px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  ${(props) =>
+    props.rgbaColor &&
+    `
+    background-color: ${props.rgbaColor};
+  `}
+  ${(props) =>
+    props.rgbColor &&
+    `
+    color: ${props.rgbColor};
+  `}
+  ${(props) =>
+    props.brightness &&
+    `
+    filter: ${props.brightness};
+  `}
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: background-color, color, filter;
+  svg {
+    transition: var(--ha-transition-duration) var(--ha-easing);
+    transition-property: color;
+  }
+`;
+
 const LayoutBetween = styled.div`
   display: flex;
   align-items: center;
@@ -84,23 +115,31 @@ const LayoutBetween = styled.div`
   margin-bottom: 20px;
 `;
 
+const LayoutRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+  margin-bottom: 20px;
+`;
+
 const Title = styled.div`
   color: var(--ha-secondary-color);
   font-size: 0.7rem;
 `;
-const Subtitle = styled.div`
-  color: var(--ha-secondary-color);
-  font-size: 0.6rem;
-  margin-top: 4px;
-`;
+
 const Description = styled.div`
-  margin-top: 4px;
   color: var(--ha-primary-color);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  padding-left: 6px;
 `;
 export interface BaseProps {
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
   icon?: string | null;
+  /** the css color value of the icon */
+  iconColor?: string | null;
+  /** the css color value of the background of the icon */
+  iconBackgroundColor?: string | null;
   /** By default, the title is retrieved from the domain name, or you can specify a manual title */
   title?: string | null;
   /** By default, the description is retrieved from the friendly name of the entity, or you can specify a manual description */
@@ -108,28 +147,31 @@ export interface BaseProps {
   /** optional classname to provide */
   className?: string;
 }
-export interface ServiceProps<D extends DomainName> extends BaseProps {
-  /** The domain name, eg "light, switch, mediaPlayer ..." */
-  domain: D;
+
+export interface ServiceProps<
+  E extends string,
+  S extends keyof EntityToServices<E>
+> extends BaseProps {
   /** The service name, eg "toggle, turnOn ..." */
-  service: DomainService<D>;
+  service: S;
   /** The data to pass to the service */
-  serviceData?: ServiceData<D, DomainService<D>>;
+  serviceData?: ServiceData<E, S>;
   /** The name of your entity */
-  entity: string;
+  entity: E;
   /** the onClick handler is called when the button is pressed after the api service is called automatically.  */
   onClick?: (entity: HassEntity) => void;
 }
-export interface ButtonCardProps<D extends DomainName>
-  extends Partial<ServiceProps<D>> {
+export interface ButtonCardProps<
+  E extends string,
+  S extends keyof EntityToServices<E>
+> extends Partial<ServiceProps<E, S>> {
   /** Optional active param, By default this is updated via home assistant */
   active?: boolean;
-  /** the onClick handler is called when the button is pressed  */
+  /** The onClick handler is called when the button is pressed  */
   onClick?: () => void;
 }
 
-function ServiceButton<D extends DomainName>({
-  domain,
+function ServiceButton<E extends string, S extends keyof EntityToServices<E>>({
   service,
   serviceData,
   entity: _entity,
@@ -137,12 +179,13 @@ function ServiceButton<D extends DomainName>({
   description: _description,
   icon: _icon,
   onClick,
-}: ServiceProps<D>) {
+}: ServiceProps<E, S>) {
+  const domain = computeDomain(_entity);
   const api = useApi(domain);
   const entity = useEntity(_entity);
   const icon = useIconByDomain(domain);
   const entityIcon = useIconByEntity(_entity);
-  const difference = useTimeDifference(entity.last_updated);
+  const on = entity.state === "on";
 
   const inputIcon = useIcon(_icon || null);
   const useApiHandler = useCallback(() => {
@@ -160,53 +203,65 @@ function ServiceButton<D extends DomainName>({
     () => _title || startCase(lowerCase(domain)),
     [_title, domain]
   );
+
   return (
     <StyledButtonCard onClick={useApiHandler}>
       <LayoutBetween>
-        {inputIcon || entityIcon || icon}
-        <Toggle active={entity.state === "on"}>
-          <ToggleState />
-        </Toggle>
+        <Fab
+          brightness={(on && entity.custom.brightness) || "brightness(100%)"}
+          rgbaColor={
+            (on && entity.custom.rgbaColor) || "rgba(255,255,255,0.15)"
+          }
+          rgbColor={(on && entity.custom.rgbColor) || "white"}
+        >
+          {inputIcon || entityIcon || icon}
+        </Fab>
+        <Description>{description}</Description>
       </LayoutBetween>
-      <Title>{title}</Title>
-      <Description>{description}</Description>
-      <Subtitle>{difference.formatted}</Subtitle>
+      <Title>
+        {title} {entity.state} - {entity.custom.relativeTime}
+      </Title>
     </StyledButtonCard>
   );
 }
 /** The ButtonCard is a simple to use component to make it easy to control and visualize the state of a device. */
-export function ButtonCard<D extends DomainName>({
+export function ButtonCard<
+  E extends string,
+  S extends keyof EntityToServices<E>
+>({
   service,
   entity,
-  domain,
+  iconColor,
+  iconBackgroundColor,
   ...rest
-}: ButtonCardProps<D>) {
+}: ButtonCardProps<E, S>) {
   const isServiceButton = useMemo(() => {
-    return [service, domain, entity].every(
-      (value) => typeof value !== "undefined"
-    );
-  }, [service, domain, entity]);
+    return [service, entity].every((value) => typeof value !== "undefined");
+  }, [service, entity]);
   const { title, description, onClick, active, icon, ...others } = rest;
   const iconElement = useIcon(icon || null);
   return (
     <Ripples borderRadius="1rem">
       {isServiceButton ? (
-        <ServiceButton
-          {...rest}
-          service={service!}
-          entity={entity!}
-          domain={domain!}
-        />
+        <ServiceButton {...rest} service={service!} entity={entity!} />
       ) : (
         <StyledButtonCard {...others} onClick={onClick}>
           <LayoutBetween>
-            {iconElement}
+            <Fab
+              brightness="brightness(100%)"
+              rgbaColor={iconBackgroundColor || "rgba(255,255,255,0.35)"}
+              rgbColor={iconColor || "rgb(255,255,255)"}
+            >
+              {iconElement}
+            </Fab>
             <Toggle active={active === true}>
               <ToggleState />
             </Toggle>
           </LayoutBetween>
-          {title && <Title>{title}</Title>}
-          {description && <Description>{description}</Description>}
+          <LayoutRow>
+            {title && <Title>{title}</Title>}
+            {description && <Description>{description}</Description>}
+          </LayoutRow>
         </StyledButtonCard>
       )}
     </Ripples>

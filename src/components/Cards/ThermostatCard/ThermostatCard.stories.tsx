@@ -7,7 +7,7 @@ import jsxToString from "jsx-to-string";
 
 function Template() {
   return (
-    <HassConnect hassUrl="fake">
+    <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
       <ThermostatCard entity="climate.air_conditioner" />
     </HassConnect>
@@ -28,7 +28,7 @@ function ExampleDocs() {
 
 function Render() {
   return (
-    <HassConnect hassUrl="fake">
+    <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
       <ThermostatCard entity="climate.air_conditioner" />
     </HassConnect>

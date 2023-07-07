@@ -5,7 +5,7 @@ import { HassConnect as HassConnectFake } from "@stories/HassConnectFake";
 
 function Render(args: Story["args"]) {
   return (
-    <HassConnectFake hassUrl="fake" {...args}>
+    <HassConnectFake hassUrl="http://localhost:8123" {...args}>
       <ThemeProvider />
       <p>Successfully Authenticated!</p>
     </HassConnectFake>

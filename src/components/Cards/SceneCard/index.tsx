@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import styled from "@emotion/styled";
 import { HassEntity } from "home-assistant-js-websocket";
-import type { DomainService, ServiceData } from "@typings/supported-services";
+import type { DomainService, ServiceData } from "@typings";
 import {
   useEntity,
   useIconByDomain,

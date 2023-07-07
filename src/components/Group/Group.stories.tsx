@@ -4,20 +4,12 @@ import { HassConnect } from "@stories/HassConnectFake";
 
 function Render(args: Story["args"]) {
   return (
-    <HassConnect hassUrl="fake">
+    <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
       <Group title="default" {...args}>
-        <ButtonCard domain="light" service="toggle" entity="light.fake_light" />
-        <ButtonCard
-          domain="switch"
-          service="toggle"
-          entity="switch.fake_gaming_switch"
-        />
-        <ButtonCard
-          domain="mediaPlayer"
-          service="toggle"
-          entity="media_player.fake_tv"
-        />
+        <ButtonCard service="toggle" entity="light.fake_light" />
+        <ButtonCard service="toggle" entity="switch.fake_gaming_switch" />
+        <ButtonCard service="toggle" entity="media_player.fake_tv" />
       </Group>
     </HassConnect>
   );

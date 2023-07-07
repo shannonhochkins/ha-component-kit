@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import styled from "@emotion/styled";
 import { Icon, IconProps } from "@iconify/react";
-import type { DomainName } from "@typings/supported-services";
+import type { DomainName } from "@typings";
 import { useEntity } from "../useEntity";
 
 // eslint-disable-next-line react-refresh/only-export-components

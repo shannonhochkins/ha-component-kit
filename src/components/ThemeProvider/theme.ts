@@ -48,7 +48,7 @@ export const theme: ThemeParams = {
   },
   device: {
     buttonCard: {
-      width: "120px",
+      width: "150px",
     },
     sceneCard: {
       width: "240px",

@@ -40,7 +40,7 @@ function CustomThemeProvider() {
 function Render(args: Story["args"]) {
   const theme = args?.theme || {};
   return (
-    <HassConnect hassUrl="fake" {...args}>
+    <HassConnect hassUrl="http://localhost:8123" {...args}>
       <h2>Theme Provider</h2>
       <p>
         A simple way of creating global styles and providing re-usable css

@@ -1,23 +1,38 @@
-// this is an auto generated file, do not change this manually
-// see scripts/README.md for more information
-import { HassServiceTarget } from "home-assistant-js-websocket";
+import type { HassServiceTarget } from "home-assistant-js-websocket";
 
 export type ServiceFunction<Data = object> = (
   entity: string,
   data?: Data
 ) => void;
 export type DomainName = Exclude<keyof SupportedServices, symbol>;
+
+export type SnakeToCamel<S extends string> =
+  S extends `${infer P1}_${infer P2}${infer P3}`
+    ? `${P1}${Uppercase<P2>}${SnakeToCamel<P3>}`
+    : S;
+
+export type EntityToServices<E extends string> =
+  E extends `${infer Prefix}.${string}`
+    ? SnakeToCamel<Prefix> extends keyof SupportedServices
+      ? SupportedServices[SnakeToCamel<Prefix>]
+      : never
+    : E extends keyof SupportedServices
+    ? SupportedServices[E]
+    : never;
+
+export type ServiceData<
+  E extends string,
+  S extends keyof EntityToServices<E>
+> = EntityToServices<E>[S] extends ServiceFunction<infer Params>
+  ? Params
+  : never;
+
 export type DomainService<T extends DomainName> = Exclude<
   keyof SupportedServices[T],
   symbol | number
 >;
 export type Target = HassServiceTarget | string | string[];
-export type ServiceData<
-  T extends DomainName,
-  M extends DomainService<T>
-> = SupportedServices[T][M] extends ServiceFunction<infer Params>
-  ? Params
-  : never;
+
 export interface SupportedServices {
   persistentNotification: {
     // Show a notification in the frontend.
@@ -37,23 +52,23 @@ export interface SupportedServices {
   };
   homeassistant: {
     // Save the persistent states (for entities derived from RestoreEntity) immediately. Maintain the normal periodic saving interval.
-    savePersistentStates: ServiceFunction<object>;
+    savePersistentStates: ServiceFunction<unknown>;
     // Generic service to turn devices off under any domain.
-    turnOff: ServiceFunction<object>;
+    turnOff: ServiceFunction<unknown>;
     // Generic service to turn devices on under any domain.
-    turnOn: ServiceFunction<object>;
+    turnOn: ServiceFunction<unknown>;
     // Generic service to toggle devices on/off under any domain
-    toggle: ServiceFunction<object>;
+    toggle: ServiceFunction<unknown>;
     // Stop the Home Assistant service.
-    stop: ServiceFunction<object>;
+    stop: ServiceFunction<unknown>;
     // Restart the Home Assistant service.
-    restart: ServiceFunction<object>;
+    restart: ServiceFunction<unknown>;
     // Check the Home Assistant configuration files for errors. Errors will be displayed in the Home Assistant log.
-    checkConfig: ServiceFunction<object>;
+    checkConfig: ServiceFunction<unknown>;
     // Force one or more entities to update its data
-    updateEntity: ServiceFunction<object>;
+    updateEntity: ServiceFunction<unknown>;
     // Reload the core configuration.
-    reloadCoreConfig: ServiceFunction<object>;
+    reloadCoreConfig: ServiceFunction<unknown>;
     // Update the Home Assistant location.
     setLocation: ServiceFunction<{
       // Latitude of your location.
@@ -62,18 +77,18 @@ export interface SupportedServices {
       longitude: string;
     }>;
     // Reload Jinja2 templates found in the custom_templates folder in your config. New values will be applied on the next render of the template.
-    reloadCustomTemplates: ServiceFunction<object>;
+    reloadCustomTemplates: ServiceFunction<unknown>;
     // Reload a config entry that matches a target.
     reloadConfigEntry: ServiceFunction<{
       // A configuration entry id
       entry_id?: string;
     }>;
     //
-    reloadAll: ServiceFunction<object>;
+    reloadAll: ServiceFunction<unknown>;
   };
   systemLog: {
     // Clear all log entries.
-    clear: ServiceFunction<object>;
+    clear: ServiceFunction<unknown>;
     // Write log entry.
     write: ServiceFunction<{
       // Message to log.
@@ -91,11 +106,11 @@ export interface SupportedServices {
       level?: "debug" | "info" | "warning" | "error" | "fatal" | "critical";
     }>;
     // Set log level for integrations.
-    setLevel: ServiceFunction<object>;
+    setLevel: ServiceFunction<unknown>;
   };
   person: {
     // Reload the person configuration.
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
   };
   frontend: {
     // Set a theme unless the client selected per-device theme.
@@ -106,7 +121,7 @@ export interface SupportedServices {
       mode?: "dark" | "light";
     }>;
     // Reload themes from YAML configuration.
-    reloadThemes: ServiceFunction<object>;
+    reloadThemes: ServiceFunction<unknown>;
   };
   recorder: {
     // Start purge task - to clean up old data from your database.
@@ -128,9 +143,9 @@ export interface SupportedServices {
       keep_days?: number;
     }>;
     // Start the recording of events and state changes
-    enable: ServiceFunction<object>;
+    enable: ServiceFunction<unknown>;
     // Stop the recording of events and state changes
-    disable: ServiceFunction<object>;
+    disable: ServiceFunction<unknown>;
   };
   hassio: {
     // Start add-on.
@@ -159,9 +174,9 @@ export interface SupportedServices {
       addon: object;
     }>;
     // Poweroff the host system.
-    hostShutdown: ServiceFunction<object>;
+    hostShutdown: ServiceFunction<unknown>;
     // Reboot the host system.
-    hostReboot: ServiceFunction<object>;
+    hostReboot: ServiceFunction<unknown>;
     // Create a full backup.
     backupFull: ServiceFunction<{
       // Optional (default = current date and time).
@@ -213,9 +228,9 @@ export interface SupportedServices {
   };
   cloud: {
     // Make instance UI available outside over NabuCasa cloud
-    remoteConnect: ServiceFunction<object>;
+    remoteConnect: ServiceFunction<unknown>;
     // Disconnect UI from NabuCasa cloud
-    remoteDisconnect: ServiceFunction<object>;
+    remoteDisconnect: ServiceFunction<unknown>;
   };
   tts: {
     // Say something using text-to-speech on a media player with google_translate.
@@ -245,7 +260,7 @@ export interface SupportedServices {
       options?: object;
     }>;
     // Remove all text-to-speech cache files and RAM cache.
-    clearCache: ServiceFunction<object>;
+    clearCache: ServiceFunction<unknown>;
     // Say something using text-to-speech on a media player with cloud.
     cloudSay: ServiceFunction<{
       // Name(s) of media player entities.
@@ -269,13 +284,13 @@ export interface SupportedServices {
       backup?: boolean;
     }>;
     // Mark currently available update as skipped.
-    skip: ServiceFunction<object>;
+    skip: ServiceFunction<unknown>;
     // Removes the skipped version marker from an update.
-    clearSkipped: ServiceFunction<object>;
+    clearSkipped: ServiceFunction<unknown>;
   };
   localtuya: {
     // Reload localtuya and reconnect to all devices.
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
     // Change the value of a datapoint (DP)
     setDp: ServiceFunction<{
       // Device ID of device to change datapoint value for
@@ -288,7 +303,7 @@ export interface SupportedServices {
   };
   restCommand: {
     //
-    assistantRelay: ServiceFunction<object>;
+    assistantRelay: ServiceFunction<unknown>;
   };
   conversation: {
     // Launch a conversation from a transcribed text.
@@ -301,11 +316,11 @@ export interface SupportedServices {
       agent_id?: string;
     }>;
     //
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
   };
   commandLine: {
     // Reload all command_line entities
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
   };
   light: {
     // Turn on one or more lights and adjust properties of the light, even when they are turned on already.
@@ -695,54 +710,54 @@ export interface SupportedServices {
   };
   zone: {
     // Reload the YAML-based zone configuration.
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
   };
   counter: {
     // Increment a counter.
-    increment: ServiceFunction<object>;
+    increment: ServiceFunction<unknown>;
     // Decrement a counter.
-    decrement: ServiceFunction<object>;
+    decrement: ServiceFunction<unknown>;
     // Reset a counter.
-    reset: ServiceFunction<object>;
+    reset: ServiceFunction<unknown>;
     // Set the counter value
     setValue: ServiceFunction<{
       // The new counter value the entity should be set to.
       value: number;
     }>;
     //
-    configure: ServiceFunction<object>;
+    configure: ServiceFunction<unknown>;
   };
   cover: {
     // Open all or specified cover.
-    openCover: ServiceFunction<object>;
+    openCover: ServiceFunction<unknown>;
     // Close all or specified cover.
-    closeCover: ServiceFunction<object>;
+    closeCover: ServiceFunction<unknown>;
     // Move to specific position all or specified cover.
     setCoverPosition: ServiceFunction<{
       // Position of the cover
       position: number;
     }>;
     // Stop all or specified cover.
-    stopCover: ServiceFunction<object>;
+    stopCover: ServiceFunction<unknown>;
     // Toggle a cover open/closed.
-    toggle: ServiceFunction<object>;
+    toggle: ServiceFunction<unknown>;
     // Open all or specified cover tilt.
-    openCoverTilt: ServiceFunction<object>;
+    openCoverTilt: ServiceFunction<unknown>;
     // Close all or specified cover tilt.
-    closeCoverTilt: ServiceFunction<object>;
+    closeCoverTilt: ServiceFunction<unknown>;
     // Stop all or specified cover.
-    stopCoverTilt: ServiceFunction<object>;
+    stopCoverTilt: ServiceFunction<unknown>;
     // Move to specific position all or specified cover tilt.
     setCoverTiltPosition: ServiceFunction<{
       // Tilt position of the cover.
       tilt_position: number;
     }>;
     // Toggle a cover tilt open/closed.
-    toggleCoverTilt: ServiceFunction<object>;
+    toggleCoverTilt: ServiceFunction<unknown>;
   };
   group: {
     // Reload group configuration, entities, and notify services.
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
     // Create/Update a user group.
     set: ServiceFunction<{
       // Group id and part of entity id.
@@ -768,7 +783,7 @@ export interface SupportedServices {
   };
   scene: {
     // Reload the scene configuration.
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
     // Activate a scene with configuration.
     apply: ServiceFunction<{
       // The entities and the state that they need to be.
@@ -793,11 +808,11 @@ export interface SupportedServices {
   };
   inputSelect: {
     // Reload the input_select configuration.
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
     // Select the first option of an input select entity.
-    selectFirst: ServiceFunction<object>;
+    selectFirst: ServiceFunction<unknown>;
     // Select the last option of an input select entity.
-    selectLast: ServiceFunction<object>;
+    selectLast: ServiceFunction<unknown>;
     // Select the next options of an input select entity.
     selectNext: ServiceFunction<{
       // If the option should cycle from the last to the first.
@@ -821,30 +836,30 @@ export interface SupportedServices {
   };
   schedule: {
     // Reload the schedule configuration
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
   };
   inputNumber: {
     // Reload the input_number configuration.
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
     // Set the value of an input number entity.
     setValue: ServiceFunction<{
       // The target value the entity should be set to.
       value: number;
     }>;
     // Increment the value of an input number entity by its stepping.
-    increment: ServiceFunction<object>;
+    increment: ServiceFunction<unknown>;
     // Decrement the value of an input number entity by its stepping.
-    decrement: ServiceFunction<object>;
+    decrement: ServiceFunction<unknown>;
   };
   inputButton: {
     //
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
     // Press the input button entity.
-    press: ServiceFunction<object>;
+    press: ServiceFunction<unknown>;
   };
   inputDatetime: {
     // Reload the input_datetime configuration.
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
     // This can be used to dynamically set the date and/or time.
     setDatetime: ServiceFunction<{
       // The target date the entity should be set to.
@@ -859,18 +874,18 @@ export interface SupportedServices {
   };
   timer: {
     //
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
     // Start a timer
     start: ServiceFunction<{
       // Duration the timer requires to finish. [optional]
       duration?: string;
     }>;
     // Pause a timer.
-    pause: ServiceFunction<object>;
+    pause: ServiceFunction<unknown>;
     // Cancel a timer.
-    cancel: ServiceFunction<object>;
+    cancel: ServiceFunction<unknown>;
     // Finish a timer.
-    finish: ServiceFunction<object>;
+    finish: ServiceFunction<unknown>;
     // Change a timer
     change: ServiceFunction<{
       // Duration to add or subtract to the running timer
@@ -879,21 +894,21 @@ export interface SupportedServices {
   };
   script: {
     //
-    gamingLightColorChanger: ServiceFunction<object>;
+    gamingLightColorChanger: ServiceFunction<unknown>;
     //
-    randomLightColour: ServiceFunction<object>;
+    randomLightColour: ServiceFunction<unknown>;
     // Reload all the available scripts
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
     // Turn on script
-    turnOn: ServiceFunction<object>;
+    turnOn: ServiceFunction<unknown>;
     // Turn off script
-    turnOff: ServiceFunction<object>;
+    turnOff: ServiceFunction<unknown>;
     // Toggle script
-    toggle: ServiceFunction<object>;
+    toggle: ServiceFunction<unknown>;
   };
   inputText: {
     // Reload the input_text configuration.
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
     // Set the value of an input text entity.
     setValue: ServiceFunction<{
       // The target value the entity should be set to.
@@ -925,19 +940,19 @@ export interface SupportedServices {
   };
   inputBoolean: {
     // Reload the input_boolean configuration
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
     // Turn on an input boolean
-    turnOn: ServiceFunction<object>;
+    turnOn: ServiceFunction<unknown>;
     // Turn off an input boolean
-    turnOff: ServiceFunction<object>;
+    turnOff: ServiceFunction<unknown>;
     // Toggle an input boolean
-    toggle: ServiceFunction<object>;
+    toggle: ServiceFunction<unknown>;
   };
   climate: {
     // Turn climate device on.
-    turnOn: ServiceFunction<object>;
+    turnOn: ServiceFunction<unknown>;
     // Turn climate device off.
-    turnOff: ServiceFunction<object>;
+    turnOff: ServiceFunction<unknown>;
     // Set HVAC operation mode for climate device.
     setHvacMode: ServiceFunction<{
       // New value of operation mode.
@@ -996,29 +1011,29 @@ export interface SupportedServices {
   };
   mediaPlayer: {
     // Turn a media player power on.
-    turnOn: ServiceFunction<object>;
+    turnOn: ServiceFunction<unknown>;
     // Turn a media player power off.
-    turnOff: ServiceFunction<object>;
+    turnOff: ServiceFunction<unknown>;
     // Toggles a media player power state.
-    toggle: ServiceFunction<object>;
+    toggle: ServiceFunction<unknown>;
     // Turn a media player volume up.
-    volumeUp: ServiceFunction<object>;
+    volumeUp: ServiceFunction<unknown>;
     // Turn a media player volume down.
-    volumeDown: ServiceFunction<object>;
+    volumeDown: ServiceFunction<unknown>;
     // Toggle media player play/pause state.
-    mediaPlayPause: ServiceFunction<object>;
+    mediaPlayPause: ServiceFunction<unknown>;
     // Send the media player the command for play.
-    mediaPlay: ServiceFunction<object>;
+    mediaPlay: ServiceFunction<unknown>;
     // Send the media player the command for pause.
-    mediaPause: ServiceFunction<object>;
+    mediaPause: ServiceFunction<unknown>;
     // Send the media player the stop command.
-    mediaStop: ServiceFunction<object>;
+    mediaStop: ServiceFunction<unknown>;
     // Send the media player the command for next track.
-    mediaNextTrack: ServiceFunction<object>;
+    mediaNextTrack: ServiceFunction<unknown>;
     // Send the media player the command for previous track.
-    mediaPreviousTrack: ServiceFunction<object>;
+    mediaPreviousTrack: ServiceFunction<unknown>;
     // Send the media player the command to clear players playlist.
-    clearPlaylist: ServiceFunction<object>;
+    clearPlaylist: ServiceFunction<unknown>;
     // Set a media player's volume level.
     volumeSet: ServiceFunction<{
       // Volume level to set as float.
@@ -1066,7 +1081,7 @@ export interface SupportedServices {
       shuffle: boolean;
     }>;
     // Unjoin the player from a group. Only works on platforms with support for player groups.
-    unjoin: ServiceFunction<object>;
+    unjoin: ServiceFunction<unknown>;
     // Set repeat mode
     repeatSet: ServiceFunction<{
       // Repeat mode to set.
@@ -1112,7 +1127,7 @@ export interface SupportedServices {
   };
   button: {
     // Press the button entity.
-    press: ServiceFunction<object>;
+    press: ServiceFunction<unknown>;
   };
   number: {
     // Set the value of a Number entity.
@@ -1149,9 +1164,9 @@ export interface SupportedServices {
       preset_mode?: string;
     }>;
     // Turn fan off.
-    turnOff: ServiceFunction<object>;
+    turnOff: ServiceFunction<unknown>;
     // Toggle the fan on/off.
-    toggle: ServiceFunction<object>;
+    toggle: ServiceFunction<unknown>;
     // Increase the speed of the fan by one speed or a percentage_step.
     increaseSpeed: ServiceFunction<{
       // Increase speed by a percentage.
@@ -1194,15 +1209,15 @@ export interface SupportedServices {
       duration?: string;
     }>;
     // Turn siren off.
-    turnOff: ServiceFunction<object>;
+    turnOff: ServiceFunction<unknown>;
     // Toggles a siren.
-    toggle: ServiceFunction<object>;
+    toggle: ServiceFunction<unknown>;
   };
   select: {
     // Select the first option of an select entity.
-    selectFirst: ServiceFunction<object>;
+    selectFirst: ServiceFunction<unknown>;
     // Select the last option of an select entity.
-    selectLast: ServiceFunction<object>;
+    selectLast: ServiceFunction<unknown>;
     // Select the next options of an select entity.
     selectNext: ServiceFunction<{
       // If the option should cycle from the last to the first.
@@ -1221,14 +1236,14 @@ export interface SupportedServices {
   };
   remote: {
     // Sends the Power Off Command.
-    turnOff: ServiceFunction<object>;
+    turnOff: ServiceFunction<unknown>;
     // Sends the Power On Command.
     turnOn: ServiceFunction<{
       // Activity ID or Activity Name to start.
       activity?: string;
     }>;
     // Toggles a device.
-    toggle: ServiceFunction<object>;
+    toggle: ServiceFunction<unknown>;
     // Sends a command or a list of commands to a device.
     sendCommand: ServiceFunction<{
       // Device ID to send command to.
@@ -1297,7 +1312,7 @@ export interface SupportedServices {
       scan_interval?: number;
     }>;
     // Stop logging growth of objects in memory.
-    stopLogObjects: ServiceFunction<object>;
+    stopLogObjects: ServiceFunction<unknown>;
     // Start logging sources of new objects in memory
     startLogObjectSources: ServiceFunction<{
       // The number of seconds between logging objects.
@@ -1306,18 +1321,18 @@ export interface SupportedServices {
       max_objects?: number;
     }>;
     // Stop logging sources of new objects in memory.
-    stopLogObjectSources: ServiceFunction<object>;
+    stopLogObjectSources: ServiceFunction<unknown>;
     // Dump the repr of all matching objects to the log.
     dumpLogObjects: ServiceFunction<{
       // The type of objects to dump to the log.
       type: string;
     }>;
     // Log the stats of all lru caches.
-    lruStats: ServiceFunction<object>;
+    lruStats: ServiceFunction<unknown>;
     // Log the current frames for all threads.
-    logThreadFrames: ServiceFunction<object>;
+    logThreadFrames: ServiceFunction<unknown>;
     // Log what is scheduled in the event loop.
-    logEventLoopScheduled: ServiceFunction<object>;
+    logEventLoopScheduled: ServiceFunction<unknown>;
   };
   wakeOnLan: {
     // Send a 'magic packet' to wake up a device with 'Wake-On-LAN' capabilities.
@@ -1332,11 +1347,11 @@ export interface SupportedServices {
   };
   switch: {
     // Turn a switch off
-    turnOff: ServiceFunction<object>;
+    turnOff: ServiceFunction<unknown>;
     // Turn a switch on
-    turnOn: ServiceFunction<object>;
+    turnOn: ServiceFunction<unknown>;
     // Toggles a switch state
-    toggle: ServiceFunction<object>;
+    toggle: ServiceFunction<unknown>;
   };
   mqtt: {
     // Publish a message to an MQTT topic.
@@ -1360,7 +1375,7 @@ export interface SupportedServices {
       duration?: number;
     }>;
     // Reload all MQTT entities from YAML.
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
   };
   samsungtvSmart: {
     // Send to samsung TV the command to change picture mode.
@@ -1431,13 +1446,13 @@ export interface SupportedServices {
   };
   camera: {
     // Enable the motion detection in a camera.
-    enableMotionDetection: ServiceFunction<object>;
+    enableMotionDetection: ServiceFunction<unknown>;
     // Disable the motion detection in a camera.
-    disableMotionDetection: ServiceFunction<object>;
+    disableMotionDetection: ServiceFunction<unknown>;
     // Turn off camera.
-    turnOff: ServiceFunction<object>;
+    turnOff: ServiceFunction<unknown>;
     // Turn on camera.
-    turnOn: ServiceFunction<object>;
+    turnOn: ServiceFunction<unknown>;
     // Take a snapshot from a camera.
     snapshot: ServiceFunction<{
       // Template of a Filename. Variable is entity_id.
@@ -1488,25 +1503,25 @@ export interface SupportedServices {
   };
   vacuum: {
     // Start a new cleaning task.
-    turnOn: ServiceFunction<object>;
+    turnOn: ServiceFunction<unknown>;
     // Stop the current cleaning task and return to home.
-    turnOff: ServiceFunction<object>;
+    turnOff: ServiceFunction<unknown>;
     //
-    toggle: ServiceFunction<object>;
+    toggle: ServiceFunction<unknown>;
     // Start, pause, or resume the cleaning task.
-    startPause: ServiceFunction<object>;
+    startPause: ServiceFunction<unknown>;
     // Start or resume the cleaning task.
-    start: ServiceFunction<object>;
+    start: ServiceFunction<unknown>;
     // Pause the cleaning task.
-    pause: ServiceFunction<object>;
+    pause: ServiceFunction<unknown>;
     // Tell the vacuum cleaner to return to its dock.
-    returnToBase: ServiceFunction<object>;
+    returnToBase: ServiceFunction<unknown>;
     // Tell the vacuum cleaner to do a spot clean-up.
-    cleanSpot: ServiceFunction<object>;
+    cleanSpot: ServiceFunction<unknown>;
     // Locate the vacuum cleaner robot.
-    locate: ServiceFunction<object>;
+    locate: ServiceFunction<unknown>;
     // Stop the current cleaning task.
-    stop: ServiceFunction<object>;
+    stop: ServiceFunction<unknown>;
     // Set the fan speed of the vacuum cleaner.
     setFanSpeed: ServiceFunction<{
       // Platform dependent vacuum cleaner fan speed, with speed steps, like 'medium' or by percentage, between 0 and 100.
@@ -1522,11 +1537,11 @@ export interface SupportedServices {
   };
   humidifier: {
     // Turn humidifier device on.
-    turnOn: ServiceFunction<object>;
+    turnOn: ServiceFunction<unknown>;
     // Turn humidifier device off.
-    turnOff: ServiceFunction<object>;
+    turnOff: ServiceFunction<unknown>;
     // Toggles a humidifier device.
-    toggle: ServiceFunction<object>;
+    toggle: ServiceFunction<unknown>;
     // Set mode for humidifier device.
     setMode: ServiceFunction<{
       // New mode
@@ -1545,16 +1560,16 @@ export interface SupportedServices {
       skip_condition?: boolean;
     }>;
     // Toggle (enable / disable) an automation.
-    toggle: ServiceFunction<object>;
+    toggle: ServiceFunction<unknown>;
     // Enable an automation.
-    turnOn: ServiceFunction<object>;
+    turnOn: ServiceFunction<unknown>;
     // Disable an automation.
     turnOff: ServiceFunction<{
       // Stop currently running actions.
       stop_actions?: boolean;
     }>;
     // Reload the automation configuration.
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
   };
   cast: {
     // Show a Lovelace view on a Chromecast.
@@ -1569,7 +1584,7 @@ export interface SupportedServices {
   };
   template: {
     // Reload all template entities.
-    reload: ServiceFunction<object>;
+    reload: ServiceFunction<unknown>;
   };
   tplink: {
     // Set a random effect
@@ -1621,7 +1636,7 @@ export interface SupportedServices {
   };
   ring: {
     // Updates the data we have for all your ring devices
-    update: ServiceFunction<object>;
+    update: ServiceFunction<unknown>;
   };
   nodered: {
     // Trigger a Node-RED Node

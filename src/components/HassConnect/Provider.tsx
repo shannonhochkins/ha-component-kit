@@ -29,12 +29,7 @@ import {
 } from "home-assistant-js-websocket";
 import { isArray, snakeCase } from "lodash";
 import { useDebouncedCallback } from "use-debounce";
-import {
-  ServiceData,
-  DomainName,
-  DomainService,
-  Target,
-} from "@typings/supported-services";
+import { ServiceData, DomainName, DomainService, Target } from "@typings";
 
 interface CallServiceArgs<T extends DomainName, M extends DomainService<T>> {
   domain: T;

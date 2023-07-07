@@ -1,5 +1,7 @@
 // components
 export { HassConnect } from "./components/HassConnect";
+export { HassContext } from "./components/HassConnect/Provider";
+
 export type { HassConnectProps } from "./components/HassConnect";
 // ButtonCard
 export { ButtonCard } from "./components/Cards/ButtonCard";

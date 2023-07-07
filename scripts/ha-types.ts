@@ -61,18 +61,22 @@ const generateInterface = () => {
       entity: string,
       data?: Data
     ) => void;
-    
     export type DomainName = Exclude<keyof SupportedServices, symbol>;
+    
+    export type SnakeToCamel<S extends string> = S extends \`\${infer P1}_\${infer P2}\${infer P3}\`
+      ? \`\${P1}\${Uppercase<P2>}\${SnakeToCamel<P3>}\`
+      : S;
+    
+    export type EntityToServices<E extends string> = E extends \`\${infer Prefix}.\${string}\`
+      ? (SnakeToCamel<Prefix> extends keyof SupportedServices ? SupportedServices[SnakeToCamel<Prefix>] : never)
+      : (E extends keyof SupportedServices ? SupportedServices[E] : never);
+    
+    export type ServiceData<E extends string, S extends keyof EntityToServices<E>> = EntityToServices<E>[S] extends ServiceFunction<infer Params> ? Params : never;
+    
     export type DomainService<T extends DomainName> = Exclude<
       keyof SupportedServices[T],
-      symbol
+      symbol | number
     >;
-    export type ServiceData<
-      T extends DomainName,
-      M extends DomainService<T>
-    > = SupportedServices[T][M] extends ServiceFunction<infer Params>
-      ? Params
-      : never;
     export interface SupportedServices {
       ${interfaces.join('')}
     }`;
@@ -80,7 +84,7 @@ const generateInterface = () => {
 
 const main = () => {
   const services = generateInterface();
-  fs.writeFileSync('./src/types/supported-services.ts', services);
+  fs.writeFileSync('./supported-services.ts', services);
   console.log('Interfaces successfully generated!');
 }
 

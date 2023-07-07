@@ -1,3 +1,10 @@
+# v.1.0.10
+##### released - 07/07/2023
+- ButtonCard no longer needs the "domain" prop, this is now inferred from the entity name, full type validation is still available, if you add entity="mediaPlayer.living_room_tv" the service prop will be validated with all the available services for the media_player domain.
+- ButtonCard - now highlights the current colour of the light over the icon and behind the icon
+- ButtonCard - has a small layout change to make it more compact
+- useEntity - will now return a "custom" object on the HassEntity object containing additional information, for a light, you'll get a bunch of css variables related to the attributes of the colour value of the light, eg brightness, rgba, rgb, and hex values, additionally the "1 minute ago" time value is also available here.
+
 # v.1.0.9
 ##### released - 06/07/2023
 - Fixing bug with externals :|
@@ -17,7 +24,7 @@
 # v.1.0.6
 ##### released - 04/07/2023
 
-- Simple changes to the "fake" entities for storybook to render different times
+- Simple changes to the "http://localhost:8123" entities for storybook to render different times
 - Adjusted the useTimeDifference hook to have all the same "now" values.
 
 # v1.0.5

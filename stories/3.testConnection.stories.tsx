@@ -1,7 +1,6 @@
 import { Story, Source } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
-import { HassConnect } from "../src/components/HassConnect";
-import { HassContext } from "../src/components/HassConnect/Provider";
+import { HassConnect, HassContext } from '../src';
 import { useContext, useState, useEffect, useMemo } from "react";
 import type {
   HassServices,
@@ -171,9 +170,9 @@ function ApiTester({ domains, entities }: ApiTesterProps) {
               color="primary"
               onClick={() => {
                 callService({
-                  // @ts-expect-error we don't know the actual value as it's dynamic from the user
+                  // @ts-expect-error - unknown domain
                   domain,
-                  // @ts-expect-error same as above
+                  // @ts-expect-error - unknown service
                   service,
                   target: entity,
                 });
@@ -266,7 +265,7 @@ function Template() {
   }, [value]);
   return (
     <>
-      <CssBaseline />
+      <CssBaseline>
       <h2>Playground</h2>
       <Grid container alignItems="start" gap={2}>
         <Grid item>
@@ -321,6 +320,7 @@ function Template() {
           </Button>
         </Grid>
       </Grid>
+      </CssBaseline>
         {ready && <HassConnect hassUrl={hassUrl}>
           <UseData />
         </HassConnect>}

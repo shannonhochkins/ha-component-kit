@@ -6,7 +6,6 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 import path from 'path';
 const { EsLinter, linterPlugin } = EsLint
-console.log('path.resolve(__dirname, "./src")', path.resolve(__dirname, "./src"));
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
   const isBuildStorybook = process.env.BUILD_STORYBOOK === 'true';

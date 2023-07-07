@@ -6,7 +6,7 @@ import {
   DomainName,
   ServiceData,
   Target,
-} from "@typings/supported-services";
+} from "@typings";
 
 export function useApi<T extends DomainName>(domain: T) {
   const { callService } = useHass();

@@ -51,7 +51,8 @@
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "storybook": "storybook dev -p 6006",
     "build:storybook": "BUILD_STORYBOOK=true storybook build",
-    "build:ha-types": "npx tsx ./scripts/ha-types.ts && npx prettier --write './src/types/supported-services.ts'"
+    "build:ha-types": "npx tsx ./scripts/ha-types.ts && npx prettier --write './src/types/supported-services.ts'",
+    "sync:ha-helpers": "npx tsx ./scripts/sync-ha-helpers.ts"
   },
   "peerDependencies": {
     "@emotion/react": ">=10.x",
