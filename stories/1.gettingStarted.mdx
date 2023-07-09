@@ -3,22 +3,21 @@ import { Meta } from '@storybook/blocks';
 <Meta title="INTRODUCTION/Getting Started" />
 
 # Overview
-This package was built to make it easy to authenticate and use your home assistant devices in a custom build react dashboard.
-
-Big ups to the devs over at [Home Assistant Web Socket](https://github.com/home-assistant/home-assistant-js-websocket) which is what this package wraps to provide ease of use
-react functionality to build out your application/dashboard.
+This [package](https://www.npmjs.com/package/ha-component-kit) was built to make it easy to authenticate and use your home assistant devices in a custom build react dashboard, this uses the official [Home Assistant Web Socket](https://github.com/home-assistant/home-assistant-js-websocket) technology used by the home assistant dashboards you're used to using!
+Once logged in, the token will refresh and you'll never have to login again on that device unless you clear your browser cache / local storage.
 
 ## Quick test
-If you want to quickly see how this works, the [Playground](/story/introduction-testconnection--playground) will help you visualize what this package is capable of.
+There's a [Playground](/story/introduction-test-connection--playground) tool that will integrate with your home assistant instance, this will give you a simple interface of all the available services and entities with their respective actions where you can test
+the connection right here without installing anything.
 
 ## Simple Installation Steps
-Install the package in your react project
+Install the [package](https://www.npmjs.com/package/ha-component-kit) in your react project
 
 ```bash
   npm i ha-component-kit
 ```
 
-Then simply wrap your root component (usally App.tsx) with the [HassConnect](/story/components-hassconnect--default) component, don't forget to include the "ThemeProvider" to get the default theme.
+Then simply wrap your root component (usally App.tsx) with the [HassConnect](/docs/components-hassconnect--docs) component, don't forget to include the "ThemeProvider" to get the default theme.
 
 ```tsx
 import React from 'react';
@@ -98,5 +97,3 @@ export default App;
 
 Now we can run `npm start` in the terminal, once it launches if you've entered your homeassistant url correctly you should see a familiar home assistant login form, login with your normal credentials and you should see your components within the HassConnect component render, this means
 we've authenticated successfully.
-
-Now you can use all the other functionality such as [useApi()](/docs/hooks-useapi--docs)!

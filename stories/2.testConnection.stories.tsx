@@ -329,7 +329,7 @@ function Template() {
 }
 
 export default {
-  title: "INTRODUCTION/TestConnection",
+  title: "INTRODUCTION/Test Connection",
   component: HassConnect,
   tags: ["autodocs"],
   parameters: {
