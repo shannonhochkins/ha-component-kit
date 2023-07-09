@@ -1,3 +1,7 @@
+# v.1.0.11
+##### released - 07/07/2023
+- removing useTimeDifference hook, this is now handled by the useEntity hook and available on all entities under the "custom" object, eg `const entity = useEntity('some_entity'); console.log(entity.custom.relativeTime);`
+
 # v.1.0.10
 ##### released - 07/07/2023
 - ButtonCard no longer needs the "domain" prop, this is now inferred from the entity name, full type validation is still available, if you add entity="mediaPlayer.living_room_tv" the service prop will be validated with all the available services for the media_player domain.
