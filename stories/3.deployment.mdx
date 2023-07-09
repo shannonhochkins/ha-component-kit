@@ -1,0 +1,90 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="INTRODUCTION/Deploying" />
+
+## Deploying to Home Assistant
+
+Once you've built your new dashboard and you're happy with it locally, we can setup a script to copy the files over to home assistant automatically!
+
+Homeassistant is served with a webserver, which we can utilize to host our new dashboard. To do this, we need to copy the `dist` folder to our home assistant instance.
+The simplest way to copy your website to home assistant, is to copy your distributable files from your dashboard you've just created into the `www` folder of your home assistant configuration directory.
+
+There's many ways to copy it, you can simply use the files exporer and copy it over, or you can use the `scp` command to copy it over with a script:
+
+1. In Homeassistant: Install and setup the Terminal & SSH addon, this is very easy!
+  - Click on your "Profile name" in your HA dashboard
+  - Scroll down and enabled "Advanced mode"
+  - Go to Settings -> Addons -> search for "Terminal & SSH" -> Install
+  - Go to the configuration tab, enter a password into the field and save
+  - Ensure the PORT is 22, save, the default username is `root`
+2. In your react project, Install scp & dotenv, this is a very easy way to copy files over ssh:
+
+```bash
+npm install --save dotenv node-scp
+# or
+yarn add dotenv node-scp
+```
+
+3. In your project at the root level, create a file called `deploy.ts` and add the following code:
+
+```ts
+import { Client } from 'node-scp';
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+const USERNAME = process.env.SSH_USERNAME;
+const PASSWORD = process.env.SSH_PASSWORD;
+const HOST_OR_IP_ADDRESS = process.env.SSH_HOSTNAME;
+const PORT = 22;
+const REMOTE_FOLDER_NAME = 'dashboard'; // the folder name you want to copy the files to
+const LOCAL_DIRECTORY = './dist'; // the pathname to your output files from your react project.
+
+const REMOTE_PATH = `/config/www/${REMOTE_FOLDER_NAME}`;
+
+
+async function deploy() {
+  try {
+    const client = await Client({
+      host: HOST_OR_IP_ADDRESS,
+      port: PORT,
+      username: USERNAME,
+      password: PASSWORD,
+      // if you have extra security, here's how you can use the privateKey / passphrase
+      // privateKey: fs.readFileSync('./key.pem'),
+      // passphrase: 'your key passphrase',
+    })
+    // empty the directory initially so we remove anything that doesn't need to be there
+    try {
+      await client.rmdir(REMOTE_PATH);
+    } catch (e) {
+      // directory may not exist, ignore
+    }
+    // upload the folder to your home assistant server
+    await client.uploadDir(LOCAL_DIRECTORY, REMOTE_PATH);
+    client.close() // remember to close connection after you finish
+    console.log('Successfully deployed!')
+  } catch (e) {
+    console.log('Error:', e.message)
+  }
+}
+
+deploy()
+```
+
+4. In your project, create a file called `.env` and add the following code:
+
+```bash
+SSH_USERNAME=root
+SSH_PASSWORD=yourpassword # the password you set in the addon
+SSH_HOSTNAME=yourhostname # your home assistant hostname or IP address, if you get EHOSTUNREACH when connecting, try your IP address `ping homeassistant.local` to get your IP address
+```
+
+5. in your package.json under `"scripts"`, add `"deploy": "npx tsx ./deploy.ts"` and run `npm run deploy` or `yarn deploy`
+
+Now you should be able to access your dashboard (assuming you haven't changed the `REMOTE_FOLDER_NAME` in the script):
+
+[http://homeassistant.local:8123/local/dashboard/index.html](http://homeassistant.local:8123/local/dashboard/index.html)
+
+or with nabucasa:
+
+[https://YOUR_NABU_CASA_ID.ui.nabu.casa/local/dashboard/index.html](https://YOUR_NABU_CASA_ID.ui.nabu.casa/local/dashboard/index.html)

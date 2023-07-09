@@ -4,9 +4,10 @@ This package is designed to be a template for creating custom dashboards for Hom
 
 [![npm version](https://badge.fury.io/js/ha-component-kit.svg)](https://badge.fury.io/js/ha-component-kit)
 
-If you like anything here, be sure to 🌟 my repo!
+If you like anything here, be sure to 🌟 [my repo!](https://github.com/shannonhochkins/ha-component-kit)
 
 It provides components for you to use to create your own custom react Home Assistant dashboard.
+
 
 ### Get Started
 
@@ -31,6 +32,9 @@ function App() {
 ```
 
 3. That's it! You can now use the components to create your own custom dashboard for Home Assistant, see the [documentation](https://shannonhochkins.github.io/ha-component-kit) for more details.
+
+### Issues / Discusssions
+If you have any issues getting this going, found any bugs or want to discuss anything, please feel free to open an issue on the [github repository](https://github.com/shannonhochkins/ha-component-kit/issues), or open up a discussion on the [github discussions](https://github.com/shannonhochkins/ha-component-kit/discussions).
 
 
 This is still a **WIP** and is subject to change, I will be making changes to this over the next few months to have a workable solution for multiple dashboards.

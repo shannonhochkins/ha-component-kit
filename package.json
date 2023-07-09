@@ -1,6 +1,6 @@
 {
   "name": "ha-component-kit",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "type": "module",
   "keywords": [
     "react",
@@ -63,8 +63,8 @@
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
-    "use-debounce": ">=9.x",
-    "react-thermostat": ">=1.x"
+    "react-thermostat": ">=1.x",
+    "use-debounce": ">=9.x"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.11.0",
@@ -97,6 +97,7 @@
     "eslint-plugin-storybook": "^0.6.12",
     "home-assistant-js-websocket": "^8.1.0",
     "jsx-to-string": "^1.4.0",
+    "node-scp": "^0.0.22",
     "prettier": "^2.8.8",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
