@@ -1,10 +1,28 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { isEqual, omit } from "lodash";
+import TimeAgo from "javascript-time-ago";
+
 import type { HassEntityCustom } from "@typings";
 import type { HassEntity } from "home-assistant-js-websocket";
-import { useHass, timeAgo } from "@hooks";
+import { useHass } from "@hooks";
 import { useDebouncedCallback } from "use-debounce";
 import { getCssColorValue } from "@utils/colors";
+// English.
+import en from "javascript-time-ago/locale/en";
+
+TimeAgo.addDefaultLocale({
+  ...en,
+  now: {
+    now: {
+      // too account for odd time differences, we set these to all be the same
+      current: "just now",
+      future: "just now",
+      past: "just now",
+    },
+  },
+});
+// Create formatter (English).
+const timeAgo = new TimeAgo("en-US");
 
 export function useEntity(entity: string, throttle = 150) {
   const { getEntity } = useHass();

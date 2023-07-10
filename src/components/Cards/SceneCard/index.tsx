@@ -7,7 +7,6 @@ import {
   useIconByDomain,
   useIcon,
   useIconByEntity,
-  useTimeDifference,
   useApi,
 } from "@hooks";
 import { Ripples } from "../../Shared/Ripple";
@@ -137,7 +136,6 @@ export function SceneCard({
 }: SceneCardProps) {
   const sceneService = useApi("scene");
   const scene = useEntity(entity);
-  const { active, formatted } = useTimeDifference(scene.state);
   const entityIcon = useIconByEntity(entity);
   const domainIcon = useIconByDomain("scene");
   const powerIcon = useIcon("mdi:power");
@@ -163,11 +161,12 @@ export function SceneCard({
         </LayoutBetween>
         <Gap />
         <LayoutBetween>
-          <Title>{formatted}</Title>
-          <Toggle active={active}>
+          <Title>{scene.custom.relativeTime}</Title>
+          <Toggle active={scene.custom.active}>
             <ToggleState>{powerIcon}</ToggleState>
             <ToggleMessage>
-              {active ? "Success..." : `Start scene`} {!active && arrowIcon}
+              {scene.custom.active ? "Success..." : `Start scene`}{" "}
+              {!scene.custom.active && arrowIcon}
             </ToggleMessage>
           </Toggle>
         </LayoutBetween>
