@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import styled from "@emotion/styled";
-import { HassEntity } from "home-assistant-js-websocket";
+import type { HassEntity } from "home-assistant-js-websocket";
 import type { DomainService, ServiceData } from "@typings";
 import {
   useEntity,
@@ -11,7 +11,7 @@ import {
 } from "@hooks";
 import { Ripples } from "../../Shared/Ripple";
 
-export const StyledSceneCard = styled.button`
+const StyledSceneCard = styled.button`
   all: unset;
   padding: 1rem;
   position: relative;

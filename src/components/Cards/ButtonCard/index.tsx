@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import styled from "@emotion/styled";
-import { HassEntity } from "home-assistant-js-websocket";
+import type { HassEntity } from "home-assistant-js-websocket";
 import { lowerCase, startCase } from "lodash";
 import type { EntityToServices, ServiceData } from "@typings";
 import {

@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { isEmpty } from "lodash";
-
 import { HassContext } from "@components/HassConnect/Provider";
 import type { HassContextProps } from "@components/HassConnect/Provider";
 

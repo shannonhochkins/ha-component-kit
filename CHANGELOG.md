@@ -1,6 +1,9 @@
+# v.1.0.12
+##### released - 08/07/2023
+- cleaning up typing exports, upgraded package to correctly resolve pathnames from alias's
 # v.1.0.11
 ##### released - 07/07/2023
-- removing useTimeDifference hook, this is now handled by the useEntity hook and available on all entities under the "custom" object, eg `const entity = useEntity('some_entity'); console.log(entity.custom.relativeTime);`
+- removing useTimeDifference hook, this is now handled by the useEntity hook and available on all entities under the "custom" object, eg `const entity = useEntity('some_entity'); console.log(entity.custom.relativeTime)`
 
 # v.1.0.10
 ##### released - 07/07/2023

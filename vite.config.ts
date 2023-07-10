@@ -5,6 +5,9 @@ import EsLint from 'vite-plugin-linter';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 import path from 'path';
+console.log(
+  path.resolve(__dirname, './tsconfig.json')
+)
 const { EsLinter, linterPlugin } = EsLint
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
@@ -62,7 +65,14 @@ export default defineConfig(configEnv => {
         include: ['./src}/**/*.{ts,tsx}'],
         linters: [new EsLinter({ configEnv })],
       }),
-      ...(isBuildStorybook ? [] : [dts({ outputDir: 'dist/types', rollupTypes: true })]),
+      ...(isBuildStorybook ? [] : [dts({
+        outDir: 'dist/types',
+        pathsToAliases: true,
+        rollupTypes: true,
+        tsconfigPath: path.resolve(__dirname, './tsconfig.json'),
+        include: ['src'],
+        exclude: ['*.stories.tsx', '**/*.stories.tsx'],
+      })]),
     ],
   }
 });

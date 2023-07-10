@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useHass } from "@hooks";
-import {
+import type {
   SupportedServices,
   DomainService,
   DomainName,

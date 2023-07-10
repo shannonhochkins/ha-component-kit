@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import styled from "@emotion/styled";
-import { Icon, IconProps } from "@iconify/react";
+import { Icon } from "@iconify/react";
+import type { IconProps } from "@iconify/react";
 import type { DomainName } from "@typings";
 import { useEntity } from "../useEntity";
 

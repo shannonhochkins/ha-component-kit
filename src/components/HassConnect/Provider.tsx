@@ -5,8 +5,8 @@ import React, {
   useCallback,
   useRef,
 } from "react";
-import {
-  // types
+// types
+import type {
   Connection,
   HassEntities,
   HassEntity,
@@ -14,10 +14,11 @@ import {
   HassUser,
   HassServices,
   getAuthOptions as AuthOptions,
-  ERR_HASS_HOST_REQUIRED,
   Auth,
   UnsubscribeFunc,
-  // methods
+} from "home-assistant-js-websocket";
+// methods
+import {
   getAuth,
   createConnection,
   subscribeEntities,
@@ -26,12 +27,16 @@ import {
   getServices as _getServices,
   getConfig as _getConfig,
   getUser as _getUser,
+  ERR_HASS_HOST_REQUIRED,
 } from "home-assistant-js-websocket";
 import { isArray, snakeCase } from "lodash";
 import { useDebouncedCallback } from "use-debounce";
 import { ServiceData, DomainName, DomainService, Target } from "@typings";
 
-interface CallServiceArgs<T extends DomainName, M extends DomainService<T>> {
+export interface CallServiceArgs<
+  T extends DomainName,
+  M extends DomainService<T>
+> {
   domain: T;
   service: M;
   serviceData?: ServiceData<T, M>;
@@ -69,7 +74,7 @@ export const HassContext = createContext<HassContextProps>(
   {} as HassContextProps
 );
 
-interface HassProviderProps {
+export interface HassProviderProps {
   children: (ready: boolean) => React.ReactNode;
   hassUrl: string;
   throttle?: number;
@@ -222,7 +227,7 @@ export function HassProvider({
     }
     const connection = await createConnection({ auth: auth.current });
     setConnection(connection);
-  }, [getAuthOptions]);
+  }, [error, getAuthOptions, hassUrl]);
 
   useEffect(() => {
     if (!ready) {

@@ -1,4 +1,4 @@
-import { ReactNode, ReactElement } from "react";
+import type { ReactNode, ReactElement } from "react";
 import { HassProvider } from "./Provider";
 
 export type HassConnectProps = {

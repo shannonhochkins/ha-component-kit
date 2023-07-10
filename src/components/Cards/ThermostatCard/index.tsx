@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Thermostat, ThermostatProps } from "react-thermostat";
+import { Thermostat } from "react-thermostat";
+import type { ThermostatProps } from "react-thermostat";
 import { useEntity, useApi } from "@hooks";
 import { merge } from "lodash";
 import { useDebouncedCallback } from "use-debounce";
