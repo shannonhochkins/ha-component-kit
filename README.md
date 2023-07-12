@@ -19,6 +19,10 @@ There's detailed [documentation](https://shannonhochkins.github.io/ha-component-
 ```bash
 npm i ha-component-kit
 ```
+
+Note: This package uses peerDependencies, npm version 4-6 will not install these automatically, you will need to install them [manually](https://stackoverflow.com/questions/35207380/how-to-install-npm-peer-dependencies-automatically), npm version 7 and above will handle this automatically.
+
+
 2. Import the required components to authenticate with Home Assistant:
 
 ```ts
