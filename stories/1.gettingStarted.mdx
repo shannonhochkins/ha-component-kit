@@ -17,6 +17,8 @@ Install the [package](https://www.npmjs.com/package/ha-component-kit) in your re
   npm i ha-component-kit
 ```
 
+***Note: This package uses peerDependencies, npm version 4-6 will not install these automatically, you will need to install them [manually](https://stackoverflow.com/questions/35207380/how-to-install-npm-peer-dependencies-automatically), npm version 7 and above will handle this automatically.***
+
 Then simply wrap your root component (usally App.tsx) with the [HassConnect](/docs/components-hassconnect--docs) component, don't forget to include the "ThemeProvider" to get the default theme.
 
 ```tsx

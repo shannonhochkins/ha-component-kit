@@ -185,21 +185,37 @@ function ApiTester({ domains, entities }: ApiTesterProps) {
       </Grid>
       {domain && entity && service && (
         <Grid item>
+          <h3>Example Usage with useEntity</h3>
+          <p>This simply exports a button that will {camelCase(service)} the {camelCase(domain)} when pressed!</p>
+          <Source
+            language="ts"
+            code={`
+export function Test${upperFirst(camelCase(domain))}{
+  const { api } = useEntity('${entity}');
+  return <button onClick={() => {
+    api.${camelCase(service)}();
+  }}
+}`}
+          />
+        </Grid>
+      )}
+      {domain && entity && service && (
+        <Grid item>
           <h3>Example Usage with callService</h3>
           <p>This simply exports a button that will {camelCase(service)} the {camelCase(domain)} when pressed!</p>
           <Source
             language="ts"
             code={`
-      export function Test${upperFirst(camelCase(domain))}{
-        const { callService } = useHass();
-        return <button onClick={() => {
-          callService({
-            domain: '${snakeCase(domain)}',
-            service: '${snakeCase(service)}',
-            target: '${entity}',
-          })
-        }}
-      }`}
+export function Test${upperFirst(camelCase(domain))}{
+  const { callService } = useHass();
+  return <button onClick={() => {
+    callService({
+      domain: '${snakeCase(domain)}',
+      service: '${snakeCase(service)}',
+      target: '${entity}',
+    })
+  }}
+}`}
           />
         </Grid>
       )}
@@ -210,12 +226,12 @@ function ApiTester({ domains, entities }: ApiTesterProps) {
           <Source
             language="ts"
             code={`
-      export function Test${upperFirst(camelCase(domain))}{
-        const { ${camelCase(service)} } = useApi('${camelCase(domain)}');
-        return <button onClick={() => {
-          ${camelCase(service)}('${entity}');
-        }}
-      }`}
+export function Test${upperFirst(camelCase(domain))}{
+  const { ${camelCase(service)} } = useApi('${camelCase(domain)}');
+  return <button onClick={() => {
+    ${camelCase(service)}('${entity}');
+  }}
+}`}
           />
         </Grid>
       )}
