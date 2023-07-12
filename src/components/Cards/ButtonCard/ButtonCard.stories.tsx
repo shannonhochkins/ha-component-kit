@@ -11,14 +11,54 @@ function Template() {
       <ThemeProvider />
       <Group title="Examples">
         <ButtonCard
-          service="setTemperature"
-          entity="climate.air_conditioner"
-          serviceData={{
-            temperature: 25,
+          entity="switch.fake_gaming_switch"
+          onClick={(entity) => {
+            entity.api.toggle();
           }}
         />
         <ButtonCard service="toggle" entity="light.fake_light" />
         <ButtonCard service="toggle" entity="media_player.fake_tv" />
+      </Group>
+    </HassConnect>
+  );
+}
+
+function TemplateOnclick() {
+  return (
+    <HassConnect hassUrl="http://localhost:8123">
+      <ThemeProvider />
+      <ButtonCard
+        entity="climate.air_conditioner"
+        onClick={(entity) => {
+          entity.api.setHvacMode({
+            hvac_mode: entity.state === "off" ? "heat" : "off",
+          });
+          entity.api.setTemperature({
+            temperature: 25,
+          });
+        }}
+      />
+    </HassConnect>
+  );
+}
+
+function LayoutExampleTemplate() {
+  return (
+    <HassConnect hassUrl="http://localhost:8123">
+      <ThemeProvider />
+      <Group title="Examples">
+        <ButtonCard
+          layout="slim"
+          title="Slim example"
+          entity="switch.fake_gaming_switch"
+          service="toggle"
+        />
+        <ButtonCard
+          layout="default"
+          title="Default example"
+          entity="switch.fake_gaming_switch"
+          service="toggle"
+        />
       </Group>
     </HassConnect>
   );
@@ -38,6 +78,32 @@ function ExampleDocs() {
         below, if there's no icon linked in home assistant it will use a
         predefined default by domain.
       </p>
+      <h3>Custom onClick</h3>
+      <p>
+        If you don't want to call a specific service or want to do multiple
+        things with the entity, you can omit the service prop and perform your
+        logic manually
+      </p>
+      <TemplateOnclick />
+      <h3>Source Code</h3>
+      <Source
+        code={`
+      <HassConnect hassUrl="http://localhost:8123">
+        <ThemeProvider />
+        <ButtonCard
+          entity="climate.air_conditioner"
+          onClick={entity => {
+            entity.api.setHvacMode({
+              hvac_mode: entity.state === 'off' ? 'heat' : 'off',
+            });
+            entity.api.setTemperature({
+              temperature: 25,
+            });
+          }}
+        />
+      </HassConnect>
+    `}
+      />
       <Template />
       <h3>Source Code</h3>
       <p>
@@ -93,5 +159,12 @@ export type GroupStory = StoryObj<typeof ExampleDocs>;
 export const DetailedExample: GroupStory = {
   render() {
     return <ExampleDocs />;
+  },
+};
+
+export type LayoutStory = StoryObj<typeof LayoutExampleTemplate>;
+export const LayoutExample: LayoutStory = {
+  render() {
+    return <LayoutExampleTemplate />;
   },
 };

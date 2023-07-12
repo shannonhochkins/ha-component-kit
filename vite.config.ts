@@ -5,9 +5,6 @@ import EsLint from 'vite-plugin-linter';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 import path from 'path';
-console.log(
-  path.resolve(__dirname, './tsconfig.json')
-)
 const { EsLinter, linterPlugin } = EsLint
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
@@ -71,7 +68,7 @@ export default defineConfig(configEnv => {
         rollupTypes: true,
         tsconfigPath: path.resolve(__dirname, './tsconfig.json'),
         include: ['src'],
-        exclude: ['*.stories.tsx', '**/*.stories.tsx'],
+        exclude: ['*.stories.tsx', '**/*.stories.tsx', '**/*.test.ts', '**/*.test.tsx'],
       })]),
     ],
   }

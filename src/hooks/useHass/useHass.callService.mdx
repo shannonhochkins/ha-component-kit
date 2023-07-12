@@ -3,7 +3,7 @@ import { Source, Meta } from '@storybook/blocks';
 <Meta title="HOOKS/useHass/callService" />
 
 # callService()
-###### `callService(args: CallServiceArgs<DomainName, DomainService<DomainName>>)`
+###### `callService(args: CallServiceArgs<SnakeOrCamelDomain, DomainService<SnakeOrCamelDomain>>)`
 The call service helper will allow you to trigger any action in home assistant.
 
 If you have typescript, there's full intellisense on a large range of domains/service/data, if not, you can use developer tools enabled in home assistant,
@@ -15,9 +15,9 @@ Additionally you could also use the [Playground](/story/introduction-testconnect
 
 ### Definition
 <Source language="ts" code={`callService({
-  domain: string; // "climate", "light" etc
-  service: string; // "turn_on", "toggle" etc
-  serviceData?: object; // any data to pass to the request
+  domain: SnakeOrCamelDomains; // "climate", "light" etc
+  service: DomainService<SnakeOrCamelDomains>; // "turn_on", "turnOn",  "toggle" etc
+  serviceData?: CallServiceArgs<SnakeOrCamelDomains, DomainService<SnakeOrCamelDomains>>; // any data to pass to the request
   target?: {
     entity_id?: string | string[];
     device_id?: string | string[];

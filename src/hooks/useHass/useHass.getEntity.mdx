@@ -2,9 +2,12 @@ import { Source, Meta } from '@storybook/blocks';
 
 <Meta title="HOOKS/useHass/getEntity" />
 
-# getEntity()
+# getEntity(entity: string, returnNullIfNotFound?: boolean)
 This will retrurn an entity directly from the context, however I suggest you use the `useEntity` hook instead as this
 is a memoized version of `getEntity` and will trigger re-renders when the entity changes.
+
+By default if you pass an entity name that doesn't exist, it will throw an error, however you can pass `true` as the returnNullIfNotFound value which will return
+null in this instance.
 
 ### Definition
 <Source language="ts" code={`getEntity(entity: string)`} />

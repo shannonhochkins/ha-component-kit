@@ -7,7 +7,7 @@ import {
 } from "./colors/convert-light-color";
 import { stateColorBrightness } from "./colors/index";
 
-function toRGB(entity: HassEntity): [number, number, number] {
+function toRGB(entity: HassEntity): [number, number, number] | null {
   if (entity.attributes) {
     if ("hs_color" in entity.attributes) {
       return hs2rgb([
@@ -33,14 +33,18 @@ function toRGB(entity: HassEntity): [number, number, number] {
     }
   }
 
-  return [255, 255, 255];
+  return null;
 }
 
 export function getCssColorValue(entity: HassEntity) {
   const color = toRGB(entity);
-  const hexColor = rgb2hex(color);
-  const rgbColor = `rgba(${color.join(", ")})`;
-  const rgbaColor = `rgba(${[...color, 0.35].join(", ")})`;
+  const hexColor = color ? rgb2hex(color) : "var(--ha-primary-active)";
+  const rgbColor = color
+    ? `rgba(${color.join(", ")})`
+    : "var(--ha-primary-inactive)";
+  const rgbaColor = color
+    ? `rgba(${[...color, 0.35].join(", ")})`
+    : "var(--ha-primary-active)";
   const brightness = stateColorBrightness(entity);
   return {
     hexColor,

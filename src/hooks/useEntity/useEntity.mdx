@@ -29,3 +29,27 @@ function App() {
 }
 
 ```
+
+### Options
+useEntity takes a second parameter which is an object of options.
+The options are:
+- `returnNullIfNotFound` - boolean - if true the hook will return null if not found, and not throw an error. Default is false.
+- `throttle` - number - how long to wait to throttle the updates, default is 150ms
+
+Example:
+
+```ts
+import { HassConnect, useEntity } from 'ha-component-kit';
+function Office() {
+  const lightStrip = useEntity('light.office_striplight', {
+    returnNullIfNotFound: true,
+  });
+  // can now access all properties relating to the light
+  return lightStrip?.state ?? 'unknown';
+}
+function App() {
+  return <HassConnect hassUrl="http://localhost:1234">
+    <Office />
+  </HassConnect>
+}
+```

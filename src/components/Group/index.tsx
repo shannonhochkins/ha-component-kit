@@ -3,7 +3,7 @@ import { StyledButtonCard } from "@components/Cards/ButtonCard";
 
 const GroupInner = styled.div`
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: flex-start;
   gap: 10px;
   ${StyledButtonCard} {
@@ -23,7 +23,7 @@ export interface GroupProps {
   children: React.ReactNode;
 }
 /** The group component will automatically layout the children in a row with a predefined gap between the children. */
-export function Group({ title, children, ...rest }: GroupProps) {
+export function Group({ title, children, ...rest }: GroupProps): JSX.Element {
   return (
     <StyledGroup {...rest}>
       <h3>{title}</h3>

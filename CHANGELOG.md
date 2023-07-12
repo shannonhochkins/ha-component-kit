@@ -1,3 +1,15 @@
+# v.1.0.13
+##### released - 09/07/2023
+- useApi hook redesigned, still works like it always has, however you can now just call useApi with no arguments `const api = useApi(); api('light').toggle('light.entity'), api('mediaPlayer').turnOn('mediaPlayer.entity')` etc
+- useApi integrated into useEntity, so you can now call `const entity = useEntity('light.office_downlight'); console.log(entity.api.turnOn())`, this is the best way to utilize calls to home assistant as in almost every cause you'll want the entity as well as the api.
+- domain name values can now be snake or camel case eg media_player.living_room_tv or mediaPlayer.living_room_tv
+- services will remain as camelCase as we chain these methods together, eg `entity.api.turnOn()` and i think this is nicer
+- refactored some of the type helpers
+- Adding tests for some of the more complex hooks to ensure they continue to work
+- callService now supports snake and camel case service names and domain names
+- updating docs
+- added a new layout prop to ButtonCard, removed "IconBackgroundColor" as this is controlled via css variables
+
 # v.1.0.12
 ##### released - 08/07/2023
 - cleaning up typing exports, upgraded package to correctly resolve pathnames from alias's

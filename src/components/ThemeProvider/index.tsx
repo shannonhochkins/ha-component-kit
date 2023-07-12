@@ -16,7 +16,7 @@ export interface ThemeProviderProps<T extends object> {
 /** A simple way of creating global styles and providing re-usable css variables to re-use across your application */
 export function ThemeProvider<T extends object>({
   theme,
-}: ThemeProviderProps<T>) {
+}: ThemeProviderProps<T>): JSX.Element {
   useEffect(() => {
     const updateCursorPosition = (e: MouseEvent) => {
       document.documentElement.style.setProperty(

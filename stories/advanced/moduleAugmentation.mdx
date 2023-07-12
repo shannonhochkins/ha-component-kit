@@ -10,20 +10,20 @@ Example, if you have a domain called "zigbee", a service called "toggle", additi
 don't match what you're expecting, you can overwrite them here by redeclaring them.
 
 ```ts
-  import { SupportedServices, ServiceFunction } from 'ha-component-kit';
+  import { SupportedServices, ServiceFunctionTypes, ServiceFunction } from 'ha-component-kit';
   declare module 'ha-component-kit' {
-    interface SupportedServices {
+    interface SupportedServices<T extends ServiceFunctionTypes = 'target'> {
       // domain level grouping
       zigbee: {
         // toggle a zigbee device
-        toggle: ServiceFunction<{
+        toggle: ServiceFunction<T, {
           // description for param 1
           param1: string;
           // description for param 2
           param2?: string;
         }>;
         // Remove a notification from the frontend.
-        turnOff: ServiceFunction<{
+        turnOff: ServiceFunction<T, {
           // description for param 1
           param1: string;
         }>;

@@ -31,10 +31,15 @@ import {
 } from "home-assistant-js-websocket";
 import { isArray, snakeCase } from "lodash";
 import { useDebouncedCallback } from "use-debounce";
-import { ServiceData, DomainName, DomainService, Target } from "@typings";
+import {
+  ServiceData,
+  SnakeOrCamelDomains,
+  DomainService,
+  Target,
+} from "@typings";
 
 export interface CallServiceArgs<
-  T extends DomainName,
+  T extends SnakeOrCamelDomains,
   M extends DomainService<T>
 > {
   domain: T;
@@ -49,11 +54,17 @@ export interface HassContextProps {
   /** This is an internal function, no need to use this */
   setConnection: (connection: Connection) => void;
   /** will retrieve a HassEntity from the context */
-  getEntity: (entity: string) => HassEntity;
+  getEntity: {
+    (entity: string): HassEntity;
+    (entity: string, returnNullIfNotFound: boolean): HassEntity | null;
+    (entity: string, returnNullIfNotFound: true): HassEntity | null;
+    (entity: string, returnNullIfNotFound: false): HassEntity;
+  };
+  // getEntity: (entity: string, returnNullIfNotFound?: boolean) => typeof returnNullIfNotFound extends true ? HassEntity | null : HassEntity;
   /** will retrieve all HassEntities from the context */
   getAllEntities: () => HassEntities;
   /** will call a service for home assistant */
-  callService: <T extends DomainName, M extends DomainService<T>>(
+  callService: <T extends SnakeOrCamelDomains, M extends DomainService<T>>(
     args: CallServiceArgs<T, M>
   ) => void;
   /** will retrieve all the HassEntities states */
@@ -84,7 +95,7 @@ export function HassProvider({
   children,
   hassUrl,
   throttle = 150,
-}: HassProviderProps) {
+}: HassProviderProps): JSX.Element {
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [ready, setReady] = useState(false);
@@ -109,14 +120,15 @@ export function HassProvider({
     [connection]
   );
   const getAllEntities = useCallback(() => _entities, [_entities]);
-  const getEntity = useCallback(
-    (entity: string) => {
-      const found = _entities[entity];
-      if (!found) throw new Error(`Entity ${entity} not found`);
-      return found;
-    },
-    [_entities]
-  );
+  const getEntity = (entity: string, returnNullIfNotFound: boolean) => {
+    const found = _entities[entity];
+    if (!found) {
+      if (returnNullIfNotFound) return null;
+      throw new Error(`Entity ${entity} not found`);
+    }
+    return found;
+  };
+
   const setEntitiesDebounce = useDebouncedCallback<
     (entities: HassEntities) => void
   >((entities) => {
@@ -148,7 +160,7 @@ export function HassProvider({
   }, []);
 
   const callService = useCallback(
-    async <T extends DomainName, M extends DomainService<T>>({
+    async <T extends SnakeOrCamelDomains, M extends DomainService<T>>({
       domain,
       service,
       serviceData,
@@ -246,7 +258,8 @@ export function HassProvider({
       value={{
         connection,
         setConnection,
-        getEntity,
+        // purposely cast here so we have correct types on usage side
+        getEntity: getEntity as HassContextProps["getEntity"],
         getAllEntities,
         callService,
         getStates,

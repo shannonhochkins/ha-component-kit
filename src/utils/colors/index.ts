@@ -1,6 +1,6 @@
 import { HassEntity } from "home-assistant-js-websocket";
 
-export const stateColorBrightness = (stateObj: HassEntity): string | null => {
+export const stateColorBrightness = (stateObj: HassEntity): string => {
   if (
     stateObj.attributes.brightness &&
     !stateObj.entity_id.startsWith("plant")
@@ -9,5 +9,5 @@ export const stateColorBrightness = (stateObj: HassEntity): string | null => {
     const brightness = stateObj.attributes.brightness;
     return `brightness(${(brightness + 245) / 5}%)`;
   }
-  return null;
+  return `brightness(100%)`;
 };

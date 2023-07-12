@@ -119,7 +119,7 @@ export interface SceneCardProps {
   /** An optional override for the title */
   title?: string;
   /** The name of your scene entity */
-  entity: string;
+  entity: `scene.${string}`;
   /** the onClick handler is called when the card is pressed  */
   onClick?: (scene: HassEntity) => void;
   /** The data to pass to the scene service */
@@ -133,7 +133,7 @@ export function SceneCard({
   onClick,
   serviceData,
   ...rest
-}: SceneCardProps) {
+}: SceneCardProps): JSX.Element {
   const sceneService = useApi("scene");
   const scene = useEntity(entity);
   const entityIcon = useIconByEntity(entity);
@@ -144,8 +144,9 @@ export function SceneCard({
       fontSize: "16px",
     },
   });
+  console.log("scene", scene);
   const useApiHandler = useCallback(() => {
-    // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
+    // @ts-expect-error we can expect it to throw errors however the parent level ts validation will catch invalid params.
     sceneService.turnOn(entity, serviceData);
     if (typeof onClick === "function") onClick(scene);
   }, [sceneService, entity, onClick, scene, serviceData]);

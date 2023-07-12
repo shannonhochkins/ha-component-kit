@@ -4,11 +4,12 @@ import type { ThermostatProps } from "react-thermostat";
 import { useEntity, useApi } from "@hooks";
 import { merge } from "lodash";
 import { useDebouncedCallback } from "use-debounce";
+import { SnakeOrCamelDomains } from "@typings";
 
 export interface ThermostatCardProps
   extends Partial<Omit<ThermostatProps, "value" | "min" | "max" | "disabled">> {
   /** This uses all available props from https://www.npmjs.com/package/react-thermostat, except value, disabled, min and max are set automatically.  */
-  entity: string;
+  entity: `${SnakeOrCamelDomains}.${string}`;
 }
 const COLOURS = {
   off: ["#848484", "#383838"],
@@ -25,7 +26,7 @@ export function ThermostatCard({
   valueSuffix = "°",
   track = {},
   ...thermostatProps
-}: ThermostatCardProps) {
+}: ThermostatCardProps): JSX.Element {
   const entity = useEntity(entityId);
   const climateService = useApi("climate");
   const [value, setValue] = useState(entity.attributes.temperature);
@@ -49,7 +50,6 @@ export function ThermostatCard({
       temperature,
     });
   }, 500);
-  console.log("entity", valueSuffix, entity);
   return (
     <>
       <Thermostat

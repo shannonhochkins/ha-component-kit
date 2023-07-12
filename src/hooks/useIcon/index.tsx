@@ -2,8 +2,9 @@ import { useMemo } from "react";
 import styled from "@emotion/styled";
 import { Icon } from "@iconify/react";
 import type { IconProps } from "@iconify/react";
-import type { DomainName } from "@typings";
+import type { AllDomains, CamelToSnake, SnakeToCamel } from "@typings";
 import { useEntity } from "../useEntity";
+import { camelCase } from "lodash";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const StyledIcon = styled(Icon)`
@@ -14,12 +15,14 @@ function assertNever(value: never): never {
   throw new Error(`Unhandled value: ${value}`);
 }
 
-export function useIconByDomain<D extends DomainName>(
-  domain: D,
-  iconProps?: Omit<IconProps, "icon">
-) {
+export function useIconByDomain<
+  D extends AllDomains | CamelToSnake<AllDomains> | "unknown"
+>(domain: D, iconProps?: Omit<IconProps, "icon">) {
   const iconName = useMemo(() => {
-    switch (domain) {
+    const convertedDomainName = camelCase(domain) as
+      | SnakeToCamel<AllDomains>
+      | "unknown";
+    switch (convertedDomainName) {
       case "light":
         return "octicon:light-bulb-24";
       case "automation":
@@ -111,12 +114,23 @@ export function useIconByDomain<D extends DomainName>(
         return "octicon:info-24";
       case "ring":
         return "simple-icons:ring";
+      case "unknown":
+        return "octicon:question-24";
+      case "sun":
+        return "ph:sun-light";
+      case "sensor":
+        return "icons8:sensor";
+      case "weather":
+        return "gis:weather-map";
+      case "binarySensor":
+      case "stt":
+        return "mdi:radar";
 
       // Add more cases for other domains and their respective icons if needed
 
       default:
         // If the domain does not match any case, we just return an info icon
-        return assertNever(domain);
+        return assertNever(convertedDomainName);
     }
   }, [domain]);
   if (iconName === null) {
@@ -136,12 +150,14 @@ export function useIcon(
   return Icon;
 }
 
-export function useIconByEntity(
-  _entity: string,
-  iconProps?: Omit<IconProps, "icon">
-) {
-  const entity = useEntity(_entity);
+export function useIconByEntity<
+  E extends `${AllDomains}.${string}` | "number.non-existent"
+>(_entity: E, iconProps?: Omit<IconProps, "icon">) {
+  const entity = useEntity(_entity || "number.non_existent", {
+    returnNullIfNotFound: true,
+  });
   const Icon = useMemo(() => {
+    if (entity === null) return null;
     const icon = entity.attributes.icon;
     if (!icon) {
       return null;

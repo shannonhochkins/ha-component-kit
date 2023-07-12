@@ -3,11 +3,11 @@ import { Meta } from '@storybook/blocks';
 <Meta title="HOOKS/useApi" />
 
 # useApi()
-###### `useApi(domain: DomainName)`
+###### `useApi(domain?: SnakeOrCamelDomain, rootTarget?: Target)`
 This hook is designed to make it easy to make api calls programmatically.
 
 This is a memoized wrapper for the [callService()](/docs/hooks-usehass-callservice--docs) helper from [useHass()](/docs/hooks-usehass--docs) to make it
-easier to trigger services programmatically.
+easier to call services.
 
 **Note:** There's extensive types available for typescript developers to make it very easy to develop and call actions with the available types for different
 services, if a service isn't available in the types or the params are different / incorrect to what you're expecting you can extend these [here](/docs/advanced-extend-api--docs).
@@ -15,18 +15,48 @@ services, if a service isn't available in the types or the params are different 
 This hook should be used inside the context of `<HassConnect />` and not outside of it otherwise it will not have access to
 the authenticated home assistant API.
 
-### Example Usage
+### Preferred usage
+The `useApi()` hook is integrated with the `useEntity` hook so you can use it directly from the entity object.
+Everything is typed so it makes it very easy to use and develop with.
 
 ```ts
 import { HassConnect, useApi } from 'ha-component-kit';
 function UseApiExample() {
-  const lightService = useApi('light');
-  return <button onClick={() => lightService.toggle('light.some_light_entity')} >TOGGLE LIGHT</button>
+  const entity = useEntity('light.some_light_entity');
+  return <button onClick={() => entity.api.toggle()} >TOGGLE LIGHT</button>
 }
 function App() {
   return <HassConnect hassUrl="http://localhost:1234">
     <UseApiExample />
   </HassConnect>
 }
-
 ```
+
+### Service level usage
+We can use the hook to retrieve all the available services for a specific domain, eg "light, mediaPlayer etc...".
+```ts
+import { HassConnect, useApi } from 'ha-component-kit';
+function UseApiExample() {
+  const lightService = useApi('light');
+  return (
+    <button onClick={() => lightService.toggle('light.some_light_entity')}>TOGGLE LIGHT</button>
+  );
+}
+function App() {
+  return <HassConnect hassUrl="http://localhost:1234">
+    <UseApiExample />
+  </HassConnect>
+}
+```
+
+## Root level usage
+We can also use the hook to retrieve all the available services and use them as needed.
+```ts
+import { HassConnect, useApi } from 'ha-component-kit';
+function UseApiExample() {
+  const api = useApi();
+  return (
+    <button onClick={() => api('light').toggle('light.some_light_entity')}>TOGGLE LIGHT</button>
+    <button onClick={() => api('switch').toggle('switch.some_switch_entity')}>TOGGLE SWITCH</button>
+  );
+}
