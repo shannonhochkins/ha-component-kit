@@ -1,0 +1,67 @@
+{
+  "name": "@hakit/components",
+  "type": "module",
+  "version": "1.0.2",
+  "private": false,
+  "keywords": [
+    "react",
+    "homeassistant",
+    "home-assistant",
+    "home-automation",
+    "socket",
+    "component",
+    "library",
+    "api",
+    "ha-component-kit",
+    "dashboard",
+    "custom"
+  ],
+  "description": "A series of components to work with @hakit/core",
+  "main": "dist/hakit-components.umd.js",
+  "module": "dist/hakit-components.es.js",
+  "types": "dist/types/index.d.cts",
+  "exports": {
+    ".": {
+      "import": "./dist/hakit-components.es.js",
+      "require": "./dist/hakit-components.umd.js",
+      "types": "./dist/types/index.d.cts"
+    }
+  },
+  "author": "Shannon Hochkins <mail@shannonhochkins.com>",
+  "license": "ISC",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENCE.md",
+    "CHANGELOG.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shannonhochkins/ha-component-kit"
+  },
+  "bugs": {
+    "url": "https://github.com/shannonhochkins/ha-component-kit/issues"
+  },
+  "homepage": "https://shannonhochkins.github.io/ha-component-kit#readme",
+  "scripts": {
+    "dev": "vite",
+    "prebuild": "rm -rf ./dist && npm run prettier",
+    "build": "tsc && vite build",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
+    "test": "NODE_ENV=test jest --rootDir=src",
+    "postbuild": "tsup src/index.ts --dts-only --dts-resolve --d dist/types",
+    "release": "npm publish --access public"
+  },
+  "peerDependencies": {
+    "@emotion/react": ">=10.x",
+    "@emotion/styled": ">=10.x",
+    "@hakit/core": "^1.0.1",
+    "lodash": ">=4.x",
+    "react": ">=16.x",
+    "react-dom": ">=16.x"
+  },
+  "devDependencies": {
+    "@emotion/babel-plugin": "^11.x"
+  }
+}

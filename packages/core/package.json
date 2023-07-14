@@ -1,0 +1,73 @@
+{
+  "name": "@hakit/core",
+  "version": "1.0.1",
+  "private": false,
+  "type": "module",
+  "keywords": [
+    "react",
+    "homeassistant",
+    "home-assistant",
+    "home-automation",
+    "socket",
+    "component",
+    "library",
+    "api",
+    "ha-component-kit",
+    "dashboard",
+    "custom"
+  ],
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "description": "A collection of React hooks and helpers for Home Assistant to easily communicate with the Home Assistant WebSocket API.",
+  "main": "dist/hakit-core.umd.js",
+  "module": "dist/hakit-core.es.js",
+  "types": "dist/types/index.d.cts",
+  "exports": {
+    ".": {
+      "import": "./dist/hakit-core.es.js",
+      "require": "./dist/hakit-core.umd.js",
+      "types": "./dist/types/index.d.cts"
+    }
+  },
+  "author": "Shannon Hochkins <mail@shannonhochkins.com>",
+  "license": "ISC",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENCE.md",
+    "CHANGELOG.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shannonhochkins/ha-component-kit"
+  },
+  "bugs": {
+    "url": "https://github.com/shannonhochkins/ha-component-kit/issues"
+  },
+  "homepage": "https://shannonhochkins.github.io/ha-component-kit#readme",
+  "scripts": {
+    "dev": "vite",
+    "prebuild": "rm -rf ./dist && npm run prettier",
+    "build": "tsc && vite build",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
+    "test": "NODE_ENV=test jest --rootDir=src",
+    "postbuild": "tsup src/index.ts --dts-only --dts-resolve --d dist/types",
+    "release": "npm publish --access public"
+  },
+  "peerDependencies": {
+    "@iconify/react": ">=4.x",
+    "home-assistant-js-websocket": ">=8.x",
+    "javascript-time-ago": ">=2.x",
+    "lodash": ">=4.x",
+    "react": ">=16.x",
+    "react-dom": ">=16.x",
+    "use-debounce": ">=9.x"
+  },
+  "devDependencies": {
+    "@types/javascript-time-ago": "^2.0.3",
+    "home-assistant-js-websocket": "^8.1.0",
+    "tsup": "^7.1.0"
+  }
+}

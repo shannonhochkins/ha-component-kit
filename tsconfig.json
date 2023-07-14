@@ -1,10 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "es5",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["es2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "skipLibCheck": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
@@ -20,15 +19,14 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "ha-component-kit": ["src"],
+      "@core": ["packages/core/src"],
       "@stories/*": ["stories/*"],
-      "@hooks": ["src/hooks"],
-      "@components/*": ["src/components/*"],
-      "@utils/*": ["src/utils/*"],
-      "@typings": ["src/types"],
-      "@tests/*": ["tests/*"]
+      "@hooks": ["packages/core/src/hooks"],
+      "@components": ["packages/components/src"],
+      "@utils/*": ["packages/core/src/utils/*"],
+      "@typings": ["packages/core/src/types"],
+      "@tests/*": ["packages/core/tests/*"]
     }
   },
-  "include": ["src", "stories", "./.d.ts", "package.json"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "exclude": ["**/*./", "**/node_modules"],
 }

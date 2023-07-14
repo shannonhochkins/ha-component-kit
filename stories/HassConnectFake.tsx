@@ -16,7 +16,7 @@ import {
   SnakeOrCamelDomains,
   Target,
 } from "@typings";
-import { HassContext } from '@components/HassConnect/Provider';
+import { HassContext } from 'packages/core/src/HassConnect/Provider';
 import { entities as ENTITIES } from '@tests/mockEntities';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
