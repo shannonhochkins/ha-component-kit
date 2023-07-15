@@ -2,6 +2,7 @@ import type { StorybookConfig } from "@storybook/react-vite";
 import path from 'path';
 import { mergeConfig } from 'vite';
 import tsconfigPaths from "vite-tsconfig-paths";
+console.log('xx', path.resolve(path.dirname(__dirname), "./", "tsconfig.json"))
 export default ({
   stories: [
     "../packages/**/*.mdx",
@@ -49,11 +50,7 @@ export default ({
     return mergeConfig(config, {
       plugins: [
         /** @see https://github.com/aleclarson/vite-tsconfig-paths */
-        tsconfigPaths({
-          // My tsconfig.json isn't simply in viteConfig.root,
-          // so I've passed an explicit path to it:
-          projects: [path.resolve(path.dirname(__dirname), "./", "tsconfig.json")],
-        })
+        tsconfigPaths()
       ]
     });
   },

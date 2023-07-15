@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": false,
   "keywords": [
     "react",
@@ -57,7 +57,6 @@
   "peerDependencies": {
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
-    "@hakit/core": ">=1.x",
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x"

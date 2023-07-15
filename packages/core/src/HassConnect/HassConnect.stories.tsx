@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Title, Description, Primary, ArgTypes } from "@storybook/blocks";
-import { HassConnect } from "@core";
+import { HassConnect } from "@hakit/core";
 import { HassConnect as HassConnectFake } from "@stories/HassConnectFake";
 
 function Render(args: Story["args"]) {

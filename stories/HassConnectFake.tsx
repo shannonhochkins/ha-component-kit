@@ -5,7 +5,7 @@ import React, {
   useRef,
   useEffect,
 } from "react";
-import {
+import type {
   // types
   Connection,
   HassEntities,

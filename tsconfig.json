@@ -19,15 +19,17 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
+      "@hakit/core": ["packages/core/dist"],
+      "@hakit/components": ["packages/components/dist"],
       "@core": ["packages/core/src"],
+      "@components": ["packages/components/src"],
       "@stories/*": ["stories/*"],
       "@hooks": ["packages/core/src/hooks"],
-      "@components": ["packages/components/src"],
       "@utils/*": ["packages/core/src/utils/*"],
       "@typings": ["packages/core/src/types"],
       "@tests/*": ["packages/core/tests/*"]
     }
   },
-  "include": ["./stories"],
+  "include": ["./stories/**/*"],
   "exclude": ["**/*./", "**/node_modules"],
 }

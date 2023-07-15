@@ -20,7 +20,7 @@ export default defineConfig(configEnv => {
           ...Object.keys(packageJson.peerDependencies),
           'react/jsx-runtime',
           'react-is',
-          'javascript-time-ago/locale/en.json'
+          '@hakit/core',
         ],
         output: {
           globals: {
