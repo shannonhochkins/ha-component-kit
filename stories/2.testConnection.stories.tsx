@@ -1,12 +1,11 @@
 import { Story, Source } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
-import { HassConnect, HassContext } from '../src';
+import { HassConnect, HassContext, useHass } from '@core';
 import { useContext, useState, useEffect, useMemo } from "react";
 import type {
   HassServices,
   HassEntities,
 } from "home-assistant-js-websocket";
-import { useHass } from "../src/hooks";
 import { upperFirst, snakeCase, camelCase } from "lodash";
 import {
   TextField,

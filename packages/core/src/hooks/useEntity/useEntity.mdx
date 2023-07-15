@@ -1,0 +1,55 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="HOOKS/useEntity" />
+
+# useEntity()
+###### `useEntity(entity: string)`
+This hook is designed to retrieve an entity and return all it's information.
+
+This is a memoized wrapper for the getEntity helper from `useHass()` allowing your component to only update
+when the entity actually changes.
+
+This hook should be used inside the context of `<HassConnect />` and not outside of it otherwise it will not have access to
+the authenticated home assistant API.
+
+
+### Example Usage
+
+```ts
+import { HassConnect, useEntity } from '@hakit/core';
+function Office() {
+  const lightStrip = useEntity('light.office_striplight');
+  // can now access all properties relating to the light
+  return lightStrip.state;
+}
+function App() {
+  return <HassConnect hassUrl="http://localhost:1234">
+    <Office />
+  </HassConnect>
+}
+
+```
+
+### Options
+useEntity takes a second parameter which is an object of options.
+The options are:
+- `returnNullIfNotFound` - boolean - if true the hook will return null if not found, and not throw an error. Default is false.
+- `throttle` - number - how long to wait to throttle the updates, default is 150ms
+
+Example:
+
+```ts
+import { HassConnect, useEntity } from '@hakit/core';
+function Office() {
+  const lightStrip = useEntity('light.office_striplight', {
+    returnNullIfNotFound: true,
+  });
+  // can now access all properties relating to the light
+  return lightStrip?.state ?? 'unknown';
+}
+function App() {
+  return <HassConnect hassUrl="http://localhost:1234">
+    <Office />
+  </HassConnect>
+}
+```

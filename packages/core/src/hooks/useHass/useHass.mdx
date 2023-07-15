@@ -1,0 +1,26 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="HOOKS/useHass" />
+
+# useHass()
+This hook will return you a set of functions that you can use to interact with your home assistant instance.
+
+
+This hook should be used inside the context of `<HassConnect />` and not outside of it otherwise it will not have access to
+the authenticated home assistant API.
+
+### Example Usage
+
+```ts
+import { HassConnect, useHass } from '@hakit/core';
+function Child() {
+  const hass = useHass();
+  const light = hass.getEntity('light.something');
+  // can now access all properties relating to the light
+  return light.state;
+}
+function App() {
+  return <HassConnect hassUrl="http://localhost:1234">
+    <Child />
+  </HassConnect>
+}

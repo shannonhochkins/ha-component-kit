@@ -5,18 +5,18 @@ import React, {
   useRef,
   useEffect,
 } from "react";
-import {
+import type {
   // types
   Connection,
   HassEntities,
 } from "home-assistant-js-websocket";
-import {
+import type {
   ServiceData,
   DomainService,
   SnakeOrCamelDomains,
   Target,
-} from "@typings";
-import { HassContext } from '@components/HassConnect/Provider';
+} from "@hakit/core";
+import { HassContext } from '@hakit/core';
 import { entities as ENTITIES } from '@tests/mockEntities';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {

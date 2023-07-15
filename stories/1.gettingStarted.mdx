@@ -3,7 +3,7 @@ import { Meta } from '@storybook/blocks';
 <Meta title="INTRODUCTION/Getting Started" />
 
 # Overview
-This [package](https://www.npmjs.com/package/ha-component-kit) was built to make it easy to authenticate and use your home assistant devices in a custom build react dashboard, this uses the official [Home Assistant Web Socket](https://github.com/home-assistant/home-assistant-js-websocket) technology used by the home assistant dashboards you're used to using!
+The [@hakit/core](https://www.npmjs.com/package/@hakit/core) provides all the core functionality to authenticate with Home Assistant to create a dynamic dashboard with React! There's also reusable components for creating custom dashboards for Home Assistant using react, this is a separate package to [@hakit/components](https://www.npmjs.com/package/@hakit/components), this uses the official [Home Assistant Web Socket](https://github.com/home-assistant/home-assistant-js-websocket) technology used by the home assistant dashboards you're used to using!
 Once logged in, the token will refresh and you'll never have to login again on that device unless you clear your browser cache / local storage.
 
 ## Quick test
@@ -11,10 +11,10 @@ There's a [Playground](/story/introduction-test-connection--playground) tool tha
 the connection right here without installing anything.
 
 ## Simple Installation Steps
-Install the [package](https://www.npmjs.com/package/ha-component-kit) in your react project
+Install the [@hakit/core](https://www.npmjs.com/package/@hakit/core) for all authentication and react hooks, this is the all the core functionality you'll need, if you want to use some of the components I've built, also install [@hakit/components](https://www.npmjs.com/package/@hakit/components):
 
 ```bash
-  npm i ha-component-kit
+  npm i @hakit/core @hakit/components
 ```
 
 ***Note: This package uses peerDependencies, npm version 4-6 will not install these automatically, you will need to install them [manually](https://stackoverflow.com/questions/35207380/how-to-install-npm-peer-dependencies-automatically), npm version 7 and above will handle this automatically.***
@@ -24,13 +24,14 @@ Then simply wrap your root component (usally App.tsx) with the [HassConnect](/do
 ```tsx
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { HassConnect, ThemeProvider } from 'ha-component-kit';
+import { HassConnect } from '@hakit/core';
+import { ThemeProvider } from '@hakit/components';
 // TODO: replace this with your home assistant url
 const HASS_URL = 'http://localhost:8123';
 function App() {
   return <HassConnect hassUrl={HASS_URL}>
     <ThemeProvider />
-    <p>Will render when connected!</p>
+    <p>This will render when connected!</p>
   </HassConnect>
 }
 
@@ -54,7 +55,7 @@ This isn't a "how to learn react" kinda tutorial, however to get this up and run
 
 Once the above is complete, the terminal will show you steps on how to run it / use it.
 
-```cd dashboard && npm i home-assistant-js-websocket ha-component-kit react react-dom```
+```cd dashboard && npm i @hakit/core @hakit/components```
 
 Open src/App.tsx and replace this with the following:
 
@@ -62,9 +63,10 @@ Open src/App.tsx and replace this with the following:
 
 
 ```ts
+// App.tsx
 import React from 'react';
 import logo from './logo.svg';
-import { HassConnect } from 'ha-component-kit';
+import { HassConnect } from '@hakit/core';
 import './App.css';
 // TODO: replace this with your home assistant url:
 const HASS_URL = 'http://localhost:8123';
@@ -72,23 +74,7 @@ const HASS_URL = 'http://localhost:8123';
 function App() {
   return (
     <HassConnect hassUrl={HASS_URL}>
-      <ThemeProvider />
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <p>This will render when connected!</p>
     </HassConnect>
   );
 }
@@ -97,5 +83,4 @@ export default App;
 
 ```
 
-Now we can run `npm start` in the terminal, once it launches if you've entered your homeassistant url correctly you should see a familiar home assistant login form, login with your normal credentials and you should see your components within the HassConnect component render, this means
-we've authenticated successfully.
+Now once you run your application, you should be prompted to login with Home Assistant, and then redirected to your custom dashboard!

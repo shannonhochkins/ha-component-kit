@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig",
+  "compilerOptions": {
+    "skipLibCheck": true
+  },
+  "rootDir": "./src",
+  "include": ["src", "test"],
+  "exclude": ["../components"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
