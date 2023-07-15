@@ -4,6 +4,21 @@
     "packages/core",
     "packages/components"
   ],
+  "keywords": [
+    "react",
+    "homeassistant",
+    "home-assistant",
+    "home-automation",
+    "socket",
+    "component",
+    "library",
+    "api",
+    "ha-component-kit",
+    "@hakit/core",
+    "@hakit/components",
+    "dashboard",
+    "custom"
+  ],
   "scripts": {
     "test": "npm run test --workspaces --if-present",
     "build": "npm run build:core && npm run build:components",
