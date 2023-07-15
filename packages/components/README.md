@@ -2,7 +2,7 @@
 
 This [package](https://www.npmjs.com/package/@hakit/components) provides reusable components for creating custom dashboards for Home Assistant using react, this is a separate package to [@hakit/core](https://www.npmjs.com/package/@hakit/core) which is a peer dependency for this package.
 
-[![npm version](https://badge.fury.io/js/@hakit/components.svg)](https://badge.fury.io/js/@hakit/components)
+[![npm version](https://badge.fury.io/js/@hakit%2Fcomponents.svg)](https://badge.fury.io/js/@hakit%2Fcomponents)
 
 If you like anything here, be sure to 🌟 [my repo!](https://github.com/shannonhochkins/ha-component-kit)
 

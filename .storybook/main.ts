@@ -1,9 +1,16 @@
 import type { StorybookConfig } from "@storybook/react-vite";
 import path from 'path';
-import { loadConfigFromFile, mergeConfig } from 'vite';
+import { mergeConfig } from 'vite';
 import tsconfigPaths from "vite-tsconfig-paths";
 export default ({
-  stories: ["../src/**/*.mdx", "../stories/**/*.mdx", "../stories/*.mdx", "../stories/*.stories.@(js|jsx|ts|tsx)", "../stories/**/*.stories.@(js|jsx|ts|tsx)", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
+  stories: [
+    "../packages/**/*.mdx",
+    "../stories/**/*.mdx",
+    "../stories/*.mdx",
+    "../stories/*.stories.@(js|jsx|ts|tsx)",
+    "../stories/**/*.stories.@(js|jsx|ts|tsx)",
+    "../packages/**/*.stories.@(js|jsx|ts|tsx)"
+  ],
   addons: ["@storybook/addon-styling", "@storybook/addon-links", "@storybook/addon-essentials", "@storybook/addon-interactions", "@storybook/addon-controls", "@storybook/addon-docs"],
   core: {},
   staticDirs: ['../static'],

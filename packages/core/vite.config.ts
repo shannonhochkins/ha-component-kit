@@ -28,6 +28,13 @@ export default defineConfig(configEnv => {
           globals: {
             react: 'React',
             'react-dom': 'ReactDOM',
+            '@iconify/react': '@iconify/react',
+            'use-debounce': 'use-debounce',
+            'lodash': 'lodash',
+            'react/jsx-runtime': 'react/jsx-runtime',
+            'home-assistant-js-websocket': 'home-assistant-js-websocket',
+            'javascript-time-ago': 'javascript-time-ago',
+            'javascript-time-ago/locale/en.json': 'javascript-time-ago/locale/en.json'
           }
         }
       },

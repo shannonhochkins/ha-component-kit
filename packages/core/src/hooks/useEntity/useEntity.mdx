@@ -16,7 +16,7 @@ the authenticated home assistant API.
 ### Example Usage
 
 ```ts
-import { HassConnect, useEntity } from 'ha-component-kit';
+import { HassConnect, useEntity } from '@hakit/core';
 function Office() {
   const lightStrip = useEntity('light.office_striplight');
   // can now access all properties relating to the light
@@ -39,7 +39,7 @@ The options are:
 Example:
 
 ```ts
-import { HassConnect, useEntity } from 'ha-component-kit';
+import { HassConnect, useEntity } from '@hakit/core';
 function Office() {
   const lightStrip = useEntity('light.office_striplight', {
     returnNullIfNotFound: true,

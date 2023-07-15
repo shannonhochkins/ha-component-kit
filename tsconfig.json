@@ -28,5 +28,6 @@
       "@tests/*": ["packages/core/tests/*"]
     }
   },
+  "include": ["./stories"],
   "exclude": ["**/*./", "**/node_modules"],
 }

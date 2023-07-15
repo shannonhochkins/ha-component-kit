@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": false,
   "keywords": [
     "react",
@@ -13,6 +13,8 @@
     "library",
     "api",
     "ha-component-kit",
+    "hakit/core",
+    "hakit/components",
     "dashboard",
     "custom"
   ],
@@ -32,8 +34,7 @@
   "files": [
     "dist",
     "README.md",
-    "LICENCE.md",
-    "CHANGELOG.md"
+    "LICENCE.md"
   ],
   "repository": {
     "type": "git",
@@ -46,7 +47,7 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "rm -rf ./dist && npm run prettier",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "test": "NODE_ENV=test jest --rootDir=src",
@@ -56,7 +57,7 @@
   "peerDependencies": {
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
-    "@hakit/core": "^1.0.1",
+    "@hakit/core": ">=1.x",
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x"

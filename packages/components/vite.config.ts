@@ -26,6 +26,11 @@ export default defineConfig(configEnv => {
           globals: {
             react: 'React',
             'react-dom': 'ReactDOM',
+            '@emotion/styled': '@emotion/styled',
+            '@emotion/react': '@emotion/react',
+            'react/jsx-runtime': 'react/jsx-runtime',
+            '@hakit/core': '@hakit/core',
+            'lodash': 'lodash'
           }
         }
       },

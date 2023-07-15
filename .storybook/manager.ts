@@ -2,7 +2,7 @@ import { create } from '@storybook/theming/create';
 
 const theme = create({
     base: 'dark',
-    brandUrl: 'https://www.npmjs.com/package/ha-component-kit',
+    brandUrl: 'https://www.npmjs.com/package/@hakit/core',
     brandImage: process.env.NODE_ENV === 'production' ? '/ha-component-kit/logo.png' : '/logo.png',
     brandTarget: '_self',
 });

@@ -6,11 +6,11 @@ import {
   ArgTypes,
   Source,
 } from "@storybook/blocks";
-import { ThemeProvider, theme } from "@components";
+import { ThemeProvider, theme } from "@hakit/components";
 import { HassConnect } from "@stories/HassConnectFake";
 import { merge } from "lodash";
 import { convertToCssVars } from "./helpers";
-import type { ThemeProviderProps } from "@components";
+import type { ThemeProviderProps } from "@hakit/components";
 // @ts-expect-error - Don't have types for jsx-to-string
 import jsxToString from "jsx-to-string";
 
@@ -69,7 +69,7 @@ function Render(args: Story["args"]) {
       <p>
         The ThemeProvider can be used as is with no props and you'll have access
         to all available css variables defined under the importable type
-        `ThemeParams` from `ha-component-kit`;
+        `ThemeParams` from `@hakit/components`;
       </p>
       <p>
         The css variables take the input theme object (which is of type
