@@ -1,4 +1,4 @@
-# We have moved!
+# Overview
 
 This repository contains functionality to easily generate custom dashboards for Home Assistant using the official web socket connection that the standard lovelace dashboards use.
 If you like anything here, be sure to 🌟 [my repo!](https://github.com/shannonhochkins/ha-component-kit)
