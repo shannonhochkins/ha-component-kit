@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Title, Description, Primary, ArgTypes } from "@storybook/blocks";
 import { HassConnect } from "@hakit/core";
 import { HassConnect as HassConnectFake } from "@stories/HassConnectFake";
-import { YouTube } from 'mdx-embed';
 
 
 
@@ -36,7 +35,17 @@ export default {
               will store tokens per device.
             </i>
           </p>
-          <YouTube youTubeId="9LLQWlLmtak" />
+          <iframe
+            style={{
+              margin: 'auto',
+              display: 'block',
+              marginTop: '20px',
+            }}
+            width="560"
+            height="315"
+            frameBorder={0}
+            src="https://www.youtube.com/embed/9LLQWlLmtak"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
           <br />
           <h2>Example</h2>
           <Primary />
