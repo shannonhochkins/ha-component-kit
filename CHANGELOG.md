@@ -1,3 +1,10 @@
+# v.1.0.5
+#### @hakit/components
+##### released - 18/07/2023
+- Adding WeatherCard component, this will retrieve information from the weather entity, it looks and behaves very similar to the standard WeatherCard in lovelace.
+
+
+--- These were previous releases from the old package
 # v.1.0.14
 - Deprecating this package in favor of scoped packages to isolate certain "features" of this kit, now available under @hakit/core and @hakit/components
 # v.1.0.13
