@@ -5,7 +5,7 @@ If you like anything here, be sure to 🌟 [my repo!](https://github.com/shannon
 
 ### Get Started
 
-There's detailed [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started, a quick rundown to get you started:
+There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
 
 ### Local Development / Contribution
 To spin up the local server, run the following command from the root of the repository:
