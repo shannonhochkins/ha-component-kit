@@ -28,7 +28,9 @@
     "dev": "npm run storybook && npm run dev --workspaces --if-present",
     "storybook": "storybook dev -p 6006",
     "build:storybook": "BUILD_STORYBOOK=true storybook build",
-    "release": "npm run release --workspaces --if-present"
+    "release": "npm run release --workspaces --if-present",
+    "release:core": "npm run release --workspace=@hakit/core",
+    "release:components": "npm run release --workspace=@hakit/components"
   },
   "devDependencies": {
     "@mui/material": "^5.13.6",

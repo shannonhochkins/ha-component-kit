@@ -1,4 +1,3 @@
-import { Source } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, WeatherCard } from "@components";
 import type { WeatherCardProps } from "@components";
