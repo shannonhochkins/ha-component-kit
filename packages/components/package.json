@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": false,
   "keywords": [
     "react",
@@ -50,8 +50,7 @@
     "build": "vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
-    "test": "NODE_ENV=test jest --rootDir=src",
-    "postbuild": "tsup src/index.ts --dts-only --dts-resolve --d dist/types",
+    "postbuild": "tsup src/index.ts --dts-only --dts-resolve --d dist/types && tsc",
     "release": "npm publish --access public"
   },
   "peerDependencies": {

@@ -3,7 +3,7 @@ import {
   onReady,
   mocked,
   connection,
-} from "@tests/mockConnection";
+} from "@mocks/mockConnection";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { useApi } from "@core";
 

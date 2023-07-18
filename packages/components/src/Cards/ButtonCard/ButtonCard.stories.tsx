@@ -1,16 +1,23 @@
 import { Source } from "@storybook/blocks";
 import type { Meta, StoryObj, Args } from "@storybook/react";
 import { ThemeProvider, Group, ButtonCard } from "@hakit/components";
+import type { ButtonCardProps } from "@hakit/components";
+import type { DomainService } from "@hakit/core";
 import { HassConnect } from "@stories/HassConnectFake";
 // @ts-expect-error - Don't have types for jsx-to-string
 import jsxToString from "jsx-to-string";
 
-function Template() {
+function Template(
+  args?: Partial<
+    ButtonCardProps<"switch.fake_gaming_switch", DomainService<"switch">>
+  >
+) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
       <Group title="Examples">
         <ButtonCard
+          {...args}
           entity="switch.fake_gaming_switch"
           onClick={(entity) => {
             entity.api.toggle();
@@ -23,11 +30,16 @@ function Template() {
   );
 }
 
-function TemplateOnclick() {
+function TemplateOnclick(
+  args?: Partial<
+    ButtonCardProps<"climate.air_conditioner", DomainService<"climate">>
+  >
+) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
       <ButtonCard
+        {...args}
         entity="climate.air_conditioner"
         onClick={(entity) => {
           entity.api.setHvacMode({
@@ -115,7 +127,7 @@ function ExampleDocs() {
   );
 }
 
-function Render(args: Args) {
+function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
@@ -157,14 +169,10 @@ export const SwitchExample: SwitchStory = {
 };
 export type GroupStory = StoryObj<typeof ExampleDocs>;
 export const DetailedExample: GroupStory = {
-  render() {
-    return <ExampleDocs />;
-  },
+  render: ExampleDocs,
 };
 
 export type LayoutStory = StoryObj<typeof LayoutExampleTemplate>;
 export const LayoutExample: LayoutStory = {
-  render() {
-    return <LayoutExampleTemplate />;
-  },
+  render: LayoutExampleTemplate,
 };

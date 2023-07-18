@@ -10,6 +10,9 @@ export type { GroupProps } from "./Group";
 // Ripples
 export { Ripples } from "./Shared/Ripples";
 export type { RipplesProps } from "./Shared/Ripples";
+// WeatherCard
+export { WeatherCard } from "./Cards/WeatherCard";
+export type { WeatherCardProps } from "./Cards/WeatherCard";
 
 // ThemeProvider
 export { ThemeProvider } from "../../components/src/ThemeProvider";

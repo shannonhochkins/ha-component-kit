@@ -27,10 +27,13 @@ interface ApiTesterProps {
 }
 
 function ApiTester({ domains, entities }: ApiTesterProps) {
-  const { callService } = useHass();
+  const { callService, getAllEntities } = useHass();
   const [domain, setDomain] = useState<string>("light");
   const [service, setService] = useState<string>("");
   const [entity, setEntity] = useState<string>("");
+  console.group('All Entities');
+  console.log(getAllEntities());
+  console.groupEnd();
   const availableEntities = useMemo(() => {
     // filter the entities that are prefixed with the domain,
     return Object.entries(entities)

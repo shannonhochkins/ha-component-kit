@@ -4,7 +4,6 @@
     "skipLibCheck": true
   },
   "rootDir": "./src",
-  "include": ["src", "test"],
-  "exclude": ["../components"],
+  "include": ["src", "mocks"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

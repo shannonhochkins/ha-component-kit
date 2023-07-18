@@ -17,7 +17,7 @@ import type {
   Target,
 } from "@hakit/core";
 import { HassContext } from '@hakit/core';
-import { entities as ENTITIES } from '@tests/mockEntities';
+import { entities as ENTITIES } from '@mocks/mockEntities';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;

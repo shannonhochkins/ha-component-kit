@@ -30,7 +30,8 @@ export default defineConfig(configEnv => {
             '@emotion/react': '@emotion/react',
             'react/jsx-runtime': 'react/jsx-runtime',
             '@hakit/core': '@hakit/core',
-            'lodash': 'lodash'
+            'lodash': 'lodash',
+            'react-is': 'react-is',
           }
         }
       },

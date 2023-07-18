@@ -27,9 +27,9 @@
       "@hooks": ["packages/core/src/hooks"],
       "@utils/*": ["packages/core/src/utils/*"],
       "@typings": ["packages/core/src/types"],
-      "@tests/*": ["packages/core/tests/*"]
+      "@mocks/*": ["packages/core/mocks/*"]
     }
   },
   "include": ["./stories/**/*"],
-  "exclude": ["**/*./", "**/node_modules"],
+  "exclude": ["**/*./", "**/node_modules"]
 }

@@ -25,6 +25,7 @@
     "build:core": "npm run build --workspace=@hakit/core",
     "build:components": "npm run build --workspace=@hakit/components",
     "start": "npm run storybook",
+    "dev": "npm run storybook && npm run dev --workspaces --if-present",
     "storybook": "storybook dev -p 6006",
     "build:storybook": "BUILD_STORYBOOK=true storybook build",
     "release": "npm run release --workspaces --if-present"

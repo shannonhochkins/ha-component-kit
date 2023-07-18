@@ -115,7 +115,8 @@ const Description = styled.div`
   color: var(--ha-primary-active);
   font-size: 0.9rem;
 `;
-export interface SceneCardProps {
+export interface SceneCardProps
+  extends Omit<React.ComponentProps<"button">, "title" | "onClick"> {
   /** An optional override for the title */
   title?: string;
   /** The name of your scene entity */

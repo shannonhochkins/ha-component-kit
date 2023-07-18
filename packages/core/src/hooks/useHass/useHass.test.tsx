@@ -3,7 +3,7 @@ import {
   onReady,
   mocked,
   connection,
-} from "@tests/mockConnection";
+} from "@mocks/mockConnection";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { useHass } from "@core";
 
@@ -81,6 +81,12 @@ describe("useHass", () => {
       const snapshot = JSON.stringify(entities, (key, value) => {
         if (key === "last_changed" || key === "last_updated") {
           return "<DATE_PLACEHOLDER>";
+        }
+        if (typeof value === "string" && value.match(/[\d]+-[\d]+-[\d]+/)) {
+          return "<DATE_PLACEHOLDER>";
+        }
+        if (typeof value === "string" && value.match(/[\d]+:[\d]+/)) {
+          return "<TIME_PLACEHOLDER>";
         }
         return value;
       });

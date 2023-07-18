@@ -2,7 +2,6 @@ import type { StorybookConfig } from "@storybook/react-vite";
 import path from 'path';
 import { mergeConfig } from 'vite';
 import tsconfigPaths from "vite-tsconfig-paths";
-console.log('xx', path.resolve(path.dirname(__dirname), "./", "tsconfig.json"))
 export default ({
   stories: [
     "../packages/**/*.mdx",
