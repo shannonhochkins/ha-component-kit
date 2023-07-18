@@ -6,11 +6,11 @@ import {
   ArgTypes,
   Source,
 } from "@storybook/blocks";
-import { ThemeProvider, theme } from "@hakit/components";
+import { ThemeProvider, theme } from "@components";
 import { HassConnect } from "@stories/HassConnectFake";
 import { merge } from "lodash";
 import { convertToCssVars } from "./helpers";
-import type { ThemeProviderProps } from "@hakit/components";
+import type { ThemeProviderProps } from "@components";
 // @ts-expect-error - Don't have types for jsx-to-string
 import jsxToString from "jsx-to-string";
 

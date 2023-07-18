@@ -1,5 +1,5 @@
 import type { StorybookConfig } from "@storybook/react-vite";
-import path from 'path';
+import react from '@vitejs/plugin-react';
 import { mergeConfig } from 'vite';
 import tsconfigPaths from "vite-tsconfig-paths";
 export default ({
@@ -46,11 +46,26 @@ export default ({
    * @see https://vitejs.dev/config/
    */
   async viteFinal(config) {
-    return mergeConfig(config, {
+    return {
+      ...config,
       plugins: [
+        // Filter out `vite:react-jsx` per suggestion in `plugin-react`...
+        // "You should stop using "vite:react-jsx" since this plugin conflicts with it."
+        // Implementation suggestion from: https://github.com/storybookjs/builder-vite/issues/113#issuecomment-940190931
+        ...(config.plugins || []).filter(
+          // @ts-ignore - `name` is not in the type definition
+          (plugin) => !(Array.isArray(plugin) && plugin.some((p) => (p && p.name === "vite:react-jsx"))),
+        ),
         /** @see https://github.com/aleclarson/vite-tsconfig-paths */
-        tsconfigPaths()
-      ]
-    });
+        tsconfigPaths(),
+        react({
+          exclude: [/\.stories\.(t|j)sx?$/, /node_modules/],
+          jsxImportSource: '@emotion/react',
+          babel: {
+            plugins: ['@emotion/babel-plugin'],
+          },
+        }),
+      ],
+    }
   },
 } satisfies StorybookConfig);

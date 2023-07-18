@@ -1,7 +1,7 @@
 import { Source } from "@storybook/blocks";
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, Group, ButtonCard } from "@hakit/components";
-import type { ButtonCardProps } from "@hakit/components";
+import { ThemeProvider, Group, ButtonCard } from "@components";
+import type { ButtonCardProps } from "@components";
 import type { DomainService } from "@hakit/core";
 import { HassConnect } from "@stories/HassConnectFake";
 // @ts-expect-error - Don't have types for jsx-to-string

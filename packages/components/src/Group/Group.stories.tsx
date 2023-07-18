@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, Group, ButtonCard } from "@hakit/components";
+import { ThemeProvider, Group, ButtonCard } from "@components";
 import { HassConnect } from "@stories/HassConnectFake";
 
 function Render(args: Story["args"]) {

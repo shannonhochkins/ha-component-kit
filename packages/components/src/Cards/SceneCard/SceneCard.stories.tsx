@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, SceneCard, SceneCardProps } from "@hakit/components";
+import { ThemeProvider, SceneCard, SceneCardProps } from "@components";
 import { HassConnect } from "@stories/HassConnectFake";
 
 function Render(args: SceneCardProps) {

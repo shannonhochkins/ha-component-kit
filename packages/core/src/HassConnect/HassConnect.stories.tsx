@@ -2,6 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Title, Description, Primary, ArgTypes } from "@storybook/blocks";
 import { HassConnect } from "@hakit/core";
 import { HassConnect as HassConnectFake } from "@stories/HassConnectFake";
+import { YouTube } from 'mdx-embed';
+
+
 
 function Render(args: Story["args"]) {
   return (
@@ -33,6 +36,9 @@ export default {
               will store tokens per device.
             </i>
           </p>
+          <YouTube youTubeId="9LLQWlLmtak" />
+          <br />
+          <h2>Example</h2>
           <Primary />
           <h2>Component Props</h2>
           <ArgTypes />
