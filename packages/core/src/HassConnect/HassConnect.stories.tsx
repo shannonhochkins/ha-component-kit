@@ -3,8 +3,6 @@ import { Title, Description, Primary, ArgTypes } from "@storybook/blocks";
 import { HassConnect } from "@hakit/core";
 import { HassConnect as HassConnectFake } from "@stories/HassConnectFake";
 
-
-
 function Render(args: Story["args"]) {
   return (
     <HassConnectFake hassUrl="http://localhost:8123" {...args}>
@@ -37,15 +35,17 @@ export default {
           </p>
           <iframe
             style={{
-              margin: 'auto',
-              display: 'block',
-              marginTop: '20px',
+              margin: "auto",
+              display: "block",
+              marginTop: "20px",
             }}
             width="560"
             height="315"
             frameBorder={0}
             src="https://www.youtube.com/embed/9LLQWlLmtak"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          ></iframe>
           <br />
           <h2>Example</h2>
           <Primary />

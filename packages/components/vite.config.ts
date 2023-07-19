@@ -16,11 +16,13 @@ export default defineConfig(configEnv => {
         fileName: (format) => `hakit-components.${format}.js`,
       },
       rollupOptions: {
+        
         external:[
           ...Object.keys(packageJson.peerDependencies),
           'react/jsx-runtime',
           'react-is',
           '@hakit/core',
+          '@iconify/react',
         ],
         output: {
           globals: {
@@ -32,6 +34,7 @@ export default defineConfig(configEnv => {
             '@hakit/core': '@hakit/core',
             'lodash': 'lodash',
             'react-is': 'react-is',
+            '@iconify/react': '@iconify/react',
           }
         }
       },

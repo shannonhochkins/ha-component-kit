@@ -50,7 +50,7 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "rm -rf ./dist && npm run prettier",
-    "build": "vite build",
+    "build": "NODE_ENV=production vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "test": "NODE_ENV=test jest --rootDir=src",
