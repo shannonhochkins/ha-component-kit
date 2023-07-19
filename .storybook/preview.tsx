@@ -13,6 +13,9 @@ const GlobalStyles = () => (
         font-size: var(--ha-font-size);
         color: var(--ha-color);
       }
+      #storybook-root {
+        width: 100%;
+      }
     `}
   />
 );

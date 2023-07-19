@@ -1,3 +1,13 @@
+# v.1.0.6
+#### @hakit/components
+- Added TimeCard component to display the current time and date easily, this is retrieved from the home assistant sensors provided for every home assistant instance.
+- Updated docs to include default values
+- Updated Group component to use the new Column/Row components
+- Added Row/Column components to easily layout child components
+- Added Ripple component to easily add a ripple effect to any custom component
+- Added focus/active animation on ButtonCard and SceneCard
+- renamed disableForecast and disableCurrent to includeCurrent and includeForecast for WeatherCard
+
 # v.1.0.5
 #### @hakit/components
 ##### released - 18/07/2023

@@ -27,6 +27,9 @@ export interface ThemeParams {
     weatherCard: {
       width: string;
     };
+    timeCard: {
+      width: string;
+    };
   };
 }
 
@@ -54,9 +57,12 @@ export const theme: ThemeParams = {
       width: "150px",
     },
     sceneCard: {
-      width: "240px",
+      width: "300px",
     },
     weatherCard: {
+      width: "300px",
+    },
+    timeCard: {
       width: "300px",
     },
   },

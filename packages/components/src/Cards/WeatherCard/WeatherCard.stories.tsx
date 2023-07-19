@@ -16,7 +16,7 @@ function WithoutForecast(args?: Partial<WeatherCardProps>) {
   return (
     <div>
       <h2>WeatherCard without the forecast</h2>
-      <Template disableForecast={true} {...args} />
+      <Template includeForecast={true} {...args} />
     </div>
   );
 }
@@ -25,7 +25,7 @@ function WithoutCurrent(args?: Partial<WeatherCardProps>) {
   return (
     <div>
       <h2>WeatherCard without the current forecast</h2>
-      <Template disableCurrent={true} {...args} />
+      <Template includeCurrent={true} {...args} />
     </div>
   );
 }
@@ -39,6 +39,8 @@ export default {
   },
   argTypes: {
     title: { control: "text" },
+    icon: { control: "text" },
+    entity: { control: "text" },
   },
 } satisfies Meta<typeof WeatherCard>;
 export type WeatherStory = StoryObj<typeof WeatherCard>;

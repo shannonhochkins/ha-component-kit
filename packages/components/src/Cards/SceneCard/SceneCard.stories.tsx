@@ -20,6 +20,7 @@ export default {
   },
   argTypes: {
     title: { control: "text" },
+    entity: { control: "text" },
   },
 } satisfies Meta<typeof SceneCard>;
 export type Story = StoryObj<typeof SceneCard>;

@@ -132,6 +132,21 @@ export const entities: HassEntities = {
     last_changed: now.toISOString(),
     last_updated: now.toISOString()
   },
+  'sensor.date': {
+    "entity_id": "sensor.date",
+    "state": "2023-07-19",
+    "attributes": {
+        "icon": "mdi:calendar",
+        "friendly_name": "Date"
+    },
+    "context": {
+        "id": "01H5MMSYR3B0AX30H5YR328BT0",
+        "parent_id": null,
+        "user_id": null
+    },
+    "last_changed": "2023-07-18T14:00:00.003Z",
+    "last_updated": "2023-07-18T14:00:00.003Z"
+  },
   'weather.entity': {
     "entity_id": "weather.entity",
     "state": "partlycloudy",

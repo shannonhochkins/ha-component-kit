@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useEntity, useHass } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { capitalize } from "lodash";
+import { Row, Column } from "@components";
 function weatherIconName(name: string) {
   switch (name) {
     case "clear-night":
@@ -64,13 +65,6 @@ const Card = styled.div`
   }
 `;
 
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-`;
-
 const Title = styled.h4`
   all: unset;
   font-size: 0.8rem;
@@ -86,12 +80,6 @@ const SubTitle = styled.h4`
   color: var(--ha-primary-color);
   margin-top: 0.3rem;
   margin-left: 1.1rem;
-`;
-const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
 `;
 const StyledIcon = styled(Icon)`
   font-size: 3rem;
@@ -155,20 +143,23 @@ export interface WeatherCardProps extends React.ComponentProps<"div"> {
   entity: `weather.${string}`;
   /** Override the default title pulled from the entity */
   title?: string;
+  /** override the icon displayed before the title */
+  icon?: string;
   /** override the temperature suffix that's pulled from the entity */
   temperatureSuffix?: string;
-  /** disable the forecast, this is disabled by default */
-  disableForecast?: boolean;
-  /** disable the current forecast row, this is disabled by default */
-  disableCurrent?: boolean;
+  /** include the forecast @default true */
+  includeForecast?: boolean;
+  /** include the current forecast row, @default true */
+  includeCurrent?: boolean;
 }
-
+/** This will pull information from the weather entity provided to display the forecast provided by home assistant, this card will display exactly what the weather card in lovelace displays. */
 export function WeatherCard({
   entity,
   title,
+  icon: _icon,
   temperatureSuffix,
-  disableForecast = false,
-  disableCurrent = false,
+  includeForecast = false,
+  includeCurrent = false,
   ...rest
 }: WeatherCardProps): JSX.Element {
   const { getConfig } = useHass();
@@ -190,12 +181,12 @@ export function WeatherCard({
   });
   return (
     <Card {...rest}>
-      {!disableCurrent && (
+      {!includeCurrent && (
         <Row>
           <StyledIcon icon={icon} />
           <Column>
             <Title>
-              <LocationIcon icon="mdi:location" />
+              <LocationIcon icon={_icon || "mdi:location"} />
               {title || friendly_name}
             </Title>
             <SubTitle>
@@ -205,7 +196,7 @@ export function WeatherCard({
           </Column>
         </Row>
       )}
-      {!disableForecast && (
+      {!includeForecast && (
         <Row
           style={{
             justifyContent: "space-between",

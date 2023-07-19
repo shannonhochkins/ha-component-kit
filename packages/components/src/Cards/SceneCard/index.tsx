@@ -25,7 +25,12 @@ const StyledSceneCard = styled.button`
   cursor: pointer;
   background-color: var(--ha-primary-background);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: box-shadow, transform, background-color;
+
+  &:active {
+    transform: translateZ(10px) scale(0.98);
+  }
   &:hover,
   &:focus,
   &:active {

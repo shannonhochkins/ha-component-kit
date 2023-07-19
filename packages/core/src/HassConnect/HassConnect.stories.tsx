@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Title, Description, Primary, ArgTypes } from "@storybook/blocks";
-import { HassConnect } from "@hakit/core";
+import { HassConnect } from "@core";
+import type { HassConnectProps } from "@core";
 import { HassConnect as HassConnectFake } from "@stories/HassConnectFake";
 
-function Render(args: Story["args"]) {
+function Render(args: Partial<HassConnectProps>) {
   return (
     <HassConnectFake hassUrl="http://localhost:8123" {...args}>
       <p>Successfully Authenticated!</p>
