@@ -2,6 +2,7 @@
 ##### released - 21/07/2023
 #### @hakit/core
 - added `useHash` hook to set/get the window hash, this is currently used to automate the state for the RoomCard
+
 # v.1.0.7
 ##### released - 21/07/2023
 #### @hakit/components
