@@ -35,7 +35,7 @@ export const StyledButtonCard = styled.button`
   transition-property: box-shadow, transform;
 
   &:active {
-    transform: translateZ(10px) scale(0.98);
+    transform: translateY(5px) scale(0.98);
   }
 
   &:hover,
@@ -167,7 +167,7 @@ export interface ButtonCardProps<
   /** the layout of the button card, this changes slightly, just preferences really @default default */
   layout?: "default" | "slim";
 }
-
+/** The ButtonCard component is an easy way to represent the state and control of an entity with a simple button, eventually I'll provide further options per domain, like being able to set the colours for lights etc... */
 export function ButtonCard<
   E extends `${AllDomains}.${string}`,
   S extends DomainService<ExtractDomain<E>>
@@ -197,7 +197,6 @@ export function ButtonCard<
   });
   const isDefaultLayout = layout === "default" || layout === undefined;
   const on = entity ? entity.state !== "off" : active || false;
-  // const { title, description, onClick, active, icon, ...others } = rest;
   const iconElement = useIcon(icon, {
     color: iconColor || undefined,
   });

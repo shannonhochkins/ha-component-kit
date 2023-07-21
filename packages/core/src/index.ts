@@ -10,6 +10,7 @@ export { useHass } from "./hooks/useHass";
 export { useEntity } from "./hooks/useEntity";
 export { useApi, createService } from "./hooks/useApi";
 export { useIconByDomain, useIcon, useIconByEntity } from "./hooks/useIcon";
+export { useHash } from "./hooks/useHash";
 
 // supported services
 export type { SupportedServices } from "./types/supported-services";

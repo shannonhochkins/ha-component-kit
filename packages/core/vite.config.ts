@@ -34,7 +34,8 @@ export default defineConfig(configEnv => {
             'react/jsx-runtime': 'react/jsx-runtime',
             'home-assistant-js-websocket': 'home-assistant-js-websocket',
             'javascript-time-ago': 'javascript-time-ago',
-            'javascript-time-ago/locale/en.json': 'javascript-time-ago/locale/en.json'
+            'javascript-time-ago/locale/en.json': 'javascript-time-ago/locale/en.json',
+            "react-router-dom": "react-router-dom",
           }
         }
       },

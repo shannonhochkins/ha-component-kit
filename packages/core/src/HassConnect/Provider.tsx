@@ -37,7 +37,6 @@ import {
   DomainService,
   Target,
 } from "@typings";
-
 export interface CallServiceArgs<
   T extends SnakeOrCamelDomains,
   M extends DomainService<T>
@@ -79,6 +78,10 @@ export interface HassContextProps {
   ready: boolean;
   /** The last time the context object was updated */
   lastUpdated: Date;
+  /** add a new route to the provider */
+  addRoute(name: string): void;
+  /** returns available routes */
+  routes: string[];
 }
 
 export const HassContext = createContext<HassContextProps>(
@@ -96,6 +99,7 @@ export function HassProvider({
   hassUrl,
   throttle = 150,
 }: HassProviderProps): JSX.Element {
+  const [routes, setRoutes] = useState<string[]>([]);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [ready, setReady] = useState(false);
@@ -121,14 +125,17 @@ export function HassProvider({
     [connection]
   );
   const getAllEntities = useCallback(() => _entities, [_entities]);
-  const getEntity = (entity: string, returnNullIfNotFound: boolean) => {
-    const found = _entities[entity];
-    if (!found) {
-      if (returnNullIfNotFound) return null;
-      throw new Error(`Entity ${entity} not found`);
-    }
-    return found;
-  };
+  const getEntity = useCallback(
+    (entity: string, returnNullIfNotFound: boolean) => {
+      const found = _entities[entity];
+      if (!found) {
+        if (returnNullIfNotFound) return null;
+        throw new Error(`Entity ${entity} not found`);
+      }
+      return found;
+    },
+    [_entities]
+  );
 
   const setEntitiesDebounce = useDebouncedCallback<
     (entities: HassEntities) => void
@@ -260,6 +267,10 @@ export function HassProvider({
     }
   }, [authenticate, ready]);
 
+  const addRoute = useCallback((hash: string) => {
+    setRoutes((routes) => Array.from(new Set([...routes, hash])));
+  }, []);
+
   return (
     <HassContext.Provider
       value={{
@@ -273,6 +284,8 @@ export function HassProvider({
         getServices,
         getConfig,
         getUser,
+        addRoute,
+        routes,
         ready,
         lastUpdated,
       }}
