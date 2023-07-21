@@ -1,5 +1,6 @@
 export interface ThemeParams {
   background: string;
+  backgroundOpaque: string;
   color: string;
   font: {
     family: string;
@@ -30,11 +31,15 @@ export interface ThemeParams {
     timeCard: {
       width: string;
     };
+    pictureCard: {
+      width: string;
+    };
   };
 }
 
 export const theme: ThemeParams = {
   background: "#212121",
+  backgroundOpaque: "rgba(33, 33, 33, 0.85)",
   color: "#fefefe",
   font: {
     size: "1rem",
@@ -63,6 +68,9 @@ export const theme: ThemeParams = {
       width: "300px",
     },
     timeCard: {
+      width: "300px",
+    },
+    pictureCard: {
       width: "300px",
     },
   },

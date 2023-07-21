@@ -14,8 +14,22 @@ const GlobalStyles = () => (
         color: var(--ha-color);
       }
       #storybook-root {
-        width: 100%;
+        
+        &:not([hidden="true"]) {
+          width: 100%;
+          height: 100%;
+          #storybook-inner-preview {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            flex-direction: column;
+          }
+        }
       }
+      
     `}
   />
 );
@@ -23,10 +37,8 @@ const GlobalStyles = () => (
 export default {
   decorators: [
     (Story) => {
-      return <div style={{
-          padding: '2rem'
-        }}>
-        <Story />
+      return <div id="storybook-inner-preview">
+        <div style={{ padding: '2rem' }}><Story /></div>
       </div>
     },
     withThemeFromJSXProvider({

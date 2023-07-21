@@ -15,6 +15,7 @@ import type {
   DomainService,
   SnakeOrCamelDomains,
   Target,
+  HassContextProps
 } from "@hakit/core";
 import { HassContext } from '@hakit/core';
 import { entities as ENTITIES } from '@mocks/mockEntities';
@@ -35,6 +36,7 @@ interface HassProviderProps {
 function HassProvider({
   children,
 }: HassProviderProps) {
+  const [routes, setRoutes] = useState<string[]>([]);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated] = useState<Date>(new Date());
   const [entities, setEntities] = useState<HassEntities>(ENTITIES);
@@ -45,14 +47,13 @@ function HassProvider({
   const getConfig = async () => null;
   const getUser = async () => null;
   const getAllEntities = useMemo(() => () => entities, [entities]);
-  const getEntity = useCallback(
-    (entity: string) => {
-      const found = entities[entity];
-      if (!found) throw new Error(`Entity ${entity} not found`);
-      return found;
-    },
-    [entities]
-  );
+  const getEntity = useCallback((entity: string) => {
+    const found = entities[entity];
+    if (!found) {
+      return null;
+    }
+    return found;
+  }, [entities]);
 
   const callService = useCallback(
     async <T extends SnakeOrCamelDomains, M extends DomainService<T>>({
@@ -144,21 +145,27 @@ function HassProvider({
         }
       }));
     }, 60000);
-  })
+  });
+
+  const addRoute = useCallback((hash: string) => {
+    setRoutes((routes) => Array.from(new Set([...routes, hash])));
+  }, []);
 
   return (
     <HassContext.Provider
       value={{
         connection,
         setConnection,
-        getEntity,
+        getEntity: getEntity as HassContextProps["getEntity"],
         getAllEntities,
         callService,
         getStates,
         getServices,
         getConfig,
         getUser,
+        addRoute,
         ready,
+        routes,
         lastUpdated,
       }}
     >

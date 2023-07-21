@@ -1,3 +1,15 @@
+# v.1.0.4
+##### released - 21/07/2023
+#### @hakit/core
+- added `useHash` hook to set/get the window hash, this is currently used to automate the state for the RoomCard
+# v.1.0.7
+##### released - 21/07/2023
+#### @hakit/components
+- Added FabCard - Exactly the same functionality as ButtonCard however this will display a simple icon button and change the colour when active
+- Added RoomCard - This is an awesome new addition which will allow you to wrap a set of other components with a RoomCard, and when clicked it will show all those components in a nice popup, this is also hashed meaning if you refresh the page the "room" will become active again.
+- Introducing framer-motion for the RoomCard to add some nice animations when opening
+- Added PictureCard component to display a picture / title / icon, useful for cameras or other media, this card is also used for the RoomCard
+
 # v.1.0.6
 #### @hakit/components
 - Added TimeCard component to display the current time and date easily, this is retrieved from the home assistant sensors provided for every home assistant instance.

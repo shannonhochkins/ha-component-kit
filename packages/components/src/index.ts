@@ -22,6 +22,15 @@ export type { ColumnProps } from "./Shared/Column";
 // TimeCard
 export { TimeCard } from "./Cards/TimeCard";
 export type { TimeCardProps } from "./Cards/TimeCard";
+// RoomCard
+export { RoomCard } from "./Cards/RoomCard";
+export type { RoomCardProps } from "./Cards/RoomCard";
+// picture card
+export { PictureCard, StyledPictureCard } from "./Cards/PictureCard";
+export type { PictureCardProps } from "./Cards/PictureCard";
+// FabCard
+export { FabCard } from "./Cards/FabCard";
+export type { FabCardProps } from "./Cards/FabCard";
 
 // ThemeProvider
 export { ThemeProvider } from "../../components/src/ThemeProvider";

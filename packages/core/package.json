@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": false,
   "type": "module",
   "keywords": [
@@ -64,7 +64,8 @@
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
-    "use-debounce": ">=9.x"
+    "use-debounce": ">=9.x",
+    "react-router-dom": ">=6.x"
   },
   "devDependencies": {
     "@types/javascript-time-ago": "^2.0.3",

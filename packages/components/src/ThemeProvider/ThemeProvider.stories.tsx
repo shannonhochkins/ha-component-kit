@@ -58,11 +58,13 @@ function Render(args: Story["args"]) {
       </p>
       <ThemeProvider theme={args?.theme} />
       <Source
+        dark
         code={`<ThemeProvider theme={${JSON.stringify(theme, null, 2)}} />`}
         language="tsx"
       />
       <p>Available CSS Variables:</p>
       <Source
+        dark
         code={`${convertToCssVars(theme).replace(/^\s+/gm, "")}`}
         language="tsx"
       />
@@ -77,7 +79,7 @@ function Render(args: Story["args"]) {
         access easily.
       </p>
       <h3>Custom Example:</h3>
-      <Source code={jsxToString(CustomThemeProvider())} />
+      <Source dark code={jsxToString(CustomThemeProvider())} />
 
       <p>
         The above will not only apply the font family to pre-existing css
@@ -92,6 +94,7 @@ function Render(args: Story["args"]) {
       </p>
 
       <Source
+        dark
         code={convertToCssVars(merge(theme, customTheme) as object).replace(
           /^\s+/gm,
           ""
@@ -100,6 +103,7 @@ function Render(args: Story["args"]) {
       <p>Which you can use simply in emotion/scss/less/css etc:</p>
 
       <Source
+        dark
         code={`body {
     \tfont-family: var(--ha-font-family);
     }
