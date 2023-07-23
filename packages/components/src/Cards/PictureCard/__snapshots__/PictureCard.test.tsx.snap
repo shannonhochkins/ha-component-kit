@@ -1,0 +1,102 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<PictureCard /> renders PictureCard 1`] = `
+.emotion-0 {
+  all: unset;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  width: var(--ha-device-picture-card-width);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  aspect-ratio: 16/9;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: stretch;
+  -webkit-box-align: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: var(--ha-primary-background);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: background-color,box-shadow,transform,background-image;
+  will-change: width,height;
+  background-image: url(FAKE);
+  -webkit-background-size: cover;
+  background-size: cover;
+  -webkit-background-position: center;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.emotion-0:active {
+  -webkit-transform: translateY(5px) scale(0.98);
+  -moz-transform: translateY(5px) scale(0.98);
+  -ms-transform: translateY(5px) scale(0.98);
+  transform: translateY(5px) scale(0.98);
+}
+
+.emotion-0:hover {
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+  background-color: var(--ha-primary-background-hover);
+}
+
+.emotion-1 {
+  all: unset;
+  padding: 1rem;
+  background-color: var(--ha-background-opaque);
+  position: absolute;
+  inset: auto 0 0 0;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.emotion-2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+<button
+  class="emotion-0"
+  data-testid="picture-card"
+  id="test"
+>
+  <h4
+    class="emotion-1"
+  >
+    <div
+      class="emotion-2"
+    >
+      <span />
+      Office
+    </div>
+  </h4>
+</button>
+`;

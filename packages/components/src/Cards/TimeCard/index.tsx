@@ -19,9 +19,8 @@ const Card = styled.div`
   background-color: var(--ha-primary-background);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
-  &:hover,
-  &:focus,
-  &:active {
+  &:hover {
+    background-color: var(--ha-primary-background-hover);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;

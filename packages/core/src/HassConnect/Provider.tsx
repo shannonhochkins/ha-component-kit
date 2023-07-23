@@ -28,6 +28,8 @@ import {
   getConfig as _getConfig,
   getUser as _getUser,
   ERR_HASS_HOST_REQUIRED,
+  ERR_CANNOT_CONNECT,
+  ERR_INVALID_HTTPS_TO_HTTP,
 } from "home-assistant-js-websocket";
 import { isArray, snakeCase } from "lodash";
 import { useDebouncedCallback } from "use-debounce";
@@ -55,11 +57,10 @@ export interface HassContextProps {
   /** will retrieve a HassEntity from the context */
   getEntity: {
     (entity: string): HassEntity;
-    (entity: string, returnNullIfNotFound: boolean): HassEntity | null;
-    (entity: string, returnNullIfNotFound: true): HassEntity | null;
-    (entity: string, returnNullIfNotFound: false): HassEntity;
+    (entity: string, returnNullIfNotFound?: boolean): HassEntity | null;
+    (entity: string, returnNullIfNotFound?: true): HassEntity | null;
+    (entity: string, returnNullIfNotFound?: false): HassEntity;
   };
-  // getEntity: (entity: string, returnNullIfNotFound?: boolean) => typeof returnNullIfNotFound extends true ? HassEntity | null : HassEntity;
   /** will retrieve all HassEntities from the context */
   getAllEntities: () => HassEntities;
   /** will call a service for home assistant */
@@ -125,17 +126,17 @@ export function HassProvider({
     [connection]
   );
   const getAllEntities = useCallback(() => _entities, [_entities]);
-  const getEntity = useCallback(
-    (entity: string, returnNullIfNotFound: boolean) => {
-      const found = _entities[entity];
-      if (!found) {
-        if (returnNullIfNotFound) return null;
-        throw new Error(`Entity ${entity} not found`);
-      }
-      return found;
-    },
-    [_entities]
-  );
+  const getEntity = (entity: string, returnNullIfNotFound: boolean) => {
+    if (entity === 'unknown') {
+      return null;
+    }
+    const found = _entities[entity];
+    if (!found) {
+      if (returnNullIfNotFound) return null;
+      throw new Error(`Entity ${entity} not found`);
+    }
+    return found;
+  };
 
   const setEntitiesDebounce = useDebouncedCallback<
     (entities: HassEntities) => void
@@ -217,6 +218,15 @@ export function HassProvider({
     if (connection === null) return;
   }, [connection, setEntitiesDebounce]);
 
+  const translateErr = (err: number | string | Error | unknown) =>
+    err === ERR_CANNOT_CONNECT
+      ? "Unable to connect"
+      : err === ERR_HASS_HOST_REQUIRED
+      ? "Please enter a Home Assistant URL."
+      : err === ERR_INVALID_HTTPS_TO_HTTP
+      ? `Cannot connect to Home Assistant instances over "http://".`
+      : `Unknown error (${err}).`;
+
   const authenticate = useCallback(async () => {
     if (typeof hassUrl !== "string") return;
     if (error !== null) setError(null);
@@ -232,14 +242,18 @@ export function HassProvider({
         throw err;
       }
     }
-    // create the connection to the websockets
-    const connection = await createConnection({ auth: auth.current });
-    // store the connection to pass to the provider
-    setConnection(connection);
-    // subscribe to the entities sockets
-    unsubscribe.current = subscribeEntities(connection, ($entities) => {
-      setEntitiesDebounce($entities);
-    });
+    try {
+      // create the connection to the websockets
+      const connection = await createConnection({ auth: auth.current });
+      // store the connection to pass to the provider
+      setConnection(connection);
+      // subscribe to the entities sockets
+      unsubscribe.current = subscribeEntities(connection, ($entities) => {
+        setEntitiesDebounce($entities);
+      });
+    } catch (e) {
+      throw new Error(translateErr(e));
+    }
     // if the url contains the auth callback url, replace the url so it doesn't contain it
     if (location.search.includes("auth_callback=1")) {
       history.replaceState(null, "", location.pathname);

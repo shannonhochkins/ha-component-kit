@@ -8,12 +8,14 @@ export interface ThemeParams {
   };
   primary: {
     background: string;
+    backgroundHover: string;
     color: string;
     active: string;
     inactive: string;
   };
   secondary: {
     background: string;
+    backgroundHover: string;
     color: string;
     active: string;
     inactive: string;
@@ -47,12 +49,14 @@ export const theme: ThemeParams = {
   },
   primary: {
     background: "#313131",
+    backgroundHover: "#363636",
     color: "#fefefe",
     active: "#f0c039",
     inactive: "#464646",
   },
   secondary: {
     background: "#464646",
+    backgroundHover: "#414141",
     color: "#7c7c7c",
     active: "#887a50",
     inactive: "#464646",

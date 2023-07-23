@@ -31,33 +31,53 @@ const StyledSceneCard = styled.button`
   &:active {
     transform: translateZ(10px) scale(0.98);
   }
-  &:hover,
-  &:focus,
-  &:active {
+  &:hover {
+    background-color: var(--ha-primary-background-hover);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
 
-const ToggleMessage = styled.span`
+const ToggleMessage = styled.span<ToggleProps>`
   font-size: 0.6rem;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   height: 100%;
   padding: 0 6px 0 8px;
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: justify-content, color;
+  justify-content: ${(props) => (props.active ? `flex-start` : `flex-end`)};
+  color: ${(props) =>
+    !props.active
+      ? "var(--ha-secondary-color)"
+      : "var(--ha-primary-inactive)"};
 `;
 
-const ToggleState = styled.div`
+const ToggleState = styled.div<ToggleProps>`
   background-color: white;
   border-radius: 100%;
   width: 30px;
   height: 30px;
   position: absolute;
   top: 5px;
-  left: 0;
+  left: 0px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: var(--ha-transition-duration) var(--ha-easing);
+    transition-property: left, transform;
+    left: ${(props) => (props.active ? "100%" : "0px")};
+    transform: ${(props) =>
+      props.active
+        ? "translate3d(calc(-100% - 5px), 0, 0)"
+        : "translate3d(calc(0% + 5px), 0, 0)"};
+    svg {
+      color: ${(props) =>
+        props.active
+          ? "var(--ha-primary-active)"
+          : "var(--ha-primary-inactive)"};
+      font-size: 40px;
+    }
 `;
 
 interface ToggleProps {
@@ -78,31 +98,6 @@ const Toggle = styled.div<ToggleProps>`
   transition: background-color var(--ha-transition-duration) var(--ha-easing);
   margin-left: 20px;
   overflow: hidden;
-  ${ToggleState} {
-    transition: var(--ha-transition-duration) var(--ha-easing);
-    transition-property: left, transform;
-    left: ${(props) => (props.active ? "100%" : "0")};
-    transform: ${(props) =>
-      props.active
-        ? "translate3d(calc(-100% - 5px), 0, 0)"
-        : "translate3d(calc(0% + 5px), 0, 0)"};
-    svg {
-      color: ${(props) =>
-        props.active
-          ? "var(--ha-primary-active)"
-          : "var(--ha-primary-inactive)"};
-      font-size: 40px;
-    }
-  }
-  ${ToggleMessage} {
-    transition: var(--ha-transition-duration) var(--ha-easing);
-    transition-property: justify-content, color;
-    justify-content: ${(props) => (props.active ? `flex-start` : `flex-end`)};
-    color: ${(props) =>
-      !props.active
-        ? "var(--ha-secondary-color)"
-        : "var(--ha-primary-inactive)"};
-  }
 `;
 
 const LayoutBetween = styled.div`
@@ -150,7 +145,6 @@ export function SceneCard({
       fontSize: "16px",
     },
   });
-  console.log("scene", scene);
   const useApiHandler = useCallback(() => {
     // @ts-expect-error we can expect it to throw errors however the parent level ts validation will catch invalid params.
     sceneService.turnOn(entity, serviceData);
@@ -170,8 +164,8 @@ export function SceneCard({
         <LayoutBetween>
           <Title>{scene.custom.relativeTime}</Title>
           <Toggle active={scene.custom.active}>
-            <ToggleState>{powerIcon}</ToggleState>
-            <ToggleMessage>
+            <ToggleState active={scene.custom.active}>{powerIcon}</ToggleState>
+            <ToggleMessage active={scene.custom.active}>
               {scene.custom.active ? "Success..." : `Start scene`}{" "}
               {!scene.custom.active && arrowIcon}
             </ToggleMessage>

@@ -47,13 +47,14 @@ function HassProvider({
   const getConfig = async () => null;
   const getUser = async () => null;
   const getAllEntities = useMemo(() => () => entities, [entities]);
-  const getEntity = useCallback((entity: string) => {
+  const getEntity = (entity: string, returnNullIfNotFound: boolean) => {
     const found = entities[entity];
     if (!found) {
-      return null;
+      if (returnNullIfNotFound) return null;
+      throw new Error(`Entity ${entity} not found`);
     }
     return found;
-  }, [entities]);
+  }
 
   const callService = useCallback(
     async <T extends SnakeOrCamelDomains, M extends DomainService<T>>({

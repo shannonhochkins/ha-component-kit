@@ -78,19 +78,7 @@ describe("useHass", () => {
       });
       await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
       const entities = result.current.getAllEntities();
-      const snapshot = JSON.stringify(entities, (key, value) => {
-        if (key === "last_changed" || key === "last_updated") {
-          return "<DATE_PLACEHOLDER>";
-        }
-        if (typeof value === "string" && value.match(/[\d]+-[\d]+-[\d]+/)) {
-          return "<DATE_PLACEHOLDER>";
-        }
-        if (typeof value === "string" && value.match(/[\d]+:[\d]+/)) {
-          return "<TIME_PLACEHOLDER>";
-        }
-        return value;
-      });
-      expect(snapshot).toMatchSnapshot();
+      expect(entities).toMatchSnapshot();
     });
   });
 });

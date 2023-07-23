@@ -29,7 +29,7 @@ export const StyledPictureCard = styled.button<Partial<PictureCardProps>>`
   background-color: var(--ha-primary-background);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: box-shadow, transform, background-image;
+  transition-property: background-color, box-shadow, transform, background-image;
   will-change: width, height;
 
   ${(props) =>
@@ -45,10 +45,9 @@ export const StyledPictureCard = styled.button<Partial<PictureCardProps>>`
     transform: translateY(5px) scale(0.98);
   }
 
-  &:hover,
-  &:focus,
-  &:active {
+  &:hover {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--ha-primary-background-hover);
   }
 `;
 
@@ -68,19 +67,17 @@ export function PictureCard({
   title,
   image,
   icon,
-  id,
   ...rest
 }: PictureCardProps): JSX.Element {
   return (
     <StyledPictureCard
-      id={id}
       {...rest}
       image={image}
       onClick={() => {
         if (typeof onClick === "function") onClick();
       }}
     >
-      <PictureCardFooter layoutId={id}>
+      <PictureCardFooter>
         <Row gap={"0.5rem"}>
           {icon && <Icon icon={icon} />}
           {title}

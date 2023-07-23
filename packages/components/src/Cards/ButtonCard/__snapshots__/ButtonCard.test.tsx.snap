@@ -1,0 +1,201 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ButtonCard /> should render without an entity 1`] = `
+.emotion-0 {
+  all: unset;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  width: var(--ha-device-button-card-width);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: stretch;
+  -webkit-box-align: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: var(--ha-primary-background);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: background-color,box-shadow,transform;
+}
+
+.emotion-0:active {
+  -webkit-transform: translateY(5px) scale(0.98);
+  -moz-transform: translateY(5px) scale(0.98);
+  -ms-transform: translateY(5px) scale(0.98);
+  transform: translateY(5px) scale(0.98);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+}
+
+.emotion-0:hover {
+  background-color: var(--ha-primary-background-hover);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+}
+
+.emotion-1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.emotion-2 {
+  border-radius: 100%;
+  padding: 6px;
+  width: 24px;
+  height: 24px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  background-color: var(--ha-primary-inactive);
+  color: var(--ha-secondary-inactive);
+  -webkit-filter: brightness(100%);
+  filter: brightness(100%);
+  -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: background-color,color,filter;
+}
+
+.emotion-2 svg {
+  -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: color;
+}
+
+.emotion-3 {
+  position: relative;
+  background-color: var(--ha-primary-inactive);
+  border-radius: 10px;
+  width: 40px;
+  height: 20px;
+  -webkit-box-flex: 0;
+  -webkit-flex-grow: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-transition: background-color var(--ha-transition-duration) var(--ha-easing);
+  transition: background-color var(--ha-transition-duration) var(--ha-easing);
+  margin-left: 20px;
+}
+
+.emotion-4 {
+  background-color: white;
+  border-radius: 100%;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 2px;
+  left: 0;
+  -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: left,transform;
+  left: 0px;
+  -webkit-transform: translate3d(calc(0% + 2px), 0, 0);
+  -moz-transform: translate3d(calc(0% + 2px), 0, 0);
+  -ms-transform: translate3d(calc(0% + 2px), 0, 0);
+  transform: translate3d(calc(0% + 2px), 0, 0);
+}
+
+.emotion-5 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  -webkit-justify-content: flex-start;
+  justify-content: flex-start;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.emotion-6 {
+  color: var(--ha-secondary-color);
+  font-size: 0.7rem;
+  margin: 2px 0;
+}
+
+.emotion-8 {
+  color: var(--ha-primary-color);
+  font-size: 0.8rem;
+}
+
+<button
+  class="emotion-0"
+  data-testid="button-card"
+>
+  <div
+    class="emotion-1"
+  >
+    <div
+      class="emotion-2"
+    >
+      <span />
+    </div>
+    <div
+      class="emotion-3"
+    >
+      <div
+        class="emotion-4"
+      />
+    </div>
+  </div>
+  <div
+    class="emotion-5"
+  >
+    <div
+      class="emotion-6"
+    >
+      <div
+        class="emotion-6"
+      >
+        something
+      </div>
+      <div
+        class="emotion-8"
+      >
+        somethingelse
+      </div>
+    </div>
+  </div>
+</button>
+`;
