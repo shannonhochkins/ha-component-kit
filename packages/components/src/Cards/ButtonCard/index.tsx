@@ -65,7 +65,6 @@ const ToggleState = styled.div<ToggleProps>`
       : "translate3d(calc(0% + 2px), 0, 0)"};
 `;
 
-
 const Toggle = styled.div<ToggleProps>`
   position: relative;
   background-color: ${(props) =>

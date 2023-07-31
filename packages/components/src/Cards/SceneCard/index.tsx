@@ -48,9 +48,7 @@ const ToggleMessage = styled.span<ToggleProps>`
   transition-property: justify-content, color;
   justify-content: ${(props) => (props.active ? `flex-start` : `flex-end`)};
   color: ${(props) =>
-    !props.active
-      ? "var(--ha-secondary-color)"
-      : "var(--ha-primary-inactive)"};
+    !props.active ? "var(--ha-secondary-color)" : "var(--ha-primary-inactive)"};
 `;
 
 const ToggleState = styled.div<ToggleProps>`
@@ -65,19 +63,17 @@ const ToggleState = styled.div<ToggleProps>`
   align-items: center;
   justify-content: center;
   transition: var(--ha-transition-duration) var(--ha-easing);
-    transition-property: left, transform;
-    left: ${(props) => (props.active ? "100%" : "0px")};
-    transform: ${(props) =>
-      props.active
-        ? "translate3d(calc(-100% - 5px), 0, 0)"
-        : "translate3d(calc(0% + 5px), 0, 0)"};
-    svg {
-      color: ${(props) =>
-        props.active
-          ? "var(--ha-primary-active)"
-          : "var(--ha-primary-inactive)"};
-      font-size: 40px;
-    }
+  transition-property: left, transform;
+  left: ${(props) => (props.active ? "100%" : "0px")};
+  transform: ${(props) =>
+    props.active
+      ? "translate3d(calc(-100% - 5px), 0, 0)"
+      : "translate3d(calc(0% + 5px), 0, 0)"};
+  svg {
+    color: ${(props) =>
+      props.active ? "var(--ha-primary-active)" : "var(--ha-primary-inactive)"};
+    font-size: 40px;
+  }
 `;
 
 interface ToggleProps {

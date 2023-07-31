@@ -15,6 +15,7 @@ import type {
   DomainService,
   SnakeOrCamelDomains,
   Target,
+  Route,
   HassContextProps
 } from "@hakit/core";
 import { HassContext } from '@hakit/core';
@@ -36,7 +37,7 @@ interface HassProviderProps {
 function HassProvider({
   children,
 }: HassProviderProps) {
-  const [routes, setRoutes] = useState<string[]>([]);
+  const [routes, setRoutes] = useState<Route[]>([]);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated] = useState<Date>(new Date());
   const [entities, setEntities] = useState<HassEntities>(ENTITIES);
@@ -50,7 +51,7 @@ function HassProvider({
   const getEntity = (entity: string, returnNullIfNotFound: boolean) => {
     const found = entities[entity];
     if (!found) {
-      if (returnNullIfNotFound) return null;
+      if (returnNullIfNotFound || entity === 'unknown') return null;
       throw new Error(`Entity ${entity} not found`);
     }
     return found;
@@ -148,8 +149,15 @@ function HassProvider({
     }, 60000);
   });
 
-  const addRoute = useCallback((hash: string) => {
-    setRoutes((routes) => Array.from(new Set([...routes, hash])));
+  const addRoute = useCallback((route: Route) => {
+    setRoutes((routes) => {
+      const exists =
+        routes.find((_route) => _route.hash === route.hash) !== undefined;
+      if (!exists) {
+        return [...routes, route];
+      }
+      return routes;
+    });
   }, []);
 
   return (

@@ -3,8 +3,10 @@ import { useMemo, useEffect, useState } from "react";
 import { useEntity, useHass } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { Row, Column } from "@components";
+import { motion } from "framer-motion";
+import type { HTMLMotionProps } from 'framer-motion';
 
-const Card = styled.div`
+const Card = styled(motion.div)`
   all: unset;
   padding: 1rem;
   position: relative;
@@ -105,18 +107,21 @@ function formatDate(dateString: string, timeZone: string): string {
   return formattedDate;
 }
 
-export interface TimeCardProps extends React.ComponentProps<"div"> {
+export interface TimeCardProps extends HTMLMotionProps<'div'> {
   /** set this to false this if you do not want to include the date, @default true */
   includeDate?: boolean;
   /** remove the icon before the time, @default true */
   includeIcon?: boolean;
   /** the name of the icon, defaults to the sensor.date icon or mdi:calendar @default mdi:calendar */
   icon?: string;
+  /** center everything instead of left aligned @default false */
+  center?: boolean;
 }
 /** There's no required props on this component, by default it retrieves information from the time and date sensor from your home assistant information and the dates are formatted by the timezone specified in your home assistant settings. */
 export function TimeCard({
   includeDate = true,
   includeIcon = true,
+  center = false,
   icon,
   ...rest
 }: TimeCardProps): JSX.Element {
@@ -142,8 +147,8 @@ export function TimeCard({
   });
   return (
     <Card {...rest}>
-      <Column gap="0.5rem" alignItems="flex-start">
-        <Row gap="0.5rem" alignItems="center">
+      <Column gap="0.5rem" alignItems={center ? 'center' : 'flex-start'}>
+        <Row gap="0.5rem" alignItems="center" wrap="nowrap">
           {includeIcon && (
             <StyledIcon
               icon={icon || dateSensor.attributes.icon || "mdi:calendar"}

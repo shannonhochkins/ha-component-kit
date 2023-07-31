@@ -1,5 +1,6 @@
 export interface ThemeParams {
   background: string;
+  backgroundDark: string;
   backgroundOpaque: string;
   color: string;
   font: {
@@ -36,11 +37,21 @@ export interface ThemeParams {
     pictureCard: {
       width: string;
     };
+    roomCard: {
+      width: string;
+    };
+    sidebarCard: {
+      width: {
+        collapsed: string;
+        expanded: string;
+      };
+    };
   };
 }
 
 export const theme: ThemeParams = {
   background: "#212121",
+  backgroundDark: "#1a1a1a",
   backgroundOpaque: "rgba(33, 33, 33, 0.85)",
   color: "#fefefe",
   font: {
@@ -63,19 +74,28 @@ export const theme: ThemeParams = {
   },
   device: {
     buttonCard: {
-      width: "150px",
+      width: "9.375rem", // 150px
     },
     sceneCard: {
-      width: "300px",
+      width: "18.75rem", // 300px
     },
     weatherCard: {
-      width: "300px",
+      width: "18.75rem", // 300px
     },
     timeCard: {
-      width: "300px",
+      width: "18.75rem", // 300px
     },
     pictureCard: {
-      width: "300px",
+      width: "18.75rem", // 300px
+    },
+    roomCard: {
+      width: "18.75rem", // 300px
+    },
+    sidebarCard: {
+      width: {
+        collapsed: "4.2rem",
+        expanded: "19rem",
+      },
     },
   },
 };

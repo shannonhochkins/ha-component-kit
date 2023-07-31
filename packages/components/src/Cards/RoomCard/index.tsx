@@ -15,6 +15,7 @@ export interface RoomCardProps extends PictureCardProps {
   /** the animation duration of the room expanding @default 0.25 */
   animationDuration?: number;
 }
+
 const PictureCardFooter = styled(motion.div)`
   all: unset;
   padding: 1rem;
@@ -73,6 +74,11 @@ export function RoomCard({
     if (hashWithoutPound === "") return null;
     return hashWithoutPound === hash;
   }, [_hash, hash]);
+  useEffect(() => {
+    if (active && !startAnimation) {
+      setStartAnimation(true);
+    }
+  }, [active, startAnimation])
   // will reset the hash back to it's original empty value
   const resetHash = useCallback(() => {
     setHash("");
@@ -83,8 +89,12 @@ export function RoomCard({
   }, []);
   // add the current route by hash
   useEffect(() => {
-    addRoute(hash);
-  }, [addRoute, hash]);
+    addRoute({
+      hash,
+      icon: icon || "mdi:info",
+      name: title,
+    });
+  }, [addRoute, hash, icon, title]);
 
   // when the escape key is pressed and we're active, close the card
   useEffect(() => {
@@ -161,10 +171,12 @@ export function RoomCard({
       </AnimatePresence>
       <StyledRoomCard layoutId={`layout-${hash}`}>
         <StyledPictureCard
+          style={{
+            width: 'var(--ha-device-room-card-width)'
+          }}
           image={image}
           onClick={() => {
             setHash(hash);
-            setStartAnimation(true);
           }}
         >
           <PictureCardFooter

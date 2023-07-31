@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<TimeCard /> renders TimeCard with title from entity 1`] = `
+exports[`<WeatherCard /> renders WeatherCard with title from entity 1`] = `
 .emotion-0 {
   all: unset;
   padding: 1rem;
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  width: var(--ha-device-time-card-width);
+  width: var(--ha-device-weather-card-width);
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -28,6 +28,7 @@ exports[`<TimeCard /> renders TimeCard with title from entity 1`] = `
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   -webkit-transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
   transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
+  gap: 1rem;
 }
 
 .emotion-0:hover {
@@ -36,6 +37,28 @@ exports[`<TimeCard /> renders TimeCard with title from entity 1`] = `
 }
 
 .emotion-1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.emotion-2 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -51,382 +74,246 @@ exports[`<TimeCard /> renders TimeCard with title from entity 1`] = `
   -ms-flex-pack: center;
   -webkit-justify-content: center;
   justify-content: center;
-  -webkit-align-items: flex-start;
-  -webkit-box-align: flex-start;
-  -ms-flex-align: flex-start;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
-
-.emotion-2 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: row;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-flex-wrap: nowrap;
-  -webkit-flex-wrap: nowrap;
-  -ms-flex-wrap: nowrap;
-  flex-wrap: nowrap;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
   -webkit-align-items: center;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  gap: 0.5rem;
 }
 
 .emotion-3 {
   all: unset;
-  font-size: 2rem;
-  color: var(--ha-primary-color);
-  font-weight: 400;
-}
-
-.emotion-4 {
-  all: unset;
-  font-size: 2rem;
+  font-size: 0.8rem;
   color: var(--ha-secondary-color);
-  font-weight: 300;
-}
-
-.emotion-5 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-flex-direction: row;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-flex-wrap: wrap;
-  -webkit-flex-wrap: wrap;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
   -webkit-align-items: center;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  -webkit-justify-content: flex-start;
+  justify-content: flex-start;
+}
+
+.emotion-4 {
+  all: unset;
+  font-size: 1rem;
+  color: var(--ha-primary-color);
+  margin-top: 0.3rem;
+  margin-left: 1.1rem;
+}
+
+.emotion-6 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.emotion-7 {
+  color: var(--ha-primary-color);
+}
+
+.emotion-8 {
+  color: var(--ha-primary-color);
+  font-size: 0.8rem;
+}
+
+.emotion-9 {
+  color: var(--ha-secondary-color);
+  font-size: 0.75rem;
 }
 
 <div
   class="emotion-0"
-  data-testid="time-card"
+  data-testid="weather-card"
 >
   <div
     class="emotion-1"
   >
+    <span />
     <div
       class="emotion-2"
-      wrap="nowrap"
     >
+      <h4
+        class="emotion-3"
+      >
+        <span />
+        Forecast &lt;City&gt;
+      </h4>
+      <h4
+        class="emotion-4"
+      >
+        17.6
+        °
+        , 
+        Partlycloudy
+      </h4>
+    </div>
+  </div>
+  <div
+    class="emotion-1"
+    style="justify-content: space-between;"
+  >
+    <div
+      class="emotion-6"
+    >
+      <div
+        class="emotion-7"
+      >
+        Tue
+      </div>
       <span />
-      <h4
-        class="emotion-3"
+      <div
+        class="emotion-8"
       >
-        01:01
-      </h4>
-      <h4
-        class="emotion-4"
+        20.8
+        °
+      </div>
+      <div
+        class="emotion-9"
       >
-        AM
-      </h4>
+        12.7
+        °
+      </div>
     </div>
     <div
-      class="emotion-5"
+      class="emotion-6"
     >
-      Wednesday, July 19th, 2023
-    </div>
-  </div>
-</div>
-`;
-
-exports[`<TimeCard /> should render with the icon 1`] = `
-.emotion-0 {
-  all: unset;
-  padding: 1rem;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  width: var(--ha-device-time-card-width);
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  -webkit-align-items: stretch;
-  -webkit-box-align: stretch;
-  -ms-flex-align: stretch;
-  align-items: stretch;
-  -webkit-box-pack: start;
-  -ms-flex-pack: start;
-  -webkit-justify-content: flex-start;
-  justify-content: flex-start;
-  cursor: default;
-  background-color: var(--ha-primary-background);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  -webkit-transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
-  transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
-}
-
-.emotion-0:hover {
-  background-color: var(--ha-primary-background-hover);
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-}
-
-.emotion-1 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-flex-wrap: wrap;
-  -webkit-flex-wrap: wrap;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: flex-start;
-  -webkit-box-align: flex-start;
-  -ms-flex-align: flex-start;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
-
-.emotion-2 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: row;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-flex-wrap: nowrap;
-  -webkit-flex-wrap: nowrap;
-  -ms-flex-wrap: nowrap;
-  flex-wrap: nowrap;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.emotion-3 {
-  all: unset;
-  font-size: 2rem;
-  color: var(--ha-primary-color);
-  font-weight: 400;
-}
-
-.emotion-4 {
-  all: unset;
-  font-size: 2rem;
-  color: var(--ha-secondary-color);
-  font-weight: 300;
-}
-
-.emotion-5 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: row;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-flex-wrap: wrap;
-  -webkit-flex-wrap: wrap;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-}
-
-<div
-  class="emotion-0"
-  data-testid="time-card"
->
-  <div
-    class="emotion-1"
-  >
-    <div
-      class="emotion-2"
-      wrap="nowrap"
-    >
-      <h4
-        class="emotion-3"
+      <div
+        class="emotion-7"
       >
-        01:01
-      </h4>
-      <h4
-        class="emotion-4"
-      >
-        AM
-      </h4>
-    </div>
-    <div
-      class="emotion-5"
-    >
-      Wednesday, July 19th, 2023
-    </div>
-  </div>
-</div>
-`;
-
-exports[`<TimeCard /> should render without the date 1`] = `
-.emotion-0 {
-  all: unset;
-  padding: 1rem;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  width: var(--ha-device-time-card-width);
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  -webkit-align-items: stretch;
-  -webkit-box-align: stretch;
-  -ms-flex-align: stretch;
-  align-items: stretch;
-  -webkit-box-pack: start;
-  -ms-flex-pack: start;
-  -webkit-justify-content: flex-start;
-  justify-content: flex-start;
-  cursor: default;
-  background-color: var(--ha-primary-background);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  -webkit-transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
-  transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
-}
-
-.emotion-0:hover {
-  background-color: var(--ha-primary-background-hover);
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-}
-
-.emotion-1 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  -webkit-box-flex-wrap: wrap;
-  -webkit-flex-wrap: wrap;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: flex-start;
-  -webkit-box-align: flex-start;
-  -ms-flex-align: flex-start;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
-
-.emotion-2 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: row;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-flex-wrap: nowrap;
-  -webkit-flex-wrap: nowrap;
-  -ms-flex-wrap: nowrap;
-  flex-wrap: nowrap;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.emotion-3 {
-  all: unset;
-  font-size: 2rem;
-  color: var(--ha-primary-color);
-  font-weight: 400;
-}
-
-.emotion-4 {
-  all: unset;
-  font-size: 2rem;
-  color: var(--ha-secondary-color);
-  font-weight: 300;
-}
-
-<div
-  class="emotion-0"
-  data-testid="time-card"
->
-  <div
-    class="emotion-1"
-  >
-    <div
-      class="emotion-2"
-      wrap="nowrap"
-    >
+        Wed
+      </div>
       <span />
-      <h4
-        class="emotion-3"
+      <div
+        class="emotion-8"
       >
-        01:01
-      </h4>
-      <h4
-        class="emotion-4"
+        16.2
+        °
+      </div>
+      <div
+        class="emotion-9"
       >
-        AM
-      </h4>
+        8.2
+        °
+      </div>
+    </div>
+    <div
+      class="emotion-6"
+    >
+      <div
+        class="emotion-7"
+      >
+        Thu
+      </div>
+      <span />
+      <div
+        class="emotion-8"
+      >
+        18.7
+        °
+      </div>
+      <div
+        class="emotion-9"
+      >
+        5
+        °
+      </div>
+    </div>
+    <div
+      class="emotion-6"
+    >
+      <div
+        class="emotion-7"
+      >
+        Fri
+      </div>
+      <span />
+      <div
+        class="emotion-8"
+      >
+        14.4
+        °
+      </div>
+      <div
+        class="emotion-9"
+      >
+        10.3
+        °
+      </div>
+    </div>
+    <div
+      class="emotion-6"
+    >
+      <div
+        class="emotion-7"
+      >
+        Sat
+      </div>
+      <span />
+      <div
+        class="emotion-8"
+      >
+        15.4
+        °
+      </div>
+      <div
+        class="emotion-9"
+      >
+        6.2
+        °
+      </div>
+    </div>
+    <div
+      class="emotion-6"
+    >
+      <div
+        class="emotion-7"
+      >
+        Sun
+      </div>
+      <span />
+      <div
+        class="emotion-8"
+      >
+        12.5
+        °
+      </div>
+      <div
+        class="emotion-9"
+      >
+        6.7
+        °
+      </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`<TimeCard /> should render without the icon 1`] = `
+exports[`<WeatherCard /> should show without current & custom temperature suffix 1`] = `
 .emotion-0 {
   all: unset;
   padding: 1rem;
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  width: var(--ha-device-time-card-width);
+  width: var(--ha-device-weather-card-width);
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -447,6 +334,7 @@ exports[`<TimeCard /> should render without the icon 1`] = `
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   -webkit-transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
   transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
+  gap: 1rem;
 }
 
 .emotion-0:hover {
@@ -455,6 +343,263 @@ exports[`<TimeCard /> should render without the icon 1`] = `
 }
 
 .emotion-1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.emotion-2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.emotion-3 {
+  color: var(--ha-primary-color);
+}
+
+.emotion-4 {
+  color: var(--ha-primary-color);
+  font-size: 0.8rem;
+}
+
+.emotion-5 {
+  color: var(--ha-secondary-color);
+  font-size: 0.75rem;
+}
+
+<div
+  class="emotion-0"
+  data-testid="weather-card"
+>
+  <div
+    class="emotion-1"
+    style="justify-content: space-between;"
+  >
+    <div
+      class="emotion-2"
+    >
+      <div
+        class="emotion-3"
+      >
+        Tue
+      </div>
+      <span />
+      <div
+        class="emotion-4"
+      >
+        20.8
+        XXX
+      </div>
+      <div
+        class="emotion-5"
+      >
+        12.7
+        XXX
+      </div>
+    </div>
+    <div
+      class="emotion-2"
+    >
+      <div
+        class="emotion-3"
+      >
+        Wed
+      </div>
+      <span />
+      <div
+        class="emotion-4"
+      >
+        16.2
+        XXX
+      </div>
+      <div
+        class="emotion-5"
+      >
+        8.2
+        XXX
+      </div>
+    </div>
+    <div
+      class="emotion-2"
+    >
+      <div
+        class="emotion-3"
+      >
+        Thu
+      </div>
+      <span />
+      <div
+        class="emotion-4"
+      >
+        18.7
+        XXX
+      </div>
+      <div
+        class="emotion-5"
+      >
+        5
+        XXX
+      </div>
+    </div>
+    <div
+      class="emotion-2"
+    >
+      <div
+        class="emotion-3"
+      >
+        Fri
+      </div>
+      <span />
+      <div
+        class="emotion-4"
+      >
+        14.4
+        XXX
+      </div>
+      <div
+        class="emotion-5"
+      >
+        10.3
+        XXX
+      </div>
+    </div>
+    <div
+      class="emotion-2"
+    >
+      <div
+        class="emotion-3"
+      >
+        Sat
+      </div>
+      <span />
+      <div
+        class="emotion-4"
+      >
+        15.4
+        XXX
+      </div>
+      <div
+        class="emotion-5"
+      >
+        6.2
+        XXX
+      </div>
+    </div>
+    <div
+      class="emotion-2"
+    >
+      <div
+        class="emotion-3"
+      >
+        Sun
+      </div>
+      <span />
+      <div
+        class="emotion-4"
+      >
+        12.5
+        XXX
+      </div>
+      <div
+        class="emotion-5"
+      >
+        6.7
+        XXX
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<WeatherCard /> should show without forecast and custom icon 1`] = `
+.emotion-0 {
+  all: unset;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  width: var(--ha-device-weather-card-width);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: stretch;
+  -webkit-box-align: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  -webkit-justify-content: flex-start;
+  justify-content: flex-start;
+  cursor: default;
+  background-color: var(--ha-primary-background);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  -webkit-transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
+  transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
+  gap: 1rem;
+}
+
+.emotion-0:hover {
+  background-color: var(--ha-primary-background-hover);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+}
+
+.emotion-1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.emotion-2 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -470,98 +615,63 @@ exports[`<TimeCard /> should render without the icon 1`] = `
   -ms-flex-pack: center;
   -webkit-justify-content: center;
   justify-content: center;
-  -webkit-align-items: flex-start;
-  -webkit-box-align: flex-start;
-  -ms-flex-align: flex-start;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
-
-.emotion-2 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-direction: row;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-flex-wrap: nowrap;
-  -webkit-flex-wrap: nowrap;
-  -ms-flex-wrap: nowrap;
-  flex-wrap: nowrap;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
   -webkit-align-items: center;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  gap: 0.5rem;
 }
 
 .emotion-3 {
   all: unset;
-  font-size: 2rem;
-  color: var(--ha-primary-color);
-  font-weight: 400;
-}
-
-.emotion-4 {
-  all: unset;
-  font-size: 2rem;
+  font-size: 0.8rem;
   color: var(--ha-secondary-color);
-  font-weight: 300;
-}
-
-.emotion-5 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-flex-direction: row;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-flex-wrap: wrap;
-  -webkit-flex-wrap: wrap;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  -webkit-justify-content: center;
-  justify-content: center;
   -webkit-align-items: center;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  -webkit-justify-content: flex-start;
+  justify-content: flex-start;
+}
+
+.emotion-4 {
+  all: unset;
+  font-size: 1rem;
+  color: var(--ha-primary-color);
+  margin-top: 0.3rem;
+  margin-left: 1.1rem;
 }
 
 <div
   class="emotion-0"
-  data-testid="time-card"
+  data-testid="weather-card"
 >
   <div
     class="emotion-1"
   >
+    <span />
     <div
       class="emotion-2"
-      wrap="nowrap"
     >
       <h4
         class="emotion-3"
       >
-        01:01
+        <span />
+        Forecast &lt;City&gt;
       </h4>
       <h4
         class="emotion-4"
       >
-        AM
+        17.6
+        °
+        , 
+        Partlycloudy
       </h4>
-    </div>
-    <div
-      class="emotion-5"
-    >
-      Wednesday, July 19th, 2023
     </div>
   </div>
 </div>

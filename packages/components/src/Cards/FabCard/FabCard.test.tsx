@@ -96,9 +96,12 @@ describe("<FabCard />", () => {
   });
 
   it("should render without an entity", async () => {
-    const { getByTestId } = render(<FabCard icon="mdi:cross" data-testid="fab-card" />, {
-      wrapper: TestWrapper,
-    });
+    const { getByTestId } = render(
+      <FabCard icon="mdi:cross" data-testid="fab-card" />,
+      {
+        wrapper: TestWrapper,
+      }
+    );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("fab-card");
     expect(buttonElement).toBeInTheDocument();

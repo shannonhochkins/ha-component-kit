@@ -14,7 +14,7 @@ const GlobalStyles = () => (
         color: var(--ha-color);
       }
       #storybook-root {
-        
+        padding: 0 !important;
         &:not([hidden="true"]) {
           width: 100%;
           height: 100%;
@@ -36,9 +36,13 @@ const GlobalStyles = () => (
 
 export default {
   decorators: [
-    (Story) => {
+    (Story, args) => {
       return <div id="storybook-inner-preview">
-        <div style={{ padding: '2rem' }}><Story /></div>
+        <div style={{
+          padding: args.parameters.padding ?? '2rem',
+          width: args.parameters.width ?? 'calc(100% - 4rem)',
+          height: args.parameters.height,
+        }}><Story /></div>
       </div>
     },
     withThemeFromJSXProvider({

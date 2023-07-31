@@ -31,6 +31,9 @@ export type { PictureCardProps } from "./Cards/PictureCard";
 // FabCard
 export { FabCard } from "./Cards/FabCard";
 export type { FabCardProps } from "./Cards/FabCard";
+// SidebarCard
+export { SidebarCard } from "./Cards/SidebarCard";
+export type { SidebarCardProps } from "./Cards/SidebarCard";
 
 // ThemeProvider
 export { ThemeProvider } from "../../components/src/ThemeProvider";

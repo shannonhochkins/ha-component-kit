@@ -270,4 +270,4 @@ export const entities: HassEntities = {
     last_changed: oneDayAgo.toISOString(),
     last_updated: oneDayAgo.toISOString()
 }
-}
+} as const;

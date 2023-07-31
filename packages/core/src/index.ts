@@ -2,7 +2,7 @@
 export { HassConnect } from "./HassConnect";
 export { HassContext } from "./HassConnect/Provider";
 // types
-export type { HassContextProps } from "./HassConnect/Provider";
+export type { HassContextProps, Route } from "./HassConnect/Provider";
 export type { HassConnectProps } from "./HassConnect";
 
 // hooks

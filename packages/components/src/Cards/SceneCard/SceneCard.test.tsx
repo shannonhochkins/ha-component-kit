@@ -3,7 +3,7 @@ import {
   TestWrapper,
   onReady,
   mocked,
-  connection
+  connection,
 } from "@mocks/mockConnection";
 import { SceneCard } from "@components";
 import { render, waitFor, fireEvent } from "@testing-library/react";
@@ -53,11 +53,11 @@ describe("<SceneCard />", () => {
     expect(buttonElement).toMatchSnapshot();
     expect(mocked.callService).toHaveBeenLastCalledWith(
       connection,
-      'scene',
-      'turn_on',
+      "scene",
+      "turn_on",
       undefined,
       {
-        entity_id: 'scene.good_morning',
+        entity_id: "scene.good_morning",
       }
     );
     expect(mockFunction).toHaveBeenCalled();

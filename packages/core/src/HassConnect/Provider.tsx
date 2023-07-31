@@ -49,6 +49,12 @@ export interface CallServiceArgs<
   target?: Target;
 }
 
+export interface Route {
+  hash: string;
+  name: string;
+  icon: string;
+}
+
 export interface HassContextProps {
   /** The connection object from home-assistant-js-websocket */
   connection: Connection | null;
@@ -80,9 +86,9 @@ export interface HassContextProps {
   /** The last time the context object was updated */
   lastUpdated: Date;
   /** add a new route to the provider */
-  addRoute(name: string): void;
+  addRoute(route: Route): void;
   /** returns available routes */
-  routes: string[];
+  routes: Route[];
 }
 
 export const HassContext = createContext<HassContextProps>(
@@ -100,7 +106,7 @@ export function HassProvider({
   hassUrl,
   throttle = 150,
 }: HassProviderProps): JSX.Element {
-  const [routes, setRoutes] = useState<string[]>([]);
+  const [routes, setRoutes] = useState<Route[]>([]);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [ready, setReady] = useState(false);
@@ -127,12 +133,12 @@ export function HassProvider({
   );
   const getAllEntities = useCallback(() => _entities, [_entities]);
   const getEntity = (entity: string, returnNullIfNotFound: boolean) => {
-    if (entity === 'unknown') {
+    if (entity === "unknown") {
       return null;
     }
     const found = _entities[entity];
     if (!found) {
-      if (returnNullIfNotFound) return null;
+      if (returnNullIfNotFound || entity === 'unknown') return null;
       throw new Error(`Entity ${entity} not found`);
     }
     return found;
@@ -281,8 +287,15 @@ export function HassProvider({
     }
   }, [authenticate, ready]);
 
-  const addRoute = useCallback((hash: string) => {
-    setRoutes((routes) => Array.from(new Set([...routes, hash])));
+  const addRoute = useCallback((route: Route) => {
+    setRoutes((routes) => {
+      const exists =
+        routes.find((_route) => _route.hash === route.hash) !== undefined;
+      if (!exists) {
+        return [...routes, route];
+      }
+      return routes;
+    });
   }, []);
 
   return (

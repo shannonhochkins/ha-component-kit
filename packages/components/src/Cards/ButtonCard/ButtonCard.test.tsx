@@ -38,7 +38,11 @@ describe("<ButtonCard />", () => {
     services.forEach((service) => {
       it(`renders correctly with entity ${entity} and service ${service}`, async () => {
         const { getByTestId } = render(
-          <ButtonCard entity={entity} service={service} data-testid="button-card" />,
+          <ButtonCard
+            entity={entity}
+            service={service}
+            data-testid="button-card"
+          />,
           {
             wrapper: TestWrapper,
           }
@@ -78,11 +82,18 @@ describe("<ButtonCard />", () => {
     });
   });
 
-
   it("should render without an entity", async () => {
-    const { getByTestId } = render(<ButtonCard title="something" description="somethingelse" icon="mdi:cross" data-testid="button-card" />, {
-      wrapper: TestWrapper,
-    });
+    const { getByTestId } = render(
+      <ButtonCard
+        title="something"
+        description="somethingelse"
+        icon="mdi:cross"
+        data-testid="button-card"
+      />,
+      {
+        wrapper: TestWrapper,
+      }
+    );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("button-card");
     expect(buttonElement).toBeInTheDocument();
