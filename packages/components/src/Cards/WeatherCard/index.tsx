@@ -5,7 +5,7 @@ import { Icon } from "@iconify/react";
 import { capitalize } from "lodash";
 import { Row, Column } from "@components";
 import { motion } from "framer-motion";
-import type { HTMLMotionProps } from 'framer-motion';
+import type { HTMLMotionProps } from "framer-motion";
 
 function weatherIconName(name: string) {
   switch (name) {
@@ -140,7 +140,7 @@ interface WeatherForecast {
   humidity: number;
 }
 
-export interface WeatherCardProps extends HTMLMotionProps<'div'> {
+export interface WeatherCardProps extends HTMLMotionProps<"div"> {
   /** The name of your entity */
   entity: `weather.${string}`;
   /** Override the default title pulled from the entity */

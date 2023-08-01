@@ -18,7 +18,7 @@ import type {
   Route,
   HassContextProps
 } from "@hakit/core";
-import { HassContext } from '@hakit/core';
+import { HassContext, useHash } from '@hakit/core';
 import { entities as ENTITIES } from '@mocks/mockEntities';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
@@ -37,6 +37,7 @@ interface HassProviderProps {
 function HassProvider({
   children,
 }: HassProviderProps) {
+  const [_hash] = useHash();
   const [routes, setRoutes] = useState<Route[]>([]);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated] = useState<Date>(new Date());
@@ -149,6 +150,21 @@ function HassProvider({
     }, 60000);
   });
 
+  useEffect(() => {
+    setRoutes((routes) =>
+      routes.map((route) => {
+        // if the current has value is the same as the hash, we're active
+        const hashWithoutPound = _hash.replace("#", "");
+        const active =
+          hashWithoutPound !== "" && hashWithoutPound === route.hash;
+        return {
+          ...route,
+          active,
+        };
+      })
+    );
+  }, [_hash]);
+
   const addRoute = useCallback((route: Route) => {
     setRoutes((routes) => {
       const exists =
@@ -159,6 +175,14 @@ function HassProvider({
       return routes;
     });
   }, []);
+
+  const useRoute = useCallback(
+    (hash: string) => {
+      const route = routes.find((route) => route.hash === hash);
+      return route || null;
+    },
+    [routes]
+  );
 
   return (
     <HassContext.Provider
@@ -173,6 +197,7 @@ function HassProvider({
         getConfig,
         getUser,
         addRoute,
+        useRoute,
         ready,
         routes,
         lastUpdated,

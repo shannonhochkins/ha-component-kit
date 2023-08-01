@@ -39,6 +39,7 @@ import {
   DomainService,
   Target,
 } from "@typings";
+import { useHash } from "@core";
 export interface CallServiceArgs<
   T extends SnakeOrCamelDomains,
   M extends DomainService<T>
@@ -53,6 +54,7 @@ export interface Route {
   hash: string;
   name: string;
   icon: string;
+  active: boolean;
 }
 
 export interface HassContextProps {
@@ -87,6 +89,7 @@ export interface HassContextProps {
   lastUpdated: Date;
   /** add a new route to the provider */
   addRoute(route: Route): void;
+  useRoute(hash: string): Route | null;
   /** returns available routes */
   routes: Route[];
 }
@@ -106,6 +109,7 @@ export function HassProvider({
   hassUrl,
   throttle = 150,
 }: HassProviderProps): JSX.Element {
+  const [_hash] = useHash();
   const [routes, setRoutes] = useState<Route[]>([]);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
@@ -138,7 +142,7 @@ export function HassProvider({
     }
     const found = _entities[entity];
     if (!found) {
-      if (returnNullIfNotFound || entity === 'unknown') return null;
+      if (returnNullIfNotFound || entity === "unknown") return null;
       throw new Error(`Entity ${entity} not found`);
     }
     return found;
@@ -287,16 +291,52 @@ export function HassProvider({
     }
   }, [authenticate, ready]);
 
-  const addRoute = useCallback((route: Route) => {
-    setRoutes((routes) => {
-      const exists =
-        routes.find((_route) => _route.hash === route.hash) !== undefined;
-      if (!exists) {
-        return [...routes, route];
-      }
-      return routes;
-    });
-  }, []);
+  useEffect(() => {
+    setRoutes((routes) =>
+      routes.map((route) => {
+        // if the current has value is the same as the hash, we're active
+        const hashWithoutPound = _hash.replace("#", "");
+        const active =
+          hashWithoutPound !== "" && hashWithoutPound === route.hash;
+        return {
+          ...route,
+          active,
+        };
+      })
+    );
+  }, [_hash]);
+
+  const addRoute = useCallback(
+    (route: Omit<Route, "active">) => {
+      setRoutes((routes) => {
+        const exists =
+          routes.find((_route) => _route.hash === route.hash) !== undefined;
+        if (!exists) {
+          // if the current has value is the same as the hash, we're active
+          const hashWithoutPound = _hash.replace("#", "");
+          const active =
+            hashWithoutPound !== "" && hashWithoutPound === route.hash;
+          return [
+            ...routes,
+            {
+              ...route,
+              active,
+            },
+          ];
+        }
+        return routes;
+      });
+    },
+    [_hash]
+  );
+
+  const useRoute = useCallback(
+    (hash: string) => {
+      const route = routes.find((route) => route.hash === hash);
+      return route || null;
+    },
+    [routes]
+  );
 
   return (
     <HassContext.Provider
@@ -312,6 +352,7 @@ export function HassProvider({
         getConfig,
         getUser,
         addRoute,
+        useRoute,
         routes,
         ready,
         lastUpdated,

@@ -93,7 +93,7 @@ export const theme: ThemeParams = {
     },
     sidebarCard: {
       width: {
-        collapsed: "4.2rem",
+        collapsed: "5rem",
         expanded: "19rem",
       },
     },
