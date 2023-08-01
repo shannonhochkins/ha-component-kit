@@ -21,7 +21,7 @@ export default {
   component: Row,
   tags: ["autodocs"],
   parameters: {
-    width: "100%",
+    centered: true
   },
   argTypes: {
     theme: { table: { disable: true } },

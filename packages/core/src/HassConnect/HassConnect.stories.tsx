@@ -17,7 +17,7 @@ export default {
   component: HassConnect,
   tags: ["autodocs"],
   parameters: {
-    width: "100%",
+    centered: true,
     docs: {
       page: () => (
         <>

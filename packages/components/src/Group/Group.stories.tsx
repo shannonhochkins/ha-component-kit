@@ -20,7 +20,7 @@ export default {
   component: Group,
   tags: ["autodocs"],
   parameters: {
-    width: "100%",
+    centered: true
   },
   argTypes: {
     title: { control: "text" },

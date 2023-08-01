@@ -37,11 +37,21 @@ const GlobalStyles = () => (
 export default {
   decorators: [
     (Story, args) => {
+      console.log('args', args);
+      const centered = args.parameters.centered ? {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 0,
+      } : {};
       return <div id="storybook-inner-preview">
         <div style={{
           padding: args.parameters.padding ?? '2rem',
           width: args.parameters.width ?? 'calc(100% - 4rem)',
           height: args.parameters.height,
+          ...centered,
         }}><Story /></div>
       </div>
     },

@@ -82,6 +82,13 @@ function HassProvider({
         }));
       }
       if (domain === 'climate') {
+        let hvac = entities[target].state;
+        if (service === 'turnOn') {
+          hvac = 'cool';
+        }
+        if (service === 'turnOff') {
+          hvac = 'off';
+        }
         return setEntities(entities => ({
           ...entities,
           [target]: {
@@ -90,11 +97,11 @@ function HassProvider({
               ...entities[target].attributes,
               ...serviceData || {},
               // @ts-expect-error - purposely casting here so i don't have to setup manual types for fake data
-              hvac_action: serviceData?.hvac_mode || entities[target].state
+              hvac_action: serviceData?.hvac_mode || hvac
             },
             ...dates,
             // @ts-expect-error - purposely casting here so i don't have to setup manual types for fake data
-            state: serviceData?.hvac_mode || entities[target].state
+            state: serviceData?.hvac_mode || hvac
           }
         }));
       }

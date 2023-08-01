@@ -35,7 +35,7 @@ export default {
   component: WeatherCard,
   tags: ["autodocs"],
   parameters: {
-    width: "100%",
+    centered: true
   },
   argTypes: {
     title: { control: "text" },

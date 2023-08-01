@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { EventHandler, useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { Icon } from "@iconify/react";
@@ -83,7 +83,7 @@ const Menu = styled.ul`
         text-align: left;
         font-size: 1.5rem;
       }
-      > div {
+      > .menu-inner {
         display: flex;
         align-items: flex-start;
         justify-content: center;
@@ -183,12 +183,18 @@ const SmallWeatherCard = styled(StyledWeatherCard)`
   }
 `;
 export interface MenuItem {
-  name: string;
+  /** The title of the menu item */
+  title: string;
+  /** the description, this will appear below the title */
   description?: string;
-  icon: string;
+  /** the icon name or JSX element, eg <Icon icon="mdi:cross" /> */
+  icon: JSX.Element | string;
+  /** the hash name of the menu item, this is optional */
   hash?: string;
+  /** if the item is active or not */
   active: boolean;
-  onClick: () => void;
+  /** onClick action to fire when the menu item is clicked  */
+  onClick: (event: React.MouseEvent<HTMLLIElement>) => void;
 }
 /** This component is a nice way of organising components / groups into an easy to navigate sidebar, the "Room Cards" will automatically insert into the sidebar items if they're present on the page, eg if you have 6 RoomCards, all 6 items will be added to the sidebar automatically, you can also add your own menu items to the start of the list, this all needs a bit more thought but for now it is pretty useful! The TimeCard and WeatherCard are integrate and themed slightly different in the sidebar, if the sidebar is present, the RoomCard will only expand to the available space and not cover the sidebar */
 export interface SidebarCardProps {
@@ -219,6 +225,7 @@ export function SidebarCard({
   const concatenatedMenuItems = useMemo<MenuItem[]>(() => {
     const mappedRoutes = routes.map((route) => ({
       ...route,
+      title: route.name,
       onClick() {
         if (!route.active) {
           setHash("");
@@ -267,7 +274,8 @@ export function SidebarCard({
                   <HamburgerMenu>
                     <motion.li
                       layoutId="ha-sidebar-menu"
-                      onClick={() => {
+                      onClick={(event) => {
+                        event.stopPropagation();
                         setOpen(!open);
                       }}
                     >
@@ -286,14 +294,21 @@ export function SidebarCard({
                   {concatenatedMenuItems.map((item, index) => {
                     return (
                       <li
-                        onClick={item.onClick}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          item.onClick(event);
+                        }}
                         className={item.active ? "active" : "inactive"}
                         key={index}
                       >
                         <a>
-                          <Icon icon={item.icon} />
-                          <div>
-                            {item.name}
+                          {typeof item.icon === "string" ? (
+                            <Icon icon={item.icon} />
+                          ) : (
+                            item.icon
+                          )}
+                          <div className="menu-inner">
+                            {item.title}
                             {item.description && (
                               <span>{item.description}</span>
                             )}
@@ -340,7 +355,8 @@ export function SidebarCard({
                 <MenuCollapsed>
                   <motion.li
                     layoutId="ha-sidebar-menu"
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.stopPropagation();
                       setOpen(!open);
                     }}
                   >
@@ -351,12 +367,19 @@ export function SidebarCard({
                   {concatenatedMenuItems.map((item, index) => {
                     return (
                       <li
-                        onClick={item.onClick}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          item.onClick(event);
+                        }}
                         key={index}
                         className={item.active ? "active" : "inactive"}
                       >
                         <a>
-                          <Icon icon={item.icon} />
+                          {typeof item.icon === "string" ? (
+                            <Icon icon={item.icon} />
+                          ) : (
+                            item.icon
+                          )}
                         </a>
                       </li>
                     );

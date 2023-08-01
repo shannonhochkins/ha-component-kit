@@ -123,7 +123,6 @@ export default {
   component: RoomCard,
   tags: ["autodocs"],
   parameters: {
-    width: "100%",
     docs: {
       page: () => (
         <>
