@@ -26,6 +26,7 @@ export function ThemeProvider<T extends object>({
             --ha-ripple-duration: 0.5s;
             --ha-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --ha-transition-duration: 0.25s;
+            --ha-room-card-expanded-offset: 0;
           }
           html,
           body {
@@ -45,6 +46,7 @@ export function ThemeProvider<T extends object>({
             font-size: var(--ha-font-size);
             color: var(--ha-color);
             overflow-x: hidden;
+            overflow-y: var(--ha-hide-body-overflow-y);
           }
         `}
       />

@@ -90,8 +90,8 @@ export const entities: HassEntities = {
     },
     state: 'off',
     entity_id: 'media_player.fake_tv',
-    last_changed: oneDayAgo.toDateString(),
-    last_updated: oneDayAgo.toDateString(),
+    last_changed: oneDayAgo.toISOString(),
+    last_updated: oneDayAgo.toISOString(),
     context: {
       id: '',
       user_id: null,
@@ -267,7 +267,7 @@ export const entities: HassEntities = {
         parent_id: null,
         user_id: null
     },
-    last_changed: oneDayAgo.toDateString(),
-    last_updated: oneDayAgo.toDateString()
+    last_changed: oneDayAgo.toISOString(),
+    last_updated: oneDayAgo.toISOString()
 }
-}
+} as const;

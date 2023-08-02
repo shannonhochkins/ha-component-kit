@@ -40,7 +40,7 @@ export default {
   component: Ripples,
   tags: ["autodocs"],
   parameters: {
-    width: "100%",
+    centered: true
   },
   argTypes: {},
 } satisfies Meta<typeof Ripples>;

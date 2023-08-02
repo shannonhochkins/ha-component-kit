@@ -32,20 +32,23 @@ export const StyledButtonCard = styled.button`
   background-color: var(--ha-primary-background);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: box-shadow, transform;
+  transition-property: background-color, box-shadow, transform;
 
   &:active {
     transform: translateY(5px) scale(0.98);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
-
-  &:hover,
-  &:focus,
-  &:active {
+  &:hover {
+    background-color: var(--ha-primary-background-hover);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
 
-const ToggleState = styled.div`
+interface ToggleProps {
+  active: boolean;
+}
+
+const ToggleState = styled.div<ToggleProps>`
   background-color: white;
   border-radius: 100%;
   width: 16px;
@@ -53,11 +56,14 @@ const ToggleState = styled.div`
   position: absolute;
   top: 2px;
   left: 0;
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: left, transform;
+  left: ${(props) => (props.active ? "100%" : "0px")};
+  transform: ${(props) =>
+    props.active
+      ? "translate3d(calc(-100% - 2px), 0, 0)"
+      : "translate3d(calc(0% + 2px), 0, 0)"};
 `;
-
-interface ToggleProps {
-  active: boolean;
-}
 
 const Toggle = styled.div<ToggleProps>`
   position: relative;
@@ -70,15 +76,6 @@ const Toggle = styled.div<ToggleProps>`
   flex-shrink: 0;
   transition: background-color var(--ha-transition-duration) var(--ha-easing);
   margin-left: 20px;
-  ${ToggleState} {
-    transition: var(--ha-transition-duration) var(--ha-easing);
-    transition-property: left, transform;
-    left: ${(props) => (props.active ? "100%" : "0")};
-    transform: ${(props) =>
-      props.active
-        ? "translate3d(calc(-100% - 2px), 0, 0)"
-        : "translate3d(calc(0% + 2px), 0, 0)"};
-  }
 `;
 
 const Fab = styled.div<{
@@ -185,14 +182,14 @@ export function ButtonCard<
   ...rest
 }: ButtonCardProps<E, S>): JSX.Element {
   const domain = _entity ? computeDomain(_entity) : null;
-  const entity = useEntity(_entity || "number.non_existent", {
+  const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
   });
   const icon = typeof _icon === "string" ? _icon : null;
   const domainIcon = useIconByDomain(domain === null ? "unknown" : domain, {
     color: iconColor || undefined,
   });
-  const entityIcon = useIconByEntity(_entity || "number.non_existent", {
+  const entityIcon = useIconByEntity(_entity || "unknown", {
     color: iconColor || undefined,
   });
   const isDefaultLayout = layout === "default" || layout === undefined;
@@ -253,7 +250,7 @@ export function ButtonCard<
           </Fab>
           {isDefaultLayout && (
             <Toggle active={on}>
-              <ToggleState />
+              <ToggleState active={on} />
             </Toggle>
           )}
           {!isDefaultLayout && <Description>{description}</Description>}

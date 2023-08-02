@@ -4,6 +4,9 @@ import { useEntity, useHass } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { capitalize } from "lodash";
 import { Row, Column } from "@components";
+import { motion } from "framer-motion";
+import type { HTMLMotionProps } from "framer-motion";
+
 function weatherIconName(name: string) {
   switch (name) {
     case "clear-night":
@@ -42,7 +45,7 @@ function weatherIconName(name: string) {
   }
 }
 
-const Card = styled.div`
+const Card = styled(motion.div)`
   all: unset;
   padding: 1rem;
   position: relative;
@@ -58,9 +61,8 @@ const Card = styled.div`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
   gap: 1rem;
-  &:hover,
-  &:focus,
-  &:active {
+  &:hover {
+    background-color: var(--ha-primary-background-hover);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
@@ -138,7 +140,7 @@ interface WeatherForecast {
   humidity: number;
 }
 
-export interface WeatherCardProps extends React.ComponentProps<"div"> {
+export interface WeatherCardProps extends HTMLMotionProps<"div"> {
   /** The name of your entity */
   entity: `weather.${string}`;
   /** Override the default title pulled from the entity */
@@ -158,8 +160,8 @@ export function WeatherCard({
   title,
   icon: _icon,
   temperatureSuffix,
-  includeForecast = false,
-  includeCurrent = false,
+  includeForecast = true,
+  includeCurrent = true,
   ...rest
 }: WeatherCardProps): JSX.Element {
   const { getConfig } = useHass();
@@ -181,7 +183,7 @@ export function WeatherCard({
   });
   return (
     <Card {...rest}>
-      {!includeCurrent && (
+      {includeCurrent && (
         <Row>
           <StyledIcon icon={icon} />
           <Column>
@@ -196,7 +198,7 @@ export function WeatherCard({
           </Column>
         </Row>
       )}
-      {!includeForecast && (
+      {includeForecast && (
         <Row
           style={{
             justifyContent: "space-between",

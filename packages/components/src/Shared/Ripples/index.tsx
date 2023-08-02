@@ -83,8 +83,8 @@ export const Ripples = memo(
 
         setRippleStyle((state) => ({
           ...state,
-          left,
-          top,
+          left: isNaN(left) ? 0 : left,
+          top: isNaN(top) ? 0 : top,
           opacity: 1,
           transform: "translate(-50%, -50%)",
           transition: "initial",

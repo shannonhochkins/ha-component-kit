@@ -16,7 +16,7 @@ function WithoutForecast(args?: Partial<WeatherCardProps>) {
   return (
     <div>
       <h2>WeatherCard without the forecast</h2>
-      <Template includeForecast={true} {...args} />
+      <Template includeForecast={false} {...args} />
     </div>
   );
 }
@@ -25,7 +25,7 @@ function WithoutCurrent(args?: Partial<WeatherCardProps>) {
   return (
     <div>
       <h2>WeatherCard without the current forecast</h2>
-      <Template includeCurrent={true} {...args} />
+      <Template includeCurrent={false} {...args} />
     </div>
   );
 }
@@ -35,7 +35,7 @@ export default {
   component: WeatherCard,
   tags: ["autodocs"],
   parameters: {
-    width: "100%",
+    centered: true
   },
   argTypes: {
     title: { control: "text" },

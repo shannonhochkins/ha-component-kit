@@ -51,7 +51,7 @@ exports[`useEntity should retrieve the entity object 1`] = `
     "active": false,
     "brightness": "brightness(100%)",
     "hexColor": "#ff6e54",
-    "relativeTime": "2 hours ago",
+    "relativeTime": "1 year ago",
     "rgbColor": "rgba(255, 109.56074999999998, 83.89500000000001)",
     "rgbaColor": "rgba(255, 109.56074999999998, 83.89500000000001, 0.35)",
   },

@@ -14,11 +14,13 @@ import type {
   HassEntityWithApi,
   AllDomains,
 } from "@hakit/core";
+import { Ripples } from "@components";
 
-const StyledFabCard = styled.div<{
+const StyledFabCard = styled.button<{
   size: number;
   active: boolean;
 }>`
+  all: unset;
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -33,10 +35,12 @@ const StyledFabCard = styled.div<{
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   translateZ(0px) scale(1);
   transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: box-shadow, transform;
-
-  &:active, &:focus {
+  transition-property: background-color, box-shadow, transform;
+  &:active {
     transform: translateY(4px) scale(0.98);
+  }
+  &:hover {
+    background-color: var(--ha-secondary-background-hover);
   }
   ${(props) =>
     props.size &&
@@ -49,7 +53,7 @@ const StyledFabCard = styled.div<{
 export interface FabCardProps<
   E extends `${AllDomains}.${string}`,
   S extends DomainService<ExtractDomain<E>>
-> extends Omit<React.ComponentPropsWithoutRef<"div">, "onClick"> {
+> extends Omit<React.ComponentPropsWithoutRef<"button">, "onClick"> {
   /** The size of the Fab, this applies to the width and height @default 40 */
   size?: number;
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
@@ -83,7 +87,7 @@ export function FabCard<
   active: _active,
   ...rest
 }: FabCardProps<E, S>): JSX.Element {
-  const entity = useEntity(_entity || "number.non_existent", {
+  const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
   });
   const domain = _entity ? computeDomain(_entity) : null;
@@ -92,7 +96,7 @@ export function FabCard<
     fontSize: size / 2,
     color: iconColor || "currentcolor",
   });
-  const entityIcon = useIconByEntity(_entity || "number.non_existent", {
+  const entityIcon = useIconByEntity(_entity || "unknown", {
     fontSize: size / 2,
     color: iconColor || "currentcolor",
   });
@@ -117,13 +121,15 @@ export function FabCard<
       onClick(entity as HassEntityWithApi<ExtractDomain<E>>);
   }, [service, entity, serviceData, onClick]);
   return (
-    <StyledFabCard
-      active={active}
-      size={size}
-      {...rest}
-      onClick={useApiHandler}
-    >
-      {iconElement || entityIcon || domainIcon}
-    </StyledFabCard>
+    <Ripples borderRadius="50%">
+      <StyledFabCard
+        active={active}
+        size={size}
+        {...rest}
+        onClick={useApiHandler}
+      >
+        {iconElement || entityIcon || domainIcon}
+      </StyledFabCard>
+    </Ripples>
   );
 }

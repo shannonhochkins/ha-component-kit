@@ -7,7 +7,6 @@ import path from 'path';
 const { EsLinter, linterPlugin } = EsLint;
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
-  console.log('configEnv', configEnv)
   return {
     root: path.resolve(__dirname, './'),
     build: {

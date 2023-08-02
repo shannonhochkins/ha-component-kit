@@ -51,7 +51,8 @@
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "postbuild": "tsup src/index.ts --dts-only --dts-resolve --d dist/types && tsc",
-    "release": "npm publish --access public"
+    "release": "npm publish --access public",
+    "test": "NODE_ENV=test jest --rootDir=src"
   },
   "peerDependencies": {
     "@emotion/react": ">=10.x",

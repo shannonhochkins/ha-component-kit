@@ -50,10 +50,10 @@ type UseEntityReturnType<
   : HassEntityWithApi<ExtractDomain<E>>;
 
 export function useEntity<
-  E extends `${AllDomains}.${string}`,
+  E extends `${AllDomains}.${string}` | "unknown",
   O extends UseEntityOptions = UseEntityOptions
 >(entity: E, options: O = DEFAULT_OPTIONS as O): UseEntityReturnType<E, O> {
-  const { throttle, returnNullIfNotFound = false } = {
+  const { throttle, returnNullIfNotFound } = {
     ...DEFAULT_OPTIONS,
     ...options,
   };

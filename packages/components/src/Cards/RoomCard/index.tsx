@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
-import { useEffect, useMemo, useCallback, useState } from "react";
+import { css, Global } from "@emotion/react";
+import { useEffect, useCallback, useState } from "react";
 import { useHass, useHash } from "@hakit/core";
 import { StyledPictureCard, Row, FabCard } from "@components";
 import type { PictureCardProps } from "@components";
@@ -15,6 +16,7 @@ export interface RoomCardProps extends PictureCardProps {
   /** the animation duration of the room expanding @default 0.25 */
   animationDuration?: number;
 }
+
 const PictureCardFooter = styled(motion.div)`
   all: unset;
   padding: 1rem;
@@ -32,23 +34,30 @@ const NavBar = styled(PictureCardFooter)`
 
 const StyledRoomCard = styled(motion.div)`
   position: relative;
+  button {
+    max-height: 100%;
+  }
 `;
 
 const FullScreen = styled(motion.div)`
   position: fixed;
   inset: 0;
+  left: var(--ha-room-card-expanded-offset);
+  padding: 0;
+  margin: 0;
+  max-height: 100svh;
   background: var(--ha-background);
   z-index: 20;
   display: flex;
   justify-content: center;
   align-items: stretch;
-  width: 100%;
+  transition: left var(--ha-transition-duration) var(--ha-easing);
 `;
 
 const ChildContainer = styled(motion.div)`
   opacity: 0;
   padding-top: 4rem;
-  width: 100%;
+  padding: 4rem 1.5rem 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -63,16 +72,16 @@ export function RoomCard({
   image,
   animationDuration = 0.25,
 }: RoomCardProps) {
-  const { addRoute } = useHass();
+  const { addRoute, useRoute } = useHass();
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
-  const [_hash, setHash] = useHash();
+  const [, setHash] = useHash();
   const [startAnimation, setStartAnimation] = useState(false);
-  // if the current has value is the same as the hash, we're active
-  const active = useMemo(() => {
-    const hashWithoutPound = _hash.replace("#", "");
-    if (hashWithoutPound === "") return null;
-    return hashWithoutPound === hash;
-  }, [_hash, hash]);
+  const route = useRoute(hash);
+  useEffect(() => {
+    if (route?.active && !startAnimation) {
+      setStartAnimation(true);
+    }
+  }, [route, startAnimation]);
   // will reset the hash back to it's original empty value
   const resetHash = useCallback(() => {
     setHash("");
@@ -83,20 +92,25 @@ export function RoomCard({
   }, []);
   // add the current route by hash
   useEffect(() => {
-    addRoute(hash);
-  }, [addRoute, hash]);
+    addRoute({
+      hash,
+      icon: icon || "mdi:info",
+      name: title,
+      active: false,
+    });
+  }, [addRoute, hash, icon, title]);
 
   // when the escape key is pressed and we're active, close the card
   useEffect(() => {
-    if (isPressed && active) {
+    if (isPressed && route?.active) {
       resetAnimation();
     }
-  }, [isPressed, active, resetAnimation]);
+  }, [isPressed, route, resetAnimation]);
 
   return (
     <>
       <AnimatePresence>
-        {active && (
+        {route?.active && (
           <FullScreen
             layoutId={`layout-${hash}`}
             initial={{ opacity: 0 }}
@@ -116,6 +130,13 @@ export function RoomCard({
               },
             }}
           >
+            <Global
+              styles={css`
+                :root {
+                  --ha-hide-body-overflow-y: hidden;
+                }
+              `}
+            />
             <NavBar
               animate={{
                 transition: {
@@ -161,10 +182,12 @@ export function RoomCard({
       </AnimatePresence>
       <StyledRoomCard layoutId={`layout-${hash}`}>
         <StyledPictureCard
+          style={{
+            width: "var(--ha-device-room-card-width)",
+          }}
           image={image}
           onClick={() => {
             setHash(hash);
-            setStartAnimation(true);
           }}
         >
           <PictureCardFooter

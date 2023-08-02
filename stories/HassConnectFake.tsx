@@ -15,9 +15,10 @@ import type {
   DomainService,
   SnakeOrCamelDomains,
   Target,
+  Route,
   HassContextProps
 } from "@hakit/core";
-import { HassContext } from '@hakit/core';
+import { HassContext, useHash } from '@hakit/core';
 import { entities as ENTITIES } from '@mocks/mockEntities';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
@@ -36,7 +37,8 @@ interface HassProviderProps {
 function HassProvider({
   children,
 }: HassProviderProps) {
-  const [routes, setRoutes] = useState<string[]>([]);
+  const [_hash] = useHash();
+  const [routes, setRoutes] = useState<Route[]>([]);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated] = useState<Date>(new Date());
   const [entities, setEntities] = useState<HassEntities>(ENTITIES);
@@ -47,13 +49,14 @@ function HassProvider({
   const getConfig = async () => null;
   const getUser = async () => null;
   const getAllEntities = useMemo(() => () => entities, [entities]);
-  const getEntity = useCallback((entity: string) => {
+  const getEntity = (entity: string, returnNullIfNotFound: boolean) => {
     const found = entities[entity];
     if (!found) {
-      return null;
+      if (returnNullIfNotFound || entity === 'unknown') return null;
+      throw new Error(`Entity ${entity} not found`);
     }
     return found;
-  }, [entities]);
+  }
 
   const callService = useCallback(
     async <T extends SnakeOrCamelDomains, M extends DomainService<T>>({
@@ -79,6 +82,13 @@ function HassProvider({
         }));
       }
       if (domain === 'climate') {
+        let hvac = entities[target].state;
+        if (service === 'turnOn') {
+          hvac = 'cool';
+        }
+        if (service === 'turnOff') {
+          hvac = 'off';
+        }
         return setEntities(entities => ({
           ...entities,
           [target]: {
@@ -87,11 +97,11 @@ function HassProvider({
               ...entities[target].attributes,
               ...serviceData || {},
               // @ts-expect-error - purposely casting here so i don't have to setup manual types for fake data
-              hvac_action: serviceData?.hvac_mode || entities[target].state
+              hvac_action: serviceData?.hvac_mode || hvac
             },
             ...dates,
             // @ts-expect-error - purposely casting here so i don't have to setup manual types for fake data
-            state: serviceData?.hvac_mode || entities[target].state
+            state: serviceData?.hvac_mode || hvac
           }
         }));
       }
@@ -147,9 +157,39 @@ function HassProvider({
     }, 60000);
   });
 
-  const addRoute = useCallback((hash: string) => {
-    setRoutes((routes) => Array.from(new Set([...routes, hash])));
+  useEffect(() => {
+    setRoutes((routes) =>
+      routes.map((route) => {
+        // if the current has value is the same as the hash, we're active
+        const hashWithoutPound = _hash.replace("#", "");
+        const active =
+          hashWithoutPound !== "" && hashWithoutPound === route.hash;
+        return {
+          ...route,
+          active,
+        };
+      })
+    );
+  }, [_hash]);
+
+  const addRoute = useCallback((route: Route) => {
+    setRoutes((routes) => {
+      const exists =
+        routes.find((_route) => _route.hash === route.hash) !== undefined;
+      if (!exists) {
+        return [...routes, route];
+      }
+      return routes;
+    });
   }, []);
+
+  const useRoute = useCallback(
+    (hash: string) => {
+      const route = routes.find((route) => route.hash === hash);
+      return route || null;
+    },
+    [routes]
+  );
 
   return (
     <HassContext.Provider
@@ -164,6 +204,7 @@ function HassProvider({
         getConfig,
         getUser,
         addRoute,
+        useRoute,
         ready,
         routes,
         lastUpdated,

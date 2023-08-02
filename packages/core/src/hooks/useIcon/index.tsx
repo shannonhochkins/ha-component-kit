@@ -161,9 +161,9 @@ export function useIcon(
 }
 
 export function useIconByEntity<
-  E extends `${AllDomains}.${string}` | "number.non-existent"
+  E extends `${AllDomains}.${string}` | "unknown"
 >(_entity: E, iconProps?: Omit<IconProps, "icon">) {
-  const entity = useEntity(_entity || "number.non_existent", {
+  const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
   });
   const Icon = useMemo(() => {
