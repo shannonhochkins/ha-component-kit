@@ -1,3 +1,18 @@
+# v.1.0.8
+##### released - 03/08/2023
+- SidebarCard - an automated easy way to interact with RoomCards and other custom functionality, it's recommended to ensure your page fills the height/width of the window to ensure the Sidebar fills correctly.
+- added multiple tests for multiple components
+- Few bugFixes to the RoomCard
+- converting pixel values to rem in the theme object.
+
+# v.1.0.5
+##### released - 03/08/2023
+- useRoute, addRoute added to useHass() hook, useRoute may be the only function you'll need to use however addRoute will automatically add the a menu item to the sidebar.
+- allowing "unknown" as an entity type when it's not provided which will return null on hooks that are expecting to return an entity.
+
+
+#### @hakit/core
+- added `useHash` hook to set/get the window hash, this is currently used to automate the state for the RoomCard
 # v.1.0.4
 ##### released - 21/07/2023
 #### @hakit/core
