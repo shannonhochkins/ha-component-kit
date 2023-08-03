@@ -119,7 +119,7 @@ export default {
   title: "COMPONENTS/ThemeProvider",
   component: ThemeProvider,
   parameters: {
-    padding: '2rem',
+    padding: "2rem",
     docs: {
       page: () => (
         <>

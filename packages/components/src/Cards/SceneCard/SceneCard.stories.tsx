@@ -16,7 +16,7 @@ export default {
   component: SceneCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true
+    centered: true,
   },
   argTypes: {
     title: { control: "text" },

@@ -1,4 +1,4 @@
-import { EventHandler, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { Icon } from "@iconify/react";
