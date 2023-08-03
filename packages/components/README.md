@@ -6,6 +6,8 @@ This [package](https://www.npmjs.com/package/@hakit/components) provides reusabl
 
 If you like anything here, be sure to 🌟 [my repo!](https://github.com/shannonhochkins/ha-component-kit)
 
+![DEMO](https://github.com/shannonhochkins/ha-component-kit/blob/master/stories/hakit-demo.gif?raw=true)
+
 ### Get Started
 
 There's detailed [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started.
