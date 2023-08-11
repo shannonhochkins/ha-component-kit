@@ -13,7 +13,7 @@ describe("useEntity", () => {
     onReady.mockClear();
   });
   it("should allow the entity to call a service directly from the entity object", async () => {
-    const { result } = renderHook(() => useEntity("light.fake_light"), {
+    const { result } = renderHook(() => useEntity("light.fake_light_1"), {
       wrapper: TestWrapper,
     });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
@@ -31,13 +31,13 @@ describe("useEntity", () => {
         color_name: "red",
       },
       {
-        entity_id: "light.fake_light",
+        entity_id: "light.fake_light_1",
       }
     );
   });
 
   it("should retrieve the entity object", async () => {
-    const { result } = renderHook(() => useEntity("light.fake_light"), {
+    const { result } = renderHook(() => useEntity("light.fake_light_1"), {
       wrapper: TestWrapper,
     });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));

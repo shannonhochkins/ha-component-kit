@@ -66,16 +66,24 @@ export function useEntity<
   const formatEntity = useCallback((entity: HassEntity): HassEntityCustom => {
     const relativeTime = timeAgo.format(new Date(entity.last_updated));
     const active = relativeTime === "just now";
-    const { hexColor, rgbColor, brightness, rgbaColor } =
-      getCssColorValue(entity);
+    const {
+      hexColor,
+      rgbColor,
+      brightness,
+      brightnessValue,
+      rgbaColor,
+      color,
+    } = getCssColorValue(entity);
     return {
       ...entity,
       custom: {
+        color,
         relativeTime,
         active,
         hexColor,
         rgbColor,
         brightness,
+        brightnessValue,
         rgbaColor,
       },
     };

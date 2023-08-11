@@ -34,6 +34,23 @@ export type { FabCardProps } from "./Cards/FabCard";
 // SidebarCard
 export { SidebarCard } from "./Cards/SidebarCard";
 export type { SidebarCardProps } from "./Cards/SidebarCard";
+// Modal
+export { Modal } from "./Shared/Modal";
+export type { ModalProps } from "./Shared/Modal";
+export { ModalLightControls } from "./Shared/Modal/ModalLightControls";
+export type { ModalLightControlsProps } from "./Shared/Modal/ModalLightControls";
+// ControlSlider
+export { ControlSlider } from "./Shared/ControlSlider";
+export type { ControlSliderProps } from "./Shared/ControlSlider";
+// ColorTempPicker
+export { ColorTempPicker } from "./Shared/ColorTempPicker";
+export type { ColorTempPickerProps } from "./Shared/ColorTempPicker";
+// ColorPicker
+export { ColorPicker } from "./Shared/ColorPicker";
+export type {
+  ColorPickerProps,
+  ColorPickerOutputColors,
+} from "./Shared/ColorPicker";
 
 // ThemeProvider
 export { ThemeProvider } from "../../components/src/ThemeProvider";

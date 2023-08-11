@@ -37,7 +37,6 @@ const GlobalStyles = () => (
 export default {
   decorators: [
     (Story, args) => {
-      console.log('args', args);
       const centered = args.parameters.centered ? {
         width: '100%',
         height: '100%',

@@ -12,8 +12,6 @@ import {
 } from "@components";
 import { Source } from "@storybook/blocks";
 import { useEntity } from "@hakit/core";
-// @ts-expect-error - Don't have types for jsx-to-string
-import jsxToString from "jsx-to-string";
 import type { SidebarCardProps } from "@components";
 import { HassConnect } from "@stories/HassConnectFake";
 import office from "../RoomCard/office.jpg";
@@ -42,16 +40,11 @@ function Template(args?: Partial<SidebarCardProps>) {
           >
             <Column gap="1rem">
               <Group title="Striplights">
-                <ButtonCard entity="light.fake_light" service="toggle" />
-                <ButtonCard entity="light.fake_light" service="toggle" />
-                <ButtonCard entity="light.fake_light" service="toggle" />
-                <ButtonCard entity="light.fake_light" service="toggle" />
+                <ButtonCard entity="light.fake_light_1" service="toggle" />
+                <ButtonCard entity="light.fake_light_2" service="toggle" />
+                <ButtonCard entity="light.fake_light_3" service="toggle" />
               </Group>
               <SceneCard entity="scene.good_morning" data-testid="scene-card" />
-              <Group title="Downlights">
-                <ButtonCard entity="light.fake_light" service="toggle" />
-                <ButtonCard entity="light.fake_light" service="toggle" />
-              </Group>
             </Column>
           </RoomCard>
           <RoomCard

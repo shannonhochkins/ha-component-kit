@@ -10,8 +10,10 @@ import {
   useApi,
 } from "@hakit/core";
 import { Ripples } from "@components";
+import { motion } from "framer-motion";
+import { MotionProps } from 'framer-motion';
 
-const StyledSceneCard = styled.button`
+const StyledSceneCard = styled(motion.button)`
   all: unset;
   padding: 1rem;
   position: relative;
@@ -111,8 +113,8 @@ const Description = styled.div`
   color: var(--ha-primary-active);
   font-size: 0.9rem;
 `;
-export interface SceneCardProps
-  extends Omit<React.ComponentProps<"button">, "title" | "onClick"> {
+type Extendable = MotionProps & Omit<React.ComponentPropsWithoutRef<"button">, "title" | "onClick">;
+export interface SceneCardProps extends Extendable {
   /** An optional override for the title */
   title?: string;
   /** The name of your scene entity */

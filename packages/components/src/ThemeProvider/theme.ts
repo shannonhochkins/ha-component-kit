@@ -39,6 +39,7 @@ export interface ThemeParams {
     };
     roomCard: {
       width: string;
+      zIndex: number;
     };
     sidebarCard: {
       width: {
@@ -46,6 +47,10 @@ export interface ThemeParams {
         expanded: string;
       };
     };
+  };
+  modal: {
+    width: string;
+    zIndex: number;
   };
 }
 
@@ -90,6 +95,7 @@ export const theme: ThemeParams = {
     },
     roomCard: {
       width: "18.75rem", // 300px
+      zIndex: 20,
     },
     sidebarCard: {
       width: {
@@ -97,5 +103,9 @@ export const theme: ThemeParams = {
         expanded: "19rem",
       },
     },
+  },
+  modal: {
+    width: "40rem",
+    zIndex: 21, // this should be higher than the room card
   },
 };

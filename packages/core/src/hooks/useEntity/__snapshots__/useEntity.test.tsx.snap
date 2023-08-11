@@ -50,12 +50,18 @@ exports[`useEntity should retrieve the entity object 1`] = `
   "custom": {
     "active": false,
     "brightness": "brightness(100%)",
+    "brightnessValue": 100,
+    "color": [
+      255,
+      109.56074999999998,
+      83.89500000000001,
+    ],
     "hexColor": "#ff6e54",
     "relativeTime": "1 year ago",
     "rgbColor": "rgba(255, 109.56074999999998, 83.89500000000001)",
     "rgbaColor": "rgba(255, 109.56074999999998, 83.89500000000001, 0.35)",
   },
-  "entity_id": "light.fake_light",
+  "entity_id": "light.fake_light_1",
   "state": "on",
 }
 `;

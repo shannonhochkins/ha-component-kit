@@ -368,12 +368,16 @@ export interface SupportedServices<T extends ServiceFunctionTypes = "target"> {
       {
         // Duration it takes to get to next state.
         transition?: number;
+        // Color temperature for the light in Kelvin.
+        color_temp_kelvin?: number;
+        // Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100.
+        hs_color?: [number, number];
         // The color for the light (based on RGB - red, green, blue).
-        rgb_color?: object;
+        rgb_color?: [number, number, number];
         // A list containing four integers between 0 and 255 representing the RGBW (red, green, blue, white) color for the light.
-        rgbw_color?: object;
+        rgbw_color?: [number, number, number, number];
         // A list containing five integers between 0 and 255 representing the RGBWW (red, green, blue, cold white, warm white) color for the light.
-        rgbww_color?: object;
+        rgbww_color?: [number, number, number, number, number];
         // A human readable color name.
         color_name?:
           | "homeassistant"
@@ -524,8 +528,6 @@ export interface SupportedServices<T extends ServiceFunctionTypes = "target"> {
           | "whitesmoke"
           | "yellow"
           | "yellowgreen";
-        // Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100.
-        hs_color?: object;
         // Color for the light in XY-format.
         xy_color?: object;
         // Color temperature for the light in mireds.
@@ -567,8 +569,16 @@ export interface SupportedServices<T extends ServiceFunctionTypes = "target"> {
       {
         // Duration it takes to get to next state.
         transition?: number;
-        // Color for the light in RGB-format.
-        rgb_color?: object;
+        // Color temperature for the light in Kelvin.
+        color_temp_kelvin?: number;
+        // Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100.
+        hs_color?: [number, number];
+        // The color for the light (based on RGB - red, green, blue).
+        rgb_color?: [number, number, number];
+        // A list containing four integers between 0 and 255 representing the RGBW (red, green, blue, white) color for the light.
+        rgbw_color?: [number, number, number, number];
+        // A list containing five integers between 0 and 255 representing the RGBWW (red, green, blue, cold white, warm white) color for the light.
+        rgbww_color?: [number, number, number, number, number];
         // A human readable color name.
         color_name?:
           | "homeassistant"
@@ -719,8 +729,6 @@ export interface SupportedServices<T extends ServiceFunctionTypes = "target"> {
           | "whitesmoke"
           | "yellow"
           | "yellowgreen";
-        // Color for the light in hue/sat format. Hue is 0-360 and Sat is 0-100.
-        hs_color?: object;
         // Color for the light in XY-format.
         xy_color?: object;
         // Color temperature for the light in mireds.

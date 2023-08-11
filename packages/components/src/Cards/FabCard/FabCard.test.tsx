@@ -17,7 +17,7 @@ describe("<FabCard />", () => {
   it("renders FabCard", async () => {
     const { getByTestId } = render(
       <FabCard
-        entity="light.fake_light"
+        entity="light.fake_light_1"
         service="turnOn"
         data-testid="fab-card"
       />,
@@ -32,7 +32,7 @@ describe("<FabCard />", () => {
   });
 
   // Tests for all valid combinations of entity and service props
-  const entities = ["light.fake_light", "switch.fake_gaming_switch"] as const;
+  const entities = ["light.fake_light_1", "switch.fake_gaming_switch"] as const;
   const services = ["turnOn", "toggle", "turnOff"] as const;
 
   entities.forEach((entity) => {
@@ -79,10 +79,10 @@ describe("<FabCard />", () => {
     });
   });
 
-  it("renders FabCard with a size default of 40", async () => {
+  it("renders FabCard with a size default of 48", async () => {
     const { getByTestId } = render(
       <FabCard
-        entity="light.fake_light"
+        entity="light.fake_light_1"
         service="turnOn"
         data-testid="fab-card"
       />,
@@ -92,7 +92,7 @@ describe("<FabCard />", () => {
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("fab-card");
-    expect(buttonElement.getAttribute("size")).toEqual("40");
+    expect(buttonElement.getAttribute("size")).toEqual("48");
   });
 
   it("should render without an entity", async () => {

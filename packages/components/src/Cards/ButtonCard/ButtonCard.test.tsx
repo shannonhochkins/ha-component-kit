@@ -17,7 +17,7 @@ describe("<ButtonCard />", () => {
   it("renders ButtonCard", async () => {
     const { getByTestId } = render(
       <ButtonCard
-        entity="light.fake_light"
+        entity="light.fake_light_1"
         service="turnOn"
         data-testid="button-card"
       />,
@@ -31,7 +31,7 @@ describe("<ButtonCard />", () => {
   });
 
   // Tests for all valid combinations of entity and service props
-  const entities = ["light.fake_light", "switch.fake_gaming_switch"] as const;
+  const entities = ["light.fake_light_1", "switch.fake_gaming_switch"] as const;
   const services = ["turnOn", "toggle", "turnOff"] as const;
 
   entities.forEach((entity) => {

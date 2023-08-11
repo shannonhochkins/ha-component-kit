@@ -1,4 +1,4 @@
-import type { HassEntities } from "home-assistant-js-websocket";
+import type { HassEntities, HassEntity } from "home-assistant-js-websocket";
 // Current time
 const now = new Date();
 
@@ -17,59 +17,116 @@ twoHoursAgo.setHours(now.getHours() - 2);
 // formatted time based on now
 const formatted = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
 
+const lightDefaults: HassEntity = {
+  attributes: {
+    friendly_name: 'Dining room light',
+    icon: "mdi:light-recessed",
+    "min_color_temp_kelvin": 2702,
+    "max_color_temp_kelvin": 6535,
+    "min_mireds": 153,
+    "max_mireds": 370,
+    "effect_list": [
+        "Night",
+        "Read",
+        "Meeting",
+        "Leasure",
+        "Soft",
+        "Rainbow",
+        "Shine",
+        "Beautiful",
+        "Music"
+    ],
+    "supported_color_modes": [
+        "color_temp",
+        "hs"
+    ],
+    "color_mode": "hs",
+    "brightness": 255,
+    "hs_color": [
+        9,
+        67.1
+    ],
+    "rgb_color": [
+        255,
+        109,
+        83
+    ],
+    "xy_color": [
+        0.591,
+        0.328
+    ],
+    "raw_state": true,
+    "supported_features": 23
+  },
+  state: 'on',
+  entity_id: 'light.fake_light_1',
+  last_changed: twoHoursAgo.toISOString(),
+  last_updated: twoHoursAgo.toISOString(),
+  context: {
+    id: '',
+    user_id: null,
+    parent_id: null,
+  }
+}
+
+const createLight = (entity_id: string, overrides: Partial<HassEntity> = {}): {
+  [entity_id: string]: HassEntity;
+} => {
+  const attributes = {
+    ...lightDefaults.attributes,
+    ...overrides.attributes,
+  };
+  if (typeof overrides.attributes !== 'undefined') {
+    Object.entries(overrides.attributes).forEach(([key, val]) => {
+      if (typeof val === 'undefined') {
+        delete attributes[key];
+      }
+    });
+  }
+  return {
+    [entity_id]: {
+      ...lightDefaults,
+      ...overrides,
+      attributes,
+      entity_id
+    },
+  };
+};
 
 export const entities: HassEntities = {
-  'light.fake_light': {
+  ...createLight('light.fake_light_1', {
     attributes: {
       friendly_name: 'Dining room light',
-      icon: "mdi:light-recessed",
-      "min_color_temp_kelvin": 2702,
-      "max_color_temp_kelvin": 6535,
-      "min_mireds": 153,
-      "max_mireds": 370,
-      "effect_list": [
-          "Night",
-          "Read",
-          "Meeting",
-          "Leasure",
-          "Soft",
-          "Rainbow",
-          "Shine",
-          "Beautiful",
-          "Music"
-      ],
-      "supported_color_modes": [
-          "color_temp",
-          "hs"
-      ],
-      "color_mode": "hs",
-      "brightness": 255,
-      "hs_color": [
-          9,
-          67.1
-      ],
-      "rgb_color": [
-          255,
-          109,
-          83
-      ],
-      "xy_color": [
-          0.591,
-          0.328
-      ],
-      "raw_state": true,
-      "supported_features": 23
-    },
-    state: 'on',
-    entity_id: 'light.fake_light',
-    last_changed: twoHoursAgo.toISOString(),
-    last_updated: twoHoursAgo.toISOString(),
-    context: {
-      id: '',
-      user_id: null,
-      parent_id: null,
     }
-  },
+  }),
+  ...createLight('light.fake_light_2', {
+    attributes: {
+      friendly_name: 'Office Down light',
+      hs_color: undefined,
+      rgb_color: undefined,
+      color_mode: 'color_temp',
+      color_temp_kelvin: 3000,
+    },
+    last_changed: twoMinutesAgo.toISOString(),
+    last_updated: twoMinutesAgo.toISOString(),
+  }),
+  ...createLight('light.fake_light_3', {
+    attributes: {
+      friendly_name: 'Office striplight light',
+      icon: 'mdi:led-strip-variant',
+      hs_color: [
+        131,
+        100
+      ],
+      rgb_color: [
+        64,
+        255,
+        112
+      ],
+    },
+    last_changed: twoMinutesAgo.toISOString(),
+    last_updated: twoMinutesAgo.toISOString(),
+  }),
   'switch.fake_gaming_switch': {
     attributes: {
       friendly_name: 'Gaming Computer'

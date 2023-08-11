@@ -48,6 +48,7 @@
     "dev": "vite",
     "prebuild": "rm -rf ./dist && npm run prettier",
     "build": "NODE_ENV=production vite build",
+    "watch:build": "NODE_ENV=production vite build --watch",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "postbuild": "tsup src/index.ts --dts-only --dts-resolve --d dist/types && tsc",
@@ -57,13 +58,14 @@
   "peerDependencies": {
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
+    "@hakit/core": ">=1.0.4",
+    "framer-motion": ">=10.x",
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
     "react-router-dom": ">=6.x",
-    "@hakit/core": ">=1.0.4",
-    "framer-motion": ">=10.x",
-    "react-use": ">=17.x"
+    "react-use": ">=17.x",
+    "@egjs/hammerjs": ">=2.x"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.x"

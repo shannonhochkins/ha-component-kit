@@ -40,7 +40,7 @@ function MultiRoomExample() {
         >
           <Row gap="1rem">
             <ButtonCard
-              entity="light.fake_light"
+              entity="light.fake_light_1"
               service="toggle"
               title="Office Light"
               description={"An office Light"}
@@ -63,7 +63,7 @@ function MultiRoomExample() {
         >
           <Row gap="1rem">
             <ButtonCard
-              entity="light.fake_light"
+              entity="light.fake_light_1"
               service="toggle"
               title="Living Room Light"
               description={"An living-room Light"}

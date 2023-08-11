@@ -2,8 +2,14 @@ import styled from "@emotion/styled";
 import { Icon } from "@iconify/react";
 import { Row } from "@components";
 import { motion } from "framer-motion";
-export interface PictureCardProps
-  extends Omit<React.ComponentProps<"button">, "onClick"> {
+import type { MotionProps } from 'framer-motion';
+
+type Extendable = Omit<
+  React.ComponentProps<"button">,
+  "onClick" | "ref"
+> &
+  MotionProps;
+export interface PictureCardProps extends Extendable {
   onClick?: () => void;
   /** an image to provide to the picture card */
   image: string;
@@ -13,7 +19,7 @@ export interface PictureCardProps
   icon?: string;
 }
 
-export const StyledPictureCard = styled.button<Partial<PictureCardProps>>`
+export const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   all: unset;
   padding: 1rem;
   position: relative;
