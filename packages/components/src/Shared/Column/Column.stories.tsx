@@ -25,7 +25,6 @@ export default {
   },
   argTypes: {
     theme: { table: { disable: true } },
-    as: { table: { disable: true } },
     justifyContent: {
       control: "text",
       description: "standard flex css properties for justify-content",
