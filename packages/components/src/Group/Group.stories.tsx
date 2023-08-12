@@ -7,7 +7,7 @@ function Render(args: Story["args"]) {
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
       <Group title="default" {...args}>
-        <ButtonCard service="toggle" entity="light.fake_light" />
+        <ButtonCard service="toggle" entity="light.fake_light_1" />
         <ButtonCard service="toggle" entity="switch.fake_gaming_switch" />
         <ButtonCard service="toggle" entity="media_player.fake_tv" />
       </Group>

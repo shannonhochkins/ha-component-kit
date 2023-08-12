@@ -26,13 +26,16 @@
     "build": "npm run build:core && npm run build:components",
     "build:core": "npm run build --workspace=@hakit/core",
     "build:components": "npm run build --workspace=@hakit/components",
+    "watch:build:components": "npm run watch:build --workspace=@hakit/components",
+    "watch:build:core": "npm run watch:build --workspace=@hakit/core",
     "start": "npm run storybook",
     "dev": "npm run storybook && npm run dev --workspaces --if-present",
     "storybook": "storybook dev -p 6006",
     "build:storybook": "BUILD_STORYBOOK=true storybook build",
     "release": "npm run release --workspaces --if-present",
     "release:core": "npm run release --workspace=@hakit/core",
-    "release:components": "npm run release --workspace=@hakit/components"
+    "release:components": "npm run release --workspace=@hakit/components",
+    "test:dashboard": " cd test-dashboard && npm start"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.22.9",
@@ -84,5 +87,8 @@
     "vite": "^4.3.9",
     "vite-plugin-linter": "^2.0.2",
     "vite-tsconfig-paths": "^4.2.0"
+  },
+  "dependencies": {
+    "@use-gesture/react": "^10.2.27"
   }
 }

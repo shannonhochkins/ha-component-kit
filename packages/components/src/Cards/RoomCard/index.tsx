@@ -7,8 +7,12 @@ import type { PictureCardProps } from "@components";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useKeyPress } from "react-use";
+import type { MotionProps } from "framer-motion";
 
-export interface RoomCardProps extends PictureCardProps {
+type Extendable = PictureCardProps &
+  Omit<React.ComponentProps<"div">, "onClick" | "ref"> &
+  MotionProps;
+export interface RoomCardProps extends Extendable {
   /** the hash of the room, eg "office", "living-room", this will set the hash in the url bar and activate the room */
   hash: string;
   /** The children to render when the room is activated */
@@ -47,7 +51,7 @@ const FullScreen = styled(motion.div)`
   margin: 0;
   max-height: 100svh;
   background: var(--ha-background);
-  z-index: 20;
+  z-index: var(--ha-device-room-card-z-index);
   display: flex;
   justify-content: center;
   align-items: stretch;
@@ -71,6 +75,7 @@ export function RoomCard({
   title,
   image,
   animationDuration = 0.25,
+  ...rest
 }: RoomCardProps) {
   const { addRoute, useRoute } = useHass();
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
@@ -89,7 +94,8 @@ export function RoomCard({
   // starts the trigger to close the full screen card
   const resetAnimation = useCallback(() => {
     setStartAnimation(false);
-  }, []);
+    resetHash();
+  }, [resetHash]);
   // add the current route by hash
   useEffect(() => {
     addRoute({
@@ -112,6 +118,7 @@ export function RoomCard({
       <AnimatePresence>
         {route?.active && (
           <FullScreen
+            key={`layout-${hash}`}
             layoutId={`layout-${hash}`}
             initial={{ opacity: 0 }}
             transition={{
@@ -153,6 +160,7 @@ export function RoomCard({
               </Row>
             </NavBar>
             <AnimatePresence
+              key={`layout-children-${hash}`}
               onExitComplete={() => {
                 resetHash();
               }}
@@ -185,6 +193,8 @@ export function RoomCard({
           style={{
             width: "var(--ha-device-room-card-width)",
           }}
+          whileTap={{ scale: 0.9 }}
+          {...rest}
           image={image}
           onClick={() => {
             setHash(hash);

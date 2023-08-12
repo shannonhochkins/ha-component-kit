@@ -7,8 +7,10 @@ import React, {
   useEffect,
 } from "react";
 import styled from "@emotion/styled";
+import { motion } from "framer-motion";
+import type { HTMLMotionProps } from "framer-motion";
 
-export interface RipplesProps extends React.ComponentProps<"div"> {
+export interface RipplesProps extends HTMLMotionProps<"div"> {
   /** the animation duration of the ripple @default 600 */
   duration?: number;
   /** the color of the ripple, @default rgba(0, 0, 0, .3) */
@@ -108,14 +110,22 @@ export const Ripples = memo(
 
     return (
       <ParentRipple borderRadius={borderRadius}>
-        <div {...rest} style={boxStyle} onClick={onClickHandler}>
+        <motion.div
+          layout
+          {...rest}
+          style={{
+            ...boxStyle,
+            borderRadius,
+          }}
+          onClick={onClickHandler}
+        >
           {children}
           <StyledRipple
             style={{
               ...rippleStyle,
             }}
           />
-        </div>
+        </motion.div>
       </ParentRipple>
     );
   }

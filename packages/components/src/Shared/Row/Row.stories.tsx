@@ -8,7 +8,7 @@ function Template(args?: Partial<RowProps>) {
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
       <Row {...args}>
-        <ButtonCard entity="light.fake_light" />
+        <ButtonCard entity="light.fake_light_1" />
         <ButtonCard entity="switch.fake_gaming_switch" />
         <ButtonCard entity="media_player.fake_tv" />
       </Row>

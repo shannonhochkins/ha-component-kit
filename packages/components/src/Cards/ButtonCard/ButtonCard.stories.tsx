@@ -23,7 +23,7 @@ function Template(
             entity.api.toggle();
           }}
         />
-        <ButtonCard service="toggle" entity="light.fake_light" />
+        <ButtonCard service="toggle" entity="light.fake_light_1" />
         <ButtonCard service="toggle" entity="media_player.fake_tv" />
       </Group>
     </HassConnect>
@@ -60,13 +60,13 @@ function LayoutExampleTemplate() {
       <ThemeProvider />
       <Group title="Examples">
         <ButtonCard
-          layout="slim"
+          defaultLayout="slim"
           title="Slim example"
           entity="switch.fake_gaming_switch"
           service="toggle"
         />
         <ButtonCard
-          layout="default"
+          defaultLayout="default"
           title="Default example"
           entity="switch.fake_gaming_switch"
           service="toggle"
@@ -148,13 +148,13 @@ export default {
   },
 } satisfies Meta<typeof ButtonCard>;
 export type LightStory = StoryObj<
-  typeof ButtonCard<"light.fake_light", "toggle">
+  typeof ButtonCard<"light.fake_light_1", "toggle">
 >;
 export const LightExample: LightStory = {
   render: Render,
   args: {
     service: "toggle",
-    entity: "light.fake_light",
+    entity: "light.fake_light_1",
   },
 };
 export type SwitchStory = StoryObj<

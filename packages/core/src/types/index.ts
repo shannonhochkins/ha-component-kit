@@ -3,6 +3,11 @@ import type {
   HassServiceTarget,
 } from "home-assistant-js-websocket";
 import type { SupportedServices } from "./supported-services";
+import { LIGHT_COLOR_MODES } from "../data/light";
+import { DefinedPropertiesByDomain } from "./entity";
+
+export type LightColorMode =
+  (typeof LIGHT_COLOR_MODES)[keyof typeof LIGHT_COLOR_MODES];
 
 export type HassEntityCustom = HassEntity & {
   custom: {
@@ -14,20 +19,28 @@ export type HassEntityCustom = HassEntity & {
     hexColor: string;
     /** brightness css value of the light ranging from 0-100 */
     brightness: string;
+    /** the brightness value represented as a number between 0-100 */
+    brightnessValue: number;
     /** the rgba color with 35% alpha */
     rgbaColor: string;
     /** the rgb color */
     rgbColor: string;
+    /** rgb values represented as an array */
+    color: [number, number, number];
   };
 };
+type HassEntityHelper<T extends AllDomains> =
+  T extends keyof DefinedPropertiesByDomain
+    ? DefinedPropertiesByDomain[T]
+    : HassEntity;
 
-export interface HassEntityWithApi<T extends AllDomains>
-  extends HassEntityCustom {
-  /** all the services associated with the domain provided, this does not require entity as the first argument */
-  api: T extends keyof SupportedServices
-    ? SupportedServices<"no-target">[SnakeToCamel<T>]
-    : never;
-}
+export type HassEntityWithApi<T extends AllDomains> = HassEntityCustom &
+  HassEntityHelper<T> & {
+    /** all the services associated with the domain provided, this does not require entity as the first argument */
+    api: T extends keyof SupportedServices
+      ? SupportedServices<"no-target">[SnakeToCamel<T>]
+      : never;
+  };
 
 export type ServiceFunctionWithEntity<Data = object> = (
   /** the entity string name from home assistant */
@@ -118,3 +131,5 @@ export type Target = HassServiceTarget | string | string[];
 export type ServiceFunctionTypes = "target" | "no-target";
 /** all the supported services */
 export type * from "./supported-services";
+export type * from "./entity";
+export type * from "./entity/light";

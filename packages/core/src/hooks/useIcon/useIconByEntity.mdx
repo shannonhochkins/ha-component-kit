@@ -13,7 +13,7 @@ To find an available icon name, simply search for an icon on [iconify](https://i
 ```ts
 import { useIconByEntity } from '@hakit/core';
 function IconExample() {
-  const icon = useIconByEntity('light.fake_light');
+  const icon = useIconByEntity('light.fake_light_1');
   return <div>{icon}</div>
 }
 ```
@@ -25,7 +25,7 @@ This example will change the color to red and the size to 40px.
 ```ts
 import { useIconByEntity } from '@hakit/core';
 function IconExample() {
-  const icon = useIconByEntity('light.fake_light', {
+  const icon = useIconByEntity('light.fake_light_1', {
     color: 'red',
     style: {
       fontSize: 40

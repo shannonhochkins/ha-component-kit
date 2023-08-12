@@ -7,31 +7,34 @@ import { TimeCard, WeatherCard, Row, Column } from "@components";
 import { motion, AnimatePresence } from "framer-motion";
 import type { WeatherCardProps, TimeCardProps } from "@components";
 
-const StyledTimeCard = styled(TimeCard)`
+const StyledTimeCard = styled(TimeCard)<{
+  open: boolean;
+}>`
   padding: 0;
   background: transparent;
   width: 100%;
   box-shadow: none;
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: padding;
   &:hover {
     box-shadow: none;
     background: transparent;
   }
-`;
-
-const SmallTimeCard = styled(StyledTimeCard)`
-  padding: 0.5rem 0;
   h4 {
-    font-size: 0.7rem;
+    transition: var(--ha-transition-duration) var(--ha-easing);
+    transition-property: font-size;
   }
+  ${(props) =>
+    !props.open &&
+    `
+    padding: 0.5rem 0;
+    h4 {
+      font-size: 0.7rem;
+    }
+  `}
 `;
 
-const StyledSidebarCard = styled(motion.div)<{
-  open: boolean;
-}>`
-  min-width: ${(props) =>
-    props.open
-      ? `var(--ha-device-sidebar-card-width-expanded)`
-      : `var(--ha-device-sidebar-card-width-collapsed)`};
+const StyledSidebarCard = styled(motion.div)`
   background-color: var(--ha-background-dark);
   display: flex;
   flex-direction: column;
@@ -40,6 +43,7 @@ const StyledSidebarCard = styled(motion.div)<{
   justify-content: flex-start;
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: min-width;
+  transform-origin: left center;
   gap: 1rem;
   > * {
     transition: var(--ha-transition-duration) var(--ha-easing);
@@ -47,7 +51,9 @@ const StyledSidebarCard = styled(motion.div)<{
   }
 `;
 
-const Menu = styled.ul`
+const Menu = styled(motion.ul)<{
+  open: boolean;
+}>`
   padding: 0;
   margin: 1rem 0 0 0;
   width: 100%;
@@ -119,19 +125,20 @@ const Menu = styled.ul`
       }
     }
   }
-`;
-
-const MenuCollapsed = styled(Menu)`
-  margin: 0;
-  li {
-    a {
-      padding: 0;
-      justify-content: center;
-      svg {
-        margin: 0;
+  ${(props) =>
+    !props.open &&
+    `
+    margin: 0;
+    li {
+      a {
+        padding: 0;
+        justify-content: center;
+        svg {
+          margin: 0;
+        }
       }
     }
-  }
+  `}
 `;
 
 const Divider = styled.hr`
@@ -143,7 +150,6 @@ const Divider = styled.hr`
 
 const HamburgerMenu = styled(Menu)`
   margin: 0;
-  width: auto;
   li {
     a {
       justify-content: center;
@@ -172,15 +178,21 @@ const StyledWeatherCard = styled(WeatherCard)`
   }
 `;
 
-const SmallWeatherCard = styled(StyledWeatherCard)`
+const WeatherCardCustom = styled(StyledWeatherCard)<{
+  open: boolean;
+}>`
   padding-bottom: 1rem;
   border-radius: 0;
-  div > * {
-    display: none;
-  }
-  div > svg {
-    display: flex;
-  }
+  ${(props) =>
+    !props.open &&
+    `
+    div > * {
+      display: none;
+    }
+    div > svg {
+      display: flex;
+    }
+  `}
 `;
 export interface MenuItem {
   /** The title of the menu item */
@@ -196,7 +208,8 @@ export interface MenuItem {
   /** onClick action to fire when the menu item is clicked  */
   onClick: (event: React.MouseEvent<HTMLLIElement>) => void;
 }
-/** This component is a nice way of organising components / groups into an easy to navigate sidebar, the "Room Cards" will automatically insert into the sidebar items if they're present on the page, eg if you have 6 RoomCards, all 6 items will be added to the sidebar automatically, you can also add your own menu items to the start of the list, this all needs a bit more thought but for now it is pretty useful! The TimeCard and WeatherCard are integrate and themed slightly different in the sidebar, if the sidebar is present, the RoomCard will only expand to the available space and not cover the sidebar */
+
+/** This component is a nice way of organizing components / groups into an easy to navigate sidebar, the "Room Cards" will automatically insert into the sidebar items if they're present on the page, eg if you have 6 RoomCards, all 6 items will be added to the sidebar automatically, you can also add your own menu items to the start of the list, this all needs a bit more thought but for now it is pretty useful! The TimeCard and WeatherCard are integrate and themed slightly different in the sidebar, if the sidebar is present, the RoomCard will only expand to the available space and not cover the sidebar */
 export interface SidebarCardProps {
   includeTimeCard?: boolean;
   startOpen?: boolean;
@@ -251,151 +264,128 @@ export function SidebarCard({
           }
         `}
       />
-      <AnimatePresence>
-        {open && (
-          <StyledSidebarCard open={true} layoutId="ha-sidebar">
-            <Column
+      <StyledSidebarCard
+        animate={{
+          minWidth: open
+            ? `var(--ha-device-sidebar-card-width-expanded)`
+            : `var(--ha-device-sidebar-card-width-collapsed)`,
+          maxWidth: open
+            ? `var(--ha-device-sidebar-card-width-expanded)`
+            : `var(--ha-device-sidebar-card-width-collapsed)`,
+        }}
+        key={`ha-sidebar-closed`}
+      >
+        <Column
+          wrap="nowrap"
+          fullHeight
+          fullWidth
+          alignItems="flex-start"
+          justifyContent="space-between"
+        >
+          <Filler>
+            <Row
               wrap="nowrap"
-              fullHeight
-              alignItems="flex-start"
-              justifyContent="space-between"
               style={{
-                padding: "0 1rem 1rem",
+                flexDirection: open ? "row" : "column",
               }}
             >
-              <Filler>
-                <Row wrap="nowrap">
-                  {includeTimeCard && (
-                    <StyledTimeCard
-                      layoutId="ha-sidebar-time"
-                      {...timeCardProps}
-                    />
-                  )}
-                  <HamburgerMenu>
+              {includeTimeCard && (
+                <StyledTimeCard
+                  key="sidebar-large-time-card"
+                  open={open}
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: 1,
+                    marginBottom: open ? 10 : 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0,
+                  }}
+                  {...timeCardProps}
+                />
+              )}
+              <HamburgerMenu
+                open={open}
+                key="hamburger-menu-open"
+                animate={{
+                  width: !open ? "100%" : "40%",
+                }}
+              >
+                <motion.li
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setOpen(!open);
+                  }}
+                >
+                  <a
+                    style={{
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Icon icon={open ? "mdi:close" : "mdi:menu"} />
+                  </a>
+                </motion.li>
+              </HamburgerMenu>
+            </Row>
+            <Divider />
+            <Menu open={open}>
+              <AnimatePresence>
+                {concatenatedMenuItems.map((item, index) => {
+                  return (
                     <motion.li
-                      layoutId="ha-sidebar-menu"
                       onClick={(event) => {
                         event.stopPropagation();
-                        setOpen(!open);
+                        item.onClick(event);
                       }}
+                      key={index}
+                      className={item.active ? "active" : "inactive"}
                     >
-                      <a
-                        style={{
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Icon icon="mdi:close" />
-                      </a>
-                    </motion.li>
-                  </HamburgerMenu>
-                </Row>
-                <Divider />
-                <Menu>
-                  {concatenatedMenuItems.map((item, index) => {
-                    return (
-                      <li
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          item.onClick(event);
-                        }}
-                        className={item.active ? "active" : "inactive"}
-                        key={index}
-                      >
-                        <a>
-                          {typeof item.icon === "string" ? (
-                            <Icon icon={item.icon} />
-                          ) : (
-                            item.icon
-                          )}
+                      <a>
+                        {typeof item.icon === "string" ? (
+                          <Icon icon={item.icon} />
+                        ) : (
+                          item.icon
+                        )}
+                        {open && (
                           <div className="menu-inner">
                             {item.title}
                             {item.description && (
                               <span>{item.description}</span>
                             )}
                           </div>
-                        </a>
-                      </li>
-                    );
-                  })}
-                </Menu>
-                {children && (
-                  <Column wrap="nowrap" gap="0.5rem">
-                    {children}
-                  </Column>
-                )}
-              </Filler>
-              {weatherCardProps && (
-                <StyledWeatherCard
-                  layoutId="ha-sidebar-weather"
+                        )}
+                      </a>
+                    </motion.li>
+                  );
+                })}
+              </AnimatePresence>
+            </Menu>
+            {children && open && <Filler>{children}</Filler>}
+          </Filler>
+          <AnimatePresence mode="wait">
+            {weatherCardProps && (
+              <motion.div
+                key="sidebar-weather-large"
+                animate={{
+                  width: open ? "calc(100% - 2rem)" : "calc(100% - 0rem)",
+                  padding: open ? "0 1rem 1rem" : "0",
+                }}
+              >
+                <WeatherCardCustom
+                  open={open}
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: 1,
+                  }}
+                  exit={{ opacity: 0 }}
                   {...weatherCardProps}
                 />
-              )}
-            </Column>
-          </StyledSidebarCard>
-        )}
-        {!open && (
-          <StyledSidebarCard open={false} layoutId="ha-sidebar">
-            <Column
-              wrap="nowrap"
-              fullHeight
-              fullWidth
-              alignItems="flex-start"
-              justifyContent="space-between"
-              style={{
-                padding: 0,
-              }}
-            >
-              <Filler>
-                {includeTimeCard && (
-                  <SmallTimeCard
-                    layoutId="ha-sidebar-time"
-                    {...timeCardProps}
-                  />
-                )}
-                <MenuCollapsed>
-                  <motion.li
-                    layoutId="ha-sidebar-menu"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setOpen(!open);
-                    }}
-                  >
-                    <a>
-                      <Icon icon="mdi:menu" />
-                    </a>
-                  </motion.li>
-                  {concatenatedMenuItems.map((item, index) => {
-                    return (
-                      <li
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          item.onClick(event);
-                        }}
-                        key={index}
-                        className={item.active ? "active" : "inactive"}
-                      >
-                        <a>
-                          {typeof item.icon === "string" ? (
-                            <Icon icon={item.icon} />
-                          ) : (
-                            item.icon
-                          )}
-                        </a>
-                      </li>
-                    );
-                  })}
-                </MenuCollapsed>
-              </Filler>
-              {weatherCardProps && (
-                <SmallWeatherCard
-                  layoutId="ha-sidebar-weather"
-                  {...weatherCardProps}
-                />
-              )}
-            </Column>
-          </StyledSidebarCard>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </Column>
+      </StyledSidebarCard>
     </>
   );
 }

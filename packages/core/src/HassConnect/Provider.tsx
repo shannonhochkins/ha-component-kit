@@ -224,9 +224,9 @@ export function HassProvider({
     }
   }, [hassUrl]);
 
-  useEffect(() => {
-    if (connection === null) return;
-  }, [connection, setEntitiesDebounce]);
+  // useEffect(() => {
+  //   if (connection === null) return;
+  // }, [connection, setEntitiesDebounce]);
 
   const translateErr = (err: number | string | Error | unknown) =>
     err === ERR_CANNOT_CONNECT

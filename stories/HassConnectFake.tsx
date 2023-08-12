@@ -16,9 +16,9 @@ import type {
   SnakeOrCamelDomains,
   Target,
   Route,
-  HassContextProps
+  HassContextProps,
 } from "@hakit/core";
-import { HassContext, useHash } from '@hakit/core';
+import { HassContext, useHash, hs2rgb } from '@hakit/core';
 import { entities as ENTITIES } from '@mocks/mockEntities';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
@@ -96,41 +96,95 @@ function HassProvider({
             attributes: {
               ...entities[target].attributes,
               ...serviceData || {},
-              // @ts-expect-error - purposely casting here so i don't have to setup manual types for fake data
+              // @ts-ignore - purposely casting here so i don't have to setup manual types for fake data
               hvac_action: serviceData?.hvac_mode || hvac
             },
             ...dates,
-            // @ts-expect-error - purposely casting here so i don't have to setup manual types for fake data
+            // @ts-ignore - purposely casting here so i don't have to setup manual types for fake data
             state: serviceData?.hvac_mode || hvac
           }
         }));
       }
       switch(service) {
         case 'turn_on':
-          return setEntities(entities => ({
-            ...entities,
-            [target]: {
-              ...entities[target],
-              ...dates,
-              state: 'on'
+        case 'turnOn':
+          return setEntities(entities => {
+            const attributes = {
+              ...entities[target].attributes,
+              ...serviceData || {},
             }
-          }));
+            if (domain === 'light') {
+              // @ts-ignore
+              const isSettingTemperature = typeof serviceData?.kelvin === 'number';
+              // @ts-ignore
+              const isSettingColor = typeof serviceData?.hs_color === 'object';
+              if (isSettingTemperature) {
+                // @ts-ignore
+                delete attributes.hs_color;
+                // @ts-ignore
+                attributes.color_mode = 'color_temp';
+                // @ts-ignore
+                attributes.color_temp_kelvin = serviceData?.kelvin;
+              }
+              if (isSettingColor) {
+                // @ts-ignore
+                attributes.color_mode = 'hs';
+                // @ts-ignore
+                attributes.rgb_color = hs2rgb([serviceData?.hs_color[0], serviceData?.hs_color[1] / 100]);
+              }
+              // @ts-ignore
+              const isSettingBrightness = serviceData?.brightness_pct !== undefined;
+              if (isSettingBrightness) {
+                // @ts-ignore
+                attributes.brightness = Math.round(serviceData.brightness_pct / 100 * 255);
+              }
+            }
+            return {
+              ...entities,
+              [target]: {
+                ...entities[target],
+                attributes: {
+                  ...attributes,
+                },
+                ...dates,
+                state: 'on'
+              }
+            };
+          });
         case 'turn_off':
+        case 'turnOff':
           return setEntities(entities => ({
             ...entities,
             [target]: {
               ...entities[target],
+              attributes: {
+                ...entities[target].attributes,
+                ...serviceData || {},
+              },
               ...dates,
-              state: 'on'
+              state: 'off'
             }
           }))
         case 'toggle':
-          setEntities(entities => ({
+          return setEntities(entities => ({
+            ...entities,
+            [target]: {
+              ...entities[target],
+              attributes: {
+                ...entities[target].attributes,
+                ...serviceData || {},
+                brightness: entities[target].state === 'on' ? entities[target].attributes.brightness : 0,
+              },
+              ...dates,
+              state: entities[target].state === 'on' ? 'off' : 'on'
+            }
+          }));
+        default:
+          return setEntities(entities => ({
             ...entities,
             [target]: {
               ...entities[target],
               ...dates,
-              state: entities[target].state === 'on' ? 'off' : 'on'
             }
           }));
       }

@@ -36,7 +36,7 @@ export const FabCardExample: FabCardStory = {
   render: Template,
   args: {
     title: "Office",
-    entity: "light.fake_light",
+    entity: "light.fake_light_1",
     icon: "mdi:office-chair",
     // @ts-expect-error - TODO will fix later
     service: "toggle",

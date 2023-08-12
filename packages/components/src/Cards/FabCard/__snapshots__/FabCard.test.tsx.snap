@@ -25,16 +25,10 @@ exports[`<FabCard /> renders FabCard 1`] = `
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
   transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-color,box-shadow,transform;
-  height: 40px;
-  width: 40px;
-}
-
-.emotion-0:active {
-  -webkit-transform: translateY(4px) scale(0.98);
-  -moz-transform: translateY(4px) scale(0.98);
-  -ms-transform: translateY(4px) scale(0.98);
-  transform: translateY(4px) scale(0.98);
+  transition-property: background-color,box-shadow;
+  font-size: 0.7rem;
+  height: 48px;
+  width: 48px;
 }
 
 .emotion-0:hover {
@@ -44,7 +38,9 @@ exports[`<FabCard /> renders FabCard 1`] = `
 <button
   class="emotion-0"
   data-testid="fab-card"
-  size="40"
+  size="48"
+  style="opacity: 1;"
+  tabindex="0"
 >
   <span />
 </button>

@@ -34,6 +34,7 @@ const config: JestConfigWithTsJest = {
       // need to overwrite this for tests to ensure it's using the source code
       "@hakit/core": ["packages/core/src"],
     }, { prefix: '<rootDir>../../../' }),
+    '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>../fileMock.ts'
   },
 };
 export default config;

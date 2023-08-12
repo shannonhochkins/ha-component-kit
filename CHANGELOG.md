@@ -1,3 +1,38 @@
+# v.1.0.10
+#### @hakit/components
+##### released - 03/08/2023
+- NEW - ButtonCard/FabCard with a light as the entity now has the ability to "long press" on the ButtonCard/FabCard to bring up options similar to the light entity in home assistant, there is absolutely no setup, if you already have a light attached to a ButtonCard/FabCard it will launch the popup when you long press on the ButtonCard/FabCard. You can control brightness, color and temperature if the light supports it.
+- NEW - ColorPicker - added individual component for a color picker which can be used by any light entity if supported.
+- NEW - TemperaturePicker - added individual component for a temperature picker which can be used by any light entity if supported.
+- NEW - ControlSlider - A more generic slider component to return a value between a minimum/maximum value, useful for curtains, blinds etc, this control slider can be used horizontally or vertically.
+- NEW - Modal - an easy way to create a custom popup, please note this isn't perfect and will be improved over time, but it's a good start.
+- All cards are now motion elements from framer-motion to add some nice animations
+- Few bug fixes with styles/animations
+
+# v.1.0.7
+#### @hakit/core
+##### released - 03/08/2023
+- NEW - light services now have typed values of expected service data
+- NEW - useLightBrightness, useLightColor, useLightTemperature hooks added, i haven't documented these and probably wont as they're used internally for the light options modal.
+- NEW - many new helper functions exposed relating to colors:
+  - temperature2rgb
+  - rgbww2rgb
+  - rgbw2rgb
+  - hex2rgb
+  - rgb2hex
+  - rgb2lab
+  - lab2rgb
+  - lab2hex
+  - rgb2hsv
+  - hsv2rgb
+  - rgb2hs
+  - hs2rgb
+  - lightSupportsColorMode
+  - lightIsInColorMode
+  - lightSupportsColor
+  - lightSupportsBrightness
+  - getLightCurrentModeRgbColor
+  - LIGHT_COLOR_MODES
 # v.1.0.9
 #### @hakit/components
 ##### released - 03/08/2023

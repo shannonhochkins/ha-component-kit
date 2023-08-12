@@ -1,5 +1,7 @@
-import { useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
 import styled from "@emotion/styled";
+import { motion } from "framer-motion";
+import type { MotionProps } from "framer-motion";
 import {
   useEntity,
   useIconByDomain,
@@ -14,9 +16,11 @@ import type {
   HassEntityWithApi,
   AllDomains,
 } from "@hakit/core";
-import { Ripples } from "@components";
+import { Ripples, ModalByEntityDomain } from "@components";
+import { useLongPress } from "react-use";
+import { startCase, lowerCase } from "lodash";
 
-const StyledFabCard = styled.button<{
+const StyledFabCard = styled(motion.button)<{
   size: number;
   active: boolean;
 }>`
@@ -33,15 +37,14 @@ const StyledFabCard = styled.button<{
   justify-content: center;
   align-items: center;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  translateZ(0px) scale(1);
   transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-color, box-shadow, transform;
+  transition-property: background-color, box-shadow;
   &:active {
-    transform: translateY(4px) scale(0.98);
   }
   &:hover {
     background-color: var(--ha-secondary-background-hover);
   }
+  font-size: 0.7rem;
   ${(props) =>
     props.size &&
     `
@@ -50,16 +53,21 @@ const StyledFabCard = styled.button<{
   `}
 `;
 
+type Extendable = Omit<React.ComponentProps<"button">, "onClick" | "ref"> &
+  MotionProps;
+
 export interface FabCardProps<
   E extends `${AllDomains}.${string}`,
   S extends DomainService<ExtractDomain<E>>
-> extends Omit<React.ComponentPropsWithoutRef<"button">, "onClick"> {
+> extends Extendable {
   /** The size of the Fab, this applies to the width and height @default 40 */
   size?: number;
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
   icon?: string | null;
   /** the css color value of the icon */
   iconColor?: string | null;
+  /** will not show any icons */
+  noIcon?: boolean;
   /** The service name, eg "toggle, turnOn ..." */
   service?: S;
   /** The data to pass to the service */
@@ -70,6 +78,8 @@ export interface FabCardProps<
   onClick?: (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
   /** optional override to set the Fab to an active state @defaults to entity value */
   active?: boolean;
+  /** the children of the fabCard, useful or small text */
+  children?: React.ReactNode;
 }
 
 /** The Fab (Floating Action Button) Card is a simple button with an icon to trigger something on press */
@@ -79,14 +89,17 @@ export function FabCard<
 >({
   icon: _icon,
   iconColor,
-  size = 40,
+  noIcon,
+  size = 48,
   entity: _entity,
   serviceData,
   service,
   onClick,
   active: _active,
+  children,
   ...rest
 }: FabCardProps<E, S>): JSX.Element {
+  const [openModal, setOpenModal] = useState(false);
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
   });
@@ -104,6 +117,11 @@ export function FabCard<
     fontSize: size / 2,
     color: iconColor || "currentcolor",
   });
+  const longPressEvent = useLongPress((e) => {
+    // ignore on right click
+    if ("button" in e && e.button === 2) return;
+    setOpenModal(true);
+  });
   const active =
     typeof _active === "boolean"
       ? _active
@@ -120,16 +138,38 @@ export function FabCard<
     if (typeof onClick === "function")
       onClick(entity as HassEntityWithApi<ExtractDomain<E>>);
   }, [service, entity, serviceData, onClick]);
+  const title = useMemo(
+    () => (domain === null ? null : startCase(lowerCase(domain))),
+    [domain]
+  );
   return (
-    <Ripples borderRadius="50%">
-      <StyledFabCard
-        active={active}
-        size={size}
-        {...rest}
-        onClick={useApiHandler}
-      >
-        {iconElement || entityIcon || domainIcon}
-      </StyledFabCard>
-    </Ripples>
+    <>
+      <Ripples borderRadius="50%" whileTap={{ scale: 0.9 }}>
+        <StyledFabCard
+          active={active}
+          layoutId={
+            typeof _entity === "string" ? `${_entity}-fab-card` : undefined
+          }
+          size={size}
+          {...longPressEvent}
+          {...rest}
+          onClick={useApiHandler}
+        >
+          {noIcon !== true && (iconElement || entityIcon || domainIcon)}
+          {typeof children !== "undefined" ? children : undefined}
+        </StyledFabCard>
+      </Ripples>
+      {typeof _entity === "string" && (
+        <ModalByEntityDomain
+          entity={_entity}
+          title={title || "Unknown title"}
+          onClose={() => {
+            setOpenModal(false);
+          }}
+          open={openModal}
+          id={`${_entity}-fab-card`}
+        />
+      )}
+    </>
   );
 }

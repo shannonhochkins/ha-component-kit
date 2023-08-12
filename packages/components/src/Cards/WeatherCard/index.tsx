@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useEntity, useHass } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { capitalize } from "lodash";
 import { Row, Column } from "@components";
 import { motion } from "framer-motion";
-import type { HTMLMotionProps } from "framer-motion";
+import type { MotionProps } from "framer-motion";
 
 function weatherIconName(name: string) {
   switch (name) {
@@ -140,7 +140,8 @@ interface WeatherForecast {
   humidity: number;
 }
 
-export interface WeatherCardProps extends HTMLMotionProps<"div"> {
+type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
+export interface WeatherCardProps extends Extendable {
   /** The name of your entity */
   entity: `weather.${string}`;
   /** Override the default title pulled from the entity */

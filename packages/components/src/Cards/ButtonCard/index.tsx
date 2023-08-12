@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { lowerCase, startCase } from "lodash";
 import type {
@@ -14,10 +14,13 @@ import {
   useIcon,
   useIconByEntity,
 } from "@hakit/core";
-import { Ripples } from "@components";
+import { Ripples, ModalByEntityDomain } from "@components";
 import { computeDomain } from "@utils/computeDomain";
+import type { MotionProps } from "framer-motion";
+import { motion } from "framer-motion";
+import { useLongPress } from "react-use";
 
-export const StyledButtonCard = styled.button`
+export const StyledButtonCard = styled(motion.button)`
   all: unset;
   padding: 1rem;
   position: relative;
@@ -32,10 +35,9 @@ export const StyledButtonCard = styled.button`
   background-color: var(--ha-primary-background);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-color, box-shadow, transform;
+  transition-property: background-color, box-shadow;
 
   &:active {
-    transform: translateY(5px) scale(0.98);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
   &:hover {
@@ -139,10 +141,15 @@ const Description = styled.div`
   color: var(--ha-primary-color);
   font-size: 0.8rem;
 `;
+type Extendable = Omit<
+  React.ComponentProps<"button">,
+  "title" | "onClick" | "ref"
+> &
+  MotionProps;
 export interface ButtonCardProps<
   E extends `${AllDomains}.${string}`,
   S extends DomainService<ExtractDomain<E>>
-> extends Omit<React.ComponentProps<"button">, "title" | "onClick"> {
+> extends Extendable {
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
   icon?: string | null;
   /** the css color value of the icon */
@@ -162,7 +169,7 @@ export interface ButtonCardProps<
   /** Optional active param, By default this is updated via home assistant */
   active?: boolean;
   /** the layout of the button card, this changes slightly, just preferences really @default default */
-  layout?: "default" | "slim";
+  defaultLayout?: "default" | "slim";
 }
 /** The ButtonCard component is an easy way to represent the state and control of an entity with a simple button, eventually I'll provide further options per domain, like being able to set the colours for lights etc... */
 export function ButtonCard<
@@ -178,9 +185,10 @@ export function ButtonCard<
   onClick,
   description: _description,
   title: _title,
-  layout,
+  defaultLayout,
   ...rest
 }: ButtonCardProps<E, S>): JSX.Element {
+  const [openModal, setOpenModal] = useState(false);
   const domain = _entity ? computeDomain(_entity) : null;
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
@@ -192,11 +200,18 @@ export function ButtonCard<
   const entityIcon = useIconByEntity(_entity || "unknown", {
     color: iconColor || undefined,
   });
-  const isDefaultLayout = layout === "default" || layout === undefined;
+  const isDefaultLayout =
+    defaultLayout === "default" || defaultLayout === undefined;
   const on = entity ? entity.state !== "off" : active || false;
   const iconElement = useIcon(icon, {
     color: iconColor || undefined,
   });
+  const longPressEvent = useLongPress((e) => {
+    // ignore on right click
+    if ("button" in e && e.button === 2) return;
+    setOpenModal(true);
+  });
+
   const useApiHandler = useCallback(() => {
     // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
     if (typeof service === "string" && entity) {
@@ -222,62 +237,84 @@ export function ButtonCard<
     [_title, domain]
   );
   return (
-    <Ripples borderRadius="1rem">
-      <StyledButtonCard {...rest} onClick={useApiHandler}>
-        <LayoutBetween>
-          <Fab
-            brightness={(on && entity?.custom.brightness) || "brightness(100%)"}
-            rgbaColor={
-              entity
-                ? on
-                  ? entity.custom.rgbaColor
-                  : "rgba(255,255,255,0.15)"
-                : on
-                ? "var(--ha-primary-active)"
-                : "var(--ha-primary-inactive)"
-            }
-            rgbColor={
-              entity
-                ? on
-                  ? entity.custom.rgbColor
-                  : "white"
-                : on
-                ? "var(--ha-secondary-active)"
-                : "var(--ha-secondary-inactive)"
-            }
-          >
-            {iconElement || entityIcon || domainIcon}
-          </Fab>
-          {isDefaultLayout && (
-            <Toggle active={on}>
-              <ToggleState active={on} />
-            </Toggle>
-          )}
-          {!isDefaultLayout && <Description>{description}</Description>}
-        </LayoutBetween>
-        <LayoutRow>
-          {!isDefaultLayout && (
-            <Title>
-              {title}{" "}
-              {typeof active === "boolean"
-                ? active
-                  ? "- on"
-                  : "- off"
-                : entity
-                ? `- ${entity.state}`
-                : ""}
-              {entity ? ` - ${entity.custom.relativeTime}` : ""}
-            </Title>
-          )}
-          {isDefaultLayout && (
-            <Title>
-              {title && <Title>{title}</Title>}
-              {description && <Description>{description}</Description>}
-              {entity && <Title>Updated: {entity.custom.relativeTime}</Title>}
-            </Title>
-          )}
-        </LayoutRow>
-      </StyledButtonCard>
-    </Ripples>
+    <>
+      <Ripples borderRadius="1rem" whileTap={{ scale: 0.9 }}>
+        <StyledButtonCard
+          {...longPressEvent}
+          layoutId={
+            typeof _entity === "string" ? `${_entity}-button-card` : undefined
+          }
+          {...rest}
+          onClick={useApiHandler}
+        >
+          <LayoutBetween>
+            <Fab
+              brightness={
+                (on && entity?.custom.brightness) || "brightness(100%)"
+              }
+              rgbaColor={
+                entity
+                  ? on
+                    ? entity.custom.rgbaColor
+                    : "rgba(255,255,255,0.15)"
+                  : on
+                  ? "var(--ha-primary-active)"
+                  : "var(--ha-primary-inactive)"
+              }
+              rgbColor={
+                entity
+                  ? on
+                    ? entity.custom.rgbColor
+                    : "white"
+                  : on
+                  ? "var(--ha-secondary-active)"
+                  : "var(--ha-secondary-inactive)"
+              }
+            >
+              {iconElement || entityIcon || domainIcon}
+            </Fab>
+            {isDefaultLayout && (
+              <Toggle active={on}>
+                <ToggleState active={on} />
+              </Toggle>
+            )}
+            {!isDefaultLayout && <Description>{description}</Description>}
+          </LayoutBetween>
+          <LayoutRow>
+            {!isDefaultLayout && (
+              <Title>
+                {title}{" "}
+                {typeof active === "boolean"
+                  ? active
+                    ? "- on"
+                    : "- off"
+                  : entity
+                  ? `- ${entity.state}`
+                  : ""}
+                {entity ? ` - ${entity.custom.relativeTime}` : ""}
+              </Title>
+            )}
+            {isDefaultLayout && (
+              <Title>
+                {title && <Title>{title}</Title>}
+                {description && <Description>{description}</Description>}
+                {entity && <Title>Updated: {entity.custom.relativeTime}</Title>}
+              </Title>
+            )}
+          </LayoutRow>
+        </StyledButtonCard>
+      </Ripples>
+      {typeof _entity === "string" && (
+        <ModalByEntityDomain
+          entity={_entity}
+          title={title || "Unknown title"}
+          onClose={() => {
+            setOpenModal(false);
+          }}
+          open={openModal}
+          id={`${_entity}-button-card`}
+        />
+      )}
+    </>
   );
 }

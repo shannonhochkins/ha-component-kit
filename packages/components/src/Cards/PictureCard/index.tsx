@@ -2,8 +2,11 @@ import styled from "@emotion/styled";
 import { Icon } from "@iconify/react";
 import { Row } from "@components";
 import { motion } from "framer-motion";
-export interface PictureCardProps
-  extends Omit<React.ComponentProps<"button">, "onClick"> {
+import type { MotionProps } from "framer-motion";
+
+type Extendable = Omit<React.ComponentProps<"button">, "onClick" | "ref"> &
+  MotionProps;
+export interface PictureCardProps extends Extendable {
   onClick?: () => void;
   /** an image to provide to the picture card */
   image: string;
@@ -13,7 +16,9 @@ export interface PictureCardProps
   icon?: string;
 }
 
-export const StyledPictureCard = styled.button<Partial<PictureCardProps>>`
+export const StyledPictureCard = styled(motion.button)<
+  Partial<PictureCardProps>
+>`
   all: unset;
   padding: 1rem;
   position: relative;
@@ -29,7 +34,7 @@ export const StyledPictureCard = styled.button<Partial<PictureCardProps>>`
   background-color: var(--ha-primary-background);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-color, box-shadow, transform, background-image;
+  transition-property: background-color, box-shadow, background-image;
   will-change: width, height;
 
   ${(props) =>
@@ -40,10 +45,6 @@ export const StyledPictureCard = styled.button<Partial<PictureCardProps>>`
     background-position: center;
     background-repeat: no-repeat;
   `}
-
-  &:active {
-    transform: translateY(5px) scale(0.98);
-  }
 
   &:hover {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
@@ -72,6 +73,7 @@ export function PictureCard({
   return (
     <StyledPictureCard
       {...rest}
+      whileTap={{ scale: 0.9 }}
       image={image}
       onClick={() => {
         if (typeof onClick === "function") onClick();

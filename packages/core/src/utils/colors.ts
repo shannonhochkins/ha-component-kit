@@ -45,11 +45,13 @@ export function getCssColorValue(entity: HassEntity) {
   const rgbaColor = color
     ? `rgba(${[...color, 0.35].join(", ")})`
     : "var(--ha-primary-active)";
-  const brightness = stateColorBrightness(entity);
+  const { css, raw } = stateColorBrightness(entity);
   return {
+    color: color || [33, 33, 33],
     hexColor,
     rgbColor,
     rgbaColor,
-    brightness,
+    brightness: css,
+    brightnessValue: raw,
   };
 }

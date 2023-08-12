@@ -8,6 +8,10 @@ If you like anything here, be sure to 🌟 [my repo!](https://github.com/shannon
 
 ### Get Started
 
+```
+  npm i @hakit/core @hakit/components -D
+```
+
 There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
 
 ### Local Development / Contribution

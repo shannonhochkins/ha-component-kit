@@ -16,7 +16,6 @@ export default defineConfig(configEnv => {
         fileName: (format) => `hakit-components.${format}.js`,
       },
       rollupOptions: {
-        
         external:[
           ...Object.keys(packageJson.peerDependencies),
           'react/jsx-runtime',
@@ -38,6 +37,7 @@ export default defineConfig(configEnv => {
             'react-router-dom': "react-router-dom",
             'framer-motion': 'framer-motion',
             'react-use': 'react-use',
+            '@egjs/hammerjs': '@egjs/hammerjs',
           }
         }
       },
