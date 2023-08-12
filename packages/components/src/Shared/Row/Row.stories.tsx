@@ -25,7 +25,6 @@ export default {
   },
   argTypes: {
     theme: { table: { disable: true } },
-    as: { table: { disable: true } },
     justifyContent: { control: "text" },
     alignItems: { control: "text" },
     gap: { control: "text" },
