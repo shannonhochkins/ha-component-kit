@@ -16,7 +16,7 @@ import type {
   HassEntityWithApi,
   AllDomains,
 } from "@hakit/core";
-import { Ripples, ModalLightControls } from "@components";
+import { Ripples, ModalByEntityDomain } from "@components";
 import { useLongPress } from "react-use";
 import { startCase, lowerCase } from "lodash";
 
@@ -40,7 +40,6 @@ const StyledFabCard = styled(motion.button)<{
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow;
   &:active {
-    
   }
   &:hover {
     background-color: var(--ha-secondary-background-hover);
@@ -54,10 +53,7 @@ const StyledFabCard = styled(motion.button)<{
   `}
 `;
 
-type Extendable = Omit<
-  React.ComponentProps<"button">,
-  "onClick" | "ref"
-> &
+type Extendable = Omit<React.ComponentProps<"button">, "onClick" | "ref"> &
   MotionProps;
 
 export interface FabCardProps<
@@ -121,7 +117,9 @@ export function FabCard<
     fontSize: size / 2,
     color: iconColor || "currentcolor",
   });
-  const longPressEvent = useLongPress(() => {
+  const longPressEvent = useLongPress((e) => {
+    // ignore on right click
+    if ("button" in e && e.button === 2) return;
     setOpenModal(true);
   });
   const active =
@@ -141,16 +139,17 @@ export function FabCard<
       onClick(entity as HassEntityWithApi<ExtractDomain<E>>);
   }, [service, entity, serviceData, onClick]);
   const title = useMemo(
-    () => domain === null ? null : startCase(lowerCase(domain)),
+    () => (domain === null ? null : startCase(lowerCase(domain))),
     [domain]
   );
   return (
     <>
-      <Ripples borderRadius="50%">
+      <Ripples borderRadius="50%" whileTap={{ scale: 0.9 }}>
         <StyledFabCard
-          whileTap={{ scale: 0.9 }}
           active={active}
-          layoutId={typeof _entity === 'string' ? `${_entity}-fab-card`: undefined}
+          layoutId={
+            typeof _entity === "string" ? `${_entity}-fab-card` : undefined
+          }
           size={size}
           {...longPressEvent}
           {...rest}
@@ -160,18 +159,16 @@ export function FabCard<
           {typeof children !== "undefined" ? children : undefined}
         </StyledFabCard>
       </Ripples>
-      {domain === "light" && (
-        <ModalLightControls
-          entity={_entity as `${"light"}.${string}`}
+      {typeof _entity === "string" && (
+        <ModalByEntityDomain
+          entity={_entity}
           title={title || "Unknown title"}
           onClose={() => {
             setOpenModal(false);
           }}
           open={openModal}
           id={`${_entity}-fab-card`}
-        >
-          Testing
-        </ModalLightControls>
+        />
       )}
     </>
   );

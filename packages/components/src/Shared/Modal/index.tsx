@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, Fragment } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { FabCard } from "@components";
-import { useKeyPress } from 'react-use';
+import { useKeyPress } from "react-use";
 
 const ModalContainer = styled(motion.div)`
   position: absolute;
@@ -16,13 +16,11 @@ const ModalContainer = styled(motion.div)`
   color: var(--ha-color);
   height: calc(100% - 4rem);
   overflow: hidden;
-  border-radius: 1rem;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
   background-color: var(--ha-primary-background);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   z-index: var(--ha-modal-z-index);
 `;
 const ModalInner = styled.div`
@@ -75,9 +73,9 @@ export function Modal({ open, id, title, children, onClose }: ModalProps) {
     }
   }, [isPressed, onClose, open]);
   return createPortal(
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       {open && (
-        <>
+        <Fragment key={`${id}-fragment`}>
           <ModalBackdrop
             key={`${id}-backdrop`}
             initial={{
@@ -89,16 +87,27 @@ export function Modal({ open, id, title, children, onClose }: ModalProps) {
             animate={{
               opacity: 1,
             }}
+            exit={{
+              opacity: 0,
+            }}
             onClick={onClose}
           />
-          <ModalContainer layout layoutId={id} key={`${id}-container`}>
+          <ModalContainer
+            style={{
+              borderRadius: "1rem",
+              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+            }}
+            layout
+            layoutId={id}
+            key={`${id}-container`}
+          >
             <Modalheader>
               <Title>{title}</Title>
-              <FabCard key={`${id}-close-button`} icon="mdi:close" onClick={onClose} />
+              <FabCard layout icon="mdi:close" onClick={onClose} />
             </Modalheader>
             <ModalInner>{children}</ModalInner>
           </ModalContainer>
-        </>
+        </Fragment>
       )}
     </AnimatePresence>,
     document.body

@@ -7,12 +7,11 @@ import type { PictureCardProps } from "@components";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useKeyPress } from "react-use";
-import type { MotionProps } from 'framer-motion';
+import type { MotionProps } from "framer-motion";
 
-type Extendable = PictureCardProps & Omit<
-  React.ComponentProps<"div">,
-  "onClick" | "ref"
-  > & MotionProps;
+type Extendable = PictureCardProps &
+  Omit<React.ComponentProps<"div">, "onClick" | "ref"> &
+  MotionProps;
 export interface RoomCardProps extends Extendable {
   /** the hash of the room, eg "office", "living-room", this will set the hash in the url bar and activate the room */
   hash: string;
@@ -119,6 +118,7 @@ export function RoomCard({
       <AnimatePresence>
         {route?.active && (
           <FullScreen
+            key={`layout-${hash}`}
             layoutId={`layout-${hash}`}
             initial={{ opacity: 0 }}
             transition={{
@@ -160,6 +160,7 @@ export function RoomCard({
               </Row>
             </NavBar>
             <AnimatePresence
+              key={`layout-children-${hash}`}
               onExitComplete={() => {
                 resetHash();
               }}
@@ -192,6 +193,7 @@ export function RoomCard({
           style={{
             width: "var(--ha-device-room-card-width)",
           }}
+          whileTap={{ scale: 0.9 }}
           {...rest}
           image={image}
           onClick={() => {

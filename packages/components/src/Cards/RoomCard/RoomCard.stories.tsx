@@ -63,16 +63,16 @@ function MultiRoomExample() {
         >
           <Row gap="1rem">
             <ButtonCard
-              entity="light.fake_light_1"
+              entity="light.fake_light_2"
               service="toggle"
               title="Living Room Light"
               description={"An living-room Light"}
             />
             <ButtonCard
-              entity="media_player.fake_tv"
+              entity="light.fake_light_3"
               service="toggle"
-              title="Living Room TV"
-              description={"An living-room TV"}
+              title="Striplights"
+              description={"Striplights bottom shelf"}
             />
           </Row>
         </RoomCard>

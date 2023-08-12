@@ -22,7 +22,7 @@ import {
 } from "@hakit/core";
 import colorWheel from "./color_wheel.png";
 
-export interface ModalLightControlsProps extends ModalProps {
+export interface ModalLightControlsProps extends Omit<ModalProps, "children"> {
   entity: `${"light"}.${string}`;
 }
 
@@ -70,11 +70,10 @@ const Separator = styled.div`
 type MainControl = "brightness" | "color_temp" | "color";
 
 const FabCardColor = styled(FabCard)`
-  
   background-color: transparent;
   transition: background var(--ha-transition-duration) var(--ha-easing);
   &:after {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0px;
     border-radius: 50%;
@@ -84,7 +83,9 @@ const FabCardColor = styled(FabCard)`
     transition: var(--ha-transition-duration) var(--ha-easing);
     transition-property: inset, border;
   }
-  ${props => props.active && `
+  ${(props) =>
+    props.active &&
+    `
     background-color: white;
     &:after {
       inset: 2px;
@@ -100,7 +101,7 @@ const FabCardTemp = styled(FabCard)`
   background-color: transparent;
   transition: background var(--ha-transition-duration) var(--ha-easing);
   &:after {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0px;
     border-radius: 50%;
@@ -114,7 +115,9 @@ const FabCardTemp = styled(FabCard)`
     transition: var(--ha-transition-duration) var(--ha-easing);
     transition-property: inset, border;
   }
-  ${props => props.active && `
+  ${(props) =>
+    props.active &&
+    `
     background-color: white;
     &:after {
       inset: 2px;
@@ -213,20 +216,30 @@ export function ModalLightControls({
               entity.api.toggle();
             }}
           />
-          {supportsColorTemp || supportsColor || supportsBrightness && <Separator />}
+          {supportsColorTemp ||
+            supportsColor ||
+            (supportsBrightness && <Separator />)}
           <AnimatePresence>
             {supportsBrightness && (
-                <FabCard
-                  key={`${_entity}-brightness`}
-                  icon="mdi:brightness-6"
-                  onClick={() => setControl("brightness")}
-                />
+              <FabCard
+                key={`${_entity}-brightness`}
+                icon="mdi:brightness-6"
+                onClick={() => setControl("brightness")}
+              />
             )}
             {supportsColor && (
-              <FabCardColor key={`${_entity}-color`} active={control === "color"} onClick={() => setControl("color")} />
+              <FabCardColor
+                key={`${_entity}-color`}
+                active={control === "color"}
+                onClick={() => setControl("color")}
+              />
             )}
             {supportsColorTemp && (
-              <FabCardTemp key={`${_entity}-color-temp`} active={control === "color_temp"} onClick={() => setControl("color_temp")} />
+              <FabCardTemp
+                key={`${_entity}-color-temp`}
+                active={control === "color_temp"}
+                onClick={() => setControl("color_temp")}
+              />
             )}
           </AnimatePresence>
         </ButtonBar>

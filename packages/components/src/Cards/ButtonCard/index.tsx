@@ -14,7 +14,7 @@ import {
   useIcon,
   useIconByEntity,
 } from "@hakit/core";
-import { Ripples, ModalLightControls } from "@components";
+import { Ripples, ModalByEntityDomain } from "@components";
 import { computeDomain } from "@utils/computeDomain";
 import type { MotionProps } from "framer-motion";
 import { motion } from "framer-motion";
@@ -206,7 +206,9 @@ export function ButtonCard<
   const iconElement = useIcon(icon, {
     color: iconColor || undefined,
   });
-  const longPressEvent = useLongPress(() => {
+  const longPressEvent = useLongPress((e) => {
+    // ignore on right click
+    if ("button" in e && e.button === 2) return;
     setOpenModal(true);
   });
 
@@ -236,11 +238,12 @@ export function ButtonCard<
   );
   return (
     <>
-      <Ripples borderRadius="1rem">
+      <Ripples borderRadius="1rem" whileTap={{ scale: 0.9 }}>
         <StyledButtonCard
           {...longPressEvent}
-          layoutId={typeof _entity === 'string' ? `${_entity}-button-card` : undefined}
-          whileTap={{ scale: 0.9 }}
+          layoutId={
+            typeof _entity === "string" ? `${_entity}-button-card` : undefined
+          }
           {...rest}
           onClick={useApiHandler}
         >
@@ -301,18 +304,16 @@ export function ButtonCard<
           </LayoutRow>
         </StyledButtonCard>
       </Ripples>
-      {domain === "light" && (
-        <ModalLightControls
-          entity={_entity as `${"light"}.${string}`}
+      {typeof _entity === "string" && (
+        <ModalByEntityDomain
+          entity={_entity}
           title={title || "Unknown title"}
           onClose={() => {
             setOpenModal(false);
           }}
           open={openModal}
           id={`${_entity}-button-card`}
-        >
-          Testing
-        </ModalLightControls>
+        />
       )}
     </>
   );

@@ -1,3 +1,4 @@
+import { m } from "framer-motion";
 import styled from "@emotion/styled";
 
 export interface ColumnProps extends React.ComponentProps<"div"> {
@@ -15,7 +16,7 @@ export interface ColumnProps extends React.ComponentProps<"div"> {
   fullWidth?: boolean;
 }
 /** A simple helper component to layout child components in a column, justify/align properties as well as gap are supported */
-export const Column = styled.div<ColumnProps>`
+export const Column = styled(m.div)<ColumnProps>`
   display: flex;
   flex-direction: column;
   flex-wrap: ${({ wrap }) => wrap || "wrap"};

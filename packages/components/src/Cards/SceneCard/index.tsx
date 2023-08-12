@@ -11,7 +11,7 @@ import {
 } from "@hakit/core";
 import { Ripples } from "@components";
 import { motion } from "framer-motion";
-import { MotionProps } from 'framer-motion';
+import { MotionProps } from "framer-motion";
 
 const StyledSceneCard = styled(motion.button)`
   all: unset;
@@ -28,11 +28,7 @@ const StyledSceneCard = styled(motion.button)`
   background-color: var(--ha-primary-background);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: box-shadow, transform, background-color;
-
-  &:active {
-    transform: translateZ(10px) scale(0.98);
-  }
+  transition-property: box-shadow, background-color;
   &:hover {
     background-color: var(--ha-primary-background-hover);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
@@ -113,7 +109,8 @@ const Description = styled.div`
   color: var(--ha-primary-active);
   font-size: 0.9rem;
 `;
-type Extendable = MotionProps & Omit<React.ComponentPropsWithoutRef<"button">, "title" | "onClick">;
+type Extendable = MotionProps &
+  Omit<React.ComponentPropsWithoutRef<"button">, "title" | "onClick">;
 export interface SceneCardProps extends Extendable {
   /** An optional override for the title */
   title?: string;
@@ -150,7 +147,7 @@ export function SceneCard({
   }, [sceneService, entity, onClick, scene, serviceData]);
 
   return (
-    <Ripples borderRadius="1rem">
+    <Ripples borderRadius="1rem" whileTap={{ scale: 0.9 }}>
       <StyledSceneCard {...rest} onClick={useApiHandler}>
         <LayoutBetween>
           <Description>

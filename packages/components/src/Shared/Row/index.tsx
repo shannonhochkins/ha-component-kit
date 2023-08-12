@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { m } from "framer-motion";
 
 export interface RowProps extends React.ComponentProps<"div"> {
   /** standard flex css properties for align-items, @default center */
@@ -15,7 +16,7 @@ export interface RowProps extends React.ComponentProps<"div"> {
   fullWidth?: boolean;
 }
 /** A simple helper component to layout child components in a row, justify/align properties as well as gap are supported */
-export const Row = styled.div<RowProps>`
+export const Row = styled(m.div)<RowProps>`
   display: flex;
   flex-direction: row;
   flex-wrap: ${({ wrap }) => wrap || "wrap"};
