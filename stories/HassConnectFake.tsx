@@ -48,6 +48,37 @@ const MODE_TO_HVAC_ACTION: {
   'fan_only': 'fan',
 }
 
+const fakeConfig = {
+  "latitude": -33.25779010313883,
+  "longitude": 151.4821529388428,
+  "elevation": 0,
+  "unit_system": {
+      "length": "km",
+      "accumulated_precipitation": "mm",
+      "mass": "g",
+      "pressure": "Pa",
+      "temperature": "°C",
+      "volume": "L",
+      "wind_speed": "m/s"
+  },
+  "location_name": "Freesia",
+  "time_zone": "Australia/Brisbane",
+  "components": [],
+  "config_dir": "/config",
+  "whitelist_external_dirs": [],
+  "allowlist_external_dirs": [],
+  "allowlist_external_urls": [],
+  "version": "2023.8.2",
+  "config_source": "storage",
+  "safe_mode": false,
+  "state": "RUNNING",
+  "external_url": null,
+  "internal_url": null,
+  "currency": "AUD",
+  "country": "AU",
+  "language": "en"
+};
+
 function HassProvider({
   children,
 }: HassProviderProps) {
@@ -60,7 +91,7 @@ function HassProvider({
   const [ready] = useState(true);
   const getStates = async () => null;
   const getServices = async () => null;
-  const getConfig = async () => null;
+  const getConfig = async () => fakeConfig;
   const getUser = async () => null;
   const getAllEntities = useMemo(() => () => entities, [entities]);
   const getEntity = (entity: string, returnNullIfNotFound: boolean) => {

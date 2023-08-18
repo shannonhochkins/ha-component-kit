@@ -34,6 +34,12 @@ export type { FabCardProps } from "./Cards/FabCard";
 // SidebarCard
 export { SidebarCard } from "./Cards/SidebarCard";
 export type { SidebarCardProps } from "./Cards/SidebarCard";
+// ClimateControls
+export { ClimateControls } from "./Shared/ClimateControls";
+export type { ClimateControlsProps } from "./Shared/ClimateControls";
+// ClimateCart
+export { ClimateCard } from "./Cards/ClimateCard";
+export type { ClimateCardProps } from "./Cards/ClimateCard";
 // Modal
 export { Modal } from "./Shared/Modal";
 export type { ModalProps } from "./Shared/Modal";

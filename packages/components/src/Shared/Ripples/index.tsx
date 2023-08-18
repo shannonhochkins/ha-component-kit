@@ -8,9 +8,10 @@ import React, {
 } from "react";
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
-import type { HTMLMotionProps } from "framer-motion";
+import type { MotionProps } from "framer-motion";
 
-export interface RipplesProps extends HTMLMotionProps<"div"> {
+type Extendable = MotionProps & React.ComponentPropsWithoutRef<'div'>;
+export interface RipplesProps extends Extendable {
   /** the animation duration of the ripple @default 600 */
   duration?: number;
   /** the color of the ripple, @default rgba(0, 0, 0, .3) */

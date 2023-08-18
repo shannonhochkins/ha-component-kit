@@ -62,7 +62,7 @@ export interface FabCardProps<
   E extends `${AllDomains}.${string}`,
   S extends DomainService<ExtractDomain<E>>
 > extends Extendable {
-  /** The size of the Fab, this applies to the width and height @default 40 */
+  /** The size of the Fab, this applies to the width and height @default 48 */
   size?: number;
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
   icon?: string | null;

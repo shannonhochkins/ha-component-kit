@@ -3,15 +3,27 @@ import type { AllDomains } from "@core";
 import type { ModalProps } from "./";
 import { ModalLightControls } from "./ModalLightControls";
 import { ModalClimateControls } from "./ModalClimateControls";
-
-export interface ModalByEntityDomainProps extends Omit<ModalProps, "children"> {
-  entity: `${AllDomains}.${string}`;
+import type { ModalLightControlsProps } from './ModalLightControls';
+import type { ModalClimateControlsProps } from './ModalClimateControls';
+interface ModalPropsByDomain {
+  light: ModalLightControlsProps;
+  climate: ModalClimateControlsProps;
 }
 
-export function ModalByEntityDomain({
+type EntityDomainProps<E extends `${AllDomains}.${string}`> = E extends `${infer Domain}.${string}`
+  ? Domain extends keyof ModalPropsByDomain
+    ? ModalPropsByDomain[Domain]
+    : Omit<ModalProps, "children">
+  : never;
+
+export type ModalByEntityDomainProps<E extends `${AllDomains}.${string}`> = EntityDomainProps<E> & {
+  entity: E;
+};
+
+export function ModalByEntityDomain<E extends `${AllDomains}.${string}`>({
   entity,
   ...rest
-}: ModalByEntityDomainProps) {
+}: ModalByEntityDomainProps<E>) {
   const domain = computeDomain(entity);
   switch (domain) {
     case "light":

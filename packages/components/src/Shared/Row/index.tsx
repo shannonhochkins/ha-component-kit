@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
-import type { HTMLMotionProps } from "framer-motion";
+import type { MotionProps } from "framer-motion";
 import { m } from "framer-motion";
-
-export interface RowProps extends HTMLMotionProps<"div"> {
+type Extendable = MotionProps & React.ComponentPropsWithoutRef<'div'>
+export interface RowProps extends Extendable {
   /** standard flex css properties for align-items, @default center */
   alignItems?: React.CSSProperties["alignItems"];
   /** standard flex css properties for justify-content, @default center */
