@@ -140,9 +140,13 @@ function RenderClimate(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
-      <ButtonCard {...args} entity="climate.air_conditioner" onClick={(entity) => {
-        entity.state === 'off' ? entity.api.turnOn() : entity.api.turnOff();
-      }} />
+      <ButtonCard
+        {...args}
+        entity="climate.air_conditioner"
+        onClick={(entity) => {
+          entity.state === "off" ? entity.api.turnOn() : entity.api.turnOff();
+        }}
+      />
     </HassConnect>
   );
 }
@@ -170,7 +174,7 @@ export const LightExample: LightStory = {
 };
 
 export const ClimateExample: StoryObj<
-typeof ButtonCard<"climate.air_conditioner", "turnOn">
+  typeof ButtonCard<"climate.air_conditioner", "turnOn">
 > = {
   render: RenderClimate,
   args: {},

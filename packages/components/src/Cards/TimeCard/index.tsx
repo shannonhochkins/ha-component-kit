@@ -106,7 +106,7 @@ function formatDate(dateString: string, timeZone: string): string {
 
   return formattedDate;
 }
-type Extendable = MotionProps & React.ComponentPropsWithoutRef<'div'>;
+type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 export interface TimeCardProps extends Extendable {
   /** set this to false this if you do not want to include the date, @default true */
   includeDate?: boolean;

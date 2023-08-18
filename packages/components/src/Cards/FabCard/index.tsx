@@ -150,7 +150,11 @@ export function FabCard<
   );
   return (
     <>
-      <Ripples disabled={disabled} borderRadius="50%" whileTap={{ scale: disabled ? 1 : 0.9 }}>
+      <Ripples
+        disabled={disabled}
+        borderRadius="50%"
+        whileTap={{ scale: disabled ? 1 : 0.9 }}
+      >
         <StyledFabCard
           disabled={disabled}
           active={active}
@@ -168,7 +172,7 @@ export function FabCard<
       </Ripples>
       {typeof _entity === "string" && (
         <ModalByEntityDomain
-          entity={_entity}
+          entity={_entity as `${AllDomains}.${string}`}
           title={title || "Unknown title"}
           onClose={() => {
             setOpenModal(false);

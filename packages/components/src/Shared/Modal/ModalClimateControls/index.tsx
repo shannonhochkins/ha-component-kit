@@ -1,10 +1,8 @@
-import {
-  Modal,
-  ClimateControls,
-} from "@components";
+import { Modal, ClimateControls } from "@components";
 import type { ClimateControlsProps, ModalProps } from "@components";
 
-export type ModalClimateControlsProps = Omit<ModalProps, "children"> & ClimateControlsProps;
+export type ModalClimateControlsProps = Omit<ModalProps, "children"> &
+  ClimateControlsProps;
 
 export function ModalClimateControls({
   entity,
@@ -18,14 +16,15 @@ export function ModalClimateControls({
   return (
     <Modal {...rest}>
       <ClimateControls
-      {...{
-        hvacModes,
-        hideCurrentTemperature,
-        hideFanMode,
-        hideState,
-        hideUpdated,
-        entity
-      }} />
+        {...{
+          hvacModes,
+          hideCurrentTemperature,
+          hideFanMode,
+          hideState,
+          hideUpdated,
+          entity,
+        }}
+      />
     </Modal>
   );
 }

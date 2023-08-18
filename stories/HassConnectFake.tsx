@@ -9,6 +9,7 @@ import type {
   // types
   Connection,
   HassEntities,
+  HassConfig,
 } from "home-assistant-js-websocket";
 import type {
   ServiceData,
@@ -65,7 +66,6 @@ const fakeConfig = {
   "time_zone": "Australia/Brisbane",
   "components": [],
   "config_dir": "/config",
-  "whitelist_external_dirs": [],
   "allowlist_external_dirs": [],
   "allowlist_external_urls": [],
   "version": "2023.8.2",
@@ -77,7 +77,7 @@ const fakeConfig = {
   "currency": "AUD",
   "country": "AU",
   "language": "en"
-};
+} satisfies HassConfig;
 
 function HassProvider({
   children,

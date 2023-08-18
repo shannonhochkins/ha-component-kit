@@ -29,13 +29,30 @@ export function ThemeProvider<T extends object>({
             --ha-room-card-expanded-offset: 0;
             color-scheme: dark;
           }
-          ::-webkit-scrollbar { width: 8px; height: 3px;}
-          ::-webkit-scrollbar-button {  background-color: var(--ha-scrollbar-button); }
-          ::-webkit-scrollbar-track {  background-color: var(--ha-scrollbar-track);}
-          ::-webkit-scrollbar-track-piece { background-color: var(--ha-scrollbar-track-piece);}
-          ::-webkit-scrollbar-thumb { height: 50px; background-color: var(--ha-scrollbar-thumb); border-radius: 3px;}
-          ::-webkit-scrollbar-corner { background-color: var(--ha-scrollbar-corner);}
-          ::-webkit-resizer { background-color: var(--ha-scrollbar-resizer);}
+          ::-webkit-scrollbar {
+            width: 8px;
+            height: 3px;
+          }
+          ::-webkit-scrollbar-button {
+            background-color: var(--ha-scrollbar-button);
+          }
+          ::-webkit-scrollbar-track {
+            background-color: var(--ha-scrollbar-track);
+          }
+          ::-webkit-scrollbar-track-piece {
+            background-color: var(--ha-scrollbar-track-piece);
+          }
+          ::-webkit-scrollbar-thumb {
+            height: 50px;
+            background-color: var(--ha-scrollbar-thumb);
+            border-radius: 3px;
+          }
+          ::-webkit-scrollbar-corner {
+            background-color: var(--ha-scrollbar-corner);
+          }
+          ::-webkit-resizer {
+            background-color: var(--ha-scrollbar-resizer);
+          }
           html,
           body {
             height: 100%;

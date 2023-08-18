@@ -26,7 +26,7 @@ const ModalContainer = styled(motion.div)`
 const ModalInner = styled.div`
   display: flex;
   padding: 5rem 1rem 2rem;
-  height:100%;
+  height: 100%;
 `;
 const ModalOverflow = styled.div`
   height: 100%;
@@ -40,9 +40,9 @@ const Modalheader = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-  position:absolute;
-  top:0;
-  left:0;
+  position: absolute;
+  top: 0;
+  left: 0;
   right: 0;
 `;
 
@@ -117,7 +117,9 @@ export function Modal({ open, id, title, children, onClose }: ModalProps) {
               <Title>{title}</Title>
               <FabCard layout icon="mdi:close" onClick={onClose} />
             </Modalheader>
-            <ModalOverflow><ModalInner>{children}</ModalInner></ModalOverflow>
+            <ModalOverflow>
+              <ModalInner>{children}</ModalInner>
+            </ModalOverflow>
           </ModalContainer>
         </Fragment>
       )}

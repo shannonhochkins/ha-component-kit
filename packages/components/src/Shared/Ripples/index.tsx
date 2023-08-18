@@ -10,7 +10,7 @@ import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 
-type Extendable = MotionProps & React.ComponentPropsWithoutRef<'div'>;
+type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 export interface RipplesProps extends Extendable {
   /** the animation duration of the ripple @default 600 */
   duration?: number;

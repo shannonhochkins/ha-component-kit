@@ -62,7 +62,7 @@ export interface ThemeParams {
     corner: string;
     button: string;
     resizer: string;
-  }
+  };
 }
 
 export const theme: ThemeParams = {
@@ -129,5 +129,5 @@ export const theme: ThemeParams = {
     corner: "#646464",
     resizer: "#646464",
     button: "#363636",
-  }
+  },
 };

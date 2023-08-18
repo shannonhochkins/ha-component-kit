@@ -1,23 +1,14 @@
 import { useRef, useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
-import { Thermostat } from 'react-thermostat';
-import {
-  Column,
-  FabCard,
-  Row,
-} from "@components";
-import {
-  useEntity,
-  OFF,
-  HvacMode,
-  useHass
-} from "@hakit/core";
+import { Thermostat } from "react-thermostat";
+import { Column, FabCard, Row } from "@components";
+import { useEntity, OFF, HvacMode, useHass } from "@hakit/core";
 import type { HassConfig } from "home-assistant-js-websocket";
-import { useDebounce } from 'react-use';
+import { useDebounce } from "react-use";
 import type { MotionProps } from "framer-motion";
 
-type Extendable = MotionProps & React.ComponentPropsWithoutRef<'div'>;
+type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 
 export interface ClimateControlsProps extends Extendable {
   entity: `${"climate"}.${string}`;
@@ -65,36 +56,36 @@ const ThermostatSize = styled.div`
 
 type HvacModeData<T> = {
   [key in HvacMode]: T;
-}
+};
 
 export const colors = {
-  auto: ['#fff', '#f9f9f9'],
-  heat_cool: ['#dae8eb', '#cd5401'],
-  heat: ['#cfac48', '#cd5401'],
-  cool: ['#dae8eb', '#2c8e98'],
-  off: ['#848484', '#383838'],
-  fan_only: ['#fff', '#f9f9f9'],
-  dry: ['#fff', '#ffc0bd'],
+  auto: ["#fff", "#f9f9f9"],
+  heat_cool: ["#dae8eb", "#cd5401"],
+  heat: ["#cfac48", "#cd5401"],
+  cool: ["#dae8eb", "#2c8e98"],
+  off: ["#848484", "#383838"],
+  fan_only: ["#fff", "#f9f9f9"],
+  dry: ["#fff", "#ffc0bd"],
 } satisfies HvacModeData<string[]>;
 
 export const activeColors = {
-  auto: 'var(--ha-primary-active)',
-  heat_cool: 'var(--ha-primary-active)',
-  heat: '#cd5401',
-  cool: '#2c8e98',
-  off: '#848484',
-  fan_only: 'var(--ha-primary-active)',
-  dry: '#ffc0bd',
+  auto: "var(--ha-primary-active)",
+  heat_cool: "var(--ha-primary-active)",
+  heat: "#cd5401",
+  cool: "#2c8e98",
+  off: "#848484",
+  fan_only: "var(--ha-primary-active)",
+  dry: "#ffc0bd",
 } satisfies HvacModeData<string>;
 
 export const icons = {
-  auto: 'mdi:thermometer-auto',
-  heat_cool: 'mdi:autorenew',
-  heat: 'mdi:fire',
-  cool: 'mdi:snowflake',
-  off: 'mdi:power',
-  fan_only: 'mdi:fan',
-  dry: 'mdi:water-percent',
+  auto: "mdi:thermometer-auto",
+  heat_cool: "mdi:autorenew",
+  heat: "mdi:fire",
+  cool: "mdi:snowflake",
+  off: "mdi:power",
+  fan_only: "mdi:fan",
+  dry: "mdi:water-percent",
 } satisfies HvacModeData<string>;
 
 const FanModeColumn = styled(Column)`
@@ -133,21 +124,20 @@ const Current = styled.div`
   bottom: -0.6rem;
 `;
 
-
 const FanMode = styled(FabCard)<{
   speed?: string;
 }>`
   animation-name: ${spin};
-  animation-duration: ${props => {
-    const speed = (props.speed || '').toLowerCase();
-    console.log('speed', speed);
-    const low = speed.includes('low');
-    const medium = speed.includes('mid') || speed.includes('medium');
-    const high = speed.includes('high');
-    if (low) return '4s';
-    if (medium) return '1.8s';
-    if (high) return '0.7s';
-    return '0s';
+  animation-duration: ${(props) => {
+    const speed = (props.speed || "").toLowerCase();
+    console.log("speed", speed);
+    const low = speed.includes("low");
+    const medium = speed.includes("mid") || speed.includes("medium");
+    const high = speed.includes("high");
+    if (low) return "4s";
+    if (medium) return "1.8s";
+    if (high) return "0.7s";
+    return "0s";
   }};
   animation-iteration-count: infinite;
   animation-timing-function: linear;
@@ -167,9 +157,21 @@ export function ClimateControls({
   const [config, setConfig] = useState<HassConfig | null>(null);
   const isOff = entity.state === OFF;
   const currentMode = entity.state in icons ? entity.state : "unknown-mode";
-  const { current_temperature, fan_mode, fan_modes = [], hvac_action, hvac_modes, min_temp = 6, max_temp = 40, temperature = 20 } = entity.attributes || {};
-  const [internalFanMode, setInternalFanMode] = useState<string | undefined>(fan_mode);
-  const [internalTemperature, setInternalTemperature] = useState<number>(temperature);
+  const {
+    current_temperature,
+    fan_mode,
+    fan_modes = [],
+    hvac_action,
+    hvac_modes,
+    min_temp = 6,
+    max_temp = 40,
+    temperature = 20,
+  } = entity.attributes || {};
+  const [internalFanMode, setInternalFanMode] = useState<string | undefined>(
+    fan_mode
+  );
+  const [internalTemperature, setInternalTemperature] =
+    useState<number>(temperature);
   const stateRef = useRef<HTMLDivElement>(null);
   const titleValue = useMemo(() => {
     if (isOff) {
@@ -178,16 +180,19 @@ export function ClimateControls({
     return hvac_action;
   }, [hvac_action, isOff]);
 
-
   useEffect(() => {
-    getConfig().then(setConfig)
+    getConfig().then(setConfig);
   }, [getConfig]);
-  
-  useDebounce(() => {
-    entity.api.setTemperature({
-      temperature: internalTemperature,
-    })
-  }, 200, [internalTemperature]);
+
+  useDebounce(
+    () => {
+      entity.api.setTemperature({
+        temperature: internalTemperature,
+      });
+    },
+    200,
+    [internalTemperature]
+  );
 
   return (
     <Column fullHeight fullWidth wrap="nowrap" {...rest}>
@@ -195,38 +200,68 @@ export function ClimateControls({
       {!hideUpdated && <Updated>{entity.custom.relativeTime}</Updated>}
       <ThermostatSize>
         <Thermostat
-         valueSuffix={config?.unit_system.temperature}
-         track={{
-          colors: colors[entity.state],
-        }} disabled={isOff} min={min_temp} max={max_temp} value={internalTemperature} onChange={(temp) => {
-          setInternalTemperature(Number(temp.toFixed(0)))
-        }} />
-        {!hideFanMode && !isOff && <FanModeColumn gap="0.5rem">
-          <FanMode size={40} disabled={isOff} title="Fan Mode" speed={isOff ? undefined : internalFanMode} active={!isOff} icon="mdi:fan" onClick={() => {
-            const currentIndex = fan_modes.findIndex(mode => mode === internalFanMode);
-            const fanMode = fan_modes[currentIndex + 1] ? fan_modes[currentIndex + 1] : fan_modes[0];
-            setInternalFanMode(fanMode);
-            entity.api.setFanMode({
-              fan_mode: fanMode,
-            });
-          }} />
-          {internalFanMode}
-        </FanModeColumn>}
-        {!hideCurrentTemperature && <CurrentTemperature>
-          {current_temperature}
-          <span>{config?.unit_system.temperature}</span>
-          <Current>CURRENT</Current>
-        </CurrentTemperature>}
+          valueSuffix={config?.unit_system.temperature}
+          track={{
+            colors: colors[entity.state],
+          }}
+          disabled={isOff}
+          min={min_temp}
+          max={max_temp}
+          value={internalTemperature}
+          onChange={(temp) => {
+            setInternalTemperature(Number(temp.toFixed(0)));
+          }}
+        />
+        {!hideFanMode && !isOff && (
+          <FanModeColumn gap="0.5rem">
+            <FanMode
+              size={40}
+              disabled={isOff}
+              title="Fan Mode"
+              speed={isOff ? undefined : internalFanMode}
+              active={!isOff}
+              icon="mdi:fan"
+              onClick={() => {
+                const currentIndex = fan_modes.findIndex(
+                  (mode) => mode === internalFanMode
+                );
+                const fanMode = fan_modes[currentIndex + 1]
+                  ? fan_modes[currentIndex + 1]
+                  : fan_modes[0];
+                setInternalFanMode(fanMode);
+                entity.api.setFanMode({
+                  fan_mode: fanMode,
+                });
+              }}
+            />
+            {internalFanMode}
+          </FanModeColumn>
+        )}
+        {!hideCurrentTemperature && (
+          <CurrentTemperature>
+            {current_temperature}
+            <span>{config?.unit_system.temperature}</span>
+            <Current>CURRENT</Current>
+          </CurrentTemperature>
+        )}
       </ThermostatSize>
 
       <Row gap="0.5rem" wrap="nowrap">
-        {(hvacModes || hvac_modes || [])
-          .concat()
-          .map((mode) => <FabCard size={40} iconColor={currentMode === mode ? activeColors[mode] : undefined} key={mode} title={mode} active={currentMode === mode} icon={icons[mode]} onClick={() => {
-            entity.api.setHvacMode({
-              hvac_mode: mode,
-            });
-          }} />)}
+        {(hvacModes || hvac_modes || []).concat().map((mode) => (
+          <FabCard
+            size={40}
+            iconColor={currentMode === mode ? activeColors[mode] : undefined}
+            key={mode}
+            title={mode}
+            active={currentMode === mode}
+            icon={icons[mode]}
+            onClick={() => {
+              entity.api.setHvacMode({
+                hvac_mode: mode,
+              });
+            }}
+          />
+        ))}
       </Row>
     </Column>
   );
