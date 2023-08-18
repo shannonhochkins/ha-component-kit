@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "private": false,
   "keywords": [
     "react",
@@ -58,14 +58,15 @@
   "peerDependencies": {
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
-    "@hakit/core": ">=1.0.4",
+    "@hakit/core": ">=1.0.8",
+    "@use-gesture/react": ">=10.x",
     "framer-motion": ">=10.x",
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
     "react-router-dom": ">=6.x",
-    "react-use": ">=17.x",
-    "@egjs/hammerjs": ">=2.x"
+    "react-thermostat": "^2.0.2",
+    "react-use": ">=17.x"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.x"

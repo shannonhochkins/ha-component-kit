@@ -9,6 +9,7 @@ const { EsLinter, linterPlugin } = EsLint;
 export default defineConfig(configEnv => {
   return {
     build: {
+      target: 'es2020',
       lib: {
         entry: path.resolve(__dirname, 'src/index.ts'),
         name: 'hakit-components',
@@ -37,7 +38,7 @@ export default defineConfig(configEnv => {
             'react-router-dom': "react-router-dom",
             'framer-motion': 'framer-motion',
             'react-use': 'react-use',
-            '@egjs/hammerjs': '@egjs/hammerjs',
+            "@use-gesture/react": "@use-gesture/react"
           }
         }
       },

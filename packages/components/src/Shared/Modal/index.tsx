@@ -24,14 +24,26 @@ const ModalContainer = styled(motion.div)`
   z-index: var(--ha-modal-z-index);
 `;
 const ModalInner = styled.div`
-  padding: 1rem;
+  display: flex;
+  padding: 5rem 1rem 2rem;
   height: 100%;
+`;
+const ModalOverflow = styled.div`
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 `;
 const Modalheader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 `;
 
 const Title = styled.h4`
@@ -105,7 +117,9 @@ export function Modal({ open, id, title, children, onClose }: ModalProps) {
               <Title>{title}</Title>
               <FabCard layout icon="mdi:close" onClick={onClose} />
             </Modalheader>
-            <ModalInner>{children}</ModalInner>
+            <ModalOverflow>
+              <ModalInner>{children}</ModalInner>
+            </ModalOverflow>
           </ModalContainer>
         </Fragment>
       )}

@@ -4,7 +4,7 @@ import { useEntity, useHass } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { Row, Column } from "@components";
 import { motion } from "framer-motion";
-import type { HTMLMotionProps } from "framer-motion";
+import type { MotionProps } from "framer-motion";
 
 const Card = styled(motion.div)`
   all: unset;
@@ -106,8 +106,8 @@ function formatDate(dateString: string, timeZone: string): string {
 
   return formattedDate;
 }
-
-export interface TimeCardProps extends HTMLMotionProps<"div"> {
+type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
+export interface TimeCardProps extends Extendable {
   /** set this to false this if you do not want to include the date, @default true */
   includeDate?: boolean;
   /** remove the icon before the time, @default true */

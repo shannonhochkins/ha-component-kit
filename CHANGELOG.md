@@ -1,3 +1,15 @@
+
+# v1.0.11
+#### @hakit/components
+- adding new dark theme color scheme for scroll bars / other browser specific changes
+- adding theme properties for scroll bars
+- NEW - Added climate control modal for climate ButtonCard / FabCard / ClimateCard
+- NEW - Added ClimateCard shared component to display climate entities
+- NEW - ModalByEntityDomain shared component now accepts all props from the domain modal component
+# v.1.0.8
+#### @hakit/core
+- Updated types for climate to be more specific for entities and services (HvacAction, HvacMode) types also exported from core and the state is now typed too
+
 # v.1.0.10
 #### @hakit/components
 ##### released - 03/08/2023

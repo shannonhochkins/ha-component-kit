@@ -28,6 +28,9 @@ export interface ThemeParams {
     sceneCard: {
       width: string;
     };
+    climateCard: {
+      width: string;
+    };
     weatherCard: {
       width: string;
     };
@@ -51,6 +54,14 @@ export interface ThemeParams {
   modal: {
     width: string;
     zIndex: number;
+  };
+  scrollbar: {
+    track: string;
+    thumb: string;
+    trackPiece: string;
+    corner: string;
+    button: string;
+    resizer: string;
   };
 }
 
@@ -84,6 +95,9 @@ export const theme: ThemeParams = {
     sceneCard: {
       width: "18.75rem", // 300px
     },
+    climateCard: {
+      width: "18.75rem", // 300px
+    },
     weatherCard: {
       width: "18.75rem", // 300px
     },
@@ -107,5 +121,13 @@ export const theme: ThemeParams = {
   modal: {
     width: "40rem",
     zIndex: 21, // this should be higher than the room card
+  },
+  scrollbar: {
+    track: "#646464",
+    thumb: "#666",
+    trackPiece: "#363636",
+    corner: "#646464",
+    resizer: "#646464",
+    button: "#363636",
   },
 };

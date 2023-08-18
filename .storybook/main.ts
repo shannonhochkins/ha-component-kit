@@ -1,3 +1,4 @@
+import { dirname, join } from "path";
 import type { StorybookConfig } from "@storybook/react-vite";
 import react from '@vitejs/plugin-react';
 import { mergeConfig } from 'vite';
@@ -11,11 +12,19 @@ export default ({
     "../stories/**/*.stories.@(js|jsx|ts|tsx)",
     "../packages/**/*.stories.@(js|jsx|ts|tsx)"
   ],
-  addons: ["@storybook/addon-styling", "@storybook/addon-links", "@storybook/addon-essentials", "@storybook/addon-interactions", "@storybook/addon-controls", "@storybook/addon-docs"],
+  addons: [
+    getAbsolutePath("@storybook/addon-styling"),
+    getAbsolutePath("@storybook/addon-links"),
+    getAbsolutePath("@storybook/addon-essentials"),
+    getAbsolutePath("@storybook/addon-interactions"),
+    getAbsolutePath("@storybook/addon-controls"),
+    getAbsolutePath("@storybook/addon-docs"),
+    getAbsolutePath("@storybook/addon-mdx-gfm")
+  ],
   core: {},
   staticDirs: ['../static'],
   framework: {
-    name: "@storybook/react-vite",
+    name: getAbsolutePath("@storybook/react-vite"),
     options: {}
   },
   docs: {
@@ -66,6 +75,10 @@ export default ({
           },
         }),
       ],
-    }
+    };
   },
 } satisfies StorybookConfig);
+
+function getAbsolutePath(value: string): any {
+  return dirname(require.resolve(join(value, "package.json")));
+}

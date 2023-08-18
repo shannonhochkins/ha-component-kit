@@ -136,7 +136,6 @@ export function ModalLightControls({
   const [control, setControl] = useState<MainControl>("brightness");
   const entity = useEntity(_entity);
   const stateRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const brightnessValue = useLightBrightness(entity);
   const titleValue = useMemo(() => {
     if (entity.state === OFF) {
@@ -157,7 +156,7 @@ export function ModalLightControls({
 
   return (
     <Modal {...rest}>
-      <Column fullHeight fullWidth>
+      <Column fullHeight fullWidth wrap="nowrap">
         <State ref={stateRef}>{titleValue}</State>
         <Updated>{entity.custom.relativeTime}</Updated>
         <Column>
@@ -244,7 +243,6 @@ export function ModalLightControls({
           </AnimatePresence>
         </ButtonBar>
       </Column>
-      <canvas ref={canvasRef} width="100%" height="100%'"></canvas>
     </Modal>
   );
 }

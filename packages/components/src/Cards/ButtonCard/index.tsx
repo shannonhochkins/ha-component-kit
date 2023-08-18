@@ -306,7 +306,7 @@ export function ButtonCard<
       </Ripples>
       {typeof _entity === "string" && (
         <ModalByEntityDomain
-          entity={_entity}
+          entity={_entity as `${AllDomains}.${string}`}
           title={title || "Unknown title"}
           onClose={() => {
             setOpenModal(false);
