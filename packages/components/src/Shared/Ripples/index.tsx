@@ -21,6 +21,8 @@ export interface RipplesProps extends HTMLMotionProps<"div"> {
   children: React.ReactNode;
   /** the css border radius of the ripple, @default none */
   borderRadius?: CSSProperties["borderRadius"];
+  /** disable the ripple */
+  disabled?: boolean;
 }
 
 const boxStyle: CSSProperties = {
@@ -58,6 +60,7 @@ export const Ripples = memo(
     borderRadius = "none",
     onClick,
     children,
+    disabled,
     ...rest
   }: RipplesProps) => {
     const [rippleStyle, setRippleStyle] = useState<CSSProperties>({});
@@ -72,6 +75,7 @@ export const Ripples = memo(
     const onClickHandler = useCallback(
       (event: React.MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
+        if (disabled) return;
         // clear the timeout if exists
         if (timeoutId.current !== null) clearTimeout(timeoutId.current);
 
@@ -105,7 +109,7 @@ export const Ripples = memo(
 
         if (typeof onClick === "function") onClick(event);
       },
-      [color, duration, onClick]
+      [color, duration, disabled, onClick]
     );
 
     return (

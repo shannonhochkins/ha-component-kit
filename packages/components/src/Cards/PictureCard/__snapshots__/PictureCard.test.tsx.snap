@@ -28,7 +28,7 @@ exports[`<PictureCard /> renders PictureCard 1`] = `
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
   transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-color,box-shadow,transform,background-image;
+  transition-property: background-color,box-shadow,background-image;
   will-change: width,height;
   background-image: url(FAKE);
   -webkit-background-size: cover;
@@ -36,13 +36,6 @@ exports[`<PictureCard /> renders PictureCard 1`] = `
   -webkit-background-position: center;
   background-position: center;
   background-repeat: no-repeat;
-}
-
-.emotion-0:active {
-  -webkit-transform: translateY(5px) scale(0.98);
-  -moz-transform: translateY(5px) scale(0.98);
-  -ms-transform: translateY(5px) scale(0.98);
-  transform: translateY(5px) scale(0.98);
 }
 
 .emotion-0:hover {
@@ -87,6 +80,7 @@ exports[`<PictureCard /> renders PictureCard 1`] = `
   class="emotion-0"
   data-testid="picture-card"
   id="test"
+  tabindex="0"
 >
   <h4
     class="emotion-1"

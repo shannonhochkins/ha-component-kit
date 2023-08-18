@@ -1,3 +1,13 @@
+
+#### @hakit/components
+- adding new dark theme color scheme for scroll bars / other browser specific changes
+- adding theme properties for scroll bars
+- NEW - Added climate control dialog box for climate buttonCards / fabCards
+- NEW - Added ClimateCard component to display climate entities
+
+#### @hakit/core
+- Updated types for climate to be more specific for entities and services (HvacAction, HvacMode) types also exported from core
+
 # v.1.0.10
 #### @hakit/components
 ##### released - 03/08/2023

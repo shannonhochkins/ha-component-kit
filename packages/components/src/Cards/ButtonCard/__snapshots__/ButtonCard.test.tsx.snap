@@ -158,7 +158,6 @@ exports[`<ButtonCard /> should render without an entity 1`] = `
 <button
   class="emotion-0"
   data-testid="button-card"
-  tabindex="0"
 >
   <div
     class="emotion-1"

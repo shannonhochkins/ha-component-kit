@@ -52,6 +52,14 @@ export interface ThemeParams {
     width: string;
     zIndex: number;
   };
+  scrollbar: {
+    track: string;
+    thumb: string;
+    trackPiece: string;
+    corner: string;
+    button: string;
+    resizer: string;
+  }
 }
 
 export const theme: ThemeParams = {
@@ -108,4 +116,12 @@ export const theme: ThemeParams = {
     width: "40rem",
     zIndex: 21, // this should be higher than the room card
   },
+  scrollbar: {
+    track: "#646464",
+    thumb: "#666",
+    trackPiece: "#363636",
+    corner: "#646464",
+    resizer: "#646464",
+    button: "#363636",
+  }
 };

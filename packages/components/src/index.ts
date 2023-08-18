@@ -39,6 +39,8 @@ export { Modal } from "./Shared/Modal";
 export type { ModalProps } from "./Shared/Modal";
 export { ModalLightControls } from "./Shared/Modal/ModalLightControls";
 export type { ModalLightControlsProps } from "./Shared/Modal/ModalLightControls";
+export { ModalClimateControls } from "./Shared/Modal/ModalClimateControls";
+export type { ModalClimateControlsProps } from "./Shared/Modal/ModalClimateControls";
 export { ModalByEntityDomain } from "./Shared/Modal/ModalByEntityDomain";
 export type { ModalByEntityDomainProps } from "./Shared/Modal/ModalByEntityDomain";
 // ControlSlider

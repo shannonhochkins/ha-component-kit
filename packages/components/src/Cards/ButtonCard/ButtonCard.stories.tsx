@@ -136,6 +136,17 @@ function Render(args?: Args) {
   );
 }
 
+function RenderClimate(args?: Args) {
+  return (
+    <HassConnect hassUrl="http://localhost:8123">
+      <ThemeProvider />
+      <ButtonCard {...args} entity="climate.air_conditioner" onClick={(entity) => {
+        entity.state === 'off' ? entity.api.turnOn() : entity.api.turnOff();
+      }} />
+    </HassConnect>
+  );
+}
+
 export default {
   title: "COMPONENTS/Cards/ButtonCard",
   component: ButtonCard,
@@ -156,6 +167,13 @@ export const LightExample: LightStory = {
     service: "toggle",
     entity: "light.fake_light_1",
   },
+};
+
+export const ClimateExample: StoryObj<
+typeof ButtonCard<"climate.air_conditioner", "turnOn">
+> = {
+  render: RenderClimate,
+  args: {},
 };
 export type SwitchStory = StoryObj<
   typeof ButtonCard<"switch.fake_gaming_switch", "toggle">

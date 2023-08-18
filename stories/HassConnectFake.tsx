@@ -17,6 +17,8 @@ import type {
   Target,
   Route,
   HassContextProps,
+  HvacMode,
+  HvacAction
 } from "@hakit/core";
 import { HassContext, useHash, hs2rgb } from '@hakit/core';
 import { entities as ENTITIES } from '@mocks/mockEntities';
@@ -32,6 +34,18 @@ interface HassProviderProps {
   children: (ready: boolean) => React.ReactNode;
   hassUrl: string;
   throttle?: number;
+}
+
+const MODE_TO_HVAC_ACTION: {
+  [key in HvacMode]: HvacAction
+} = {
+  'off': 'off',
+  'heat': 'heating',
+  'cool': 'cooling',
+  'heat_cool': 'preheating',
+  'auto': 'idle',
+  'dry': 'drying',
+  'fan_only': 'fan',
 }
 
 function HassProvider({
@@ -82,13 +96,6 @@ function HassProvider({
         }));
       }
       if (domain === 'climate') {
-        let hvac = entities[target].state;
-        if (service === 'turnOn') {
-          hvac = 'cool';
-        }
-        if (service === 'turnOff') {
-          hvac = 'off';
-        }
         return setEntities(entities => ({
           ...entities,
           [target]: {
@@ -97,11 +104,11 @@ function HassProvider({
               ...entities[target].attributes,
               ...serviceData || {},
               // @ts-ignore - purposely casting here so i don't have to setup manual types for fake data
-              hvac_action: serviceData?.hvac_mode || hvac
+              hvac_action: MODE_TO_HVAC_ACTION[serviceData?.hvac_mode] || entities[target].attributes.hvac_action
             },
             ...dates,
             // @ts-ignore - purposely casting here so i don't have to setup manual types for fake data
-            state: serviceData?.hvac_mode || hvac
+            state: serviceData?.hvac_mode || entities[target].state
           }
         }));
       }
