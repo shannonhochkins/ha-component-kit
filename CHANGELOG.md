@@ -1,3 +1,25 @@
+# v.1.0.9
+#### @hakit/core
+- Refactored HassConnect authentication as sometimes it was not rendering the children until a manual refresh was performed.
+- NEW - HassConnect - options prop added to pass down options to the provider
+   - throttle - determine the default throttle amount to use for all entity updates (default is 150ms)
+   - allowNonSecure - allow non https urls to authenticate (default is false), localhost is accepted by default
+   - preloadConfiguration - if the configuration object should fetch before children render (default is false)
+- loadTokens, saveTokens logic is identical to the home assistant auth flow, this is to ensure the tokens are saved correctly and can be used in the future, these functions are exposed from core under loadTokens and saveTokens
+- Adding more error handling to the authentication flow
+- NEW - returning logout method from useHass hook, this will clear the tokens and force a re-authentication
+- Previously, authentication was checking the current url last authenticated with, this may have been causing issues with the authentication flow, this has been removed and will authenticate correctly if there's tokens present in local storage.
+# v1.0.11
+#### @hakit/components
+- adding new dark theme color scheme for scroll bars / other browser specific changes
+- adding theme properties for scroll bars
+- NEW - Added climate control modal for climate ButtonCard / FabCard / ClimateCard
+- NEW - Added ClimateCard shared component to display climate entities
+- NEW - ModalByEntityDomain shared component now accepts all props from the domain modal component
+# v.1.0.8
+#### @hakit/core
+- Updated types for climate to be more specific for entities and services (HvacAction, HvacMode) types also exported from core and the state is now typed too
+
 # v.1.0.10
 #### @hakit/components
 ##### released - 03/08/2023

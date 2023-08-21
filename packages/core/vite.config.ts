@@ -21,7 +21,11 @@ export default defineConfig(configEnv => {
           ...Object.keys(packageJson.peerDependencies),
           'react/jsx-runtime',
           'react-is',
-          'javascript-time-ago/locale/en.json'
+          'javascript-time-ago/locale/en.json',
+          '@emotion/sheet',
+          '@emotion/cache',
+          '@emotion/serialize',
+          '@emotion/utils',
         ],
         output: {
           globals: {
@@ -35,6 +39,11 @@ export default defineConfig(configEnv => {
             'javascript-time-ago': 'javascript-time-ago',
             'javascript-time-ago/locale/en.json': 'javascript-time-ago/locale/en.json',
             "react-router-dom": "react-router-dom",
+            'react-thermostat': 'react-thermostat',
+            '@emotion/sheet': '@emotion/sheet',
+            '@emotion/cache': '@emotion/cache',
+            '@emotion/serialize': '@emotion/serialize',
+            '@emotion/utils': '@emotion/utils',
           }
         }
       },

@@ -4,36 +4,6 @@ import React from "react";
 import { withThemeFromJSXProvider } from '@storybook/addon-styling';
 import { Global, css } from '@emotion/react';
 
-const GlobalStyles = () => (
-  <Global
-    styles={css`
-      .docs-story {
-        background-color: var(--ha-background);
-        font-family: var(--ha-font-family);
-        font-size: var(--ha-font-size);
-        color: var(--ha-color);
-      }
-      #storybook-root {
-        padding: 0 !important;
-        &:not([hidden="true"]) {
-          width: 100%;
-          height: 100%;
-          #storybook-inner-preview {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            align-items: center;
-            justify-content: flex-start;
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      }
-      
-    `}
-  />
-);
-
 export default {
   decorators: [
     (Story, args) => {
@@ -46,6 +16,33 @@ export default {
         padding: 0,
       } : {};
       return <div id="storybook-inner-preview">
+         <Global
+          styles={css`
+            .docs-story {
+              background-color: var(--ha-background);
+              font-family: var(--ha-font-family);
+              font-size: var(--ha-font-size);
+              color: var(--ha-color);
+            }
+            #storybook-root {
+              padding: 0 !important;
+              &:not([hidden="true"]) {
+                width: 100%;
+                height: 100%;
+                #storybook-inner-preview {
+                  display: flex;
+                  width: 100%;
+                  height: 100%;
+                  align-items: center;
+                  justify-content: flex-start;
+                  width: 100%;
+                  flex-direction: column;
+                }
+              }
+            }
+            
+          `}
+          />
         <div style={{
           padding: args.parameters.padding ?? '2rem',
           width: args.parameters.width ?? 'calc(100% - 4rem)',
@@ -54,9 +51,6 @@ export default {
         }}><Story /></div>
       </div>
     },
-    withThemeFromJSXProvider({
-      GlobalStyles, // Adds your GlobalStyles component to all stories
-    }),
   ],
 
   parameters: {

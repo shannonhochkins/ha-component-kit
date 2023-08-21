@@ -1,6 +1,6 @@
 import { Story, Source } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
-import { HassConnect, HassContext, useHass } from '@core';
+import { HassConnect, HassContext, useHass, loadTokens } from '@core';
 import { useContext, useState, useEffect, useMemo } from "react";
 import type {
   HassServices,
@@ -27,13 +27,14 @@ interface ApiTesterProps {
 }
 
 function ApiTester({ domains, entities }: ApiTesterProps) {
-  const { callService, getAllEntities } = useHass();
+  const { callService, getAllEntities, config } = useHass();
   const [domain, setDomain] = useState<string>("light");
   const [service, setService] = useState<string>("");
   const [entity, setEntity] = useState<string>("");
   console.group('All Entities');
   console.log(getAllEntities());
   console.groupEnd();
+  console.log('ConfigurationObject', config);
   const availableEntities = useMemo(() => {
     // filter the entities that are prefixed with the domain,
     return Object.entries(entities)
@@ -242,7 +243,7 @@ export function Test${upperFirst(camelCase(domain))}{
 }
 
 function UseData() {
-  const { getAllEntities, getServices } = useContext(HassContext);
+  const { getAllEntities, getServices, config } = useContext(HassContext);
   const entities = getAllEntities();
   const [services, setServices] = useState<HassServices | null>(null);
   const hasEntities = useMemo(
@@ -269,6 +270,7 @@ function UseData() {
 function Template() {
   const storedHassUrl = localStorage.getItem("hassUrl");
   const storedHassTokens = localStorage.getItem("hassTokens");
+  console.log('storedHassTokens', storedHassTokens, loadTokens());
   const isAuthRedirect = window.location.href.includes("auth_callback");
   const [error, setError]  = useState<string>("");
   const [hassUrl, setHassUrl] = useState<string>(storedHassTokens === null && !isAuthRedirect ? "" : storedHassUrl || '');
@@ -339,7 +341,10 @@ function Template() {
         </Grid>
       </Grid>
       </CssBaseline>
-        {ready && <HassConnect hassUrl={hassUrl}>
+        {ready && <HassConnect hassUrl={hassUrl} options={{
+          allowNonSecure: true,
+          preloadConfiguration: true,
+        }}>
           <UseData />
         </HassConnect>}
     </>

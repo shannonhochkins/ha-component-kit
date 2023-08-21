@@ -40,7 +40,6 @@ exports[`<FabCard /> renders FabCard 1`] = `
   data-testid="fab-card"
   size="48"
   style="opacity: 1;"
-  tabindex="0"
 >
   <span />
 </button>

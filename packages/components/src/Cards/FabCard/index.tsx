@@ -39,10 +39,12 @@ const StyledFabCard = styled(motion.button)<{
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow;
-  &:active {
-  }
-  &:hover {
+  &:not(:disabled):hover {
     background-color: var(--ha-secondary-background-hover);
+  }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
   }
   font-size: 0.7rem;
   ${(props) =>
@@ -60,7 +62,7 @@ export interface FabCardProps<
   E extends `${AllDomains}.${string}`,
   S extends DomainService<ExtractDomain<E>>
 > extends Extendable {
-  /** The size of the Fab, this applies to the width and height @default 40 */
+  /** The size of the Fab, this applies to the width and height @default 48 */
   size?: number;
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
   icon?: string | null;
@@ -80,6 +82,8 @@ export interface FabCardProps<
   active?: boolean;
   /** the children of the fabCard, useful or small text */
   children?: React.ReactNode;
+  /** disable the fab card, onClick will not fire */
+  disabled?: boolean;
 }
 
 /** The Fab (Floating Action Button) Card is a simple button with an icon to trigger something on press */
@@ -97,6 +101,7 @@ export function FabCard<
   onClick,
   active: _active,
   children,
+  disabled,
   ...rest
 }: FabCardProps<E, S>): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
@@ -129,6 +134,7 @@ export function FabCard<
       ? false
       : entity.state !== "off";
   const useApiHandler = useCallback(() => {
+    if (disabled) return;
     // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
     if (typeof service === "string" && entity) {
       // @ts-expect-error - we don't actually know the service at this level
@@ -137,15 +143,20 @@ export function FabCard<
     }
     if (typeof onClick === "function")
       onClick(entity as HassEntityWithApi<ExtractDomain<E>>);
-  }, [service, entity, serviceData, onClick]);
+  }, [service, entity, serviceData, disabled, onClick]);
   const title = useMemo(
     () => (domain === null ? null : startCase(lowerCase(domain))),
     [domain]
   );
   return (
     <>
-      <Ripples borderRadius="50%" whileTap={{ scale: 0.9 }}>
+      <Ripples
+        disabled={disabled}
+        borderRadius="50%"
+        whileTap={{ scale: disabled ? 1 : 0.9 }}
+      >
         <StyledFabCard
+          disabled={disabled}
           active={active}
           layoutId={
             typeof _entity === "string" ? `${_entity}-fab-card` : undefined
@@ -161,7 +172,7 @@ export function FabCard<
       </Ripples>
       {typeof _entity === "string" && (
         <ModalByEntityDomain
-          entity={_entity}
+          entity={_entity as `${AllDomains}.${string}`}
           title={title || "Unknown title"}
           onClose={() => {
             setOpenModal(false);

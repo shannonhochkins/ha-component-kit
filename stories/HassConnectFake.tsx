@@ -9,6 +9,8 @@ import type {
   // types
   Connection,
   HassEntities,
+  HassConfig,
+  Auth,
 } from "home-assistant-js-websocket";
 import type {
   ServiceData,
@@ -17,6 +19,8 @@ import type {
   Target,
   Route,
   HassContextProps,
+  HvacMode,
+  HvacAction
 } from "@hakit/core";
 import { HassContext, useHash, hs2rgb } from '@hakit/core';
 import { entities as ENTITIES } from '@mocks/mockEntities';
@@ -34,6 +38,68 @@ interface HassProviderProps {
   throttle?: number;
 }
 
+const MODE_TO_HVAC_ACTION: {
+  [key in HvacMode]: HvacAction
+} = {
+  'off': 'off',
+  'heat': 'heating',
+  'cool': 'cooling',
+  'heat_cool': 'preheating',
+  'auto': 'idle',
+  'dry': 'drying',
+  'fan_only': 'fan',
+}
+
+const fakeConfig: HassConfig = {
+  "latitude": -33.25779010313883,
+  "longitude": 151.4821529388428,
+  "elevation": 0,
+  "unit_system": {
+      "length": "km",
+      "accumulated_precipitation": "mm",
+      "mass": "g",
+      "pressure": "Pa",
+      "temperature": "°C",
+      "volume": "L",
+      "wind_speed": "m/s"
+  },
+  "location_name": "Freesia",
+  "time_zone": "Australia/Brisbane",
+  "components": [],
+  "config_dir": "/config",
+  "allowlist_external_dirs": [],
+  "allowlist_external_urls": [],
+  "version": "2023.8.2",
+  "config_source": "storage",
+  "safe_mode": false,
+  "state": "RUNNING",
+  "external_url": null,
+  "internal_url": null,
+  "currency": "AUD",
+  "country": "AU",
+  "language": "en"
+};
+
+const fakeAuth: Auth = {
+  data: {
+    hassUrl: "",
+    clientId: null,
+    expires: 0,
+    refresh_token: "",
+    access_token: "",
+    expires_in: 0
+  },
+  wsUrl: "",
+  accessToken: "",
+  expired: false,
+  refreshAccessToken: function (): Promise<void> {
+    throw new Error("Function not implemented.");
+  },
+  revoke: function (): Promise<void> {
+    throw new Error("Function not implemented.");
+  }
+}
+
 function HassProvider({
   children,
 }: HassProviderProps) {
@@ -46,7 +112,7 @@ function HassProvider({
   const [ready] = useState(true);
   const getStates = async () => null;
   const getServices = async () => null;
-  const getConfig = async () => null;
+  const getConfig = async () => fakeConfig;
   const getUser = async () => null;
   const getAllEntities = useMemo(() => () => entities, [entities]);
   const getEntity = (entity: string, returnNullIfNotFound: boolean) => {
@@ -82,13 +148,6 @@ function HassProvider({
         }));
       }
       if (domain === 'climate') {
-        let hvac = entities[target].state;
-        if (service === 'turnOn') {
-          hvac = 'cool';
-        }
-        if (service === 'turnOff') {
-          hvac = 'off';
-        }
         return setEntities(entities => ({
           ...entities,
           [target]: {
@@ -97,11 +156,11 @@ function HassProvider({
               ...entities[target].attributes,
               ...serviceData || {},
               // @ts-ignore - purposely casting here so i don't have to setup manual types for fake data
-              hvac_action: serviceData?.hvac_mode || hvac
+              hvac_action: MODE_TO_HVAC_ACTION[serviceData?.hvac_mode] || entities[target].attributes.hvac_action
             },
             ...dates,
             // @ts-ignore - purposely casting here so i don't have to setup manual types for fake data
-            state: serviceData?.hvac_mode || hvac
+            state: serviceData?.hvac_mode || entities[target].state
           }
         }));
       }
@@ -262,6 +321,9 @@ function HassProvider({
         ready,
         routes,
         lastUpdated,
+        auth: fakeAuth,
+        config: fakeConfig,
+        logout: () => null,
       }}
     >
       {children(ready)}
