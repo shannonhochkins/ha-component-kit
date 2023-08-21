@@ -1,4 +1,14 @@
-
+# v.1.0.9
+#### @hakit/core
+- Refactored HassConnect authentication as sometimes it was not rendering the children until a manual refresh was performed.
+- NEW - HassConnect - options prop added to pass down options to the provider
+   - throttle - determine the default throttle amount to use for all entity updates (default is 150ms)
+   - allowNonSecure - allow non https urls to authenticate (default is false), localhost is accepted by default
+   - preloadConfiguration - if the configuration object should fetch before children render (default is false)
+- loadTokens, saveTokens logic is identical to the home assistant auth flow, this is to ensure the tokens are saved correctly and can be used in the future, these functions are exposed from core under loadTokens and saveTokens
+- Adding more error handling to the authentication flow
+- NEW - returning logout method from useHass hook, this will clear the tokens and force a re-authentication
+- Previously, authentication was checking the current url last authenticated with, this may have been causing issues with the authentication flow, this has been removed and will authenticate correctly if there's tokens present in local storage.
 # v1.0.11
 #### @hakit/components
 - adding new dark theme color scheme for scroll bars / other browser specific changes

@@ -19,7 +19,7 @@
     "custom"
   ],
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=16.0.0"
   },
   "description": "A collection of React hooks and helpers for Home Assistant to easily communicate with the Home Assistant WebSocket API.",
   "main": "dist/hakit-core.umd.js",
