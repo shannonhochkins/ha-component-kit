@@ -10,6 +10,7 @@ import type {
   Connection,
   HassEntities,
   HassConfig,
+  Auth,
 } from "home-assistant-js-websocket";
 import type {
   ServiceData,
@@ -49,7 +50,7 @@ const MODE_TO_HVAC_ACTION: {
   'fan_only': 'fan',
 }
 
-const fakeConfig = {
+const fakeConfig: HassConfig = {
   "latitude": -33.25779010313883,
   "longitude": 151.4821529388428,
   "elevation": 0,
@@ -77,7 +78,27 @@ const fakeConfig = {
   "currency": "AUD",
   "country": "AU",
   "language": "en"
-} satisfies HassConfig;
+};
+
+const fakeAuth: Auth = {
+  data: {
+    hassUrl: "",
+    clientId: null,
+    expires: 0,
+    refresh_token: "",
+    access_token: "",
+    expires_in: 0
+  },
+  wsUrl: "",
+  accessToken: "",
+  expired: false,
+  refreshAccessToken: function (): Promise<void> {
+    throw new Error("Function not implemented.");
+  },
+  revoke: function (): Promise<void> {
+    throw new Error("Function not implemented.");
+  }
+}
 
 function HassProvider({
   children,
@@ -300,6 +321,9 @@ function HassProvider({
         ready,
         routes,
         lastUpdated,
+        auth: fakeAuth,
+        config: fakeConfig,
+        logout: () => null,
       }}
     >
       {children(ready)}

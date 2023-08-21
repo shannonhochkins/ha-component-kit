@@ -8,6 +8,9 @@ export * from "./data/light";
 // components
 export { HassConnect } from "./HassConnect";
 export { HassContext } from "./HassConnect/Provider";
+// tokens
+export { loadTokens, saveTokens } from "./HassConnect/token-storage";
+
 // types
 export type { HassContextProps, Route } from "./HassConnect/Provider";
 export type { HassConnectProps } from "./HassConnect";

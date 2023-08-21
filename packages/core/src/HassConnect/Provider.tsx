@@ -29,6 +29,7 @@ import {
   getUser as _getUser,
   ERR_HASS_HOST_REQUIRED,
   ERR_CANNOT_CONNECT,
+  ERR_INVALID_AUTH,
   ERR_INVALID_HTTPS_TO_HTTP,
 } from "home-assistant-js-websocket";
 import { isArray, snakeCase } from "lodash";
@@ -40,6 +41,7 @@ import {
   Target,
 } from "@typings";
 import { useHash } from "@core";
+import { saveTokens, loadTokens } from "./token-storage";
 export interface CallServiceArgs<
   T extends SnakeOrCamelDomains,
   M extends DomainService<T>
@@ -92,6 +94,12 @@ export interface HassContextProps {
   useRoute(hash: string): Route | null;
   /** returns available routes */
   routes: Route[];
+  /** the home assistant authentication object */
+  auth: Auth;
+  /** the home assistant configuration */
+  config: HassConfig | null;
+  /** logout of HA */
+  logout: () => void;
 }
 
 export const HassContext = createContext<HassContextProps>(
@@ -99,23 +107,121 @@ export const HassContext = createContext<HassContextProps>(
 );
 
 export interface HassProviderProps {
+  /** components to render once authenticated, this accepts a child function which will pass if it is ready or not */
   children: (ready: boolean) => React.ReactNode;
+  /** the home assistant url */
   hassUrl: string;
+  /** the throttle controller for updated @default 150 */
   throttle?: number;
+  /** should you want to use a locally hosted home assistant instance, enable this flag @default false */
+  allowNonSecure?: boolean;
+  /** preload home-assistant configuration */
+  preloadConfiguration?: boolean;
 }
+
+function translateErr(err: number | string | Error | unknown) {
+  return err === ERR_CANNOT_CONNECT
+    ? "Unable to connect"
+    : err === ERR_HASS_HOST_REQUIRED
+    ? "Please enter a Home Assistant URL."
+    : err === ERR_INVALID_HTTPS_TO_HTTP
+    ? `Cannot connect to Home Assistant instances over "http://".`
+    : `Unknown error (${err}).`;
+}
+type ConnectionResponse =
+  | {
+      type: "success";
+      connection: Connection;
+      auth: Auth;
+    }
+  | {
+      type: "error";
+      error: string;
+    }
+  | {
+      type: "failed";
+      cannotConnect: true;
+    };
+
+const tryConnection = async (
+  init: "auth-callback" | "user-request" | "saved-tokens",
+  hassUrl?: string
+): Promise<ConnectionResponse> => {
+  const options: AuthOptions = {
+    saveTokens,
+    loadTokens: () => Promise.resolve(loadTokens()),
+  };
+
+  if (hassUrl) {
+    options.hassUrl = hassUrl;
+  }
+  let auth: Auth;
+
+  try {
+    auth = await getAuth(options);
+    if (auth.expired) {
+      await auth.refreshAccessToken();
+    }
+  } catch (err: any) {
+    if (init === "saved-tokens" && err === ERR_CANNOT_CONNECT) {
+      return {
+        type: "failed",
+        cannotConnect: true,
+      };
+    }
+    return {
+      type: "error",
+      error: translateErr(err),
+    };
+  } finally {
+    // Clear url if we have a auth callback in url.
+    if (location.search.includes("auth_callback=1")) {
+      history.replaceState(null, "", location.pathname);
+    }
+  }
+  let connection: Connection;
+  try {
+    // create the connection to the websockets
+    connection = await createConnection({ auth });
+  } catch (err) {
+    // In case of saved tokens, silently solve problems.
+    if (init === "saved-tokens") {
+      if (err === ERR_CANNOT_CONNECT) {
+        return {
+          type: "failed",
+          cannotConnect: true,
+        };
+      } else if (err === ERR_INVALID_AUTH) {
+        saveTokens(null);
+      }
+    }
+    return {
+      type: "error",
+      error: translateErr(err),
+    };
+  }
+  return {
+    type: "success",
+    connection,
+    auth,
+  };
+};
 
 export function HassProvider({
   children,
   hassUrl,
   throttle = 150,
+  allowNonSecure = false,
+  preloadConfiguration = false,
 }: HassProviderProps): JSX.Element {
   const [_hash] = useHash();
   const [routes, setRoutes] = useState<Route[]>([]);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [ready, setReady] = useState(false);
-  const auth = useRef<Auth | null>(null);
-  const hasRequestedAuth = useRef(false);
+  const [config, setConfig] = useState<HassConfig | null>(null);
+  const [cannotConnect, setCannotConnect] = useState(false);
+  const [auth, setAuth] = useState<Auth | null>(null);
   const unsubscribe = useRef<UnsubscribeFunc | null>(null);
   const [_entities, setEntities] = useState<HassEntities>({});
   const [error, setError] = useState<string | null>(null);
@@ -155,30 +261,28 @@ export function HassProvider({
     setLastUpdated(new Date());
     if (!ready) setReady(true);
   }, throttle);
-  const getAuthOptions = useCallback((hassUrl: string): AuthOptions => {
-    const { origin: inputOrigin } = new URL(hassUrl);
-    return {
-      hassUrl: inputOrigin,
-      async loadTokens() {
-        try {
-          const tokens = JSON.parse(localStorage.hassTokens);
-          const { origin: tokenOrigin } = new URL(tokens.hassUrl);
-          // abort the authentication if the token url doesn't match
-          if (inputOrigin !== tokenOrigin) return null;
-          return tokens;
-        } catch (err) {
-          if (err instanceof Error) {
-            if (!err.message.includes("is not valid JSON")) {
-              setError(err.message);
-            }
-          }
-        }
-      },
-      saveTokens: (tokens) => {
-        localStorage.hassTokens = JSON.stringify(tokens);
-      },
-    };
+
+  const reset = useCallback(() => {
+    // when the hassUrl changes, reset some properties and re-authenticate
+    setReady(false);
+    setEntities({});
+    setConnection(null);
+    setAuth(null);
+    if (unsubscribe.current) {
+      unsubscribe.current();
+      unsubscribe.current = null;
+    }
   }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      reset();
+      saveTokens(null);
+      location.reload();
+    } catch (err: any) {
+      alert("Unable to log out!");
+    }
+  }, [reset]);
 
   const callService = useCallback(
     async <T extends SnakeOrCamelDomains, M extends DomainService<T>>({
@@ -211,85 +315,84 @@ export function HassProvider({
     [connection, ready]
   );
 
+  const handleConnect = useCallback(async () => {
+    let connectionResponse: ConnectionResponse;
+    // this will trigger on first mount
+    if (location.search.indexOf("auth_callback=1") !== -1) {
+      connectionResponse = await tryConnection("auth-callback");
+    } else if (loadTokens()) {
+      connectionResponse = await tryConnection("saved-tokens");
+    } else {
+      const value = hassUrl || "";
+
+      if (value === "") {
+        setError("Please enter a Home Assistant URL.");
+        return;
+      }
+      if (value.indexOf("://") === -1) {
+        setError(
+          "Please enter your full URL, including the protocol part (https://)."
+        );
+        return;
+      }
+
+      let url: URL;
+      try {
+        url = new URL(value);
+      } catch (err: any) {
+        setError("Invalid URL");
+        return;
+      }
+
+      if (
+        url.protocol === "http:" &&
+        url.hostname !== "localhost" &&
+        allowNonSecure === false
+      ) {
+        setError(translateErr(ERR_INVALID_HTTPS_TO_HTTP));
+        return;
+      }
+      connectionResponse = await tryConnection("user-request", value);
+    }
+    if (connectionResponse.type === "error") {
+      setError(connectionResponse.error);
+    } else if (connectionResponse.type === "failed") {
+      setCannotConnect(true);
+    } else if (connectionResponse.type === "success") {
+      // // store a reference to the authentication object
+      setAuth(connectionResponse.auth);
+      // // store the connection to pass to the provider
+      setConnection(connectionResponse.connection);
+    }
+  }, [hassUrl, allowNonSecure]);
+
   useEffect(() => {
-    // when the hassUrl changes, reset some properties
-    setReady(false);
-    setEntities({});
-    setConnection(null);
-    auth.current = null;
-    hasRequestedAuth.current = false;
+    handleConnect();
+  }, [handleConnect]);
+
+  useEffect(() => {
+    // if preloadConfiguration is set to true, load it if we haven't already
+    if (preloadConfiguration && config === null) {
+      getConfig().then((config) => {
+        setConfig(config);
+      });
+    }
+  }, [preloadConfiguration, getConfig, config]);
+
+  useEffect(() => {
+    // subscribe to the entities sockets when we have a connection
+    // we're already subscribed, so unsubscribe first
     if (unsubscribe.current) {
       unsubscribe.current();
       unsubscribe.current = null;
     }
-  }, [hassUrl]);
-
-  // useEffect(() => {
-  //   if (connection === null) return;
-  // }, [connection, setEntitiesDebounce]);
-
-  const translateErr = (err: number | string | Error | unknown) =>
-    err === ERR_CANNOT_CONNECT
-      ? "Unable to connect"
-      : err === ERR_HASS_HOST_REQUIRED
-      ? "Please enter a Home Assistant URL."
-      : err === ERR_INVALID_HTTPS_TO_HTTP
-      ? `Cannot connect to Home Assistant instances over "http://".`
-      : `Unknown error (${err}).`;
-
-  const authenticate = useCallback(async () => {
-    if (typeof hassUrl !== "string") return;
-    if (error !== null) setError(null);
-    try {
-      auth.current = await getAuth(getAuthOptions(hassUrl));
-      if (auth.current.expired) {
-        return auth.current.refreshAccessToken();
-      }
-    } catch (err) {
-      if (err === ERR_HASS_HOST_REQUIRED) {
-        auth.current = await getAuth(getAuthOptions(hassUrl));
-      } else {
-        throw err;
-      }
-    }
-    try {
-      // create the connection to the websockets
-      const connection = await createConnection({ auth: auth.current });
-      // store the connection to pass to the provider
-      setConnection(connection);
-      // subscribe to the entities sockets
+    // now subscribe to the entities
+    if (connection) {
       unsubscribe.current = subscribeEntities(connection, ($entities) => {
         setEntitiesDebounce($entities);
       });
-    } catch (e) {
-      throw new Error(translateErr(e));
     }
-    // if the url contains the auth callback url, replace the url so it doesn't contain it
-    if (location.search.includes("auth_callback=1")) {
-      history.replaceState(null, "", location.pathname);
-    }
-    return () => {
-      // on unmount, unsubscribe
-      if (unsubscribe.current) {
-        unsubscribe.current();
-        unsubscribe.current = null;
-      }
-    };
-  }, [error, getAuthOptions, hassUrl, setEntitiesDebounce]);
-
-  useEffect(() => {
-    if (!ready && !hasRequestedAuth.current) {
-      try {
-        authenticate();
-        hasRequestedAuth.current = true;
-      } catch (err) {
-        hasRequestedAuth.current = false;
-        if (err instanceof Error) {
-          setError(err.message);
-        }
-      }
-    }
-  }, [authenticate, ready]);
+  }, [connection, setEntitiesDebounce]);
 
   useEffect(() => {
     setRoutes((routes) =>
@@ -338,6 +441,15 @@ export function HassProvider({
     [routes]
   );
 
+  if (cannotConnect) {
+    return (
+      <p>
+        Unable to connect to ${loadTokens()!.hassUrl}, refresh the page and try
+        again, or <a onClick={logout}>Logout</a>.
+      </p>
+    );
+  }
+
   return (
     <HassContext.Provider
       value={{
@@ -356,6 +468,10 @@ export function HassProvider({
         routes,
         ready,
         lastUpdated,
+        logout,
+        /** simply wont be able to read this value unless authentication is successful, okay to cast here */
+        auth: auth as Auth,
+        config,
       }}
     >
       {error === null ? children(ready) : error}
