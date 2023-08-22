@@ -23,7 +23,7 @@ describe("<FabCard />", () => {
       />,
       {
         wrapper: TestWrapper,
-      }
+      },
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("fab-card");
@@ -42,7 +42,7 @@ describe("<FabCard />", () => {
           <FabCard entity={entity} service={service} data-testid="fab-card" />,
           {
             wrapper: TestWrapper,
-          }
+          },
         );
         await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
         const buttonElement = getByTestId("fab-card");
@@ -60,7 +60,7 @@ describe("<FabCard />", () => {
           />,
           {
             wrapper: TestWrapper,
-          }
+          },
         );
         await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
         const buttonElement = getByTestId("fab-card");
@@ -72,7 +72,7 @@ describe("<FabCard />", () => {
           undefined,
           {
             entity_id: entity,
-          }
+          },
         );
         expect(mockFunction).toHaveBeenCalled();
       });
@@ -88,7 +88,7 @@ describe("<FabCard />", () => {
       />,
       {
         wrapper: TestWrapper,
-      }
+      },
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("fab-card");
@@ -100,7 +100,7 @@ describe("<FabCard />", () => {
       <FabCard icon="mdi:cross" data-testid="fab-card" />,
       {
         wrapper: TestWrapper,
-      }
+      },
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("fab-card");

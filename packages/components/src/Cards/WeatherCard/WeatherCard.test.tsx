@@ -13,7 +13,7 @@ describe("<WeatherCard />", () => {
       <WeatherCard entity="weather.entity" data-testid="weather-card" />,
       {
         wrapper: TestWrapper,
-      }
+      },
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("weather-card");
@@ -31,7 +31,7 @@ describe("<WeatherCard />", () => {
       />,
       {
         wrapper: TestWrapper,
-      }
+      },
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("weather-card");
@@ -49,7 +49,7 @@ describe("<WeatherCard />", () => {
       />,
       {
         wrapper: TestWrapper,
-      }
+      },
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("weather-card");

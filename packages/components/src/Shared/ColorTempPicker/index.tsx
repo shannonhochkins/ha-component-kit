@@ -129,7 +129,7 @@ function polar2xy(r: number, phi: number) {
 function drawColorWheel(
   ctx: CanvasRenderingContext2D,
   minTemp: number,
-  maxTemp: number
+  maxTemp: number,
 ) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   const radius = ctx.canvas.width / 2;
@@ -144,7 +144,7 @@ function drawColorWheel(
 
     const temperature = Math.max(
       Math.min(min + fraction * (max - min), max),
-      min
+      min,
     );
 
     const color = rgb2hex(temperature2rgb(temperature));
@@ -176,7 +176,7 @@ export function ColorTempPicker({
   const isOn = entity.state === ON;
   const supportsColorTemp = lightSupportsColorMode(
     entity,
-    LIGHT_COLOR_MODES.COLOR_TEMP
+    LIGHT_COLOR_MODES.COLOR_TEMP,
   );
   const getColoursFromTemperature = useCallback(
     (temperature: number) => {
@@ -189,7 +189,7 @@ export function ColorTempPicker({
         hs,
       };
     },
-    [max, min]
+    [max, min],
   );
 
   const updateColours = useCallback(
@@ -205,7 +205,7 @@ export function ColorTempPicker({
           : "hidden";
       }
     },
-    [getColoursFromTemperature]
+    [getColoursFromTemperature],
   );
 
   const _generateColorWheel = useCallback(() => {
@@ -228,11 +228,11 @@ export function ColorTempPicker({
       const fraction = (y / SAFE_ZONE_FACTOR + 1) / 2;
       const temperature = Math.max(
         Math.min(min + fraction * (max - min), max),
-        min
+        min,
       );
       return Math.round(temperature);
     },
-    [min, max]
+    [min, max],
   );
 
   const setValue = useCallback(
@@ -241,11 +241,11 @@ export function ColorTempPicker({
       _cursorPosition.current = updatedValue;
       parentRef.current.style.setProperty(
         "--value-x",
-        disabled ? "0" : `${updatedValue[0]}`
+        disabled ? "0" : `${updatedValue[0]}`,
       );
       parentRef.current.style.setProperty(
         "--value-y",
-        disabled ? "0" : `${updatedValue[1]}`
+        disabled ? "0" : `${updatedValue[1]}`,
       );
       _localValue.current = _getValueFromCoord(_cursorPosition.current);
       updateColours(_localValue.current);
@@ -255,7 +255,7 @@ export function ColorTempPicker({
         parentRef.current.style.removeProperty("--value-y");
       };
     },
-    [disabled, updateColours, _getValueFromCoord]
+    [disabled, updateColours, _getValueFromCoord],
   );
 
   const _getCoordsFromValue = useCallback(
@@ -270,11 +270,11 @@ export function ColorTempPicker({
       const y = (2 * fraction - 1) * SAFE_ZONE_FACTOR;
       return [0, y];
     },
-    [value, min, max]
+    [value, min, max],
   );
 
   const _localValue = useRef<number>(
-    _getValueFromCoord(_getCoordsFromValue(value))
+    _getValueFromCoord(_getCoordsFromValue(value)),
   );
 
   useEffect(() => {
@@ -303,7 +303,7 @@ export function ColorTempPicker({
       const [__x, __y] = polar2xy(Math.min(1, r), phi);
       return [__x, __y];
     },
-    []
+    [],
   );
 
   const triggerOnChange = useCallback(
@@ -320,7 +320,7 @@ export function ColorTempPicker({
         });
       }, 100);
     },
-    [onChangeApplied, entity, value, getColoursFromTemperature]
+    [onChangeApplied, entity, value, getColoursFromTemperature],
   );
 
   useEffect(() => {
@@ -381,7 +381,7 @@ export function ColorTempPicker({
         const x = state.event.clientX;
         const y = state.event.clientY;
         setValue(
-          _getPositionFromEvent([x, y], state.event.target as HTMLElement)
+          _getPositionFromEvent([x, y], state.event.target as HTMLElement),
         );
         triggerOnChange(_localValue.current);
       },
@@ -390,7 +390,7 @@ export function ColorTempPicker({
       drag: {
         filterTaps: true,
       },
-    }
+    },
   );
 
   return supportsColorTemp ? (

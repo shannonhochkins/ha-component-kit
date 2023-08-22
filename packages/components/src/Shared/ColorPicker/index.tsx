@@ -45,7 +45,7 @@ function adjustRgb(
   cw?: number,
   ww?: number,
   minKelvin?: number,
-  maxKelvin?: number
+  maxKelvin?: number,
 ) {
   if (wv != null) {
     return rgbw2rgb([...rgb, wv] as [number, number, number, number]);
@@ -54,7 +54,7 @@ function adjustRgb(
     return rgbww2rgb(
       [...rgb, cw, ww] as [number, number, number, number, number],
       minKelvin,
-      maxKelvin
+      maxKelvin,
     );
   }
   return rgb;
@@ -67,7 +67,7 @@ function drawColorWheel(
   cw?: number,
   ww?: number,
   minKelvin?: number,
-  maxKelvin?: number
+  maxKelvin?: number,
 ) {
   const radius = ctx.canvas.width / 2;
 
@@ -93,8 +93,8 @@ function drawColorWheel(
         cw,
         ww,
         minKelvin,
-        maxKelvin
-      )
+        maxKelvin,
+      ),
     );
     const end = rgb2hex(
       adjustRgb(
@@ -103,8 +103,8 @@ function drawColorWheel(
         cw,
         ww,
         minKelvin,
-        maxKelvin
-      )
+        maxKelvin,
+      ),
     );
     gradient.addColorStop(0, start);
     gradient.addColorStop(1, end);
@@ -229,7 +229,7 @@ export function ColorPicker({
       lightColors.coolWhite,
       lightColors.warmWhite,
       minKelvin,
-      maxKelvin
+      maxKelvin,
     );
   }, [
     lightColors.colorBrightness,
@@ -252,7 +252,7 @@ export function ColorPicker({
       const [x, y] = polar2xy(r, phi);
       return [x, y];
     },
-    []
+    [],
   );
 
   const _getValueFromCoord = useCallback(
@@ -263,7 +263,7 @@ export function ColorPicker({
       const saturation = Math.round(Math.min(r, 1) * 100) / 100;
       return [hue, saturation];
     },
-    []
+    [],
   );
 
   const _getPositionFromEvent = useCallback(
@@ -281,7 +281,7 @@ export function ColorPicker({
       const [__x, __y] = polar2xy(Math.min(1, r), phi);
       return [__x, __y];
     },
-    []
+    [],
   );
 
   const _resetPosition = useCallback(() => {
@@ -319,7 +319,7 @@ export function ColorPicker({
             ]),
             lightColors.white,
             lightColors.coolWhite,
-            lightColors.warmWhite
+            lightColors.warmWhite,
           )
         : ([255, 255, 255] as [number, number, number]);
     hex.current = rgb2hex(rgb);
@@ -345,11 +345,11 @@ export function ColorPicker({
       _cursorPosition.current = updatedValue;
       parentRef.current.style.setProperty(
         "--value-x",
-        disabled ? "0" : `${updatedValue[0]}`
+        disabled ? "0" : `${updatedValue[0]}`,
       );
       parentRef.current.style.setProperty(
         "--value-y",
-        disabled ? "0" : `${updatedValue[1]}`
+        disabled ? "0" : `${updatedValue[1]}`,
       );
       _localValue.current = _getValueFromCoord(..._cursorPosition.current);
       updateColours();
@@ -365,7 +365,7 @@ export function ColorPicker({
         parentRef.current.style.removeProperty("--value-y");
       };
     },
-    [disabled, _getValueFromCoord, onChange, updateColours]
+    [disabled, _getValueFromCoord, onChange, updateColours],
   );
 
   useEffect(() => {
@@ -379,14 +379,14 @@ export function ColorPicker({
       color: LightColor,
       params?: {
         brightness_pct: number;
-      }
+      },
     ) => {
       entity.api.turnOn({
         ...color,
         ...params,
       });
     },
-    [entity]
+    [entity],
   );
 
   const _setRgbWColor = useCallback(
@@ -401,7 +401,7 @@ export function ColorPicker({
           number,
           number,
           number,
-          number
+          number,
         ];
         _applyColor({ rgbww_color });
       } else if (lightSupportsColorMode(entity, LIGHT_COLOR_MODES.RGBW)) {
@@ -413,12 +413,12 @@ export function ColorPicker({
           number,
           number,
           number,
-          number
+          number,
         ];
         _applyColor({ rgbw_color });
       }
     },
-    [entity, _applyColor]
+    [entity, _applyColor],
   );
 
   const _adjustColorBrightness = useCallback(
@@ -440,7 +440,7 @@ export function ColorPicker({
       }
       return rgbColor;
     },
-    []
+    [],
   );
 
   const _updateColor = useCallback(
@@ -457,24 +457,24 @@ export function ColorPicker({
           lightColors.colorBrightness
             ? _adjustColorBrightness(
                 rgb_color,
-                (lightColors.colorBrightness * 255) / 100
+                (lightColors.colorBrightness * 255) / 100,
               )
-            : rgb_color
+            : rgb_color,
         );
       } else if (lightSupportsColorMode(entity, LIGHT_COLOR_MODES.RGB)) {
         if (lightColors.brightnessAdjusted) {
           const brightnessAdjust = (lightColors.brightnessAdjusted / 255) * 100;
           const brightnessPercentage = Math.round(
-            ((entity.attributes.brightness || 0) * brightnessAdjust) / 255
+            ((entity.attributes.brightness || 0) * brightnessAdjust) / 255,
           );
           const ajustedRgbColor = _adjustColorBrightness(
             rgb_color,
             lightColors.brightnessAdjusted,
-            true
+            true,
           );
           _applyColor(
             { rgb_color: ajustedRgbColor },
-            { brightness_pct: brightnessPercentage }
+            { brightness_pct: brightnessPercentage },
           );
         } else {
           _applyColor({ rgb_color });
@@ -490,7 +490,7 @@ export function ColorPicker({
       lightColors.brightnessAdjusted,
       _adjustColorBrightness,
       _applyColor,
-    ]
+    ],
   );
 
   const bind = useGesture(
@@ -499,7 +499,7 @@ export function ColorPicker({
         if (disabled) return;
         _cursorPosition.current = _getPositionFromEvent(
           state.values,
-          state.target as HTMLElement
+          state.target as HTMLElement,
         );
         setValue(_cursorPosition.current);
       },
@@ -513,7 +513,7 @@ export function ColorPicker({
         setPressed(false, state.type);
         _cursorPosition.current = _getPositionFromEvent(
           state.values,
-          state.target as HTMLElement
+          state.target as HTMLElement,
         );
         setValue(_cursorPosition.current);
         if (typeof onChangeApplied === "function")
@@ -531,7 +531,7 @@ export function ColorPicker({
         const y = state.event.clientY;
         _cursorPosition.current = _getPositionFromEvent(
           [x, y],
-          state.event.target as HTMLElement
+          state.event.target as HTMLElement,
         );
         setValue(_cursorPosition.current);
         if (typeof onChangeApplied === "function")
@@ -547,7 +547,7 @@ export function ColorPicker({
       drag: {
         filterTaps: true,
       },
-    }
+    },
   );
 
   return supportsColor ? (

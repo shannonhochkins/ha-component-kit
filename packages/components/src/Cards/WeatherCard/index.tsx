@@ -209,7 +209,7 @@ export function WeatherCard({
             (forecast, index) => {
               const dateFormatted = convertDateTime(
                 forecast.datetime,
-                timeZone
+                timeZone,
               );
               const [day] = dateFormatted.split(",");
               return (
@@ -226,7 +226,7 @@ export function WeatherCard({
                   </TemperatureLow>
                 </Forecast>
               );
-            }
+            },
           )}
         </Row>
       )}

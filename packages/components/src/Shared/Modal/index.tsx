@@ -124,6 +124,6 @@ export function Modal({ open, id, title, children, onClose }: ModalProps) {
         </Fragment>
       )}
     </AnimatePresence>,
-    document.body
+    document.body,
   );
 }

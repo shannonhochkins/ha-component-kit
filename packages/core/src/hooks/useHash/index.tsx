@@ -20,7 +20,7 @@ export const useHash = (): [string, (newHash: string) => void] => {
         window.location.hash = newHash;
       }
     },
-    [hash]
+    [hash],
   );
 
   return [hash, _setHash];

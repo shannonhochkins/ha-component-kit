@@ -168,7 +168,7 @@ export function ClimateControls({
     temperature = 20,
   } = entity.attributes || {};
   const [internalFanMode, setInternalFanMode] = useState<string | undefined>(
-    fan_mode
+    fan_mode,
   );
   const [internalTemperature, setInternalTemperature] =
     useState<number>(temperature);
@@ -191,7 +191,7 @@ export function ClimateControls({
       });
     },
     200,
-    [internalTemperature]
+    [internalTemperature],
   );
 
   return (
@@ -223,7 +223,7 @@ export function ClimateControls({
               icon="mdi:fan"
               onClick={() => {
                 const currentIndex = fan_modes.findIndex(
-                  (mode) => mode === internalFanMode
+                  (mode) => mode === internalFanMode,
                 );
                 const fanMode = fan_modes[currentIndex + 1]
                   ? fan_modes[currentIndex + 1]

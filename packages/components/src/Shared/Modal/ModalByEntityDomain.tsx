@@ -1,5 +1,5 @@
 import { computeDomain } from "@utils/computeDomain";
-import type { AllDomains } from "@core";
+import type { EntityName } from "@hakit/core";
 import type { ModalProps } from "./";
 import { ModalLightControls } from "./ModalLightControls";
 import { ModalClimateControls } from "./ModalClimateControls";
@@ -10,19 +10,19 @@ interface ModalPropsByDomain {
   climate: ModalClimateControlsProps;
 }
 
-type EntityDomainProps<E extends `${AllDomains}.${string}`> =
+type EntityDomainProps<E extends EntityName> =
   E extends `${infer Domain}.${string}`
     ? Domain extends keyof ModalPropsByDomain
       ? ModalPropsByDomain[Domain]
       : Omit<ModalProps, "children">
     : never;
 
-export type ModalByEntityDomainProps<E extends `${AllDomains}.${string}`> =
+export type ModalByEntityDomainProps<E extends EntityName> =
   EntityDomainProps<E> & {
     entity: E;
   };
 
-export function ModalByEntityDomain<E extends `${AllDomains}.${string}`>({
+export function ModalByEntityDomain<E extends EntityName>({
   entity,
   ...rest
 }: ModalByEntityDomainProps<E>) {

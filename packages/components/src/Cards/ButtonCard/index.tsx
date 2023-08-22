@@ -6,7 +6,7 @@ import type {
   ExtractDomain,
   ServiceData,
   HassEntityWithApi,
-  AllDomains,
+  EntityName,
 } from "@hakit/core";
 import {
   useEntity,
@@ -147,8 +147,8 @@ type Extendable = Omit<
 > &
   MotionProps;
 export interface ButtonCardProps<
-  E extends `${AllDomains}.${string}`,
-  S extends DomainService<ExtractDomain<E>>
+  E extends EntityName,
+  S extends DomainService<ExtractDomain<E>>,
 > extends Extendable {
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
   icon?: string | null;
@@ -173,8 +173,8 @@ export interface ButtonCardProps<
 }
 /** The ButtonCard component is an easy way to represent the state and control of an entity with a simple button, eventually I'll provide further options per domain, like being able to set the colours for lights etc... */
 export function ButtonCard<
-  E extends `${AllDomains}.${string}`,
-  S extends DomainService<ExtractDomain<E>>
+  E extends EntityName,
+  S extends DomainService<ExtractDomain<E>>,
 >({
   service,
   entity: _entity,
@@ -234,7 +234,7 @@ export function ButtonCard<
   // use the input title if provided, else use the domain if available, else null
   const title = useMemo(
     () => _title || (domain !== null ? startCase(lowerCase(domain)) : null),
-    [_title, domain]
+    [_title, domain],
   );
   return (
     <>
@@ -306,7 +306,7 @@ export function ButtonCard<
       </Ripples>
       {typeof _entity === "string" && (
         <ModalByEntityDomain
-          entity={_entity as `${AllDomains}.${string}`}
+          entity={_entity as EntityName}
           title={title || "Unknown title"}
           onClose={() => {
             setOpenModal(false);

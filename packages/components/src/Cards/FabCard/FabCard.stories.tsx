@@ -8,7 +8,7 @@ function Template(
   args: FabCardProps<
     "light.something",
     DomainService<ExtractDomain<"light.something">>
-  >
+  >,
 ) {
   return (
     <HassConnect hassUrl="http://localhost:8123">

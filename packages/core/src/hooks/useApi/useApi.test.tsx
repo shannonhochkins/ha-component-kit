@@ -16,7 +16,7 @@ describe("useApi", () => {
       () => useApi("light", { entity_id: "light.kitchen" }),
       {
         wrapper: TestWrapper,
-      }
+      },
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     act(() => {
@@ -34,7 +34,7 @@ describe("useApi", () => {
       },
       {
         entity_id: "light.kitchen",
-      }
+      },
     );
   });
 
@@ -58,7 +58,7 @@ describe("useApi", () => {
       },
       {
         entity_id: "light.kitchen",
-      }
+      },
     );
   });
 
@@ -82,7 +82,7 @@ describe("useApi", () => {
       },
       {
         entity_id: "light.kitchen",
-      }
+      },
     );
   });
 });

@@ -4,6 +4,6 @@
     "skipLibCheck": true
   },
   "rootDir": "./src",
-  "include": ["src", "mocks"],
+  "include": ["src", "bin", "mocks"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

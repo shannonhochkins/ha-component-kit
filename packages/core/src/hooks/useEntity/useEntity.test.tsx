@@ -32,7 +32,7 @@ describe("useEntity", () => {
       },
       {
         entity_id: "light.fake_light_1",
-      }
+      },
     );
   });
 
@@ -44,7 +44,7 @@ describe("useEntity", () => {
     act(() => {
       // omitting the api object here as the serializer doesn't like proxy objects
       expect(
-        omit(result.current, "api", "last_changed", "last_updated")
+        omit(result.current, "api", "last_changed", "last_updated"),
       ).toMatchSnapshot();
     });
   });
@@ -55,12 +55,12 @@ describe("useEntity", () => {
         async () => {
           await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
           expect(useEntity("light.does_not_exist")).toThrowError(
-            "Entity light.does_not_exist not found"
+            "Entity light.does_not_exist not found",
           );
         },
         {
           wrapper: TestWrapper,
-        }
+        },
       );
     });
   });
@@ -73,12 +73,12 @@ describe("useEntity", () => {
           expect(
             useEntity("light.does_not_exist", {
               returnNullIfNotFound: true,
-            })
+            }),
           ).toEqual(null);
         },
         {
           wrapper: TestWrapper,
-        }
+        },
       );
     });
   });

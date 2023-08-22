@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "sourceMap": true,
+    "strict": true,
+    "outDir": "../dist/sync",
+  },
+  "lib": ["ESNext"],
+  "include": ["cli.ts", "index.ts"],
+  "exclude": []
+}
