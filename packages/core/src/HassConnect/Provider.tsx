@@ -175,7 +175,7 @@ const tryConnection = async (
     };
   } finally {
     // Clear url if we have a auth callback in url.
-    if (location.search.includes("auth_callback=1")) {
+    if (location && location.search.includes("auth_callback=1")) {
       history.replaceState(null, "", location.pathname);
     }
   }
@@ -278,7 +278,7 @@ export function HassProvider({
     try {
       reset();
       saveTokens(null);
-      location.reload();
+      if (location) location.reload();
     } catch (err: any) {
       alert("Unable to log out!");
     }
@@ -318,7 +318,7 @@ export function HassProvider({
   const handleConnect = useCallback(async () => {
     let connectionResponse: ConnectionResponse;
     // this will trigger on first mount
-    if (location.search.indexOf("auth_callback=1") !== -1) {
+    if (location && location.search.indexOf("auth_callback=1") !== -1) {
       connectionResponse = await tryConnection("auth-callback");
     } else if (loadTokens()) {
       connectionResponse = await tryConnection("saved-tokens");

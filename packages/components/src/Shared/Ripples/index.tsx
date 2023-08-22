@@ -84,8 +84,12 @@ export const Ripples = memo(
 
         const rect = currentTarget.getBoundingClientRect();
 
-        const left = pageX - (rect.left + window.scrollX);
-        const top = pageY - (rect.top + window.scrollY);
+        const left =
+          pageX -
+          (rect.left + (typeof window === "undefined" ? 1 : window.scrollX));
+        const top =
+          pageY -
+          (rect.top + (typeof window === "undefined" ? 1 : window.scrollY));
         const size = Math.max(rect.width, rect.height);
 
         setRippleStyle((state) => ({
