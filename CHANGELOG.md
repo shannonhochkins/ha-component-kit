@@ -1,3 +1,12 @@
+# v.1.0.12
+#### @hakit/components
+- Types have been re-built to handle module augmentation for services/entities
+# v.1.0.10
+#### @hakit/core
+- NEW - typescript sync script and cli command added to ensure all types are up to date with the latest home assistant types, this will be run before every release to ensure the types are up to date.
+- NEW - With the new typescript sync feature, all components will have intellisense of the entities and services relative to your home assistant instance.
+- Types have been re-built to handle module augmentation for services/entities
+
 # v.1.0.9
 #### @hakit/core
 - Refactored HassConnect authentication as sometimes it was not rendering the children until a manual refresh was performed.
