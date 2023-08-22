@@ -6,7 +6,7 @@ import type {
   HassEntityWithApi,
   HassEntityCustom,
   ExtractDomain,
-  AllDomains,
+  EntityName,
 } from "@typings";
 import type { HassEntity } from "home-assistant-js-websocket";
 import { useHass, useApi } from "@core";
@@ -44,14 +44,14 @@ const DEFAULT_OPTIONS: UseEntityOptions = {
 
 type UseEntityReturnType<
   E,
-  O extends UseEntityOptions
+  O extends UseEntityOptions,
 > = O["returnNullIfNotFound"] extends true
   ? HassEntityWithApi<ExtractDomain<E>> | null
   : HassEntityWithApi<ExtractDomain<E>>;
 
 export function useEntity<
-  E extends `${AllDomains}.${string}` | "unknown",
-  O extends UseEntityOptions = UseEntityOptions
+  E extends EntityName,
+  O extends UseEntityOptions = UseEntityOptions,
 >(entity: E, options: O = DEFAULT_OPTIONS as O): UseEntityReturnType<E, O> {
   const { throttle, returnNullIfNotFound } = {
     ...DEFAULT_OPTIONS,
@@ -92,7 +92,7 @@ export function useEntity<
     setEntity(formatEntity(entity));
   }, throttle);
   const [$entity, setEntity] = useState<HassEntityCustom | null>(
-    matchedEntity !== null ? formatEntity(matchedEntity) : null
+    matchedEntity !== null ? formatEntity(matchedEntity) : null,
   );
 
   useEffect(() => {
@@ -105,7 +105,7 @@ export function useEntity<
       foundEntity &&
       !isEqual(
         omit(foundEntity, "custom", "last_changed", "last_updated"),
-        omit($entity, "custom", "last_changed", "last_updated")
+        omit($entity, "custom", "last_changed", "last_updated"),
       )
     ) {
       debounceUpdate(foundEntity);

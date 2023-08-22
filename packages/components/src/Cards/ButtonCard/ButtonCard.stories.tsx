@@ -10,7 +10,7 @@ import jsxToString from "jsx-to-string";
 function Template(
   args?: Partial<
     ButtonCardProps<"switch.fake_gaming_switch", DomainService<"switch">>
-  >
+  >,
 ) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
@@ -33,7 +33,7 @@ function Template(
 function TemplateOnclick(
   args?: Partial<
     ButtonCardProps<"climate.air_conditioner", DomainService<"climate">>
-  >
+  >,
 ) {
   return (
     <HassConnect hassUrl="http://localhost:8123">

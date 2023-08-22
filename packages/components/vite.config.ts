@@ -27,6 +27,7 @@ export default defineConfig(configEnv => {
         output: {
           globals: {
             react: 'React',
+            'react-thermostat': 'react-thermostat',
             'react-dom': 'ReactDOM',
             '@emotion/styled': '@emotion/styled',
             '@emotion/react': '@emotion/react',

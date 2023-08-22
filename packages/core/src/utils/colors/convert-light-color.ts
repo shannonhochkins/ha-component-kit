@@ -4,7 +4,7 @@ const DEFAULT_MIN_KELVIN = 2700;
 const DEFAULT_MAX_KELVIN = 6500;
 
 export const temperature2rgb = (
-  temperature: number
+  temperature: number,
 ): [number, number, number] => {
   const value = temperature / 100;
   return [
@@ -45,7 +45,7 @@ const temperatureBlue = (temperature: number): number => {
 
 const matchMaxScale = (
   inputColors: number[],
-  outputColors: number[]
+  outputColors: number[],
 ): number[] => {
   const maxIn: number = Math.max(...inputColors);
   const maxOut: number = Math.max(...outputColors);
@@ -67,7 +67,7 @@ const kelvin2mired = (kelvintTemperature: number) =>
 export const rgbww2rgb = (
   rgbww: [number, number, number, number, number],
   minKelvin?: number,
-  maxKelvin?: number
+  maxKelvin?: number,
 ): [number, number, number] => {
   const [r, g, b, cw, ww] = rgbww;
   // Calculate color temperature of the white channels
@@ -98,7 +98,7 @@ export const rgbww2rgb = (
 };
 
 export const rgbw2rgb = (
-  rgbw: [number, number, number, number]
+  rgbw: [number, number, number, number],
 ): [number, number, number] => {
   const [r, g, b, w] = rgbw;
   const rgb = [r + w, g + w, b + w] as [number, number, number];

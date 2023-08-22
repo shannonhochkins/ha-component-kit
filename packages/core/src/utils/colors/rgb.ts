@@ -11,7 +11,7 @@ export const luminosity = (rgb: [number, number, number]): number => {
 
 export const rgbContrast = (
   color1: [number, number, number],
-  color2: [number, number, number]
+  color2: [number, number, number],
 ) => {
   const lum1 = luminosity(color1);
   const lum2 = luminosity(color2);
@@ -25,5 +25,5 @@ export const rgbContrast = (
 
 export const getRGBContrastRatio = (
   rgb1: [number, number, number],
-  rgb2: [number, number, number]
+  rgb2: [number, number, number],
 ) => Math.round((rgbContrast(rgb1, rgb2) + Number.EPSILON) * 100) / 100;

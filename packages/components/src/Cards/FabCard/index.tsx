@@ -14,7 +14,7 @@ import type {
   ExtractDomain,
   ServiceData,
   HassEntityWithApi,
-  AllDomains,
+  EntityName,
 } from "@hakit/core";
 import { Ripples, ModalByEntityDomain } from "@components";
 import { useLongPress } from "react-use";
@@ -59,8 +59,8 @@ type Extendable = Omit<React.ComponentProps<"button">, "onClick" | "ref"> &
   MotionProps;
 
 export interface FabCardProps<
-  E extends `${AllDomains}.${string}`,
-  S extends DomainService<ExtractDomain<E>>
+  E extends EntityName,
+  S extends DomainService<ExtractDomain<E>>,
 > extends Extendable {
   /** The size of the Fab, this applies to the width and height @default 48 */
   size?: number;
@@ -88,8 +88,8 @@ export interface FabCardProps<
 
 /** The Fab (Floating Action Button) Card is a simple button with an icon to trigger something on press */
 export function FabCard<
-  E extends `${AllDomains}.${string}`,
-  S extends DomainService<ExtractDomain<E>>
+  E extends EntityName,
+  S extends DomainService<ExtractDomain<E>>,
 >({
   icon: _icon,
   iconColor,
@@ -146,7 +146,7 @@ export function FabCard<
   }, [service, entity, serviceData, disabled, onClick]);
   const title = useMemo(
     () => (domain === null ? null : startCase(lowerCase(domain))),
-    [domain]
+    [domain],
   );
   return (
     <>
@@ -172,7 +172,7 @@ export function FabCard<
       </Ripples>
       {typeof _entity === "string" && (
         <ModalByEntityDomain
-          entity={_entity as `${AllDomains}.${string}`}
+          entity={_entity as EntityName}
           title={title || "Unknown title"}
           onClose={() => {
             setOpenModal(false);

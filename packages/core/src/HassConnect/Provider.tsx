@@ -44,7 +44,7 @@ import { useHash } from "@core";
 import { saveTokens, loadTokens } from "./token-storage";
 export interface CallServiceArgs<
   T extends SnakeOrCamelDomains,
-  M extends DomainService<T>
+  M extends DomainService<T>,
 > {
   domain: T;
   service: M;
@@ -75,7 +75,7 @@ export interface HassContextProps {
   getAllEntities: () => HassEntities;
   /** will call a service for home assistant */
   callService: <T extends SnakeOrCamelDomains, M extends DomainService<T>>(
-    args: CallServiceArgs<T, M>
+    args: CallServiceArgs<T, M>,
   ) => void;
   /** will retrieve all the HassEntities states */
   getStates: () => Promise<HassEntity[] | null>;
@@ -103,7 +103,7 @@ export interface HassContextProps {
 }
 
 export const HassContext = createContext<HassContextProps>(
-  {} as HassContextProps
+  {} as HassContextProps,
 );
 
 export interface HassProviderProps {
@@ -145,7 +145,7 @@ type ConnectionResponse =
 
 const tryConnection = async (
   init: "auth-callback" | "user-request" | "saved-tokens",
-  hassUrl?: string
+  hassUrl?: string,
 ): Promise<ConnectionResponse> => {
   const options: AuthOptions = {
     saveTokens,
@@ -227,19 +227,19 @@ export function HassProvider({
   const [error, setError] = useState<string | null>(null);
   const getStates = useCallback(
     async () => (connection === null ? null : await _getStates(connection)),
-    [connection]
+    [connection],
   );
   const getServices = useCallback(
     async () => (connection === null ? null : await _getServices(connection)),
-    [connection]
+    [connection],
   );
   const getConfig = useCallback(
     async () => (connection === null ? null : await _getConfig(connection)),
-    [connection]
+    [connection],
   );
   const getUser = useCallback(
     async () => (connection === null ? null : await _getUser(connection)),
-    [connection]
+    [connection],
   );
   const getAllEntities = useCallback(() => _entities, [_entities]);
   const getEntity = (entity: string, returnNullIfNotFound: boolean) => {
@@ -307,12 +307,12 @@ export function HassProvider({
           snakeCase(service),
           // purposely cast here as we know it's correct
           serviceData as object,
-          target
+          target,
         );
       }
       return false;
     },
-    [connection, ready]
+    [connection, ready],
   );
 
   const handleConnect = useCallback(async () => {
@@ -331,7 +331,7 @@ export function HassProvider({
       }
       if (value.indexOf("://") === -1) {
         setError(
-          "Please enter your full URL, including the protocol part (https://)."
+          "Please enter your full URL, including the protocol part (https://).",
         );
         return;
       }
@@ -405,7 +405,7 @@ export function HassProvider({
           ...route,
           active,
         };
-      })
+      }),
     );
   }, [_hash]);
 
@@ -430,7 +430,7 @@ export function HassProvider({
         return routes;
       });
     },
-    [_hash]
+    [_hash],
   );
 
   const useRoute = useCallback(
@@ -438,7 +438,7 @@ export function HassProvider({
       const route = routes.find((route) => route.hash === hash);
       return route || null;
     },
-    [routes]
+    [routes],
   );
 
   if (cannotConnect) {

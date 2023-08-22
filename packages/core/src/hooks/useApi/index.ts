@@ -13,7 +13,7 @@ import type { HassContextProps } from "@core";
 export function createService<T extends SnakeOrCamelDomains>(
   domain: T,
   callService: HassContextProps["callService"],
-  rootTarget?: Target
+  rootTarget?: Target,
 ): SupportedServices[SnakeToCamel<T>] {
   return new Proxy<SupportedServices[SnakeToCamel<T>]>(
     // @ts-expect-error - purposely not defining the target object here
@@ -42,23 +42,23 @@ export function createService<T extends SnakeOrCamelDomains>(
           });
         };
       },
-    }
+    },
   );
 }
 
 export function useApi<T extends SnakeOrCamelDomains>(
   domain: T,
-  rootTarget: Target
+  rootTarget: Target,
 ): SupportedServices<"no-target">[SnakeToCamel<T>];
 export function useApi<T extends SnakeOrCamelDomains>(
-  domain: T
+  domain: T,
 ): SupportedServices[SnakeToCamel<T>];
 export function useApi(): <T extends SnakeOrCamelDomains>(
-  domain: T
+  domain: T,
 ) => SupportedServices[SnakeToCamel<T>];
 export function useApi<T extends SnakeOrCamelDomains>(
   domain?: T,
-  rootTarget?: Target
+  rootTarget?: Target,
 ) {
   const { callService } = useHass();
 
@@ -70,7 +70,7 @@ export function useApi<T extends SnakeOrCamelDomains>(
     (inputDomain: SnakeOrCamelDomains) => {
       return createService(inputDomain, callService, rootTarget);
     },
-    [callService, rootTarget]
+    [callService, rootTarget],
   );
 
   return domain ? service : apiWithDomain;

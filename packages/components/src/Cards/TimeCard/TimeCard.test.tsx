@@ -23,7 +23,7 @@ describe("<TimeCard />", () => {
       <TimeCard data-testid="time-card" includeIcon={false} />,
       {
         wrapper: TestWrapper,
-      }
+      },
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("time-card");
@@ -35,7 +35,7 @@ describe("<TimeCard />", () => {
       <TimeCard icon="mdi:cross" data-testid="time-card" includeIcon={false} />,
       {
         wrapper: TestWrapper,
-      }
+      },
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("time-card");
@@ -47,7 +47,7 @@ describe("<TimeCard />", () => {
       <TimeCard data-testid="time-card" includeDate={false} />,
       {
         wrapper: TestWrapper,
-      }
+      },
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("time-card");

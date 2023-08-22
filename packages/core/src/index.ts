@@ -26,5 +26,5 @@ export { useLightTemperature } from "./hooks/useLightTemperature";
 export { useLightColor } from "./hooks/useLightColor";
 
 // supported services
-export type { SupportedServices } from "./types/supported-services";
+export type { DefaultServices } from "./types/supported-services";
 export type * from "./types/index";

@@ -97,7 +97,7 @@ function Render(args: Story["args"]) {
         dark
         code={convertToCssVars(merge(theme, customTheme) as object).replace(
           /^\s+/gm,
-          ""
+          "",
         )}
       />
       <p>Which you can use simply in emotion/scss/less/css etc:</p>

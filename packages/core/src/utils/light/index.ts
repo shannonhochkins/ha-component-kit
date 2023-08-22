@@ -18,7 +18,7 @@ const modesSupportingBrightness: LightColorMode[] = [
 
 export const lightSupportsColorMode = (
   entity: HassEntityWithApi<"light">,
-  mode: LightColorMode
+  mode: LightColorMode,
 ) => entity.attributes.supported_color_modes?.includes(mode) || false;
 
 export const lightIsInColorMode = (entity: HassEntityWithApi<"light">) =>
@@ -28,16 +28,16 @@ export const lightIsInColorMode = (entity: HassEntityWithApi<"light">) =>
 
 export const lightSupportsColor = (entity: HassEntityWithApi<"light">) =>
   entity.attributes.supported_color_modes?.some((mode) =>
-    modesSupportingColor.includes(mode)
+    modesSupportingColor.includes(mode),
   ) || false;
 
 export const lightSupportsBrightness = (entity: HassEntityWithApi<"light">) =>
   entity.attributes.supported_color_modes?.some((mode) =>
-    modesSupportingBrightness.includes(mode)
+    modesSupportingBrightness.includes(mode),
   ) || false;
 
 export const getLightCurrentModeRgbColor = (
-  entity: HassEntityWithApi<"light">
+  entity: HassEntityWithApi<"light">,
 ): number[] | undefined =>
   entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBWW
     ? entity.attributes.rgbww_color

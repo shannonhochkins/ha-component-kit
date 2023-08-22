@@ -67,7 +67,7 @@ const rgb2xyz = (rgb: [number, number, number]): [number, number, number] => {
 };
 
 export const rgb2lab = (
-  rgb: [number, number, number]
+  rgb: [number, number, number],
 ): [number, number, number] => {
   const [x, y, z] = rgb2xyz(rgb);
   const l = 116 * y - 16;
@@ -75,7 +75,7 @@ export const rgb2lab = (
 };
 
 export const lab2rgb = (
-  lab: [number, number, number]
+  lab: [number, number, number],
 ): [number, number, number] => {
   const [l, a, b] = lab;
 
@@ -100,7 +100,7 @@ export const lab2hex = (lab: [number, number, number]): string => {
 };
 
 export const rgb2hsv = (
-  rgb: [number, number, number]
+  rgb: [number, number, number],
 ): [number, number, number] => {
   const [r, g, b] = rgb;
   const v = Math.max(r, g, b);
@@ -111,7 +111,7 @@ export const rgb2hsv = (
 };
 
 export const hsv2rgb = (
-  hsv: [number, number, number]
+  hsv: [number, number, number],
 ): [number, number, number] => {
   const [h, s, v] = hsv;
   const f = (n: number) => {

@@ -256,28 +256,28 @@ export function ControlSlider({
     (value: number) => {
       return Math.min(Math.max(value, min), max);
     },
-    [min, max]
+    [min, max],
   );
 
   const valueToPercentage = useCallback(
     (value: number) => {
       return (boundedValue(value) - min) / (max - min);
     },
-    [min, max, boundedValue]
+    [min, max, boundedValue],
   );
 
   const percentageToValue = useCallback(
     (value: number) => {
       return (max - min) * value + min;
     },
-    [min, max]
+    [min, max],
   );
 
   const steppedValue = useCallback(
     (value: number) => {
       return Math.round(value / step) * step;
     },
-    [step]
+    [step],
   );
 
   const triggerOnChange = useCallback(
@@ -289,7 +289,7 @@ export function ControlSlider({
         onChangeApplied(updatedValue);
       }, 100);
     },
-    [onChangeApplied, value]
+    [onChangeApplied, value],
   );
 
   const _getPercentageFromEvent = useCallback(
@@ -304,7 +304,7 @@ export function ControlSlider({
       const total = target.clientWidth;
       return Math.max(Math.min(1, (x - offset) / total), 0);
     },
-    [vertical]
+    [vertical],
   );
   const setValue = useCallback(
     (updatedValue: number) => {
@@ -318,10 +318,10 @@ export function ControlSlider({
             : mode === "end"
             ? `${max}`
             : "0"
-          : `${valueToPercentage(updatedValue)}`
+          : `${valueToPercentage(updatedValue)}`,
       );
     },
-    [valueToPercentage, disabled, min, max, mode]
+    [valueToPercentage, disabled, min, max, mode],
   );
 
   useEffect(() => {
@@ -352,7 +352,7 @@ export function ControlSlider({
         if (disabled) return;
         const percentage = _getPercentageFromEvent(
           state.values,
-          state.target as HTMLElement
+          state.target as HTMLElement,
         );
         setPressed(state.dragging === true);
         setValue(percentageToValue(percentage));
@@ -368,7 +368,7 @@ export function ControlSlider({
         setPressed(false);
         const percentage = _getPercentageFromEvent(
           state.values,
-          state.target as HTMLElement
+          state.target as HTMLElement,
         );
         setValue(steppedValue(percentageToValue(percentage)));
         triggerOnChange(inlineValue.current);
@@ -379,7 +379,7 @@ export function ControlSlider({
         const y = state.event.clientY;
         const percentage = _getPercentageFromEvent(
           [x, y],
-          state.event.target as HTMLElement
+          state.event.target as HTMLElement,
         );
         setValue(steppedValue(percentageToValue(percentage)));
         triggerOnChange(inlineValue.current);
@@ -389,7 +389,7 @@ export function ControlSlider({
       drag: {
         filterTaps: true,
       },
-    }
+    },
   );
 
   return (

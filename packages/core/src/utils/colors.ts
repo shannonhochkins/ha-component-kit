@@ -28,7 +28,7 @@ function toRGB(entity: HassEntity): [number, number, number] | null {
       return rgbww2rgb(
         entity.attributes.rgbww_color,
         entity.attributes.min_color_temp_kelvin,
-        entity.attributes.max_color_temp_kelvin
+        entity.attributes.max_color_temp_kelvin,
       );
     }
   }

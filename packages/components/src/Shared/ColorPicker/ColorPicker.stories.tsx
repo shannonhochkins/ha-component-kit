@@ -15,7 +15,7 @@ function Template(args?: Partial<ColorPickerProps>) {
         valueRef.current.style.color = hex;
       }
     },
-    []
+    [],
   );
 
   return (

@@ -2,12 +2,40 @@ import type {
   HassEntity,
   HassServiceTarget,
 } from "home-assistant-js-websocket";
-import type { SupportedServices } from "./supported-services";
+import type { DefaultServices } from "./supported-services";
 import { LIGHT_COLOR_MODES } from "../data/light";
 import { DefinedPropertiesByDomain } from "./entity";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore - ignore the next check as this is extendable from the client side.
+// eslint-disable-next-line
+export interface CustomSupportedServices<
+  T extends ServiceFunctionTypes = "target",
+> {}
+// dodgey hack to determine if the custom supported services are empty or not, if they're empty we use the default services
+export type SupportedServices<T extends ServiceFunctionTypes = "target"> = [
+  keyof CustomSupportedServices<T>,
+] extends [never]
+  ? DefaultServices<T>
+  : CustomSupportedServices<T>;
+
 export type LightColorMode =
   (typeof LIGHT_COLOR_MODES)[keyof typeof LIGHT_COLOR_MODES];
+
+export type DefaultEntityName = `${AllDomains}.${string}`;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore - ignore the next check as this is extendable from the client side.
+// eslint-disable-next-line
+export interface CustomEntityNameContainer {}
+
+export type EntityName =
+  | ([keyof CustomEntityNameContainer] extends [never]
+      ? DefaultEntityName
+      : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore - ignore the next check as this is extendable from the client side.
+        // eslint-disable-next-line
+        CustomEntityNameContainer["names"])
+  | "unknown";
 
 export type HassEntityCustom = HassEntity & {
   custom: {
@@ -46,7 +74,7 @@ export type ServiceFunctionWithEntity<Data = object> = (
   /** the entity string name from home assistant */
   entity: string,
   /** the data to send to the service */
-  data?: Data
+  data?: Data,
 ) => void;
 
 export type ServiceFunctionWithoutEntity<Data = object> = {
@@ -56,7 +84,7 @@ export type ServiceFunctionWithoutEntity<Data = object> = {
 
 export type ServiceFunction<
   T extends ServiceFunctionTypes = "target",
-  Data = object
+  Data = object,
 > = {
   /** with target, the service method expects a Target value as the first argument */
   target: ServiceFunctionWithEntity<Data>;
@@ -107,7 +135,7 @@ export type DomainService<D extends SnakeOrCamelDomains> =
 /** returns the supported data to be used with the ServiceFunction */
 export type ServiceData<
   D extends SnakeOrCamelDomains,
-  S extends DomainService<D>
+  S extends DomainService<D>,
 > = S extends keyof SupportedServices[SnakeToCamel<D>]
   ? SupportedServices[SnakeToCamel<D>][S] extends ServiceFunction<
       "target",
@@ -127,7 +155,7 @@ export type ServiceData<
 export type NonSymbolNumberKeys<T> = Exclude<keyof T, symbol | number>;
 /** Wrapper for HassServiceTarget to also allow string or string[] */
 export type Target = HassServiceTarget | string | string[];
-/** Available service function types, target includes the target param, no-target doesn't */
+/** Available service function types, target includes the target param in the service, no-target doesn't */
 export type ServiceFunctionTypes = "target" | "no-target";
 /** all the supported services */
 export type * from "./supported-services";

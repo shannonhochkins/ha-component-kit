@@ -74,7 +74,7 @@
     "jest-environment-jsdom": "^29.6.1",
     "jest-localstorage-mock": "^2.4.26",
     "jsx-to-string": "^1.4.0",
-    "prettier": "^2.8.8",
+    "prettier": "^3.0.2",
     "react": "^18.x",
     "react-dom": "^18.x",
     "react-use": "^17.4.0",
