@@ -214,7 +214,8 @@ export function ColorPicker({
   const _pressed = useRef<string>();
   const _cursorPosition = useRef<[number, number]>();
   const _localValue = useRef<[number, number]>();
-  const canvasSize = RENDER_SIZE * window.devicePixelRatio;
+  const canvasSize =
+    RENDER_SIZE * (typeof window === "undefined" ? 1 : window.devicePixelRatio);
   const minKelvin = entity.attributes.min_color_temp_kelvin;
   const maxKelvin = entity.attributes.max_color_temp_kelvin;
   const isOn = entity.state === ON;
