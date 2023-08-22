@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "private": false,
   "type": "module",
   "keywords": [
@@ -81,7 +81,8 @@
     "react-router-dom": ">=6.x",
     "use-debounce": ">=9.x",
     "ws": "^8.13.0",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "prettier": ">=3.x.x"
   },
   "devDependencies": {
     "@liuli-util/vite-plugin-node": "^0.6.0",
@@ -89,7 +90,6 @@
     "@types/javascript-time-ago": "^2.0.3",
     "@types/ws": "^8.5.5",
     "home-assistant-js-websocket": "^8.1.0",
-    "prettier": "^3.0.2",
     "tsup": "^7.1.0"
   }
 }
