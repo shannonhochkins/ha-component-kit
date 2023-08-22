@@ -1,5 +1,5 @@
 import type { ServiceFunctionTypes, ServiceFunction } from "./";
-export interface SupportedServices<T extends ServiceFunctionTypes = "target"> {
+export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   persistentNotification: {
     // Show a notification in the frontend.
     create: ServiceFunction<
@@ -319,22 +319,6 @@ export interface SupportedServices<T extends ServiceFunctionTypes = "target"> {
     skip: ServiceFunction<T, unknown>;
     // Removes the skipped version marker from an update.
     clearSkipped: ServiceFunction<T, unknown>;
-  };
-  localtuya: {
-    // Reload localtuya and reconnect to all devices.
-    reload: ServiceFunction<T, unknown>;
-    // Change the value of a datapoint (DP)
-    setDp: ServiceFunction<
-      T,
-      {
-        // Device ID of device to change datapoint value for
-        device_id?: object;
-        // Datapoint index
-        dp?: object;
-        // New value to set
-        value?: object;
-      }
-    >;
   };
   restCommand: {
     //
@@ -999,10 +983,6 @@ export interface SupportedServices<T extends ServiceFunctionTypes = "target"> {
     >;
   };
   script: {
-    //
-    gamingLightColorChanger: ServiceFunction<T, unknown>;
-    //
-    randomLightColour: ServiceFunction<T, unknown>;
     // Reload all the available scripts
     reload: ServiceFunction<T, unknown>;
     // Turn on script
@@ -1021,38 +1001,6 @@ export interface SupportedServices<T extends ServiceFunctionTypes = "target"> {
       {
         // The target value the entity should be set to.
         value: string;
-      }
-    >;
-  };
-  deconz: {
-    // Configure attributes of either a device endpoint in deCONZ or the deCONZ service itself.
-    configure: ServiceFunction<
-      T,
-      {
-        // Represents a specific device endpoint in deCONZ.
-        entity?: string;
-        // String representing a full path to deCONZ endpoint (when entity is not specified) or a subpath of the device path for the entity (when entity is specified).
-        field?: string;
-        // JSON object with what data you want to alter.
-        data: object;
-        // Unique string for each deCONZ hardware. It can be found as part of the integration name. Useful if you run multiple deCONZ integrations.
-        bridgeid?: string;
-      }
-    >;
-    // Refresh available devices from deCONZ.
-    deviceRefresh: ServiceFunction<
-      T,
-      {
-        // Unique string for each deCONZ hardware. It can be found as part of the integration name. Useful if you run multiple deCONZ integrations.
-        bridgeid?: string;
-      }
-    >;
-    // Clean up device and entity registry entries orphaned by deCONZ.
-    removeOrphanedEntries: ServiceFunction<
-      T,
-      {
-        // Unique string for each deCONZ hardware. It can be found as part of the integration name. Useful if you run multiple deCONZ integrations.
-        bridgeid?: string;
       }
     >;
   };
@@ -1654,26 +1602,6 @@ export interface SupportedServices<T extends ServiceFunctionTypes = "target"> {
     // Reload all MQTT entities from YAML.
     reload: ServiceFunction<T, unknown>;
   };
-  samsungtvSmart: {
-    // Send to samsung TV the command to change picture mode.
-    selectPictureMode: ServiceFunction<
-      T,
-      {
-        // Name of the target entity
-        entity_id: string;
-        // Name of the picture mode to switch to. Possible options can be found in the picture_mode_list state attribute.
-        picture_mode: string;
-      }
-    >;
-    // Send to samsung TV the command to set art mode.
-    setArtMode: ServiceFunction<
-      T,
-      {
-        // Name of the target entity
-        entity_id: string;
-      }
-    >;
-  };
   notify: {
     // Sends a notification that is visible in the front-end.
     persistentNotification: ServiceFunction<
@@ -1683,48 +1611,6 @@ export interface SupportedServices<T extends ServiceFunctionTypes = "target"> {
         message: string;
         // Title for your notification.
         title?: string;
-      }
-    >;
-    // Sends a notification message using the mobile_app_natashas_iphone integration.
-    mobileAppNatashasIphone: ServiceFunction<
-      T,
-      {
-        // Message body of the notification.
-        message: string;
-        // Title for your notification.
-        title?: string;
-        // An array of targets to send the notification to. Optional depending on the platform.
-        target?: object;
-        // Extended information for notification. Optional depending on the platform.
-        data?: object;
-      }
-    >;
-    // Sends a notification message using the mobile_app_sm_t220 integration.
-    mobileAppSmT220: ServiceFunction<
-      T,
-      {
-        // Message body of the notification.
-        message: string;
-        // Title for your notification.
-        title?: string;
-        // An array of targets to send the notification to. Optional depending on the platform.
-        target?: object;
-        // Extended information for notification. Optional depending on the platform.
-        data?: object;
-      }
-    >;
-    // Sends a notification message using the mobile_app_shannons_phone integration.
-    mobileAppShannonsPhone: ServiceFunction<
-      T,
-      {
-        // Message body of the notification.
-        message: string;
-        // Title for your notification.
-        title?: string;
-        // An array of targets to send the notification to. Optional depending on the platform.
-        target?: object;
-        // Extended information for notification. Optional depending on the platform.
-        data?: object;
       }
     >;
     // Sends a notification message using the notify service.
@@ -1919,64 +1805,6 @@ export interface SupportedServices<T extends ServiceFunctionTypes = "target"> {
   template: {
     // Reload all template entities.
     reload: ServiceFunction<T, unknown>;
-  };
-  tplink: {
-    // Set a random effect
-    randomEffect: ServiceFunction<
-      T,
-      {
-        // Initial HSV sequence
-        init_states: object;
-        // List of HSV sequences (Max 16)
-        backgrounds?: object;
-        // List of segments (0 for all)
-        segments?: object;
-        // Initial brightness
-        brightness?: number;
-        // Duration
-        duration?: number;
-        // Transition
-        transition?: number;
-        // Fade off
-        fadeoff?: number;
-        // Range of hue
-        hue_range?: object;
-        // Range of saturation
-        saturation_range?: object;
-        // Range of brightness
-        brightness_range?: object;
-        // Range of transition
-        transition_range?: object;
-        // Random seed
-        random_seed?: number;
-      }
-    >;
-    // Set a sequence effect
-    sequenceEffect: ServiceFunction<
-      T,
-      {
-        // List of HSV sequences (Max 16)
-        sequence: object;
-        // List of Segments (0 for all)
-        segments?: object;
-        // Initial brightness
-        brightness?: number;
-        // Duration
-        duration?: number;
-        // Repetitions (0 for continuous)
-        repeat_times?: number;
-        // Transition
-        transition?: number;
-        // Speed of spread
-        spread?: number;
-        // Direction
-        direction?: number;
-      }
-    >;
-  };
-  ring: {
-    // Updates the data we have for all your ring devices
-    update: ServiceFunction<T, unknown>;
   };
   nodered: {
     // Trigger a Node-RED Node

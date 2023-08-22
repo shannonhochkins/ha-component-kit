@@ -149,7 +149,7 @@ export function ModalLightControls({
 
   const supportsColorTemp = lightSupportsColorMode(
     entity,
-    LIGHT_COLOR_MODES.COLOR_TEMP
+    LIGHT_COLOR_MODES.COLOR_TEMP,
   );
   const supportsColor = lightSupportsColor(entity);
   const supportsBrightness = lightSupportsBrightness(entity);

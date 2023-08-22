@@ -110,7 +110,7 @@ export const Ripples = memo(
 
         if (typeof onClick === "function") onClick(event);
       },
-      [color, duration, disabled, onClick]
+      [color, duration, disabled, onClick],
     );
 
     return (
@@ -133,5 +133,5 @@ export const Ripples = memo(
         </motion.div>
       </ParentRipple>
     );
-  }
+  },
 );

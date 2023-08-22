@@ -37,7 +37,7 @@ describe("useHass", () => {
         },
         {
           entity_id: "media_player.fake_player",
-        }
+        },
       );
     });
 
@@ -66,7 +66,7 @@ describe("useHass", () => {
         },
         {
           entity_id: "media_player.fake_player",
-        }
+        },
       );
     });
   });

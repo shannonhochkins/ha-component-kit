@@ -1,7 +1,12 @@
 import { useMemo } from "react";
 import { Icon as IconElement } from "@iconify/react";
 import type { IconProps } from "@iconify/react";
-import type { AllDomains, CamelToSnake, SnakeToCamel } from "@typings";
+import type {
+  AllDomains,
+  CamelToSnake,
+  SnakeToCamel,
+  EntityName,
+} from "@typings";
 import { useEntity } from "@core";
 import { camelCase } from "lodash";
 
@@ -10,7 +15,7 @@ function assertNever(value: never): never {
 }
 
 export function useIconByDomain<
-  D extends AllDomains | CamelToSnake<AllDomains> | "unknown"
+  D extends AllDomains | CamelToSnake<AllDomains> | "unknown",
 >(domain: D, iconProps?: Omit<IconProps, "icon">) {
   const iconName = useMemo(() => {
     const convertedDomainName = camelCase(domain) as
@@ -50,8 +55,6 @@ export function useIconByDomain<
       case "logbook":
         return "icon-park-outline:log";
       case "switch":
-      case "localtuya":
-        return "radix-icons:button";
       case "text":
       case "schedule":
       case "conversation":
@@ -84,7 +87,6 @@ export function useIconByDomain<
       case "climate":
         return "mdi:home-climate-outline";
       case "mediaPlayer":
-      case "samsungtvSmart":
       case "ffmpeg":
       case "cast":
         return "solar:tv-broken";
@@ -99,15 +101,11 @@ export function useIconByDomain<
       case "humidifier":
         return "mdi:air-humidifier";
       // un-categorized
-      case "deconz":
       case "profiler":
       case "wakeOnLan":
       case "mqtt":
-      case "tplink":
       case "deviceTracker":
         return "octicon:info-24";
-      case "ring":
-        return "simple-icons:ring";
       case "unknown":
         return "octicon:question-24";
       case "sun":
@@ -143,7 +141,7 @@ export function useIconByDomain<
 
 export function useIcon(
   icon: string | null,
-  iconProps?: Omit<IconProps, "icon">
+  iconProps?: Omit<IconProps, "icon">,
 ) {
   const Icon = useMemo(() => {
     if (icon === null) return null;
@@ -160,9 +158,10 @@ export function useIcon(
   return Icon;
 }
 
-export function useIconByEntity<
-  E extends `${AllDomains}.${string}` | "unknown"
->(_entity: E, iconProps?: Omit<IconProps, "icon">) {
+export function useIconByEntity<E extends EntityName>(
+  _entity: E,
+  iconProps?: Omit<IconProps, "icon">,
+) {
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
   });

@@ -246,7 +246,7 @@ export function SidebarCard({
             () => {
               setHash(route.hash);
             },
-            hash === "" ? 0 : 450
+            hash === "" ? 0 : 450,
           );
         }
       },

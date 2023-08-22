@@ -22,7 +22,7 @@ describe("<SceneCard />", () => {
       />,
       {
         wrapper: TestWrapper,
-      }
+      },
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("scene-card");
@@ -43,7 +43,7 @@ describe("<SceneCard />", () => {
       />,
       {
         wrapper: TestWrapper,
-      }
+      },
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("scene-card");
@@ -58,7 +58,7 @@ describe("<SceneCard />", () => {
       undefined,
       {
         entity_id: "scene.good_morning",
-      }
+      },
     );
     expect(mockFunction).toHaveBeenCalled();
   });

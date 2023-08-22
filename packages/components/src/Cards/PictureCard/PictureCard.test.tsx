@@ -20,7 +20,7 @@ describe("<PictureCard />", () => {
       />,
       {
         wrapper: TestWrapper,
-      }
+      },
     );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("picture-card");

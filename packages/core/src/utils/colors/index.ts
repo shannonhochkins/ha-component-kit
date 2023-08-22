@@ -1,7 +1,7 @@
 import { HassEntity } from "home-assistant-js-websocket";
 
 export const stateColorBrightness = (
-  stateObj: HassEntity
+  stateObj: HassEntity,
 ): {
   css: string;
   raw: number;

@@ -64,7 +64,7 @@ export function getColorByIndex(index: number) {
 
 export function getGraphColorByIndex(
   index: number,
-  style: CSSStyleDeclaration
+  style: CSSStyleDeclaration,
 ) {
   // The CSS vars for the colors use range 1..n, so we need to adjust the index from the internal 0..n color index range.
   return (
