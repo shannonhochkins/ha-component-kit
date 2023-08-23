@@ -13,7 +13,8 @@ import {
 import { useGesture } from "@use-gesture/react";
 
 const RENDER_SIZE = 400;
-const canvasSize = RENDER_SIZE * window.devicePixelRatio;
+const canvasSize =
+  RENDER_SIZE * (typeof window === "undefined" ? 1 : window.devicePixelRatio);
 
 type HueSaturation = [number, number];
 type Rgb = [number, number, number];

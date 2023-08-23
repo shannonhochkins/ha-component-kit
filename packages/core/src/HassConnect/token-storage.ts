@@ -1,30 +1,23 @@
 import { AuthData } from "home-assistant-js-websocket";
 
-const storage = window.localStorage || {};
+const storage =
+  typeof window !== "undefined" ? window.localStorage : ({} as Storage);
 
-declare global {
-  interface Window {
-    __tokenCache: {
-      // undefined: we haven't loaded yet
-      // null: none stored
-      tokens?: AuthData | null;
-      writeEnabled: boolean;
-    };
-  }
-}
-
-const extractSearchParam = (param: string): string | null => {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(param);
+type TokenCache = {
+  tokens?: AuthData | null;
+  writeEnabled: boolean;
 };
 
-let tokenCache = window.__tokenCache;
-if (!tokenCache) {
-  tokenCache = window.__tokenCache = {
-    tokens: undefined,
-    writeEnabled: true,
-  };
-}
+const tokenCache: TokenCache = {
+  tokens: undefined,
+  writeEnabled: true,
+};
+
+const extractSearchParam = (param: string): string | null => {
+  if (typeof location === "undefined") return null; // Protect against server-side execution
+  const urlParams = new URLSearchParams(location.search);
+  return urlParams.get(param);
+};
 
 export function saveTokens(tokens: AuthData | null) {
   tokenCache.tokens = tokens;
@@ -33,7 +26,7 @@ export function saveTokens(tokens: AuthData | null) {
     tokenCache.writeEnabled = true;
   }
 
-  if (tokenCache.writeEnabled) {
+  if (tokenCache.writeEnabled && typeof storage !== "undefined") {
     try {
       storage.hassTokens = JSON.stringify(tokens);
     } catch (err: any) {
@@ -43,7 +36,7 @@ export function saveTokens(tokens: AuthData | null) {
 }
 
 export function loadTokens() {
-  if (tokenCache.tokens === undefined) {
+  if (tokenCache.tokens === undefined && typeof storage !== "undefined") {
     try {
       // Delete the old token cache.
       delete storage.tokens;
