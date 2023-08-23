@@ -1,9 +1,11 @@
+
 # v.1.0.14
 #### @hakit/components
 - Handling missing window/location properties for nextjs where they're not available in server components.
 # v.1.0.12
 #### @hakit/core
 - Handling missing window/location properties for nextjs where they're not available in server components.
+
 # v.1.0.12
 #### @hakit/components
 - Types have been re-built to handle module augmentation for services/entities

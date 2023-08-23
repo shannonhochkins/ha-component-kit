@@ -90,6 +90,7 @@
     "@types/javascript-time-ago": "^2.0.3",
     "@types/ws": "^8.5.5",
     "home-assistant-js-websocket": "^8.1.0",
+    "prettier": "^3.0.2",
     "tsup": "^7.1.0"
   }
 }
