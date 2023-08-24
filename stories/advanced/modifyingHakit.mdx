@@ -1,0 +1,69 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="ADVANCED/Modifying hakit" />
+
+# Modifying @hakit
+
+## Using local version of @hakit
+
+1. Clone and setup the repo alongside your dashboard project 
+```shell
+git clone https://github.com/shannonhochkins/ha-component-kit.git
+cd ha-component-kit
+npm install
+```
+
+2. Build and watch library changes
+```
+npm run watch:build:core
+```
+
+3. In your dashboard project, add aliases for `@hakit` and `react` to `vite.config.ts`
+```js
+export default defineConfig({
+  plugins: [react(), viteTsconfigPaths()],
+  resolve: {
+    alias: {
+      '@hakit/core': path.resolve(
+        __dirname,
+        '../ha-component-kit/packages/core/dist/hakit-core.es.js',
+      ),
+      react: path.resolve('./node_modules/react'),
+      'react-dom': path.resolve('./node_modules/react-dom'),
+    },
+  },
+})
+```
+4. Start your dashboard project
+
+5. When getting an error of missing dependencies, run `npm link libraryName` first at the dashboard root, then at `ha-component-kit`
+
+
+## Developing node scripts
+
+1. Navigate into `ha-component-kit/packages/core`
+
+2. Make some changes to the scripts in the `packages/core/bin`
+
+3. Build the script you modified, e.g. `npm run build:sync-script`
+
+4. Import the transpiled output file directly, e.g.
+```ts
+// import { typeSync } from '@hakit/core/sync' // usual import, comment out
+import { typeSync } from '../ha-component-kit/packages/core/dist/sync/node/index.js'
+
+async function runner() {
+  await typeSync({
+    url: 'YOUR_HOME_ASSISTANT_URL',
+    token: 'YOUR_LONG_LIVED_TOKEN'
+  })
+}
+runner()
+```
+
+5. Run it as usual, but remember to use `--esm`
+```shell
+ ./node_modules/.bin/ts-node --esm ./sync.ts
+```
+
+6. If encountering esm issues, make sure that the `.ts` files have no compiled `.js` file alongside it

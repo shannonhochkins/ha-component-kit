@@ -41,7 +41,7 @@ const resolveSelectorType = (selector: Selector) => {
   return 'object';
 }
 
-
+const sanitize = (str: string | undefined) => (str ? str.replace(/"/g, "'").replace(/[\n\r]+/g, ' ') : '');
 
 export const generateServiceTypes = (input: HassServices, whitelist: string[] = []) => {
   const interfaces = Object.entries(input).map(([domain, services]) => {
@@ -52,12 +52,12 @@ export const generateServiceTypes = (input: HassServices, whitelist: string[] = 
       const camelService = _.camelCase(service);
       const data = Object.entries<Field>(fields as unknown as { [key: string]: Field }).map(([field, { selector, example, required, description }]) => {
         const type = field in REMAPPED_TYPES ? REMAPPED_TYPES[field] : resolveSelectorType(selector as Selector);
-        const exampleUsage = example ? ` @example ${`${example}`.replace(/"/g, "'").replace(/[\n\r]+/g, ' ')}` : '';
-        return `// ${description}${exampleUsage}\n${field}${required ? '' : '?'}: ${type};`;
+        const exampleUsage = example ? ` @example ${sanitize(String(example))}` : '';
+        return `// ${sanitize(String(description))}${exampleUsage}\n${field}${required ? '' : '?'}: ${type};`;
       });
       const serviceData = `${Object.keys(fields).length === 0 ? 'object' : `{${data.join('\n')}}`}`;
 
-      return `// ${description}
+      return `// ${sanitize(String(description))}
               ${camelService}: ServiceFunction<T, ${serviceData}>;
             `;
     }).join('')}

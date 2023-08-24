@@ -41,11 +41,8 @@ export async function typeSync({
       }
     }`;
   const outDir = _outDir || process.cwd();
-  const formatted = await prettier.format(output, {
-    parser: 'typescript'
-  });
   // now write the file
-  fs.writeFileSync(`${outDir}/${filename}`, formatted);
+  fs.writeFileSync(`${outDir}/${filename}`, output);
   console.log(`Succesfully generated types: ${outDir}/${filename}\n\n`);
   // reminder to add the generated file to the tsconfig.json include array
   console.log(`IMPORTANT: Don't forget to add the "${filename}" file to your tsconfig.json include array\n\n`);
