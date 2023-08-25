@@ -1,5 +1,5 @@
 // ButtonCard
-export { ButtonCard, StyledButtonCard } from "./Cards/ButtonCard";
+export { ButtonCard } from "./Cards/ButtonCard";
 export type { ButtonCardProps } from "./Cards/ButtonCard";
 // SceneCard
 export { SceneCard } from "./Cards/SceneCard";
@@ -26,7 +26,7 @@ export type { TimeCardProps } from "./Cards/TimeCard";
 export { RoomCard } from "./Cards/RoomCard";
 export type { RoomCardProps } from "./Cards/RoomCard";
 // picture card
-export { PictureCard, StyledPictureCard } from "./Cards/PictureCard";
+export { PictureCard } from "./Cards/PictureCard";
 export type { PictureCardProps } from "./Cards/PictureCard";
 // FabCard
 export { FabCard } from "./Cards/FabCard";
@@ -63,6 +63,6 @@ export type {
 } from "./Shared/ColorPicker";
 
 // ThemeProvider
-export { ThemeProvider } from "../../components/src/ThemeProvider";
-export { theme } from "../../components/src/ThemeProvider/theme";
-export type { ThemeProviderProps } from "../../components/src/ThemeProvider";
+export { ThemeProvider } from "./ThemeProvider";
+export { theme } from "./ThemeProvider/theme";
+export type { ThemeProviderProps } from "./ThemeProvider";

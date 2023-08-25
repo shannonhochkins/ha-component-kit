@@ -1,30 +1,15 @@
-// color helpers
-export * from "./utils/colors/convert-light-color";
-export * from "./utils/colors/convert-color";
-export * from "./utils/light";
-// custom types
-export * from "./data/entity";
-export * from "./data/light";
-// components
-export { HassConnect } from "./HassConnect";
-export { HassContext } from "./HassConnect/Provider";
-// tokens
-export { loadTokens, saveTokens } from "./HassConnect/token-storage";
-
-// types
+// utils
+export * from "./utils";
+// custom data types
+export * from "./data";
+// HassConnect
 export type { HassContextProps, Route } from "./HassConnect/Provider";
 export type { HassConnectProps } from "./HassConnect";
-
+export { HassConnect } from "./HassConnect";
+export { HassContext } from "./HassConnect/Provider";
+export { loadTokens, saveTokens } from "./HassConnect/token-storage";
 // hooks
-export { useHass } from "./hooks/useHass";
-export { useEntity } from "./hooks/useEntity";
-export { useApi, createService } from "./hooks/useApi";
-export { useIconByDomain, useIcon, useIconByEntity } from "./hooks/useIcon";
-export { useHash } from "./hooks/useHash";
-export { useLightBrightness } from "./hooks/useLightBrightness";
-export { useLightTemperature } from "./hooks/useLightTemperature";
-export { useLightColor } from "./hooks/useLightColor";
-
+export * from "./hooks";
 // supported services
 export type { DefaultServices } from "./types/supported-services";
 export type * from "./types/index";

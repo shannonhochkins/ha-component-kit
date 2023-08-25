@@ -4,7 +4,7 @@ import { generateServiceTypes } from './service-generator.js';
 import { generateEntityType } from './entity-generator.js';
 import fs from 'fs';
 import { DEFAULT_FILENAME } from './constants.js';
-import * as prettier from "prettier";
+import { format, Options } from "prettier";
 
 export interface TypeSyncOptions {
   url: string;
@@ -12,6 +12,10 @@ export interface TypeSyncOptions {
   outDir?: string;
   filename?: string;
   serviceWhitelist?: string[];
+  prettier?: {
+    options: Options;
+    disable: boolean;
+  }
 }
 
 export async function typeSync({
@@ -20,6 +24,7 @@ export async function typeSync({
   outDir: _outDir,
   filename = DEFAULT_FILENAME,
   serviceWhitelist = [],
+  prettier,
 }: TypeSyncOptions) {
   if (!url || !token) {
     throw new Error('Missing url or token arguments');
@@ -41,8 +46,10 @@ export async function typeSync({
       }
     }`;
   const outDir = _outDir || process.cwd();
-  const formatted = await prettier.format(output, {
-    parser: 'typescript'
+
+  const formatted = prettier?.disable ? output: await format(output, {
+    parser: 'typescript',
+    ...prettier?.options
   });
   // now write the file
   fs.writeFileSync(`${outDir}/${filename}`, formatted);

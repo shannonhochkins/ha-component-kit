@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { useEffect, useCallback, useState } from "react";
 import { useHass, useHash } from "@hakit/core";
-import { StyledPictureCard, Row, FabCard } from "@components";
+import { Row, FabCard } from "@components";
 import type { PictureCardProps } from "@components";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,6 +20,40 @@ export interface RoomCardProps extends Extendable {
   /** the animation duration of the room expanding @default 0.25 */
   animationDuration?: number;
 }
+
+const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
+  all: unset;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  width: var(--ha-device-picture-card-width);
+  display: flex;
+  aspect-ratio: 16 / 9;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: var(--ha-primary-background);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: background-color, box-shadow, background-image;
+  will-change: width, height;
+
+  ${(props) =>
+    props.image &&
+    `
+    background-image: url(${props.image});
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  `}
+
+  &:hover {
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--ha-primary-background-hover);
+  }
+`;
 
 const PictureCardFooter = styled(motion.div)`
   all: unset;

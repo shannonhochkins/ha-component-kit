@@ -5,6 +5,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 import path from 'path';
 const { EsLinter, linterPlugin } = EsLint;
+import dts from 'vite-plugin-dts';
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
   return {
@@ -23,6 +24,10 @@ export default defineConfig(configEnv => {
           'react-is',
           '@hakit/core',
           '@iconify/react',
+          '@emotion/sheet',
+          '@emotion/cache',
+          '@emotion/serialize',
+          '@emotion/utils',
         ],
         output: {
           globals: {
@@ -39,10 +44,15 @@ export default defineConfig(configEnv => {
             'react-router-dom': "react-router-dom",
             'framer-motion': 'framer-motion',
             'react-use': 'react-use',
-            "@use-gesture/react": "@use-gesture/react"
+            "@use-gesture/react": "@use-gesture/react",
+            '@emotion/sheet': '@emotion/sheet',
+            '@emotion/cache': '@emotion/cache',
+            '@emotion/serialize': '@emotion/serialize',
+            '@emotion/utils': '@emotion/utils',
           }
         }
       },
+      sourcemap: true,
       minify: true,
     },
     plugins: [
@@ -59,6 +69,26 @@ export default defineConfig(configEnv => {
         include: ['./src}/**/*.{ts,tsx}'],
         linters: [new EsLinter({ configEnv })],
       }),
+      dts({
+        rollupTypes: false,
+        root: path.resolve(__dirname, './'),
+        outDir: path.resolve(__dirname, './dist/types'),
+        include: [path.resolve(__dirname, './src')],
+        exclude: ['node_modules/**', 'framer-motion'],
+        clearPureImport: true,
+        insertTypesEntry: false,
+        aliasesExclude: ['@hakit/core'],
+        beforeWriteFile: (filePath, content) => {
+          const base = path.resolve(__dirname, './dist/types/packages/components/src');
+          const replace = path.resolve(__dirname, './dist/types');
+          if (filePath.includes('test.d.ts')) return false;
+          if (filePath.includes('stories.d.ts')) return false;
+          return {
+            filePath: filePath.replace(base, replace),
+            content,
+          }
+        },
+      })
     ],
   }
 });

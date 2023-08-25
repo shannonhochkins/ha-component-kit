@@ -4,12 +4,14 @@ import EsLint from 'vite-plugin-linter';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 import path from 'path';
+import dts from 'vite-plugin-dts';
 const { EsLinter, linterPlugin } = EsLint;
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
   return {
     root: path.resolve(__dirname, './'),
     build: {
+      sourcemap: true,
       lib: {
         entry: path.resolve(__dirname, 'src/index.ts'),
         name: 'hakit-core',
@@ -58,6 +60,24 @@ export default defineConfig(configEnv => {
         include: ['./src}/**/*.{ts,tsx}'],
         linters: [new EsLinter({ configEnv })],
       }),
+      dts({
+        rollupTypes: false,
+        root: path.resolve(__dirname, './'),
+        outDir: path.resolve(__dirname, './dist/types'),
+        include: [path.resolve(__dirname, './src')],
+        clearPureImport: true,
+        insertTypesEntry: false,
+        beforeWriteFile: (filePath, content) => {
+          const base = path.resolve(__dirname, './dist/types/packages/core/src');
+          const replace = path.resolve(__dirname, './dist/types');
+          if (filePath.includes('test.d.ts')) return false;
+          if (filePath.includes('stories.d.ts')) return false;
+          return {
+            filePath: filePath.replace(base, replace),
+            content,
+          }
+        },
+      })
     ],
   }
 });

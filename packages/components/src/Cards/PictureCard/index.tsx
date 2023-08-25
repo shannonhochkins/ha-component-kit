@@ -16,9 +16,7 @@ export interface PictureCardProps extends Extendable {
   icon?: string;
 }
 
-export const StyledPictureCard = styled(motion.button)<
-  Partial<PictureCardProps>
->`
+const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   all: unset;
   padding: 1rem;
   position: relative;
