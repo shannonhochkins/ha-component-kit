@@ -97,7 +97,6 @@ const FanMode = styled(FabCard)<{
   animation-name: ${spin};
   animation-duration: ${(props) => {
     const speed = (props.speed || "").toLowerCase();
-    console.log("speed", speed);
     const low = speed.includes("low");
     const medium = speed.includes("mid") || speed.includes("medium");
     const high = speed.includes("high");

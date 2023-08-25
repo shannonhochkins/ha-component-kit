@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "private": false,
   "type": "module",
   "keywords": [
@@ -22,7 +22,8 @@
     "hakit-sync-types": "./dist/sync/cli/cli.js"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
   },
   "description": "A collection of React hooks and helpers for Home Assistant to easily communicate with the Home Assistant WebSocket API.",
   "main": "./dist/hakit-core.umd.cjs",

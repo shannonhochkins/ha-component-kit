@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "1.0.15",
+  "version": "1.0.17",
   "private": false,
   "keywords": [
     "react",
@@ -18,6 +18,10 @@
     "dashboard",
     "custom"
   ],
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": ">=16.0.0"
+  },
   "description": "A series of components to work with @hakit/core",
   "main": "./dist/hakit-components.umd.js",
   "module": "./dist/hakit-components.es.js",
@@ -58,7 +62,7 @@
   "peerDependencies": {
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
-    "@hakit/core": ">=1.0.12",
+    "@hakit/core": ">=1.0.14",
     "@use-gesture/react": ">=10.x",
     "framer-motion": ">=10.x",
     "lodash": ">=4.x",
