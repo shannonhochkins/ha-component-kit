@@ -270,7 +270,6 @@ function UseData() {
 function Template() {
   const storedHassUrl = localStorage.getItem("hassUrl");
   const storedHassTokens = localStorage.getItem("hassTokens");
-  console.log('storedHassTokens', storedHassTokens, loadTokens());
   const isAuthRedirect = window.location.href.includes("auth_callback");
   const [error, setError]  = useState<string>("");
   const [hassUrl, setHassUrl] = useState<string>(storedHassTokens === null && !isAuthRedirect ? "" : storedHassUrl || '');
