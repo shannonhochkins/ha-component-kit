@@ -4,6 +4,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
 const { EsLinter, linterPlugin } = EsLint;
 import { node } from '@liuli-util/vite-plugin-node';
+import dts from 'vite-plugin-dts'
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
   return {
@@ -26,6 +27,7 @@ export default defineConfig(configEnv => {
           }
         }
       },
+      sourcemap: true,
       minify: true,
     },
     plugins: [
@@ -39,7 +41,21 @@ export default defineConfig(configEnv => {
       node({
         entry: path.resolve(__dirname, './index.ts'),
         formats: ['cjs', 'es'],
-        dts: true,
+        dts: false,
+      }),
+      dts({
+        rollupTypes: false,
+        root: path.resolve(__dirname, './'),
+        outDir: path.resolve(__dirname, '../dist/sync/node/types'),
+        clearPureImport: true,
+        insertTypesEntry: false,
+        beforeWriteFile: (filePath, content) => {
+          if (filePath.includes('cli.d.ts')) return false;
+          return {
+            filePath,
+            content,
+          }
+        },
       })
     ],
   }

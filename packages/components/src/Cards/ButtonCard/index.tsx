@@ -20,7 +20,7 @@ import type { MotionProps } from "framer-motion";
 import { motion } from "framer-motion";
 import { useLongPress } from "react-use";
 
-export const StyledButtonCard = styled(motion.button)`
+const StyledButtonCard = styled(motion.button)`
   all: unset;
   padding: 1rem;
   position: relative;

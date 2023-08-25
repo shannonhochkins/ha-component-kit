@@ -1,7 +1,21 @@
+# v.1.0.15
+#### @hakit/components
+- Rebuilt types, no longer bundled into one giant file and now split into multiple files for each component, this should make it easier to use the types in your own projects when investigating available types.
+- sourcemaps now included in package
+- improved developer experience
+
+# v.1.0.13
+#### @hakit/core
+- Rebuilt bundlers and output, types are now categorized to make it easier to use in your own projects.
+- updated documentation
+- typeSync script updated with more options
+- sourcemaps now included in package
+- improved developer experience
 
 # v.1.0.14
 #### @hakit/components
 - Handling missing window/location properties for nextjs where they're not available in server components.
+
 # v.1.0.12
 #### @hakit/core
 - Handling missing window/location properties for nextjs where they're not available in server components.

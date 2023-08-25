@@ -8,7 +8,7 @@ import { Ripples } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { useLongPress } from "react-use";
-import { icons, activeColors } from "../../Shared/ClimateControls";
+import { icons, activeColors } from "../../Shared/ClimateControls/shared";
 
 const StyledClimateCard = styled(motion.button)`
   all: unset;

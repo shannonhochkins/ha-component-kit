@@ -21,10 +21,15 @@ the connection right here without installing anything.
 Install the [@hakit/core](https://www.npmjs.com/package/@hakit/core) for all authentication and react hooks, this is the all the core functionality you'll need, if you want to use some of the components I've built, also install [@hakit/components](https://www.npmjs.com/package/@hakit/components):
 
 ```bash
-  npm i @hakit/core @hakit/components
+  npm i @hakit/core @hakit/components -D
 ```
-
 ***Note: This package uses peerDependencies, npm version 4-6 will not install these automatically, you will need to install them [manually](https://stackoverflow.com/questions/35207380/how-to-install-npm-peer-dependencies-automatically), npm version 7 and above will handle this automatically.***
+
+
+### Sync typescript
+There's an awesome subfeature of this package that will generate types specific to your home assistant instance! It's recommended that you [follow this flow](/docs/introduction-typescriptsync--docs)!
+
+### Authenticate
 
 Then simply wrap your root component (usally App.tsx) with the [HassConnect](/docs/components-hassconnect--docs) component, don't forget to include the "ThemeProvider" to get the default theme.
 

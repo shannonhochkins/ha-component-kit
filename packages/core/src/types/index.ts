@@ -10,6 +10,7 @@ import { DefinedPropertiesByDomain } from "./entity";
 // @ts-ignore - ignore the next check as this is extendable from the client side.
 // eslint-disable-next-line
 export interface CustomSupportedServices<
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   T extends ServiceFunctionTypes = "target",
 > {}
 // dodgey hack to determine if the custom supported services are empty or not, if they're empty we use the default services
@@ -33,7 +34,6 @@ export type EntityName =
       ? DefaultEntityName
       : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore - ignore the next check as this is extendable from the client side.
-        // eslint-disable-next-line
         CustomEntityNameContainer["names"])
   | "unknown";
 

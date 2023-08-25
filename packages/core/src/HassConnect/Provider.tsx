@@ -162,7 +162,7 @@ const tryConnection = async (
     if (auth.expired) {
       await auth.refreshAccessToken();
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (init === "saved-tokens" && err === ERR_CANNOT_CONNECT) {
       return {
         type: "failed",
@@ -279,8 +279,8 @@ export function HassProvider({
       reset();
       saveTokens(null);
       if (location) location.reload();
-    } catch (err: any) {
-      alert("Unable to log out!");
+    } catch (err: unknown) {
+      setError("Unable to log out!");
     }
   }, [reset]);
 
@@ -339,7 +339,7 @@ export function HassProvider({
       let url: URL;
       try {
         url = new URL(value);
-      } catch (err: any) {
+      } catch (err: unknown) {
         setError("Invalid URL");
         return;
       }

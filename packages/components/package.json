@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "private": false,
   "keywords": [
     "react",
@@ -19,14 +19,14 @@
     "custom"
   ],
   "description": "A series of components to work with @hakit/core",
-  "main": "dist/hakit-components.umd.js",
-  "module": "dist/hakit-components.es.js",
-  "types": "dist/types/index.d.cts",
+  "main": "./dist/hakit-components.umd.js",
+  "module": "./dist/hakit-components.es.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/hakit-components.es.js",
       "require": "./dist/hakit-components.umd.js",
-      "types": "./dist/types/index.d.cts"
+      "types": "./dist/types/index.d.ts"
     }
   },
   "author": "Shannon Hochkins <mail@shannonhochkins.com>",
@@ -34,6 +34,7 @@
   "files": [
     "dist",
     "README.md",
+    "package.json",
     "LICENCE.md"
   ],
   "repository": {
@@ -46,12 +47,11 @@
   "homepage": "https://shannonhochkins.github.io/ha-component-kit#readme",
   "scripts": {
     "dev": "vite",
-    "prebuild": "rm -rf ./dist && npm run prettier",
+    "prebuild": "rm -rf ./dist && npm run lint && npm run prettier",
     "build": "NODE_ENV=production vite build",
     "watch:build": "NODE_ENV=production vite build --watch",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
-    "postbuild": "tsup src/index.ts --dts-only --dts-resolve --d dist/types && tsc",
     "release": "npm publish --access public",
     "test": "NODE_ENV=test jest --rootDir=src"
   },
