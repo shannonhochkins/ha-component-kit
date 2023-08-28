@@ -1,7 +1,6 @@
 import type { Preview } from "@storybook/react";
 import { Title, Description, Primary, ArgTypes } from "@storybook/blocks";
 import React from "react";
-import { ThemeProvider } from '@emotion/react';
 import { withThemeFromJSXProvider } from '@storybook/addon-themes'
 import { GlobalStyles } from './theme';
 
@@ -9,7 +8,6 @@ export default {
   decorators: [
     withThemeFromJSXProvider({
       GlobalStyles,
-      Provider: ThemeProvider
     }),
     (Story, args) => {
       const centered = args.parameters.centered ? {

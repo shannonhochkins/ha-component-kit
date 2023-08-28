@@ -1,11 +1,11 @@
 import { useMemo } from "react";
-import { LIGHT_COLOR_MODES } from "../../data/light";
 import {
   HassEntityWithApi,
   ON,
   lightSupportsColorMode,
   getLightCurrentModeRgbColor,
   rgb2hs,
+  LIGHT_COLOR_MODES,
 } from "@core";
 
 export const useLightColor = (entity: HassEntityWithApi<"light">) => {

@@ -2,7 +2,7 @@
 import { connect } from './connection.js';
 import { generateServiceTypes } from './service-generator.js';
 import { generateEntityType } from './entity-generator.js';
-import fs from 'fs';
+import { writeFileSync } from 'fs';
 import { DEFAULT_FILENAME } from './constants.js';
 import { format, Options } from "prettier";
 
@@ -52,7 +52,7 @@ export async function typeSync({
     ...prettier?.options
   });
   // now write the file
-  fs.writeFileSync(`${outDir}/${filename}`, formatted);
+  writeFileSync(`${outDir}/${filename}`, formatted);
   console.log(`Succesfully generated types: ${outDir}/${filename}\n\n`);
   // reminder to add the generated file to the tsconfig.json include array
   console.log(`IMPORTANT: Don't forget to add the "${filename}" file to your tsconfig.json include array\n\n`);

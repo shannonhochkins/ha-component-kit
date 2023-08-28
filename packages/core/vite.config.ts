@@ -15,8 +15,8 @@ export default defineConfig(configEnv => {
       lib: {
         entry: path.resolve(__dirname, 'src/index.ts'),
         name: 'hakit-core',
-        formats: ['es', 'umd'],
-        fileName: (format) => `hakit-core.${format}.${format === 'umd' ? 'cjs' : 'js'}`,
+        formats: ['es', 'cjs'],
+        fileName: (format) => `hakit-core.${format}.${format === 'cjs' ? 'cjs' : 'js'}`,
       },
       rollupOptions: {
         external:[

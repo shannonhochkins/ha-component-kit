@@ -14,8 +14,8 @@ export default defineConfig(configEnv => {
       lib: {
         entry: path.resolve(__dirname, 'src/index.ts'),
         name: 'hakit-components',
-        formats: ['es', 'umd'],
-        fileName: (format) => `hakit-components.${format}.js`,
+        formats: ['es', 'cjs'],
+        fileName: (format) => `hakit-components.${format}.${format === 'cjs' ? 'cjs' : 'js'}`,
       },
       rollupOptions: {
         external:[

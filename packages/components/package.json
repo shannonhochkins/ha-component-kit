@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "private": false,
   "keywords": [
     "react",
@@ -19,13 +19,13 @@
     "custom"
   ],
   "description": "A series of components to work with @hakit/core",
-  "main": "./dist/hakit-components.umd.js",
+  "main": "./dist/hakit-components.cjs.cjs",
   "module": "./dist/hakit-components.es.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/hakit-components.es.js",
-      "require": "./dist/hakit-components.umd.js",
+      "require": "./dist/hakit-components.cjs.cjs",
       "types": "./dist/types/index.d.ts"
     }
   },
@@ -58,7 +58,7 @@
   "peerDependencies": {
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
-    "@hakit/core": ">=1.0.12",
+    "@hakit/core": ">=1.0.14",
     "@use-gesture/react": ">=10.x",
     "framer-motion": ">=10.x",
     "lodash": ">=4.x",
