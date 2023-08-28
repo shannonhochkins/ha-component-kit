@@ -1,8 +1,9 @@
-# v.1.0.16
+# v.1.0.18
 #### @hakit/components
 - Fixed bug with storybook previewer not rendering emotion components
+- linking new types for entities as mentioned below
 
-# v.1.0.14
+# v.1.0.15
 #### @hakit/core
 - NEW - there's now a lot more types available for domains, i've written a script that syncs these types from the home assistant repository and it's now made the following domains available and typed the same way that home assistant is using them:
  - AlarmControlPanelEntity
@@ -32,7 +33,6 @@
 - Documentation added on how to extend the domain types for an entity if you want to add your own custom types for a domain that isn't listed above, you can find this information at the bottom of the "TypescriptSync" page.
 - Fixed bug where i intended to output the vite package under commonjs but accidentally generated in umd.
 - improved output code for the cli script and node script to generate user types.
-
 
 
 # v.1.0.15
