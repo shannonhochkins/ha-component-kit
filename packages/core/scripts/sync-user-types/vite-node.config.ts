@@ -8,9 +8,9 @@ import dts from 'vite-plugin-dts'
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
   return {
-    root: path.resolve(__dirname, '../'),
+    root: path.resolve(__dirname, '../../'),
     build: {
-      outDir: path.resolve(__dirname, '../dist/sync/node'),
+      outDir: path.resolve(__dirname, '../../dist/sync/node'),
       rollupOptions: {
         external:[
           'prettier',
@@ -40,13 +40,13 @@ export default defineConfig(configEnv => {
       }),
       node({
         entry: path.resolve(__dirname, './index.ts'),
-        formats: ['cjs', 'es'],
+        formats: ['cjs'],
         dts: false,
       }),
       dts({
         rollupTypes: false,
         root: path.resolve(__dirname, './'),
-        outDir: path.resolve(__dirname, '../dist/sync/node/types'),
+        outDir: path.resolve(__dirname, '../../dist/sync/node/types'),
         clearPureImport: true,
         insertTypesEntry: false,
         beforeWriteFile: (filePath, content) => {

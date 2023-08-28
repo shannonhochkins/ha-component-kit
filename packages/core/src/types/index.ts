@@ -3,8 +3,8 @@ import type {
   HassServiceTarget,
 } from "home-assistant-js-websocket";
 import type { DefaultServices } from "./supported-services";
-import { LIGHT_COLOR_MODES } from "../data/light";
-import { DefinedPropertiesByDomain } from "./entity";
+import type { DefinedPropertiesByDomain } from "./entitiesByDomain";
+export type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - ignore the next check as this is extendable from the client side.
@@ -19,9 +19,6 @@ export type SupportedServices<T extends ServiceFunctionTypes = "target"> = [
 ] extends [never]
   ? DefaultServices<T>
   : CustomSupportedServices<T>;
-
-export type LightColorMode =
-  (typeof LIGHT_COLOR_MODES)[keyof typeof LIGHT_COLOR_MODES];
 
 export type DefaultEntityName = `${AllDomains}.${string}`;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -159,5 +156,5 @@ export type Target = HassServiceTarget | string | string[];
 export type ServiceFunctionTypes = "target" | "no-target";
 /** all the supported services */
 export type * from "./supported-services";
-export type * from "./entity";
-export type * from "./entity/light";
+export type * from "./entitiesByDomain";
+// export type * from "./entity/light";

@@ -24,3 +24,6 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+supported-types.d.ts
+.ha-repo-cache

@@ -2,7 +2,7 @@ import { Story, Source, Title, Description } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { Tabs, Tab, Divider, Box} from '@mui/material';
-import { DEFAULT_FILENAME } from '../packages/core/bin/constants';
+import { DEFAULT_FILENAME } from '../packages/core/scripts/sync-user-types/constants';
 import { TypeSyncOptions } from '@hakit/core/sync';
 import { GlobalStyles } from '../.storybook/theme';
 
@@ -137,18 +137,50 @@ runner();
     You will then have to link this to your tsconfig file in the <mark>include</mark> section before you import your src files.</p>
 
     <Source dark code={`
-  // tsconfig.json
-  {
-    "include": [
-      "sync-types.ts",
-      "${DEFAULT_FILENAME}", // Note: if you provided a custom filename flag or outDir this will need to change to reflect your name/path
-      "src",
-    ]
-  }
+// tsconfig.json
+{
+  "include": [
+    "sync-types.ts",
+    "${DEFAULT_FILENAME}", // Note: if you provided a custom filename flag or outDir this will need to change to reflect your name/path
+    "src",
+  ]
+}
     `} />
 
     <h2>Result</h2>
     <p>If successful, when you import a hook of say "useEntity" you should get complete intellisense for services and entities!</p>
+
+    <h1>Extending Entities</h1>
+    <p>By default, @hakit/core will support all defined entities that the home assistant repository also supports, there may be cases for you to extend or add your own types for domains that aren't pre-processed.</p>
+    <p>For example, if the base types for the calendar domain aren't up to scratch, you can create your own extension of the types.</p>
+    <p>First, create a file called <mark>custom-entities.d.ts</mark> in the root of your project.</p>
+    <p>Then, add the following code:</p>
+    <Source dark code={`
+import '@hakit/core';
+declare module "@hakit/core" {
+  interface CalendarEntity {
+    attributes: {
+      start_time: string;
+    }
+  }
+  export interface DefinedPropertiesByDomain {
+    ['calendar']: CalendarEntity;
+  }
+}
+    `} />
+    <p>Then link this to the includes array of your tsconfig.json</p>
+    <Source dark code={`
+// tsconfig.json
+{
+  "include": [
+    "sync-types.ts",
+    "custom-entities.d.ts",
+    "${DEFAULT_FILENAME}",
+    "src",
+  ]
+}
+    `} />
+    <p>By default, the start_time property may not be a string, however this will allow you to extend the base entity to include start_time as the expected value.</p>
   </>
 }
 

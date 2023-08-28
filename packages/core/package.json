@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "private": false,
   "type": "module",
   "keywords": [
@@ -26,18 +26,18 @@
     "npm": ">=7.0.0"
   },
   "description": "A collection of React hooks and helpers for Home Assistant to easily communicate with the Home Assistant WebSocket API.",
-  "main": "./dist/hakit-core.umd.cjs",
+  "main": "./dist/hakit-core.cjs.cjs",
   "module": "./dist/hakit-core.es.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/hakit-core.es.js",
-      "require": "./dist/hakit-core.umd.cjs",
+      "require": "./dist/hakit-core.cjs.cjs",
       "types": "./dist/types/index.d.ts"
     },
     "./sync": {
       "types": "./dist/sync/node/types/index.d.ts",
-      "import": "./dist/sync/node/index.js",
+      "import": "./dist/sync/node/index.cjs",
       "require": "./dist/sync/node/index.cjs"
     }
   },
@@ -60,19 +60,23 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "rm -rf ./dist && npm run lint && npm run prettier",
-    "build": "npm run build:core && npm run build:sync-script && npm run build:sync-script-cli",
+    "build": "npm run build:sync-ha-types && npm run build:core && npm run build:sync-script && npm run build:sync-script-cli",
     "build:core": "NODE_ENV=production vite build",
-    "build:sync-script": "NODE_ENV=production vite --config ./bin/vite-node.config.ts build",
+    "build:sync-script": "NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build",
     "build:sync-script-cli": "tsup",
+    "build:sync-ha-types": "ts-node --esm ./scripts/sync-ha-types/index.ts",
     "watch:build": "NODE_ENV=production vite build --watch",
-    "watch:build:sync-script": "NODE_ENV=production vite --config ./bin/vite-node.config.ts build --watch",
+    "watch:build:sync-script": "NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build --watch",
+    "dev:test:sync-script": "npm run build:sync-script && ts-node ./scripts/sync-user-types/test.ts",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "test": "NODE_ENV=test jest --rootDir=src",
     "release": "npm publish --access public"
   },
   "tsup": {
-    "entry": ["bin/cli.ts"],
+    "entry": [
+      "scripts/sync-user-types/cli.ts"
+    ],
     "splitting": false,
     "sourcemap": false,
     "clean": true,
@@ -85,13 +89,13 @@
     "home-assistant-js-websocket": ">=8.x",
     "javascript-time-ago": ">=2.x",
     "lodash": ">=4.x",
+    "prettier": ">=3.x.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
     "react-router-dom": ">=6.x",
     "use-debounce": ">=9.x",
-    "ws": "^8.13.0",
-    "yargs": "^17.7.2",
-    "prettier": ">=3.x.x"
+    "ws": ">=8.x.x",
+    "yargs": ">=17.x.x"
   },
   "devDependencies": {
     "@liuli-util/vite-plugin-node": "^0.6.0",
@@ -100,6 +104,9 @@
     "@types/ws": "^8.5.5",
     "home-assistant-js-websocket": "^8.1.0",
     "prettier": "^3.0.2",
+    "simple-git": "^3.19.1",
+    "ts-morph": "^19.0.0",
+    "ts-node": "^10.9.1",
     "tsup": "^7.1.0"
   }
 }
