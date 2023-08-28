@@ -5,6 +5,11 @@ If you like anything here, be sure to 🌟 [my repo!](https://github.com/shannon
 
 ![DEMO](https://github.com/shannonhochkins/ha-component-kit/blob/master/stories/hakit-demo.gif?raw=true)
 
+## Help me out?
+
+I've spent a lot of time on this, you're free to use it but would appreciate a small donation if you're feeling generous! Buy me a coffee!
+
+[Buy me a coffee!](https://www.buymeacoffee.com/jinglezzz)
 
 ### Get Started
 
