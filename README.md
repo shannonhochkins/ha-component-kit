@@ -19,6 +19,9 @@ I've spent a lot of time on this, you're free to use it but would appreciate a s
 
 There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
 
+### What's next?
+Have your say! Vote for what you'd like to see next in [upcoming features!](https://github.com/shannonhochkins/ha-component-kit/discussions/28)
+
 ### Contributors!
 
 #### Local Storybook
