@@ -20,6 +20,7 @@ const StyledSceneCard = styled(motion.button)`
   overflow: hidden;
   border-radius: 1rem;
   width: var(--ha-device-scene-card-width);
+  aspect-ratio: 2/0.74;
   display: flex;
   flex-direction: column;
   align-items: stretch;

@@ -4,8 +4,6 @@ import { useState } from "react";
 import { Tabs, Tab, Divider, Box} from '@mui/material';
 import { DEFAULT_FILENAME } from '../packages/core/scripts/sync-user-types/constants';
 import { TypeSyncOptions } from '@hakit/core/sync';
-import { GlobalStyles } from '../.storybook/theme';
-
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -197,7 +195,6 @@ export default {
           <Title />
           <Description />
           <Template />
-          <GlobalStyles />
         </>
       ),
       description: {

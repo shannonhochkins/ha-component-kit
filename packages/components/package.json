@@ -62,9 +62,9 @@
   "peerDependencies": {
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
-    "@hakit/core": ">=1.0.15",
-    "@use-gesture/react": ">=10.x",
     "framer-motion": ">=10.x",
+    "@hakit/core": ">=1.0.15",
+    "@use-gesture/react": ">=10.x",    
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
