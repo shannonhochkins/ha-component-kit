@@ -215,6 +215,7 @@ export function HassProvider({
   preloadConfiguration = false,
 }: HassProviderProps): JSX.Element {
   const [_hash] = useHash();
+  const authenticating = useRef(false);
   const [routes, setRoutes] = useState<Route[]>([]);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
@@ -268,6 +269,7 @@ export function HassProvider({
     setEntities({});
     setConnection(null);
     setAuth(null);
+    authenticating.current = false;
     if (unsubscribe.current) {
       unsubscribe.current();
       unsubscribe.current = null;
@@ -327,12 +329,14 @@ export function HassProvider({
 
       if (value === "") {
         setError("Please enter a Home Assistant URL.");
+        authenticating.current = false;
         return;
       }
       if (value.indexOf("://") === -1) {
         setError(
           "Please enter your full URL, including the protocol part (https://).",
         );
+        authenticating.current = false;
         return;
       }
 
@@ -341,6 +345,7 @@ export function HassProvider({
         url = new URL(value);
       } catch (err: unknown) {
         setError("Invalid URL");
+        authenticating.current = false;
         return;
       }
 
@@ -350,6 +355,7 @@ export function HassProvider({
         allowNonSecure === false
       ) {
         setError(translateErr(ERR_INVALID_HTTPS_TO_HTTP));
+        authenticating.current = false;
         return;
       }
       connectionResponse = await tryConnection("user-request", value);
@@ -364,10 +370,14 @@ export function HassProvider({
       // // store the connection to pass to the provider
       setConnection(connectionResponse.connection);
     }
+    authenticating.current = false;
   }, [hassUrl, allowNonSecure]);
 
   useEffect(() => {
-    handleConnect();
+    if (!authenticating.current) {
+      authenticating.current = true;
+      handleConnect();
+    }
   }, [handleConnect]);
 
   useEffect(() => {

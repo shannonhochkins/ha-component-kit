@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "private": false,
   "type": "module",
   "keywords": [
@@ -95,7 +95,10 @@
     "react-router-dom": ">=6.x",
     "use-debounce": ">=9.x",
     "ws": ">=8.x.x",
-    "yargs": ">=17.x.x"
+    "yargs": ">=17.x.x",
+    "@emotion/react": ">=10.x",
+    "@emotion/styled": ">=10.x",
+    "framer-motion": ">=10.x"
   },
   "devDependencies": {
     "@liuli-util/vite-plugin-node": "^0.6.0",
