@@ -12,9 +12,9 @@ I've spent a lot of time on this, you're free to use it but would appreciate a s
 [Buy me a coffee!](https://www.buymeacoffee.com/jinglezzz)
 
 ### Get Started
-
+There's an npm create command which will setup react, typescript, vite & hakit automatically for you with a terminal wizard!
 ```
-  npm install @hakit/core @hakit/components -D
+  npm create hakit@latest
 ```
 
 There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!

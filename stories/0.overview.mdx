@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/blocks';
+import { Meta, Source } from '@storybook/blocks';
 import demo from './hakit-demo.gif';
 
 <Meta title="INTRODUCTION/Overview" />
@@ -9,6 +9,11 @@ import demo from './hakit-demo.gif';
 
 There's a range of availabe components/utilities from the [@hakit/core](https://www.npmjs.com/package/@hakit/core) & [@hakit/components](https://www.npmjs.com/package/@hakit/components) packages, allowing you to achieve any type of dashboard layout you want! There's also a range of pre-built components which will allow you to achieve the below result with ease!
 
-<img src={demo} />
+<img style={{ marginBottom: '20px'}} width="50%" src={demo} />
 
-Ready to [get started?](/docs/introduction-getting-started--docs)
+## Project Setup
+There's an npm create command which will setup react, typescript, vite & hakit automatically for you with a terminal wizard!
+
+<Source dark code={`npm create hakit@latest`} />
+
+If the above is successful, you should be on your way to creating your own dashboard! If it wasn't please follow the [steps here](/docs/introduction-getting-started--docs)
