@@ -5,11 +5,9 @@ import { ModalLightControls } from "./ModalLightControls";
 import { ModalClimateControls } from "./ModalClimateControls";
 import type { ModalLightControlsProps } from "./ModalLightControls";
 import type { ModalClimateControlsProps } from "./ModalClimateControls";
-import type { ModalVacuumControlsProps } from "./ModalVacuumControls";
 interface ModalPropsByDomain {
   light: ModalLightControlsProps;
   climate: ModalClimateControlsProps;
-  vacuum: ModalVacuumControlsProps;
 }
 
 type EntityDomainProps<E extends EntityName> =
