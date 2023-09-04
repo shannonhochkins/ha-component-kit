@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "private": false,
   "type": "module",
   "keywords": [
@@ -51,12 +51,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/shannonhochkins/ha-component-kit"
+    "url": "git+https://github.com/shannonhochkins/ha-component-kit",
+    "directory": "packages/core"
   },
   "bugs": {
     "url": "https://github.com/shannonhochkins/ha-component-kit/issues"
   },
   "homepage": "https://shannonhochkins.github.io/ha-component-kit#readme",
+  "funding": "https://github.com/shannonhochkins/ha-component-kit?sponsor=1",
   "scripts": {
     "dev": "vite",
     "prebuild": "rm -rf ./dist && npm run lint && npm run prettier",

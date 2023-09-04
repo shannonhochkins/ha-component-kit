@@ -1,3 +1,17 @@
+# v.1.0.20
+#### @hakit/components
+- documentation updated
+- few small bug fixes
+
+# v.1.0.17
+#### @hakit/core
+- documentation updated
+- few small bug fixes
+
+# v.1.0.04
+#### create-hakit
+- Released `npm create hakit@latest` to scaffold a new project with vite, react, typescript and hakit
+
 # v.1.0.19
 #### @hakit/components
 - Fixed bug with nested buttons for the ClimateCard

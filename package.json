@@ -2,7 +2,8 @@
   "name": "@hakit/monorepo",
   "workspaces": [
     "packages/core",
-    "packages/components"
+    "packages/components",
+    "packages/create-hakit"
   ],
   "keywords": [
     "react",
@@ -25,8 +26,9 @@
     "test": "npm run test --workspaces --if-present",
     "test:components": "npm run test --workspace=@hakit/components",
     "test:core": "npm run test --workspace=@hakit/core",
-    "build": "npm run build:core && npm run build:components",
+    "build": "npm run build:core && npm run build:components && npm run build:create",
     "build:core": "npm run build --workspace=@hakit/core",
+    "build:create": "npm run build --workspace=create-hakit",
     "build:components": "npm run build --workspace=@hakit/components",
     "build:storybook": "BUILD_STORYBOOK=true storybook build",
     "watch:build:components": "npm run watch:build --workspace=@hakit/components",
@@ -35,6 +37,7 @@
     "release": "npm run release --workspaces --if-present",
     "release:core": "npm run release --workspace=@hakit/core",
     "release:components": "npm run release --workspace=@hakit/components",
+    "release:create": "npm run release --workspace=create-hakit",
     "test:dashboard": " cd test-dashboard && npm start"
   },
   "devDependencies": {
