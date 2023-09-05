@@ -21,40 +21,6 @@ export interface VacuumEntityAttributes extends HassEntityAttributeBase {
   battery_icon?: string;
 }
 
-export interface VacuumCardShortcut {
-  name?: string;
-  icon?: string;
-  service?: string;
-  service_data?: Record<string, unknown>;
-}
-
-export interface VacuumCardStat {
-  entity_id?: string;
-  attribute?: string;
-  value_template?: string;
-  unit?: string;
-  subtitle?: string;
-}
-
-export interface VacuumCardAction {
-  service: string;
-  service_data?: Record<string, unknown>;
-}
-
-export interface VacuumCardConfig {
-  entity: string;
-  map: string;
-  map_refresh: number;
-  image: string;
-  show_name: boolean;
-  show_status: boolean;
-  show_toolbar: boolean;
-  compact_view: boolean;
-  stats: Record<string, VacuumCardStat[]>;
-  actions: Record<string, VacuumCardAction>;
-  shortcuts: VacuumCardShortcut[];
-}
-
 export interface VacuumEntity extends VacuumEntityBase {
   attributes: VacuumEntityAttributes;
   state: VacuumEntityState;

@@ -1,6 +1,6 @@
 import { HassServices } from 'home-assistant-js-websocket';
 import _ from 'lodash';
-import { REMAPPED_TYPES, REMAPPED_TYPES_BY_DOMAIN } from './constants';
+import { REMAPPED_TYPES } from './constants';
 
 type Selector = {
   select?: {
