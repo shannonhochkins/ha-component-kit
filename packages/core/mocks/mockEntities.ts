@@ -38,7 +38,7 @@ export const entities: HassEntities = {
     }
   }),
   ...createMediaPlayer('media_player.fake_tv'),
-  ...createScene('scene.goodmorning'),
+  ...createScene('scene.good_morning'),
   ...createSensor('sensor.time', {
     attributes: {
       icon: "mdi:clock",
