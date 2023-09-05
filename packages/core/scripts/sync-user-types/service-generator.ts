@@ -1,5 +1,6 @@
 import { HassServices } from 'home-assistant-js-websocket';
 import _ from 'lodash';
+import { REMAPPED_TYPES, REMAPPED_TYPES_BY_DOMAIN } from './constants';
 
 type Selector = {
   select?: {
@@ -7,13 +8,6 @@ type Selector = {
       value: string;
     }[] | string[];
   }
-};
-
-const REMAPPED_TYPES: Record<string, string> = {
-  hs_color: `[number, number]`,
-  rgb_color: `[number, number, number]`,
-  rgbw_color: `[number, number, number, number]`,
-  rgbww_color: `[number, number, number, number, number]`,
 };
 
 const resolveSelectorType = (selector: Selector) => {
@@ -46,8 +40,9 @@ export const generateServiceTypes = (input: HassServices, whitelist: string[] = 
       const data = Object.entries(fields).map(([field, { selector, example, description, ...rest }]) => {
         // @ts-expect-error - this does exist, types are wrong in homeassistant
         const required = rest.required ?? false;
+        const staticTypes = REMAPPED_TYPES_BY_DOMAIN[domain] ?? REMAPPED_TYPES;
         // some fields come back as number[] but we know these should be something specific, these are hard coded above
-        const type = field in REMAPPED_TYPES ? REMAPPED_TYPES[field] : resolveSelectorType(selector as Selector);
+        const type = field in staticTypes ? staticTypes[field] : resolveSelectorType(selector as Selector);
         const exampleUsage = example ? ` @example ${example}` : '';
         return `// ${sanitizeString(`${description}${exampleUsage}`)}\n${field}${required ? '' : '?'}: ${type};`;
       });
