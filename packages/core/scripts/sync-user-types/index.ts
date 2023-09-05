@@ -36,7 +36,7 @@ export async function typeSync({
   const serviceInterfaces = await generateServiceTypes(services, typeof serviceWhitelist === 'string' ? [serviceWhitelist] : serviceWhitelist.map(x => `${x}`));
   const output = `
     ${warning}
-    import { ServiceFunction, ServiceFunctionTypes, VacuumEntityState } from "@hakit/core";
+    import { ServiceFunction, ServiceFunctionTypes } from "@hakit/core";
     declare module '@hakit/core' {
       export interface CustomSupportedServices<T extends ServiceFunctionTypes = "target"> {
         ${serviceInterfaces}

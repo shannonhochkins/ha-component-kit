@@ -8,7 +8,7 @@ const defaults = {
     friendly_name: "Gaming Computer",
   },
   state: "off",
-  entity_id: "switch.fake_gaming_switch",
+  entity_id: "switch.fake_switch",
   last_changed: now.toISOString(),
   last_updated: now.toISOString(),
   context: {
