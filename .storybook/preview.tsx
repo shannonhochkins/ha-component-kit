@@ -1,14 +1,10 @@
 import type { Preview } from "@storybook/react";
 import { Title, Description, Primary, ArgTypes } from "@storybook/blocks";
 import React from "react";
-import { withThemeFromJSXProvider } from '@storybook/addon-themes'
-import { GlobalStyles } from './theme';
+import './global.css';
 
 export default {
   decorators: [
-    withThemeFromJSXProvider({
-      GlobalStyles,
-    }),
     (Story, args) => {
       const centered = args.parameters.centered ? {
         width: '100%',

@@ -245,7 +245,7 @@ exports[`useHass getAllEntities should retrieve all the entities 1`] = `
     "last_updated": "2022-07-23T01:01:01.164Z",
     "state": "01:01",
   },
-  "switch.fake_gaming_switch": {
+  "switch.fake_switch": {
     "attributes": {
       "friendly_name": "Gaming Computer",
     },
@@ -254,7 +254,7 @@ exports[`useHass getAllEntities should retrieve all the entities 1`] = `
       "parent_id": null,
       "user_id": null,
     },
-    "entity_id": "switch.fake_gaming_switch",
+    "entity_id": "switch.fake_switch",
     "last_changed": "2022-07-23T01:01:01.164Z",
     "last_updated": "2022-07-23T01:01:01.164Z",
     "state": "off",

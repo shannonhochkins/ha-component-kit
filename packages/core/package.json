@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "1.0.15",
+  "version": "1.0.18",
   "private": false,
   "type": "module",
   "keywords": [
@@ -51,12 +51,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/shannonhochkins/ha-component-kit"
+    "url": "git+https://github.com/shannonhochkins/ha-component-kit",
+    "directory": "packages/core"
   },
   "bugs": {
     "url": "https://github.com/shannonhochkins/ha-component-kit/issues"
   },
   "homepage": "https://shannonhochkins.github.io/ha-component-kit#readme",
+  "funding": "https://github.com/shannonhochkins/ha-component-kit?sponsor=1",
   "scripts": {
     "dev": "vite",
     "prebuild": "rm -rf ./dist && npm run lint && npm run prettier",
@@ -71,6 +73,7 @@
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "test": "NODE_ENV=test jest --rootDir=src",
+    "prerelease": "npm run build",
     "release": "npm publish --access public"
   },
   "tsup": {
@@ -95,7 +98,10 @@
     "react-router-dom": ">=6.x",
     "use-debounce": ">=9.x",
     "ws": ">=8.x.x",
-    "yargs": ">=17.x.x"
+    "yargs": ">=17.x.x",
+    "@emotion/react": ">=10.x",
+    "@emotion/styled": ">=10.x",
+    "framer-motion": ">=10.x"
   },
   "devDependencies": {
     "@liuli-util/vite-plugin-node": "^0.6.0",

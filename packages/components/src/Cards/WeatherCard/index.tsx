@@ -129,17 +129,6 @@ const TemperatureLow = styled.div`
   font-size: 0.75rem;
 `;
 
-interface WeatherForecast {
-  datetime: string;
-  temperature: number;
-  precipitation: number;
-  condition: string;
-  templow: number;
-  wind_speed: number;
-  wind_bearing: number;
-  humidity: number;
-}
-
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 export interface WeatherCardProps extends Extendable {
   /** The name of your entity */
@@ -205,29 +194,26 @@ export function WeatherCard({
             justifyContent: "space-between",
           }}
         >
-          {(weather.attributes.forecast as WeatherForecast[]).map(
-            (forecast, index) => {
-              const dateFormatted = convertDateTime(
-                forecast.datetime,
-                timeZone,
-              );
-              const [day] = dateFormatted.split(",");
-              return (
-                <Forecast key={index}>
-                  <Day>{day}</Day>
-                  <ForecastIcon icon={weatherIconName(forecast.condition)} />
-                  <Temperature>
-                    {forecast.temperature}
-                    {temperatureSuffix || unit}
-                  </Temperature>
-                  <TemperatureLow>
-                    {forecast.templow}
-                    {temperatureSuffix || unit}
-                  </TemperatureLow>
-                </Forecast>
-              );
-            },
-          )}
+          {(weather.attributes.forecast ?? []).map((forecast, index) => {
+            const dateFormatted = convertDateTime(forecast.datetime, timeZone);
+            const [day] = dateFormatted.split(",");
+            return (
+              <Forecast key={index}>
+                <Day>{day}</Day>
+                <ForecastIcon
+                  icon={weatherIconName(forecast.condition as string)}
+                />
+                <Temperature>
+                  {forecast.temperature}
+                  {temperatureSuffix || unit}
+                </Temperature>
+                <TemperatureLow>
+                  {forecast.templow}
+                  {temperatureSuffix || unit}
+                </TemperatureLow>
+              </Forecast>
+            );
+          })}
         </Row>
       )}
     </Card>

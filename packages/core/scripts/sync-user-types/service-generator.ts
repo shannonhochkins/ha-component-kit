@@ -1,5 +1,6 @@
 import { HassServices } from 'home-assistant-js-websocket';
 import _ from 'lodash';
+import { REMAPPED_TYPES } from './constants';
 
 type Selector = {
   select?: {
@@ -7,13 +8,6 @@ type Selector = {
       value: string;
     }[] | string[];
   }
-};
-
-const REMAPPED_TYPES: Record<string, string> = {
-  hs_color: `[number, number]`,
-  rgb_color: `[number, number, number]`,
-  rgbw_color: `[number, number, number, number]`,
-  rgbww_color: `[number, number, number, number, number]`,
 };
 
 const resolveSelectorType = (selector: Selector) => {

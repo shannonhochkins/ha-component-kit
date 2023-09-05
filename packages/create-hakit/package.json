@@ -1,0 +1,53 @@
+{
+  "name": "create-hakit",
+  "version": "1.0.5",
+  "type": "module",
+  "author": "Shannon Hochkins <mail@shannonhochkins.com>",
+  "license": "ISC",
+  "bin": {
+    "create-hakit": "index.js",
+    "chak": "index.js"
+  },
+  "files": [
+    "index.js",
+    "template",
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rimraf ./test-project",
+    "dev": "ts-node --esm ./src/index.ts",
+    "build": "unbuild",
+    "typecheck": "tsc --noEmit",
+    "prebuild": "npm run typecheck",
+    "prerelease": "npm run build",
+    "release": "npm publish --access public"
+  },
+  "engines": {
+    "node": "^18.0.0 || >=20.0.0",
+    "npm": "^7.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shannonhochkins/ha-component-kit",
+    "directory": "packages/create-hakit"
+  },
+  "bugs": {
+    "url": "https://github.com/shannonhochkins/ha-component-kit/issues"
+  },
+  "homepage": "https://shannonhochkins.github.io/ha-component-kit#readme",
+  "funding": "https://github.com/shannonhochkins/ha-component-kit?sponsor=1",
+  "dependencies": {
+    "create-vite": "latest"
+  },
+  "devDependencies": {
+    "@types/minimist": "^1.2.2",
+    "@types/prompts": "^2.4.4",
+    "cross-spawn": "^7.0.3",
+    "kolorist": "^1.8.0",
+    "minimist": "^1.2.8",
+    "node-scp": "^0.0.23",
+    "prompts": "^2.4.2",
+    "rimraf": "^5.0.1",
+    "unbuild": "^2.0.0"
+  }
+}

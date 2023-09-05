@@ -259,20 +259,21 @@ export function SidebarCard({
         styles={css`
           :root {
             --ha-room-card-expanded-offset: ${open
-              ? `var(--ha-device-sidebar-card-width-expanded)`
-              : `var(--ha-device-sidebar-card-width-collapsed)`};
+              ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
+              : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
           }
         `}
       />
       <StyledSidebarCard
         animate={{
           minWidth: open
-            ? `var(--ha-device-sidebar-card-width-expanded)`
-            : `var(--ha-device-sidebar-card-width-collapsed)`,
+            ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
+            : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`,
           maxWidth: open
-            ? `var(--ha-device-sidebar-card-width-expanded)`
-            : `var(--ha-device-sidebar-card-width-collapsed)`,
+            ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
+            : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`,
         }}
+        initial={false}
         key={`ha-sidebar-closed`}
       >
         <Column
@@ -286,6 +287,7 @@ export function SidebarCard({
             <Row
               wrap="nowrap"
               style={{
+                padding: open ? "0.28rem 0" : "0",
                 flexDirection: open ? "row" : "column",
               }}
             >
@@ -296,7 +298,6 @@ export function SidebarCard({
                   initial={{ opacity: 0 }}
                   animate={{
                     opacity: 1,
-                    marginBottom: open ? 10 : 0,
                   }}
                   exit={{
                     opacity: 0,

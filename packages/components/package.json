@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "1.0.18",
+  "version": "1.0.21",
   "private": false,
   "keywords": [
     "react",
@@ -43,12 +43,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/shannonhochkins/ha-component-kit"
+    "url": "git+https://github.com/shannonhochkins/ha-component-kit",
+    "directory": "packages/components"
   },
   "bugs": {
     "url": "https://github.com/shannonhochkins/ha-component-kit/issues"
   },
   "homepage": "https://shannonhochkins.github.io/ha-component-kit#readme",
+  "funding": "https://github.com/shannonhochkins/ha-component-kit?sponsor=1",
   "scripts": {
     "dev": "vite",
     "prebuild": "rm -rf ./dist && npm run lint && npm run prettier",
@@ -56,15 +58,16 @@
     "watch:build": "NODE_ENV=production vite build --watch",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
+    "prerelease": "npm run build",
     "release": "npm publish --access public",
     "test": "NODE_ENV=test jest --rootDir=src"
   },
   "peerDependencies": {
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
-    "@hakit/core": ">=1.0.15",
-    "@use-gesture/react": ">=10.x",
     "framer-motion": ">=10.x",
+    "@hakit/core": "^1.0.18",
+    "@use-gesture/react": ">=10.x",    
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
