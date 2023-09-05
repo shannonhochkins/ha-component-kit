@@ -194,29 +194,26 @@ export function WeatherCard({
             justifyContent: "space-between",
           }}
         >
-          {(weather.attributes.forecast ?? []).map(
-            (forecast, index) => {
-              const dateFormatted = convertDateTime(
-                forecast.datetime,
-                timeZone,
-              );
-              const [day] = dateFormatted.split(",");
-              return (
-                <Forecast key={index}>
-                  <Day>{day}</Day>
-                  <ForecastIcon icon={weatherIconName(forecast.condition as string)} />
-                  <Temperature>
-                    {forecast.temperature}
-                    {temperatureSuffix || unit}
-                  </Temperature>
-                  <TemperatureLow>
-                    {forecast.templow}
-                    {temperatureSuffix || unit}
-                  </TemperatureLow>
-                </Forecast>
-              );
-            },
-          )}
+          {(weather.attributes.forecast ?? []).map((forecast, index) => {
+            const dateFormatted = convertDateTime(forecast.datetime, timeZone);
+            const [day] = dateFormatted.split(",");
+            return (
+              <Forecast key={index}>
+                <Day>{day}</Day>
+                <ForecastIcon
+                  icon={weatherIconName(forecast.condition as string)}
+                />
+                <Temperature>
+                  {forecast.temperature}
+                  {temperatureSuffix || unit}
+                </Temperature>
+                <TemperatureLow>
+                  {forecast.templow}
+                  {temperatureSuffix || unit}
+                </TemperatureLow>
+              </Forecast>
+            );
+          })}
         </Row>
       )}
     </Card>
