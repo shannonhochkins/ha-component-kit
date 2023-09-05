@@ -20,6 +20,12 @@ export type SupportedServices<T extends ServiceFunctionTypes = "target"> = [
   ? DefaultServices<T>
   : CustomSupportedServices<T>;
 
+export type FilterByDomain<
+  T,
+  Prefix extends AllDomains,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+> = T extends `${Prefix}${infer _Rest}` ? T : never;
+
 export type DefaultEntityName = `${AllDomains}.${string}`;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - ignore the next check as this is extendable from the client side.

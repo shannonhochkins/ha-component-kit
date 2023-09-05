@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import styled from "@emotion/styled";
-import type { HassEntityWithApi } from "@hakit/core";
+import type { HassEntityWithApi, HvacMode } from "@hakit/core";
 import { ModalByEntityDomain, Row, FabCard } from "@components";
 import type { ClimateControlsProps } from "@components";
 import { useEntity, useIconByDomain, useIconByEntity, OFF } from "@hakit/core";
@@ -10,13 +10,14 @@ import type { MotionProps } from "framer-motion";
 import { useLongPress } from "react-use";
 import { icons, activeColors } from "../../Shared/ClimateControls/shared";
 
-const StyledClimateCard = styled(motion.button)`
+const StyledClimateCard = styled(motion.div)`
   all: unset;
   padding: 1rem;
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
   width: var(--ha-device-climate-card-width);
+  aspect-ratio: 2/0.74;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -121,7 +122,7 @@ export function ClimateCard({
                   color:
                     currentMode === "unknown-mode"
                       ? undefined
-                      : activeColors[currentMode],
+                      : activeColors[currentMode as HvacMode],
                 }}
               >
                 {entityIcon || domainIcon}

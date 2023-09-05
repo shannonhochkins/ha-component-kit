@@ -1,3 +1,30 @@
+# v.1.0.20
+#### @hakit/components
+- documentation updated
+- few small bug fixes
+
+# v.1.0.17
+#### @hakit/core
+- documentation updated
+- few small bug fixes
+
+# v.1.0.04
+#### create-hakit
+- Released `npm create hakit@latest` to scaffold a new project with vite, react, typescript and hakit
+
+# v.1.0.19
+#### @hakit/components
+- Fixed bug with nested buttons for the ClimateCard
+- NEW - GroupCard now has collapsible props allowing you to collapse or expand sections of cards easily, there has also been some style changes here.
+- Fixed bug with sidebar card, header should align with expanded RoomCards now
+- ClimateCard and Scene Card now match the same height as ButtonCards with the use of aspect-ratio
+
+# v.1.0.16
+#### @hakit/core
+- Fixed bug with HassConnect as it was attempting to double tap the authentication request
+- NEW - HassConnect - children will now fade in once authenticated
+- BREAKING CHANGE - HassConnect - default loader added, "fallback" prop now renamed to "loader", suggested to set the background of your app to the same color as the primary background color from the ThemeProvider (#1a1a1a)
+
 # v.1.0.18
 #### @hakit/components
 - Fixed bug with storybook previewer not rendering emotion components
