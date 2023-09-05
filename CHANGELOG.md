@@ -1,3 +1,12 @@
+
+# v.1.0.18
+#### @hakit/core
+- added new types for vacuum entities
+
+# v.1.0.21
+#### @hakit/components
+- fixed some types for weather
+
 # v.1.0.20
 #### @hakit/components
 - documentation updated
