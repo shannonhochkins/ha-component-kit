@@ -73,6 +73,7 @@
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "test": "NODE_ENV=test jest --rootDir=src",
+    "prerelease": "npm run build",
     "release": "npm publish --access public"
   },
   "tsup": {
