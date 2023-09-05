@@ -9,7 +9,7 @@ import jsxToString from "jsx-to-string";
 
 function Template(
   args?: Partial<
-    ButtonCardProps<"switch.fake_gaming_switch", DomainService<"switch">>
+    ButtonCardProps<"switch.fake_switch", DomainService<"switch">>
   >,
 ) {
   return (
@@ -18,7 +18,7 @@ function Template(
       <Group title="Examples">
         <ButtonCard
           {...args}
-          entity="switch.fake_gaming_switch"
+          entity="switch.fake_switch"
           onClick={(entity) => {
             entity.api.toggle();
           }}
@@ -62,13 +62,13 @@ function LayoutExampleTemplate() {
         <ButtonCard
           defaultLayout="slim"
           title="Slim example"
-          entity="switch.fake_gaming_switch"
+          entity="switch.fake_switch"
           service="toggle"
         />
         <ButtonCard
           defaultLayout="default"
           title="Default example"
-          entity="switch.fake_gaming_switch"
+          entity="switch.fake_switch"
           service="toggle"
         />
       </Group>
@@ -180,13 +180,13 @@ export const ClimateExample: StoryObj<
   args: {},
 };
 export type SwitchStory = StoryObj<
-  typeof ButtonCard<"switch.fake_gaming_switch", "toggle">
+  typeof ButtonCard<"switch.fake_switch", "toggle">
 >;
 export const SwitchExample: SwitchStory = {
   render: Render,
   args: {
     service: "toggle",
-    entity: "switch.fake_gaming_switch",
+    entity: "switch.fake_switch",
   },
 };
 export type GroupStory = StoryObj<typeof ExampleDocs>;

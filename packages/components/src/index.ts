@@ -37,13 +37,9 @@ export type { SidebarCardProps } from "./Cards/SidebarCard";
 // ClimateControls
 export { ClimateControls } from "./Shared/ClimateControls";
 export type { ClimateControlsProps } from "./Shared/ClimateControls";
-// ClimateCart
+// ClimateCard
 export { ClimateCard } from "./Cards/ClimateCard";
 export type { ClimateCardProps } from "./Cards/ClimateCard";
-export { VacuumControls } from "./Shared/VacuumControls";
-export type { VacuumControlsProps } from "./Shared/VacuumControls";
-export { VacuumCard } from "./Cards/VacuumCard";
-export type { VacuumCardProps } from "./Cards/VacuumCard";
 
 // Modal
 export { Modal } from "./Shared/Modal";
@@ -52,8 +48,6 @@ export { ModalLightControls } from "./Shared/Modal/ModalLightControls";
 export type { ModalLightControlsProps } from "./Shared/Modal/ModalLightControls";
 export { ModalClimateControls } from "./Shared/Modal/ModalClimateControls";
 export type { ModalClimateControlsProps } from "./Shared/Modal/ModalClimateControls";
-export { ModalVacuumControls } from "./Shared/Modal/ModalVacuumControls";
-export type { ModalVacuumControlsProps } from "./Shared/Modal/ModalVacuumControls";
 export { ModalByEntityDomain } from "./Shared/Modal/ModalByEntityDomain";
 export type { ModalByEntityDomainProps } from "./Shared/Modal/ModalByEntityDomain";
 // ControlSlider

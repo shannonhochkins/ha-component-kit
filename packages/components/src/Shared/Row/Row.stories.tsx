@@ -9,7 +9,7 @@ function Template(args?: Partial<RowProps>) {
       <ThemeProvider />
       <Row {...args}>
         <ButtonCard entity="light.fake_light_1" />
-        <ButtonCard entity="switch.fake_gaming_switch" />
+        <ButtonCard entity="switch.fake_switch" />
         <ButtonCard entity="media_player.fake_tv" />
       </Row>
     </HassConnect>
