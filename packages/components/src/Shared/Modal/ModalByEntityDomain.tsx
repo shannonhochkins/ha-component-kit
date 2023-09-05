@@ -3,6 +3,7 @@ import type { EntityName } from "@hakit/core";
 import type { ModalProps } from "./";
 import { ModalLightControls } from "./ModalLightControls";
 import { ModalClimateControls } from "./ModalClimateControls";
+import { ModalVacuumControls } from "./ModalVacuumControls";
 import type { ModalLightControlsProps } from "./ModalLightControls";
 import type { ModalClimateControlsProps } from "./ModalClimateControls";
 import type { ModalVacuumControlsProps } from "./ModalVacuumControls";
@@ -38,6 +39,13 @@ export function ModalByEntityDomain<E extends EntityName>({
       return (
         <ModalClimateControls
           entity={entity as `climate.${string}`}
+          {...rest}
+        />
+      );
+    case "vacuum":
+      return (
+        <ModalVacuumControls
+          entity={entity as `vacuum.${string}`}
           {...rest}
         />
       );

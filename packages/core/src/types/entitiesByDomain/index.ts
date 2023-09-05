@@ -20,10 +20,12 @@ import {
   TextEntity,
   TimerEntity,
   UpdateEntity,
-  VacuumEntity,
   WaterHeaterEntity,
   WeatherEntity,
 } from "@core";
+// custom overrides for the VacuumEntity
+import { VacuumEntity } from "../entities/vacuum";
+
 export interface DefinedPropertiesByDomain {
   ["alarm_control_panel"]: AlarmControlPanelEntity;
   ["automation"]: AutomationEntity;

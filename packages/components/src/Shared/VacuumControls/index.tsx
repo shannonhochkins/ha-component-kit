@@ -1,27 +1,32 @@
-import { useRef, useMemo, useState, useEffect, Key } from "react";
+import { useRef, useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { Column, FabCard, Row } from "@components";
-import { useEntity, useHass, VacuumMode } from "@hakit/core";
-import type { HassConfig } from "home-assistant-js-websocket";
+import { useEntity } from "@hakit/core";
 import { useDebounce } from "react-use";
 import type { MotionProps } from "framer-motion";
 import { activeColors, icons } from "./shared";
+import { Icon } from "@iconify/react";
+import DEFAULT_IMAGE from './vacuum.svg';
 
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 
 export interface VacuumControlsProps extends Extendable {
   entity: `${"vacuum"}.${string}`;
   /** provide a list of vacuumModes you want to support/display in the UI, will use all by default */
-  VacuumModes?: VacuumMode[];
-  /** hide the current battery level */
+  vacuumModes?: string[];
+  /** hide the current battery level @default false */
   hideCurrentBatteryLevel?: boolean;
-  /** hide the fan mode fab */
+  /** hide the fan mode fab @default false */
   hideFanMode?: boolean;
-  /** hide the state of the vacuum entity */
+  /** hide the state of the vacuum entity @default false */
   hideState?: boolean;
-  /** hide the last updated time */
+  /** hide the last updated time @default false */
   hideUpdated?: boolean;
+  /** hide the toolbar @default false */
+  hideToolbar?: boolean;
+  /** change the default custom image to display @default vacuum svg */
+  customImage?: string;
 }
 
 const State = styled.div`
@@ -52,6 +57,10 @@ const VacuumSize = styled.div`
   min-height: 300px;
   margin-bottom: 2rem;
   position: relative;
+`;
+
+const VacuumImage = styled.img`
+  width: 60%;
 `;
 
 const FanModeColumn = styled(Column)`
@@ -96,10 +105,10 @@ const FanMode = styled(FabCard)<{
   animation-name: ${spin};
   animation-duration: ${(props) => {
     const speed = (props.speed || "").toLowerCase();
-    const silent = speed.includes("Silent");
-    const standard = speed.includes("Standard");
-    const medium = speed.includes("Medium");
-    const turbo = speed.includes("Turbo");
+    const silent = speed.includes("silent");
+    const standard = speed.includes("standard");
+    const medium = speed.includes("medium");
+    const turbo = speed.includes("turbo");
     if (silent) return "4s";
     if (standard) return "2.5s";
     if (medium) return "1.8s";
@@ -109,23 +118,83 @@ const FanMode = styled(FabCard)<{
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 `;
+
+export function VacuumToolbar({
+  entity: _entity,
+  hideToolbar = false,
+}: {
+  entity: `${"vacuum"}.${string}`;
+  hideToolbar?: boolean;
+}) {
+  const entity = useEntity(_entity);
+
+  if (hideToolbar) {
+    return null;
+  }
+
+  switch (entity.state) {
+    case 'on':
+    case 'auto':
+    case 'spot':
+    case 'edge':
+    case 'single_room':
+    case 'cleaning': {
+      return <Row gap="0.5rem">
+        <FabCard title="pause" size={35} icon="mdi:pause" onClick={() => entity.api.pause()} />
+        <FabCard title="stop" size={35} icon="mdi:stop" onClick={() => entity.api.stop()} />
+        <FabCard title="return to base" size={35} icon="mdi:home-map-marker"onClick={() => entity.api.returnToBase()} />
+      </Row>;
+    }
+
+    case 'paused': {
+      return <Row gap="0.5rem">
+        <FabCard title="start" size={35} icon="mdi:play"
+          onClick={() => entity.api.startPause()}
+        />
+        <FabCard title="return to base" size={35} icon="mdi:home-map-marker"onClick={() => entity.api.returnToBase()} />
+      </Row>
+    }
+
+    case 'returning': {
+      return <Row gap="0.5rem">
+        <FabCard title="start" size={35} icon="mdi:play" onClick={() => entity.api.startPause()} />
+        <FabCard title="pause" size={35} icon="mdi:pause" onClick={() => entity.api.pause()} />
+      </Row>
+    }
+    case 'docked':
+    case 'idle':
+    default: {
+      const dockButton = <FabCard title="return to base" size={35} icon="mdi:home-map-marker"onClick={() => entity.api.returnToBase()} />
+
+      return <Row gap="0.5rem">
+        <FabCard title="start" size={35} icon="mdi:play" onClick={() => entity.api.start()} />
+        <FabCard title="locate" size={35} icon="mdi:map-marker" onClick={() => entity.api.locate()} />
+        {entity.state === 'idle' ? dockButton : null}
+      </Row>
+    }
+  }
+}
+
 /** This layout is shared for the popup for a buttonCard and fabCard when long pressing on a card with a vacuum entity, and also the vacuumCard, this will fill the width/height of the parent component */
 export function VacuumControls({
   entity: _entity,
   vacuumModes,
-  hideCurrentBatteryLevel,
-  hideFanMode,
-  hideState,
-  hideUpdated,
+  hideCurrentBatteryLevel = false,
+  hideFanMode = false,
+  hideState = false,
+  hideUpdated = false,
+  hideToolbar = false,
+  customImage = DEFAULT_IMAGE,
   ...rest
 }: VacuumControlsProps) {
   const entity = useEntity(_entity);
-  const { getConfig } = useHass();
-  const [config, setConfig] = useState<HassConfig | null>(null);
-  const isDocked = entity.state === "docked";
-  const currentMode = entity.state in icons ? entity.state : "unknown-mode";
-  const { battery_level, fan_speed } = entity.attributes || {};
-  const [internalFanSpeed, setInternalFanSpeed] = useState<string>(fan_speed);
+  const isDocked = entity.state === 'docked';
+  // I suggest you always show the state, regardless of the icon if you don't have something supported in icons, the mode will show
+  // as unknown mode instead of the actual state value, best to show a default icon in the case where you don't
+  // have one set in the icons object
+  const stateIcon = entity.state in icons ? icons[entity.state] : "mdi:question-box-outline";
+  const { battery_level, fan_speed, fan_speed_list } = entity.attributes || {};
+  const [internalFanSpeed, setInternalFanSpeed] = useState(fan_speed);
   const stateRef = useRef<HTMLDivElement>(null);
   const titleValue = useMemo(() => {
     if (isDocked) {
@@ -134,15 +203,13 @@ export function VacuumControls({
     return "cleaning";
   }, [isDocked]);
 
-  useEffect(() => {
-    getConfig().then(setConfig);
-  }, [getConfig]);
-
   useDebounce(
     () => {
-      entity.api.setFanSpeed({
-        fan_speed: internalFanSpeed,
-      });
+      if (typeof internalFanSpeed === 'string') {
+        entity.api.setFanSpeed({
+          fan_speed: internalFanSpeed,
+        });
+      }
     },
     200,
     [internalFanSpeed],
@@ -153,60 +220,50 @@ export function VacuumControls({
       {!hideState && <State ref={stateRef}>{titleValue}</State>}
       {!hideUpdated && <Updated>{entity.custom.relativeTime}</Updated>}
       <VacuumSize>
-        {/* <div>Vacuum Image</div> */}
-        {!hideFanMode && !isDocked && (
-          <FanModeColumn gap="0.5rem">
-            {/* <FanMode
-              size={40}
-              disabled={isDocked}
-              title="Fan Mode"
-              speed={isDocked ? undefined : internalFanSpeed}
-              active={!isDocked}
-              icon="mdi:fan"
-              onClick={() => {
-                const currentIndex = fan_speed.findIndex(
-                  (speed: string) => speed === internalFanSpeed,
-                );
-                const fanSpeed = fan_speed[currentIndex + 1]
-                  ? fan_speed[currentIndex + 1]
-                  : fan_speed[0];
-                setInternalFanSpeed(fanSpeed);
-                entity.api.setFanSpeed({
-                  fan_speed: fanSpeed,
-                });
-              }}
-            /> */}
-            <div>Fan Mode</div>
-            {internalFanSpeed}
-          </FanModeColumn>
-        )}
-        {!hideCurrentBatteryLevel && (
-          <div>Battery Level {battery_level}</div>
-          // <CurrentBatteryLevel>
-          //   {battery_level}
-          //   {/* <span>{config?.unit_system.battery_level}</span> */}
-          //   <Current>CURRENT</Current>
-          // </CurrentBatteryLevel>
-        )}
+        <Column gap="0.5rem">
+          <VacuumImage src={customImage} />
+          {!hideFanMode && !isDocked && (
+            <FanModeColumn gap="0.5rem">
+              <FanMode
+                size={40}
+                disabled={isDocked}
+                title="Fan Mode"
+                speed={isDocked ? undefined : internalFanSpeed}
+                active={!isDocked}
+                icon="mdi:fan"
+                onClick={() => {
+                  const list = fan_speed_list ?? [];
+                  const currentIndex = list.findIndex(
+                    speed => speed.toLowerCase() === (internalFanSpeed ?? '').toLowerCase(),
+                  );
+                  const fanSpeed = list[currentIndex + 1]
+                    ? list[currentIndex + 1]
+                    : list[0];
+                  setInternalFanSpeed(fanSpeed);
+                  entity.api.setFanSpeed({
+                    fan_speed: fanSpeed,
+                  });
+                }}
+              />
+              <div>Fan Mode</div>
+              {internalFanSpeed}
+            </FanModeColumn>
+          )}
+          {!hideCurrentBatteryLevel && (
+            <>
+              <div>Battery Level {battery_level}</div>
+              <CurrentBatteryLevel>
+                {battery_level}
+                <span>%</span>
+                <Current>CURRENT</Current>
+              </CurrentBatteryLevel>
+            </>
+          )}
+          StateIcon: <Icon icon={stateIcon} />
+          State: {entity.state}
+          <VacuumToolbar entity={_entity} hideToolbar={hideToolbar} />
+        </Column>
       </VacuumSize>
-
-      {/* <Row gap="0.5rem" wrap="nowrap">
-        {(vacuumModes || fan_speed || []).concat().map((mode) => (
-          <FabCard
-            size={40}
-            iconColor={currentMode === mode ? activeColors[mode] : undefined}
-            key={mode}
-            title={mode}
-            active={currentMode === mode}
-            icon={icons[mode]}
-            onClick={() => {
-              entity.api.setFanSpeed({
-                fan_speed: mode,
-              });
-            }}
-          />
-        ))}
-      </Row> */}
     </Column>
   );
 }

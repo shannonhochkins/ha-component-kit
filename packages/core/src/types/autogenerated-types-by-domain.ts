@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// auto generated, do not manipulate, instead run the sync-attribute-types script
+// auto generated, do not manipulate, instead run the sync-ha-types script
 import {
   HassEntityBase,
   HassEntityAttributeBase,

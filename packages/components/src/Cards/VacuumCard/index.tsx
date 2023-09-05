@@ -8,6 +8,7 @@ import { Ripples } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { useLongPress } from "react-use";
+import { VacuumToolbar } from '../../Shared/VacuumControls';
 import { icons, activeColors } from "../../Shared/VacuumControls/shared";
 
 const StyledVacuumCard = styled(motion.button)`
@@ -73,17 +74,21 @@ export function VacuumCard({
   entity: _entity,
   title: _title,
   onClick,
-  VacuumModes,
+  vacuumModes,
   hideCurrentBatteryLevel,
-  hideFanMode,
-  hideState,
-  hideUpdated,
+  hideFanMode = false,
+  hideState = false,
+  hideUpdated = false,
+  hideToolbar = false,
   ...rest
 }: VacuumCardProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
   const entity = useEntity(_entity);
   const entityIcon = useIconByEntity(_entity);
   const domainIcon = useIconByDomain("vacuum");
+  // as mentioned in the shared layout, this probably isn't the best way to retrieve the current mode
+  // best to use the entity.state value directly, and display a default icon if not specified
+  // (i've updated the shared layout file for you to show you what i mean)
   const currentMode = entity.state in icons ? entity.state : "unknown-mode";
   const title = _title || entity.attributes.friendly_name;
   const { fan_speed } = entity.attributes;
@@ -95,6 +100,8 @@ export function VacuumCard({
   });
 
   const titleValue = useMemo(() => {
+    // I think the title value should just be entity.state
+    // to show you if it's returning to home, or cleaning, or paused, etc
     if (isDocked) {
       return "docked";
     }
@@ -131,15 +138,17 @@ export function VacuumCard({
             <Title>{entity.custom.relativeTime}</Title>
           </LayoutBetween>
           <Gap />
+          <VacuumToolbar entity={_entity} hideToolbar={hideToolbar} />
           <Row fullWidth gap="0.5rem" wrap="nowrap">
-            {(VacuumModes || []).map((mode) => (
+            
+            {(vacuumModes || []).map((mode) => (
               <FabCard size={35} key={mode} title={mode} icon={icons[mode]} />
             ))}
           </Row>
         </StyledVacuumCard>
       </Ripples>
       <ModalByEntityDomain
-        VacuumModes={VacuumModes}
+        vacuumModes={vacuumModes}
         hideCurrentBatteryLevel={hideCurrentBatteryLevel}
         hideState={hideState}
         hideUpdated={hideUpdated}

@@ -1,7 +1,7 @@
-import type { VacuumMode } from "@hakit/core";
+import type { VacuumEntityState } from "@hakit/core";
 
-export type VacuumData<T> = {
-  [key in VacuumMode]: T;
+type VacuumData<T> = {
+  [key in VacuumEntityState]: T;
 };
 
 export const colors: VacuumData<string[]> = {
@@ -30,3 +30,5 @@ export const icons: VacuumData<string> = {
   locate: "mdi:map-marker",
   return_to_base: "mdi:home-map-marker",
 };
+// these are the available states for the vacuum
+// "cleaning" | "docked" | "idle" | "paused" | "returning" | "error" | "unknown" | string;
