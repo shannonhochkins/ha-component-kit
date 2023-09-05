@@ -163,4 +163,3 @@ export type ServiceFunctionTypes = "target" | "no-target";
 /** all the supported services */
 export type * from "./supported-services";
 export type * from "./entitiesByDomain";
-// export type * from "./entity/light";

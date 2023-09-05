@@ -32,7 +32,7 @@ describe("<FabCard />", () => {
   });
 
   // Tests for all valid combinations of entity and service props
-  const entities = ["light.fake_light_1", "switch.fake_gaming_switch"] as const;
+  const entities = ["light.fake_light_1", "switch.fake_switch"] as const;
   const services = ["turnOn", "toggle", "turnOff"] as const;
 
   entities.forEach((entity) => {

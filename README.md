@@ -61,21 +61,4 @@ npm link @hakit/core @hakit/components
 ```
 If you now navigate to your node_modules under @hakit, you should see the packages linked to your local @hakit packages and changes you make in hakit should reflect on your dashboard.
 
-#### Local Development - TypeSync
-The typesync script is under packages/core/bin
-This script is responsible for generating types for users for the home assistant instance, there's a node and cli script available, the cli script imports the node script for simplicity.
-
-1. Run `npm link -ws`
-2. Set your directory to ./packages/core
-3. Run the following:
-
-```shell
-npm run watch:build:sync-script
-```
-4. on your test dashboard, run `npm link @hakit/core`
-5. Follow the steps to setup the sync script on the test dashboard [here](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-typescriptsync--docs)
-6. Now when you run the sync script you'll see your changes reflect in the node version only, the cli script will not re-compile here.
-
-
-NOTE: In watch mode the types will not be re-generated on subsequent changes, it's very annoying but I'm working on it.
 
