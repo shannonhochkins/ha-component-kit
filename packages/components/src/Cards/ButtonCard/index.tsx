@@ -169,7 +169,7 @@ export interface ButtonCardProps<E extends EntityName> extends Extendable {
   /** The name of your entity */
   entity?: E;
   /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
-  onClick?: (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
+  onClick?: E extends undefined ? (entity: null) => void : (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
   /** Optional active param, By default this is updated via home assistant */
   active?: boolean;
   /** the layout of the button card, this changes slightly, just preferences really @default default */

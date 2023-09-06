@@ -14,6 +14,11 @@ function Template(
           entity.api.toggle();
         }}
       />
+      <FabCard
+        onClick={() => {
+          console.log('entity');
+        }}
+      />
     </HassConnect>
   );
 }
