@@ -121,10 +121,23 @@ export interface TimeCardProps extends Extendable {
 
 const Warning = () => (
   <Alert type="warning">
-    <p>Time or Date sensor is unavailable, please add the <b>"time"</b> & <b>"date"</b> display options to the <b>"date_time"</b> sensor to your configuration.yaml in Home Assistant.</p>
-    <p>You can follow the guide <a href="https://www.home-assistant.io/integrations/time_date/" target="_blank">here</a>.</p>
+    <p>
+      Time or Date sensor is unavailable, please add the <b>"time"</b> &{" "}
+      <b>"date"</b> display options to the <b>"date_time"</b> sensor to your
+      configuration.yaml in Home Assistant.
+    </p>
+    <p>
+      You can follow the guide{" "}
+      <a
+        href="https://www.home-assistant.io/integrations/time_date/"
+        target="_blank"
+      >
+        here
+      </a>
+      .
+    </p>
   </Alert>
-)
+);
 /** There's no required props on this component, by default it retrieves information from the time and date sensor from your home assistant information and the dates are formatted by the timezone specified in your home assistant settings. */
 function _TimeCard({
   includeDate = true,
@@ -136,12 +149,12 @@ function _TimeCard({
   const { getConfig } = useHass();
   const [timeZone, setTimeZone] = useState<string>("UTC");
   const timeSensor = useEntity("sensor.time", {
-    returnNullIfNotFound: true
+    returnNullIfNotFound: true,
   });
   const dateSensor = useEntity("sensor.date", {
-    returnNullIfNotFound: true
+    returnNullIfNotFound: true,
   });
-  const parts = convertTo12Hour(timeSensor?.state ?? '00:00');
+  const parts = convertTo12Hour(timeSensor?.state ?? "00:00");
   const [formatted, amOrPm] = useMemo(() => {
     const hour = parts.find((part) => part.type === "hour");
     const minute = parts.find((part) => part.type === "minute");

@@ -1,3 +1,7 @@
+// these imports can be removed when we drop support for SceneCard
+import { TriggerCard } from "./Cards/TriggerCard";
+import type { TriggerCardProps } from "./Cards/TriggerCard";
+import type { EntityName } from "@hakit/core";
 // ErorrBoundary fallback
 export { fallback } from "./Shared/ErrorBoundary";
 // ButtonCard
@@ -6,6 +10,15 @@ export type { ButtonCardProps } from "./Cards/ButtonCard";
 // TriggerCard
 export { TriggerCard } from "./Cards/TriggerCard";
 export type { TriggerCardProps } from "./Cards/TriggerCard";
+/**
+ * @deprecated SceneCardProps is deprecated and will be removed in future versions. Use TriggerCardProps instead.
+ */
+export type SceneCardProps<E extends EntityName> = TriggerCardProps<E>;
+
+/**
+ * @deprecated SceneCard is deprecated and will be removed in future versions. Use TriggerCard instead.
+ */
+export const SceneCard = TriggerCard;
 // Group
 export { Group } from "./Group";
 export type { GroupProps } from "./Group";

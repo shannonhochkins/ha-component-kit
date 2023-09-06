@@ -105,8 +105,7 @@ function _ClimateCard({
   const isOff = entity.state === OFF;
   const longPressEvent = useLongPress((e) => {
     // ignore on right click
-    if (("button" in e && e.button === 2) || !isUnavailable || !disabled)
-      return;
+    if (("button" in e && e.button === 2) || isUnavailable || disabled) return;
     setOpenModal(true);
   });
 

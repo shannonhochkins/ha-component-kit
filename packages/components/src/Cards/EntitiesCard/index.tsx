@@ -5,6 +5,7 @@ import {
   useIconByEntity,
   computeDomain,
   isUnavailableState,
+  ON,
 } from "@hakit/core";
 import type { EntityName, AllDomains, HassEntityWithApi } from "@hakit/core";
 import { Icon } from "@iconify/react";
@@ -46,22 +47,36 @@ const IconWrapper = styled(Row)`
 const Name = styled.div`
   flex-grow: 1;
   font-size: 0.8rem;
+  span {
+    width: 100%;
+    font-size: 0.7rem;
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--ha-secondary-color);
+  }
 `;
 const State = styled.div`
-  width: 100%;
-  max-width: 5.5rem;
+  max-width: 5rem;
   font-size: 0.8rem;
   text-align: right;
+  white-space: nowrap;
 `;
 
 interface EntityItem {
+  /** The name of the entity to render */
   entity: EntityName;
+  /** the icon name to use @default entity_icon */
   icon?: string;
+  /** the name of the entity @default friendly_name */
   name?: string;
+  /** the function to call when the row is clicked @default undefined */
   onClick?: <T extends AllDomains>(entity: HassEntityWithApi<T>) => void;
+  /** the function to render the state @default undefined */
   renderState?: <T extends AllDomains>(
     entity: HassEntityWithApi<T>,
   ) => React.ReactElement;
+  /** include last updated time @default false */
+  includeLastUpdated?: boolean;
 }
 
 function EntityRow({
@@ -70,12 +85,16 @@ function EntityRow({
   name: _name,
   renderState,
   onClick,
+  includeLastUpdated = false,
 }: EntityItem) {
   const entity = useEntity(_entity);
   const domain = computeDomain(_entity);
   const domainIcon = useIconByDomain(domain === null ? "unknown" : domain);
   const entityIcon = useIconByEntity(_entity || "unknown");
   const isUnavailable = isUnavailableState(entity?.state);
+  const on = entity?.state === ON;
+  const iconColor = on ? entity.custom.hexColor : "white";
+
   return (
     <Row
       wrap="nowrap"
@@ -86,6 +105,8 @@ function EntityRow({
       <IconWrapper
         style={{
           opacity: isUnavailable ? "0.3" : "1",
+          color: iconColor,
+          filter: (on && entity?.custom.brightness) || "brightness(100%)",
         }}
       >
         {_icon ? <Icon icon={_icon} /> : entityIcon ?? domainIcon}
@@ -94,9 +115,21 @@ function EntityRow({
         {_name ??
           entity.attributes.friendly_name ??
           entity.attributes.entity_id}
+        {includeLastUpdated && <span>{entity.custom.relativeTime}</span>}
       </Name>
       <State>
-        {typeof renderState === "function" ? renderState(entity) : entity.state}
+        {typeof renderState === "function" ? (
+          renderState(entity)
+        ) : isUnavailable ? (
+          entity.state
+        ) : (
+          <>
+            {entity.state}
+            {entity.attributes?.unit_of_measurement
+              ? entity.attributes?.unit_of_measurement
+              : ""}
+          </>
+        )}
       </State>
     </Row>
   );
@@ -110,9 +143,15 @@ type Extendable = Omit<
 export interface EntitiesCardProps extends Extendable {
   /** The names of your entities */
   entities?: (EntityName | EntityItem)[];
+  /** include the last updated time, will apply to every row unless specified on an individual EntityItem @default false */
+  includeLastUpdated?: boolean;
 }
 /** The EntitiesCard component is an easy way to represent the state a of multiple entities with a simple layout, you can customize every part of every row with the EntityItem properties, the renderState and onClick both receive the entity object with the api properties. */
-function _EntitiesCard({ entities, ...rest }: EntitiesCardProps): JSX.Element {
+function _EntitiesCard({
+  entities,
+  includeLastUpdated = false,
+  ...rest
+}: EntitiesCardProps): JSX.Element {
   return (
     <StyledEntitiesCard {...rest}>
       <Column gap="1rem" fullWidth>
@@ -125,7 +164,7 @@ function _EntitiesCard({ entities, ...rest }: EntitiesCardProps): JSX.Element {
               : entity;
           return (
             <ErrorBoundary {...fallback({ prefix: "EntityRow" })}>
-              <EntityRow {...props} />
+              <EntityRow includeLastUpdated={includeLastUpdated} {...props} />
             </ErrorBoundary>
           );
         })}

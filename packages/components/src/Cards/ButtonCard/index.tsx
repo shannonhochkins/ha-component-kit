@@ -213,7 +213,7 @@ function _ButtonCard<E extends EntityName>({
   });
   const longPressEvent = useLongPress((e) => {
     // ignore on right click
-    if ("button" in e && e.button === 2) return;
+    if (("button" in e && e.button === 2) || disabled || isUnavailable) return;
     setOpenModal(true);
   });
 

@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { useEffect, useCallback, useState } from "react";
-import { useHass, useHash } from "@hakit/core";
+import { useHass } from "@hakit/core";
 import { Row, FabCard, fallback } from "@components";
 import type { PictureCardProps } from "@components";
 import { Icon } from "@iconify/react";
@@ -115,44 +115,50 @@ function _RoomCard({
 }: RoomCardProps) {
   const { addRoute, useRoute } = useHass();
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
-  const [, setHash] = useHash();
-  const [startAnimation, setStartAnimation] = useState(false);
+  const [forceRender, setForceRender] = useState(false);
+  const [animateChildren, setAnimateChildren] = useState(false);
   const route = useRoute(hash);
-  useEffect(() => {
-    if (route?.active && !startAnimation) {
-      setStartAnimation(true);
-    }
-  }, [route, startAnimation]);
-  // will reset the hash back to it's original empty value
-  const resetHash = useCallback(() => {
-    setHash("");
-  }, [setHash]);
+  const actualHash = window.location.hash;
+  const active = actualHash.replace("#", "") === hash.replace("#", "");
   // starts the trigger to close the full screen card
   const resetAnimation = useCallback(() => {
-    setStartAnimation(false);
-    resetHash();
-  }, [resetHash]);
-  // add the current route by hash
+    setForceRender(false);
+  }, []);
+  useEffect(() => {
+    console.log({
+      actualHash,
+      active,
+      forceRender,
+    });
+    if (actualHash && active && !forceRender) {
+      setForceRender(true);
+    } else if (actualHash && active && forceRender && !animateChildren) {
+      setAnimateChildren(true);
+    }
+  }, [actualHash, forceRender, active, animateChildren]);
+  // add the current route by hash, even though this is called multiple times
+  // it will only add it the first time
   useEffect(() => {
     addRoute({
       hash,
       icon: icon || "mdi:info",
       name: title,
-      active: false,
+      active: actualHash.replace("#", "") === hash.replace("#", ""),
     });
-  }, [addRoute, hash, icon, title]);
+  }, [addRoute, actualHash, hash, icon, title]);
 
   // when the escape key is pressed and we're active, close the card
   useEffect(() => {
-    if (isPressed && route?.active) {
+    if (isPressed && route?.active === true) {
+      window.location.hash = "";
       resetAnimation();
     }
-  }, [isPressed, route, resetAnimation]);
+  }, [isPressed, route?.active, resetAnimation]);
 
   return (
     <>
-      <AnimatePresence>
-        {route?.active && (
+      <AnimatePresence key={`${hash}-room-card-parent`}>
+        {forceRender === true && (
           <FullScreen
             key={`layout-${hash}`}
             layoutId={`layout-${hash}`}
@@ -192,16 +198,23 @@ function _RoomCard({
                   {icon && <Icon icon={icon} />}
                   {title}
                 </Row>
-                <FabCard icon="mdi:close" onClick={() => resetAnimation()} />
+                <FabCard
+                  icon="mdi:close"
+                  onClick={() => {
+                    window.location.hash = "";
+                    resetAnimation();
+                  }}
+                />
               </Row>
             </NavBar>
             <AnimatePresence
               key={`layout-children-${hash}`}
               onExitComplete={() => {
-                resetHash();
+                window.location.hash = "";
+                resetAnimation();
               }}
             >
-              {startAnimation && (
+              {animateChildren && (
                 <ChildContainer
                   initial={{ opacity: 0 }}
                   transition={{
@@ -233,7 +246,7 @@ function _RoomCard({
           {...rest}
           image={image}
           onClick={() => {
-            setHash(hash);
+            window.location.hash = hash;
           }}
         >
           <PictureCardFooter

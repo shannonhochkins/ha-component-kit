@@ -145,7 +145,6 @@ function _FabCard<E extends EntityName>({
     () => (domain === null ? null : startCase(lowerCase(domain))),
     [domain],
   );
-  console.log("disabled", disabled);
   return (
     <>
       <Ripples
