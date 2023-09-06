@@ -191,6 +191,7 @@ function ApiTester({ domains, entities }: ApiTesterProps) {
           <h3>Example Usage with useEntity</h3>
           <p>This simply exports a button that will {camelCase(service)} the {camelCase(domain)} when pressed!</p>
           <Source
+            dark
             language="ts"
             code={`
 export function Test${upperFirst(camelCase(domain))}{
@@ -207,6 +208,7 @@ export function Test${upperFirst(camelCase(domain))}{
           <h3>Example Usage with callService</h3>
           <p>This simply exports a button that will {camelCase(service)} the {camelCase(domain)} when pressed!</p>
           <Source
+            dark
             language="ts"
             code={`
 export function Test${upperFirst(camelCase(domain))}{
@@ -227,6 +229,7 @@ export function Test${upperFirst(camelCase(domain))}{
           <h3>Example Usage with useApi hook</h3>
           <p>This simply exports a button that will {camelCase(service)} the {camelCase(domain)} when pressed!</p>
           <Source
+            dark
             language="ts"
             code={`
 export function Test${upperFirst(camelCase(domain))}{

@@ -21,6 +21,12 @@ export interface ThemeParams {
     active: string;
     inactive: string;
   };
+  alert: {
+    errorColor: string;
+    warningColor: string;
+    successColor: string;
+    infoColor: string;
+  };
   device: {
     buttonCard: {
       width: string;
@@ -43,6 +49,9 @@ export interface ThemeParams {
     roomCard: {
       width: string;
       zIndex: number;
+    };
+    entitiesCard: {
+      width: string;
     };
     sidebarCard: {
       width: {
@@ -88,6 +97,12 @@ export const theme: ThemeParams = {
     active: "#887a50",
     inactive: "#464646",
   },
+  alert: {
+    errorColor: "#db4437",
+    warningColor: "#ffa600",
+    successColor: "#43a047",
+    infoColor: "#039be5",
+  },
   device: {
     buttonCard: {
       width: "9.375rem", // 150px
@@ -110,6 +125,9 @@ export const theme: ThemeParams = {
     roomCard: {
       width: "18.75rem", // 300px
       zIndex: 20,
+    },
+    entitiesCard: {
+      width: "18.75rem", // 300px
     },
     sidebarCard: {
       width: {

@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/blocks';
+import { Meta, Source } from '@storybook/blocks';
 
 <Meta title="HOOKS/useHash" />
 
@@ -11,7 +11,7 @@ It will return a getter/setter, useful when you want to programmatically change 
 
 ### Example Usage
 
-```ts
+<Source dark code={`
 import { RoomCard } from '@hakit/components';
 import { HassConnect, useHash } from '@hakit/core';
 function Office() {
@@ -31,6 +31,5 @@ function App() {
     <Office />
   </HassConnect>
 }
-
-```
+`} />
 

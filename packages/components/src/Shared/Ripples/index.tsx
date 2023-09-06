@@ -9,6 +9,8 @@ import React, {
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
+import { fallback } from "@components";
+import { ErrorBoundary } from "react-error-boundary";
 
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 export interface RipplesProps extends Extendable {
@@ -54,7 +56,7 @@ const ParentRipple = styled.div<{
   `}
 `;
 /** Ripples is a component that can easily add an interactive ripple effect when clicked, simply wrap your component in Ripples and you're good to go! If your component has a border radius, simply pass the same value as a prop to ripples to mask the effect */
-export const Ripples = memo(
+const _Ripples = memo(
   ({
     duration = 600,
     color = "rgba(0, 0, 0, .3)",
@@ -139,3 +141,11 @@ export const Ripples = memo(
     );
   },
 );
+
+export function Ripples(props: RipplesProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "Ripples" })}>
+      <_Ripples {...props} />
+    </ErrorBoundary>
+  );
+}

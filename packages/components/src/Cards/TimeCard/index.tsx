@@ -2,9 +2,10 @@ import styled from "@emotion/styled";
 import { useMemo, useEffect, useState } from "react";
 import { useEntity, useHass } from "@hakit/core";
 import { Icon } from "@iconify/react";
-import { Row, Column } from "@components";
+import { Row, Column, fallback, Alert } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
+import { ErrorBoundary } from "react-error-boundary";
 
 const Card = styled(motion.div)`
   all: unset;
@@ -117,8 +118,28 @@ export interface TimeCardProps extends Extendable {
   /** center everything instead of left aligned @default false */
   center?: boolean;
 }
+
+const Warning = () => (
+  <Alert type="warning">
+    <p>
+      Time or Date sensor is unavailable, please add the <b>"time"</b> &{" "}
+      <b>"date"</b> display options to the <b>"date_time"</b> sensor to your
+      configuration.yaml in Home Assistant.
+    </p>
+    <p>
+      You can follow the guide{" "}
+      <a
+        href="https://www.home-assistant.io/integrations/time_date/"
+        target="_blank"
+      >
+        here
+      </a>
+      .
+    </p>
+  </Alert>
+);
 /** There's no required props on this component, by default it retrieves information from the time and date sensor from your home assistant information and the dates are formatted by the timezone specified in your home assistant settings. */
-export function TimeCard({
+function _TimeCard({
   includeDate = true,
   includeIcon = true,
   center = false,
@@ -127,9 +148,13 @@ export function TimeCard({
 }: TimeCardProps): JSX.Element {
   const { getConfig } = useHass();
   const [timeZone, setTimeZone] = useState<string>("UTC");
-  const sensor = useEntity("sensor.time");
-  const dateSensor = useEntity("sensor.date");
-  const parts = convertTo12Hour(sensor.state);
+  const timeSensor = useEntity("sensor.time", {
+    returnNullIfNotFound: true,
+  });
+  const dateSensor = useEntity("sensor.date", {
+    returnNullIfNotFound: true,
+  });
+  const parts = convertTo12Hour(timeSensor?.state ?? "00:00");
   const [formatted, amOrPm] = useMemo(() => {
     const hour = parts.find((part) => part.type === "hour");
     const minute = parts.find((part) => part.type === "minute");
@@ -145,6 +170,9 @@ export function TimeCard({
     }
     getTimeZone();
   });
+  if (!dateSensor || !timeSensor) {
+    return <Warning />;
+  }
   return (
     <Card {...rest}>
       <Column gap="0.5rem" alignItems={center ? "center" : "flex-start"}>
@@ -160,5 +188,13 @@ export function TimeCard({
         {includeDate && <Row>{formatDate(dateSensor.state, timeZone)}</Row>}
       </Column>
     </Card>
+  );
+}
+
+export function TimeCard(props: TimeCardProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "TimeCard" })}>
+      <_TimeCard {...props} />
+    </ErrorBoundary>
   );
 }

@@ -1,19 +1,20 @@
 import { useCallback } from "react";
 import styled from "@emotion/styled";
-import type { HassEntity } from "home-assistant-js-websocket";
-import type { DomainService, ServiceData } from "@hakit/core";
+import type { EntityName, ExtractDomain, HassEntityWithApi } from "@hakit/core";
 import {
   useEntity,
   useIconByDomain,
   useIcon,
   useIconByEntity,
-  useApi,
+  computeDomain,
+  isUnavailableState,
 } from "@hakit/core";
-import { Ripples } from "@components";
+import { ErrorBoundary } from "react-error-boundary";
+import { Ripples, fallback } from "@components";
 import { motion } from "framer-motion";
 import { MotionProps } from "framer-motion";
 
-const StyledSceneCard = styled(motion.button)`
+const StyledTriggerCard = styled(motion.button)`
   all: unset;
   padding: 1rem;
   position: relative;
@@ -30,7 +31,11 @@ const StyledSceneCard = styled(motion.button)`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: box-shadow, background-color;
-  &:hover {
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
+  &:(:disabled):hover {
     background-color: var(--ha-primary-background-hover);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
@@ -106,68 +111,90 @@ const Title = styled.div`
   color: var(--ha-secondary-color);
   font-size: 0.7rem;
 `;
-const Description = styled.div`
+const Description = styled.div<{
+  disabled?: boolean;
+}>`
   color: var(--ha-primary-active);
+  ${(props) => props.disabled && `color: var(--ha-secondary-color);`}
   font-size: 0.9rem;
 `;
 type Extendable = MotionProps &
   Omit<React.ComponentPropsWithoutRef<"button">, "title" | "onClick">;
-export interface SceneCardProps extends Extendable {
+export interface TriggerCardProps<E extends EntityName> extends Extendable {
   /** An optional override for the title */
   title?: string;
-  /** The name of your scene entity */
-  entity: `scene.${string}`;
+  /** The name of your entity */
+  entity: E;
   /** the onClick handler is called when the card is pressed  */
-  onClick?: (scene: HassEntity) => void;
-  /** The data to pass to the scene service */
-  serviceData?: ServiceData<"scene", DomainService<"scene">>;
+  onClick?: (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
 }
 
-/** The SceneCard is a simple to use component to make it easy to trigger and a scene. */
-export function SceneCard({
-  entity,
+/** The TriggerCard is a simple to use component to make it easy to trigger and a scene, automation, script or any other entity to trigger. */
+function _TriggerCard<E extends EntityName>({
+  entity: _entity,
   title,
   onClick,
-  serviceData,
+  disabled: _disabled,
   ...rest
-}: SceneCardProps): JSX.Element {
-  const sceneService = useApi("scene");
-  const scene = useEntity(entity);
-  const entityIcon = useIconByEntity(entity);
-  const domainIcon = useIconByDomain("scene");
+}: TriggerCardProps<E>): JSX.Element {
+  const domain = computeDomain(_entity);
+  const entity = useEntity(_entity);
+  const entityIcon = useIconByEntity(_entity);
+  const domainIcon = useIconByDomain(domain);
   const powerIcon = useIcon("mdi:power");
   const arrowIcon = useIcon("mingcute:arrows-right-line", {
     style: {
       fontSize: "16px",
     },
   });
+  const isUnavailable = isUnavailableState(entity.state);
+  const disabled = _disabled || isUnavailable;
   const useApiHandler = useCallback(() => {
-    // @ts-expect-error we can expect it to throw errors however the parent level ts validation will catch invalid params.
-    sceneService.turnOn(entity, serviceData);
-    if (typeof onClick === "function") onClick(scene);
-  }, [sceneService, entity, onClick, scene, serviceData]);
+    if (typeof onClick === "function" && !isUnavailable) onClick(entity);
+  }, [entity, onClick, isUnavailable]);
 
   return (
-    <Ripples borderRadius="1rem" whileTap={{ scale: 0.9 }}>
-      <StyledSceneCard {...rest} onClick={useApiHandler}>
+    <Ripples
+      borderRadius="1rem"
+      disabled={disabled}
+      whileTap={{ scale: disabled ? 1 : 0.9 }}
+    >
+      <StyledTriggerCard disabled={disabled} {...rest} onClick={useApiHandler}>
         <LayoutBetween>
-          <Description>
-            {title || scene.attributes.friendly_name || entity}
+          <Description disabled={disabled}>
+            {title || entity.attributes.friendly_name || _entity}
           </Description>
           {entityIcon || domainIcon}
         </LayoutBetween>
         <Gap />
         <LayoutBetween>
-          <Title>{scene.custom.relativeTime}</Title>
-          <Toggle active={scene.custom.active}>
-            <ToggleState active={scene.custom.active}>{powerIcon}</ToggleState>
-            <ToggleMessage active={scene.custom.active}>
-              {scene.custom.active ? "Success..." : `Start scene`}{" "}
-              {!scene.custom.active && arrowIcon}
-            </ToggleMessage>
+          <Title>
+            {entity.custom.relativeTime}
+            {disabled ? ` - ${entity.state}` : ""}
+          </Title>
+          <Toggle active={disabled ? false : entity.custom.active}>
+            {disabled ? null : (
+              <>
+                <ToggleState active={entity.custom.active}>
+                  {powerIcon}
+                </ToggleState>
+                <ToggleMessage active={entity.custom.active}>
+                  {entity.custom.active ? "Success..." : `Start ${domain}`}{" "}
+                  {!entity.custom.active && arrowIcon}
+                </ToggleMessage>
+              </>
+            )}
           </Toggle>
         </LayoutBetween>
-      </StyledSceneCard>
+      </StyledTriggerCard>
     </Ripples>
+  );
+}
+
+export function TriggerCard<E extends EntityName>(props: TriggerCardProps<E>) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "TriggerCard" })}>
+      <_TriggerCard {...props} />
+    </ErrorBoundary>
   );
 }

@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/blocks';
+import { Source, Meta } from '@storybook/blocks';
 
 <Meta title="HOOKS/useEntity" />
 # useEntity()
@@ -29,7 +29,7 @@ the authenticated home assistant API.
 
 ### Example Usage
 
-```ts
+<Source dark code={`
 import { HassConnect, useEntity } from '@hakit/core';
 function Office() {
   const lightStrip = useEntity('light.office_striplight');
@@ -41,8 +41,7 @@ function App() {
     <Office />
   </HassConnect>
 }
-
-```
+`} />
 
 ### Options
 useEntity takes a second parameter which is an object of options.
@@ -52,7 +51,7 @@ The options are:
 
 Example:
 
-```ts
+<Source dark code={`
 import { HassConnect, useEntity } from '@hakit/core';
 function Office() {
   const lightStrip = useEntity('light.office_striplight', {
@@ -66,4 +65,4 @@ function App() {
     <Office />
   </HassConnect>
 }
-```
+`} />

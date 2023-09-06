@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "private": false,
   "keywords": [
     "react",
@@ -53,8 +53,10 @@
   "funding": "https://github.com/shannonhochkins/ha-component-kit?sponsor=1",
   "scripts": {
     "dev": "vite",
+    "type-check": "tsc --noEmit",
     "prebuild": "rm -rf ./dist && npm run lint && npm run prettier",
     "build": "NODE_ENV=production vite build",
+    "postbuild": "npm run type-check",
     "watch:build": "NODE_ENV=production vite build --watch",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
@@ -65,15 +67,16 @@
   "peerDependencies": {
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
+    "@hakit/core": "^1.0.19",
+    "@use-gesture/react": ">=10.x",
     "framer-motion": ">=10.x",
-    "@hakit/core": "^1.0.18",
-    "@use-gesture/react": ">=10.x",    
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
     "react-router-dom": ">=6.x",
     "react-thermostat": "^2.0.2",
-    "react-use": ">=17.x"
+    "react-use": ">=17.x",
+    "react-error-boundary": "^4.x"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.x"
