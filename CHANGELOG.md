@@ -1,4 +1,11 @@
 # @hakit/components
+
+## 1.0.25
+
+### Patch Changes
+
+- fixed onclick bug for FabCard and ButtonCard
+# @hakit/components
 ## 1.0.24
 - TriggerCard - wide range of new props to make this card more configurable, previously this card was updated automatically based on the last updated or last triggered value, now it will deactivate after a period of time, there's also description, icon changes, text changes props and more, see storybook for more details.
 

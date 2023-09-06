@@ -124,15 +124,13 @@ function _RoomCard({
     setForceRender(false);
   }, []);
   useEffect(() => {
-    console.log({
-      actualHash,
-      active,
-      forceRender,
-    });
     if (actualHash && active && !forceRender) {
       setForceRender(true);
     } else if (actualHash && active && forceRender && !animateChildren) {
       setAnimateChildren(true);
+    } else if (!active && (forceRender || animateChildren)) {
+      setAnimateChildren(false);
+      setForceRender(false);
     }
   }, [actualHash, forceRender, active, animateChildren]);
   // add the current route by hash, even though this is called multiple times

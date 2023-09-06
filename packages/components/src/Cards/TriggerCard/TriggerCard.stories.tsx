@@ -53,7 +53,5 @@ export default {
 export type Story = StoryObj<typeof TriggerCard>;
 export const Example: Story = {
   render: Render,
-  args: {
-    
-  },
+  args: {},
 };
