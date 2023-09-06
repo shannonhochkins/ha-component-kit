@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/blocks';
+import { Meta, Source } from '@storybook/blocks';
 import { useIcon } from './';
 
 <Meta title="HOOKS/useIcon" />
@@ -11,13 +11,13 @@ To find an available icon name, simply search for an icon on [iconify](https://i
 
 ### Example Usage
 
-```ts
+<Source dark code={`
 import { useIcon } from '@hakit/core';
 function IconExample() {
   const icon = useIcon('mdi:home');
   return <div>{icon}</div>
 }
-```
+`} />
 
 ## Outputs
 
@@ -27,7 +27,7 @@ function IconExample() {
 
 If you want to provide props that the Icon component that [@iconify/react"](https://iconify.design/docs/icon-components/react/) supports, pass it as the second parameter.
 This example will change the color to red and the size to 40px.
-```ts
+<Source dark code={`
 import { useIcon } from '@hakit/core';
 function IconExample() {
   const icon = useIcon('mdi:home', {
@@ -38,7 +38,7 @@ function IconExample() {
   });
   return <div>{icon}</div>
 }
-```
+`} />
 
 ## Outputs
 

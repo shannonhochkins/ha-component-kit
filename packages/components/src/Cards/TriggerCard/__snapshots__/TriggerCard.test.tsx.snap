@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<SceneCard /> renders SceneCard with override title 1`] = `
+exports[`<TriggerCard /> renders TriggerCard with override title 1`] = `
 .emotion-0 {
   all: unset;
   padding: 1rem;
@@ -192,7 +192,7 @@ exports[`<SceneCard /> renders SceneCard with override title 1`] = `
 </button>
 `;
 
-exports[`<SceneCard /> renders SceneCard with title from entity 1`] = `
+exports[`<TriggerCard /> renders TriggerCard with title from entity 1`] = `
 .emotion-0 {
   all: unset;
   padding: 1rem;

@@ -58,7 +58,8 @@ export function useEntity<
     ...options,
   };
   const { getEntity } = useHass();
-  const timeSensor = getEntity("sensor.time");
+  const timeSensor = getEntity("sensor.time", true);
+  console.log("returnNullIfNotFound", entity, returnNullIfNotFound);
   const matchedEntity = getEntity(entity, returnNullIfNotFound);
   const domain = computeDomain(entity) as ExtractDomain<E>;
   const api = useApi(domain, entity);
@@ -100,7 +101,7 @@ export function useEntity<
   }, [formatEntity, timeSensor]);
 
   useEffect(() => {
-    const foundEntity = getEntity(entity);
+    const foundEntity = getEntity(entity, true);
     if (
       foundEntity &&
       !isEqual(

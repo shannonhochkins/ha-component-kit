@@ -10,7 +10,10 @@ import {
   lightSupportsColorMode,
   LIGHT_COLOR_MODES,
 } from "@hakit/core";
+import type { EntityName, FilterByDomain } from "@hakit/core";
 import { useGesture } from "@use-gesture/react";
+import { fallback } from "@components";
+import { ErrorBoundary } from "react-error-boundary";
 
 const RENDER_SIZE = 400;
 const canvasSize =
@@ -30,7 +33,7 @@ export interface ColorTempPickerProps
   /** if the picker should be disabled @default false */
   disabled?: boolean;
   /** the light entity to use with the ColorTempPicker */
-  entity: `light.${string}`;
+  entity: FilterByDomain<EntityName, "light">;
   /** will provide the value when the user has finished interacting */
   onChangeApplied?: (kelvin: number, colors: ColorPickerOutputColors) => void;
   /** will provide the value as it's changing but not actually finished updating */
@@ -157,7 +160,7 @@ function drawColorWheel(
 }
 
 /** This color picker was designed to easily retrieve a value from a colour wheel based on values provided from a light entity, you can click or drag on the picker to pick a value */
-export function ColorTempPicker({
+function _ColorTempPicker({
   disabled = false,
   entity: _entity,
   onChangeApplied,
@@ -419,4 +422,12 @@ export function ColorTempPicker({
       </div>
     </Picker>
   ) : null;
+}
+
+export function ColorTempPicker(props: ColorTempPickerProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "ColorTempPicker" })}>
+      <_ColorTempPicker {...props} />
+    </ErrorBoundary>
+  );
 }

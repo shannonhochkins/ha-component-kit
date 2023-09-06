@@ -2,12 +2,13 @@ import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { useEffect, useCallback, useState } from "react";
 import { useHass, useHash } from "@hakit/core";
-import { Row, FabCard } from "@components";
+import { Row, FabCard, fallback } from "@components";
 import type { PictureCardProps } from "@components";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useKeyPress } from "react-use";
 import type { MotionProps } from "framer-motion";
+import { ErrorBoundary } from "react-error-boundary";
 
 type Extendable = PictureCardProps &
   Omit<React.ComponentProps<"div">, "onClick" | "ref"> &
@@ -103,7 +104,7 @@ const ChildContainer = styled(motion.div)`
 `;
 
 /** The RoomCard component is a very simple way of categorizing all your entities into a single "PictureCard" which will show all the entities when clicked. */
-export function RoomCard({
+function _RoomCard({
   hash,
   children,
   icon,
@@ -250,5 +251,13 @@ export function RoomCard({
         </StyledPictureCard>
       </StyledRoomCard>
     </>
+  );
+}
+
+export function RoomCard(props: RoomCardProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "RoomCard" })}>
+      <_RoomCard {...props} />
+    </ErrorBoundary>
   );
 }

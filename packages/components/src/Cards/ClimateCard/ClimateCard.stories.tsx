@@ -6,7 +6,7 @@ function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
-      <ClimateCard {...args} entity="climate.air_conditioner" />
+      <ClimateCard entity={"climate.air_conditioner"} {...args} />
     </HassConnect>
   );
 }
@@ -22,12 +22,22 @@ export default {
 export type ClimateStory = StoryObj<typeof ClimateCard>;
 export const ClimateCardExample: ClimateStory = {
   render: Render,
-  args: {},
+  args: {
+    entity: "climate.air_conditioner",
+  },
 };
 
 export const ClimateCardWithCustomHvacExample: ClimateStory = {
   render: Render,
   args: {
+    entity: "climate.air_conditioner",
     hvacModes: ["heat", "cool", "off"],
+  },
+};
+
+export const ClimateCardUnavailableExample: ClimateStory = {
+  render: Render,
+  args: {
+    entity: "climate.unavailable",
   },
 };

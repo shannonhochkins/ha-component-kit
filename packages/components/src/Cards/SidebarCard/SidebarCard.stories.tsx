@@ -8,7 +8,7 @@ import {
   RoomCard,
   Group,
   Column,
-  SceneCard,
+  TriggerCard,
 } from "@components";
 import { Source } from "@storybook/blocks";
 import { useEntity } from "@hakit/core";
@@ -44,7 +44,10 @@ function Template(args?: Partial<SidebarCardProps>) {
                 <ButtonCard entity="light.fake_light_2" service="toggle" />
                 <ButtonCard entity="light.fake_light_3" service="toggle" />
               </Group>
-              <SceneCard entity="scene.good_morning" data-testid="scene-card" />
+              <TriggerCard
+                entity="scene.good_morning"
+                data-testid="scene-card"
+              />
             </Column>
           </RoomCard>
           <RoomCard
