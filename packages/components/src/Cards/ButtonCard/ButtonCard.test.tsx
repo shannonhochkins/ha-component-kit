@@ -56,7 +56,7 @@ describe("<ButtonCard />", () => {
         const mockFunction = jest.fn();
         const { getByTestId } = render(
           <ButtonCard
-            entity={entity as 'light.fake_light_1'}
+            entity={entity as "light.fake_light_1"}
             service={service}
             onClick={(entity) => {
               entity.api.turnOff();
@@ -92,7 +92,7 @@ describe("<ButtonCard />", () => {
         description="somethingelse"
         icon="mdi:cross"
         onClick={() => {
-          console.log('entity');
+          console.log("entity");
         }}
         data-testid="button-card"
       />,

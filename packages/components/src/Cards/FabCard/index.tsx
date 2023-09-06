@@ -76,7 +76,9 @@ export interface FabCardProps<E extends EntityName> extends Extendable {
   /** The name of your entity */
   entity?: E;
   /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
-  onClick?: E extends undefined ? (entity: null) => void : (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
+  onClick?: E extends undefined
+    ? (entity: null) => void
+    : (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
   /** optional override to set the Fab to an active state @defaults to entity value */
   active?: boolean;
   /** the children of the fabCard, useful or small text */

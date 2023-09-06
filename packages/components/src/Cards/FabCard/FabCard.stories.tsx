@@ -16,7 +16,7 @@ function Template(
       />
       <FabCard
         onClick={() => {
-          console.log('entity');
+          console.log("entity");
         }}
       />
     </HassConnect>
