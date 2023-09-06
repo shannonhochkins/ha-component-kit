@@ -13,12 +13,14 @@ import {
   useIconByDomain,
   useIcon,
   useIconByEntity,
+  isUnavailableState,
 } from "@hakit/core";
-import { Ripples, ModalByEntityDomain } from "@components";
+import { Ripples, ModalByEntityDomain, fallback } from "@components";
 import { computeDomain } from "@utils/computeDomain";
 import type { MotionProps } from "framer-motion";
 import { motion } from "framer-motion";
 import { useLongPress } from "react-use";
+import { ErrorBoundary } from "react-error-boundary";
 
 const StyledButtonCard = styled(motion.button)`
   all: unset;
@@ -37,10 +39,15 @@ const StyledButtonCard = styled(motion.button)`
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow;
 
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
+
   &:active {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
-  &:hover {
+  &:not(:disabled):hover {
     background-color: var(--ha-primary-background-hover);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
@@ -146,10 +153,7 @@ type Extendable = Omit<
   "title" | "onClick" | "ref"
 > &
   MotionProps;
-export interface ButtonCardProps<
-  E extends EntityName,
-  S extends DomainService<ExtractDomain<E>>,
-> extends Extendable {
+export interface ButtonCardProps<E extends EntityName> extends Extendable {
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
   icon?: string | null;
   /** the css color value of the icon */
@@ -159,9 +163,9 @@ export interface ButtonCardProps<
   /** By default, the description is retrieved from the friendly name of the entity, or you can specify a manual description */
   description?: string | null;
   /** The service name, eg "toggle, turnOn ..." */
-  service?: S;
+  service?: DomainService<ExtractDomain<E>>;
   /** The data to pass to the service */
-  serviceData?: ServiceData<ExtractDomain<E>, S>;
+  serviceData?: ServiceData<ExtractDomain<E>, DomainService<ExtractDomain<E>>>;
   /** The name of your entity */
   entity?: E;
   /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
@@ -171,11 +175,7 @@ export interface ButtonCardProps<
   /** the layout of the button card, this changes slightly, just preferences really @default default */
   defaultLayout?: "default" | "slim";
 }
-/** The ButtonCard component is an easy way to represent the state and control of an entity with a simple button, eventually I'll provide further options per domain, like being able to set the colours for lights etc... */
-export function ButtonCard<
-  E extends EntityName,
-  S extends DomainService<ExtractDomain<E>>,
->({
+function _ButtonCard<E extends EntityName>({
   service,
   entity: _entity,
   iconColor,
@@ -186,8 +186,9 @@ export function ButtonCard<
   description: _description,
   title: _title,
   defaultLayout,
+  disabled,
   ...rest
-}: ButtonCardProps<E, S>): JSX.Element {
+}: ButtonCardProps<E>): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
   const domain = _entity ? computeDomain(_entity) : null;
   const entity = useEntity(_entity || "unknown", {
@@ -202,26 +203,31 @@ export function ButtonCard<
   });
   const isDefaultLayout =
     defaultLayout === "default" || defaultLayout === undefined;
-  const on = entity ? entity.state !== "off" : active || false;
+  const isUnavailable = isUnavailableState(entity?.state);
+  const on = entity
+    ? entity.state !== "off" && !isUnavailable
+    : active || false;
   const iconElement = useIcon(icon, {
     color: iconColor || undefined,
   });
   const longPressEvent = useLongPress((e) => {
     // ignore on right click
-    if ("button" in e && e.button === 2) return;
+    if (("button" in e && e.button === 2) || disabled || isUnavailable) return;
     setOpenModal(true);
   });
 
   const useApiHandler = useCallback(() => {
     // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
-    if (typeof service === "string" && entity) {
+    if (typeof service === "string" && entity && !isUnavailable) {
       // @ts-expect-error - we don't actually know the service at this level
       const caller = entity.api[service];
       caller(serviceData);
     }
-    if (typeof onClick === "function")
-      onClick(entity as HassEntityWithApi<ExtractDomain<E>>);
-  }, [service, entity, serviceData, onClick]);
+    if (typeof onClick === "function") {
+      // @ts-expect-error - types are accurate, we just don't know the domain entity type
+      onClick(entity);
+    }
+  }, [service, entity, serviceData, onClick, isUnavailable]);
   // use the input description if provided, else use the friendly name if available, else entity name, else null
   const description = useMemo(() => {
     return _description === null
@@ -238,9 +244,14 @@ export function ButtonCard<
   );
   return (
     <>
-      <Ripples borderRadius="1rem" whileTap={{ scale: 0.9 }}>
+      <Ripples
+        borderRadius="1rem"
+        disabled={disabled || isUnavailable}
+        whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
+      >
         <StyledButtonCard
           {...longPressEvent}
+          disabled={disabled || isUnavailable}
           layoutId={
             typeof _entity === "string" ? `${_entity}-button-card` : undefined
           }
@@ -275,7 +286,7 @@ export function ButtonCard<
             </Fab>
             {isDefaultLayout && (
               <Toggle active={on}>
-                <ToggleState active={on} />
+                {!isUnavailable && <ToggleState active={on} />}
               </Toggle>
             )}
             {!isDefaultLayout && <Description>{description}</Description>}
@@ -296,7 +307,12 @@ export function ButtonCard<
             )}
             {isDefaultLayout && (
               <Title>
-                {title && <Title>{title}</Title>}
+                {title && (
+                  <Title>
+                    {title}
+                    {isUnavailable && entity ? ` - ${entity.state}` : ""}
+                  </Title>
+                )}
                 {description && <Description>{description}</Description>}
                 {entity && <Title>Updated: {entity.custom.relativeTime}</Title>}
               </Title>
@@ -316,5 +332,13 @@ export function ButtonCard<
         />
       )}
     </>
+  );
+}
+/** The ButtonCard component is an easy way to represent the state and control of an entity with a simple button, eventually I'll provide further options per domain, like being able to set the colours for lights etc... */
+export function ButtonCard<E extends EntityName>(props: ButtonCardProps<E>) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "ButtonCard" })}>
+      <_ButtonCard {...props} />
+    </ErrorBoundary>
   );
 }

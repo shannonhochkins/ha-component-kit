@@ -7,6 +7,7 @@ import {
   useIconByDomain,
   useIcon,
   useIconByEntity,
+  isUnavailableState,
 } from "@hakit/core";
 import { computeDomain } from "@utils/computeDomain";
 import type {
@@ -16,9 +17,10 @@ import type {
   HassEntityWithApi,
   EntityName,
 } from "@hakit/core";
-import { Ripples, ModalByEntityDomain } from "@components";
+import { Ripples, ModalByEntityDomain, fallback } from "@components";
 import { useLongPress } from "react-use";
 import { startCase, lowerCase } from "lodash";
+import { ErrorBoundary } from "react-error-boundary";
 
 const StyledFabCard = styled(motion.button)<{
   size: number;
@@ -58,10 +60,7 @@ const StyledFabCard = styled(motion.button)<{
 type Extendable = Omit<React.ComponentProps<"button">, "onClick" | "ref"> &
   MotionProps;
 
-export interface FabCardProps<
-  E extends EntityName,
-  S extends DomainService<ExtractDomain<E>>,
-> extends Extendable {
+export interface FabCardProps<E extends EntityName> extends Extendable {
   /** The size of the Fab, this applies to the width and height @default 48 */
   size?: number;
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
@@ -71,9 +70,9 @@ export interface FabCardProps<
   /** will not show any icons */
   noIcon?: boolean;
   /** The service name, eg "toggle, turnOn ..." */
-  service?: S;
+  service?: DomainService<ExtractDomain<E>>;
   /** The data to pass to the service */
-  serviceData?: ServiceData<ExtractDomain<E>, S>;
+  serviceData?: ServiceData<ExtractDomain<E>, DomainService<ExtractDomain<E>>>;
   /** The name of your entity */
   entity?: E;
   /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
@@ -86,11 +85,7 @@ export interface FabCardProps<
   disabled?: boolean;
 }
 
-/** The Fab (Floating Action Button) Card is a simple button with an icon to trigger something on press */
-export function FabCard<
-  E extends EntityName,
-  S extends DomainService<ExtractDomain<E>>,
->({
+function _FabCard<E extends EntityName>({
   icon: _icon,
   iconColor,
   noIcon,
@@ -103,7 +98,7 @@ export function FabCard<
   children,
   disabled,
   ...rest
-}: FabCardProps<E, S>): JSX.Element {
+}: FabCardProps<E>): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
@@ -114,6 +109,7 @@ export function FabCard<
     fontSize: size / 2,
     color: iconColor || "currentcolor",
   });
+  const isUnavailable = isUnavailableState(entity?.state);
   const entityIcon = useIconByEntity(_entity || "unknown", {
     fontSize: size / 2,
     color: iconColor || "currentcolor",
@@ -132,18 +128,20 @@ export function FabCard<
       ? _active
       : entity === null
       ? false
-      : entity.state !== "off";
+      : entity.state !== "off" && !isUnavailable;
   const useApiHandler = useCallback(() => {
     if (disabled) return;
     // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
-    if (typeof service === "string" && entity) {
+    if (typeof service === "string" && entity && !isUnavailable) {
       // @ts-expect-error - we don't actually know the service at this level
       const caller = entity.api[service];
       caller(serviceData);
     }
-    if (typeof onClick === "function")
-      onClick(entity as HassEntityWithApi<ExtractDomain<E>>);
-  }, [service, entity, serviceData, disabled, onClick]);
+    if (typeof onClick === "function" && entity !== null) {
+      // @ts-expect-error - nothing wrong with the types here, service will be accurate, inspect later
+      onClick(entity);
+    }
+  }, [service, entity, serviceData, disabled, isUnavailable, onClick]);
   const title = useMemo(
     () => (domain === null ? null : startCase(lowerCase(domain))),
     [domain],
@@ -151,12 +149,12 @@ export function FabCard<
   return (
     <>
       <Ripples
-        disabled={disabled}
+        disabled={disabled || isUnavailable}
         borderRadius="50%"
-        whileTap={{ scale: disabled ? 1 : 0.9 }}
+        whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
       >
         <StyledFabCard
-          disabled={disabled}
+          disabled={disabled || isUnavailable}
           active={active}
           layoutId={
             typeof _entity === "string" ? `${_entity}-fab-card` : undefined
@@ -182,5 +180,13 @@ export function FabCard<
         />
       )}
     </>
+  );
+}
+/** The Fab (Floating Action Button) Card is a simple button with an icon to trigger something on press */
+export function FabCard<E extends EntityName>(props: FabCardProps<E>) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "FabCard" })}>
+      <_FabCard {...props} />
+    </ErrorBoundary>
   );
 }

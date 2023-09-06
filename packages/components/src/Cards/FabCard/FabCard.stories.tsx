@@ -1,19 +1,19 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, FabCard } from "@components";
-import type { FabCardProps } from "@components";
+import { ThemeProvider, FabCard, FabCardProps } from "@components";
 import { HassConnect } from "@stories/HassConnectFake";
-import type { DomainService, ExtractDomain } from "@core";
 
 function Template(
-  args: FabCardProps<
-    "light.something",
-    DomainService<ExtractDomain<"light.something">>
-  >,
+  args?: Partial<FabCardProps<"light.fake_light_1" | "light.unavailable">>,
 ) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
-      <FabCard {...args} />
+      <FabCard
+        {...args}
+        onClick={(entity) => {
+          entity.api.toggle();
+        }}
+      />
     </HassConnect>
   );
 }
@@ -30,15 +30,22 @@ export default {
     entity: { control: "text" },
   },
 } satisfies Meta<typeof FabCard>;
-export type FabCardStory = StoryObj<typeof FabCard>;
+export type FabCardStory = StoryObj<
+  typeof FabCard<"light.fake_light_1" | "light.unavailable">
+>;
 export const FabCardExample: FabCardStory = {
-  // @ts-expect-error - TODO will fix later
   render: Template,
   args: {
     title: "Office",
     entity: "light.fake_light_1",
     icon: "mdi:office-chair",
-    // @ts-expect-error - TODO will fix later
     service: "toggle",
+  },
+};
+
+export const FabCardUnavailableExample: FabCardStory = {
+  render: Template,
+  args: {
+    entity: "light.unavailable",
   },
 };

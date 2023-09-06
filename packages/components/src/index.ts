@@ -1,9 +1,24 @@
+// these imports can be removed when we drop support for SceneCard
+import { TriggerCard } from "./Cards/TriggerCard";
+import type { TriggerCardProps } from "./Cards/TriggerCard";
+import type { EntityName } from "@hakit/core";
+// ErorrBoundary fallback
+export { fallback } from "./Shared/ErrorBoundary";
 // ButtonCard
 export { ButtonCard } from "./Cards/ButtonCard";
 export type { ButtonCardProps } from "./Cards/ButtonCard";
-// SceneCard
-export { SceneCard } from "./Cards/SceneCard";
-export type { SceneCardProps } from "./Cards/SceneCard";
+// TriggerCard
+export { TriggerCard } from "./Cards/TriggerCard";
+export type { TriggerCardProps } from "./Cards/TriggerCard";
+/**
+ * @deprecated SceneCardProps is deprecated and will be removed in future versions. Use TriggerCardProps instead.
+ */
+export type SceneCardProps<E extends EntityName> = TriggerCardProps<E>;
+
+/**
+ * @deprecated SceneCard is deprecated and will be removed in future versions. Use TriggerCard instead.
+ */
+export const SceneCard = TriggerCard;
 // Group
 export { Group } from "./Group";
 export type { GroupProps } from "./Group";
@@ -40,7 +55,9 @@ export type { ClimateControlsProps } from "./Shared/ClimateControls";
 // ClimateCard
 export { ClimateCard } from "./Cards/ClimateCard";
 export type { ClimateCardProps } from "./Cards/ClimateCard";
-
+// EntitiesCard
+export { EntitiesCard } from "./Cards/EntitiesCard";
+export type { EntitiesCardProps } from "./Cards/EntitiesCard";
 // Modal
 export { Modal } from "./Shared/Modal";
 export type { ModalProps } from "./Shared/Modal";
@@ -62,6 +79,9 @@ export type {
   ColorPickerProps,
   ColorPickerOutputColors,
 } from "./Shared/ColorPicker";
+// Alert
+export { Alert } from "./Shared/Alert";
+export type { AlertProps } from "./Shared/Alert";
 
 // ThemeProvider
 export { ThemeProvider } from "./ThemeProvider";

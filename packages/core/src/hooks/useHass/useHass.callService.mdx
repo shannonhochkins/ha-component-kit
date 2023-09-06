@@ -14,7 +14,7 @@ This is an easy way to visualize all the available domains/service for your home
 Additionally you could also use the [Playground](/story/introduction-testconnection--playground) to show you what's available.
 
 ### Definition
-<Source language="ts" code={`callService({
+<Source dark language="ts" code={`callService({
   domain: SnakeOrCamelDomains; // "climate", "light" etc
   service: DomainService<SnakeOrCamelDomains>; // "turn_on", "turnOn",  "toggle" etc
   serviceData?: CallServiceArgs<SnakeOrCamelDomains, DomainService<SnakeOrCamelDomains>>; // any data to pass to the request

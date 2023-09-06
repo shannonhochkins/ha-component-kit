@@ -1,3 +1,45 @@
+# @hakit/components
+## 1.0.24
+- TriggerCard - wide range of new props to make this card more configurable, previously this card was updated automatically based on the last updated or last triggered value, now it will deactivate after a period of time, there's also description, icon changes, text changes props and more, see storybook for more details.
+
+# @hakit/core
+## 1.0.21
+- entity.custom now has a timeDiff property available in milliseconds representing the time difference between now and the last updated time of the entity.
+# @hakit/core
+## 1.0.20
+
+### Patch Changes
+- Fixing bug with api types on snake domains, previously useEntity('media_player').api was not returning available services
+# @hakit/components
+## 1.0.23
+- bumping dependency version
+# @hakit/core
+## 1.0.19
+# @ hakit/components
+## 1.0.22
+
+### Patch Changes
+
+- cbf9c5c: @hakit/core
+
+  - fixed types for vacuum entities, matched with home assistant repository
+  - Adding error handling for when time/date sensors are unavailable (pointed out by @dhruvpandeysm), additionally the useEntity hook will no longer throw this error when the time sensor is unavailable
+  - added FilterByDomain type helper to filter EntityName by a specific domain
+
+  @hakit/components
+
+  - BREAKING - This is a breaking change for all those using the SceneCard which has been renamed to TriggerCard to support other entities like automations, scripts etc. that you may want to trigger once, it will no longer automatically call 'turnOn', this is now expected to be handled via the onClick handler which returns the entity with the api attached, eg `onClick={(entity) => entity.api.turnOn()}` the SceneCard is still available and marked as Deprecated in the docs, it will be removed in the next few releases.
+  - NEW - components will now show buttons in a disabled mode when the entity is unavailable or unknown
+  - NEW - ErrorBoundaries - every component is now wrapped in a higher order component that will catch errors, previously when one component failed, the whole page will fail to render, now individual cards/components that render with an error will display the error on screen for you to debug the issue.
+  - NEW - TimeCard will now display a necessary configuration change to support this card when the sensor.time or sensor.date is unavailable
+  - NEW - most components will no render in a disabled state by default when the entity is unavailable from home assistant
+  - NEW - most components that support an entity now have an disabled prop available to re-style the component in a disabled state
+  - NEW - withErrorBoundary HOC - you can now wrap any component with the withErrorBoundary HOC to catch errors, this is useful if you're creating your own custom components and want to catch errors, this is exported from @hakit/components
+  - NEW - EntitiesCard - similar to the Entities Card in home assistant, you have full control over each row that's displayed
+  - NEW - Alert - a shared component to display warnings or alerts, currently used by the ErrorBoundaries that have been introduced
+  - NEW - components that use single domain entities (eg ClimateCard or ColorPicker etc) will now have correct intellisense on available entities if the types are synced.
+  - BUGFIX - RoomCard wasn't activating in certain scenarios, this has been fixed
+
 
 # v.1.0.18
 #### @hakit/core

@@ -1,8 +1,9 @@
 import styled from "@emotion/styled";
 import { Icon } from "@iconify/react";
-import { Row } from "@components";
+import { Row, fallback } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
+import { ErrorBoundary } from "react-error-boundary";
 
 type Extendable = Omit<React.ComponentProps<"button">, "onClick" | "ref"> &
   MotionProps;
@@ -60,8 +61,7 @@ const PictureCardFooter = styled(motion.h4)`
   font-size: 1.2rem;
 `;
 
-/** A simple component to render an image with a title/icon similar to the lovelace picture card, you can also bind a click event to the card */
-export function PictureCard({
+function _PictureCard({
   onClick,
   title,
   image,
@@ -84,5 +84,13 @@ export function PictureCard({
         </Row>
       </PictureCardFooter>
     </StyledPictureCard>
+  );
+}
+/** A simple component to render an image with a title/icon similar to the lovelace picture card, you can also bind a click event to the card */
+export function PictureCard(props: PictureCardProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "PictureCard" })}>
+      <_PictureCard {...props} />
+    </ErrorBoundary>
   );
 }

@@ -1,11 +1,13 @@
 import styled from "@emotion/styled";
 import React, { useState, useEffect } from "react";
-import { useEntity, useHass } from "@hakit/core";
+import { useEntity, useHass, isUnavailableState } from "@hakit/core";
+import type { FilterByDomain, EntityName } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { capitalize } from "lodash";
-import { Row, Column } from "@components";
+import { Row, Column, fallback } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
+import { ErrorBoundary } from "react-error-boundary";
 
 function weatherIconName(name: string) {
   switch (name) {
@@ -132,7 +134,7 @@ const TemperatureLow = styled.div`
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 export interface WeatherCardProps extends Extendable {
   /** The name of your entity */
-  entity: `weather.${string}`;
+  entity: FilterByDomain<EntityName, "weather">;
   /** Override the default title pulled from the entity */
   title?: string;
   /** override the icon displayed before the title */
@@ -144,8 +146,7 @@ export interface WeatherCardProps extends Extendable {
   /** include the current forecast row, @default true */
   includeCurrent?: boolean;
 }
-/** This will pull information from the weather entity provided to display the forecast provided by home assistant, this card will display exactly what the weather card in lovelace displays. */
-export function WeatherCard({
+function _WeatherCard({
   entity,
   title,
   icon: _icon,
@@ -157,6 +158,7 @@ export function WeatherCard({
   const { getConfig } = useHass();
   const [timeZone, setTimeZone] = useState<string>("UTC");
   const weather = useEntity(entity);
+  const isUnavailable = isUnavailableState(weather.state);
   const icon = weatherIconName(weather.state);
   const {
     attributes: { friendly_name, temperature, temperature_unit },
@@ -173,7 +175,7 @@ export function WeatherCard({
   });
   return (
     <Card {...rest}>
-      {includeCurrent && (
+      {includeCurrent && !isUnavailable && (
         <Row>
           <StyledIcon icon={icon} />
           <Column>
@@ -188,7 +190,7 @@ export function WeatherCard({
           </Column>
         </Row>
       )}
-      {includeForecast && (
+      {includeForecast && !isUnavailable && (
         <Row
           style={{
             justifyContent: "space-between",
@@ -216,6 +218,15 @@ export function WeatherCard({
           })}
         </Row>
       )}
+      {isUnavailable && weather.state}
     </Card>
+  );
+}
+/** This will pull information from the weather entity provided to display the forecast provided by home assistant, this card will display exactly what the weather card in lovelace displays. */
+export function WeatherCard(props: WeatherCardProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "WeatherCard" })}>
+      <_WeatherCard {...props} />
+    </ErrorBoundary>
   );
 }

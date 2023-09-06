@@ -7,8 +7,12 @@ import { createScene } from './createScene';
 import { createWeather } from './createWeather';
 import { createClimate } from './createClimate';
 import { createVacuum } from './createVacuum';
+import { createAutomation } from './createAutomation';
 
 export const entities: HassEntities = {
+  ...createLight('light.unavailable', {
+    "state": "unavailable",
+  }),
   ...createLight("light.fake_light_1", {
     attributes: {
       friendly_name: "Dining room light",
@@ -54,5 +58,12 @@ export const entities: HassEntities = {
   }),
   ...createWeather("weather.entity"),
   ...createClimate("climate.air_conditioner"),
+  ...createClimate("climate.unavailable", {
+    state: 'unavailable',
+    attributes: {
+      hvac_action: 'unavailable',
+    }
+  }),
   ...createVacuum("vacuum.robot_vacuum"),
+  ...createAutomation("automation.dim_lights"),
 } as const;

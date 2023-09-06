@@ -5,17 +5,17 @@ import {
   mocked,
   connection,
 } from "@mocks/mockConnection";
-import { SceneCard } from "@components";
+import { TriggerCard } from "@components";
 import { render, waitFor, fireEvent } from "@testing-library/react";
-describe("<SceneCard />", () => {
+describe("<TriggerCard />", () => {
   beforeEach(() => {
     onReady.mockClear();
   });
   // Test to check if the component renders correctly
-  it("renders SceneCard with title from entity", async () => {
+  it("renders TriggerCard with title from entity", async () => {
     const mockFunction = jest.fn();
     const { getByTestId } = render(
-      <SceneCard
+      <TriggerCard
         entity="scene.good_morning"
         onClick={mockFunction}
         data-testid="scene-card"
@@ -32,10 +32,10 @@ describe("<SceneCard />", () => {
     expect(buttonElement).toMatchSnapshot();
   });
 
-  it("renders SceneCard with override title", async () => {
+  it("renders TriggerCard with override title", async () => {
     const mockFunction = jest.fn();
     const { getByTestId } = render(
-      <SceneCard
+      <TriggerCard
         entity="scene.good_morning"
         title="Good morning San Francisco!"
         onClick={mockFunction}

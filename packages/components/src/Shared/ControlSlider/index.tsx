@@ -1,6 +1,8 @@
 import { useRef, useEffect, useCallback } from "react";
 import styled from "@emotion/styled";
 import { useGesture } from "@use-gesture/react";
+import { fallback } from "@components";
+import { ErrorBoundary } from "react-error-boundary";
 
 export interface ControlSliderProps {
   /** the orientation of the slider @default true */
@@ -230,8 +232,7 @@ const SliderHolder = styled.div``;
 const SliderTrackBackground = styled.div``;
 const SliderTrackBar = styled.div``;
 
-/** A interactive slider to control values ranging between two other values, eg brightness on a light, or curtain position etc.. */
-export function ControlSlider({
+function _ControlSlider({
   vertical = true,
   disabled = false,
   showHandle = true,
@@ -421,5 +422,14 @@ export function ControlSlider({
         )}
       </SliderHolder>
     </Slider>
+  );
+}
+
+/** A interactive slider to control values ranging between two other values, eg brightness on a light, or curtain position etc.. */
+export function ControlSlider(props: ControlSliderProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "ControlSlider" })}>
+      <_ControlSlider {...props} />
+    </ErrorBoundary>
   );
 }

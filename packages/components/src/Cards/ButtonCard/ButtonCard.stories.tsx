@@ -2,16 +2,11 @@ import { Source } from "@storybook/blocks";
 import type { Meta, StoryObj, Args } from "@storybook/react";
 import { ThemeProvider, Group, ButtonCard } from "@components";
 import type { ButtonCardProps } from "@components";
-import type { DomainService } from "@hakit/core";
 import { HassConnect } from "@stories/HassConnectFake";
 // @ts-expect-error - Don't have types for jsx-to-string
 import jsxToString from "jsx-to-string";
 
-function Template(
-  args?: Partial<
-    ButtonCardProps<"switch.fake_switch", DomainService<"switch">>
-  >,
-) {
+function Template(args?: Partial<ButtonCardProps<"switch.fake_switch">>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
@@ -25,15 +20,14 @@ function Template(
         />
         <ButtonCard service="toggle" entity="light.fake_light_1" />
         <ButtonCard service="toggle" entity="media_player.fake_tv" />
+        <ButtonCard service="toggle" entity="light.unavailable" />
       </Group>
     </HassConnect>
   );
 }
 
 function TemplateOnclick(
-  args?: Partial<
-    ButtonCardProps<"climate.air_conditioner", DomainService<"climate">>
-  >,
+  args?: Partial<ButtonCardProps<"climate.air_conditioner">>,
 ) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
@@ -66,10 +60,19 @@ function LayoutExampleTemplate() {
           service="toggle"
         />
         <ButtonCard
+          defaultLayout="slim"
+          title="Slim example"
+          entity="light.unavailable"
+          service="toggle"
+        />
+        <ButtonCard
           defaultLayout="default"
           title="Default example"
           entity="switch.fake_switch"
           service="toggle"
+          onClick={(entity) => {
+            entity.api.toggle();
+          }}
         />
       </Group>
     </HassConnect>
@@ -99,6 +102,7 @@ function ExampleDocs() {
       <TemplateOnclick />
       <h3>Source Code</h3>
       <Source
+        dark
         code={`
       <HassConnect hassUrl="http://localhost:8123">
         <ThemeProvider />
@@ -122,7 +126,7 @@ function ExampleDocs() {
         This example shows how you can use the Group component to create a group
         of cards.
       </p>
-      <Source code={jsxToString(Template())} />
+      <Source dark code={jsxToString(Template())} />
     </div>
   );
 }
@@ -162,9 +166,7 @@ export default {
     title: { control: "text" },
   },
 } satisfies Meta<typeof ButtonCard>;
-export type LightStory = StoryObj<
-  typeof ButtonCard<"light.fake_light_1", "toggle">
->;
+export type LightStory = StoryObj<typeof ButtonCard<"light.fake_light_1">>;
 export const LightExample: LightStory = {
   render: Render,
   args: {
@@ -174,14 +176,12 @@ export const LightExample: LightStory = {
 };
 
 export const ClimateExample: StoryObj<
-  typeof ButtonCard<"climate.air_conditioner", "turnOn">
+  typeof ButtonCard<"climate.air_conditioner">
 > = {
   render: RenderClimate,
   args: {},
 };
-export type SwitchStory = StoryObj<
-  typeof ButtonCard<"switch.fake_switch", "toggle">
->;
+export type SwitchStory = StoryObj<typeof ButtonCard<"switch.fake_switch">>;
 export const SwitchExample: SwitchStory = {
   render: Render,
   args: {

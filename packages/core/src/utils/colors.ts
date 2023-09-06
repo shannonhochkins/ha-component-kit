@@ -36,8 +36,8 @@ function toRGB(entity: HassEntity): [number, number, number] | null {
   return null;
 }
 
-export function getCssColorValue(entity: HassEntity) {
-  const color = toRGB(entity);
+export function getCssColorValue(entity: HassEntity | null) {
+  const color = entity ? toRGB(entity) : null;
   const hexColor = color ? rgb2hex(color) : "var(--ha-primary-active)";
   const rgbColor = color
     ? `rgba(${color.join(", ")})`

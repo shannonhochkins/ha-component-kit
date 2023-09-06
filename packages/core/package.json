@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "1.0.18",
+  "version": "1.0.21",
   "private": false,
   "type": "module",
   "keywords": [
@@ -61,8 +61,9 @@
   "funding": "https://github.com/shannonhochkins/ha-component-kit?sponsor=1",
   "scripts": {
     "dev": "vite",
+    "type-check": "tsc --noEmit",
     "prebuild": "rm -rf ./dist && npm run lint && npm run prettier",
-    "build": "npm run build:sync-ha-types && npm run build:core && npm run build:sync-script && npm run build:sync-script-cli",
+    "build": "npm run build:sync-ha-types && npm run build:core && npm run type-check && npm run build:sync-script && npm run build:sync-script-cli",
     "build:core": "NODE_ENV=production vite build",
     "build:sync-script": "NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build",
     "build:sync-script-cli": "tsup",

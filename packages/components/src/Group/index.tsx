@@ -1,7 +1,8 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
-import { Row, Column } from "@components";
+import { Row, Column, fallback } from "@components";
 import { motion, AnimatePresence } from "framer-motion";
+import { ErrorBoundary } from "react-error-boundary";
 
 const StyledGroup = styled.div<{
   collapsed: boolean;
@@ -44,8 +45,7 @@ export interface GroupProps extends Omit<React.ComponentProps<"div">, "title"> {
   /** should the group be collapsed by default @default false */
   collapsed?: boolean;
 }
-/** The group component will automatically layout the children in a row with a predefined gap between the children. The Group component is handy when you want to be able to collapse sections of cards */
-export function Group({
+function _Group({
   title,
   children,
   gap = "0.5rem",
@@ -89,5 +89,13 @@ export function Group({
         )}
       </AnimatePresence>
     </StyledGroup>
+  );
+}
+/** The group component will automatically layout the children in a row with a predefined gap between the children. The Group component is handy when you want to be able to collapse sections of cards */
+export function Group(props: GroupProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "Group" })}>
+      <_Group {...props} />
+    </ErrorBoundary>
   );
 }
