@@ -1,6 +1,8 @@
 ## Overview
 I'm using changesets to manage this monorepo as there's a few packages that need to be deployed at the same time or individually.
 
+I'm not using changesets to actually publish as they require payment to do so.
+
 ### Deploying
 Deploying is relatively simple, run the following command:
 ```bash
@@ -18,14 +20,11 @@ npx changeset version
 
 This command will also automatically update any inter-dependencies between packages, eg @hakit/components depends on the latest version of @hakit/core, this will update automatically.
 
-Once you've done this, commit your changes, build packages if necessary, then run:
+Once you've done this, commit your changes, then run:
 
 ```bash
-npx changeset publish
+npm run release:core
+npm run release:components
 ```
 
-#### Change status
-Optionally, to see the changes that will be deployed, you can run the following command:
-```bash
-npx changeset status --verbose
-```
+These commands will build everything needed to deploy before it actually releases, so no need to run these before the release.
