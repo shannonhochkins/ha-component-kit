@@ -138,8 +138,10 @@ function _FabCard<E extends EntityName>({
       const caller = entity.api[service];
       caller(serviceData);
     }
-    if (typeof onClick === "function")
-      onClick(entity as HassEntityWithApi<ExtractDomain<E>>);
+    if (typeof onClick === "function" && entity !== null) {
+      // @ts-expect-error - nothing wrong with the types here, service will be accurate, inspect later
+      onClick(entity);
+    }
   }, [service, entity, serviceData, disabled, isUnavailable, onClick]);
   const title = useMemo(
     () => (domain === null ? null : startCase(lowerCase(domain))),

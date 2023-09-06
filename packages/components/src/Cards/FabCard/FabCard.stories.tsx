@@ -1,12 +1,19 @@
-import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, FabCard } from "@components";
+import type { Meta, StoryObj } from "@storybook/react";
+import { ThemeProvider, FabCard, FabCardProps } from "@components";
 import { HassConnect } from "@stories/HassConnectFake";
 
-function Template(args?: Args) {
+function Template(
+  args?: Partial<FabCardProps<"light.fake_light_1" | "light.unavailable">>,
+) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
-      <FabCard {...args} />
+      <FabCard
+        {...args}
+        onClick={(entity) => {
+          entity.api.toggle();
+        }}
+      />
     </HassConnect>
   );
 }

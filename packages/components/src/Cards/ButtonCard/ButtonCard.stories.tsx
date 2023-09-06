@@ -70,6 +70,9 @@ function LayoutExampleTemplate() {
           title="Default example"
           entity="switch.fake_switch"
           service="toggle"
+          onClick={(entity) => {
+            entity.api.toggle();
+          }}
         />
       </Group>
     </HassConnect>
