@@ -66,12 +66,11 @@ type HassEntityHelper<T extends AllDomains> =
     : HassEntity;
 
 export type HassEntityWithApi<T extends AllDomains> = HassEntityCustom &
-  HassEntityHelper<T> & {
-    /** all the services associated with the domain provided, this does not require entity as the first argument */
-    api: T extends keyof SupportedServices
-      ? SupportedServices<"no-target">[SnakeToCamel<T>]
-      : never;
-  };
+HassEntityHelper<SnakeToCamel<T>> & {
+  api: SnakeToCamel<T> extends keyof SupportedServices<"no-target">
+    ? SupportedServices<"no-target">[SnakeToCamel<T>]
+    : never;
+};
 
 export type ServiceFunctionWithEntity<Data = object> = (
   /** the entity string name from home assistant */

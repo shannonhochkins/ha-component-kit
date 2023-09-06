@@ -1,4 +1,15 @@
 # @hakit/core
+
+## 1.0.20
+
+### Patch Changes
+
+- Fixing bug with api types on snake domains, previously useEntity('media_player').api was not returning available services
+# @hakit/components
+
+## 1.0.23
+- bumping dependency version
+# @hakit/core
 ## 1.0.19
 # @ hakit/components
 ## 1.0.22
