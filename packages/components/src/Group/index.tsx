@@ -45,7 +45,6 @@ export interface GroupProps extends Omit<React.ComponentProps<"div">, "title"> {
   /** should the group be collapsed by default @default false */
   collapsed?: boolean;
 }
-/** The group component will automatically layout the children in a row with a predefined gap between the children. The Group component is handy when you want to be able to collapse sections of cards */
 function _Group({
   title,
   children,
@@ -92,7 +91,7 @@ function _Group({
     </StyledGroup>
   );
 }
-
+/** The group component will automatically layout the children in a row with a predefined gap between the children. The Group component is handy when you want to be able to collapse sections of cards */
 export function Group(props: GroupProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "Group" })}>

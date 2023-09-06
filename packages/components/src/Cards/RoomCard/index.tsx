@@ -103,7 +103,6 @@ const ChildContainer = styled(motion.div)`
   width: 100%;
 `;
 
-/** The RoomCard component is a very simple way of categorizing all your entities into a single "PictureCard" which will show all the entities when clicked. */
 function _RoomCard({
   hash,
   children,
@@ -266,7 +265,7 @@ function _RoomCard({
     </>
   );
 }
-
+/** The RoomCard component is a very simple way of categorizing all your entities into a single "PictureCard" which will show all the entities when clicked. */
 export function RoomCard(props: RoomCardProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "RoomCard" })}>

@@ -1,12 +1,16 @@
-# @hakit/core
+# @hakit/components
+## 1.0.24
+- TriggerCard - wide range of new props to make this card more configurable, previously this card was updated automatically based on the last updated or last triggered value, now it will deactivate after a period of time, there's also description, icon changes, text changes props and more, see storybook for more details.
 
+# @hakit/core
+## 1.0.21
+- entity.custom now has a timeDiff property available in milliseconds representing the time difference between now and the last updated time of the entity.
+# @hakit/core
 ## 1.0.20
 
 ### Patch Changes
-
 - Fixing bug with api types on snake domains, previously useEntity('media_player').api was not returning available services
 # @hakit/components
-
 ## 1.0.23
 - bumping dependency version
 # @hakit/core

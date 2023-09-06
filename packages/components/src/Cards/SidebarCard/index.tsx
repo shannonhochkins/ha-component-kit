@@ -210,7 +210,6 @@ export interface MenuItem {
   onClick: (event: React.MouseEvent<HTMLLIElement>) => void;
 }
 
-/** This component is a nice way of organizing components / groups into an easy to navigate sidebar, the "Room Cards" will automatically insert into the sidebar items if they're present on the page, eg if you have 6 RoomCards, all 6 items will be added to the sidebar automatically, you can also add your own menu items to the start of the list, this all needs a bit more thought but for now it is pretty useful! The TimeCard and WeatherCard are integrate and themed slightly different in the sidebar, if the sidebar is present, the RoomCard will only expand to the available space and not cover the sidebar */
 export interface SidebarCardProps {
   /** should the time card be included by default @default true */
   includeTimeCard?: boolean;
@@ -398,7 +397,7 @@ function _SidebarCard({
     </>
   );
 }
-
+/** This component is a nice way of organizing components / groups into an easy to navigate sidebar, the "Room Cards" will automatically insert into the sidebar items if they're present on the page, eg if you have 6 RoomCards, all 6 items will be added to the sidebar automatically, you can also add your own menu items to the start of the list, this all needs a bit more thought but for now it is pretty useful! The TimeCard and WeatherCard are integrate and themed slightly different in the sidebar, if the sidebar is present, the RoomCard will only expand to the available space and not cover the sidebar */
 export function SidebarCard(props: SidebarCardProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "SidebarCard" })}>

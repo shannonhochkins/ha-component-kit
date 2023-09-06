@@ -232,7 +232,6 @@ const SliderHolder = styled.div``;
 const SliderTrackBackground = styled.div``;
 const SliderTrackBar = styled.div``;
 
-/** A interactive slider to control values ranging between two other values, eg brightness on a light, or curtain position etc.. */
 function _ControlSlider({
   vertical = true,
   disabled = false,
@@ -426,6 +425,7 @@ function _ControlSlider({
   );
 }
 
+/** A interactive slider to control values ranging between two other values, eg brightness on a light, or curtain position etc.. */
 export function ControlSlider(props: ControlSliderProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ControlSlider" })}>

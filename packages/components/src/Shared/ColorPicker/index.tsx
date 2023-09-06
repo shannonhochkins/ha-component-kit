@@ -199,7 +199,6 @@ export interface ColorPickerProps {
   /** will provide the color output as it's changing but not actually finished updating, the value may also trigger initially once the color calculations have been applied */
   onChange?: (colors: ColorPickerOutputColors) => void;
 }
-/** This color picker was designed to easily retrieve a value from a color wheel based on values provided from a light entity, you can click or drag on the picker to pick a value, once applied the color wheel will automatically update your light entity, if the light entity provided does not support color it will not render at all */
 function _ColorPicker({
   disabled = false,
   entity: _entity,
@@ -602,6 +601,7 @@ function _ColorPicker({
   ) : null;
 }
 
+/** This color picker was designed to easily retrieve a value from a color wheel based on values provided from a light entity, you can click or drag on the picker to pick a value, once applied the color wheel will automatically update your light entity, if the light entity provided does not support color it will not render at all */
 export function ColorPicker(props: ColorPickerProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ColorPicker" })}>
