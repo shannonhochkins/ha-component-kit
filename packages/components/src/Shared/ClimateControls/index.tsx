@@ -2,17 +2,19 @@ import { useRef, useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { Thermostat } from "react-thermostat";
-import { Column, FabCard, Row } from "@components";
+import { Column, FabCard, Row, fallback } from "@components";
+import type { EntityName, FilterByDomain } from "@hakit/core";
 import { useEntity, OFF, useHass, HvacMode } from "@hakit/core";
 import type { HassConfig } from "home-assistant-js-websocket";
 import { useDebounce } from "react-use";
 import type { MotionProps } from "framer-motion";
 import { colors, activeColors, icons } from "./shared";
+import { ErrorBoundary } from "react-error-boundary";
 
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 
 export interface ClimateControlsProps extends Extendable {
-  entity: `${"climate"}.${string}`;
+  entity: FilterByDomain<EntityName, "climate">;
   /** provide a list of hvacModes you want to support/display in the UI, will use all by default */
   hvacModes?: HvacMode[];
   /** hide the current temperature */
@@ -109,7 +111,7 @@ const FanMode = styled(FabCard)<{
   animation-timing-function: linear;
 `;
 /** This layout is shared for the popup for a buttonCard and fabCard when long pressing on a card with a climate entity, and also the climateCard, this will fill the width/height of the parent component */
-export function ClimateControls({
+function _ClimateControls({
   entity: _entity,
   hvacModes,
   hideCurrentTemperature,
@@ -168,7 +170,7 @@ export function ClimateControls({
         <Thermostat
           valueSuffix={config?.unit_system.temperature}
           track={{
-            colors: colors[entity.state],
+            colors: colors[entity.state as HvacMode],
           }}
           disabled={isOff}
           min={min_temp}
@@ -230,5 +232,13 @@ export function ClimateControls({
         ))}
       </Row>
     </Column>
+  );
+}
+
+export function ClimateControls(props: ClimateControlsProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "ClimateControls" })}>
+      <_ClimateControls {...props} />
+    </ErrorBoundary>
   );
 }

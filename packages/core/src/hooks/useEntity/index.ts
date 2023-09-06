@@ -58,13 +58,15 @@ export function useEntity<
     ...options,
   };
   const { getEntity } = useHass();
-  const timeSensor = getEntity("sensor.time");
+  const timeSensor = getEntity("sensor.time", true);
   const matchedEntity = getEntity(entity, returnNullIfNotFound);
   const domain = computeDomain(entity) as ExtractDomain<E>;
   const api = useApi(domain, entity);
 
   const formatEntity = useCallback((entity: HassEntity): HassEntityCustom => {
-    const relativeTime = timeAgo.format(new Date(entity.last_updated));
+    const relativeTime = timeAgo.format(
+      new Date(entity.attributes.last_triggered ?? entity.last_updated),
+    );
     const active = relativeTime === "just now";
     const {
       hexColor,
@@ -100,7 +102,7 @@ export function useEntity<
   }, [formatEntity, timeSensor]);
 
   useEffect(() => {
-    const foundEntity = getEntity(entity);
+    const foundEntity = getEntity(entity, true);
     if (
       foundEntity &&
       !isEqual(

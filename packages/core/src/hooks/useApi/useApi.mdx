@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/blocks';
+import { Source, Meta } from '@storybook/blocks';
 
 <Meta title="HOOKS/useApi" />
 
@@ -19,7 +19,7 @@ the authenticated home assistant API.
 The `useApi()` hook is integrated with the `useEntity` hook so you can use it directly from the entity object.
 Everything is typed so it makes it very easy to use and develop with.
 
-```ts
+<Source dark code={`
 import { HassConnect, useApi } from '@hakit/core';
 function UseApiExample() {
   const entity = useEntity('light.some_light_entity');
@@ -30,11 +30,11 @@ function App() {
     <UseApiExample />
   </HassConnect>
 }
-```
+`} />
 
 ### Service level usage
 We can use the hook to retrieve all the available services for a specific domain, eg "light, mediaPlayer etc...".
-```ts
+<Source dark code={`
 import { HassConnect, useApi } from '@hakit/core';
 function UseApiExample() {
   const lightService = useApi('light');
@@ -47,11 +47,11 @@ function App() {
     <UseApiExample />
   </HassConnect>
 }
-```
+`} />
 
 ## Root level usage
 We can also use the hook to retrieve all the available services and use them as needed.
-```ts
+<Source dark code={`
 import { HassConnect, useApi } from '@hakit/core';
 function UseApiExample() {
   const api = useApi();
@@ -59,4 +59,4 @@ function UseApiExample() {
     <button onClick={() => api('light').toggle('light.some_light_entity')}>TOGGLE LIGHT</button>
     <button onClick={() => api('switch').toggle('switch.some_switch_entity')}>TOGGLE SWITCH</button>
   );
-}
+}`} />

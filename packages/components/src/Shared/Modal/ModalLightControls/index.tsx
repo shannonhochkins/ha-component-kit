@@ -20,10 +20,11 @@ import {
   lightSupportsColorMode,
   lightSupportsColor,
 } from "@hakit/core";
+import type { EntityName, FilterByDomain } from "@hakit/core";
 import colorWheel from "./color_wheel.png";
 
 export interface ModalLightControlsProps extends Omit<ModalProps, "children"> {
-  entity: `${"light"}.${string}`;
+  entity: FilterByDomain<EntityName, "light">;
 }
 
 const State = styled.div`

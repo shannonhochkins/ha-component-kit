@@ -18,14 +18,10 @@ mark {
   &:not([hidden="true"]) {
     width: 100%;
     height: 100%;
+    display:flex;
     #storybook-inner-preview {
       display: flex;
       width: 100%;
-      height: 100%;
-      align-items: center;
-      justify-content: flex-start;
-      width: 100%;
-      flex-direction: column;
     }
   }
 }
