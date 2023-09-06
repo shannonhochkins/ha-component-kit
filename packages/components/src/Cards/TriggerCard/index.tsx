@@ -188,9 +188,8 @@ function _TriggerCard<E extends EntityName>({
     if (typeof onClick === "function" && !isUnavailable) onClick(entity);
     if (timeRef.current) clearTimeout(timeRef.current);
     timeRef.current = setTimeout(() => {
-      console.log('resetting');
       setActive(false);
-    }, activeStateDuration)
+    }, activeStateDuration);
   }, [entity, onClick, activeStateDuration, isUnavailable]);
 
   return (
