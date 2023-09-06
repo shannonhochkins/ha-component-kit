@@ -146,7 +146,6 @@ export interface EntitiesCardProps extends Extendable {
   /** include the last updated time, will apply to every row unless specified on an individual EntityItem @default false */
   includeLastUpdated?: boolean;
 }
-/** The EntitiesCard component is an easy way to represent the state a of multiple entities with a simple layout, you can customize every part of every row with the EntityItem properties, the renderState and onClick both receive the entity object with the api properties. */
 function _EntitiesCard({
   entities,
   includeLastUpdated = false,
@@ -172,7 +171,7 @@ function _EntitiesCard({
     </StyledEntitiesCard>
   );
 }
-
+/** The EntitiesCard component is an easy way to represent the state a of multiple entities with a simple layout, you can customize every part of every row with the EntityItem properties, the renderState and onClick both receive the entity object with the api properties. */
 export function EntitiesCard(props: EntitiesCardProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "EntitiesCard" })}>

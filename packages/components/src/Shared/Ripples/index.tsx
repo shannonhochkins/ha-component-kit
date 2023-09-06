@@ -55,7 +55,6 @@ const ParentRipple = styled.div<{
     display: inline-flex;
   `}
 `;
-/** Ripples is a component that can easily add an interactive ripple effect when clicked, simply wrap your component in Ripples and you're good to go! If your component has a border radius, simply pass the same value as a prop to ripples to mask the effect */
 const _Ripples = memo(
   ({
     duration = 600,
@@ -141,7 +140,7 @@ const _Ripples = memo(
     );
   },
 );
-
+/** Ripples is a component that can easily add an interactive ripple effect when clicked, simply wrap your component in Ripples and you're good to go! If your component has a border radius, simply pass the same value as a prop to ripples to mask the effect */
 export function Ripples(props: RipplesProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "Ripples" })}>

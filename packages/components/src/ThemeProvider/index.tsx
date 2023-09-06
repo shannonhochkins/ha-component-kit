@@ -14,7 +14,6 @@ export interface ThemeProviderProps<T extends object> {
   theme?: DeepPartial<ThemeParams> & T;
 }
 
-/** A simple way of creating global styles and providing re-usable css variables to re-use across your application */
 function _ThemeProvider<T extends object>({
   theme,
 }: ThemeProviderProps<T>): JSX.Element {
@@ -80,7 +79,7 @@ function _ThemeProvider<T extends object>({
     </>
   );
 }
-
+/** A simple way of creating global styles and providing re-usable css variables to re-use across your application */
 export function ThemeProvider<T extends object>(props: ThemeProviderProps<T>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ThemeProvider" })}>

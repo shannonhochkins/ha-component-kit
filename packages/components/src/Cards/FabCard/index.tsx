@@ -85,7 +85,6 @@ export interface FabCardProps<E extends EntityName> extends Extendable {
   disabled?: boolean;
 }
 
-/** The Fab (Floating Action Button) Card is a simple button with an icon to trigger something on press */
 function _FabCard<E extends EntityName>({
   icon: _icon,
   iconColor,
@@ -183,7 +182,7 @@ function _FabCard<E extends EntityName>({
     </>
   );
 }
-
+/** The Fab (Floating Action Button) Card is a simple button with an icon to trigger something on press */
 export function FabCard<E extends EntityName>(props: FabCardProps<E>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "FabCard" })}>

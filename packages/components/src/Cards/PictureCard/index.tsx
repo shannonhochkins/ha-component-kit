@@ -61,7 +61,6 @@ const PictureCardFooter = styled(motion.h4)`
   font-size: 1.2rem;
 `;
 
-/** A simple component to render an image with a title/icon similar to the lovelace picture card, you can also bind a click event to the card */
 function _PictureCard({
   onClick,
   title,
@@ -87,7 +86,7 @@ function _PictureCard({
     </StyledPictureCard>
   );
 }
-
+/** A simple component to render an image with a title/icon similar to the lovelace picture card, you can also bind a click event to the card */
 export function PictureCard(props: PictureCardProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "PictureCard" })}>

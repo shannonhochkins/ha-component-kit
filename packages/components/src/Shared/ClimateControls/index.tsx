@@ -110,7 +110,6 @@ const FanMode = styled(FabCard)<{
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 `;
-/** This layout is shared for the popup for a buttonCard and fabCard when long pressing on a card with a climate entity, and also the climateCard, this will fill the width/height of the parent component */
 function _ClimateControls({
   entity: _entity,
   hvacModes,
@@ -234,7 +233,7 @@ function _ClimateControls({
     </Column>
   );
 }
-
+/** This layout is shared for the popup for a buttonCard and fabCard when long pressing on a card with a climate entity, and also the climateCard, this will fill the width/height of the parent component */
 export function ClimateControls(props: ClimateControlsProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ClimateControls" })}>

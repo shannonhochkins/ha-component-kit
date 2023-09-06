@@ -175,7 +175,6 @@ export interface ButtonCardProps<E extends EntityName> extends Extendable {
   /** the layout of the button card, this changes slightly, just preferences really @default default */
   defaultLayout?: "default" | "slim";
 }
-/** The ButtonCard component is an easy way to represent the state and control of an entity with a simple button, eventually I'll provide further options per domain, like being able to set the colours for lights etc... */
 function _ButtonCard<E extends EntityName>({
   service,
   entity: _entity,
@@ -335,7 +334,7 @@ function _ButtonCard<E extends EntityName>({
     </>
   );
 }
-
+/** The ButtonCard component is an easy way to represent the state and control of an entity with a simple button, eventually I'll provide further options per domain, like being able to set the colours for lights etc... */
 export function ButtonCard<E extends EntityName>(props: ButtonCardProps<E>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ButtonCard" })}>

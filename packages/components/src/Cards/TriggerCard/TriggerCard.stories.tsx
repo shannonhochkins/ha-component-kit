@@ -15,6 +15,18 @@ function Render(args?: Args) {
           }}
         />
         <TriggerCard
+          entity="automation.dim_lights"
+          description="Will dim all the lights linked to the automation"
+          sliderIcon="mdi:downlight"
+          sliderTextActive="Dimming..."
+          sliderTextInactive="Dim me!"
+          hideArrow
+          {...args}
+          onClick={(entity) => {
+            entity.api.turnOn();
+          }}
+        />
+        <TriggerCard
           entity="light.unavailable"
           onClick={(entity) => {
             // will not fire when unavailable
@@ -42,6 +54,6 @@ export type Story = StoryObj<typeof TriggerCard>;
 export const Example: Story = {
   render: Render,
   args: {
-    entity: "scene.good_morning",
+    
   },
 };

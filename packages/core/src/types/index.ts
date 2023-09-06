@@ -44,6 +44,8 @@ export type HassEntityCustom = HassEntity & {
   custom: {
     /** the difference in time between the last updated value and now, eg "1 minute ago, 1 day ago etc, 5 days from now" */
     relativeTime: string;
+    /** the difference in time in milliseconds between now and the time the entity was updated / triggered */
+    timeDiff: number;
     /** if the last updated value was considered "now" */
     active: boolean;
     /** the hexColor value if the entity is a light */
@@ -66,11 +68,11 @@ type HassEntityHelper<T extends AllDomains> =
     : HassEntity;
 
 export type HassEntityWithApi<T extends AllDomains> = HassEntityCustom &
-HassEntityHelper<SnakeToCamel<T>> & {
-  api: SnakeToCamel<T> extends keyof SupportedServices<"no-target">
-    ? SupportedServices<"no-target">[SnakeToCamel<T>]
-    : never;
-};
+  HassEntityHelper<SnakeToCamel<T>> & {
+    api: SnakeToCamel<T> extends keyof SupportedServices<"no-target">
+      ? SupportedServices<"no-target">[SnakeToCamel<T>]
+      : never;
+  };
 
 export type ServiceFunctionWithEntity<Data = object> = (
   /** the entity string name from home assistant */

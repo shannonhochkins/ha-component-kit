@@ -159,7 +159,6 @@ function drawColorWheel(
   }
 }
 
-/** This color picker was designed to easily retrieve a value from a colour wheel based on values provided from a light entity, you can click or drag on the picker to pick a value */
 function _ColorTempPicker({
   disabled = false,
   entity: _entity,
@@ -424,6 +423,7 @@ function _ColorTempPicker({
   ) : null;
 }
 
+/** This color picker was designed to easily retrieve a value from a colour wheel based on values provided from a light entity, you can click or drag on the picker to pick a value */
 export function ColorTempPicker(props: ColorTempPickerProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ColorTempPicker" })}>

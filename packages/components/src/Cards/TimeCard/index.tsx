@@ -138,7 +138,6 @@ const Warning = () => (
     </p>
   </Alert>
 );
-/** There's no required props on this component, by default it retrieves information from the time and date sensor from your home assistant information and the dates are formatted by the timezone specified in your home assistant settings. */
 function _TimeCard({
   includeDate = true,
   includeIcon = true,
@@ -190,7 +189,7 @@ function _TimeCard({
     </Card>
   );
 }
-
+/** There's no required props on this component, by default it retrieves information from the time and date sensor from your home assistant information and the dates are formatted by the timezone specified in your home assistant settings. */
 export function TimeCard(props: TimeCardProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "TimeCard" })}>

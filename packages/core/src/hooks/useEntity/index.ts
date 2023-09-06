@@ -64,9 +64,12 @@ export function useEntity<
   const api = useApi(domain, entity);
 
   const formatEntity = useCallback((entity: HassEntity): HassEntityCustom => {
-    const relativeTime = timeAgo.format(
-      new Date(entity.attributes.last_triggered ?? entity.last_updated),
+    const now = new Date();
+    const then = new Date(
+      entity.attributes.last_triggered ?? entity.last_updated,
     );
+    const relativeTime = timeAgo.format(then);
+    const timeDiff = Math.abs(now.getTime() - then.getTime());
     const active = relativeTime === "just now";
     const {
       hexColor,
@@ -81,6 +84,7 @@ export function useEntity<
       custom: {
         color,
         relativeTime,
+        timeDiff,
         active,
         hexColor,
         rgbColor,

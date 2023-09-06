@@ -80,7 +80,6 @@ export interface ClimateCardProps extends Extendable {
   onClick?: (entity: HassEntityWithApi<"climate">) => void;
 }
 
-/** The ClimateCard is a card to easily interact with climate entities, whilst it's not documented below, the types are correct and you can also pass through anything related to ModalClimateControlsProps */
 function _ClimateCard({
   entity: _entity,
   title: _title,
@@ -197,6 +196,7 @@ function _ClimateCard({
     </>
   );
 }
+/** The ClimateCard is a card to easily interact with climate entities, whilst it's not documented below, the types are correct and you can also pass through anything related to ModalClimateControlsProps */
 export function ClimateCard(props: ClimateCardProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ClimateCard" })}>

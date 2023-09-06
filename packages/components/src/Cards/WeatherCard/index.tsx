@@ -146,7 +146,6 @@ export interface WeatherCardProps extends Extendable {
   /** include the current forecast row, @default true */
   includeCurrent?: boolean;
 }
-/** This will pull information from the weather entity provided to display the forecast provided by home assistant, this card will display exactly what the weather card in lovelace displays. */
 function _WeatherCard({
   entity,
   title,
@@ -223,7 +222,7 @@ function _WeatherCard({
     </Card>
   );
 }
-
+/** This will pull information from the weather entity provided to display the forecast provided by home assistant, this card will display exactly what the weather card in lovelace displays. */
 export function WeatherCard(props: WeatherCardProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "WeatherCard" })}>

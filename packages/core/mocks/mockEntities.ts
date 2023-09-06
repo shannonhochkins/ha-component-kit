@@ -7,6 +7,7 @@ import { createScene } from './createScene';
 import { createWeather } from './createWeather';
 import { createClimate } from './createClimate';
 import { createVacuum } from './createVacuum';
+import { createAutomation } from './createAutomation';
 
 export const entities: HassEntities = {
   ...createLight('light.unavailable', {
@@ -64,4 +65,5 @@ export const entities: HassEntities = {
     }
   }),
   ...createVacuum("vacuum.robot_vacuum"),
+  ...createAutomation("automation.dim_lights"),
 } as const;
