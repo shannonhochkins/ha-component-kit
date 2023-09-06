@@ -58,6 +58,9 @@ export type { ClimateCardProps } from "./Cards/ClimateCard";
 // EntitiesCard
 export { EntitiesCard } from "./Cards/EntitiesCard";
 export type { EntitiesCardProps } from "./Cards/EntitiesCard";
+// MediaPlayerCard
+export { MediaPlayerCard } from "./Cards/MediaPlayerCard";
+export type { MediaPlayerCardProps } from "./Cards/MediaPlayerCard";
 // Modal
 export { Modal } from "./Shared/Modal";
 export type { ModalProps } from "./Shared/Modal";
