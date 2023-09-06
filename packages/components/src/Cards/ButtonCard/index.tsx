@@ -224,8 +224,10 @@ function _ButtonCard<E extends EntityName>({
       const caller = entity.api[service];
       caller(serviceData);
     }
-    if (typeof onClick === "function")
-      onClick(entity as HassEntityWithApi<ExtractDomain<E>>);
+    if (typeof onClick === "function") {
+      // @ts-expect-error - types are accurate, we just don't know the domain entity type
+      onClick(entity);
+    }
   }, [service, entity, serviceData, onClick, isUnavailable]);
   // use the input description if provided, else use the friendly name if available, else entity name, else null
   const description = useMemo(() => {
