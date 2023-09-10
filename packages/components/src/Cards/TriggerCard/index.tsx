@@ -53,7 +53,7 @@ const ToggleMessage = styled.span<ToggleProps>`
   justify-content: ${(props) => (props.active ? `flex-start` : `flex-end`)};
   color: ${(props) =>
     !props.active ? "var(--ha-secondary-color)" : "var(--ha-primary-inactive)"};
-    ${props => props.hideArrow && `padding-right: 0.8rem;`}
+  ${(props) => props.hideArrow && `padding-right: 0.8rem;`}
 `;
 
 const ToggleState = styled.div<ToggleProps>`
@@ -219,7 +219,9 @@ function _TriggerCard<E extends EntityName>({
                   {sliderIcon ?? powerIcon}
                 </ToggleState>
                 <ToggleMessage hideArrow={hideArrow} active={active}>
-                  {active ? sliderTextActive ?? "Success..." : sliderTextInactive ?? `Run ${domain}`}{" "}
+                  {active
+                    ? sliderTextActive ?? "Success..."
+                    : sliderTextInactive ?? `Run ${domain}`}{" "}
                   {!active && !hideArrow && arrowIcon}
                 </ToggleMessage>
               </>
