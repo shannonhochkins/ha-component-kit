@@ -62,9 +62,9 @@ export type HassEntityCustom = HassEntity & {
     color: [number, number, number];
   };
 };
-type HassEntityHelper<T extends AllDomains> =
-  T extends keyof DefinedPropertiesByDomain
-    ? DefinedPropertiesByDomain[T]
+export type HassEntityHelper<T extends AllDomains> =
+  CamelToSnake<T> extends keyof DefinedPropertiesByDomain
+    ? DefinedPropertiesByDomain[CamelToSnake<T>]
     : HassEntity;
 
 export type HassEntityWithApi<T extends AllDomains> = HassEntityCustom &
@@ -75,8 +75,8 @@ export type HassEntityWithApi<T extends AllDomains> = HassEntityCustom &
   };
 
 export type ServiceFunctionWithEntity<Data = object> = (
-  /** the entity string name from home assistant */
-  entity: string,
+  /** the entity target from home assistant, string, string[] or object */
+  entity: Target,
   /** the data to send to the service */
   data?: Data,
 ) => void;

@@ -303,14 +303,18 @@ export function HassProvider({
         throw new Error("service must be a string");
       }
       if (connection && ready) {
-        return await _callService(
-          connection,
-          snakeCase(domain),
-          snakeCase(service),
-          // purposely cast here as we know it's correct
-          serviceData as object,
-          target,
-        );
+        try {
+          return await _callService(
+            connection,
+            snakeCase(domain),
+            snakeCase(service),
+            // purposely cast here as we know it's correct
+            serviceData as object,
+            target,
+          );
+        } catch (e) {
+          // TODO - raise error to client here
+        }
       }
       return false;
     },

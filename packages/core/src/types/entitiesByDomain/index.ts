@@ -12,7 +12,6 @@ import {
   LawnMowerEntity,
   LightEntity,
   LockEntity,
-  MediaPlayerEntity,
   RemoteEntity,
   SceneEntity,
   ScriptEntity,
@@ -25,6 +24,7 @@ import {
 } from "@core";
 // custom overrides for the VacuumEntity
 import { VacuumEntity } from "../entities/vacuum";
+import { MediaPlayerEntity } from "../entities/mediaPlayer";
 
 export interface DefinedPropertiesByDomain {
   ["alarm_control_panel"]: AlarmControlPanelEntity;

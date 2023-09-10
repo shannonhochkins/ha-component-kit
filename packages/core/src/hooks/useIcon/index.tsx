@@ -131,7 +131,7 @@ export function useIconByDomain<
   return (
     <IconElement
       style={{
-        fontSize: "24px",
+        fontSize: iconProps?.fontSize ?? "24px",
       }}
       icon={iconName}
       {...iconProps}
@@ -148,7 +148,7 @@ export function useIcon(
     return (
       <IconElement
         style={{
-          fontSize: "24px",
+          fontSize: iconProps?.fontSize ?? "24px",
         }}
         icon={icon || "octicon:info-24"}
         {...iconProps}
@@ -174,7 +174,7 @@ export function useIconByEntity<E extends EntityName>(
     return (
       <IconElement
         style={{
-          fontSize: "24px",
+          fontSize: iconProps?.fontSize ?? "24px",
         }}
         icon={icon}
         {...iconProps}

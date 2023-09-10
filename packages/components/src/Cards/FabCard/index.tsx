@@ -106,16 +106,16 @@ function _FabCard<E extends EntityName>({
   const domain = _entity ? computeDomain(_entity) : null;
   const icon = typeof _icon === "string" ? _icon : null;
   const domainIcon = useIconByDomain(domain === null ? "unknown" : domain, {
-    fontSize: size / 2,
+    fontSize: `${size / 1.7}px`,
     color: iconColor || "currentcolor",
   });
   const isUnavailable = isUnavailableState(entity?.state);
   const entityIcon = useIconByEntity(_entity || "unknown", {
-    fontSize: size / 2,
+    fontSize: `${size / 1.7}px`,
     color: iconColor || "currentcolor",
   });
   const iconElement = useIcon(icon, {
-    fontSize: size / 2,
+    fontSize: `${size / 1.7}px`,
     color: iconColor || "currentcolor",
   });
   const longPressEvent = useLongPress((e) => {
@@ -137,7 +137,7 @@ function _FabCard<E extends EntityName>({
       const caller = entity.api[service];
       caller(serviceData);
     }
-    if (typeof onClick === "function" && entity !== null) {
+    if (typeof onClick === "function") {
       // @ts-expect-error - nothing wrong with the types here, service will be accurate, inspect later
       onClick(entity);
     }

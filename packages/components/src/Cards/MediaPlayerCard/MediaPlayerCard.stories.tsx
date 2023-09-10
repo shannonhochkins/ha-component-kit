@@ -6,12 +6,32 @@ function Template(
   args?: Partial<MediaPlayerCardProps>,
 ) {
   return (
-    <HassConnect hassUrl={'http://homeassistant.local:8123'} options={{
-      throttle: 0
-    }}>
+    <HassConnect hassUrl={'http://homeassistant.local:8123'}>
       <ThemeProvider />
       <MediaPlayerCard
-        entity="media_player.nesthubfd90"
+        entity="media_player.dark_google_speaker"
+        group={['media_player.test_players']}
+        {...args}
+      />
+      <MediaPlayerCard
+        entity="media_player.dark_google_speaker"
+        volumeLayout={'slider'}
+        showThumbnail
+        group={['media_player.test_players']}
+        {...args}
+      />
+      <MediaPlayerCard
+        layout="slim"
+        volumeLayout={'slider'}
+        entity="media_player.dark_google_speaker"
+        group={['media_player.test_players']}
+        {...args}
+      />
+      <MediaPlayerCard
+        layout="slim"
+        showThumbnail
+        entity="media_player.dark_google_speaker"
+        group={['media_player.test_players']}
         {...args}
       />
     </HassConnect>
