@@ -87,7 +87,6 @@ export function useIconByDomain<
       case "climate":
         return "mdi:home-climate-outline";
       case "mediaPlayer":
-      case "ffmpeg":
       case "cast":
         return "solar:tv-broken";
       case "lock":
@@ -102,7 +101,6 @@ export function useIconByDomain<
         return "mdi:air-humidifier";
       // un-categorized
       case "profiler":
-      case "wakeOnLan":
       case "mqtt":
       case "deviceTracker":
         return "octicon:info-24";
@@ -117,6 +115,14 @@ export function useIconByDomain<
       case "binarySensor":
       case "stt":
         return "mdi:radar";
+      case "waterHeater":
+        return "mdi:water-boiler";
+      case "lawnMower":
+        return "mdi:robot-mower";
+      case "calendar":
+        return "mdi:calendar";
+      case "ring":
+        return "mdi:doorbell-video";
 
       // Add more cases for other domains and their respective icons if needed
 

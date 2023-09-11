@@ -1874,38 +1874,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  deconz: {
-    // Configures attributes of either a device endpoint in deCONZ or the deCONZ service itself.
-    configure: ServiceFunction<
-      T,
-      {
-        // Represents a specific device endpoint in deCONZ.
-        entity?: string;
-        // String representing a full path to deCONZ endpoint (when entity is not specified) or a subpath of the device path for the entity (when entity is specified). @example '/lights/1/state' or '/state'
-        field?: string;
-        // JSON object with what data you want to alter. @example {'on': true}
-        data: object;
-        // Unique string for each deCONZ hardware. It can be found as part of the integration name. Useful if you run multiple deCONZ integrations. @example 00212EFFFF012345
-        bridgeid?: string;
-      }
-    >;
-    // Refreshes available devices from deCONZ.
-    deviceRefresh: ServiceFunction<
-      T,
-      {
-        // Unique string for each deCONZ hardware. It can be found as part of the integration name. Useful if you run multiple deCONZ integrations. @example 00212EFFFF012345
-        bridgeid?: string;
-      }
-    >;
-    // Cleans up device and entity registry entries orphaned by deCONZ.
-    removeOrphanedEntries: ServiceFunction<
-      T,
-      {
-        // Unique string for each deCONZ hardware. It can be found as part of the integration name. Useful if you run multiple deCONZ integrations. @example 00212EFFFF012345
-        bridgeid?: string;
-      }
-    >;
-  };
   cast: {
     // Shows a dashboard view on a Chromecast device.
     showLovelaceView: ServiceFunction<
@@ -1923,80 +1891,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   template: {
     // Reloads template entities from the YAML-configuration.
     reload: ServiceFunction<T, object>;
-  };
-  samsungtvSmart: {
-    // Send to samsung TV the command to change picture mode.
-    selectPictureMode: ServiceFunction<
-      T,
-      {
-        // Name of the target entity @example media_player.tv
-        entity_id: string;
-        // Name of the picture mode to switch to. Possible options can be found in the picture_mode_list state attribute. @example Standard
-        picture_mode: string;
-      }
-    >;
-    // Send to samsung TV the command to set art mode.
-    setArtMode: ServiceFunction<
-      T,
-      {
-        // Name of the target entity @example media_player.tv
-        entity_id: string;
-      }
-    >;
-  };
-  tplink: {
-    // Sets a random effect.
-    randomEffect: ServiceFunction<
-      T,
-      {
-        // Initial HSV sequence. @example 199,99,96
-        init_states: object;
-        // List of HSV sequences (Max 16). @example - [199, 89, 50] - [160, 50, 50] - [180, 100, 50]
-        backgrounds?: object;
-        // List of segments (0 for all). @example 0, 2, 4, 6, 8
-        segments?: object;
-        // Initial brightness. @example 90
-        brightness?: number;
-        // Duration.
-        duration?: number;
-        // Transition. @example 2000
-        transition?: number;
-        // Fade off. @example 2000
-        fadeoff?: number;
-        // Range of hue. @example 340, 360
-        hue_range?: object;
-        // Range of saturation. @example 40, 95
-        saturation_range?: object;
-        // Range of brightness. @example 90, 100
-        brightness_range?: object;
-        // Range of transition. @example 2000, 6000
-        transition_range?: object;
-        // Random seed. @example 80
-        random_seed?: number;
-      }
-    >;
-    // Sets a sequence effect.
-    sequenceEffect: ServiceFunction<
-      T,
-      {
-        // List of HSV sequences (Max 16). @example - [340, 20, 50] - [20, 50, 50] - [0, 100, 50]
-        sequence: object;
-        // List of Segments (0 for all). @example 0, 2, 4, 6, 8
-        segments?: object;
-        // Initial brightness. @example 80
-        brightness?: number;
-        // Duration.
-        duration?: number;
-        // Repetitions (0 for continuous).
-        repeat_times?: number;
-        // Transition. @example 2000
-        transition?: number;
-        // Speed of spread. @example 1
-        spread?: number;
-        // Direction. @example 1
-        direction?: number;
-      }
-    >;
   };
   ring: {
     // Updates the data we have for all your ring devices.
