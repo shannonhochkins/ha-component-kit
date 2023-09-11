@@ -63,7 +63,7 @@
     "dev": "vite",
     "type-check": "tsc --noEmit",
     "prebuild": "rm -rf ./dist && npm run lint && npm run prettier",
-    "build": "npm run sync-local-types && npm run build:sync-ha-types && npm run build:core && npm run type-check && npm run build:sync-script-cli",
+    "build": "npm run build:sync-script-cli && npm run sync-local-types && npm run build:sync-ha-types && npm run build:core && npm run type-check",
     "build:core": "NODE_ENV=production vite build",
     "build:sync-script": "NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build",
     "build:sync-script-cli": "tsup",

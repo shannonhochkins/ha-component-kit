@@ -12,6 +12,7 @@ export default defineConfig(configEnv => {
     root: path.resolve(__dirname, './'),
     build: {
       sourcemap: true,
+      emptyOutDir: false,
       lib: {
         entry: path.resolve(__dirname, 'src/index.ts'),
         name: 'hakit-core',
