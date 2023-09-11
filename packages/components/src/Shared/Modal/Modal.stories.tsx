@@ -9,7 +9,7 @@ import {
   Column,
   Row,
 } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
   return (

@@ -11,7 +11,10 @@ export interface TypeSyncOptions {
   token: string;
   outDir?: string;
   filename?: string;
-  serviceWhitelist?: string[];
+  /** this is used internally to generate the default supported services, you will most definitely need to leave this as true */
+  custom?: boolean;
+  domainWhitelist?: string[];
+  domainBlacklist?: string[];
   prettier?: {
     options: Options;
     disable: boolean;
@@ -23,7 +26,9 @@ export async function typeSync({
   token,
   outDir: _outDir,
   filename = DEFAULT_FILENAME,
-  serviceWhitelist = [],
+  domainWhitelist = [],
+  domainBlacklist = [],
+  custom = true,
   prettier,
 }: TypeSyncOptions) {
   if (!url || !token) {
@@ -32,9 +37,10 @@ export async function typeSync({
   const warning = `
   // this is an auto generated file, do not change this manually
   `;
+  
   const { services, states } = await connect(url, token);
-  const serviceInterfaces = await generateServiceTypes(services, typeof serviceWhitelist === 'string' ? [serviceWhitelist] : serviceWhitelist.map(x => `${x}`));
-  const output = `
+  const serviceInterfaces = await generateServiceTypes(services, typeof domainWhitelist === 'string' ? [domainWhitelist] : domainWhitelist.map(x => `${x}`), domainBlacklist);
+  const output = custom ? `
     ${warning}
     import { ServiceFunction, ServiceFunctionTypes } from "@hakit/core";
     declare module '@hakit/core' {
@@ -44,7 +50,14 @@ export async function typeSync({
       export interface CustomEntityNameContainer {
         names: ${generateEntityType(states)};
       }
-    }`;
+    }
+  ` : `
+    ${warning}
+    import type { ServiceFunctionTypes, ServiceFunction } from "./";
+    export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
+      ${serviceInterfaces}
+    }
+  `;
   const outDir = _outDir || process.cwd();
 
   const formatted = prettier?.disable ? output: await format(output, {

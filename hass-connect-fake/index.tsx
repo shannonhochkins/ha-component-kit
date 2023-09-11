@@ -19,11 +19,11 @@ import type {
   Target,
   Route,
   HassContextProps,
-  HvacMode,
-  HvacAction
 } from "@hakit/core";
-import { HassContext, useHash, hs2rgb } from '@hakit/core';
-import { entities as ENTITIES } from '@mocks/mockEntities';
+import { isArray } from "lodash";
+import { HassContext, useHash } from '@hakit/core';
+import { entities as ENTITIES } from './mocks/mockEntities';
+import fakeApi from './mocks/fake-call-service';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
@@ -36,18 +36,6 @@ interface HassProviderProps {
   children: (ready: boolean) => React.ReactNode;
   hassUrl: string;
   throttle?: number;
-}
-
-const MODE_TO_HVAC_ACTION: {
-  [key in HvacMode]: HvacAction
-} = {
-  'off': 'off',
-  'heat': 'heating',
-  'cool': 'cooling',
-  'heat_cool': 'preheating',
-  'auto': 'idle',
-  'dry': 'drying',
-  'fan_only': 'fan',
 }
 
 const fakeConfig: HassConfig = {
@@ -131,38 +119,26 @@ function HassProvider({
       target,
       serviceData
     }: CallServiceArgs<T, M>) => {
-      if (typeof target !== 'string') return;
+      console.log('domain', domain, target)
+      if (typeof target !== 'string' && !isArray(target)) return;
       const now = new Date().toISOString();
+      
+      if (domain in fakeApi) {
+        // @ts-expect-error - unable to retrieve correct type at this level
+        const api = fakeApi[domain];
+        const skip = api({
+          setEntities,
+          now,
+          target,
+          service,
+          serviceData,
+        });
+        if (!skip) return;
+      }
+      if (typeof target !== 'string') return;
       const dates = {
         last_changed: now,
         last_updated: now,
-      }
-      if (domain === 'scene') {
-        return setEntities(entities => ({
-          ...entities,
-          [target]: {
-            ...entities[target],
-            ...dates,
-            state: now
-          }
-        }));
-      }
-      if (domain === 'climate') {
-        return setEntities(entities => ({
-          ...entities,
-          [target]: {
-            ...entities[target],
-            attributes: {
-              ...entities[target].attributes,
-              ...serviceData || {},
-              // @ts-ignore - purposely casting here so i don't have to setup manual types for fake data
-              hvac_action: MODE_TO_HVAC_ACTION[serviceData?.hvac_mode] || entities[target].attributes.hvac_action
-            },
-            ...dates,
-            // @ts-ignore - purposely casting here so i don't have to setup manual types for fake data
-            state: serviceData?.hvac_mode || entities[target].state
-          }
-        }));
       }
       switch(service) {
         case 'turn_on':
@@ -171,32 +147,6 @@ function HassProvider({
             const attributes = {
               ...entities[target].attributes,
               ...serviceData || {},
-            }
-            if (domain === 'light') {
-              // @ts-ignore
-              const isSettingTemperature = typeof serviceData?.kelvin === 'number';
-              // @ts-ignore
-              const isSettingColor = typeof serviceData?.hs_color === 'object';
-              if (isSettingTemperature) {
-                // @ts-ignore
-                delete attributes.hs_color;
-                // @ts-ignore
-                attributes.color_mode = 'color_temp';
-                // @ts-ignore
-                attributes.color_temp_kelvin = serviceData?.kelvin;
-              }
-              if (isSettingColor) {
-                // @ts-ignore
-                attributes.color_mode = 'hs';
-                // @ts-ignore
-                attributes.rgb_color = hs2rgb([serviceData?.hs_color[0], serviceData?.hs_color[1] / 100]);
-              }
-              // @ts-ignore
-              const isSettingBrightness = serviceData?.brightness_pct !== undefined;
-              if (isSettingBrightness) {
-                // @ts-ignore
-                attributes.brightness = Math.round(serviceData.brightness_pct / 100 * 255);
-              }
             }
             return {
               ...entities,

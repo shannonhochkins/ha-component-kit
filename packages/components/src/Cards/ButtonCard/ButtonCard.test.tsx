@@ -4,7 +4,7 @@ import {
   onReady,
   mocked,
   connection,
-} from "@mocks/mockConnection";
+} from "@hass-connect-fake/mocks/mockConnection";
 import { ButtonCard } from "@components";
 import { computeDomain } from "@utils/computeDomain";
 import { render, waitFor, fireEvent } from "@testing-library/react";

@@ -165,6 +165,7 @@ function _ClimateCard({
                 iconColor={
                   currentMode === mode ? activeColors[mode] : undefined
                 }
+                preventPropagation
                 key={mode}
                 title={mode}
                 active={currentMode === mode}

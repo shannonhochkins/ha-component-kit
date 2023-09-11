@@ -30,6 +30,7 @@ const StyledFabCard = styled(motion.button)<{
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  flex-shrink: 0;
   text-align: center;
   border-radius: 50%;
   background-color: var(--ha-secondary-background);
@@ -40,7 +41,10 @@ const StyledFabCard = styled(motion.button)<{
   align-items: center;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-color, box-shadow;
+  transition-property: background-color, color, box-shadow;
+  svg {
+    transition: color var(--ha-transition-duration) var(--ha-easing);
+  }
   &:not(:disabled):hover {
     background-color: var(--ha-secondary-background-hover);
   }
@@ -85,6 +89,8 @@ export interface FabCardProps<E extends EntityName> extends Extendable {
   children?: React.ReactNode;
   /** disable the fab card, onClick will not fire */
   disabled?: boolean;
+  /** passed to the ripple component to stop double scaling effect */
+  preventPropagation?: boolean;
 }
 
 function _FabCard<E extends EntityName>({
@@ -99,6 +105,8 @@ function _FabCard<E extends EntityName>({
   active: _active,
   children,
   disabled,
+  className,
+  preventPropagation,
   ...rest
 }: FabCardProps<E>): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
@@ -151,6 +159,7 @@ function _FabCard<E extends EntityName>({
   return (
     <>
       <Ripples
+        preventPropagation={preventPropagation}
         disabled={disabled || isUnavailable}
         borderRadius="50%"
         whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
@@ -164,6 +173,7 @@ function _FabCard<E extends EntityName>({
           size={size}
           {...longPressEvent}
           {...rest}
+          className={`${active ? "active " : ""}${className}`}
           onClick={useApiHandler}
         >
           {noIcon !== true && (iconElement || entityIcon || domainIcon)}

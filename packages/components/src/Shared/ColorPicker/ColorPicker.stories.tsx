@@ -2,7 +2,7 @@ import { useRef, useCallback } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, Column, ColorPicker, ButtonCard } from "@components";
 import type { ColorPickerProps, ColorPickerOutputColors } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<ColorPickerProps>) {
   const valueRef = useRef<HTMLDivElement>(null);

@@ -2,7 +2,7 @@ import { useRef } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, ControlSlider, Row, Column } from "@components";
 import type { ControlSliderProps } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 
 interface SliderProps {
   value: number;

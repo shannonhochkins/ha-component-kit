@@ -7,4 +7,5 @@ export const REMAPPED_TYPES: Record<string, string> = {
   rgb_color: `[number, number, number]`,
   rgbw_color: `[number, number, number, number]`,
   rgbww_color: `[number, number, number, number, number]`,
+  group_members: `string[]`,
 };

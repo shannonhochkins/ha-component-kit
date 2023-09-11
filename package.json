@@ -38,7 +38,8 @@
     "release:core": "npm run release --workspace=@hakit/core",
     "release:components": "npm run release --workspace=@hakit/components",
     "release:create": "npm run release --workspace=create-hakit",
-    "test:dashboard": " cd test-dashboard && npm start"
+    "test:dashboard": " cd test-dashboard && npm start",
+    "sync-local-types": "npm run sync-local-types --workspace=@hakit/core"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.22.9",
@@ -69,6 +70,7 @@
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "@vitejs/plugin-react": "^4.0.0",
+    "dotenv": "^16.3.1",
     "eslint": "^8.38.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",

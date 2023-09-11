@@ -1,5 +1,17 @@
-# @hakit/components
+# @hakit/core
+## 1.0.22
+- NEW - MediaPlayer now has custom types available
+- NEW - supported-services.ts now updates on every release to ensure the latest services/domains are available for users that don't use the type-sync functionality.
+- NEW - @hakit/core/sync now updated to handle blacklist/whitelist for domains
 
+
+# @hakit/components
+## 1.0.26
+- NEW - MediaPlayerCard - an awesome new addition! This card is similar to the mini-media-player available in HACS, it provides most of the core functionality you'd expect from a media player.
+- BUGFIX - fixed some styles with the FabCard where propagation was causing weird distortion effects
+
+
+# @hakit/components
 ## 1.0.25
 
 ### Patch Changes

@@ -55,7 +55,7 @@ export interface ThemeParams {
     };
     mediaCard: {
       width: string;
-    }
+    };
     sidebarCard: {
       width: {
         collapsed: string;
@@ -139,8 +139,8 @@ export const theme: ThemeParams = {
       },
     },
     mediaCard: {
-      width: '18.75rem'
-    }
+      width: "18.75rem",
+    },
   },
   modal: {
     width: "40rem",

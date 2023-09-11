@@ -30,9 +30,10 @@ function sanitizeString(str: string | boolean | number): string {
   return `${str}`.replace(/"/g, "'").replace(/[\n\r]+/g, ' ');
 }
 
-export const generateServiceTypes = (input: HassServices, whitelist: string[] = []) => {
+export const generateServiceTypes = (input: HassServices, whitelist: string[] = [], blacklist: string[] = []) => {
   const interfaces = Object.entries(input).map(([domain, services]) => {
     const camelDomain = _.camelCase(domain);
+    if (blacklist.length > 0 && (blacklist.includes(camelDomain) || blacklist.includes(domain))) return '';
     if (whitelist.length > 0 && (!whitelist.includes(camelDomain) || !whitelist.includes(domain))) return '';
     const domainServices = Object.entries(services).map(([service, { fields, description }]) => {
       const camelService = _.camelCase(service);

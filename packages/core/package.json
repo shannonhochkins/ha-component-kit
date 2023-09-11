@@ -63,7 +63,7 @@
     "dev": "vite",
     "type-check": "tsc --noEmit",
     "prebuild": "rm -rf ./dist && npm run lint && npm run prettier",
-    "build": "npm run build:sync-ha-types && npm run build:core && npm run type-check && npm run build:sync-script && npm run build:sync-script-cli",
+    "build": "npm run build:sync-ha-types && npm run build:core && npm run type-check && npm run build:sync-script && npm run build:sync-script-cli && npm run sync-local-types",
     "build:core": "NODE_ENV=production vite build",
     "build:sync-script": "NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build",
     "build:sync-script-cli": "tsup",
@@ -75,7 +75,8 @@
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "test": "NODE_ENV=test jest --rootDir=src",
     "prerelease": "npm run build",
-    "release": "npm publish --access public"
+    "release": "npm publish --access public",
+    "sync-local-types": "node ./sync-local-types.cjs"
   },
   "tsup": {
     "entry": [

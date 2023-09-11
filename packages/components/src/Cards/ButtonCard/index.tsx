@@ -189,6 +189,7 @@ function _ButtonCard<E extends EntityName>({
   title: _title,
   defaultLayout,
   disabled,
+  className,
   ...rest
 }: ButtonCardProps<E>): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
@@ -257,6 +258,7 @@ function _ButtonCard<E extends EntityName>({
           layoutId={
             typeof _entity === "string" ? `${_entity}-button-card` : undefined
           }
+          className={`${active ? "active " : ""}${className}`}
           {...rest}
           onClick={useApiHandler}
         >

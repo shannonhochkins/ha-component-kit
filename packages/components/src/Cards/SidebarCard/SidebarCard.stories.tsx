@@ -13,7 +13,7 @@ import {
 import { Source } from "@storybook/blocks";
 import { useEntity } from "@hakit/core";
 import type { SidebarCardProps } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 import office from "../RoomCard/office.jpg";
 import livingRoom from "../RoomCard/living-room.jpg";
 
