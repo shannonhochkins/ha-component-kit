@@ -89,6 +89,19 @@ export function mediaPlayerUpdates({
         }
       });
     }
+    case 'mediaSeek':
+      return setEntities(entities => ({
+        ...entities,
+        [target]: {
+          ...entities[target],
+          ...dates,
+          attributes: {
+            ...entities[target].attributes,
+            media_position: serviceData?.seek_position,
+            media_position_updated_at: now,
+          }
+        }
+      }));
     case 'volumeSet':
     case 'volumeMute':
       return setEntities(entities => ({
@@ -98,7 +111,7 @@ export function mediaPlayerUpdates({
           ...dates,
           attributes: {
             ...entities[target].attributes,
-            ...serviceData ?? {},
+            ...serviceData ?? {},            
           }
         }
       }));
