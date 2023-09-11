@@ -1,5 +1,5 @@
 // important that these are imported first or the mock won't work.
-import { TestWrapper, onReady } from "@mocks/mockConnection";
+import { TestWrapper, onReady } from "@hass-connect-fake/mocks/mockConnection";
 import { PictureCard } from "@components";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 describe("<PictureCard />", () => {

@@ -10,7 +10,7 @@ import type {
   ColorTempPickerProps,
   ColorPickerOutputColors,
 } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<ColorTempPickerProps>) {
   const valueRef = useRef<HTMLDivElement>(null);

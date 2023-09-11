@@ -2,7 +2,7 @@ import { Source } from "@storybook/blocks";
 import type { Meta, StoryObj, Args } from "@storybook/react";
 import { ThemeProvider, Group, ButtonCard } from "@components";
 import type { ButtonCardProps } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 // @ts-expect-error - Don't have types for jsx-to-string
 import jsxToString from "jsx-to-string";
 

@@ -12,7 +12,7 @@ const defaults = {
   last_changed: now.toISOString(),
   last_updated: now.toISOString(),
   context: {
-    id: "",
+    id: "1",
     user_id: null,
     parent_id: null,
   },

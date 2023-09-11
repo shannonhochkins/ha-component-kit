@@ -4,7 +4,7 @@ import {
   onReady,
   mocked,
   connection,
-} from "@mocks/mockConnection";
+} from "@hass-connect-fake/mocks/mockConnection";
 import { TriggerCard } from "@components";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 describe("<TriggerCard />", () => {

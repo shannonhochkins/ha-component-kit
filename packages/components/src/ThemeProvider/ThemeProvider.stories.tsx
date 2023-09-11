@@ -7,7 +7,7 @@ import {
   Source,
 } from "@storybook/blocks";
 import { ThemeProvider, theme } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 import { merge } from "lodash";
 import { convertToCssVars } from "./helpers";
 import type { ThemeProviderProps } from "@components";

@@ -10,6 +10,7 @@ export default defineConfig(configEnv => {
   return {
     root: path.resolve(__dirname, '../../'),
     build: {
+      emptyOutDir: false,
       outDir: path.resolve(__dirname, '../../dist/sync/node'),
       rollupOptions: {
         external:[

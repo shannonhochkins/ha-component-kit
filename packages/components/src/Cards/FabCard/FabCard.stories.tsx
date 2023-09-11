@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, FabCard, FabCardProps } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 
 function Template(
   args?: Partial<FabCardProps<"light.fake_light_1" | "light.unavailable">>,

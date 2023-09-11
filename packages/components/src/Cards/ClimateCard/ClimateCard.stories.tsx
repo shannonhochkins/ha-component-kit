@@ -1,6 +1,6 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
 import { ThemeProvider, ClimateCard } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
   return (

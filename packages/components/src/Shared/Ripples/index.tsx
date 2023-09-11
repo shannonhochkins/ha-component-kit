@@ -26,6 +26,8 @@ export interface RipplesProps extends Extendable {
   borderRadius?: CSSProperties["borderRadius"];
   /** disable the ripple */
   disabled?: boolean;
+  /** prevent propagation on ripples */
+  preventPropagation?: boolean;
 }
 
 const boxStyle: CSSProperties = {
@@ -63,6 +65,7 @@ const _Ripples = memo(
     onClick,
     children,
     disabled,
+    preventPropagation,
     ...rest
   }: RipplesProps) => {
     const [rippleStyle, setRippleStyle] = useState<CSSProperties>({});
@@ -119,9 +122,19 @@ const _Ripples = memo(
     );
 
     return (
-      <ParentRipple borderRadius={borderRadius}>
+      <ParentRipple
+        borderRadius={borderRadius}
+        style={{
+          flexShrink: 0,
+        }}
+      >
         <motion.div
           layout
+          onPointerDownCapture={(e) => {
+            if (preventPropagation) {
+              e.stopPropagation();
+            }
+          }}
           {...rest}
           style={{
             ...boxStyle,

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, PictureCard } from "@components";
 import type { PictureCardProps } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 import office from "./office.jpg";
 
 function Template(args: PictureCardProps) {

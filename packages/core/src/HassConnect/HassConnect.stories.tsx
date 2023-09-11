@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Title, Description, Primary, ArgTypes } from "@storybook/blocks";
 import { HassConnect } from "@core";
 import type { HassConnectProps } from "@core";
-import { HassConnect as HassConnectFake } from "@stories/HassConnectFake";
+import { HassConnect as HassConnectFake } from "@hass-connect-fake";
 
 function Render(args: Partial<HassConnectProps>) {
   return (
