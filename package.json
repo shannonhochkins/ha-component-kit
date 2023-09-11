@@ -26,7 +26,7 @@
     "test": "npm run test --workspaces --if-present",
     "test:components": "npm run test --workspace=@hakit/components",
     "test:core": "npm run test --workspace=@hakit/core",
-    "build": "npm run build:core && npm run build:components && npm run build:create && npm run build:storybook",
+    "build": "npm run build:core && npm run build:components && npm run build:create",
     "build:core": "npm run build --workspace=@hakit/core",
     "build:create": "npm run build --workspace=create-hakit",
     "build:components": "npm run build --workspace=@hakit/components",
