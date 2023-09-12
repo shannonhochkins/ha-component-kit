@@ -162,7 +162,10 @@ function _EntitiesCard({
                 }
               : entity;
           return (
-            <ErrorBoundary key={`${entity.id}-${index}`} {...fallback({ prefix: "EntityRow" })}>
+            <ErrorBoundary
+              key={`${entity}-${index}`}
+              {...fallback({ prefix: "EntityRow" })}
+            >
               <EntityRow includeLastUpdated={includeLastUpdated} {...props} />
             </ErrorBoundary>
           );

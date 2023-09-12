@@ -699,7 +699,7 @@ function _MediaPlayerCard({
                       {buffering ? " - buffering" : ""}
                     </Title>
                   )}
-                  {(isOff || layout ==='slim') && (
+                  {(isOff || layout === "slim") && (
                     <AlternateControls
                       allEntityIds={allEntityIds}
                       entity={_entity}

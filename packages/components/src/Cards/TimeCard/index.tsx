@@ -174,7 +174,11 @@ function _TimeCard({
   }
   return (
     <Card {...rest}>
-      <Column gap="0.5rem" alignItems={center ? "center" : "flex-start"} fullHeight>
+      <Column
+        gap="0.5rem"
+        alignItems={center ? "center" : "flex-start"}
+        fullHeight
+      >
         <Row gap="0.5rem" alignItems="center" wrap="nowrap">
           {includeIcon && (
             <StyledIcon
