@@ -688,7 +688,9 @@ function _MediaPlayerCard({
                 style={{
                   width:
                     hideThumbnail === false
-                      ? `calc(100% - (${thumbnailSize} + 2rem))`
+                      ? `calc(100% - (${thumbnailSize} + ${
+                          layout === "slim" ? "2rem" : "0.5rem"
+                        }))`
                       : "100%",
                 }}
               >
