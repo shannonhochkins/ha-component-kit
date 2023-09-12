@@ -300,7 +300,7 @@ function AlternateControls({
         api.join(entity.entity_id, {
           // @ts-expect-error - types are wrong....
           entity_id: entity.entity_id,
-          group_members: groupedEntities.map((x) => x.entity_id),
+          group_members: allEntityIds.filter(id => id !== entity.entity_id),
         });
       } else {
         api.unjoin(entity.entity_id, {
@@ -308,7 +308,7 @@ function AlternateControls({
         });
       }
     },
-    [api, entity.entity_id],
+    [api, allEntityIds, entity.entity_id],
   );
   return (
     <Row gap="0.5rem" wrap="nowrap">
