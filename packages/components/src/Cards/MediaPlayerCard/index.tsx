@@ -687,7 +687,7 @@ function _MediaPlayerCard({
                 alignItems="flex-start"
                 style={{
                   width:
-                    hideThumbnail === false
+                    hideThumbnail === false && artworkUrl !== null
                       ? `calc(100% - (${thumbnailSize} + ${
                           layout === "slim" ? "2rem" : "0.5rem"
                         }))`
