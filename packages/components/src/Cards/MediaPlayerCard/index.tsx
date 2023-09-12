@@ -688,7 +688,7 @@ function _MediaPlayerCard({
                 style={{
                   width:
                     hideThumbnail === false
-                      ? `calc(100% - ${thumbnailSize})`
+                      ? `calc(100% - (${thumbnailSize} + 2rem))`
                       : "100%",
                 }}
               >
@@ -699,7 +699,7 @@ function _MediaPlayerCard({
                       {buffering ? " - buffering" : ""}
                     </Title>
                   )}
-                  {isOff && (
+                  {(isOff || layout ==='slim') && (
                     <AlternateControls
                       allEntityIds={allEntityIds}
                       entity={_entity}

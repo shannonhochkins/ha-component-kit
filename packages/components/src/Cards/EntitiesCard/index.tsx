@@ -153,8 +153,8 @@ function _EntitiesCard({
 }: EntitiesCardProps): JSX.Element {
   return (
     <StyledEntitiesCard {...rest}>
-      <Column gap="1rem" fullWidth>
-        {entities?.map((entity) => {
+      <Column gap="1rem" fullWidth fullHeight>
+        {entities?.map((entity, index) => {
           const props: EntityItem =
             typeof entity === "string"
               ? {
@@ -162,7 +162,7 @@ function _EntitiesCard({
                 }
               : entity;
           return (
-            <ErrorBoundary {...fallback({ prefix: "EntityRow" })}>
+            <ErrorBoundary key={`${entity.id}-${index}`} {...fallback({ prefix: "EntityRow" })}>
               <EntityRow includeLastUpdated={includeLastUpdated} {...props} />
             </ErrorBoundary>
           );
