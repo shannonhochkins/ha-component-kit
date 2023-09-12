@@ -2,30 +2,6 @@
 
 import type { ServiceFunctionTypes, ServiceFunction } from "./";
 export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
-  persistentNotification: {
-    // Shows a notification on the **Notifications** panel.
-    create: ServiceFunction<
-      T,
-      {
-        // Message body of the notification. @example Please check your configuration.yaml.
-        message: string;
-        // Optional title of the notification. @example Test notification
-        title?: string;
-        // ID of the notification. This new notification will overwrite an existing notification with the same ID. @example 1234
-        notification_id?: string;
-      }
-    >;
-    // Removes a notification from the **Notifications** panel.
-    dismiss: ServiceFunction<
-      T,
-      {
-        // ID of the notification to be removed. @example 1234
-        notification_id: string;
-      }
-    >;
-    // Removes all notifications from the **Notifications** panel.
-    dismissAll: ServiceFunction<T, object>;
-  };
   homeassistant: {
     // Saves the persistent states immediately. Maintains the normal periodic saving interval.
     savePersistentStates: ServiceFunction<T, object>;
@@ -67,6 +43,30 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     >;
     //
     reloadAll: ServiceFunction<T, object>;
+  };
+  persistentNotification: {
+    // Shows a notification on the **Notifications** panel.
+    create: ServiceFunction<
+      T,
+      {
+        // Message body of the notification. @example Please check your configuration.yaml.
+        message: string;
+        // Optional title of the notification. @example Test notification
+        title?: string;
+        // ID of the notification. This new notification will overwrite an existing notification with the same ID. @example 1234
+        notification_id?: string;
+      }
+    >;
+    // Removes a notification from the **Notifications** panel.
+    dismiss: ServiceFunction<
+      T,
+      {
+        // ID of the notification to be removed. @example 1234
+        notification_id: string;
+      }
+    >;
+    // Removes all notifications from the **Notifications** panel.
+    dismissAll: ServiceFunction<T, object>;
   };
   systemLog: {
     // Clears all log entries.
@@ -324,14 +324,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Removes the skipped version marker from an update.
     clearSkipped: ServiceFunction<T, object>;
   };
-  restCommand: {
-    //
-    assistantRelay: ServiceFunction<T, object>;
-  };
-  commandLine: {
-    // Reloads command line configuration from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
-  };
   conversation: {
     // Launches a conversation from a transcribed text.
     process: ServiceFunction<
@@ -347,6 +339,14 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     >;
     //
     reload: ServiceFunction<T, object>;
+  };
+  commandLine: {
+    // Reloads command line configuration from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
+  };
+  restCommand: {
+    //
+    assistantRelay: ServiceFunction<T, object>;
   };
   light: {
     // Turn on one or more lights and adjust properties of the light, even when they are turned on already.
@@ -800,14 +800,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Toggles a cover tilt open/closed.
     toggleCoverTilt: ServiceFunction<T, object>;
   };
-  switch: {
-    // Turns a switch off.
-    turnOff: ServiceFunction<T, object>;
-    // Turns a switch on.
-    turnOn: ServiceFunction<T, object>;
-    // Toggles a switch on/off.
-    toggle: ServiceFunction<T, object>;
-  };
   group: {
     // Reloads group configuration, entities, and notify services from YAML-configuration.
     reload: ServiceFunction<T, object>;
@@ -856,10 +848,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Decrements the current value by 1 step.
     decrement: ServiceFunction<T, object>;
   };
-  schedule: {
-    // Reloads schedules from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
-  };
   inputDatetime: {
     // Reloads helpers from the YAML-configuration.
     reload: ServiceFunction<T, object>;
@@ -877,6 +865,10 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         timestamp?: number;
       }
     >;
+  };
+  schedule: {
+    // Reloads schedules from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
   };
   inputButton: {
     //
@@ -1030,6 +1022,40 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
+  scene: {
+    // Reloads the scenes from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
+    // Activates a scene with configuration.
+    apply: ServiceFunction<
+      T,
+      {
+        // List of entities and their target state. @example light.kitchen: 'on' light.ceiling:   state: 'on'   brightness: 80
+        entities: object;
+        // Time it takes the devices to transition into the states defined in the scene.
+        transition?: number;
+      }
+    >;
+    // Creates a new scene.
+    create: ServiceFunction<
+      T,
+      {
+        // The entity ID of the new scene. @example all_lights
+        scene_id: string;
+        // List of entities and their target state. If your entities are already in the target state right now, use `snapshot_entities` instead. @example light.tv_back_light: 'on' light.ceiling:   state: 'on'   brightness: 200
+        entities?: object;
+        // List of entities to be included in the snapshot. By taking a snapshot, you record the current state of those entities. If you do not want to use the current state of all your entities for this scene, you can combine the `snapshot_entities` with `entities`. @example - light.ceiling - light.kitchen
+        snapshot_entities?: object;
+      }
+    >;
+    // Activates a scene.
+    turnOn: ServiceFunction<
+      T,
+      {
+        // Time it takes the devices to transition into the states defined in the scene.
+        transition?: number;
+      }
+    >;
+  };
   timer: {
     //
     reload: ServiceFunction<T, object>;
@@ -1070,49 +1096,39 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Toggle a script. Starts it, if isn't running, stops it otherwise.
     toggle: ServiceFunction<T, object>;
   };
-  scene: {
-    // Reloads the scenes from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
-    // Activates a scene with configuration.
-    apply: ServiceFunction<
+  calendar: {
+    // Adds a new calendar event.
+    createEvent: ServiceFunction<
       T,
       {
-        // List of entities and their target state. @example light.kitchen: 'on' light.ceiling:   state: 'on'   brightness: 80
-        entities: object;
-        // Time it takes the devices to transition into the states defined in the scene.
-        transition?: number;
+        // Defines the short summary or subject for the event. @example Department Party
+        summary: string;
+        // A more complete description of the event than the one provided by the summary. @example Meeting to provide technical review for 'Phoenix' design.
+        description?: string;
+        // The date and time the event should start. @example 2022-03-22 20:00:00
+        start_date_time?: object;
+        // The date and time the event should end. @example 2022-03-22 22:00:00
+        end_date_time?: object;
+        // The date the all-day event should start. @example 2022-03-22
+        start_date?: object;
+        // The date the all-day event should end (exclusive). @example 2022-03-23
+        end_date?: object;
+        // Days or weeks that you want to create the event in. @example {'days': 2} or {'weeks': 2}
+        in?: object;
+        // The location of the event. @example Conference Room - F123, Bldg. 002
+        location?: string;
       }
     >;
-    // Creates a new scene.
-    create: ServiceFunction<
+    // Lists events on a calendar within a time range.
+    listEvents: ServiceFunction<
       T,
       {
-        // The entity ID of the new scene. @example all_lights
-        scene_id: string;
-        // List of entities and their target state. If your entities are already in the target state right now, use `snapshot_entities` instead. @example light.tv_back_light: 'on' light.ceiling:   state: 'on'   brightness: 200
-        entities?: object;
-        // List of entities to be included in the snapshot. By taking a snapshot, you record the current state of those entities. If you do not want to use the current state of all your entities for this scene, you can combine the `snapshot_entities` with `entities`. @example - light.ceiling - light.kitchen
-        snapshot_entities?: object;
-      }
-    >;
-    // Activates a scene.
-    turnOn: ServiceFunction<
-      T,
-      {
-        // Time it takes the devices to transition into the states defined in the scene.
-        transition?: number;
-      }
-    >;
-  };
-  inputText: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
-    // Sets the value.
-    setValue: ServiceFunction<
-      T,
-      {
-        // The target value. @example This is an example text
-        value: string;
+        // Returns active events after this time (exclusive). When not set, defaults to now. @example 2022-03-22 20:00:00
+        start_date_time?: object;
+        // Returns active events before this time (exclusive). Cannot be used with 'duration'. @example 2022-03-22 22:00:00
+        end_date_time?: object;
+        // Returns active events from start_date_time until the specified duration.
+        duration?: object;
       }
     >;
   };
@@ -1126,59 +1142,15 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Toggles the helper on/off.
     toggle: ServiceFunction<T, object>;
   };
-  remote: {
-    // Turns the device off.
-    turnOff: ServiceFunction<T, object>;
-    // Sends the power on command.
-    turnOn: ServiceFunction<
+  inputText: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
+    // Sets the value.
+    setValue: ServiceFunction<
       T,
       {
-        // Activity ID or activity name to be started. @example BedroomTV
-        activity?: string;
-      }
-    >;
-    // Toggles a device on/off.
-    toggle: ServiceFunction<T, object>;
-    // Sends a command or a list of commands to a device.
-    sendCommand: ServiceFunction<
-      T,
-      {
-        // Device ID to send command to. @example 32756745
-        device?: string;
-        // A single command or a list of commands to send. @example Play
-        command: object;
-        // The number of times you want to repeat the commands.
-        num_repeats?: number;
-        // The time you want to wait in between repeated commands.
-        delay_secs?: number;
-        // The time you want to have it held before the release is send.
-        hold_secs?: number;
-      }
-    >;
-    // Learns a command or a list of commands from a device.
-    learnCommand: ServiceFunction<
-      T,
-      {
-        // Device ID to learn command from. @example television
-        device?: string;
-        // A single command or a list of commands to learn. @example Turn on
-        command?: object;
-        // The type of command to be learned.
-        command_type?: "ir" | "rf";
-        // If code must be stored as an alternative. This is useful for discrete codes. Discrete codes are used for toggles that only perform one function. For example, a code to only turn a device on. If it is on already, sending the code won't change the state.
-        alternative?: boolean;
-        // Timeout for the command to be learned.
-        timeout?: number;
-      }
-    >;
-    // Deletes a command or a list of commands from the database.
-    deleteCommand: ServiceFunction<
-      T,
-      {
-        // Device from which commands will be deleted. @example television
-        device?: string;
-        // The single command or the list of commands to be deleted. @example Mute
-        command: object;
+        // The target value. @example This is an example text
+        value: string;
       }
     >;
   };
@@ -1235,16 +1207,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     logThreadFrames: ServiceFunction<T, object>;
     // Logs what is scheduled in the event loop.
     logEventLoopScheduled: ServiceFunction<T, object>;
-  };
-  weather: {
-    // Get weather forecast.
-    getForecast: ServiceFunction<
-      T,
-      {
-        // Forecast type: daily, hourly or twice daily.
-        type: "daily" | "hourly" | "twice_daily";
-      }
-    >;
   };
   mqtt: {
     // Publishes a message to an MQTT topic.
@@ -1546,6 +1508,32 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
+  lock: {
+    // Unlocks a lock.
+    unlock: ServiceFunction<
+      T,
+      {
+        // Code used to unlock the lock. @example 1234
+        code?: string;
+      }
+    >;
+    // Locks a lock.
+    lock: ServiceFunction<
+      T,
+      {
+        // Code used to lock the lock. @example 1234
+        code?: string;
+      }
+    >;
+    // Opens a lock.
+    open: ServiceFunction<
+      T,
+      {
+        // Code used to open the lock. @example 1234
+        code?: string;
+      }
+    >;
+  };
   select: {
     // Selects the first option.
     selectFirst: ServiceFunction<T, object>;
@@ -1576,6 +1564,24 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
+  number: {
+    // Sets the value of a number.
+    setValue: ServiceFunction<
+      T,
+      {
+        // The target value to set. @example 42
+        value?: string;
+      }
+    >;
+  };
+  lawnMower: {
+    // Starts the mowing task.
+    startMowing: ServiceFunction<T, object>;
+    // Pauses the mowing task.
+    pause: ServiceFunction<T, object>;
+    // Stops the mowing task and returns to the dock.
+    dock: ServiceFunction<T, object>;
+  };
   siren: {
     // Turns the siren on.
     turnOn: ServiceFunction<
@@ -1593,6 +1599,48 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     turnOff: ServiceFunction<T, object>;
     // Toggles the siren on/off.
     toggle: ServiceFunction<T, object>;
+  };
+  text: {
+    // Sets the value.
+    setValue: ServiceFunction<
+      T,
+      {
+        // Enter your text. @example Hello world!
+        value: string;
+      }
+    >;
+  };
+  waterHeater: {
+    // Turns water heater on.
+    turnOn: ServiceFunction<T, object>;
+    // Turns water heater off.
+    turnOff: ServiceFunction<T, object>;
+    // Turns away mode on/off.
+    setAwayMode: ServiceFunction<
+      T,
+      {
+        // New value of away mode.
+        away_mode: boolean;
+      }
+    >;
+    // Sets the target temperature.
+    setTemperature: ServiceFunction<
+      T,
+      {
+        // New target temperature for the water heater.
+        temperature: number;
+        // New value of the operation mode. For a list of possible modes, refer to the integration documentation. @example eco
+        operation_mode?: string;
+      }
+    >;
+    // Sets the operation mode.
+    setOperationMode: ServiceFunction<
+      T,
+      {
+        // New value of the operation mode. For a list of possible modes, refer to the integration documentation. @example eco
+        operation_mode: string;
+      }
+    >;
   };
   humidifier: {
     // Turns the humidifier on.
@@ -1615,42 +1663,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       {
         // Target humidity.
         humidity: number;
-      }
-    >;
-  };
-  number: {
-    // Sets the value of a number.
-    setValue: ServiceFunction<
-      T,
-      {
-        // The target value to set. @example 42
-        value?: string;
-      }
-    >;
-  };
-  lock: {
-    // Unlocks a lock.
-    unlock: ServiceFunction<
-      T,
-      {
-        // Code used to unlock the lock. @example 1234
-        code?: string;
-      }
-    >;
-    // Locks a lock.
-    lock: ServiceFunction<
-      T,
-      {
-        // Code used to lock the lock. @example 1234
-        code?: string;
-      }
-    >;
-    // Opens a lock.
-    open: ServiceFunction<
-      T,
-      {
-        // Code used to open the lock. @example 1234
-        code?: string;
       }
     >;
   };
@@ -1694,92 +1706,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  waterHeater: {
-    // Turns water heater on.
-    turnOn: ServiceFunction<T, object>;
-    // Turns water heater off.
-    turnOff: ServiceFunction<T, object>;
-    // Turns away mode on/off.
-    setAwayMode: ServiceFunction<
-      T,
-      {
-        // New value of away mode.
-        away_mode: boolean;
-      }
-    >;
-    // Sets the target temperature.
-    setTemperature: ServiceFunction<
-      T,
-      {
-        // New target temperature for the water heater.
-        temperature: number;
-        // New value of the operation mode. For a list of possible modes, refer to the integration documentation. @example eco
-        operation_mode?: string;
-      }
-    >;
-    // Sets the operation mode.
-    setOperationMode: ServiceFunction<
-      T,
-      {
-        // New value of the operation mode. For a list of possible modes, refer to the integration documentation. @example eco
-        operation_mode: string;
-      }
-    >;
-  };
-  text: {
-    // Sets the value.
-    setValue: ServiceFunction<
-      T,
-      {
-        // Enter your text. @example Hello world!
-        value: string;
-      }
-    >;
-  };
-  lawnMower: {
-    // Starts the mowing task.
-    startMowing: ServiceFunction<T, object>;
-    // Pauses the mowing task.
-    pause: ServiceFunction<T, object>;
-    // Stops the mowing task and returns to the dock.
-    dock: ServiceFunction<T, object>;
-  };
-  calendar: {
-    // Adds a new calendar event.
-    createEvent: ServiceFunction<
-      T,
-      {
-        // Defines the short summary or subject for the event. @example Department Party
-        summary: string;
-        // A more complete description of the event than the one provided by the summary. @example Meeting to provide technical review for 'Phoenix' design.
-        description?: string;
-        // The date and time the event should start. @example 2022-03-22 20:00:00
-        start_date_time?: object;
-        // The date and time the event should end. @example 2022-03-22 22:00:00
-        end_date_time?: object;
-        // The date the all-day event should start. @example 2022-03-22
-        start_date?: object;
-        // The date the all-day event should end (exclusive). @example 2022-03-23
-        end_date?: object;
-        // Days or weeks that you want to create the event in. @example {'days': 2} or {'weeks': 2}
-        in?: object;
-        // The location of the event. @example Conference Room - F123, Bldg. 002
-        location?: string;
-      }
-    >;
-    // Lists events on a calendar within a time range.
-    listEvents: ServiceFunction<
-      T,
-      {
-        // Returns active events after this time (exclusive). When not set, defaults to now. @example 2022-03-22 20:00:00
-        start_date_time?: object;
-        // Returns active events before this time (exclusive). Cannot be used with 'duration'. @example 2022-03-22 22:00:00
-        end_date_time?: object;
-        // Returns active events from start_date_time until the specified duration.
-        duration?: object;
-      }
-    >;
-  };
   automation: {
     // Triggers the actions of an automation.
     trigger: ServiceFunction<
@@ -1803,6 +1729,70 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     >;
     // Reloads the automation configuration.
     reload: ServiceFunction<T, object>;
+  };
+  switch: {
+    // Turns a switch off.
+    turnOff: ServiceFunction<T, object>;
+    // Turns a switch on.
+    turnOn: ServiceFunction<T, object>;
+    // Toggles a switch on/off.
+    toggle: ServiceFunction<T, object>;
+  };
+  remote: {
+    // Turns the device off.
+    turnOff: ServiceFunction<T, object>;
+    // Sends the power on command.
+    turnOn: ServiceFunction<
+      T,
+      {
+        // Activity ID or activity name to be started. @example BedroomTV
+        activity?: string;
+      }
+    >;
+    // Toggles a device on/off.
+    toggle: ServiceFunction<T, object>;
+    // Sends a command or a list of commands to a device.
+    sendCommand: ServiceFunction<
+      T,
+      {
+        // Device ID to send command to. @example 32756745
+        device?: string;
+        // A single command or a list of commands to send. @example Play
+        command: object;
+        // The number of times you want to repeat the commands.
+        num_repeats?: number;
+        // The time you want to wait in between repeated commands.
+        delay_secs?: number;
+        // The time you want to have it held before the release is send.
+        hold_secs?: number;
+      }
+    >;
+    // Learns a command or a list of commands from a device.
+    learnCommand: ServiceFunction<
+      T,
+      {
+        // Device ID to learn command from. @example television
+        device?: string;
+        // A single command or a list of commands to learn. @example Turn on
+        command?: object;
+        // The type of command to be learned.
+        command_type?: "ir" | "rf";
+        // If code must be stored as an alternative. This is useful for discrete codes. Discrete codes are used for toggles that only perform one function. For example, a code to only turn a device on. If it is on already, sending the code won't change the state.
+        alternative?: boolean;
+        // Timeout for the command to be learned.
+        timeout?: number;
+      }
+    >;
+    // Deletes a command or a list of commands from the database.
+    deleteCommand: ServiceFunction<
+      T,
+      {
+        // Device from which commands will be deleted. @example television
+        device?: string;
+        // The single command or the list of commands to be deleted. @example Mute
+        command: object;
+      }
+    >;
   };
   notify: {
     // Sends a notification that is visible in the **Notifications** panel.
@@ -1871,6 +1861,16 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         target?: object;
         // undefined @example platform specific
         data?: object;
+      }
+    >;
+  };
+  weather: {
+    // Get weather forecast.
+    getForecast: ServiceFunction<
+      T,
+      {
+        // Forecast type: daily, hourly or twice daily.
+        type: "daily" | "hourly" | "twice_daily";
       }
     >;
   };

@@ -1,4 +1,22 @@
 # @hakit/core
+## 1.0.24
+- bumped version
+
+
+# @hakit/components
+## 1.0.28
+- BUGFIX - styles with media card
+- BUGFIX - seek now implemented in mock api
+- BUGFIX - few cards when wrapped in a Row with stretch enabled, weren't filling available space
+- BUGFIX - entities card was missing key in map
+- BUGFIX - setting preventPropagation to false on ripples as default
+
+# Storybook
+- added new demo landing page dashboard
+- fixed multiple styles
+- adding demo gif
+
+# @hakit/core
 ## 1.0.23
 - NEW - MediaPlayer now has custom types available
 - NEW - supported-services.ts now updates on every release to ensure the latest services/domains are available for users that don't use the type-sync functionality.
