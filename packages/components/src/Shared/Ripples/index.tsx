@@ -65,7 +65,7 @@ const _Ripples = memo(
     onClick,
     children,
     disabled,
-    preventPropagation,
+    preventPropagation = false,
     ...rest
   }: RipplesProps) => {
     const [rippleStyle, setRippleStyle] = useState<CSSProperties>({});

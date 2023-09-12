@@ -119,7 +119,6 @@ function HassProvider({
       target,
       serviceData
     }: CallServiceArgs<T, M>) => {
-      console.log('domain', domain, target)
       if (typeof target !== 'string' && !isArray(target)) return;
       const now = new Date().toISOString();
       

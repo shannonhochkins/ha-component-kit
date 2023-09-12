@@ -1,8 +1,15 @@
 import type { ServiceArgs } from './types';
+import { defaults } from '../createMediaPlayer';
 
 const tracks = (now: string) => ({
   first: {
+    ...defaults,
     attributes: {
+      ...defaults.attributes,
+      friendly_name: "Bedroom Speaker",
+      volume_level: 0.54,
+      is_volume_muted: false,
+      supported_features: 152511,
       media_duration: 219,
       media_position: 1.819,
       media_position_updated_at: now,
@@ -18,7 +25,13 @@ const tracks = (now: string) => ({
     },
   },
   second: {
+    ...defaults,
     attributes: {
+      ...defaults.attributes,
+      friendly_name: "Bedroom Speaker",
+      volume_level: 0.54,
+      is_volume_muted: false,
+      supported_features: 152511,
       media_duration: 199,
       media_position: 1.005,
       media_position_updated_at: now,
@@ -48,7 +61,6 @@ export function mediaPlayerUpdates({
     last_updated: now,
   }
   if (typeof _target === 'string') return true;
-  console.log('service', service);
   const [target] = _target;
   switch (service) {
     case 'mediaPlay':
@@ -58,6 +70,27 @@ export function mediaPlayerUpdates({
           ...entities[target],
           ...dates,
           state: 'playing'
+        }
+      }));
+    case 'turnOn':
+    case 'turn_on':
+      return setEntities(entities => ({
+        ...entities,
+        [target]: {
+          ...entities[target],
+          ...tracks(now).first,
+          ...dates,
+          state: 'playing'
+        }
+      }));
+    case 'turnOff':
+    case 'turn_off':
+      return setEntities(entities => ({
+        ...entities,
+        [target]: {
+          ...entities[target],
+          ...dates,
+          state: 'off'
         }
       }));
     case 'mediaPause':
@@ -81,6 +114,7 @@ export function mediaPlayerUpdates({
             ...entities[target],
             ...tracks(now)[next],
             ...dates,
+            state: 'playing',
             attributes: {
               ...entities[target].attributes,
               ...tracks(now)[next].attributes,
@@ -97,6 +131,7 @@ export function mediaPlayerUpdates({
           ...dates,
           attributes: {
             ...entities[target].attributes,
+            // @ts-ignore - TODO - type later
             media_position: serviceData?.seek_position,
             media_position_updated_at: now,
           }

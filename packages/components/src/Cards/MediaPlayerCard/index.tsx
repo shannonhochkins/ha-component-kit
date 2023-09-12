@@ -300,7 +300,6 @@ function AlternateControls({
         api.join(entity.entity_id, {
           // @ts-expect-error - types are wrong....
           entity_id: entity.entity_id,
-          // @ts-expect-error - types are wrong....
           group_members: groupedEntities.map((x) => x.entity_id),
         });
       } else {
@@ -687,8 +686,10 @@ function _MediaPlayerCard({
                 alignItems="flex-start"
                 style={{
                   width:
-                    hideThumbnail === false
-                      ? `calc(100% - ${thumbnailSize})`
+                    hideThumbnail === false && artworkUrl !== null
+                      ? `calc(100% - (${thumbnailSize} + ${
+                          layout === "slim" ? "2rem" : "0.5rem"
+                        }))`
                       : "100%",
                 }}
               >
@@ -699,7 +700,7 @@ function _MediaPlayerCard({
                       {buffering ? " - buffering" : ""}
                     </Title>
                   )}
-                  {isOff && (
+                  {(isOff || layout === "slim") && (
                     <AlternateControls
                       allEntityIds={allEntityIds}
                       entity={_entity}

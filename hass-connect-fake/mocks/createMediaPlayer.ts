@@ -3,7 +3,7 @@ import { createEntity } from './createEntity';
 
 const now = new Date();
 
-const defaults = {
+export const defaults = {
   attributes: {
     friendly_name: "Living room TV",
   },

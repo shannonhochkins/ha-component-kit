@@ -12,6 +12,9 @@ import { createAutomation } from './createAutomation';
 export const entities: HassEntities = {
   ...createLight('light.unavailable', {
     "state": "unavailable",
+    attributes: {
+      friendly_name: 'Unavailable light demo',
+    }
   }),
   ...createLight("light.fake_light_1", {
     attributes: {
@@ -55,7 +58,7 @@ export const entities: HassEntities = {
       media_artist: "Calvin Harris",
       app_name: "YouTube Music",
       entity_picture: "https://lh3.googleusercontent.com/sLxiYvk82ZBXIYW-g_qh4BDjkApX4gdRvGxeinQIC0HBwte4AKOzS3u2mDPaYjPBw6dD_Of-r0x10egf=w544-h544-l90-rj",
-      friendly_name: "Dark Google Speaker",
+      friendly_name: "Bedroom Speaker",
       supported_features: 152511
     }
   }),

@@ -13,6 +13,9 @@ mark {
   border-radius: 4px;
   padding: 2px 6px;
 }
+.hide-controls #storybook-panel-root {
+  display: none !important;
+}
 #storybook-root {
   padding: 0 !important;
   &:not([hidden="true"]) {
