@@ -15,7 +15,7 @@ To spin up the storybook interface, run the following command from the root of t
 npm start
 ```
 
-To introduce a new feature to the component package, follow the same file structure as the other components, there must be a Stories.tsx file and an index.tsx file, exporting a wrapped component in an ErrorBoundary. The `components/src/index.ts` file should export the types and components relevant to the feature so the types and components are exported with the package.
+To introduce a new feature to the component package, follow the same file structure as the other components, there must be a Stories.tsx file and an index.tsx file the exported component should be wrapped in an ErrorBoundary to avoid dashboards crashing when an individual component fails to render. The `components/src/index.ts` file should export the types and components relevant to the feature so the types and components are exported with the package.
 
 There's load's of reference examples already built, however please reach out if you get stuck or have any questions, it's a complicated project with a lot of moving parts and functionality.
 
