@@ -1,3 +1,6 @@
+# @hakit/components
+## 1.0.29
+- BUGFIX - media player card was not sending correct entities for join action
 # @hakit/core
 ## 1.0.24
 - bumped version
