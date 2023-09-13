@@ -76,6 +76,33 @@ export const entities: HassEntities = {
       friendly_name: "Date",
     },
   }),
+  ...createSensor('sensor.curtain', {
+    state: '12',
+    attributes: {
+      device_class: 'battery',
+      icon: 'mdi:curtain',
+      friendly_name: 'Office curtain sensor',
+      unit_of_measurement: '%'
+    }
+  }),
+  ...createSensor('sensor.remote', {
+    state: '20',
+    attributes: {
+      icon: 'mdi:remote',
+      friendly_name: 'Remote battery',
+      device_class: 'battery',
+      unit_of_measurement: '%'
+    }
+  }),
+  ...createSensor('sensor.motion_sensor', {
+    state: '3',
+    attributes: {
+      device_class: 'battery',
+      friendly_name: 'Motion Sensor',
+      icon: "mdi:proximity-sensor-off",
+      unit_of_measurement: '%'
+    }
+  }),
   ...createWeather("weather.entity"),
   ...createClimate("climate.air_conditioner"),
   ...createClimate("climate.unavailable", {
