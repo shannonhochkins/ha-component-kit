@@ -5,21 +5,32 @@ If you like anything here, be sure to 🌟 [my repo!](https://github.com/shannon
 
 ![DEMO](https://github.com/shannonhochkins/ha-component-kit/blob/master/stories/hakit-demo.gif?raw=true)
 
+## Help me out?
+
+I've spent a lot of time on this, you're free to use it but would appreciate a small donation if you're feeling generous! Buy me a coffee!
+
+[Buy me a coffee!](https://www.buymeacoffee.com/jinglezzz)
 
 ### Get Started
-
+There's an npm create command which will setup react, typescript, vite & hakit automatically for you with a terminal wizard!
 ```
-  npm i @hakit/core @hakit/components -D
+  npm create hakit@latest
+```
+
+Or, if you want to install manually on an existing project:
+```
+  npm install @hakit/core @hakit/components
 ```
 
 There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
 
-### Local Development / Contribution
-To spin up the local server, run the following command from the root of the repository:
+### What's next?
+Have your say! Vote for what you'd like to see next in [upcoming features!](https://github.com/shannonhochkins/ha-component-kit/discussions/28)
 
-```bash
-npm i && npm start
-```
+### Contributors!
 
-This will kick off the storybook server, which will allow you to develop and test components locally with the storybook demo pages.
+I welcome anyone who's willing to contribute to the package, if you're interested in helping out or have some suggestions to changes, please feel free to open a PR or an issue!
+
+There's detailed instructions on how to get started if you want to introduce a new feature to the repository [here](CONTRIBUTING.md).
+
 

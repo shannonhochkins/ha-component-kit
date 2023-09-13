@@ -4,6 +4,8 @@ import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { FabCard } from "@components";
 import { useKeyPress } from "react-use";
+import { fallback } from "@components";
+import { ErrorBoundary } from "react-error-boundary";
 
 const ModalContainer = styled(motion.div)`
   position: absolute;
@@ -76,8 +78,7 @@ export interface ModalProps {
   /** triggered when the users pressed the close button, this is also triggered when the escape key is pressed */
   onClose: () => void;
 }
-/** The modal component was built to easily generate a popup dialog from any element by passing through an "open" value, if you pass an id value, and the same id value is used on another motion element from framer-motion the Modal will animate from this element, see the examples below. */
-export function Modal({ open, id, title, children, onClose }: ModalProps) {
+function _Modal({ open, id, title, children, onClose }: ModalProps) {
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   useEffect(() => {
     if (isPressed && onClose && open) {
@@ -125,5 +126,13 @@ export function Modal({ open, id, title, children, onClose }: ModalProps) {
       )}
     </AnimatePresence>,
     document.body,
+  );
+}
+/** The modal component was built to easily generate a popup dialog from any element by passing through an "open" value, if you pass an id value, and the same id value is used on another motion element from framer-motion the Modal will animate from this element, see the examples below. */
+export function Modal(props: ModalProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "Modal" })}>
+      <_Modal {...props} />
+    </ErrorBoundary>
   );
 }

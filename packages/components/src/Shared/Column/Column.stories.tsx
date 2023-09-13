@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, Column, ButtonCard } from "@components";
 import type { ColumnProps } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<ColumnProps>) {
   return (
@@ -9,7 +9,7 @@ function Template(args?: Partial<ColumnProps>) {
       <ThemeProvider />
       <Column {...args}>
         <ButtonCard entity="light.fake_light_1" />
-        <ButtonCard entity="switch.fake_gaming_switch" />
+        <ButtonCard entity="switch.fake_switch" />
         <ButtonCard entity="media_player.fake_tv" />
       </Column>
     </HassConnect>

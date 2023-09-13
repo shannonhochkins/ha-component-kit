@@ -15,7 +15,9 @@ import {
   LIGHT_COLOR_MODES,
   ON,
 } from "@hakit/core";
-import type { LightColor } from "@hakit/core";
+import type { LightColor, EntityName, FilterByDomain } from "@hakit/core";
+import { fallback } from "@components";
+import { ErrorBoundary } from "react-error-boundary";
 
 const RENDER_SIZE = 400;
 
@@ -191,14 +193,13 @@ export interface ColorPickerOutputColors {
 export interface ColorPickerProps {
   disabled?: boolean;
   /** the name of the light entity to control */
-  entity: `light.${string}`;
+  entity: FilterByDomain<EntityName, "light">;
   /** will provide the color output options when the user has finished interacting */
   onChangeApplied?: (colors: ColorPickerOutputColors) => void;
   /** will provide the color output as it's changing but not actually finished updating, the value may also trigger initially once the color calculations have been applied */
   onChange?: (colors: ColorPickerOutputColors) => void;
 }
-/** This color picker was designed to easily retrieve a value from a color wheel based on values provided from a light entity, you can click or drag on the picker to pick a value, once applied the color wheel will automatically update your light entity, if the light entity provided does not support color it will not render at all */
-export function ColorPicker({
+function _ColorPicker({
   disabled = false,
   entity: _entity,
   onChange,
@@ -598,4 +599,13 @@ export function ColorPicker({
       </div>
     </ColorPickerWrapper>
   ) : null;
+}
+
+/** This color picker was designed to easily retrieve a value from a color wheel based on values provided from a light entity, you can click or drag on the picker to pick a value, once applied the color wheel will automatically update your light entity, if the light entity provided does not support color it will not render at all */
+export function ColorPicker(props: ColorPickerProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "ColorPicker" })}>
+      <_ColorPicker {...props} />
+    </ErrorBoundary>
+  );
 }

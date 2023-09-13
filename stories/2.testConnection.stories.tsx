@@ -1,6 +1,6 @@
 import { Story, Source } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
-import { HassConnect, HassContext, useHass, loadTokens } from '@core';
+import { HassConnect, HassContext, useHass } from '@core';
 import { useContext, useState, useEffect, useMemo } from "react";
 import type {
   HassServices,
@@ -191,6 +191,7 @@ function ApiTester({ domains, entities }: ApiTesterProps) {
           <h3>Example Usage with useEntity</h3>
           <p>This simply exports a button that will {camelCase(service)} the {camelCase(domain)} when pressed!</p>
           <Source
+            dark
             language="ts"
             code={`
 export function Test${upperFirst(camelCase(domain))}{
@@ -207,6 +208,7 @@ export function Test${upperFirst(camelCase(domain))}{
           <h3>Example Usage with callService</h3>
           <p>This simply exports a button that will {camelCase(service)} the {camelCase(domain)} when pressed!</p>
           <Source
+            dark
             language="ts"
             code={`
 export function Test${upperFirst(camelCase(domain))}{
@@ -227,6 +229,7 @@ export function Test${upperFirst(camelCase(domain))}{
           <h3>Example Usage with useApi hook</h3>
           <p>This simply exports a button that will {camelCase(service)} the {camelCase(domain)} when pressed!</p>
           <Source
+            dark
             language="ts"
             code={`
 export function Test${upperFirst(camelCase(domain))}{
@@ -270,7 +273,6 @@ function UseData() {
 function Template() {
   const storedHassUrl = localStorage.getItem("hassUrl");
   const storedHassTokens = localStorage.getItem("hassTokens");
-  console.log('storedHassTokens', storedHassTokens, loadTokens());
   const isAuthRedirect = window.location.href.includes("auth_callback");
   const [error, setError]  = useState<string>("");
   const [hassUrl, setHassUrl] = useState<string>(storedHassTokens === null && !isAuthRedirect ? "" : storedHassUrl || '');

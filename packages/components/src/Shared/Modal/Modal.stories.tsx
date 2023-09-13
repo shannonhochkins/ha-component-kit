@@ -9,7 +9,7 @@ import {
   Column,
   Row,
 } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
   return (
@@ -116,9 +116,7 @@ export default {
     centered: true,
   },
 } satisfies Meta<typeof Modal>;
-export type ModalStory = StoryObj<
-  typeof ButtonCard<"light.fake_light_1", "toggle">
->;
+export type ModalStory = StoryObj<typeof ButtonCard<"light.fake_light_1">>;
 export const ModalExample: ModalStory = {
   render: Render,
   args: {

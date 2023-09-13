@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { LIGHT_COLOR_MODES } from "../../data/light";
-import { HassEntityWithApi, ON } from "@core";
+import { LIGHT_COLOR_MODES, HassEntityWithApi, ON } from "@core";
 
 export const useLightTemperature = (entity: HassEntityWithApi<"light">) => {
   return useMemo(() => {

@@ -9,6 +9,8 @@ import React, {
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
+import { fallback } from "@components";
+import { ErrorBoundary } from "react-error-boundary";
 
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 export interface RipplesProps extends Extendable {
@@ -24,6 +26,8 @@ export interface RipplesProps extends Extendable {
   borderRadius?: CSSProperties["borderRadius"];
   /** disable the ripple */
   disabled?: boolean;
+  /** prevent propagation on ripples */
+  preventPropagation?: boolean;
 }
 
 const boxStyle: CSSProperties = {
@@ -53,8 +57,7 @@ const ParentRipple = styled.div<{
     display: inline-flex;
   `}
 `;
-/** Ripples is a component that can easily add an interactive ripple effect when clicked, simply wrap your component in Ripples and you're good to go! If your component has a border radius, simply pass the same value as a prop to ripples to mask the effect */
-export const Ripples = memo(
+const _Ripples = memo(
   ({
     duration = 600,
     color = "rgba(0, 0, 0, .3)",
@@ -62,6 +65,7 @@ export const Ripples = memo(
     onClick,
     children,
     disabled,
+    preventPropagation = false,
     ...rest
   }: RipplesProps) => {
     const [rippleStyle, setRippleStyle] = useState<CSSProperties>({});
@@ -118,9 +122,19 @@ export const Ripples = memo(
     );
 
     return (
-      <ParentRipple borderRadius={borderRadius}>
+      <ParentRipple
+        borderRadius={borderRadius}
+        style={{
+          flexShrink: 0,
+        }}
+      >
         <motion.div
           layout
+          onPointerDownCapture={(e) => {
+            if (preventPropagation) {
+              e.stopPropagation();
+            }
+          }}
           {...rest}
           style={{
             ...boxStyle,
@@ -139,3 +153,11 @@ export const Ripples = memo(
     );
   },
 );
+/** Ripples is a component that can easily add an interactive ripple effect when clicked, simply wrap your component in Ripples and you're good to go! If your component has a border radius, simply pass the same value as a prop to ripples to mask the effect */
+export function Ripples(props: RipplesProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "Ripples" })}>
+      <_Ripples {...props} />
+    </ErrorBoundary>
+  );
+}

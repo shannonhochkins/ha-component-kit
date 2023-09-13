@@ -1,24 +1,41 @@
+// these imports can be removed when we drop support for SceneCard
+import { TriggerCard } from "./Cards/TriggerCard";
+import type { TriggerCardProps } from "./Cards/TriggerCard";
+import type { EntityName } from "@hakit/core";
+// ErorrBoundary fallback
+export { fallback } from "./Shared/ErrorBoundary";
 // ButtonCard
-export { ButtonCard, StyledButtonCard } from "./Cards/ButtonCard";
+export { ButtonCard } from "./Cards/ButtonCard";
 export type { ButtonCardProps } from "./Cards/ButtonCard";
-// SceneCard
-export { SceneCard } from "./Cards/SceneCard";
-export type { SceneCardProps } from "./Cards/SceneCard";
+// TriggerCard
+export { TriggerCard } from "./Cards/TriggerCard";
+export type { TriggerCardProps } from "./Cards/TriggerCard";
+/**
+ * @deprecated SceneCardProps is deprecated and will be removed in future versions. Use TriggerCardProps instead.
+ */
+export type SceneCardProps<E extends EntityName> = TriggerCardProps<E>;
+
+/**
+ * @deprecated SceneCard is deprecated and will be removed in future versions. Use TriggerCard instead.
+ */
+export const SceneCard = TriggerCard;
 // Group
 export { Group } from "./Group";
 export type { GroupProps } from "./Group";
 // Ripples
 export { Ripples } from "./Shared/Ripples";
 export type { RipplesProps } from "./Shared/Ripples";
-// WeatherCard
-export { WeatherCard } from "./Cards/WeatherCard";
-export type { WeatherCardProps } from "./Cards/WeatherCard";
 // Row
 export { Row } from "./Shared/Row";
 export type { RowProps } from "./Shared/Row";
 // column
 export { Column } from "./Shared/Column";
 export type { ColumnProps } from "./Shared/Column";
+// WeatherCard
+export { WeatherCard } from "./Cards/WeatherCard";
+export type { WeatherCardProps } from "./Cards/WeatherCard";
+export { GarbageCollectionCard } from "./Cards/GarbageCollectionCard";
+export type { GarbageCollectionCardProps } from "./Cards/GarbageCollectionCard";
 // TimeCard
 export { TimeCard } from "./Cards/TimeCard";
 export type { TimeCardProps } from "./Cards/TimeCard";
@@ -26,7 +43,7 @@ export type { TimeCardProps } from "./Cards/TimeCard";
 export { RoomCard } from "./Cards/RoomCard";
 export type { RoomCardProps } from "./Cards/RoomCard";
 // picture card
-export { PictureCard, StyledPictureCard } from "./Cards/PictureCard";
+export { PictureCard } from "./Cards/PictureCard";
 export type { PictureCardProps } from "./Cards/PictureCard";
 // FabCard
 export { FabCard } from "./Cards/FabCard";
@@ -37,9 +54,15 @@ export type { SidebarCardProps } from "./Cards/SidebarCard";
 // ClimateControls
 export { ClimateControls } from "./Shared/ClimateControls";
 export type { ClimateControlsProps } from "./Shared/ClimateControls";
-// ClimateCart
+// ClimateCard
 export { ClimateCard } from "./Cards/ClimateCard";
 export type { ClimateCardProps } from "./Cards/ClimateCard";
+// EntitiesCard
+export { EntitiesCard } from "./Cards/EntitiesCard";
+export type { EntitiesCardProps } from "./Cards/EntitiesCard";
+// MediaPlayerCard
+export { MediaPlayerCard } from "./Cards/MediaPlayerCard";
+export type { MediaPlayerCardProps } from "./Cards/MediaPlayerCard";
 // Modal
 export { Modal } from "./Shared/Modal";
 export type { ModalProps } from "./Shared/Modal";
@@ -61,8 +84,11 @@ export type {
   ColorPickerProps,
   ColorPickerOutputColors,
 } from "./Shared/ColorPicker";
+// Alert
+export { Alert } from "./Shared/Alert";
+export type { AlertProps } from "./Shared/Alert";
 
 // ThemeProvider
-export { ThemeProvider } from "../../components/src/ThemeProvider";
-export { theme } from "../../components/src/ThemeProvider/theme";
-export type { ThemeProviderProps } from "../../components/src/ThemeProvider";
+export { ThemeProvider } from "./ThemeProvider";
+export { theme } from "./ThemeProvider/theme";
+export type { ThemeProviderProps } from "./ThemeProvider";

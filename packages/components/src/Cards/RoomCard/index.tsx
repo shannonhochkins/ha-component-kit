@@ -1,13 +1,14 @@
 import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { useEffect, useCallback, useState } from "react";
-import { useHass, useHash } from "@hakit/core";
-import { StyledPictureCard, Row, FabCard } from "@components";
+import { useHass } from "@hakit/core";
+import { Row, FabCard, fallback } from "@components";
 import type { PictureCardProps } from "@components";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useKeyPress } from "react-use";
 import type { MotionProps } from "framer-motion";
+import { ErrorBoundary } from "react-error-boundary";
 
 type Extendable = PictureCardProps &
   Omit<React.ComponentProps<"div">, "onClick" | "ref"> &
@@ -20,6 +21,40 @@ export interface RoomCardProps extends Extendable {
   /** the animation duration of the room expanding @default 0.25 */
   animationDuration?: number;
 }
+
+const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
+  all: unset;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  width: var(--ha-device-picture-card-width);
+  display: flex;
+  aspect-ratio: 16 / 9;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: var(--ha-primary-background);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: background-color, box-shadow, background-image;
+  will-change: width, height;
+
+  ${(props) =>
+    props.image &&
+    `
+    background-image: url(${props.image});
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  `}
+
+  &:hover {
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--ha-primary-background-hover);
+  }
+`;
 
 const PictureCardFooter = styled(motion.div)`
   all: unset;
@@ -65,10 +100,10 @@ const ChildContainer = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
 `;
 
-/** The RoomCard component is a very simple way of categorizing all your entities into a single "PictureCard" which will show all the entities when clicked. */
-export function RoomCard({
+function _RoomCard({
   hash,
   children,
   icon,
@@ -79,44 +114,48 @@ export function RoomCard({
 }: RoomCardProps) {
   const { addRoute, useRoute } = useHass();
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
-  const [, setHash] = useHash();
-  const [startAnimation, setStartAnimation] = useState(false);
+  const [forceRender, setForceRender] = useState(false);
+  const [animateChildren, setAnimateChildren] = useState(false);
   const route = useRoute(hash);
-  useEffect(() => {
-    if (route?.active && !startAnimation) {
-      setStartAnimation(true);
-    }
-  }, [route, startAnimation]);
-  // will reset the hash back to it's original empty value
-  const resetHash = useCallback(() => {
-    setHash("");
-  }, [setHash]);
+  const actualHash = window.location.hash;
+  const active = actualHash.replace("#", "") === hash.replace("#", "");
   // starts the trigger to close the full screen card
   const resetAnimation = useCallback(() => {
-    setStartAnimation(false);
-    resetHash();
-  }, [resetHash]);
-  // add the current route by hash
+    setForceRender(false);
+  }, []);
+  useEffect(() => {
+    if (actualHash && active && !forceRender) {
+      setForceRender(true);
+    } else if (actualHash && active && forceRender && !animateChildren) {
+      setAnimateChildren(true);
+    } else if (!active && (forceRender || animateChildren)) {
+      setAnimateChildren(false);
+      setForceRender(false);
+    }
+  }, [actualHash, forceRender, active, animateChildren]);
+  // add the current route by hash, even though this is called multiple times
+  // it will only add it the first time
   useEffect(() => {
     addRoute({
       hash,
       icon: icon || "mdi:info",
       name: title,
-      active: false,
+      active: actualHash.replace("#", "") === hash.replace("#", ""),
     });
-  }, [addRoute, hash, icon, title]);
+  }, [addRoute, actualHash, hash, icon, title]);
 
   // when the escape key is pressed and we're active, close the card
   useEffect(() => {
-    if (isPressed && route?.active) {
+    if (isPressed && route?.active === true) {
+      window.location.hash = "";
       resetAnimation();
     }
-  }, [isPressed, route, resetAnimation]);
+  }, [isPressed, route?.active, resetAnimation]);
 
   return (
     <>
-      <AnimatePresence>
-        {route?.active && (
+      <AnimatePresence key={`${hash}-room-card-parent`}>
+        {forceRender === true && (
           <FullScreen
             key={`layout-${hash}`}
             layoutId={`layout-${hash}`}
@@ -156,16 +195,23 @@ export function RoomCard({
                   {icon && <Icon icon={icon} />}
                   {title}
                 </Row>
-                <FabCard icon="mdi:close" onClick={() => resetAnimation()} />
+                <FabCard
+                  icon="mdi:close"
+                  onClick={() => {
+                    window.location.hash = "";
+                    resetAnimation();
+                  }}
+                />
               </Row>
             </NavBar>
             <AnimatePresence
               key={`layout-children-${hash}`}
               onExitComplete={() => {
-                resetHash();
+                window.location.hash = "";
+                resetAnimation();
               }}
             >
-              {startAnimation && (
+              {animateChildren && (
                 <ChildContainer
                   initial={{ opacity: 0 }}
                   transition={{
@@ -197,7 +243,7 @@ export function RoomCard({
           {...rest}
           image={image}
           onClick={() => {
-            setHash(hash);
+            window.location.hash = hash;
           }}
         >
           <PictureCardFooter
@@ -215,5 +261,13 @@ export function RoomCard({
         </StyledPictureCard>
       </StyledRoomCard>
     </>
+  );
+}
+/** The RoomCard component is a very simple way of categorizing all your entities into a single "PictureCard" which will show all the entities when clicked. */
+export function RoomCard(props: RoomCardProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "RoomCard" })}>
+      <_RoomCard {...props} />
+    </ErrorBoundary>
   );
 }

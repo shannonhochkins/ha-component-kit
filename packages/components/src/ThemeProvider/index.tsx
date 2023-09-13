@@ -3,6 +3,8 @@ import { merge } from "lodash";
 import { theme as defaultTheme } from "./theme";
 import type { ThemeParams } from "./theme";
 import { convertToCssVars } from "./helpers";
+import { fallback } from "@components";
+import { ErrorBoundary } from "react-error-boundary";
 
 type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
@@ -12,8 +14,7 @@ export interface ThemeProviderProps<T extends object> {
   theme?: DeepPartial<ThemeParams> & T;
 }
 
-/** A simple way of creating global styles and providing re-usable css variables to re-use across your application */
-export function ThemeProvider<T extends object>({
+function _ThemeProvider<T extends object>({
   theme,
 }: ThemeProviderProps<T>): JSX.Element {
   return (
@@ -76,5 +77,17 @@ export function ThemeProvider<T extends object>({
         `}
       />
     </>
+  );
+}
+/**
+ * A simple way of creating global styles and providing re-usable css variables to re-use across your application
+ *
+ * There's very little css shipped with this ThemeProvider, the main purpose of this provider is to create the css variables used for all components across @hakit/components, however it does ship with some base css to the body, html and scrollbars.
+ * */
+export function ThemeProvider<T extends object>(props: ThemeProviderProps<T>) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "ThemeProvider" })}>
+      <_ThemeProvider {...props} />
+    </ErrorBoundary>
   );
 }

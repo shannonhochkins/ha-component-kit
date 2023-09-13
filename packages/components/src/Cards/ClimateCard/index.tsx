@@ -1,22 +1,30 @@
 import React, { useState, useMemo } from "react";
 import styled from "@emotion/styled";
-import type { HassEntityWithApi } from "@hakit/core";
+import type { HassEntityWithApi, HvacMode } from "@hakit/core";
 import { ModalByEntityDomain, Row, FabCard } from "@components";
 import type { ClimateControlsProps } from "@components";
-import { useEntity, useIconByDomain, useIconByEntity, OFF } from "@hakit/core";
-import { Ripples } from "@components";
+import {
+  useEntity,
+  useIconByDomain,
+  useIconByEntity,
+  OFF,
+  isUnavailableState,
+} from "@hakit/core";
+import { Ripples, fallback } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { useLongPress } from "react-use";
-import { icons, activeColors } from "../../Shared/ClimateControls";
+import { icons, activeColors } from "../../Shared/ClimateControls/shared";
+import { ErrorBoundary } from "react-error-boundary";
 
-const StyledClimateCard = styled(motion.button)`
+const StyledClimateCard = styled(motion.div)`
   all: unset;
   padding: 1rem;
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
   width: var(--ha-device-climate-card-width);
+  aspect-ratio: 2/0.74;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -26,7 +34,11 @@ const StyledClimateCard = styled(motion.button)`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: box-shadow, background-color;
-  &:hover {
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
+  &:not(.disabled):hover {
     background-color: var(--ha-primary-background-hover);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
@@ -68,8 +80,7 @@ export interface ClimateCardProps extends Extendable {
   onClick?: (entity: HassEntityWithApi<"climate">) => void;
 }
 
-/** The ClimateCard is a card to easily interact with climate entities, whilst it's not documented below, the types are correct and you can also pass through anything related to ModalClimateControlsProps */
-export function ClimateCard({
+function _ClimateCard({
   entity: _entity,
   title: _title,
   onClick,
@@ -78,6 +89,8 @@ export function ClimateCard({
   hideFanMode,
   hideState,
   hideUpdated,
+  disabled,
+  className,
   ...rest
 }: ClimateCardProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
@@ -87,25 +100,36 @@ export function ClimateCard({
   const currentMode = entity.state in icons ? entity.state : "unknown-mode";
   const title = _title || entity.attributes.friendly_name;
   const { hvac_action, hvac_modes } = entity.attributes;
+  const isUnavailable = isUnavailableState(entity.state);
   const isOff = entity.state === OFF;
   const longPressEvent = useLongPress((e) => {
     // ignore on right click
-    if ("button" in e && e.button === 2) return;
+    if (("button" in e && e.button === 2) || isUnavailable || disabled) return;
     setOpenModal(true);
   });
 
   const titleValue = useMemo(() => {
+    if (isUnavailable) {
+      return entity.state;
+    }
     if (isOff) {
       return "Off";
     }
     return hvac_action;
-  }, [hvac_action, isOff]);
+  }, [hvac_action, entity.state, isUnavailable, isOff]);
 
   return (
     <>
-      <Ripples borderRadius="1rem" whileTap={{ scale: 0.9 }}>
+      <Ripples
+        disabled={disabled || isUnavailable}
+        borderRadius="1rem"
+        whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
+      >
         <StyledClimateCard
           {...longPressEvent}
+          className={`${
+            disabled || isUnavailable ? "disabled" : ""
+          } ${className}`}
           layoutId={`${_entity}-climate-card`}
           {...rest}
           onClick={() => {
@@ -119,9 +143,11 @@ export function ClimateCard({
               <Icon
                 style={{
                   color:
-                    currentMode === "unknown-mode"
+                    isUnavailable || disabled
+                      ? activeColors["off"]
+                      : currentMode === "unknown-mode"
                       ? undefined
-                      : activeColors[currentMode],
+                      : activeColors[currentMode as HvacMode],
                 }}
               >
                 {entityIcon || domainIcon}
@@ -135,9 +161,11 @@ export function ClimateCard({
             {(hvacModes || hvac_modes || []).concat().map((mode) => (
               <FabCard
                 size={35}
+                disabled={disabled || isUnavailable}
                 iconColor={
                   currentMode === mode ? activeColors[mode] : undefined
                 }
+                preventPropagation
                 key={mode}
                 title={mode}
                 active={currentMode === mode}
@@ -167,5 +195,13 @@ export function ClimateCard({
         id={`${_entity}-climate-card`}
       />
     </>
+  );
+}
+/** The ClimateCard is a card to easily interact with climate entities, whilst it's not documented below, the types are correct and you can also pass through anything related to ModalClimateControlsProps */
+export function ClimateCard(props: ClimateCardProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "ClimateCard" })}>
+      <_ClimateCard {...props} />
+    </ErrorBoundary>
   );
 }

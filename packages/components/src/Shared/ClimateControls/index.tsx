@@ -2,16 +2,19 @@ import { useRef, useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { Thermostat } from "react-thermostat";
-import { Column, FabCard, Row } from "@components";
-import { useEntity, OFF, HvacMode, useHass } from "@hakit/core";
+import { Column, FabCard, Row, fallback } from "@components";
+import type { EntityName, FilterByDomain } from "@hakit/core";
+import { useEntity, OFF, useHass, HvacMode } from "@hakit/core";
 import type { HassConfig } from "home-assistant-js-websocket";
 import { useDebounce } from "react-use";
 import type { MotionProps } from "framer-motion";
+import { colors, activeColors, icons } from "./shared";
+import { ErrorBoundary } from "react-error-boundary";
 
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 
 export interface ClimateControlsProps extends Extendable {
-  entity: `${"climate"}.${string}`;
+  entity: FilterByDomain<EntityName, "climate">;
   /** provide a list of hvacModes you want to support/display in the UI, will use all by default */
   hvacModes?: HvacMode[];
   /** hide the current temperature */
@@ -53,40 +56,6 @@ const ThermostatSize = styled.div`
   margin-bottom: 2rem;
   position: relative;
 `;
-
-type HvacModeData<T> = {
-  [key in HvacMode]: T;
-};
-
-export const colors = {
-  auto: ["#fff", "#f9f9f9"],
-  heat_cool: ["#dae8eb", "#cd5401"],
-  heat: ["#cfac48", "#cd5401"],
-  cool: ["#dae8eb", "#2c8e98"],
-  off: ["#848484", "#383838"],
-  fan_only: ["#fff", "#f9f9f9"],
-  dry: ["#fff", "#ffc0bd"],
-} satisfies HvacModeData<string[]>;
-
-export const activeColors = {
-  auto: "var(--ha-primary-active)",
-  heat_cool: "var(--ha-primary-active)",
-  heat: "#cd5401",
-  cool: "#2c8e98",
-  off: "#848484",
-  fan_only: "var(--ha-primary-active)",
-  dry: "#ffc0bd",
-} satisfies HvacModeData<string>;
-
-export const icons = {
-  auto: "mdi:thermometer-auto",
-  heat_cool: "mdi:autorenew",
-  heat: "mdi:fire",
-  cool: "mdi:snowflake",
-  off: "mdi:power",
-  fan_only: "mdi:fan",
-  dry: "mdi:water-percent",
-} satisfies HvacModeData<string>;
 
 const FanModeColumn = styled(Column)`
   position: absolute;
@@ -130,7 +99,6 @@ const FanMode = styled(FabCard)<{
   animation-name: ${spin};
   animation-duration: ${(props) => {
     const speed = (props.speed || "").toLowerCase();
-    console.log("speed", speed);
     const low = speed.includes("low");
     const medium = speed.includes("mid") || speed.includes("medium");
     const high = speed.includes("high");
@@ -142,8 +110,7 @@ const FanMode = styled(FabCard)<{
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 `;
-/** This layout is shared for the popup for a buttonCard and fabCard when long pressing on a card with a climate entity, and also the climateCard, this will fill the width/height of the parent component */
-export function ClimateControls({
+function _ClimateControls({
   entity: _entity,
   hvacModes,
   hideCurrentTemperature,
@@ -202,7 +169,7 @@ export function ClimateControls({
         <Thermostat
           valueSuffix={config?.unit_system.temperature}
           track={{
-            colors: colors[entity.state],
+            colors: colors[entity.state as HvacMode],
           }}
           disabled={isOff}
           min={min_temp}
@@ -264,5 +231,13 @@ export function ClimateControls({
         ))}
       </Row>
     </Column>
+  );
+}
+/** This layout is shared for the popup for a buttonCard and fabCard when long pressing on a card with a climate entity, and also the climateCard, this will fill the width/height of the parent component */
+export function ClimateControls(props: ClimateControlsProps) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "ClimateControls" })}>
+      <_ClimateControls {...props} />
+    </ErrorBoundary>
   );
 }

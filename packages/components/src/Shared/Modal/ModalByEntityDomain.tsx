@@ -1,5 +1,5 @@
 import { computeDomain } from "@utils/computeDomain";
-import type { EntityName } from "@hakit/core";
+import type { EntityName, FilterByDomain } from "@hakit/core";
 import type { ModalProps } from "./";
 import { ModalLightControls } from "./ModalLightControls";
 import { ModalClimateControls } from "./ModalClimateControls";
@@ -30,12 +30,15 @@ export function ModalByEntityDomain<E extends EntityName>({
   switch (domain) {
     case "light":
       return (
-        <ModalLightControls entity={entity as `light.${string}`} {...rest} />
+        <ModalLightControls
+          entity={entity as FilterByDomain<EntityName, "light">}
+          {...rest}
+        />
       );
     case "climate":
       return (
         <ModalClimateControls
-          entity={entity as `climate.${string}`}
+          entity={entity as FilterByDomain<EntityName, "climate">}
           {...rest}
         />
       );

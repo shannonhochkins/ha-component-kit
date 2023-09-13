@@ -1,8 +1,8 @@
 import { dirname, join } from "path";
 import type { StorybookConfig } from "@storybook/react-vite";
 import react from '@vitejs/plugin-react';
-import { mergeConfig } from 'vite';
 import tsconfigPaths from "vite-tsconfig-paths";
+import svgr from "vite-plugin-svgr";
 export default ({
   stories: [
     "../packages/**/*.mdx",
@@ -13,7 +13,7 @@ export default ({
     "../packages/**/*.stories.@(js|jsx|ts|tsx)"
   ],
   addons: [
-    getAbsolutePath("@storybook/addon-styling"),
+    getAbsolutePath("@storybook/addon-themes"),
     getAbsolutePath("@storybook/addon-links"),
     getAbsolutePath("@storybook/addon-essentials"),
     getAbsolutePath("@storybook/addon-interactions"),
@@ -74,6 +74,7 @@ export default ({
             plugins: ['@emotion/babel-plugin'],
           },
         }),
+        svgr(),
       ],
     };
   },

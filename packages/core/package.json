@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "1.0.12",
+  "version": "1.0.25",
   "private": false,
   "type": "module",
   "keywords": [
@@ -22,21 +22,22 @@
     "hakit-sync-types": "./dist/sync/cli/cli.js"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
   },
   "description": "A collection of React hooks and helpers for Home Assistant to easily communicate with the Home Assistant WebSocket API.",
-  "main": "dist/hakit-core.umd.cjs",
-  "module": "dist/hakit-core.es.js",
-  "types": "dist/types/index.d.cts",
+  "main": "./dist/hakit-core.cjs.cjs",
+  "module": "./dist/hakit-core.es.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/hakit-core.es.js",
-      "require": "./dist/hakit-core.umd.cjs",
-      "types": "./dist/types/index.d.cts"
+      "require": "./dist/hakit-core.cjs.cjs",
+      "types": "./dist/types/index.d.ts"
     },
     "./sync": {
-      "types": "./dist/sync/node/index.d.ts",
-      "import": "./dist/sync/node/index.js",
+      "types": "./dist/sync/node/types/index.d.ts",
+      "import": "./dist/sync/node/index.cjs",
       "require": "./dist/sync/node/index.cjs"
     }
   },
@@ -50,39 +51,59 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/shannonhochkins/ha-component-kit"
+    "url": "git+https://github.com/shannonhochkins/ha-component-kit",
+    "directory": "packages/core"
   },
   "bugs": {
     "url": "https://github.com/shannonhochkins/ha-component-kit/issues"
   },
   "homepage": "https://shannonhochkins.github.io/ha-component-kit#readme",
+  "funding": "https://github.com/shannonhochkins/ha-component-kit?sponsor=1",
   "scripts": {
     "dev": "vite",
-    "prebuild": "rm -rf ./dist && npm run prettier",
-    "build": "npm run build:core && npm run build:sync-script",
+    "type-check": "tsc --noEmit",
+    "prebuild": "rm -rf ./dist && npm run lint && npm run prettier",
+    "build": "npm run sync-local-types && npm run build:sync-script-cli && npm run build:sync-ha-types && npm run build:core && npm run type-check",
     "build:core": "NODE_ENV=production vite build",
-    "build:core-types": "tsup src/index.ts --dts-only --dts-resolve --d dist/types && tsc",
-    "build:sync-script": "NODE_ENV=production vite --config ./bin/vite-node.config.ts build",
-    "build:sync-script-types": "tsup bin/cli.ts --format esm --d dist/sync/cli",
+    "build:sync-script": "NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build",
+    "build:sync-script-cli": "tsup",
+    "build:sync-ha-types": "ts-node --esm ./scripts/sync-ha-types/index.ts",
     "watch:build": "NODE_ENV=production vite build --watch",
+    "watch:build:sync-script": "NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build --watch",
+    "dev:test:sync-script": "npm run build:sync-script && ts-node ./scripts/sync-user-types/test.ts",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "test": "NODE_ENV=test jest --rootDir=src",
-    "postbuild": "npm run build:core-types && npm run build:sync-script-types",
-    "release": "npm publish --access public"
+    "prerelease": "npm run build",
+    "release": "npm publish --access public",
+    "sync-local-types": "npm run build:sync-script && node ./sync-local-types.cjs"
+  },
+  "tsup": {
+    "entry": [
+      "scripts/sync-user-types/cli.ts"
+    ],
+    "splitting": false,
+    "sourcemap": false,
+    "clean": true,
+    "format": "esm",
+    "dts": false,
+    "outDir": "dist/sync/cli"
   },
   "peerDependencies": {
     "@iconify/react": ">=4.x",
     "home-assistant-js-websocket": ">=8.x",
     "javascript-time-ago": ">=2.x",
     "lodash": ">=4.x",
+    "prettier": ">=3.x.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
     "react-router-dom": ">=6.x",
     "use-debounce": ">=9.x",
-    "ws": "^8.13.0",
-    "yargs": "^17.7.2",
-    "prettier": ">=3.x.x"
+    "ws": ">=8.x.x",
+    "yargs": ">=17.x.x",
+    "@emotion/react": ">=10.x",
+    "@emotion/styled": ">=10.x",
+    "framer-motion": ">=10.x"
   },
   "devDependencies": {
     "@liuli-util/vite-plugin-node": "^0.6.0",
@@ -91,6 +112,9 @@
     "@types/ws": "^8.5.5",
     "home-assistant-js-websocket": "^8.1.0",
     "prettier": "^3.0.2",
+    "simple-git": "^3.19.1",
+    "ts-morph": "^19.0.0",
+    "ts-node": "^10.9.1",
     "tsup": "^7.1.0"
   }
 }

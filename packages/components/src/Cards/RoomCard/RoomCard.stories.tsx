@@ -11,7 +11,7 @@ import type { RoomCardProps } from "@components";
 import { useHash } from "@hakit/core";
 // @ts-expect-error - Don't have types for jsx-to-string
 import jsxToString from "jsx-to-string";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 import office from "./office.jpg";
 import livingRoom from "./living-room.jpg";
 function Template(args: RoomCardProps) {

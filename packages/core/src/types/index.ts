@@ -3,13 +3,14 @@ import type {
   HassServiceTarget,
 } from "home-assistant-js-websocket";
 import type { DefaultServices } from "./supported-services";
-import { LIGHT_COLOR_MODES } from "../data/light";
-import { DefinedPropertiesByDomain } from "./entity";
+import type { DefinedPropertiesByDomain } from "./entitiesByDomain";
+export type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - ignore the next check as this is extendable from the client side.
 // eslint-disable-next-line
 export interface CustomSupportedServices<
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   T extends ServiceFunctionTypes = "target",
 > {}
 // dodgey hack to determine if the custom supported services are empty or not, if they're empty we use the default services
@@ -19,8 +20,11 @@ export type SupportedServices<T extends ServiceFunctionTypes = "target"> = [
   ? DefaultServices<T>
   : CustomSupportedServices<T>;
 
-export type LightColorMode =
-  (typeof LIGHT_COLOR_MODES)[keyof typeof LIGHT_COLOR_MODES];
+export type FilterByDomain<
+  T,
+  Prefix extends AllDomains,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+> = T extends `${Prefix}${infer _Rest}` ? T : never;
 
 export type DefaultEntityName = `${AllDomains}.${string}`;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -33,7 +37,6 @@ export type EntityName =
       ? DefaultEntityName
       : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore - ignore the next check as this is extendable from the client side.
-        // eslint-disable-next-line
         CustomEntityNameContainer["names"])
   | "unknown";
 
@@ -41,6 +44,8 @@ export type HassEntityCustom = HassEntity & {
   custom: {
     /** the difference in time between the last updated value and now, eg "1 minute ago, 1 day ago etc, 5 days from now" */
     relativeTime: string;
+    /** the difference in time in milliseconds between now and the time the entity was updated / triggered */
+    timeDiff: number;
     /** if the last updated value was considered "now" */
     active: boolean;
     /** the hexColor value if the entity is a light */
@@ -57,22 +62,21 @@ export type HassEntityCustom = HassEntity & {
     color: [number, number, number];
   };
 };
-type HassEntityHelper<T extends AllDomains> =
-  T extends keyof DefinedPropertiesByDomain
-    ? DefinedPropertiesByDomain[T]
+export type HassEntityHelper<T extends AllDomains> =
+  CamelToSnake<T> extends keyof DefinedPropertiesByDomain
+    ? DefinedPropertiesByDomain[CamelToSnake<T>]
     : HassEntity;
 
 export type HassEntityWithApi<T extends AllDomains> = HassEntityCustom &
-  HassEntityHelper<T> & {
-    /** all the services associated with the domain provided, this does not require entity as the first argument */
-    api: T extends keyof SupportedServices
+  HassEntityHelper<SnakeToCamel<T>> & {
+    api: SnakeToCamel<T> extends keyof SupportedServices<"no-target">
       ? SupportedServices<"no-target">[SnakeToCamel<T>]
       : never;
   };
 
 export type ServiceFunctionWithEntity<Data = object> = (
-  /** the entity string name from home assistant */
-  entity: string,
+  /** the entity target from home assistant, string, string[] or object */
+  entity: Target,
   /** the data to send to the service */
   data?: Data,
 ) => void;
@@ -159,5 +163,4 @@ export type Target = HassServiceTarget | string | string[];
 export type ServiceFunctionTypes = "target" | "no-target";
 /** all the supported services */
 export type * from "./supported-services";
-export type * from "./entity";
-export type * from "./entity/light";
+export type * from "./entitiesByDomain";

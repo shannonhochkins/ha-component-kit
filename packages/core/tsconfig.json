@@ -3,7 +3,17 @@
   "compilerOptions": {
     "skipLibCheck": true
   },
+  "ts-node": {
+    "esm": true,
+    "compilerOptions": {
+      "allowSyntheticDefaultImports": true,
+      "lib": ["ES2022"],
+      "module": "ES2022",
+      "moduleResolution": "node",
+      "target": "ES2022"
+    }
+  },
   "rootDir": "./src",
-  "include": ["src", "bin", "mocks"],
+  "include": ["src", ".d.ts", "bin", "mocks"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
