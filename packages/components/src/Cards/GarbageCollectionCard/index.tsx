@@ -277,15 +277,18 @@ function _GarbageCollectionCard({
     return days === 0 ? "Today" : days === 1 ? "Tomorrow" : `in ${days} days`;
   }, []);
 
-  const findNextNonNullWeek = useCallback((weeks: WeekConfig[], startWeek: number): number => {
-    for (let i = 0; i < weeks.length; i++) {
-      const index = (startWeek + i) % weeks.length;
-      if (weeks[index] !== null) {
-        return index;
+  const findNextNonNullWeek = useCallback(
+    (weeks: WeekConfig[], startWeek: number): number => {
+      for (let i = 0; i < weeks.length; i++) {
+        const index = (startWeek + i) % weeks.length;
+        if (weeks[index] !== null) {
+          return index;
+        }
       }
-    }
-    return -1; // return an invalid index if no non-null weeks are found
-  }, []);
+      return -1; // return an invalid index if no non-null weeks are found
+    },
+    [],
+  );
 
   const collections = useMemo(
     () =>
@@ -302,7 +305,7 @@ function _GarbageCollectionCard({
         let nextWeekIndex = (currentWeek + 1) % schedule.weeks.length;
 
         // Find next non-null week for non-weekly frequencies
-        if (schedule.frequency !== 'weekly') {
+        if (schedule.frequency !== "weekly") {
           nextWeekIndex = findNextNonNullWeek(schedule.weeks, currentWeek);
         }
 
@@ -354,7 +357,14 @@ function _GarbageCollectionCard({
           },
         ];
       }),
-    [currentWeek, dayNames, schedules, today, findNextNonNullWeek, formatTimeDisplay],
+    [
+      currentWeek,
+      dayNames,
+      schedules,
+      today,
+      findNextNonNullWeek,
+      formatTimeDisplay,
+    ],
   );
   console.log("collections", collections);
   return (
@@ -400,13 +410,13 @@ function _GarbageCollectionCard({
  * It uses the current date (either provided by home assistant sensor.date or via javascript to determine the current day of the week, and then calculates the next collection date based on the schedule provided.
  *
  * You can change the color of the bin, by simply providing a css color property or providing an object will allow you to change colors, size of the bin, text, textColors, icon or even a custom render function.
- * 
+ *
  * It will also allow you to create multiple schedules if you need to.
- * 
+ *
  * You can also hide the "next" collection by passing through hideNextCollection on the schedule.
- * 
+ *
  * WARNING: If the approach I've taken for schedules doesn't work for you, reach out on github an open an new issue with some details on what isn't working for you!
- * 
+ *
  * Here's an example of some of the customization achievable:
  * */
 export function GarbageCollectionCard(props: GarbageCollectionCardProps) {
