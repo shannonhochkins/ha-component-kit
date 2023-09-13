@@ -1,4 +1,9 @@
 # @hakit/components
+## 1.0.30
+- NEW - GarbageCollectionCard - a new card to display the upcoming garbage bin collection times, useful for those like myself who always forget...
+- CHANGE - TimeCard no longer retrieves the timeZone from the hass config, there was no need for this as the
+  sensor.date value is just 2023-07-19 with no timezone offsets, and also already calculated by timezone of the configuration.
+# @hakit/components
 ## 1.0.29
 - BUGFIX - media player card was not sending correct entities for join action
 # @hakit/core

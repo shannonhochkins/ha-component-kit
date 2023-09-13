@@ -2,7 +2,7 @@ import { Story } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 import { css, Global } from "@emotion/react";
 import { HassConnect } from '@hass-connect-fake';
-import { ThemeProvider, SidebarCard, FabCard, Row, Column, RoomCard, ButtonCard, WeatherCard, TimeCard, Group, ClimateCard, MediaPlayerCard, EntitiesCard, TriggerCard } from '@components';
+import { ThemeProvider, SidebarCard, FabCard, Row, Column, RoomCard, ButtonCard, WeatherCard, TimeCard, Group, ClimateCard, MediaPlayerCard, EntitiesCard, TriggerCard, GarbageCollectionCard } from '@components';
 // @ts-expect-error - don't need to type this
 import office from './office.jpg';
 // @ts-expect-error - don't need to type this
@@ -26,6 +26,9 @@ function Template() {
         padding: '2rem',
         overflow: 'auto'
       }}>
+        <Group title="Time & Date">
+        <TimeCard />
+        </Group>
         <Group title="Lights & Switches">
           <ButtonCard entity="light.fake_light_1" service="toggle" />
           <ButtonCard entity="light.fake_light_2" service="toggle" icon="mdi:power" />
@@ -40,16 +43,55 @@ function Template() {
           <FabCard entity="switch.fake_switch" service="toggle" />
           <FabCard entity="vacuum.robot_vacuum" service="toggle" />
         </Group>
-        <Group title="Miscellaneous" layout="column">
+        <Group title="Miscellaneous" layout="column" gap="1rem">
           <Row gap="1rem" alignItems="stretch">
             <EntitiesCard entities={['sensor.date', 'sensor.time', 'automation.dim_lights']} />
             <MediaPlayerCard entity="media_player.fake_speaker" layout="slim" />
             <TriggerCard entity="scene.good_morning" />
           </Row>
           <Row gap="1rem" alignItems="stretch">
-            <TimeCard />
             <ClimateCard entity="climate.air_conditioner" />
             <WeatherCard entity="weather.entity" />
+            <GarbageCollectionCard description="Here's the upcoming garbage collection schedule." schedules={[
+              {
+                day: "Thursday",
+                frequency: "weekly",
+                weeks: [
+                  [
+                    {
+                      color: "#b62525",
+                      name: "General Waste",
+                    },
+                    {
+                      color: "#009b00",
+                      name: "Garden Waste",
+                    },
+                  ],
+                  [
+                    {
+                      color: "#b62525",
+                      textColor: "white",
+                      name: "Waste",
+                    },
+                    {
+                      color: "#c8c804",
+                      name: "Recycling",
+                    },
+                  ],
+                  [
+                    {
+                      color: "#b62525",
+                      icon: "game-icons:nuclear-waste",
+                    },
+                    {
+                      color: "#009b00",
+                      name: "Garden",
+                    },
+                  ],
+                  ["#b62525", "#c8c804"],
+                ],
+              },
+            ]} />
           </Row>
           <Row gap="1rem">
             <RoomCard icon="mdi:office-chair" title="Office" hash="office" image={office}>

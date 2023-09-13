@@ -79,7 +79,11 @@ function _ThemeProvider<T extends object>({
     </>
   );
 }
-/** A simple way of creating global styles and providing re-usable css variables to re-use across your application */
+/**
+ * A simple way of creating global styles and providing re-usable css variables to re-use across your application
+ *
+ * There's very little css shipped with this ThemeProvider, the main purpose of this provider is to create the css variables used for all components across @hakit/components, however it does ship with some base css to the body, html and scrollbars.
+ * */
 export function ThemeProvider<T extends object>(props: ThemeProviderProps<T>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ThemeProvider" })}>

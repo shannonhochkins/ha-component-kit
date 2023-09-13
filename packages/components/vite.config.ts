@@ -6,6 +6,7 @@ import packageJson from './package.json';
 import path from 'path';
 const { EsLinter, linterPlugin } = EsLint;
 import dts from 'vite-plugin-dts';
+import svgr from "vite-plugin-svgr";
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
   return {
@@ -65,6 +66,7 @@ export default defineConfig(configEnv => {
           plugins: ['@emotion/babel-plugin'],
         },
       }),
+      svgr(),
       linterPlugin({
         include: ['./src}/**/*.{ts,tsx}'],
         linters: [new EsLinter({ configEnv })],

@@ -62,6 +62,9 @@ export interface ThemeParams {
         expanded: string;
       };
     };
+    garbageCollectionCard: {
+      width: string;
+    };
   };
   modal: {
     width: string;
@@ -139,6 +142,9 @@ export const theme: ThemeParams = {
       },
     },
     mediaCard: {
+      width: "18.75rem",
+    },
+    garbageCollectionCard: {
       width: "18.75rem",
     },
   },
