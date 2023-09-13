@@ -1,10 +1,39 @@
 ## Overview
-I'm using changesets to manage this monorepo as there's a few packages that need to be deployed at the same time or individually.
+I'm using changesets to manage this monorepo as there's a few packages that need to be deployed at the same time or individually and this will automatically manage sub dependencies.
 
 I'm not using changesets to actually publish as they require payment to do so.
 
 ### Deploying
-Deploying is relatively simple, run the following command:
+- Deploying to storybook just requires the PR to be merged to master and it will kickoff a github action to deploy.
+
+### Tagging & Releasing
+
+Releasing is relatively simple, run the following command:
+
+These commands will build everything needed to deploy before it actually releases, so no need to run these before the release.
+
+This is the release process I'm using, it's a bit manual but it works for now.
+```bash
+# Step 1: Make sure your local master is up-to-date with the remote
+git fetch origin
+git checkout master
+
+# Step 2: Create a release branch
+git flow release start "v1.0.0"
+# ... perform any final adjustments on the release branch, bump version numbers, etc. ...
+npx changeset
+npm changeset version
+## release core or components
+npm run release:core
+npm run release:components
+
+# Step 3: Push the tag to the remote
+git flow release finish "v1.0.0"
+# Step 4: Push all branches and tags to remote
+git push origin master
+git push --tags
+```
+
 ```bash
 npx changeset
 ```
@@ -27,4 +56,4 @@ npm run release:core
 npm run release:components
 ```
 
-These commands will build everything needed to deploy before it actually releases, so no need to run these before the release.
+
