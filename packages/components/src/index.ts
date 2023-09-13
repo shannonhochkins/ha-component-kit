@@ -25,15 +25,17 @@ export type { GroupProps } from "./Group";
 // Ripples
 export { Ripples } from "./Shared/Ripples";
 export type { RipplesProps } from "./Shared/Ripples";
-// WeatherCard
-export { WeatherCard } from "./Cards/WeatherCard";
-export type { WeatherCardProps } from "./Cards/WeatherCard";
 // Row
 export { Row } from "./Shared/Row";
 export type { RowProps } from "./Shared/Row";
 // column
 export { Column } from "./Shared/Column";
 export type { ColumnProps } from "./Shared/Column";
+// WeatherCard
+export { WeatherCard } from "./Cards/WeatherCard";
+export type { WeatherCardProps } from "./Cards/WeatherCard";
+export { GarbageCollectionCard } from "./Cards/GarbageCollectionCard";
+export type { GarbageCollectionCardProps } from "./Cards/GarbageCollectionCard";
 // TimeCard
 export { TimeCard } from "./Cards/TimeCard";
 export type { TimeCardProps } from "./Cards/TimeCard";

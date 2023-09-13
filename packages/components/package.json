@@ -73,12 +73,13 @@
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
+    "react-error-boundary": "^4.x",
     "react-router-dom": ">=6.x",
     "react-thermostat": "^2.0.2",
-    "react-use": ">=17.x",
-    "react-error-boundary": "^4.x"
+    "react-use": ">=17.x"
   },
   "devDependencies": {
-    "@emotion/babel-plugin": "^11.x"
+    "@emotion/babel-plugin": "^11.x",
+    "vite-plugin-svgr": "^3.2.0"
   }
 }

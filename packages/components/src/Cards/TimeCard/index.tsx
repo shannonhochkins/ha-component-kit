@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
-import { useMemo, useEffect, useState } from "react";
-import { useEntity, useHass } from "@hakit/core";
+import { useMemo } from "react";
+import { useEntity } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { Row, Column, fallback, Alert } from "@components";
 import { motion } from "framer-motion";
@@ -65,13 +65,12 @@ function convertTo12Hour(time: string) {
   return formatter.formatToParts(date);
 }
 
-function formatDate(dateString: string, timeZone: string): string {
+function formatDate(dateString: string): string {
   // Create a new Date object
   const date = new Date(dateString);
 
   // Use Intl.DateTimeFormat to format the date
   const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone,
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -145,8 +144,6 @@ function _TimeCard({
   icon,
   ...rest
 }: TimeCardProps): JSX.Element {
-  const { getConfig } = useHass();
-  const [timeZone, setTimeZone] = useState<string>("UTC");
   const timeSensor = useEntity("sensor.time", {
     returnNullIfNotFound: true,
   });
@@ -160,15 +157,6 @@ function _TimeCard({
     const amOrPm = parts.find((part) => part.type === "dayPeriod");
     return [`${hour?.value}:${minute?.value}`, amOrPm?.value];
   }, [parts]);
-  useEffect(() => {
-    async function getTimeZone() {
-      const config = await getConfig();
-      if (config) {
-        setTimeZone(config.time_zone);
-      }
-    }
-    getTimeZone();
-  });
   if (!dateSensor || !timeSensor) {
     return <Warning />;
   }
@@ -188,7 +176,7 @@ function _TimeCard({
           <Time>{formatted}</Time>
           <AmOrPm>{amOrPm}</AmOrPm>
         </Row>
-        {includeDate && <Row>{formatDate(dateSensor.state, timeZone)}</Row>}
+        {includeDate && <Row>{formatDate(dateSensor.state)}</Row>}
       </Column>
     </Card>
   );
