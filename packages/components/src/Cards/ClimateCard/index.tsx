@@ -106,6 +106,8 @@ function _ClimateCard({
     // ignore on right click
     if (("button" in e && e.button === 2) || isUnavailable || disabled) return;
     setOpenModal(true);
+  }, {
+    isPreventDefault: false,
   });
 
   const titleValue = useMemo(() => {
@@ -133,9 +135,8 @@ function _ClimateCard({
           layoutId={`${_entity}-climate-card`}
           {...rest}
           onClick={() => {
-            if (typeof onClick === "function") {
-              onClick(entity);
-            }
+            if (isUnavailable || disabled || typeof onClick !== "function") return;
+            onClick(entity);
           }}
         >
           <LayoutBetween>
