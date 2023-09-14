@@ -1,3 +1,7 @@
+# @hakit/core
+## 1.0.26
+### Patch Changes
+- BUGFIX - useLowDevices hook was performing too many state updates
 # @hakit/components
 ## 1.0.31
 - BUGFIX - ButtonCard & FabCard click events we're triggering on mobile devices due to the useLongPress hook, this has been fixed.
