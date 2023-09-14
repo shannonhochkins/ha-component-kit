@@ -217,9 +217,12 @@ function _ButtonCard<E extends EntityName>({
     // ignore on right click
     if (("button" in e && e.button === 2) || disabled || isUnavailable) return;
     setOpenModal(true);
+  }, {
+    isPreventDefault: false,
   });
 
-  const useApiHandler = useCallback(() => {
+  const onClickHandler = useCallback(() => {
+    if (disabled) return;
     // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
     if (typeof service === "string" && entity && !isUnavailable) {
       // @ts-expect-error - we don't actually know the service at this level
@@ -230,7 +233,7 @@ function _ButtonCard<E extends EntityName>({
       // @ts-expect-error - types are accurate, we just don't know the domain entity type
       onClick(entity);
     }
-  }, [service, entity, serviceData, onClick, isUnavailable]);
+  }, [service, disabled, entity, serviceData, onClick, isUnavailable]);
   // use the input description if provided, else use the friendly name if available, else entity name, else null
   const description = useMemo(() => {
     return _description === null
@@ -260,7 +263,7 @@ function _ButtonCard<E extends EntityName>({
           }
           className={`${active ? "active " : ""}${className}`}
           {...rest}
-          onClick={useApiHandler}
+          onClick={onClickHandler}
         >
           <LayoutBetween>
             <Fab

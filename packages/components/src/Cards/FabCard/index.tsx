@@ -128,18 +128,13 @@ function _FabCard<E extends EntityName>({
     fontSize: `${size / 1.7}px`,
     color: iconColor || "currentcolor",
   });
-  const longPressEvent = useLongPress((e) => {
-    // ignore on right click
-    if ("button" in e && e.button === 2) return;
-    setOpenModal(true);
-  });
   const active =
     typeof _active === "boolean"
       ? _active
       : entity === null
       ? false
       : entity.state !== "off" && !isUnavailable;
-  const useApiHandler = useCallback(() => {
+  const onClickHandler = useCallback(() => {
     if (disabled) return;
     // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
     if (typeof service === "string" && entity && !isUnavailable) {
@@ -152,6 +147,13 @@ function _FabCard<E extends EntityName>({
       onClick(entity);
     }
   }, [service, entity, serviceData, disabled, isUnavailable, onClick]);
+  const longPressEvent = useLongPress((e) => {
+    // ignore on right click
+    if (("button" in e && e.button === 2) || (disabled || isUnavailable)) return;
+    setOpenModal(true);
+  }, {
+    isPreventDefault: false,
+  });
   const title = useMemo(
     () => (domain === null ? null : startCase(lowerCase(domain))),
     [domain],
@@ -173,8 +175,8 @@ function _FabCard<E extends EntityName>({
           size={size}
           {...longPressEvent}
           {...rest}
-          className={`${active ? "active " : ""}${className}`}
-          onClick={useApiHandler}
+          className={`${active ? "active " : ""}${className ?? ''}`}
+          onClick={onClickHandler}
         >
           {noIcon !== true && (iconElement || entityIcon || domainIcon)}
           {typeof children !== "undefined" ? children : undefined}
