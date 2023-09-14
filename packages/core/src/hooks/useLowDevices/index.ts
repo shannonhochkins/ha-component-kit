@@ -1,6 +1,7 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useHass } from "@core";
-import { HassEntity } from "home-assistant-js-websocket";
+import { HassEntity, HassEntities } from "home-assistant-js-websocket";
+import { isEqual } from "lodash";
 
 export interface LowDevicesOptions {
   /** the minimum battery percentage threshold */
@@ -19,13 +20,15 @@ export const useLowDevices = ({
   min = 0,
   max = 20,
 }: LowDevicesOptions = {}) => {
-  const { getAllEntities, lastUpdated } = useHass();
+  const { getAllEntities } = useHass();
   const [lowEntities, setLowEntities] = useState<HassEntity[]>([]);
   const entities = getAllEntities();
-
-  useEffect(() => {
-    const batteryEntities = Object.values(entities)
-      .filter((entity) => {
+  const prevEntitiesRef = useRef<null | HassEntities>(null);
+  // Check if entities have actually changed meaningfully
+  const haveEntitiesChanged = !isEqual(prevEntitiesRef.current, entities);
+  const batteryEntities = useMemo(
+    () =>
+      Object.values(entities).filter((entity) => {
         const hasBatteryProperties =
           entity.attributes.unit_of_measurement === "%" &&
           entity.attributes.device_class === "battery";
@@ -43,11 +46,15 @@ export const useLowDevices = ({
           isBlacklisted &&
           isWhitelisted
         );
-      })
-      .sort((a, b) => Number(a.state) - Number(b.state));
-    if (batteryEntities.length > 0) {
+      }),
+    [blacklist, entities, max, min, whitelist],
+  );
+
+  useEffect(() => {
+    if (haveEntitiesChanged && !isEqual(batteryEntities, lowEntities)) {
       setLowEntities(batteryEntities);
     }
-  }, [lastUpdated, blacklist, whitelist, entities, min, max]);
+    prevEntitiesRef.current = entities;
+  }, [haveEntitiesChanged, batteryEntities, lowEntities, entities]);
   return useMemo(() => lowEntities, [lowEntities]);
 };
