@@ -29,7 +29,7 @@ function MultiRoomExample() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
-      <Row gap="1rem" fullWidth style={{ height: "50vh" }}>
+      <Row gap="1rem" fullWidth>
         <RoomCard
           {...{
             hash: "office",

@@ -15,8 +15,7 @@ These commands will build everything needed to deploy before it actually release
 This is the release process I'm using, it's a bit manual but it works for now.
 ```bash
 # Step 1: Make sure your local master is up-to-date with the remote
-git fetch origin
-git checkout master
+git fetch origin && git checkout master && git pull
 
 # Step 2: Create a release branch
 git flow release start "v1.0.0"
@@ -26,7 +25,7 @@ npm changeset version
 ## release core or components
 npm run release:core
 npm run release:components
-
+# commit files
 # Step 3: Push the tag to the remote
 git flow release finish "v1.0.0"
 # Step 4: Push all branches and tags to remote
