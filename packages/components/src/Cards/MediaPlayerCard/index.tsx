@@ -26,7 +26,7 @@ const MediaPlayerWrapper = styled(motion.div)<{
   layoutName?: Layout;
 }>`
   padding: 0;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-300-shade);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-image, background-color, box-shadow;
@@ -69,7 +69,7 @@ const MediaPlayerWrapper = styled(motion.div)<{
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
   &:not(:disabled):hover {
-    background-color: var(--ha-primary-background-hover);
+    background-color: var(--ha-400-shade);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 
@@ -105,7 +105,7 @@ const Clock = styled.div<{
   transition: opacity var(--ha-transition-duration) var(--ha-easing);
   padding: 0.2rem;
   font-size: 0.8rem;
-  background: var(--ha-primary-background);
+  background: var(--ha-200-shade);
   z-index: 1;
   border-radius: 0.25rem;
   pointer-events: none;
@@ -143,7 +143,7 @@ const ProgressBar = styled.div<{
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--ha-primary-active);
+      background: var(--ha-300);
       width: var(--progress-${props.entity}-width, 100%);
     }
   }
@@ -162,6 +162,7 @@ const ProgressBar = styled.div<{
 `;
 const Title = styled.div`
   font-size: 0.8rem;
+  color: rgba(255, 255, 255, 1);
 `;
 
 const Base = styled(Column)`
@@ -193,10 +194,12 @@ const StyledFab = styled(FabCard)`
 
 const StyledMarquee = styled(Marquee)`
   font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.87);
 `;
 
 const SmallText = styled.span`
   font-size: 0.8rem;
+  color: rgba(255, 255, 255, 1);
 `;
 
 const VolumeSlider = styled.label<{

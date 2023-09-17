@@ -30,11 +30,11 @@ const Card = styled(motion.div)`
   align-items: stretch;
   justify-content: flex-start;
   cursor: default;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-300-shade);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
   &:hover {
-    background-color: var(--ha-primary-background-hover);
+    background-color: var(--ha-400-shade);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
@@ -67,7 +67,7 @@ const Bin = styled.div<{
 `;
 
 const BinBox = styled(Column)`
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--ha-500-shade);
   border-radius: 0.5rem;
   padding: 0.5rem;
   width: calc(50% - 1.5rem);
@@ -76,20 +76,23 @@ const BinBox = styled(Column)`
   }
   .collection-time {
     font-size: 0.8rem;
+    color: var(--ha-500-shade-contrast);
   }
   .collection-title {
     font-size: 0.8rem;
     margin-bottom: 0.5rem;
+    color: var(--ha-300-shade-contrast);
   }
 `;
 
 const Title = styled.div`
   font-size: 1rem;
+  color: var(--ha-50-shade-contrast);
 `;
 const Description = styled.div`
   font-size: 0.8rem;
   margin-top: 0.5rem;
-  color: var(--ha-secondary-color);
+  color: var(--ha-500-shade-contrast);
 `;
 
 interface VerticalTextProps {

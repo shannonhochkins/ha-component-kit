@@ -38,13 +38,13 @@ function toRGB(entity: HassEntity): [number, number, number] | null {
 
 export function getCssColorValue(entity: HassEntity | null) {
   const color = entity ? toRGB(entity) : null;
-  const hexColor = color ? rgb2hex(color) : "var(--ha-primary-active)";
+  const hexColor = color ? rgb2hex(color) : "var(--ha-A400)";
   const rgbColor = color
     ? `rgba(${color.join(", ")})`
-    : "var(--ha-primary-inactive)";
+    : "var(--ha-500-shade-contrast)";
   const rgbaColor = color
     ? `rgba(${[...color, 0.35].join(", ")})`
-    : "var(--ha-primary-active)";
+    : "var(--ha-A200)";
   const { css, raw } = stateColorBrightness(entity);
   return {
     color: color || [33, 33, 33],

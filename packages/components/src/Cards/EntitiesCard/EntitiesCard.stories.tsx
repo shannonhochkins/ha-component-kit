@@ -7,7 +7,7 @@ function Render(args?: Args) {
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
       <Column gap="1rem">
-        <EntitiesCard {...args} />
+        <EntitiesCard includeLastUpdated {...args} />
         <Alert
           type="warning"
           description="Error above is intentional to show how error boundaries are handled."

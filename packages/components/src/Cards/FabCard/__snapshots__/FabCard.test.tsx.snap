@@ -9,7 +9,7 @@ exports[`<FabCard /> renders FabCard 1`] = `
   text-align: center;
   border-radius: 50%;
   background-color: var(--ha-secondary-background);
-  color: var(--ha-primary-active);
+  color: var(--ha-300);
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;

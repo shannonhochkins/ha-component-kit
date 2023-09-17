@@ -34,7 +34,7 @@ const StyledButtonCard = styled(motion.button)`
   align-items: stretch;
   justify-content: space-between;
   cursor: pointer;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-300-shade);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow;
@@ -48,7 +48,7 @@ const StyledButtonCard = styled(motion.button)`
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
   &:not(:disabled):hover {
-    background-color: var(--ha-primary-background-hover);
+    background-color: var(--ha-400-shade);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
@@ -58,13 +58,14 @@ interface ToggleProps {
 }
 
 const ToggleState = styled.div<ToggleProps>`
-  background-color: white;
+  background-color: var(--ha-100);
   border-radius: 100%;
   width: 16px;
   height: 16px;
   position: absolute;
   top: 2px;
   left: 0;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: left, transform;
   left: ${(props) => (props.active ? "100%" : "0px")};
@@ -77,7 +78,7 @@ const ToggleState = styled.div<ToggleProps>`
 const Toggle = styled.div<ToggleProps>`
   position: relative;
   background-color: ${(props) =>
-    props.active ? "var(--ha-primary-active)" : "var(--ha-primary-inactive)"};
+    props.active ? "var(--ha-A200)" : "var(--ha-50-shade)"};
   border-radius: 10px;
   width: 40px;
   height: 20px;
@@ -99,6 +100,7 @@ const Fab = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
   ${(props) =>
     props.rgbaColor &&
     `
@@ -139,14 +141,15 @@ const LayoutRow = styled.div`
 `;
 
 const Title = styled.div`
-  color: var(--ha-secondary-color);
+  color: var(--ha-400-shade-contrast);
   font-size: 0.7rem;
   margin: 2px 0;
 `;
 
 const Description = styled.div`
-  color: var(--ha-primary-color);
+  color: var(--ha-50-shade-contrast);
   font-size: 0.8rem;
+  font-weight: bold;
 `;
 type Extendable = Omit<
   React.ComponentProps<"button">,
@@ -188,7 +191,7 @@ function _ButtonCard<E extends EntityName>({
   description: _description,
   title: _title,
   defaultLayout,
-  disabled,
+  disabled = false,
   className,
   ...rest
 }: ButtonCardProps<E>): JSX.Element {
@@ -206,7 +209,7 @@ function _ButtonCard<E extends EntityName>({
   });
   const isDefaultLayout =
     defaultLayout === "default" || defaultLayout === undefined;
-  const isUnavailable = isUnavailableState(entity?.state);
+  const isUnavailable = typeof entity?.state === 'string' ? isUnavailableState(entity.state) : false;
   const on = entity
     ? entity.state !== "off" && !isUnavailable
     : active || false;
@@ -276,17 +279,17 @@ function _ButtonCard<E extends EntityName>({
                     ? entity.custom.rgbaColor
                     : "rgba(255,255,255,0.15)"
                   : on
-                  ? "var(--ha-primary-active)"
-                  : "var(--ha-primary-inactive)"
+                  ? "var(--ha-A400)"
+                  : "var(--ha-500-shade-contrast)"
               }
               rgbColor={
                 entity
                   ? on
                     ? entity.custom.rgbColor
-                    : "white"
+                    : "var(--ha-500-shade-contrast)"
                   : on
-                  ? "var(--ha-secondary-active)"
-                  : "var(--ha-secondary-inactive)"
+                  ? "var(--ha-300)"
+                  : "var(--ha-500-shade-contrast)"
               }
             >
               {iconElement || entityIcon || domainIcon}

@@ -30,7 +30,7 @@ const StyledClimateCard = styled(motion.div)`
   align-items: stretch;
   justify-content: center;
   cursor: pointer;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-300-shade);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: box-shadow, background-color;
@@ -39,13 +39,20 @@ const StyledClimateCard = styled(motion.div)`
     opacity: 0.8;
   }
   &:not(.disabled):hover {
-    background-color: var(--ha-primary-background-hover);
+    background-color: var(--ha-400-shade);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
 
 const Gap = styled.div`
   height: 20px;
+`;
+const StyledFabCard = styled(FabCard)`
+  color: var(--ha-300);
+  background-color: var(--ha-200-shade);
+  &:hover:not(:disabled) {
+    background-color: var(--ha-100-shade);
+  }
 `;
 
 const LayoutBetween = styled.div`
@@ -56,11 +63,12 @@ const LayoutBetween = styled.div`
 `;
 
 const Title = styled.div`
-  color: var(--ha-secondary-color);
+  
+  color: var(--ha-400-shade-contrast);
   font-size: 0.7rem;
 `;
 const Icon = styled.div`
-  color: var(--ha-primary-active);
+  color: var(--ha-A400);
 `;
 const Description = styled.div`
   font-size: 0.9rem;
@@ -69,6 +77,7 @@ const Description = styled.div`
   justify-content: flex-start;
   gap: 0.5rem;
   text-transform: capitalize;
+  color: var(--ha-50-shade-contrast);
 `;
 type Extendable = Omit<ClimateControlsProps, "onClick"> &
   MotionProps &
@@ -147,7 +156,7 @@ function _ClimateCard({
                     isUnavailable || disabled
                       ? activeColors["off"]
                       : currentMode === "unknown-mode"
-                      ? undefined
+                      ? 'var(--ha-500-shade-contrast)'
                       : activeColors[currentMode as HvacMode],
                 }}
               >
@@ -160,7 +169,7 @@ function _ClimateCard({
           <Gap />
           <Row fullWidth gap="0.5rem" wrap="nowrap">
             {(hvacModes || hvac_modes || []).concat().map((mode) => (
-              <FabCard
+              <StyledFabCard
                 size={35}
                 disabled={disabled || isUnavailable}
                 iconColor={

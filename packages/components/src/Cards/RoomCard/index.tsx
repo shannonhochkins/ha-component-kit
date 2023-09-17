@@ -35,12 +35,16 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   align-items: stretch;
   justify-content: space-between;
   cursor: pointer;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-300-shade);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow, background-image;
   will-change: width, height;
-
+  color: var(--ha-200-shade-contrast);
+  svg {
+    color: var(--ha-200-shade-contrast);
+    transition: color var(--ha-transition-duration) var(--ha-easing);
+  }
   ${(props) =>
     props.image &&
     `
@@ -52,7 +56,11 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
 
   &:hover {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-    background-color: var(--ha-primary-background-hover);
+    background-color: var(--ha-300-shade);
+    color: var(--ha-300-shade-contrast);
+    svg {
+      color: var(--ha-300-shade-contrast);
+    }
   }
 `;
 
@@ -60,6 +68,7 @@ const PictureCardFooter = styled(motion.div)`
   all: unset;
   padding: 1rem;
   background-color: var(--ha-background-opaque);
+  transition: color var(--ha-transition-duration) var(--ha-easing);
   position: absolute;
   inset: auto 0 0 0;
   font-weight: bold;
@@ -67,7 +76,7 @@ const PictureCardFooter = styled(motion.div)`
 `;
 
 const NavBar = styled(PictureCardFooter)`
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-50-shade);
   inset: 0 0 auto 0;
 `;
 
@@ -85,12 +94,13 @@ const FullScreen = styled(motion.div)`
   padding: 0;
   margin: 0;
   max-height: 100svh;
-  background: var(--ha-background);
+  background: var(--ha-100-shade);
   z-index: var(--ha-device-room-card-z-index);
   display: flex;
   justify-content: center;
   align-items: stretch;
   transition: left var(--ha-transition-duration) var(--ha-easing);
+  color: var(--ha-50-shade-contrast);
 `;
 
 const ChildContainer = styled(motion.div)`

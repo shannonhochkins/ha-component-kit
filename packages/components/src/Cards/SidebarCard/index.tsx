@@ -36,7 +36,7 @@ const StyledTimeCard = styled(TimeCard)<{
 `;
 
 const StyledSidebarCard = styled(motion.div)`
-  background-color: var(--ha-background-dark);
+  background-color: var(--ha-50-shade);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -101,27 +101,31 @@ const Menu = styled(motion.ul)<{
         width: 100%;
         font-size: 0.7rem;
         font-weight: 300;
-        color: var(--ha-secondary-color);
+        color: var(--ha-100-shade-contrast);
       }
     }
   }
   li {
     > a {
-      color: var(--ha-color);
+      color: var(--ha-100-shade-contrast);
       background-color: transparent;
+      transition: var(--ha-transition-duration) var(--ha-easing);
+      transition-property: color, background-color;
       svg {
-        color: var(--ha-color);
+        color: var(--ha-100-shade-contrast);
+        transition: var(--ha-transition-duration) var(--ha-easing);
+        transition-property: color;
       }
     }
     &:hover,
     &.active,
     &:focus {
       > a {
-        color: var(--ha-primary-active);
-        background-color: var(--ha-background-opaque);
+        color: var(--ha-A400);
+        background-color: var(--ha-100-shade);
 
         svg {
-          color: var(--ha-primary-active);
+          color: var(--ha-A400);
         }
       }
     }
@@ -145,7 +149,7 @@ const Menu = styled(motion.ul)<{
 const Divider = styled.hr`
   width: 100%;
   border: none;
-  border-bottom: 1px solid var(--ha-secondary-background);
+  border-bottom: 1px solid var(--ha-200-shade);
   margin: 0;
 `;
 

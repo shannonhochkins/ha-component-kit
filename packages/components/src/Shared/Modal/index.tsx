@@ -15,14 +15,14 @@ const ModalContainer = styled(motion.div)`
   display: flex;
   width: var(--ha-modal-width);
   margin-left: calc(var(--ha-modal-width) / -2);
-  color: var(--ha-color);
+  color: var(--ha-text-2);
   height: calc(100% - 4rem);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-200-shade);
   z-index: var(--ha-modal-z-index);
 `;
 const ModalInner = styled.div`

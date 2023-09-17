@@ -45,12 +45,14 @@ const StyledAlert = styled.div`
     font-weight: bold;
     font-size: 0.8rem;
     line-height: 1rem;
+    color: var(--ha-50-shade-contrast);
   }
   .description {
     margin-top: 2px;
     font-weight: normal;
     font-size: 0.75rem;
     line-height: 1rem;
+    color: var(--ha-100-shade-contrast);
   }
 
   &.no-title {

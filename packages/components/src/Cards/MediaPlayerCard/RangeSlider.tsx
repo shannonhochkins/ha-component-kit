@@ -13,7 +13,7 @@ const StyledRange = styled.div<{
       width: 100%;
       height: 10px;
       border-radius: 5px;
-      background: var(--ha-secondary-background);
+      background: var(--ha-background-5);
       outline: none;
       padding: 0;
       margin: 0;
@@ -23,17 +23,17 @@ const StyledRange = styled.div<{
         width: ${props.handleSize}px;
         height: ${props.handleSize}px;
         border-radius: 50%;
-        background: var(--ha-primary-active);
+        background: var(--ha-300);
         cursor: pointer;
         transition: background .15s ease-in-out;
 
         &:hover {
-          background: var(--ha-primary-active);
+          background: var(--ha-300);
         }
       }
 
       &:active::-webkit-slider-thumb {
-        background: var(--ha-primary-active);
+        background: var(--ha-300);
       }
 
       &::-moz-range-thumb {
@@ -41,31 +41,31 @@ const StyledRange = styled.div<{
         height: ${props.handleSize}px;
         border: 0;
         border-radius: 50%;
-        background: var(--ha-primary-active);
+        background: var(--ha-300);
         cursor: pointer;
         transition: background .15s ease-in-out;
 
         &:hover {
-          background: var(--ha-primary-active);
+          background: var(--ha-300);
         }
       }
 
       &:active::-moz-range-thumb {
-        background: var(--ha-primary-active);
+        background: var(--ha-300);
       }
       
       &:focus {
         
         &::-webkit-slider-thumb {
-          box-shadow: 0 0 0 3px var(--ha-primary-color),
-                      0 0 0 6px var(--ha-primary-background);
+          box-shadow: 0 0 0 3px var(--ha-100-shade),
+                      0 0 0 6px var(--ha-200-shade);
         }
       }
     }
 
     // Firefox Overrides
     ::-moz-range-track {
-        background: var(--ha-secondary-background);
+        background: var(--ha-200-shade);
         border: 0;
     }
 

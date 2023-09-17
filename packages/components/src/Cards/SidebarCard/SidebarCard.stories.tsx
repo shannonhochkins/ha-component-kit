@@ -17,10 +17,21 @@ import { HassConnect } from "@hass-connect-fake";
 import office from "../RoomCard/office.jpg";
 import livingRoom from "../RoomCard/living-room.jpg";
 
+const MakeFullScreen = () => {
+  return <Global
+    styles={css`
+      #storybook-inner-preview > div > div {
+        height: 100%;
+      }
+    `}
+  />;
+}
+
 function Template(args?: Partial<SidebarCardProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
+      <MakeFullScreen />
       <Row
         alignItems="stretch"
         justifyContent="flex-start"
@@ -185,6 +196,7 @@ function TemplateMenuItems(args?: Partial<SidebarCardProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
+      <MakeFullScreen />
       <Row
         alignItems="stretch"
         justifyContent="flex-start"

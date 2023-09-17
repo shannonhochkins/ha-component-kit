@@ -1,8 +1,25 @@
+import { useState } from "react";
 import { Story } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 import { css, Global } from "@emotion/react";
 import { HassConnect } from '@hass-connect-fake';
-import { ThemeProvider, SidebarCard, FabCard, Row, Column, RoomCard, ButtonCard, WeatherCard, TimeCard, Group, ClimateCard, MediaPlayerCard, EntitiesCard, TriggerCard, GarbageCollectionCard } from '@components';
+import {
+  ThemeProvider,
+  SidebarCard,
+  FabCard,
+  Row,
+  Column,
+  RoomCard,
+  ButtonCard,
+  WeatherCard,
+  TimeCard,
+  Group,
+  ClimateCard,
+  MediaPlayerCard,
+  EntitiesCard,
+  TriggerCard,
+  GarbageCollectionCard
+} from '@components';
 // @ts-expect-error - don't need to type this
 import office from './office.jpg';
 // @ts-expect-error - don't need to type this
@@ -12,7 +29,7 @@ import diningRoom from './dining-room.jpg';
 
 function Template() {
   return <HassConnect hassUrl="https://homeassistant.local:8123">
-    <ThemeProvider />
+    <ThemeProvider darkMode={true} />
     <Global
       styles={css`
         :root {
@@ -45,7 +62,7 @@ function Template() {
         </Group>
         <Group title="Miscellaneous" layout="column" gap="1rem">
           <Row gap="1rem" alignItems="stretch">
-            <EntitiesCard entities={['sensor.date', 'sensor.time', 'automation.dim_lights']} />
+            <EntitiesCard includeLastUpdated entities={['sensor.date', 'sensor.time', 'automation.dim_lights']} />
             <MediaPlayerCard entity="media_player.fake_speaker" layout="slim" />
             <TriggerCard entity="scene.good_morning" />
           </Row>

@@ -1,5 +1,5 @@
 export interface ThemeParams {
-  background: string;
+  // background: string;
   backgroundDark: string;
   backgroundOpaque: string;
   color: string;
@@ -81,7 +81,7 @@ export interface ThemeParams {
 }
 
 export const theme: ThemeParams = {
-  background: "#212121",
+  // background: "#212121",
   backgroundDark: "#1a1a1a",
   backgroundOpaque: "rgba(33, 33, 33, 0.85)",
   color: "#fefefe",

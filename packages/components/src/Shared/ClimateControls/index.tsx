@@ -217,7 +217,7 @@ function _ClimateControls({
         {(hvacModes || hvac_modes || []).concat().map((mode) => (
           <FabCard
             size={40}
-            iconColor={currentMode === mode ? activeColors[mode] : undefined}
+            iconColor={currentMode === mode ? activeColors[mode] : `var(--ha-300)`}
             key={mode}
             title={mode}
             active={currentMode === mode}

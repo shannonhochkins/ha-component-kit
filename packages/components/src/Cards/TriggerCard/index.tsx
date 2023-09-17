@@ -27,7 +27,7 @@ const StyledTriggerCard = styled(motion.button)`
   align-items: stretch;
   justify-content: center;
   cursor: pointer;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-300-shade);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: box-shadow, background-color;
@@ -35,8 +35,8 @@ const StyledTriggerCard = styled(motion.button)`
     cursor: not-allowed;
     opacity: 0.8;
   }
-  &:(:disabled):hover {
-    background-color: var(--ha-primary-background-hover);
+  &:not(:disabled):hover {
+    background-color: var(--ha-400-shade);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
@@ -52,12 +52,12 @@ const ToggleMessage = styled.span<ToggleProps>`
   transition-property: justify-content, color;
   justify-content: ${(props) => (props.active ? `flex-start` : `flex-end`)};
   color: ${(props) =>
-    !props.active ? "var(--ha-secondary-color)" : "var(--ha-primary-inactive)"};
-  ${(props) => props.hideArrow && `padding-right: 0.8rem;`}
+    !props.active ? "var(--ha-300)" : "var(--ha-300-contrast)"};
+    ${(props) => props.hideArrow && `padding-right: 0.8rem;`}
 `;
 
 const ToggleState = styled.div<ToggleProps>`
-  background-color: white;
+  background-color: var(--ha-200-shade);
   border-radius: 100%;
   width: 1.9rem;
   height: 1.9rem;
@@ -75,8 +75,7 @@ const ToggleState = styled.div<ToggleProps>`
       ? "translate3d(calc(-100% - 5px), 0, 0)"
       : "translate3d(calc(0% + 5px), 0, 0)"};
   svg {
-    color: ${(props) =>
-      props.active ? "var(--ha-primary-active)" : "var(--ha-primary-inactive)"};
+    color: ${(props) => (props.active ? "var(--ha-A400)" : "var(--ha-200)")};
     font-size: 40px;
   }
 `;
@@ -91,7 +90,7 @@ const Gap = styled.div`
 const Toggle = styled.div<ToggleProps>`
   position: relative;
   background-color: ${(props) =>
-    props.active ? "var(--ha-primary-active)" : "var(--ha-secondary-inactive)"};
+    props.active ? "var(--ha-300)" : "var(--ha-200-shade)"};
   border-radius: 3rem;
   width: 10rem;
   height: 2.5rem;
@@ -110,19 +109,19 @@ const LayoutBetween = styled.div`
 `;
 
 const Title = styled.div`
-  color: var(--ha-secondary-color);
+  color: var(--ha-text-2);
   font-size: 0.7rem;
 `;
 const Description = styled.div<{
   disabled?: boolean;
 }>`
-  color: var(--ha-primary-active);
-  ${(props) => props.disabled && `color: var(--ha-secondary-color);`}
+  color: var(--ha-text-1);
+  ${(props) => props.disabled && `color: var(--ha-text-2);`}
   font-size: 0.9rem;
   span {
     display: block;
     width: 100%;
-    color: var(--ha-secondary-color);
+    color: var(--ha-text-2);
     margin-top: 0.3rem;
     line-height: 1rem;
     font-size: 0.7rem;

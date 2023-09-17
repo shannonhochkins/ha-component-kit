@@ -33,9 +33,9 @@ const StyledFabCard = styled(motion.button)<{
   flex-shrink: 0;
   text-align: center;
   border-radius: 50%;
-  background-color: var(--ha-secondary-background);
+  background-color: var(--ha-300-shade);
   color: ${(props) =>
-    props.active ? `var(--ha-primary-active)` : `var(--ha-primary-color)`};
+    props.active ? `var(--ha-A400)` : `var(--ha-500-shade-contrast)`};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -46,7 +46,7 @@ const StyledFabCard = styled(motion.button)<{
     transition: color var(--ha-transition-duration) var(--ha-easing);
   }
   &:not(:disabled):hover {
-    background-color: var(--ha-secondary-background-hover);
+    background-color: var(--ha-400-shade);
   }
   &:disabled {
     cursor: not-allowed;
@@ -89,7 +89,7 @@ export interface FabCardProps<E extends EntityName> extends Extendable {
   children?: React.ReactNode;
   /** disable the fab card, onClick will not fire */
   disabled?: boolean;
-  /** passed to the ripple component to stop double scaling effect */
+  /** passed to the ripple component to stop double scaling effect @default true */
   preventPropagation?: boolean;
 }
 
@@ -104,9 +104,9 @@ function _FabCard<E extends EntityName>({
   onClick,
   active: _active,
   children,
-  disabled,
+  disabled = false,
   className,
-  preventPropagation,
+  preventPropagation = false,
   ...rest
 }: FabCardProps<E>): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
@@ -119,7 +119,7 @@ function _FabCard<E extends EntityName>({
     fontSize: `${size / 1.7}px`,
     color: iconColor || "currentcolor",
   });
-  const isUnavailable = isUnavailableState(entity?.state);
+  const isUnavailable = typeof entity?.state === 'string' ? isUnavailableState(entity.state) : false;
   const entityIcon = useIconByEntity(_entity || "unknown", {
     fontSize: `${size / 1.7}px`,
     color: iconColor || "currentcolor",
@@ -158,6 +158,7 @@ function _FabCard<E extends EntityName>({
     () => (domain === null ? null : startCase(lowerCase(domain))),
     [domain],
   );
+  console.log('disabled', disabled, isUnavailable)
   return (
     <>
       <Ripples
@@ -175,8 +176,8 @@ function _FabCard<E extends EntityName>({
           size={size}
           {...longPressEvent}
           {...rest}
-          className={`${active ? "active " : ""}${className ?? ''}`}
           onClick={onClickHandler}
+          className={`${active ? "active " : ""}${className ?? ''}`}
         >
           {noIcon !== true && (iconElement || entityIcon || domainIcon)}
           {typeof children !== "undefined" ? children : undefined}

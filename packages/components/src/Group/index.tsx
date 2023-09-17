@@ -7,13 +7,15 @@ import { ErrorBoundary } from "react-error-boundary";
 const StyledGroup = styled.div<{
   collapsed: boolean;
 }>`
-  background-color: rgba(0, 0, 0, 0.15);
+  background-color: var(--ha-200-shade);
+  color: var(--ha-200-shade-contrast);
   border-radius: 1rem;
   padding: ${({ collapsed }) => (collapsed ? "0 2rem" : "0 2rem 2rem")};
-  transition: padding var(--ha-transition-duration) var(--ha-easing);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: padding, background-color;
   width: calc(100% - 4rem);
   h3 {
-    color: var(--ha-primary-color);
+    color: var(--ha-100-shade-contrast);
     margin: 0;
     cursor: pointer;
     padding: ${({ collapsed }) => (collapsed ? "1.5rem 0" : "2rem 0")};
@@ -24,7 +26,7 @@ const StyledGroup = styled.div<{
       content: "${({ collapsed }) => (collapsed ? "+" : "-")}";
       display: inline-block;
       margin-right: 0.5rem;
-      color: var(--ha-primary-active);
+      color: var(--ha-A400);
     }
   }
 `;

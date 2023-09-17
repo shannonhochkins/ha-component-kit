@@ -59,12 +59,12 @@ const Card = styled(motion.div)`
   align-items: stretch;
   justify-content: flex-start;
   cursor: default;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-300-shade);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
   gap: 1rem;
   &:hover {
-    background-color: var(--ha-primary-background-hover);
+    background-color: var(--ha-400-shade);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
@@ -72,7 +72,7 @@ const Card = styled(motion.div)`
 const Title = styled.h4`
   all: unset;
   font-size: 0.8rem;
-  color: var(--ha-secondary-color);
+  color: var(--ha-300-shade-contrast);
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -81,17 +81,18 @@ const Title = styled.h4`
 const SubTitle = styled.h4`
   all: unset;
   font-size: 1rem;
-  color: var(--ha-primary-color);
+  color: var(--ha-500-shade-contrast);
   margin-top: 0.3rem;
   margin-left: 1.1rem;
 `;
 const StyledIcon = styled(Icon)`
   font-size: 3rem;
+  color: var(--ha-A100);
 `;
 
 const LocationIcon = styled(Icon)`
   font-size: 1rem;
-  color: var(--ha-primary-active);
+  color: var(--ha-A400);
   margin-right: 0.2rem;
 `;
 
@@ -117,17 +118,18 @@ const Forecast = styled.div`
 `;
 const ForecastIcon = styled(Icon)`
   font-size: 1.5rem;
+  color: var(--ha-A100);
 `;
 
 const Day = styled.div`
-  color: var(--ha-primary-color);
+  color: var(--ha-50-shade-contrast);
 `;
 const Temperature = styled.div`
-  color: var(--ha-primary-color);
+  color: var(--ha-50-shade-contrast);
   font-size: 0.8rem;
 `;
 const TemperatureLow = styled.div`
-  color: var(--ha-secondary-color);
+  color: var(--ha-500-shade-contrast);
   font-size: 0.75rem;
 `;
 
