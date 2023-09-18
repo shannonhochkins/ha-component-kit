@@ -26,7 +26,7 @@ const MediaPlayerWrapper = styled(motion.div)<{
   layoutName?: Layout;
 }>`
   padding: 0;
-  background-color: var(--ha-300-shade);
+  background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-image, background-color, box-shadow;
@@ -69,7 +69,7 @@ const MediaPlayerWrapper = styled(motion.div)<{
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
   &:not(:disabled):hover {
-    background-color: var(--ha-400-shade);
+    background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 
@@ -105,7 +105,7 @@ const Clock = styled.div<{
   transition: opacity var(--ha-transition-duration) var(--ha-easing);
   padding: 0.2rem;
   font-size: 0.8rem;
-  background: var(--ha-200-shade);
+  background: var(--ha-S200);
   z-index: 1;
   border-radius: 0.25rem;
   pointer-events: none;
@@ -167,7 +167,7 @@ const Title = styled.div`
 
 const Base = styled(Column)`
   padding: 0.5rem 0.5rem 1rem;
-  width: calc(100% - 1rem);
+  width: 100%;
   background-color: rgba(0, 0, 0, 0.5);
 `;
 const Empty = styled.span``;
@@ -206,7 +206,7 @@ const VolumeSlider = styled.label<{
   layout: Layout;
 }>`
   display: inline-block;
-  width: ${(props) => (props.layout === "card" ? "80%" : "60%")};
+  width: ${(props) => (props.layout === "card" ? "80%" : "65%")};
   color: rgba(0, 0, 0, 0.87);
   font-size: 1rem;
   line-height: 1.5;
@@ -677,7 +677,7 @@ function _MediaPlayerCard({
             fullWidth
             gap="0.5rem"
             style={{
-              paddingBottom: isOff ? "0.5rem" : "1rem",
+              paddingBottom: isOff ? layout==='slim' ? '1rem' : "0.5rem" : "1rem",
             }}
           >
             <Row gap="0.5rem" wrap="nowrap" fullWidth>
@@ -690,9 +690,7 @@ function _MediaPlayerCard({
                 style={{
                   width:
                     hideThumbnail === false && artworkUrl !== null
-                      ? `calc(100% - (${thumbnailSize} + ${
-                          layout === "slim" ? "2rem" : "0.5rem"
-                        }))`
+                      ? `calc(100% - (${thumbnailSize} + 0.5rem))`
                       : "100%",
                 }}
               >

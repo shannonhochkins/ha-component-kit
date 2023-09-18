@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import {
   Title,
@@ -6,13 +7,15 @@ import {
   ArgTypes,
   Source,
 } from "@storybook/blocks";
-import { ThemeProvider, theme } from "@components";
+import { ThemeProvider, theme, Group, Alert } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import { merge } from "lodash";
 import { convertToCssVars } from "./helpers";
 import type { ThemeProviderProps } from "@components";
 // @ts-expect-error - Don't have types for jsx-to-string
 import jsxToString from "jsx-to-string";
+import { ThemeControls, ThemeControlsProps } from './ThemeControls';
+import { DEFAULT_THEME_OPTIONS } from './constants';
 
 const customTheme: ThemeProviderProps<{
   anything: {
@@ -38,25 +41,53 @@ function CustomThemeProvider() {
 
 function Render(args: Story["args"]) {
   const theme = args?.theme || {};
+  const [customTheme, setCustomTheme] = useState<Omit<ThemeControlsProps, 'onChange'>>({
+    darkMode: DEFAULT_THEME_OPTIONS.darkMode,
+    tint: DEFAULT_THEME_OPTIONS.tint,
+    hue: DEFAULT_THEME_OPTIONS.hue,
+    saturation: DEFAULT_THEME_OPTIONS.saturation,
+    lightness: DEFAULT_THEME_OPTIONS.lightness,
+    contrastThreshold: DEFAULT_THEME_OPTIONS.contrastThreshold,
+  });
   return (
     <HassConnect hassUrl="http://localhost:8123" {...args}>
       <h2>Theme Provider</h2>
       <p>
         A simple way of creating global styles and providing re-usable css
-        variables to re-use across your application
+        variables to re-use across your custom home assistant dashboard.
       </p>
+      <Group title="Dynamic Theme Controls" collapsed>
+        <ThemeControls {...customTheme} onChange={(_theme) => {
+          setCustomTheme(_theme);
+        }} />
+      </Group>
+      <Alert type="info" title="NOTE" style={{
+        marginTop: '1rem',
+      }}>The dynamic theme controls above will update the code below so you can copy/paste your desired theme.</Alert>
+      <Source
+        dark
+        code={`
+<ThemeProvider
+  hue={${customTheme.hue}}
+  lightness={${customTheme.lightness}}
+  saturation={${customTheme.saturation}}
+  darkMode={${customTheme.darkMode}}
+  contrastThreshold={${customTheme.contrastThreshold}}
+  tint={${customTheme.tint}}
+/>
+        `}
+        language="tsx"
+      />
+      <ThemeProvider {...customTheme} theme={args?.theme} />
+      <h2>Other Properties</h2>
       <p>
         You do not need to provide the following theme object, this is the
         default, if you want to extend/change anything you can just pass in your
         overrides.
       </p>
-      <p>
-        <i>
-          <b>Note: </b> You can pass anything to the theme object and the css
-          variables will be created!
-        </i>
-      </p>
-      <ThemeProvider theme={args?.theme} />
+      <Alert type="info" title="NOTE" style={{
+        marginTop: '1rem',
+      }}>You can pass anything to the theme object and the css variables will be created!</Alert>
       <Source
         dark
         code={`<ThemeProvider theme={${JSON.stringify(theme, null, 2)}} />`}

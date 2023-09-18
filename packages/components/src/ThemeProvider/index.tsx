@@ -1,44 +1,56 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { css, Global } from "@emotion/react";
 import styled from "@emotion/styled";
 import { merge } from "lodash";
 import { theme as defaultTheme } from "./theme";
 import type { ThemeParams } from "./theme";
 import { convertToCssVars } from "./helpers";
-import { fallback, FabCard, Row, Column } from "@components";
-import { rgbToHsl, hex2rgb } from '@hakit/core';
+import { fallback, FabCard, Modal} from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import { RangeSlider } from '../Cards/MediaPlayerCard/RangeSlider';
+import { motion } from "framer-motion";
+import {
+  LIGHT,
+  DARK,
+  ACCENT,
+  DEFAULT_START_LIGHT,
+  DEFAULT_START_DARK,
+  DIFF,
+  DEFAULT_THEME_OPTIONS,
+} from './constants';
+import { ThemeControls } from './ThemeControls';
+import type { ThemeControlsProps } from './ThemeControls';
 
 type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
 };
 
 export interface ThemeProviderProps<T extends object> {
-  primaryColor?: string;
-  contrastThreshold?: string;
+  /** the tint factor to apply to the shade colors */
+  tint?: number;
+  /** the color hue shift value */
+  hue?: number;
+  /** the color saturation value */
+  saturation?: number;
+  /** the color lightness value */
+  lightness?: number;
+  /** the contrast threshold for text @default 65 */
+  contrastThreshold?: number;
+  /** dark mode or light mode */
   darkMode?: boolean;
-  includeDarkLightToggle?: boolean;
-  darkLightToggleStyles?: React.CSSProperties;
+  /** the theme controls button can be automatically included at the top right of the page @default false */
+  includeThemeControls?: boolean;
+  /** the styles for the theme controls button if you want to reposition it */
+  themeControlStyles?: React.CSSProperties;
+  /** the theme properties */
   theme?: DeepPartial<ThemeParams> & T;
 }
 
-const DarkLightToggle = styled.div`
+const ThemeControlsBox = styled(motion.div)`
   position: fixed;
   top: 1rem;
   right: 1rem;
-  background-color: var(--ha-50-shade);
-  // TODO - revert this to 0
-  z-index: 100;
+  z-index: 0;
 `;
-
-const variantsLight = ['50', '100', '200', '300', '400'];
-const variantsDark = ['600', '700', '800', '900'];
-const variantsAccent = ['A100', 'A200', 'A400', 'A700'];
-const DEFAULT_START_LIGHT = 3;
-const DEFAULT_START_DARK = 97;
-
-const backgroundDiff = 60 / (variantsLight.length + 1 + variantsDark.length + variantsAccent.length);
 
 // Function to generate light and dark variants
 const generateVariantVars = (
@@ -61,8 +73,8 @@ const generateVariantVars = (
         : `hsl(0, 0%, calc(((((1 - var(--mtc-l-${variant})) * var(--ha-l) * var(--ha-l) / 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)))`
 
       const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
-      const indexOffset = !isLight ? variantsLight.length + 1 : 0;
-      const offsetBackground = darkMode ? baseLightness + (backgroundDiff * (i + indexOffset)) : baseLightness - (backgroundDiff * (i + indexOffset));
+      const indexOffset = !isLight ? LIGHT.length + 1 : 0;
+      const offsetBackground = darkMode ? baseLightness + (DIFF * (i + indexOffset)) : baseLightness - (DIFF * (i + indexOffset));
 
       return `
         --ha-${variant}-h: var(--ha-h);
@@ -70,8 +82,8 @@ const generateVariantVars = (
         --ha-${variant}-l: ${lightness};
         --ha-${variant}: hsl(var(--ha-${variant}-h), var(--ha-${variant}-s), var(--ha-${variant}-l));
         --ha-${variant}-contrast: ${contrast};
-        --ha-${variant}-shade: hsl(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), ${offsetBackground}%);
-        --ha-${variant}-shade-contrast: hsl(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), calc(((100% - ${offsetBackground}%) + ${indexOffset} * 10%)));
+        --ha-S${variant}: hsl(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), ${offsetBackground}%);
+        --ha-S${variant}-contrast: hsl(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), calc(((100% - ${offsetBackground}%) + ${indexOffset} * 10%)));
       `;
     })
     .join('');
@@ -81,17 +93,17 @@ const generateVariantVars = (
 const generateAccentVars = (variants: string[], tint: number, darkMode: boolean): string => {
   return variants
     .map((variant, i) => {
-      const indexOffset = variantsLight.length + 1 + variantsDark.length;
+      const indexOffset = LIGHT.length + 1 + DARK.length;
       const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
-      const offsetBackground = darkMode ? baseLightness + (backgroundDiff * (indexOffset + i)) : baseLightness - (backgroundDiff * (indexOffset + i));
+      const offsetBackground = darkMode ? baseLightness + (DIFF * (indexOffset + i)) : baseLightness - (DIFF * (indexOffset + i));
 
       return `
         --ha-${variant}-h: calc(var(--ha-h) * var(--mtc-h-${variant}));
         --ha-${variant}-s: calc(var(--mtc-s-${variant}) * 100%);
         --ha-${variant}-l: calc(var(--mtc-l-${variant}) * 100%);
         --ha-${variant}: hsl(var(--ha-${variant}-h), var(--ha-${variant}-s), var(--ha-${variant}-l));
-        --ha-${variant}-shade: hsl(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), ${offsetBackground}%);
-        --ha-${variant}-shade-contrast: hsl(var(--ha-${variant}-s), calc(var(--ha-${variant}-s) * ${tint}), calc(((100% - ${offsetBackground}%))));
+        --ha-S${variant}: hsl(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), ${offsetBackground}%);
+        --ha-S${variant}-contrast: hsl(var(--ha-${variant}-s), calc(var(--ha-${variant}-s) * ${tint}), calc(((100% - ${offsetBackground}%))));
       `;
     })
     .join('');
@@ -99,11 +111,11 @@ const generateAccentVars = (variants: string[], tint: number, darkMode: boolean)
 
 // Main function to generate all variables
 const generateAllVars = (tint: number, darkMode: boolean): string => {
-  const lightVars = generateVariantVars(variantsLight, 'Light', tint, darkMode);
-  const darkVars = generateVariantVars(variantsDark, 'Dark', tint, darkMode);
-  const accentVars = generateAccentVars(variantsAccent, tint, darkMode);
+  const lightVars = generateVariantVars(LIGHT, 'Light', tint, darkMode);
+  const darkVars = generateVariantVars(DARK, 'Dark', tint, darkMode);
+  const accentVars = generateAccentVars(ACCENT, tint, darkMode);
   const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
-  const offsetBackground = darkMode ? baseLightness + (backgroundDiff * 5) : baseLightness - (backgroundDiff * 5);
+  const offsetBackground = darkMode ? baseLightness + (DIFF * 5) : baseLightness - (DIFF * 5);
 
   return `
     ${lightVars}
@@ -112,53 +124,64 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
     --ha-500-l: calc(var(--ha-l) * 1%);
     --ha-500: var(--ha);
     --ha-500-contrast: hsl(0, 0%, calc(((var(--ha-l) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)));
-    --ha-500-shade: hsl(var(--ha-h), calc(var(--ha-500-s) * ${tint}), ${offsetBackground}%);
-    --ha-500-shade-contrast: hsl(var(--ha-h), calc(var(--ha-500-s) * ${tint}), calc(((100% - ${offsetBackground}%))));
+    --ha-S500: hsl(var(--ha-h), calc(var(--ha-500-s) * ${tint}), ${offsetBackground}%);
+    --ha-S500-contrast: hsl(var(--ha-h), calc(var(--ha-500-s) * ${tint}), calc(((100% - ${offsetBackground}%))));
     ${darkVars}
     ${accentVars}
   `;
 };
 
-
-
 function _ThemeProvider<T extends object>({
   theme,
-  darkMode = true,
-  primaryColor = '#558aba',
-  includeDarkLightToggle = true,
-  darkLightToggleStyles,
-  contrastThreshold = '65%',
+  darkMode = DEFAULT_THEME_OPTIONS.darkMode,
+  tint: t = DEFAULT_THEME_OPTIONS.tint,
+  hue: h = DEFAULT_THEME_OPTIONS.hue,
+  saturation: s = DEFAULT_THEME_OPTIONS.saturation,
+  lightness: l = DEFAULT_THEME_OPTIONS.lightness,
+  contrastThreshold: c = DEFAULT_THEME_OPTIONS.contrastThreshold,
+  includeThemeControls = false,
+  themeControlStyles,
 }: ThemeProviderProps<T>): JSX.Element {
-  const [r, g, b] = hex2rgb(primaryColor);
-  const [h, s, l] = rgbToHsl(r, g, b);
-  const [hue, setHue] = useState(h);
-  const [light, setLight] = useState(l);
-  const [tint, setTint] = useState(1);
-  const [sat, setSat] = useState(s);
-  const [dark, setDark] = useState(darkMode);
-  const colorScheme = dark ? 'dark' : 'light';
+  const getTheme = useCallback(() => {
+    return {
+      hue: h,
+      lightness: l,
+      tint: t,
+      saturation: s,
+      darkMode: darkMode,
+      contrastThreshold: c,
+    } satisfies Omit<ThemeControlsProps, 'onChange'>;
+  }, [c, darkMode, h, l, s, t]);
+  const defaults = getTheme();
+  const [_theme, setTheme] = useState<Omit<ThemeControlsProps, 'onChange'>>(defaults);
+  const [open, setOpen] = useState(false);
+  const colorScheme = _theme.darkMode ? 'dark' : 'light';
+
+  useEffect(() => {
+    const newTheme = getTheme();
+    setTheme(newTheme);
+  }, [c, darkMode, getTheme, h, l, s, t])
   return (
     <>
       <Global
         styles={css`
           :root {
             ${convertToCssVars(merge(defaultTheme, theme))}
-            /* 0 for light theme, 1 for dark theme */
-            --is-dark-theme: ${dark ? '1' : '0'};
+            --is-dark-theme: ${_theme.darkMode ? '1' : '0'};
             color-scheme: ${colorScheme};
             --ha-ripple-size: 50;
             --ha-ripple-duration: 0.5s;
             --ha-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --ha-transition-duration: 0.25s;
             --ha-room-card-expanded-offset: 0;
-            --ha-background-opaque: ${dark ? 'hsla(0, 0%, 0%, 0.5)' : 'hsla(0, 0%, 100%, 0.5)'};
+            --ha-background-opaque: ${_theme.darkMode ? `hsla(var(--ha-h), calc(var(--ha-s) * 1%), 10%, 0.9)` : `hsla(var(--ha-h), calc(var(--ha-s) * 1%), 20%, 0.7)`};
           }
           
           :root {
-            --ha-h: ${hue};
-            --ha-s: ${sat};
-            --ha-l: ${light};
-            --ha-contrast-threshold: ${contrastThreshold};
+            --ha-h: ${_theme.hue};
+            --ha-s: ${_theme.saturation};
+            --ha-l: ${_theme.lightness};
+            --ha-contrast-threshold: ${_theme.contrastThreshold}%;
             --ha-so: calc(var(--ha-s) * 1%);
             --ha: hsla(var(--ha-h), calc(var(--ha-s) * 1%), calc(var(--ha-l) * 1%), 100%);
             --mtc-h-A100: 1;
@@ -195,33 +218,35 @@ function _ThemeProvider<T extends object>({
             --mtc-light-s: 0;
             --mtc-light-l: 100;
 
-            ${generateAllVars(tint, dark)}
+            ${generateAllVars(_theme.tint ?? DEFAULT_THEME_OPTIONS.tint, _theme.darkMode ?? DEFAULT_THEME_OPTIONS.darkMode)}
           }
             
-          ::-webkit-scrollbar {
-            width: 8px;
-            height: 3px;
+          * {
+            box-sizing: border-box;
+            ::-webkit-scrollbar-corner { background: rgba(0,0,0,0.5); }
+
+            * {
+                scrollbar-width: thin;
+                scrollbar-color: var(--ha-S500) var(--ha-S200);
+            }
+        
+            /* Works on Chrome, Edge, and Safari */
+            *::-webkit-scrollbar {
+                width: 12px;
+                height: 12px;
+            }
+        
+            *::-webkit-scrollbar-track {
+                background: var(--ha-S200); // track background color
+            }
+        
+            *::-webkit-scrollbar-thumb {
+                background-color: var(--ha-S500);
+                border-radius: 20px;
+                border: 3px solid var(--ha-S200);
+            }
           }
-          ::-webkit-scrollbar-button {
-            background-color: var(--ha-scrollbar-button);
-          }
-          ::-webkit-scrollbar-track {
-            background-color: var(--ha-scrollbar-track);
-          }
-          ::-webkit-scrollbar-track-piece {
-            background-color: var(--ha-scrollbar-track-piece);
-          }
-          ::-webkit-scrollbar-thumb {
-            height: 50px;
-            background-color: var(--ha-scrollbar-thumb);
-            border-radius: 3px;
-          }
-          ::-webkit-scrollbar-corner {
-            background-color: var(--ha-scrollbar-corner);
-          }
-          ::-webkit-resizer {
-            background-color: var(--ha-scrollbar-resizer);
-          }
+          
           html,
           body {
             height: 100%;
@@ -230,80 +255,34 @@ function _ThemeProvider<T extends object>({
             padding: 0;
           }
           body {
-            
             -webkit-font-smoothing: antialiased;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -webkit-tap-highlight-color: var(--ha-S100-contrast);
             -webkit-overflow-scrolling: touch;
             -moz-osx-font-smoothing: grayscale;
             scroll-behavior: smooth;
-            background-color: var(--ha-100-shade);
+            background-color: var(--ha-S100);
             font-family: var(--ha-font-family);
             font-size: var(--ha-font-size);
-            color: var(--ha-100-shade-contrast);
+            color: var(--ha-S100-contrast);
             overflow-x: hidden;
             overflow-y: var(--ha-hide-body-overflow-y);
           }
         `}
       />
-      {includeDarkLightToggle && <DarkLightToggle style={{
-        ...darkLightToggleStyles ?? {}
-      }} ><Column>
-          Tint
-          <RangeSlider min={0} max={1} step={0.05} value={tint} onChange={(value) => {
-            setTint(value);
-          }} />
-          Hue
-          <RangeSlider min={0} max={360} value={hue} onChange={(value) => {
-            setHue(value);
-          }} />
-          Sat
-          <RangeSlider min={0} max={100} value={sat} onChange={(value) => {
-            setSat(value);
-          }} />
-          Light
-          <RangeSlider min={0} max={100} value={light} onChange={(value) => {
-            setLight(value);
-          }} />
-        </Column>
-        {/* <Row wrap="nowrap" gap="0.5rem">
-          {[
-            '50',
-            '100',
-            '200',
-            '300',
-            '400',
-            '500',
-            '600',
-            '700',
-            '800',
-            '900',
-            'A100',
-            'A200',
-            'A400',
-            'A700',
-          ].map((color) => {
-            return <Column gap="0.5rem" key={color}>
-                <Row title={`var(--ha-${color})`} style={{
-                  fontSize: '0.8rem',
-                  width: '3rem',
-                  height: '3rem',
-                  color: `var(--ha-${color}-contrast)`,
-                  backgroundColor: `var(--ha-${color})`,
-                }}>TEXT</Row>
-                <Row title={`var(--ha-${color}-shade)`} style={{
-                  fontSize: '0.8rem',
-                  width: '3rem',
-                  height: '3rem',
-                  color: `var(--ha-${color}-shade-contrast)`,
-                  backgroundColor: `var(--ha-${color}-shade)`,
-                }}>SHADE</Row>
-            </Column>
-          })}
-        </Row> */}
-        <FabCard icon={!dark ? 'ph:sun' : 'ph:moon'} onClick={() => {
-          setDark(!dark);
+      {includeThemeControls && <ThemeControlsBox style={{
+        ...themeControlStyles ?? {}
+      }} >
+        <FabCard onClick={() => setOpen(true)} tooltipPlacement="left" title="Theme Controls" layoutId="theme-controls" icon="mdi:color" />
+      </ThemeControlsBox>}
+      {includeThemeControls && <Modal description="The theme is entirely calculated using css formulas, no javascript!" id="theme-controls" open={open} title="Theme Controls" onClose={() => {
+        setOpen(false);
+      }}>
+        <ThemeControls {...{
+          ..._theme,
+        }} onChange={theme => {
+          setTheme(theme);
         }} />
-      </DarkLightToggle>}
+      </Modal>}
     </>
   );
 }

@@ -6,7 +6,7 @@ import { HassConnect } from "@hass-connect-fake";
 function Template(args?: Partial<TimeCardProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <TimeCard {...args} />
     </HassConnect>
   );

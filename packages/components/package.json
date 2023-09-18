@@ -76,7 +76,8 @@
     "react-error-boundary": "^4.x",
     "react-router-dom": ">=6.x",
     "react-thermostat": "^2.0.2",
-    "react-use": ">=17.x"
+    "react-use": ">=17.x",
+    "rc-tooltip": "^6.x.x"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.x",

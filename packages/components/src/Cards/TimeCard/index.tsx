@@ -19,30 +19,30 @@ const Card = styled(motion.div)`
   align-items: stretch;
   justify-content: flex-start;
   cursor: default;
-  background-color: var(--ha-300-shade);
+  background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
   &:hover {
-    background-color: var(--ha-400-shade);
+    background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
 
 const StyledIcon = styled(Icon)`
-  color: var(--ha-400-shade-contrast);
+  color: var(--ha-A200);
   font-size: 30px;
 `;
 
 const Time = styled.h4`
   all: unset;
   font-size: 2rem;
-  color: var(--ha-200-shade-contrast);
+  color: var(--ha-S200-contrast);
   font-weight: 400;
 `;
 const AmOrPm = styled.h4`
   all: unset;
   font-size: 2rem;
-  color: var(--ha-400-shade-contrast);
+  color: var(--ha-S400-contrast);
   font-weight: 300;
 `;
 

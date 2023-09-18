@@ -30,11 +30,11 @@ const Card = styled(motion.div)`
   align-items: stretch;
   justify-content: flex-start;
   cursor: default;
-  background-color: var(--ha-300-shade);
+  background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
   &:hover {
-    background-color: var(--ha-400-shade);
+    background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
@@ -67,32 +67,32 @@ const Bin = styled.div<{
 `;
 
 const BinBox = styled(Column)`
-  background: var(--ha-500-shade);
+  background: var(--ha-S500);
   border-radius: 0.5rem;
   padding: 0.5rem;
-  width: calc(50% - 1.5rem);
+  width: 50%;
   &:nth-of-type(2n) {
     margin-left: 1rem;
   }
   .collection-time {
     font-size: 0.8rem;
-    color: var(--ha-500-shade-contrast);
+    color: var(--ha-S500-contrast);
   }
   .collection-title {
     font-size: 0.8rem;
     margin-bottom: 0.5rem;
-    color: var(--ha-300-shade-contrast);
+    color: var(--ha-S300-contrast);
   }
 `;
 
 const Title = styled.div`
   font-size: 1rem;
-  color: var(--ha-50-shade-contrast);
+  color: var(--ha-S50-contrast);
 `;
 const Description = styled.div`
   font-size: 0.8rem;
   margin-top: 0.5rem;
-  color: var(--ha-500-shade-contrast);
+  color: var(--ha-S500-contrast);
 `;
 
 interface VerticalTextProps {
@@ -379,6 +379,8 @@ function _GarbageCollectionCard({
       <Row
         fullHeight
         fullWidth
+        wrap="nowrap"
+        justifyContent="space-between"
         style={{
           marginTop: "1rem",
         }}

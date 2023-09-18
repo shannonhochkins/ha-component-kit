@@ -21,13 +21,13 @@ function Template({
           className,
         }}
       >
-        <ThemeProvider />
+        <ThemeProvider includeThemeControls />
         <div
           style={{
             overflow: "hidden",
             padding: 40,
             borderRadius: "20px",
-            backgroundColor: "var(--ha-200-shade)",
+            backgroundColor: "var(--ha-S200)",
             textAlign: "center",
           }}
         >

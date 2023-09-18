@@ -35,14 +35,14 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   align-items: stretch;
   justify-content: space-between;
   cursor: pointer;
-  background-color: var(--ha-300-shade);
+  background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow, background-image;
   will-change: width, height;
-  color: var(--ha-200-shade-contrast);
+  color: var(--ha-S200-contrast);
   svg {
-    color: var(--ha-200-shade-contrast);
+    color: var(--ha-S200-contrast);
     transition: color var(--ha-transition-duration) var(--ha-easing);
   }
   ${(props) =>
@@ -56,10 +56,10 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
 
   &:hover {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-    background-color: var(--ha-300-shade);
-    color: var(--ha-300-shade-contrast);
+    background-color: var(--ha-S300);
+    color: var(--ha-500-contrast);
     svg {
-      color: var(--ha-300-shade-contrast);
+      color: var(--ha-S300-contrast);
     }
   }
 `;
@@ -67,6 +67,7 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
 const PictureCardFooter = styled(motion.div)`
   all: unset;
   padding: 1rem;
+  color: var(--ha-500-contrast);
   background-color: var(--ha-background-opaque);
   transition: color var(--ha-transition-duration) var(--ha-easing);
   position: absolute;
@@ -76,7 +77,7 @@ const PictureCardFooter = styled(motion.div)`
 `;
 
 const NavBar = styled(PictureCardFooter)`
-  background-color: var(--ha-50-shade);
+  background-color: var(--ha-S200);
   inset: 0 0 auto 0;
 `;
 
@@ -94,13 +95,13 @@ const FullScreen = styled(motion.div)`
   padding: 0;
   margin: 0;
   max-height: 100svh;
-  background: var(--ha-100-shade);
+  background: var(--ha-S100);
   z-index: var(--ha-device-room-card-z-index);
   display: flex;
   justify-content: center;
   align-items: stretch;
   transition: left var(--ha-transition-duration) var(--ha-easing);
-  color: var(--ha-50-shade-contrast);
+  color: var(--ha-S50-contrast);
 `;
 
 const ChildContainer = styled(motion.div)`
@@ -206,6 +207,8 @@ function _RoomCard({
                   {title}
                 </Row>
                 <FabCard
+                  title="Close"
+                  tooltipPlacement="left"
                   icon="mdi:close"
                   onClick={() => {
                     window.location.hash = "";
@@ -264,7 +267,9 @@ function _RoomCard({
             }}
           >
             <Row gap={"0.5rem"}>
-              {icon && <Icon icon={icon} />}
+              {icon && <Icon icon={icon} style={{
+                color: `var(--ha-500-contrast)`
+              }} />}
               {title}
             </Row>
           </PictureCardFooter>

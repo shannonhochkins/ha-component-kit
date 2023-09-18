@@ -30,7 +30,7 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   align-items: stretch;
   justify-content: space-between;
   cursor: pointer;
-  background-color: var(--ha-300-shade);
+  background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow, background-image;
@@ -47,15 +47,15 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
 
   &:hover {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-    background-color: var(--ha-400-shade);
+    background-color: var(--ha-S400);
   }
 `;
 
 const PictureCardFooter = styled(motion.h4)`
   all: unset;
   padding: 1rem;
+  color: var(--ha-500-contrast);
   background-color: var(--ha-background-opaque);
-  color: var(--ha-300-contrast);
   position: absolute;
   inset: auto 0 0 0;
   font-weight: bold;

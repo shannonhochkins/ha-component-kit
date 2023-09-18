@@ -6,7 +6,7 @@ import { HassConnect } from "@hass-connect-fake";
 function Template(args?: Partial<RowProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Row {...args}>
         <ButtonCard entity="light.fake_light_1" />
         <ButtonCard entity="switch.fake_switch" />

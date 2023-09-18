@@ -6,7 +6,7 @@ import { HassConnect } from "@hass-connect-fake";
 function Template(args?: Partial<WeatherCardProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <WeatherCard {...args} entity="weather.entity" />
     </HassConnect>
   );

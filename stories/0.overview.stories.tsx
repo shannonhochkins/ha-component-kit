@@ -29,7 +29,7 @@ import diningRoom from './dining-room.jpg';
 
 function Template() {
   return <HassConnect hassUrl="https://homeassistant.local:8123">
-    <ThemeProvider darkMode={true} />
+    <ThemeProvider includeThemeControls darkMode={true} />
     <Global
       styles={css`
         :root {

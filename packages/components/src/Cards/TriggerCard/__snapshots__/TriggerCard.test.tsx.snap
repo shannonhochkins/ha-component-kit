@@ -24,7 +24,7 @@ exports[`<TriggerCard /> renders TriggerCard with override title 1`] = `
   -webkit-justify-content: center;
   justify-content: center;
   cursor: pointer;
-  background-color: var(--ha-200-shade);
+  background-color: var(--ha-S200);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
   transition: var(--ha-transition-duration) var(--ha-easing);
@@ -32,7 +32,7 @@ exports[`<TriggerCard /> renders TriggerCard with override title 1`] = `
 }
 
 .emotion-0:hover {
-  background-color: var(--ha-300-shade);
+  background-color: var(--ha-S300);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -216,7 +216,7 @@ exports[`<TriggerCard /> renders TriggerCard with title from entity 1`] = `
   -webkit-justify-content: center;
   justify-content: center;
   cursor: pointer;
-  background-color: var(--ha-200-shade);
+  background-color: var(--ha-S200);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
   transition: var(--ha-transition-duration) var(--ha-easing);
@@ -224,7 +224,7 @@ exports[`<TriggerCard /> renders TriggerCard with title from entity 1`] = `
 }
 
 .emotion-0:hover {
-  background-color: var(--ha-300-shade);
+  background-color: var(--ha-S300);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
 }
 

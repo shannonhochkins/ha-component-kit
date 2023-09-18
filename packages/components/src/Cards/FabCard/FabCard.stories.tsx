@@ -7,7 +7,7 @@ function Template(
 ) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Row gap="1rem">
         <FabCard
           {...args}

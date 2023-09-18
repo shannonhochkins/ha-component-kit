@@ -26,7 +26,7 @@ const StyledEntitiesCard = styled(motion.button)`
   align-items: stretch;
   justify-content: space-between;
   cursor: pointer;
-  background-color: var(--ha-300-shade);
+  background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow;
@@ -46,15 +46,15 @@ const IconWrapper = styled(Row)`
 const Name = styled.div`
   flex-grow: 1;
   font-size: 0.8rem;
-  color: var(--ha-50-shade-contrast);
-  font-weight: bold;
+  color: var(--ha-S50-contrast);
+  font-weight: 500;
   span {
     width: 100%;
     font-size: 0.7rem;
     font-weight: 400;
     display: block;
     margin-top: 0.2rem;
-    color: var(--ha-200);
+    color: var(--ha-S500-contrast);
   }
 `;
 const State = styled.div`
@@ -63,15 +63,15 @@ const State = styled.div`
   font-weight: 400;
   text-align: right;
   white-space: nowrap;
-  color: var(--ha-300-shade-contrast);
+  color: var(--ha-S300-contrast);
 `;
 
 const EntityRowInner = styled.div`
-  width: calc(100% - 2rem);
+  width: 100%;
   padding: 1rem;
   transition: background-color var(--ha-transition-duration) var(--ha-easing);
   &:hover {
-    background-color: var(--ha-400-shade);
+    background-color: var(--ha-S400);
   }
 `;
 
@@ -106,7 +106,7 @@ function EntityRow({
   const entityIcon = useIconByEntity(_entity || "unknown");
   const isUnavailable = isUnavailableState(entity?.state);
   const on = entity?.state === ON;
-  const iconColor = on ? entity.custom.hexColor : "var(--ha-500-shade-contrast)";
+  const iconColor = on ? entity.custom.hexColor : "var(--ha-S500-contrast)";
 
   return (    
       <EntityRowInner>

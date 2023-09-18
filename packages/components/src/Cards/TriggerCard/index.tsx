@@ -27,7 +27,7 @@ const StyledTriggerCard = styled(motion.button)`
   align-items: stretch;
   justify-content: center;
   cursor: pointer;
-  background-color: var(--ha-300-shade);
+  background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: box-shadow, background-color;
@@ -36,7 +36,7 @@ const StyledTriggerCard = styled(motion.button)`
     opacity: 0.8;
   }
   &:not(:disabled):hover {
-    background-color: var(--ha-400-shade);
+    background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
@@ -57,7 +57,7 @@ const ToggleMessage = styled.span<ToggleProps>`
 `;
 
 const ToggleState = styled.div<ToggleProps>`
-  background-color: var(--ha-200-shade);
+  background-color: var(--ha-S200);
   border-radius: 100%;
   width: 1.9rem;
   height: 1.9rem;
@@ -90,7 +90,7 @@ const Gap = styled.div`
 const Toggle = styled.div<ToggleProps>`
   position: relative;
   background-color: ${(props) =>
-    props.active ? "var(--ha-300)" : "var(--ha-200-shade)"};
+    props.active ? "var(--ha-300)" : "var(--ha-S200)"};
   border-radius: 3rem;
   width: 10rem;
   height: 2.5rem;

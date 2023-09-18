@@ -10,7 +10,7 @@ import { HassConnect } from "@hass-connect-fake";
 function Template(args?: Partial<MediaPlayerCardProps>) {
   return (
     <HassConnect hassUrl={"http://homeassistant.local:8123"}>
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Column gap="1rem">
         <Column gap="1rem">
           <p>Default Display</p>

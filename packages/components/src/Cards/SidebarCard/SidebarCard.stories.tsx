@@ -30,7 +30,7 @@ const MakeFullScreen = () => {
 function Template(args?: Partial<SidebarCardProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <MakeFullScreen />
       <Row
         alignItems="stretch"
@@ -195,7 +195,7 @@ function Replica() {
 function TemplateMenuItems(args?: Partial<SidebarCardProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <MakeFullScreen />
       <Row
         alignItems="stretch"

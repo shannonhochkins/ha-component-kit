@@ -41,7 +41,7 @@ export function getCssColorValue(entity: HassEntity | null) {
   const hexColor = color ? rgb2hex(color) : "var(--ha-A400)";
   const rgbColor = color
     ? `rgba(${color.join(", ")})`
-    : "var(--ha-500-shade-contrast)";
+    : "var(--ha-S500-contrast)";
   const rgbaColor = color
     ? `rgba(${[...color, 0.35].join(", ")})`
     : "var(--ha-A200)";

@@ -34,7 +34,7 @@ const StyledButtonCard = styled(motion.button)`
   align-items: stretch;
   justify-content: space-between;
   cursor: pointer;
-  background-color: var(--ha-300-shade);
+  background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow;
@@ -48,7 +48,7 @@ const StyledButtonCard = styled(motion.button)`
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
   &:not(:disabled):hover {
-    background-color: var(--ha-400-shade);
+    background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
@@ -78,7 +78,7 @@ const ToggleState = styled.div<ToggleProps>`
 const Toggle = styled.div<ToggleProps>`
   position: relative;
   background-color: ${(props) =>
-    props.active ? "var(--ha-A200)" : "var(--ha-50-shade)"};
+    props.active ? "var(--ha-A400)" : "var(--ha-S50)"};
   border-radius: 10px;
   width: 40px;
   height: 20px;
@@ -95,8 +95,8 @@ const Fab = styled.div<{
 }>`
   border-radius: 100%;
   padding: 6px;
-  width: 24px;
-  height: 24px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -141,15 +141,15 @@ const LayoutRow = styled.div`
 `;
 
 const Title = styled.div`
-  color: var(--ha-400-shade-contrast);
+  color: var(--ha-S500-contrast);
   font-size: 0.7rem;
   margin: 2px 0;
 `;
 
 const Description = styled.div`
-  color: var(--ha-50-shade-contrast);
+  color: var(--ha-S50-contrast);
   font-size: 0.8rem;
-  font-weight: bold;
+  font-weight: 500;
 `;
 type Extendable = Omit<
   React.ComponentProps<"button">,
@@ -280,16 +280,16 @@ function _ButtonCard<E extends EntityName>({
                     : "rgba(255,255,255,0.15)"
                   : on
                   ? "var(--ha-A400)"
-                  : "var(--ha-500-shade-contrast)"
+                  : "var(--ha-S500-contrast)"
               }
               rgbColor={
                 entity
                   ? on
                     ? entity.custom.rgbColor
-                    : "var(--ha-500-shade-contrast)"
+                    : "var(--ha-S500-contrast)"
                   : on
                   ? "var(--ha-300)"
-                  : "var(--ha-500-shade-contrast)"
+                  : "var(--ha-S500-contrast)"
               }
             >
               {iconElement || entityIcon || domainIcon}

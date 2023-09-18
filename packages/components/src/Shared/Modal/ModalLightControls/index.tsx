@@ -90,7 +90,7 @@ const FabCardColor = styled(FabCard)`
     background-color: white;
     &:after {
       inset: 2px;
-      border: 2px solid var(--ha-200-shade);
+      border: 2px solid var(--ha-S200);
     }
   `}
   svg {
@@ -122,7 +122,7 @@ const FabCardTemp = styled(FabCard)`
     background-color: white;
     &:after {
       inset: 2px;
-      border: 2px solid var(--ha-200-shade);
+      border: 2px solid var(--ha-S200);
     }
   `}
   svg {

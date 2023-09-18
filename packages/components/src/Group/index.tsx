@@ -7,15 +7,15 @@ import { ErrorBoundary } from "react-error-boundary";
 const StyledGroup = styled.div<{
   collapsed: boolean;
 }>`
-  background-color: var(--ha-200-shade);
-  color: var(--ha-200-shade-contrast);
+  background-color: var(--ha-S200);
+  color: var(--ha-S200-contrast);
   border-radius: 1rem;
   padding: ${({ collapsed }) => (collapsed ? "0 2rem" : "0 2rem 2rem")};
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: padding, background-color;
-  width: calc(100% - 4rem);
+  width: 100%;
   h3 {
-    color: var(--ha-100-shade-contrast);
+    color: var(--ha-S100-contrast);
     margin: 0;
     cursor: pointer;
     padding: ${({ collapsed }) => (collapsed ? "1.5rem 0" : "2rem 0")};

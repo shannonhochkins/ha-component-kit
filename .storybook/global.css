@@ -1,8 +1,8 @@
 .docs-story {
-  background-color: var(--ha-100-shade);
+  background-color: var(--ha-S100);
   font-family: var(--ha-font-family);
   font-size: var(--ha-font-size);
-  color: var(--ha-50-shade-contrast);
+  color: var(--ha-S50-contrast);
   > div > div  {
     width: 100%;
   }

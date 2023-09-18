@@ -5,7 +5,7 @@ import { HassConnect } from "@hass-connect-fake";
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Column gap="1rem">
         <EntitiesCard includeLastUpdated {...args} />
         <Alert

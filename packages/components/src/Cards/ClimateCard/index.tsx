@@ -14,6 +14,7 @@ import { Ripples, fallback } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { useLongPress } from "react-use";
+import { capitalize } from "lodash";
 import { icons, activeColors } from "../../Shared/ClimateControls/shared";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -30,7 +31,7 @@ const StyledClimateCard = styled(motion.div)`
   align-items: stretch;
   justify-content: center;
   cursor: pointer;
-  background-color: var(--ha-300-shade);
+  background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: box-shadow, background-color;
@@ -39,7 +40,7 @@ const StyledClimateCard = styled(motion.div)`
     opacity: 0.8;
   }
   &:not(.disabled):hover {
-    background-color: var(--ha-400-shade);
+    background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
@@ -49,9 +50,9 @@ const Gap = styled.div`
 `;
 const StyledFabCard = styled(FabCard)`
   color: var(--ha-300);
-  background-color: var(--ha-200-shade);
+  background-color: var(--ha-S200);
   &:hover:not(:disabled) {
-    background-color: var(--ha-100-shade);
+    background-color: var(--ha-S100);
   }
 `;
 
@@ -64,7 +65,7 @@ const LayoutBetween = styled.div`
 
 const Title = styled.div`
   
-  color: var(--ha-400-shade-contrast);
+  color: var(--ha-S400-contrast);
   font-size: 0.7rem;
 `;
 const Icon = styled.div`
@@ -77,7 +78,7 @@ const Description = styled.div`
   justify-content: flex-start;
   gap: 0.5rem;
   text-transform: capitalize;
-  color: var(--ha-50-shade-contrast);
+  color: var(--ha-S50-contrast);
 `;
 type Extendable = Omit<ClimateControlsProps, "onClick"> &
   MotionProps &
@@ -156,7 +157,7 @@ function _ClimateCard({
                     isUnavailable || disabled
                       ? activeColors["off"]
                       : currentMode === "unknown-mode"
-                      ? 'var(--ha-500-shade-contrast)'
+                      ? 'var(--ha-S500-contrast)'
                       : activeColors[currentMode as HvacMode],
                 }}
               >
@@ -166,6 +167,13 @@ function _ClimateCard({
             </Description>
             <Title>{entity.custom.relativeTime}</Title>
           </LayoutBetween>
+          <Row justifyContent="flex-start">
+            <Title style={{
+              paddingLeft: '2rem'
+            }}>
+              Speed: {entity.attributes.fan_mode || "Unknown"}, Temperature: {entity.attributes.temperature}°C
+            </Title>
+          </Row>
           <Gap />
           <Row fullWidth gap="0.5rem" wrap="nowrap">
             {(hvacModes || hvac_modes || []).concat().map((mode) => (
@@ -177,7 +185,7 @@ function _ClimateCard({
                 }
                 preventPropagation
                 key={mode}
-                title={mode}
+                title={capitalize(mode.replace(/_/g, ' '))}
                 active={currentMode === mode}
                 icon={icons[mode]}
                 onClick={() => {

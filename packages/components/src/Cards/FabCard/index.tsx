@@ -17,7 +17,8 @@ import type {
   HassEntityWithApi,
   EntityName,
 } from "@hakit/core";
-import { Ripples, ModalByEntityDomain, fallback } from "@components";
+import { Ripples, ModalByEntityDomain, fallback, Tooltip } from "@components";
+import type { TooltipProps } from "@components";
 import { useLongPress } from "react-use";
 import { startCase, lowerCase } from "lodash";
 import { ErrorBoundary } from "react-error-boundary";
@@ -33,9 +34,9 @@ const StyledFabCard = styled(motion.button)<{
   flex-shrink: 0;
   text-align: center;
   border-radius: 50%;
-  background-color: var(--ha-300-shade);
+  background-color: var(--ha-S300);
   color: ${(props) =>
-    props.active ? `var(--ha-A400)` : `var(--ha-500-shade-contrast)`};
+    props.active ? `var(--ha-A400)` : `var(--ha-S500-contrast)`};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -46,7 +47,7 @@ const StyledFabCard = styled(motion.button)<{
     transition: color var(--ha-transition-duration) var(--ha-easing);
   }
   &:not(:disabled):hover {
-    background-color: var(--ha-400-shade);
+    background-color: var(--ha-S400);
   }
   &:disabled {
     cursor: not-allowed;
@@ -79,6 +80,10 @@ export interface FabCardProps<E extends EntityName> extends Extendable {
   serviceData?: ServiceData<ExtractDomain<E>, DomainService<ExtractDomain<E>>>;
   /** The name of your entity */
   entity?: E;
+  /** the title used for the tooltip and or modal that will expands, defaults to entity name or domain name @default "entitiy_name" */
+  title?: string;
+  /** the tooltip placement @default 'top' */
+  tooltipPlacement?: TooltipProps['placement'];
   /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
   onClick?: E extends undefined
     ? (entity: null) => void
@@ -94,6 +99,8 @@ export interface FabCardProps<E extends EntityName> extends Extendable {
 }
 
 function _FabCard<E extends EntityName>({
+  title: _title,
+  tooltipPlacement,
   icon: _icon,
   iconColor,
   noIcon,
@@ -155,34 +162,35 @@ function _FabCard<E extends EntityName>({
     isPreventDefault: false,
   });
   const title = useMemo(
-    () => (domain === null ? null : startCase(lowerCase(domain))),
-    [domain],
+    () => _title ?? (domain === null ? null : startCase(lowerCase(domain))),
+    [_title, domain],
   );
-  console.log('disabled', disabled, isUnavailable)
   return (
     <>
-      <Ripples
-        preventPropagation={preventPropagation}
-        disabled={disabled || isUnavailable}
-        borderRadius="50%"
-        whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
-      >
-        <StyledFabCard
+      <Tooltip placement={tooltipPlacement} title={`${_title ?? entity?.attributes?.friendly_name ?? title ?? ''}${entity?.state ? ` - ${entity.state}` : ''}`}>
+        <Ripples
+          preventPropagation={preventPropagation}
           disabled={disabled || isUnavailable}
-          active={active}
-          layoutId={
-            typeof _entity === "string" ? `${_entity}-fab-card` : undefined
-          }
-          size={size}
-          {...longPressEvent}
-          {...rest}
-          onClick={onClickHandler}
-          className={`${active ? "active " : ""}${className ?? ''}`}
+          borderRadius="50%"
+          whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
         >
-          {noIcon !== true && (iconElement || entityIcon || domainIcon)}
-          {typeof children !== "undefined" ? children : undefined}
-        </StyledFabCard>
-      </Ripples>
+          <StyledFabCard
+            disabled={disabled || isUnavailable}
+            active={active}
+            layoutId={
+              typeof _entity === "string" ? `${_entity}-fab-card` : undefined
+            }
+            size={size}
+            {...longPressEvent}
+            {...rest}
+            onClick={onClickHandler}
+            className={`${active ? "active " : ""}${className ?? ''}`}
+          >
+            {noIcon !== true && (iconElement || entityIcon || domainIcon)}
+            {typeof children !== "undefined" ? children : undefined}
+          </StyledFabCard>
+        </Ripples>
+      </Tooltip>
       {typeof _entity === "string" && (
         <ModalByEntityDomain
           entity={_entity as EntityName}

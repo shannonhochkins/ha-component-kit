@@ -36,7 +36,7 @@ const StyledTimeCard = styled(TimeCard)<{
 `;
 
 const StyledSidebarCard = styled(motion.div)`
-  background-color: var(--ha-50-shade);
+  background-color: var(--ha-S50);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -101,18 +101,18 @@ const Menu = styled(motion.ul)<{
         width: 100%;
         font-size: 0.7rem;
         font-weight: 300;
-        color: var(--ha-100-shade-contrast);
+        color: var(--ha-S100-contrast);
       }
     }
   }
   li {
     > a {
-      color: var(--ha-100-shade-contrast);
+      color: var(--ha-S100-contrast);
       background-color: transparent;
       transition: var(--ha-transition-duration) var(--ha-easing);
       transition-property: color, background-color;
       svg {
-        color: var(--ha-100-shade-contrast);
+        color: var(--ha-S100-contrast);
         transition: var(--ha-transition-duration) var(--ha-easing);
         transition-property: color;
       }
@@ -122,7 +122,7 @@ const Menu = styled(motion.ul)<{
     &:focus {
       > a {
         color: var(--ha-A400);
-        background-color: var(--ha-100-shade);
+        background-color: var(--ha-S100);
 
         svg {
           color: var(--ha-A400);
@@ -149,7 +149,7 @@ const Menu = styled(motion.ul)<{
 const Divider = styled.hr`
   width: 100%;
   border: none;
-  border-bottom: 1px solid var(--ha-200-shade);
+  border-bottom: 1px solid var(--ha-S200);
   margin: 0;
 `;
 
@@ -277,9 +277,7 @@ function _SidebarCard({
       />
       <StyledSidebarCard
         animate={{
-          minWidth: open
-            ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
-            : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`,
+          width: '100%',
           maxWidth: open
             ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
             : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`,
@@ -380,7 +378,7 @@ function _SidebarCard({
               <motion.div
                 key="sidebar-weather-large"
                 animate={{
-                  width: open ? "calc(100% - 2rem)" : "calc(100% - 0rem)",
+                  width: '100%',
                   padding: open ? "0 1rem 1rem" : "0",
                 }}
               >

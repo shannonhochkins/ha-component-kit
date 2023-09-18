@@ -1,10 +1,9 @@
-import { useEffect, Fragment } from "react";
+import { useEffect, Fragment, ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
-import { FabCard } from "@components";
 import { useKeyPress } from "react-use";
-import { fallback } from "@components";
+import { FabCard, fallback, Column } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
 const ModalContainer = styled(motion.div)`
@@ -15,29 +14,32 @@ const ModalContainer = styled(motion.div)`
   display: flex;
   width: var(--ha-modal-width);
   margin-left: calc(var(--ha-modal-width) / -2);
-  color: var(--ha-text-2);
+  color: var(--ha-S50-contrast);
   height: calc(100% - 4rem);
   overflow: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: stretch;
   justify-content: space-between;
-  background-color: var(--ha-200-shade);
+  background-color: var(--ha-S200);
   z-index: var(--ha-modal-z-index);
 `;
 const ModalInner = styled.div`
   display: flex;
-  padding: 5rem 1rem 2rem;
+  padding: 0rem 1rem 2rem;
   height: 100%;
+  align-items: flex-start;
 `;
 const ModalOverflow = styled.div`
-  height: 100%;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  margin-top: 5rem;
+  justify-content: center;
   align-items: stretch;
+  width: 100%;
 `;
-const Modalheader = styled.div`
+const ModalHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -53,15 +55,20 @@ const Title = styled.h4`
   font-size: 1.5rem;
 `;
 
+const Description = styled.h4`
+  all: unset;
+  font-size: 0.9rem;
+  color: var(--ha-S500-contrast);
+`;
+
 const ModalBackdrop = styled(motion.div)`
   position: absolute;
-  z-index: 0;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--ha-background-opaque);
   cursor: pointer;
+  background: var(--ha-background-opaque);
   z-index: var(--ha-modal-z-index);
   backdrop-filter: blur(2em) brightness(0.75);
 `;
@@ -74,11 +81,13 @@ export interface ModalProps {
   /** the react layout to include inside the Modal */
   children: React.ReactNode;
   /** The title of the dialog */
-  title: string;
+  title: ReactNode;
+  /** the description of the modal */
+  description?: ReactNode;
   /** triggered when the users pressed the close button, this is also triggered when the escape key is pressed */
   onClose: () => void;
 }
-function _Modal({ open, id, title, children, onClose }: ModalProps) {
+function _Modal({ open, id, title, description, children, onClose }: ModalProps) {
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   useEffect(() => {
     if (isPressed && onClose && open) {
@@ -108,16 +117,19 @@ function _Modal({ open, id, title, children, onClose }: ModalProps) {
           <ModalContainer
             style={{
               borderRadius: "1rem",
-              boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+              boxShadow: "0px 2px 4px var(--ha-S50)",
             }}
             layout
             layoutId={id}
             key={`${id}-container`}
           >
-            <Modalheader>
-              <Title>{title}</Title>
-              <FabCard layout icon="mdi:close" onClick={onClose} />
-            </Modalheader>
+            <ModalHeader>
+              <Column alignItems="flex-start">
+                <Title>{title}</Title>
+                {description && <Description>{description}</Description>}
+              </Column>
+              <FabCard tooltipPlacement="left" title="Close" layout icon="mdi:close" onClick={onClose} />
+            </ModalHeader>
             <ModalOverflow>
               <ModalInner>{children}</ModalInner>
             </ModalOverflow>
