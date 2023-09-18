@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, ReactNode } from "react";
 import styled from "@emotion/styled";
 import { useDebouncedCallback } from "use-debounce";
-import { fallback } from '@components';
+import { fallback } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
 const StyledRange = styled.div<{
@@ -96,15 +96,17 @@ const StyledRange = styled.div<{
   `}
 `;
 
-const Tooltip = styled.div`
+const Tooltip = styled.div<{
+  size: number;
+}>`
   opacity: 0;
   position: absolute;
   bottom: 100%;
-  width: 2rem;
-  height: 2rem;
+  width: ${({ size }) => `${size}rem`};
+  height: ${({ size }) => `${size}rem`};
   border-radius: 50% 50% 50% 0;
   left: 0;
-  transform: translate(-50%, 1rem) rotate(-45deg)  scale(0);
+  transform: translate(-50%, 1rem) rotate(-45deg) scale(0);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: transform, opacity;
   background-color: var(--ha-A400);
@@ -113,9 +115,9 @@ const Tooltip = styled.div`
   z-index: 0;
   &:after {
     content: attr(data-title);
-    font-size: 12px;
+    font-size: 0.7rem;
     display: flex;
-    align-items:center;
+    align-items: center;
     justify-content: center;
     color: white;
     transform: rotate(45deg);
@@ -139,10 +141,11 @@ const Description = styled.span`
   color: var(--ha-S500-contrast);
 `;
 
-export interface RangeSliderProps extends Omit<
-React.InputHTMLAttributes<HTMLInputElement>,
-'onInput' | 'onChange'
-> {
+export interface RangeSliderProps
+  extends Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    "onInput" | "onChange"
+  > {
   /** The minimum value for the input @default 0 */
   min?: number;
   /** The maximum value for the input @default 100 */
@@ -161,15 +164,21 @@ React.InputHTMLAttributes<HTMLInputElement>,
   description?: ReactNode;
   /** should the tooltip value be hidden @default false */
   hideTooltip?: boolean;
+  /** function to format the value displayed in the tooltip */
+  formatTooltipValue?: (value: number) => string;
+  /** tooltip size, increase/decrease the size of the tooltip, value should be a number representing rems @default 2 */
+  tooltipSize?: number;
 }
 
 function _RangeSlider({
   value: _value,
   onChange,
+  formatTooltipValue,
   hideTooltip,
   label,
   description,
   className,
+  tooltipSize = 2,
   handleSize = 15,
   min: _min = 0,
   max: _max = 100,
@@ -181,7 +190,7 @@ function _RangeSlider({
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (typeof value === 'number') {
+    if (typeof value === "number") {
       setValue(value);
     }
   }, [value]);
@@ -191,23 +200,32 @@ function _RangeSlider({
     const min = parseFloat(`${_min ?? 0}`);
     const max = parseFloat(`${_max ?? 100}`);
     const step = parseFloat(`${_step ?? 1}`);
-    const roundedValue = parseFloat(rangeRef.current.valueAsNumber.toFixed(step < 1 ? Math.abs(Math.log10(step)) : 0));
-    const percentage = ((rangeRef.current.valueAsNumber - min) / (max - min)) * 100;
-    
+    const roundedValue = parseFloat(
+      rangeRef.current.valueAsNumber.toFixed(
+        step < 1 ? Math.abs(Math.log10(step)) : 0,
+      ),
+    );
+    const percentage =
+      ((rangeRef.current.valueAsNumber - min) / (max - min)) * 100;
+
     if (tooltipRef.current) {
       tooltipRef.current.style.left = `${percentage}%`;
-      tooltipRef.current.setAttribute('data-title', `${roundedValue}`);
+      const tooltipValue =
+        typeof formatTooltipValue === "function"
+          ? formatTooltipValue(roundedValue)
+          : roundedValue;
+      tooltipRef.current.setAttribute("data-title", `${tooltipValue}`);
     }
-  }, [value, _min, _max, _step, hideTooltip]);
+  }, [value, _min, _max, _step, formatTooltipValue, hideTooltip]);
 
   const debouncedOnChange = useDebouncedCallback((value: number) => {
-    if (typeof onChange === 'function') {
+    if (typeof onChange === "function") {
       onChange(value);
     }
   }, 300);
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: "relative" }}>
       {label && <Label>{label}</Label>}
       {description && <Description>{description}</Description>}
       <StyledRange
@@ -230,19 +248,23 @@ function _RangeSlider({
             debouncedOnChange(event.target.valueAsNumber);
           }}
         />
-        {!hideTooltip && <div className="tooltip-holder" style={{
-          position: 'absolute',
-          top: 0,
-          left: handleSize / 2,
-          right: handleSize / 2,
-        }}>
-          <Tooltip ref={tooltipRef} />
-        </div>}
+        {!hideTooltip && (
+          <div
+            className="tooltip-holder"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: handleSize / 2,
+              right: handleSize / 2,
+            }}
+          >
+            <Tooltip size={tooltipSize} ref={tooltipRef} />
+          </div>
+        )}
       </StyledRange>
     </div>
   );
 }
-
 
 /** The RangeSlider is a simple component that allows you to provide a slider to extract a value and do something with it */
 export function RangeSlider(props: RangeSliderProps) {

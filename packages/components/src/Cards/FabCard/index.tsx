@@ -83,7 +83,7 @@ export interface FabCardProps<E extends EntityName> extends Extendable {
   /** the title used for the tooltip and or modal that will expands, defaults to entity name or domain name @default "entitiy_name" */
   title?: string;
   /** the tooltip placement @default 'top' */
-  tooltipPlacement?: TooltipProps['placement'];
+  tooltipPlacement?: TooltipProps["placement"];
   /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
   onClick?: E extends undefined
     ? (entity: null) => void
@@ -126,7 +126,10 @@ function _FabCard<E extends EntityName>({
     fontSize: `${size / 1.7}px`,
     color: iconColor || "currentcolor",
   });
-  const isUnavailable = typeof entity?.state === 'string' ? isUnavailableState(entity.state) : false;
+  const isUnavailable =
+    typeof entity?.state === "string"
+      ? isUnavailableState(entity.state)
+      : false;
   const entityIcon = useIconByEntity(_entity || "unknown", {
     fontSize: `${size / 1.7}px`,
     color: iconColor || "currentcolor",
@@ -154,20 +157,29 @@ function _FabCard<E extends EntityName>({
       onClick(entity);
     }
   }, [service, entity, serviceData, disabled, isUnavailable, onClick]);
-  const longPressEvent = useLongPress((e) => {
-    // ignore on right click
-    if (("button" in e && e.button === 2) || (disabled || isUnavailable)) return;
-    setOpenModal(true);
-  }, {
-    isPreventDefault: false,
-  });
+  const longPressEvent = useLongPress(
+    (e) => {
+      // ignore on right click
+      if (("button" in e && e.button === 2) || disabled || isUnavailable)
+        return;
+      setOpenModal(true);
+    },
+    {
+      isPreventDefault: false,
+    },
+  );
   const title = useMemo(
     () => _title ?? (domain === null ? null : startCase(lowerCase(domain))),
     [_title, domain],
   );
   return (
     <>
-      <Tooltip placement={tooltipPlacement} title={`${_title ?? entity?.attributes?.friendly_name ?? title ?? ''}${entity?.state ? ` - ${entity.state}` : ''}`}>
+      <Tooltip
+        placement={tooltipPlacement}
+        title={`${_title ?? entity?.attributes?.friendly_name ?? title ?? ""}${
+          entity?.state ? ` - ${entity.state}` : ""
+        }`}
+      >
         <Ripples
           preventPropagation={preventPropagation}
           disabled={disabled || isUnavailable}
@@ -184,7 +196,7 @@ function _FabCard<E extends EntityName>({
             {...longPressEvent}
             {...rest}
             onClick={onClickHandler}
-            className={`${active ? "active " : ""}${className ?? ''}`}
+            className={`${active ? "active " : ""}${className ?? ""}`}
           >
             {noIcon !== true && (iconElement || entityIcon || domainIcon)}
             {typeof children !== "undefined" ? children : undefined}
@@ -194,7 +206,7 @@ function _FabCard<E extends EntityName>({
       {typeof _entity === "string" && (
         <ModalByEntityDomain
           entity={_entity as EntityName}
-          title={title || "Unknown title"}
+          title={title ?? "Unknown title"}
           onClose={() => {
             setOpenModal(false);
           }}

@@ -369,7 +369,6 @@ function _GarbageCollectionCard({
       formatTimeDisplay,
     ],
   );
-  console.log("collections", collections);
   return (
     <Card {...rest}>
       <Title>{title}</Title>

@@ -406,6 +406,12 @@ export function HassProvider({
         setEntitiesDebounce($entities);
       });
     }
+    return () => {
+      if (unsubscribe.current) {
+        unsubscribe.current();
+        unsubscribe.current = null;
+      }
+    };
   }, [connection, setEntitiesDebounce]);
 
   useEffect(() => {

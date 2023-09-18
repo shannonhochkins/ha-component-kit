@@ -5,7 +5,7 @@ import { merge } from "lodash";
 import { theme as defaultTheme } from "./theme";
 import type { ThemeParams } from "./theme";
 import { convertToCssVars } from "./helpers";
-import { fallback, FabCard, Modal} from "@components";
+import { fallback, FabCard, Modal } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { motion } from "framer-motion";
 import {
@@ -16,9 +16,9 @@ import {
   DEFAULT_START_DARK,
   DIFF,
   DEFAULT_THEME_OPTIONS,
-} from './constants';
-import { ThemeControls } from './ThemeControls';
-import type { ThemeControlsProps } from './ThemeControls';
+} from "./constants";
+import { ThemeControls } from "./ThemeControls";
+import type { ThemeControlsProps } from "./ThemeControls";
 
 type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
@@ -55,13 +55,13 @@ const ThemeControlsBox = styled(motion.div)`
 // Function to generate light and dark variants
 const generateVariantVars = (
   variants: string[],
-  type: 'Light' | 'Dark',
+  type: "Light" | "Dark",
   tint: number,
   darkMode: boolean,
 ): string => {
   return variants
     .map((variant, i) => {
-      const isLight = type === 'Light';
+      const isLight = type === "Light";
       const saturation = isLight
         ? `calc(((var(--ha-s) - var(--mtc-light-s)) * var(--mtc-s-${variant}) + var(--mtc-light-s)) * 1%)`
         : `calc(((1 - var(--mtc-s-${variant})) * 100 + var(--mtc-s-${variant}) * var(--ha-s)) * 1%)`;
@@ -70,11 +70,13 @@ const generateVariantVars = (
         : `calc(((1 - var(--mtc-l-${variant})) * var(--ha-l) * var(--ha-l) / 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%)`;
       const contrast = isLight
         ? `hsl(0, 0%, calc(((((1 - var(--mtc-l-${variant})) * 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)))`
-        : `hsl(0, 0%, calc(((((1 - var(--mtc-l-${variant})) * var(--ha-l) * var(--ha-l) / 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)))`
+        : `hsl(0, 0%, calc(((((1 - var(--mtc-l-${variant})) * var(--ha-l) * var(--ha-l) / 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)))`;
 
       const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
       const indexOffset = !isLight ? LIGHT.length + 1 : 0;
-      const offsetBackground = darkMode ? baseLightness + (DIFF * (i + indexOffset)) : baseLightness - (DIFF * (i + indexOffset));
+      const offsetBackground = darkMode
+        ? baseLightness + DIFF * (i + indexOffset)
+        : baseLightness - DIFF * (i + indexOffset);
 
       return `
         --ha-${variant}-h: var(--ha-h);
@@ -86,16 +88,22 @@ const generateVariantVars = (
         --ha-S${variant}-contrast: hsl(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), calc(((100% - ${offsetBackground}%) + ${indexOffset} * 10%)));
       `;
     })
-    .join('');
+    .join("");
 };
 
 // Function to generate accent variants
-const generateAccentVars = (variants: string[], tint: number, darkMode: boolean): string => {
+const generateAccentVars = (
+  variants: string[],
+  tint: number,
+  darkMode: boolean,
+): string => {
   return variants
     .map((variant, i) => {
       const indexOffset = LIGHT.length + 1 + DARK.length;
       const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
-      const offsetBackground = darkMode ? baseLightness + (DIFF * (indexOffset + i)) : baseLightness - (DIFF * (indexOffset + i));
+      const offsetBackground = darkMode
+        ? baseLightness + DIFF * (indexOffset + i)
+        : baseLightness - DIFF * (indexOffset + i);
 
       return `
         --ha-${variant}-h: calc(var(--ha-h) * var(--mtc-h-${variant}));
@@ -106,16 +114,18 @@ const generateAccentVars = (variants: string[], tint: number, darkMode: boolean)
         --ha-S${variant}-contrast: hsl(var(--ha-${variant}-s), calc(var(--ha-${variant}-s) * ${tint}), calc(((100% - ${offsetBackground}%))));
       `;
     })
-    .join('');
+    .join("");
 };
 
 // Main function to generate all variables
 const generateAllVars = (tint: number, darkMode: boolean): string => {
-  const lightVars = generateVariantVars(LIGHT, 'Light', tint, darkMode);
-  const darkVars = generateVariantVars(DARK, 'Dark', tint, darkMode);
+  const lightVars = generateVariantVars(LIGHT, "Light", tint, darkMode);
+  const darkVars = generateVariantVars(DARK, "Dark", tint, darkMode);
   const accentVars = generateAccentVars(ACCENT, tint, darkMode);
   const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
-  const offsetBackground = darkMode ? baseLightness + (DIFF * 5) : baseLightness - (DIFF * 5);
+  const offsetBackground = darkMode
+    ? baseLightness + DIFF * 5
+    : baseLightness - DIFF * 5;
 
   return `
     ${lightVars}
@@ -150,40 +160,48 @@ function _ThemeProvider<T extends object>({
       saturation: s,
       darkMode: darkMode,
       contrastThreshold: c,
-    } satisfies Omit<ThemeControlsProps, 'onChange'>;
+    } satisfies Omit<ThemeControlsProps, "onChange">;
   }, [c, darkMode, h, l, s, t]);
   const defaults = getTheme();
-  const [_theme, setTheme] = useState<Omit<ThemeControlsProps, 'onChange'>>(defaults);
+  const [_theme, setTheme] =
+    useState<Omit<ThemeControlsProps, "onChange">>(defaults);
   const [open, setOpen] = useState(false);
-  const colorScheme = _theme.darkMode ? 'dark' : 'light';
+  const colorScheme = _theme.darkMode ? "dark" : "light";
 
   useEffect(() => {
     const newTheme = getTheme();
     setTheme(newTheme);
-  }, [c, darkMode, getTheme, h, l, s, t])
+  }, [c, darkMode, getTheme, h, l, s, t]);
   return (
     <>
       <Global
         styles={css`
           :root {
             ${convertToCssVars(merge(defaultTheme, theme))}
-            --is-dark-theme: ${_theme.darkMode ? '1' : '0'};
+            --is-dark-theme: ${_theme.darkMode ? "1" : "0"};
             color-scheme: ${colorScheme};
             --ha-ripple-size: 50;
             --ha-ripple-duration: 0.5s;
             --ha-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --ha-transition-duration: 0.25s;
             --ha-room-card-expanded-offset: 0;
-            --ha-background-opaque: ${_theme.darkMode ? `hsla(var(--ha-h), calc(var(--ha-s) * 1%), 10%, 0.9)` : `hsla(var(--ha-h), calc(var(--ha-s) * 1%), 20%, 0.7)`};
+            --ha-background-opaque: ${_theme.darkMode
+              ? `hsla(var(--ha-h), calc(var(--ha-s) * 1%), 10%, 0.9)`
+              : `hsla(var(--ha-h), calc(var(--ha-s) * 1%), 20%, 0.7)`};
           }
-          
+
           :root {
             --ha-h: ${_theme.hue};
             --ha-s: ${_theme.saturation};
             --ha-l: ${_theme.lightness};
             --ha-contrast-threshold: ${_theme.contrastThreshold}%;
             --ha-so: calc(var(--ha-s) * 1%);
-            --ha: hsla(var(--ha-h), calc(var(--ha-s) * 1%), calc(var(--ha-l) * 1%), 100%);
+            --ha: hsla(
+              var(--ha-h),
+              calc(var(--ha-s) * 1%),
+              calc(var(--ha-l) * 1%),
+              100%
+            );
             --mtc-h-A100: 1;
             --mtc-h-A200: 1;
             --mtc-h-A400: 1;
@@ -218,35 +236,40 @@ function _ThemeProvider<T extends object>({
             --mtc-light-s: 0;
             --mtc-light-l: 100;
 
-            ${generateAllVars(_theme.tint ?? DEFAULT_THEME_OPTIONS.tint, _theme.darkMode ?? DEFAULT_THEME_OPTIONS.darkMode)}
+            ${generateAllVars(
+              _theme.tint ?? DEFAULT_THEME_OPTIONS.tint,
+              _theme.darkMode ?? DEFAULT_THEME_OPTIONS.darkMode,
+            )}
           }
-            
+
           * {
             box-sizing: border-box;
-            ::-webkit-scrollbar-corner { background: rgba(0,0,0,0.5); }
+            ::-webkit-scrollbar-corner {
+              background: rgba(0, 0, 0, 0.5);
+            }
 
             * {
-                scrollbar-width: thin;
-                scrollbar-color: var(--ha-S500) var(--ha-S200);
+              scrollbar-width: thin;
+              scrollbar-color: var(--ha-S500) var(--ha-S200);
             }
-        
+
             /* Works on Chrome, Edge, and Safari */
             *::-webkit-scrollbar {
-                width: 12px;
-                height: 12px;
+              width: 12px;
+              height: 12px;
             }
-        
+
             *::-webkit-scrollbar-track {
-                background: var(--ha-S200); // track background color
+              background: var(--ha-S200); // track background color
             }
-        
+
             *::-webkit-scrollbar-thumb {
-                background-color: var(--ha-S500);
-                border-radius: 20px;
-                border: 3px solid var(--ha-S200);
+              background-color: var(--ha-S500);
+              border-radius: 20px;
+              border: 3px solid var(--ha-S200);
             }
           }
-          
+
           html,
           body {
             height: 100%;
@@ -269,20 +292,41 @@ function _ThemeProvider<T extends object>({
           }
         `}
       />
-      {includeThemeControls && <ThemeControlsBox style={{
-        ...themeControlStyles ?? {}
-      }} >
-        <FabCard onClick={() => setOpen(true)} tooltipPlacement="left" title="Theme Controls" layoutId="theme-controls" icon="mdi:color" />
-      </ThemeControlsBox>}
-      {includeThemeControls && <Modal description="The theme is entirely calculated using css formulas, no javascript!" id="theme-controls" open={open} title="Theme Controls" onClose={() => {
-        setOpen(false);
-      }}>
-        <ThemeControls {...{
-          ..._theme,
-        }} onChange={theme => {
-          setTheme(theme);
-        }} />
-      </Modal>}
+      {includeThemeControls && (
+        <ThemeControlsBox
+          style={{
+            ...(themeControlStyles ?? {}),
+          }}
+        >
+          <FabCard
+            onClick={() => setOpen(true)}
+            tooltipPlacement="left"
+            title="Theme Controls"
+            layoutId="theme-controls"
+            icon="mdi:color"
+          />
+        </ThemeControlsBox>
+      )}
+      {includeThemeControls && (
+        <Modal
+          description="The theme is entirely calculated using css formulas, no javascript!"
+          id="theme-controls"
+          open={open}
+          title="Theme Controls"
+          onClose={() => {
+            setOpen(false);
+          }}
+        >
+          <ThemeControls
+            {...{
+              ..._theme,
+            }}
+            onChange={(theme) => {
+              setTheme(theme);
+            }}
+          />
+        </Modal>
+      )}
     </>
   );
 }

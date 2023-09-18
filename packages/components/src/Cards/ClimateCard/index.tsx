@@ -64,7 +64,6 @@ const LayoutBetween = styled.div`
 `;
 
 const Title = styled.div`
-  
   color: var(--ha-S400-contrast);
   font-size: 0.7rem;
 `;
@@ -112,13 +111,17 @@ function _ClimateCard({
   const { hvac_action, hvac_modes } = entity.attributes;
   const isUnavailable = isUnavailableState(entity.state);
   const isOff = entity.state === OFF;
-  const longPressEvent = useLongPress((e) => {
-    // ignore on right click
-    if (("button" in e && e.button === 2) || isUnavailable || disabled) return;
-    setOpenModal(true);
-  }, {
-    isPreventDefault: false,
-  });
+  const longPressEvent = useLongPress(
+    (e) => {
+      // ignore on right click
+      if (("button" in e && e.button === 2) || isUnavailable || disabled)
+        return;
+      setOpenModal(true);
+    },
+    {
+      isPreventDefault: false,
+    },
+  );
 
   const titleValue = useMemo(() => {
     if (isUnavailable) {
@@ -145,7 +148,8 @@ function _ClimateCard({
           layoutId={`${_entity}-climate-card`}
           {...rest}
           onClick={() => {
-            if (isUnavailable || disabled || typeof onClick !== "function") return;
+            if (isUnavailable || disabled || typeof onClick !== "function")
+              return;
             onClick(entity);
           }}
         >
@@ -157,7 +161,7 @@ function _ClimateCard({
                     isUnavailable || disabled
                       ? activeColors["off"]
                       : currentMode === "unknown-mode"
-                      ? 'var(--ha-S500-contrast)'
+                      ? "var(--ha-S500-contrast)"
                       : activeColors[currentMode as HvacMode],
                 }}
               >
@@ -168,10 +172,13 @@ function _ClimateCard({
             <Title>{entity.custom.relativeTime}</Title>
           </LayoutBetween>
           <Row justifyContent="flex-start">
-            <Title style={{
-              paddingLeft: '2rem'
-            }}>
-              Speed: {entity.attributes.fan_mode || "Unknown"}, Temperature: {entity.attributes.temperature}°C
+            <Title
+              style={{
+                paddingLeft: "2rem",
+              }}
+            >
+              Speed: {entity.attributes.fan_mode || "Unknown"}, Temperature:{" "}
+              {entity.attributes.temperature}°C
             </Title>
           </Row>
           <Gap />
@@ -185,7 +192,7 @@ function _ClimateCard({
                 }
                 preventPropagation
                 key={mode}
-                title={capitalize(mode.replace(/_/g, ' '))}
+                title={capitalize(mode.replace(/_/g, " "))}
                 active={currentMode === mode}
                 icon={icons[mode]}
                 onClick={() => {
@@ -205,7 +212,7 @@ function _ClimateCard({
         hideState={hideState}
         hideUpdated={hideUpdated}
         entity={_entity}
-        title={title || "Unknown title"}
+        title={title ?? "Unknown title"}
         onClose={() => {
           setOpenModal(false);
         }}

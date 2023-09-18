@@ -9,12 +9,16 @@ function Template(props: TooltipProps): JSX.Element {
       <ThemeProvider includeThemeControls />
       <Row fullHeight fullWidth>
         <Tooltip {...props}>
-          <div style={{
-            backgroundColor: 'var(--ha-S400)',
-            color: 'var(--ha-S400-contrast)',
-            padding: '2rem',
-            borderRadius: '0.5rem'
-          }}>Tooltip</div>
+          <div
+            style={{
+              backgroundColor: "var(--ha-S400)",
+              color: "var(--ha-S400-contrast)",
+              padding: "2rem",
+              borderRadius: "0.5rem",
+            }}
+          >
+            Tooltip
+          </div>
         </Tooltip>
       </Row>
     </HassConnect>
@@ -35,6 +39,6 @@ export type TimeStory = StoryObj<typeof Tooltip>;
 export const TooltipExample: TimeStory = {
   render: Template,
   args: {
-    title: "A tooltip!!!"
+    title: "A tooltip!!!",
   },
 };

@@ -108,14 +108,14 @@ function EntityRow({
   const on = entity?.state === ON;
   const iconColor = on ? entity.custom.hexColor : "var(--ha-S500-contrast)";
 
-  return (    
-      <EntityRowInner>
-        <Row
-      wrap="nowrap"
-      gap="1rem"
-      fullWidth
-      onClick={() => onClick && onClick(entity)}
-    >
+  return (
+    <EntityRowInner>
+      <Row
+        wrap="nowrap"
+        gap="1rem"
+        fullWidth
+        onClick={() => onClick && onClick(entity)}
+      >
         <IconWrapper
           style={{
             opacity: isUnavailable ? "0.3" : "1",
@@ -145,8 +145,8 @@ function EntityRow({
             </>
           )}
         </State>
-        </Row>
-      </EntityRowInner>
+      </Row>
+    </EntityRowInner>
   );
 }
 

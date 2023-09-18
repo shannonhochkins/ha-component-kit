@@ -89,8 +89,8 @@ const Toggle = styled.div<ToggleProps>`
 `;
 
 const Fab = styled.div<{
-  rgbaColor: string;
-  rgbColor: string;
+  backgroundColor: string;
+  textColor: string;
   brightness: string;
 }>`
   border-radius: 100%;
@@ -102,14 +102,14 @@ const Fab = styled.div<{
   justify-content: center;
   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
   ${(props) =>
-    props.rgbaColor &&
+    props.backgroundColor &&
     `
-    background-color: ${props.rgbaColor};
+    background-color: ${props.backgroundColor};
   `}
   ${(props) =>
-    props.rgbColor &&
+    props.textColor &&
     `
-    color: ${props.rgbColor};
+    color: ${props.textColor};
   `}
   ${(props) =>
     props.brightness &&
@@ -209,20 +209,27 @@ function _ButtonCard<E extends EntityName>({
   });
   const isDefaultLayout =
     defaultLayout === "default" || defaultLayout === undefined;
-  const isUnavailable = typeof entity?.state === 'string' ? isUnavailableState(entity.state) : false;
+  const isUnavailable =
+    typeof entity?.state === "string"
+      ? isUnavailableState(entity.state)
+      : false;
   const on = entity
     ? entity.state !== "off" && !isUnavailable
     : active || false;
   const iconElement = useIcon(icon, {
     color: iconColor || undefined,
   });
-  const longPressEvent = useLongPress((e) => {
-    // ignore on right click
-    if (("button" in e && e.button === 2) || disabled || isUnavailable) return;
-    setOpenModal(true);
-  }, {
-    isPreventDefault: false,
-  });
+  const longPressEvent = useLongPress(
+    (e) => {
+      // ignore on right click
+      if (("button" in e && e.button === 2) || disabled || isUnavailable)
+        return;
+      setOpenModal(true);
+    },
+    {
+      isPreventDefault: false,
+    },
+  );
 
   const onClickHandler = useCallback(() => {
     if (disabled) return;
@@ -273,22 +280,14 @@ function _ButtonCard<E extends EntityName>({
               brightness={
                 (on && entity?.custom.brightness) || "brightness(100%)"
               }
-              rgbaColor={
-                entity
-                  ? on
-                    ? entity.custom.rgbaColor
-                    : "rgba(255,255,255,0.15)"
-                  : on
-                  ? "var(--ha-A400)"
-                  : "var(--ha-S500-contrast)"
-              }
-              rgbColor={
+              backgroundColor={on ? "var(--ha-S500)" : "var(--ha-S400)"}
+              textColor={
                 entity
                   ? on
                     ? entity.custom.rgbColor
                     : "var(--ha-S500-contrast)"
                   : on
-                  ? "var(--ha-300)"
+                  ? "var(--ha-A400)"
                   : "var(--ha-S500-contrast)"
               }
             >
@@ -333,7 +332,7 @@ function _ButtonCard<E extends EntityName>({
       {typeof _entity === "string" && (
         <ModalByEntityDomain
           entity={_entity as EntityName}
-          title={title || "Unknown title"}
+          title={title ?? "Unknown title"}
           onClose={() => {
             setOpenModal(false);
           }}

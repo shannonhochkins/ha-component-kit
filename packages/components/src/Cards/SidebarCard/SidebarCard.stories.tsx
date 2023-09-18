@@ -18,14 +18,16 @@ import office from "../RoomCard/office.jpg";
 import livingRoom from "../RoomCard/living-room.jpg";
 
 const MakeFullScreen = () => {
-  return <Global
-    styles={css`
-      #storybook-inner-preview > div > div {
-        height: 100%;
-      }
-    `}
-  />;
-}
+  return (
+    <Global
+      styles={css`
+        #storybook-inner-preview > div > div {
+          height: 100%;
+        }
+      `}
+    />
+  );
+};
 
 function Template(args?: Partial<SidebarCardProps>) {
   return (

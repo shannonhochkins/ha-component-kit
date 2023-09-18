@@ -14,8 +14,8 @@ import { convertToCssVars } from "./helpers";
 import type { ThemeProviderProps } from "@components";
 // @ts-expect-error - Don't have types for jsx-to-string
 import jsxToString from "jsx-to-string";
-import { ThemeControls, ThemeControlsProps } from './ThemeControls';
-import { DEFAULT_THEME_OPTIONS } from './constants';
+import { ThemeControls, ThemeControlsProps } from "./ThemeControls";
+import { DEFAULT_THEME_OPTIONS } from "./constants";
 
 const customTheme: ThemeProviderProps<{
   anything: {
@@ -41,7 +41,9 @@ function CustomThemeProvider() {
 
 function Render(args: Story["args"]) {
   const theme = args?.theme || {};
-  const [customTheme, setCustomTheme] = useState<Omit<ThemeControlsProps, 'onChange'>>({
+  const [customTheme, setCustomTheme] = useState<
+    Omit<ThemeControlsProps, "onChange">
+  >({
     darkMode: DEFAULT_THEME_OPTIONS.darkMode,
     tint: DEFAULT_THEME_OPTIONS.tint,
     hue: DEFAULT_THEME_OPTIONS.hue,
@@ -57,13 +59,23 @@ function Render(args: Story["args"]) {
         variables to re-use across your custom home assistant dashboard.
       </p>
       <Group title="Dynamic Theme Controls" collapsed>
-        <ThemeControls {...customTheme} onChange={(_theme) => {
-          setCustomTheme(_theme);
-        }} />
+        <ThemeControls
+          {...customTheme}
+          onChange={(_theme) => {
+            setCustomTheme(_theme);
+          }}
+        />
       </Group>
-      <Alert type="info" title="NOTE" style={{
-        marginTop: '1rem',
-      }}>The dynamic theme controls above will update the code below so you can copy/paste your desired theme.</Alert>
+      <Alert
+        type="info"
+        title="NOTE"
+        style={{
+          marginTop: "1rem",
+        }}
+      >
+        The dynamic theme controls above will update the code below so you can
+        copy/paste your desired theme.
+      </Alert>
       <Source
         dark
         code={`
@@ -85,9 +97,16 @@ function Render(args: Story["args"]) {
         default, if you want to extend/change anything you can just pass in your
         overrides.
       </p>
-      <Alert type="info" title="NOTE" style={{
-        marginTop: '1rem',
-      }}>You can pass anything to the theme object and the css variables will be created!</Alert>
+      <Alert
+        type="info"
+        title="NOTE"
+        style={{
+          marginTop: "1rem",
+        }}
+      >
+        You can pass anything to the theme object and the css variables will be
+        created!
+      </Alert>
       <Source
         dark
         code={`<ThemeProvider theme={${JSON.stringify(theme, null, 2)}} />`}

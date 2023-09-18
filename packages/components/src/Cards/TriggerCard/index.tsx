@@ -53,7 +53,7 @@ const ToggleMessage = styled.span<ToggleProps>`
   justify-content: ${(props) => (props.active ? `flex-start` : `flex-end`)};
   color: ${(props) =>
     !props.active ? "var(--ha-300)" : "var(--ha-300-contrast)"};
-    ${(props) => props.hideArrow && `padding-right: 0.8rem;`}
+  ${(props) => props.hideArrow && `padding-right: 0.8rem;`}
 `;
 
 const ToggleState = styled.div<ToggleProps>`
@@ -109,19 +109,19 @@ const LayoutBetween = styled.div`
 `;
 
 const Title = styled.div`
-  color: var(--ha-text-2);
+  color: var(--ha-S500-contrast);
   font-size: 0.7rem;
 `;
 const Description = styled.div<{
   disabled?: boolean;
 }>`
-  color: var(--ha-text-1);
-  ${(props) => props.disabled && `color: var(--ha-text-2);`}
+  color: var(--ha-S500-contrast);
+  ${(props) => props.disabled && `color: var(--ha-S50-contrast);`}
   font-size: 0.9rem;
   span {
     display: block;
     width: 100%;
-    color: var(--ha-text-2);
+    color: var(--ha-S50-contrast);
     margin-top: 0.3rem;
     line-height: 1rem;
     font-size: 0.7rem;

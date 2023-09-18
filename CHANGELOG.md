@@ -1,10 +1,15 @@
 # @hakit/components
 ## 1.1.0
 - NEW - Massive changes to the core styles for components, ThemeProvider now accepts hue, saturation, lightness, tint, contrastThreshold and darkMode as props, light/dark mode fully supported, interactive color sliders to visualize the theme changes on the overview page and on every single storybook component page. The default colors have also been changed which is why this has been released as a new minor release.
+- NEW - scroll-bars have been re-themed and supported in more browsers
 - NEW - RangeSlider - a simple slider to get/set values between a min/max range
 - NEW - Title - a new component to display titles which has been connected to some components by default to help display more information about the entities.
 - BUGFIX - multiple styling bug fixes, every component has been touched at some point during this refactor to ensure the styles are consistent and work as expected for the new Theme controls.
+- BUGFIX - animations with sidebar were really jumpy before, this has been fixed.
+- BREAKING - the entire theme module has been rebuilt, if you were using any of the default css variables like --ha-text or --ha-primary-x or --ha-secondary-x etc, these have been deprecated.
 
+# @hakit/core
+- NEW - color theme variables connected to the getCssColor value, if you're not using @hakit/components you'll need to provide these yourself.
 
 # @hakit/core
 ## 1.0.26

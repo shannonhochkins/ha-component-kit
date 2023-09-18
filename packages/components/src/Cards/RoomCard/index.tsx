@@ -267,9 +267,14 @@ function _RoomCard({
             }}
           >
             <Row gap={"0.5rem"}>
-              {icon && <Icon icon={icon} style={{
-                color: `var(--ha-500-contrast)`
-              }} />}
+              {icon && (
+                <Icon
+                  icon={icon}
+                  style={{
+                    color: `var(--ha-500-contrast)`,
+                  }}
+                />
+              )}
               {title}
             </Row>
           </PictureCardFooter>

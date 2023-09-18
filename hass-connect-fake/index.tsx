@@ -96,7 +96,7 @@ function HassProvider({
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated] = useState<Date>(new Date());
   const [entities, setEntities] = useState<HassEntities>(ENTITIES);
-  const clock = useRef<NodeJS.Timer | null>(null);
+  const clock = useRef<NodeJS.Timeout | null>(null);
   const [ready] = useState(true);
   const getStates = async () => null;
   const getServices = async () => null;
@@ -201,6 +201,7 @@ function HassProvider({
   );
 
   useEffect(() => {
+    if (clock.current) clearInterval(clock.current);
     clock.current = setInterval(() => {
       const now = new Date();
       const formatted = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
@@ -217,6 +218,9 @@ function HassProvider({
         }
       }));
     }, 60000);
+    return () => {
+      if (clock.current) clearInterval(clock.current);
+    }
   });
 
   useEffect(() => {

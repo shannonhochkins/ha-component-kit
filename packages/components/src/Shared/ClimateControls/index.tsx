@@ -12,7 +12,10 @@ import { colors, activeColors, icons } from "./shared";
 import { ErrorBoundary } from "react-error-boundary";
 import { capitalize } from "lodash";
 
-type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
+type Extendable = Omit<
+  MotionProps & React.ComponentPropsWithoutRef<"div">,
+  "title"
+>;
 
 export interface ClimateControlsProps extends Extendable {
   entity: FilterByDomain<EntityName, "climate">;
@@ -219,9 +222,11 @@ function _ClimateControls({
         {(hvacModes || hvac_modes || []).concat().map((mode) => (
           <FabCard
             size={40}
-            iconColor={currentMode === mode ? activeColors[mode] : `var(--ha-300)`}
+            iconColor={
+              currentMode === mode ? activeColors[mode] : `var(--ha-300)`
+            }
             key={mode}
-            title={capitalize(mode.replace(/_/g, ' '))}
+            title={capitalize(mode.replace(/_/g, " "))}
             active={currentMode === mode}
             icon={icons[mode]}
             onClick={() => {

@@ -81,13 +81,20 @@ export interface ModalProps {
   /** the react layout to include inside the Modal */
   children: React.ReactNode;
   /** The title of the dialog */
-  title: ReactNode;
+  title?: ReactNode;
   /** the description of the modal */
   description?: ReactNode;
   /** triggered when the users pressed the close button, this is also triggered when the escape key is pressed */
   onClose: () => void;
 }
-function _Modal({ open, id, title, description, children, onClose }: ModalProps) {
+function _Modal({
+  open,
+  id,
+  title,
+  description,
+  children,
+  onClose,
+}: ModalProps) {
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   useEffect(() => {
     if (isPressed && onClose && open) {
@@ -125,10 +132,16 @@ function _Modal({ open, id, title, description, children, onClose }: ModalProps)
           >
             <ModalHeader>
               <Column alignItems="flex-start">
-                <Title>{title}</Title>
+                {title && <Title>{title}</Title>}
                 {description && <Description>{description}</Description>}
               </Column>
-              <FabCard tooltipPlacement="left" title="Close" layout icon="mdi:close" onClick={onClose} />
+              <FabCard
+                tooltipPlacement="left"
+                title="Close"
+                layout
+                icon="mdi:close"
+                onClick={onClose}
+              />
             </ModalHeader>
             <ModalOverflow>
               <ModalInner>{children}</ModalInner>

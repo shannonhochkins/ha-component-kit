@@ -11,13 +11,12 @@ import { snakeCase, clamp } from "lodash";
 import { useGesture } from "@use-gesture/react";
 import type { HassEntity } from "home-assistant-js-websocket";
 import type { EntityName, FilterByDomain } from "@hakit/core";
-import { FabCard, fallback, Row, Column } from "@components";
+import { FabCard, fallback, Row, Column, RangeSlider } from "@components";
 import type { RowProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import { Marquee } from "./Marquee";
-import { RangeSlider } from "./RangeSlider";
 import type { MarqueeProps } from "./Marquee";
 import { useThrottledCallback } from "use-debounce";
 
@@ -408,6 +407,8 @@ function VolumeControls({
             disabled={disabled}
             step={0.02}
             value={is_volume_muted ? 0 : volume_level}
+            formatTooltipValue={(value) => `${Math.round(value * 100)}%`}
+            tooltipSize={2.2}
             onChange={(value) => {
               api.volumeSet(allEntityIds, {
                 volume_level: value,
@@ -677,7 +678,11 @@ function _MediaPlayerCard({
             fullWidth
             gap="0.5rem"
             style={{
-              paddingBottom: isOff ? layout==='slim' ? '1rem' : "0.5rem" : "1rem",
+              paddingBottom: isOff
+                ? layout === "slim"
+                  ? "1rem"
+                  : "0.5rem"
+                : "1rem",
             }}
           >
             <Row gap="0.5rem" wrap="nowrap" fullWidth>

@@ -277,7 +277,7 @@ function _SidebarCard({
       />
       <StyledSidebarCard
         animate={{
-          width: '100%',
+          width: "100%",
           maxWidth: open
             ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
             : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`,
@@ -378,7 +378,7 @@ function _SidebarCard({
               <motion.div
                 key="sidebar-weather-large"
                 animate={{
-                  width: '100%',
+                  width: "100%",
                   padding: open ? "0 1rem 1rem" : "0",
                 }}
               >
