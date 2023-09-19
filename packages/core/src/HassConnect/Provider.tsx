@@ -42,6 +42,8 @@ import {
 } from "@typings";
 import { useHash } from "@core";
 import { saveTokens, loadTokens } from "./token-storage";
+import { subscribeHistory, computeHistory } from "./history";
+import type { HistoryResult } from "./history";
 export interface CallServiceArgs<
   T extends SnakeOrCamelDomains,
   M extends DomainService<T>,
@@ -77,6 +79,7 @@ export interface HassContextProps {
   callService: <T extends SnakeOrCamelDomains, M extends DomainService<T>>(
     args: CallServiceArgs<T, M>,
   ) => void;
+  getHistory: () => HistoryResult;
   /** will retrieve all the HassEntities states */
   getStates: () => Promise<HassEntity[] | null>;
   /** will retrieve all the HassServices */
@@ -115,8 +118,6 @@ export interface HassProviderProps {
   throttle?: number;
   /** should you want to use a locally hosted home assistant instance, enable this flag @default false */
   allowNonSecure?: boolean;
-  /** preload home-assistant configuration */
-  preloadConfiguration?: boolean;
 }
 
 function translateErr(err: number | string | Error | unknown) {
@@ -212,18 +213,22 @@ export function HassProvider({
   hassUrl,
   throttle = 150,
   allowNonSecure = false,
-  preloadConfiguration = false,
 }: HassProviderProps): JSX.Element {
   const [_hash] = useHash();
   const authenticating = useRef(false);
   const [routes, setRoutes] = useState<Route[]>([]);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  const [history, setHistory] = useState<HistoryResult>({
+    line: [],
+    timeline: [],
+  });
   const [ready, setReady] = useState(false);
   const [config, setConfig] = useState<HassConfig | null>(null);
   const [cannotConnect, setCannotConnect] = useState(false);
   const [auth, setAuth] = useState<Auth | null>(null);
-  const unsubscribe = useRef<UnsubscribeFunc | null>(null);
+  const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
+  const historySubscription = useRef<null | Promise<() => Promise<void>>>();
   const [_entities, setEntities] = useState<HassEntities>({});
   const [error, setError] = useState<string | null>(null);
   const getStates = useCallback(
@@ -270,9 +275,9 @@ export function HassProvider({
     setConnection(null);
     setAuth(null);
     authenticating.current = false;
-    if (unsubscribe.current) {
-      unsubscribe.current();
-      unsubscribe.current = null;
+    if (entityUnsubscribe.current) {
+      entityUnsubscribe.current();
+      entityUnsubscribe.current = null;
     }
   }, []);
 
@@ -386,33 +391,78 @@ export function HassProvider({
 
   useEffect(() => {
     // if preloadConfiguration is set to true, load it if we haven't already
-    if (preloadConfiguration && config === null) {
+    if (config === null) {
       getConfig().then((config) => {
         setConfig(config);
       });
     }
-  }, [preloadConfiguration, getConfig, config]);
+  }, [getConfig, config]);
+
+  const getHistory = useCallback(() => {
+    return history;
+  }, [history]);
 
   useEffect(() => {
+    // don't re-subscribe if we already are
+    if (entityUnsubscribe.current) return;
     // subscribe to the entities sockets when we have a connection
-    // we're already subscribed, so unsubscribe first
-    if (unsubscribe.current) {
-      unsubscribe.current();
-      unsubscribe.current = null;
-    }
-    // now subscribe to the entities
     if (connection) {
-      unsubscribe.current = subscribeEntities(connection, ($entities) => {
+      // now subscribe to the entities
+      entityUnsubscribe.current = subscribeEntities(connection, ($entities) => {
         setEntitiesDebounce($entities);
       });
     }
     return () => {
-      if (unsubscribe.current) {
-        unsubscribe.current();
-        unsubscribe.current = null;
+      if (entityUnsubscribe.current) {
+        entityUnsubscribe.current();
+        entityUnsubscribe.current = null;
       }
     };
   }, [connection, setEntitiesDebounce]);
+
+  const unsubscribeHistory = useCallback(() => {
+    if (historySubscription.current) {
+      historySubscription.current.then((unsubscribe) => unsubscribe?.());
+      historySubscription.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!connection || !config) return;
+    unsubscribeHistory();
+    const start = new Date();
+    start.setHours(start.getHours() - 1, 0, 0, 0);
+    const startDate = start;
+
+    const end = new Date();
+    end.setHours(end.getHours() + 2, 0, 0, 0);
+    const endDate = end;
+    const entityIds = Object.keys(_entities);
+    historySubscription.current = subscribeHistory(
+      connection,
+      _entities,
+      (history) => {
+        const computedHistory = computeHistory(config, _entities, history);
+        setHistory(computedHistory);
+
+        // this._stateHistory = computeHistory(
+        //   this.hass,
+        //   history,
+        //   this.hass.localize
+        // );
+      },
+      startDate,
+      endDate,
+      entityIds,
+    );
+    historySubscription.current.catch((err) => {
+      console.log("cathing error", err);
+      unsubscribeHistory();
+    });
+    return () => {
+      unsubscribeHistory();
+    };
+  }, [config, connection, _entities, unsubscribeHistory]);
 
   useEffect(() => {
     setRoutes((routes) =>
@@ -478,6 +528,7 @@ export function HassProvider({
         // purposely cast here so we have correct types on usage side
         getEntity: getEntity as HassContextProps["getEntity"],
         getAllEntities,
+        getHistory,
         callService,
         getStates,
         getServices,

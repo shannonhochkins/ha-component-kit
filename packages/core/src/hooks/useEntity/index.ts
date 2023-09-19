@@ -9,7 +9,7 @@ import type {
   EntityName,
 } from "@typings";
 import type { HassEntity } from "home-assistant-js-websocket";
-import { useHass, useApi } from "@core";
+import { useHass, useApi, useHistory } from "@core";
 import { useDebouncedCallback } from "use-debounce";
 import { getCssColorValue } from "@utils/colors";
 import { computeDomain } from "@utils/computeDomain";
@@ -62,7 +62,7 @@ export function useEntity<
   const matchedEntity = getEntity(entity, returnNullIfNotFound);
   const domain = computeDomain(entity) as ExtractDomain<E>;
   const api = useApi(domain, entity);
-
+  const history = useHistory(entity);
   const formatEntity = useCallback((entity: HassEntity): HassEntityCustom => {
     const now = new Date();
     const then = new Date(
@@ -125,7 +125,8 @@ export function useEntity<
     }
     return {
       ...$entity,
+      history,
       api,
     } as unknown as UseEntityReturnType<E, O>;
-  }, [$entity, api]);
+  }, [$entity, api, history]);
 }

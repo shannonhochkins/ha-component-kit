@@ -144,12 +144,14 @@ function _TimeCard({
   icon,
   ...rest
 }: TimeCardProps): JSX.Element {
+
   const timeSensor = useEntity("sensor.time", {
     returnNullIfNotFound: true,
   });
   const dateSensor = useEntity("sensor.date", {
     returnNullIfNotFound: true,
   });
+  console.log('sensors', timeSensor, dateSensor);
   const parts = convertTo12Hour(timeSensor?.state ?? "00:00");
   const [formatted, amOrPm] = useMemo(() => {
     const hour = parts.find((part) => part.type === "hour");

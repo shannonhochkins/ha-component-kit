@@ -11,6 +11,7 @@
 - BREAKING - the entire theme module has been rebuilt, if you were using any of the default css variables like --ha-text or --ha-primary-x or --ha-secondary-x etc, these have been deprecated.
 
 # @hakit/core
+## 1.1.0
 - NEW - color theme variables connected to the getCssColor value, if you're not using @hakit/components you'll need to provide these yourself.
 
 # @hakit/core
