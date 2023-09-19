@@ -279,7 +279,7 @@ function _ThemeProvider<T extends object>({
           }
           body {
             -webkit-font-smoothing: antialiased;
-            -webkit-tap-highlight-color: var(--ha-S100-contrast);
+            -webkit-tap-highlight-color: transparent;
             -webkit-overflow-scrolling: touch;
             -moz-osx-font-smoothing: grayscale;
             scroll-behavior: smooth;
