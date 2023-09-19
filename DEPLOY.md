@@ -18,7 +18,7 @@ This is the release process I'm using, it's a bit manual but it works for now.
 git fetch origin && git checkout master && git pull
 
 # Step 2: Create a release branch
-git flow release start "v1.0.0"
+git flow release start "1.0.0"
 # ... perform any final adjustments on the release branch, bump version numbers, etc. ...
 npx changeset
 npm changeset version
@@ -27,7 +27,7 @@ npm run release:core
 npm run release:components
 # commit files
 # Step 3: Push the tag to the remote
-git flow release finish "v1.0.0"
+git flow release finish "1.0.0"
 # Step 4: Push all branches and tags to remote
 git push origin master
 git push --tags
