@@ -44,7 +44,7 @@ function Template(args?: Partial<ControlSliderProps>) {
   ] satisfies SliderProps[];
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Row gap={"1rem"}>
         {sliders.map(({ value, thickness, sliderColor, ref }, index) => (
           <Column key={index} gap="0.5rem">

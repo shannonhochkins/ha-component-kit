@@ -7,7 +7,7 @@ import { HassConnect } from "@hass-connect-fake";
 function Template(args?: GarbageCollectionCardProps) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <GarbageCollectionCard schedules={[]} {...args} />
     </HassConnect>
   );
@@ -16,7 +16,7 @@ function Template(args?: GarbageCollectionCardProps) {
 function Detailed() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Column gap="1rem" alignItems="flex-start">
         <p>
           If you normally get your bins picked up on a weekly interval on a

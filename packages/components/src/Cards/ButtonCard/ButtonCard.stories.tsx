@@ -9,7 +9,7 @@ import jsxToString from "jsx-to-string";
 function Template(args?: Partial<ButtonCardProps<"switch.fake_switch">>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Group title="Examples">
         <ButtonCard
           {...args}
@@ -31,7 +31,7 @@ function TemplateOnclick(
 ) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <ButtonCard
         {...args}
         entity="climate.air_conditioner"
@@ -51,7 +51,7 @@ function TemplateOnclick(
 function LayoutExampleTemplate() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Group title="Examples">
         <ButtonCard
           defaultLayout="slim"
@@ -105,7 +105,7 @@ function ExampleDocs() {
         dark
         code={`
       <HassConnect hassUrl="http://localhost:8123">
-        <ThemeProvider />
+        <ThemeProvider includeThemeControls />
         <ButtonCard
           entity="climate.air_conditioner"
           onClick={entity => {
@@ -134,7 +134,7 @@ function ExampleDocs() {
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <ButtonCard {...args} />
     </HassConnect>
   );
@@ -143,7 +143,7 @@ function Render(args?: Args) {
 function RenderClimate(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <ButtonCard
         {...args}
         entity="climate.air_conditioner"

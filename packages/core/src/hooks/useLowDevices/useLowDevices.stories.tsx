@@ -32,7 +32,7 @@ function RenderDevices() {
 function Template() {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Column fullWidth gap="1rem">
         <p>
           The following renders the low battery devices in an EntitiesCard

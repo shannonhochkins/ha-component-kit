@@ -16,7 +16,7 @@ import { ErrorBoundary } from "react-error-boundary";
 
 const StyledEntitiesCard = styled(motion.button)`
   all: unset;
-  padding: 1rem;
+  padding: 0;
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
@@ -26,7 +26,7 @@ const StyledEntitiesCard = styled(motion.button)`
   align-items: stretch;
   justify-content: space-between;
   cursor: pointer;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow;
@@ -35,7 +35,6 @@ const StyledEntitiesCard = styled(motion.button)`
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
   &:hover {
-    background-color: var(--ha-primary-background-hover);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
@@ -47,19 +46,33 @@ const IconWrapper = styled(Row)`
 const Name = styled.div`
   flex-grow: 1;
   font-size: 0.8rem;
+  color: var(--ha-S50-contrast);
+  font-weight: 500;
   span {
     width: 100%;
     font-size: 0.7rem;
+    font-weight: 400;
     display: block;
     margin-top: 0.2rem;
-    color: var(--ha-secondary-color);
+    color: var(--ha-S500-contrast);
   }
 `;
 const State = styled.div`
   max-width: 5rem;
   font-size: 0.8rem;
+  font-weight: 400;
   text-align: right;
   white-space: nowrap;
+  color: var(--ha-S300-contrast);
+`;
+
+const EntityRowInner = styled.div`
+  width: 100%;
+  padding: 1rem;
+  transition: background-color var(--ha-transition-duration) var(--ha-easing);
+  &:hover {
+    background-color: var(--ha-S400);
+  }
 `;
 
 interface EntityItem {
@@ -93,45 +106,47 @@ function EntityRow({
   const entityIcon = useIconByEntity(_entity || "unknown");
   const isUnavailable = isUnavailableState(entity?.state);
   const on = entity?.state === ON;
-  const iconColor = on ? entity.custom.hexColor : "white";
+  const iconColor = on ? entity.custom.hexColor : "var(--ha-S500-contrast)";
 
   return (
-    <Row
-      wrap="nowrap"
-      gap="1rem"
-      fullWidth
-      onClick={() => onClick && onClick(entity)}
-    >
-      <IconWrapper
-        style={{
-          opacity: isUnavailable ? "0.3" : "1",
-          color: iconColor,
-          filter: (on && entity?.custom.brightness) || "brightness(100%)",
-        }}
+    <EntityRowInner>
+      <Row
+        wrap="nowrap"
+        gap="1rem"
+        fullWidth
+        onClick={() => onClick && onClick(entity)}
       >
-        {_icon ? <Icon icon={_icon} /> : entityIcon ?? domainIcon}
-      </IconWrapper>
-      <Name>
-        {_name ??
-          entity.attributes.friendly_name ??
-          entity.attributes.entity_id}
-        {includeLastUpdated && <span>{entity.custom.relativeTime}</span>}
-      </Name>
-      <State>
-        {typeof renderState === "function" ? (
-          renderState(entity)
-        ) : isUnavailable ? (
-          entity.state
-        ) : (
-          <>
-            {entity.state}
-            {entity.attributes?.unit_of_measurement
-              ? entity.attributes?.unit_of_measurement
-              : ""}
-          </>
-        )}
-      </State>
-    </Row>
+        <IconWrapper
+          style={{
+            opacity: isUnavailable ? "0.3" : "1",
+            color: iconColor,
+            filter: (on && entity?.custom.brightness) || "brightness(100%)",
+          }}
+        >
+          {_icon ? <Icon icon={_icon} /> : entityIcon ?? domainIcon}
+        </IconWrapper>
+        <Name>
+          {_name ??
+            entity.attributes.friendly_name ??
+            entity.attributes.entity_id}
+          {includeLastUpdated && <span>{entity.custom.relativeTime}</span>}
+        </Name>
+        <State>
+          {typeof renderState === "function" ? (
+            renderState(entity)
+          ) : isUnavailable ? (
+            entity.state
+          ) : (
+            <>
+              {entity.state}
+              {entity.attributes?.unit_of_measurement
+                ? entity.attributes?.unit_of_measurement
+                : ""}
+            </>
+          )}
+        </State>
+      </Row>
+    </EntityRowInner>
   );
 }
 
@@ -153,7 +168,7 @@ function _EntitiesCard({
 }: EntitiesCardProps): JSX.Element {
   return (
     <StyledEntitiesCard {...rest}>
-      <Column gap="1rem" fullWidth fullHeight>
+      <Column fullWidth fullHeight>
         {entities?.map((entity, index) => {
           const props: EntityItem =
             typeof entity === "string"

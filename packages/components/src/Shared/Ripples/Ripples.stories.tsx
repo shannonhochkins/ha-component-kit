@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, Ripples } from "@components";
 import type { RipplesProps } from "@components";
+import { HassConnect } from "@hass-connect-fake";
 
 function Template({
   duration,
@@ -10,28 +11,30 @@ function Template({
   className,
 }: RipplesProps): JSX.Element {
   return (
-    <Ripples
-      {...{
-        duration,
-        color,
-        onClick,
-        borderRadius,
-        className,
-      }}
-    >
-      <ThemeProvider />
-      <div
-        style={{
-          overflow: "hidden",
-          padding: 40,
-          borderRadius: "20px",
-          backgroundColor: "var(--ha-primary-background)",
-          textAlign: "center",
+    <HassConnect hassUrl="http://homeassistant.local:8123">
+      <Ripples
+        {...{
+          duration,
+          color,
+          onClick,
+          borderRadius,
+          className,
         }}
       >
-        CLICK ME
-      </div>
-    </Ripples>
+        <ThemeProvider includeThemeControls />
+        <div
+          style={{
+            overflow: "hidden",
+            padding: 40,
+            borderRadius: "20px",
+            backgroundColor: "var(--ha-S200)",
+            textAlign: "center",
+          }}
+        >
+          CLICK ME
+        </div>
+      </Ripples>
+    </HassConnect>
   );
 }
 

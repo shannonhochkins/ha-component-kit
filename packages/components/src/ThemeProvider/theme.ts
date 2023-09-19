@@ -1,25 +1,7 @@
 export interface ThemeParams {
-  background: string;
-  backgroundDark: string;
-  backgroundOpaque: string;
-  color: string;
   font: {
     family: string;
     size: string | number;
-  };
-  primary: {
-    background: string;
-    backgroundHover: string;
-    color: string;
-    active: string;
-    inactive: string;
-  };
-  secondary: {
-    background: string;
-    backgroundHover: string;
-    color: string;
-    active: string;
-    inactive: string;
   };
   alert: {
     errorColor: string;
@@ -70,38 +52,12 @@ export interface ThemeParams {
     width: string;
     zIndex: number;
   };
-  scrollbar: {
-    track: string;
-    thumb: string;
-    trackPiece: string;
-    corner: string;
-    button: string;
-    resizer: string;
-  };
 }
 
 export const theme: ThemeParams = {
-  background: "#212121",
-  backgroundDark: "#1a1a1a",
-  backgroundOpaque: "rgba(33, 33, 33, 0.85)",
-  color: "#fefefe",
   font: {
     size: "1rem",
     family: '"Roboto","Helvetica","Arial",sans-serif',
-  },
-  primary: {
-    background: "#313131",
-    backgroundHover: "#363636",
-    color: "#fefefe",
-    active: "#f0c039",
-    inactive: "#464646",
-  },
-  secondary: {
-    background: "#464646",
-    backgroundHover: "#414141",
-    color: "#7c7c7c",
-    active: "#887a50",
-    inactive: "#464646",
   },
   alert: {
     errorColor: "#db4437",
@@ -151,13 +107,5 @@ export const theme: ThemeParams = {
   modal: {
     width: "40rem",
     zIndex: 21, // this should be higher than the room card
-  },
-  scrollbar: {
-    track: "#646464",
-    thumb: "#666",
-    trackPiece: "#363636",
-    corner: "#646464",
-    resizer: "#646464",
-    button: "#363636",
   },
 };

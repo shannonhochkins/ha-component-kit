@@ -1,3 +1,18 @@
+// tooltip
+export { Tooltip } from "./Shared/Tooltip";
+export type { TooltipProps } from "./Shared/Tooltip";
+// tooltip
+export { RangeSlider } from "./Shared/RangeSlider";
+export type { RangeSliderProps } from "./Shared/RangeSlider";
+// Ripples
+export { Ripples } from "./Shared/Ripples";
+export type { RipplesProps } from "./Shared/Ripples";
+// Row
+export { Row } from "./Shared/Row";
+export type { RowProps } from "./Shared/Row";
+// column
+export { Column } from "./Shared/Column";
+export type { ColumnProps } from "./Shared/Column";
 // these imports can be removed when we drop support for SceneCard
 import { TriggerCard } from "./Cards/TriggerCard";
 import type { TriggerCardProps } from "./Cards/TriggerCard";
@@ -22,15 +37,6 @@ export const SceneCard = TriggerCard;
 // Group
 export { Group } from "./Group";
 export type { GroupProps } from "./Group";
-// Ripples
-export { Ripples } from "./Shared/Ripples";
-export type { RipplesProps } from "./Shared/Ripples";
-// Row
-export { Row } from "./Shared/Row";
-export type { RowProps } from "./Shared/Row";
-// column
-export { Column } from "./Shared/Column";
-export type { ColumnProps } from "./Shared/Column";
 // WeatherCard
 export { WeatherCard } from "./Cards/WeatherCard";
 export type { WeatherCardProps } from "./Cards/WeatherCard";

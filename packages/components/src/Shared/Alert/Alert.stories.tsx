@@ -6,7 +6,7 @@ import { HassConnect } from "@hass-connect-fake";
 function Template(args?: Partial<AlertProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Column gap="1rem">
         <Alert {...args} type="error" />
         <Alert {...args} type="info" />

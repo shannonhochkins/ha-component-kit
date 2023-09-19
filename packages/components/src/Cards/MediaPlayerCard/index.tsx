@@ -11,13 +11,12 @@ import { snakeCase, clamp } from "lodash";
 import { useGesture } from "@use-gesture/react";
 import type { HassEntity } from "home-assistant-js-websocket";
 import type { EntityName, FilterByDomain } from "@hakit/core";
-import { FabCard, fallback, Row, Column } from "@components";
+import { FabCard, fallback, Row, Column, RangeSlider } from "@components";
 import type { RowProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import { Marquee } from "./Marquee";
-import { RangeSlider } from "./RangeSlider";
 import type { MarqueeProps } from "./Marquee";
 import { useThrottledCallback } from "use-debounce";
 
@@ -26,7 +25,7 @@ const MediaPlayerWrapper = styled(motion.div)<{
   layoutName?: Layout;
 }>`
   padding: 0;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-image, background-color, box-shadow;
@@ -69,7 +68,7 @@ const MediaPlayerWrapper = styled(motion.div)<{
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
   &:not(:disabled):hover {
-    background-color: var(--ha-primary-background-hover);
+    background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 
@@ -105,7 +104,7 @@ const Clock = styled.div<{
   transition: opacity var(--ha-transition-duration) var(--ha-easing);
   padding: 0.2rem;
   font-size: 0.8rem;
-  background: var(--ha-primary-background);
+  background: var(--ha-S200);
   z-index: 1;
   border-radius: 0.25rem;
   pointer-events: none;
@@ -143,7 +142,7 @@ const ProgressBar = styled.div<{
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--ha-primary-active);
+      background: var(--ha-300);
       width: var(--progress-${props.entity}-width, 100%);
     }
   }
@@ -162,11 +161,12 @@ const ProgressBar = styled.div<{
 `;
 const Title = styled.div`
   font-size: 0.8rem;
+  color: rgba(255, 255, 255, 1);
 `;
 
 const Base = styled(Column)`
   padding: 0.5rem 0.5rem 1rem;
-  width: calc(100% - 1rem);
+  width: 100%;
   background-color: rgba(0, 0, 0, 0.5);
 `;
 const Empty = styled.span``;
@@ -193,17 +193,19 @@ const StyledFab = styled(FabCard)`
 
 const StyledMarquee = styled(Marquee)`
   font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.87);
 `;
 
 const SmallText = styled.span`
   font-size: 0.8rem;
+  color: rgba(255, 255, 255, 1);
 `;
 
 const VolumeSlider = styled.label<{
   layout: Layout;
 }>`
   display: inline-block;
-  width: ${(props) => (props.layout === "card" ? "80%" : "60%")};
+  width: ${(props) => (props.layout === "card" ? "80%" : "65%")};
   color: rgba(0, 0, 0, 0.87);
   font-size: 1rem;
   line-height: 1.5;
@@ -405,6 +407,8 @@ function VolumeControls({
             disabled={disabled}
             step={0.02}
             value={is_volume_muted ? 0 : volume_level}
+            formatTooltipValue={(value) => `${Math.round(value * 100)}%`}
+            tooltipSize={2.2}
             onChange={(value) => {
               api.volumeSet(allEntityIds, {
                 volume_level: value,
@@ -674,7 +678,11 @@ function _MediaPlayerCard({
             fullWidth
             gap="0.5rem"
             style={{
-              paddingBottom: isOff ? "0.5rem" : "1rem",
+              paddingBottom: isOff
+                ? layout === "slim"
+                  ? "1rem"
+                  : "0.5rem"
+                : "1rem",
             }}
           >
             <Row gap="0.5rem" wrap="nowrap" fullWidth>
@@ -687,9 +695,7 @@ function _MediaPlayerCard({
                 style={{
                   width:
                     hideThumbnail === false && artworkUrl !== null
-                      ? `calc(100% - (${thumbnailSize} + ${
-                          layout === "slim" ? "2rem" : "0.5rem"
-                        }))`
+                      ? `calc(100% - (${thumbnailSize} + 0.5rem))`
                       : "100%",
                 }}
               >

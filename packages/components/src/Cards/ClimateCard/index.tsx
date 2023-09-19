@@ -14,6 +14,7 @@ import { Ripples, fallback } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { useLongPress } from "react-use";
+import { capitalize } from "lodash";
 import { icons, activeColors } from "../../Shared/ClimateControls/shared";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -30,7 +31,7 @@ const StyledClimateCard = styled(motion.div)`
   align-items: stretch;
   justify-content: center;
   cursor: pointer;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: box-shadow, background-color;
@@ -39,13 +40,20 @@ const StyledClimateCard = styled(motion.div)`
     opacity: 0.8;
   }
   &:not(.disabled):hover {
-    background-color: var(--ha-primary-background-hover);
+    background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 `;
 
 const Gap = styled.div`
   height: 20px;
+`;
+const StyledFabCard = styled(FabCard)`
+  color: var(--ha-300);
+  background-color: var(--ha-S200);
+  &:hover:not(:disabled) {
+    background-color: var(--ha-S100);
+  }
 `;
 
 const LayoutBetween = styled.div`
@@ -56,11 +64,11 @@ const LayoutBetween = styled.div`
 `;
 
 const Title = styled.div`
-  color: var(--ha-secondary-color);
+  color: var(--ha-S400-contrast);
   font-size: 0.7rem;
 `;
 const Icon = styled.div`
-  color: var(--ha-primary-active);
+  color: var(--ha-A400);
 `;
 const Description = styled.div`
   font-size: 0.9rem;
@@ -69,6 +77,7 @@ const Description = styled.div`
   justify-content: flex-start;
   gap: 0.5rem;
   text-transform: capitalize;
+  color: var(--ha-S50-contrast);
 `;
 type Extendable = Omit<ClimateControlsProps, "onClick"> &
   MotionProps &
@@ -102,13 +111,17 @@ function _ClimateCard({
   const { hvac_action, hvac_modes } = entity.attributes;
   const isUnavailable = isUnavailableState(entity.state);
   const isOff = entity.state === OFF;
-  const longPressEvent = useLongPress((e) => {
-    // ignore on right click
-    if (("button" in e && e.button === 2) || isUnavailable || disabled) return;
-    setOpenModal(true);
-  }, {
-    isPreventDefault: false,
-  });
+  const longPressEvent = useLongPress(
+    (e) => {
+      // ignore on right click
+      if (("button" in e && e.button === 2) || isUnavailable || disabled)
+        return;
+      setOpenModal(true);
+    },
+    {
+      isPreventDefault: false,
+    },
+  );
 
   const titleValue = useMemo(() => {
     if (isUnavailable) {
@@ -135,7 +148,8 @@ function _ClimateCard({
           layoutId={`${_entity}-climate-card`}
           {...rest}
           onClick={() => {
-            if (isUnavailable || disabled || typeof onClick !== "function") return;
+            if (isUnavailable || disabled || typeof onClick !== "function")
+              return;
             onClick(entity);
           }}
         >
@@ -147,7 +161,7 @@ function _ClimateCard({
                     isUnavailable || disabled
                       ? activeColors["off"]
                       : currentMode === "unknown-mode"
-                      ? undefined
+                      ? "var(--ha-S500-contrast)"
                       : activeColors[currentMode as HvacMode],
                 }}
               >
@@ -157,10 +171,20 @@ function _ClimateCard({
             </Description>
             <Title>{entity.custom.relativeTime}</Title>
           </LayoutBetween>
+          <Row justifyContent="flex-start">
+            <Title
+              style={{
+                paddingLeft: "2rem",
+              }}
+            >
+              Speed: {entity.attributes.fan_mode || "Unknown"}, Temperature:{" "}
+              {entity.attributes.temperature}°C
+            </Title>
+          </Row>
           <Gap />
           <Row fullWidth gap="0.5rem" wrap="nowrap">
             {(hvacModes || hvac_modes || []).concat().map((mode) => (
-              <FabCard
+              <StyledFabCard
                 size={35}
                 disabled={disabled || isUnavailable}
                 iconColor={
@@ -168,7 +192,7 @@ function _ClimateCard({
                 }
                 preventPropagation
                 key={mode}
-                title={mode}
+                title={capitalize(mode.replace(/_/g, " "))}
                 active={currentMode === mode}
                 icon={icons[mode]}
                 onClick={() => {
@@ -188,7 +212,7 @@ function _ClimateCard({
         hideState={hideState}
         hideUpdated={hideUpdated}
         entity={_entity}
-        title={title || "Unknown title"}
+        title={title ?? "Unknown title"}
         onClose={() => {
           setOpenModal(false);
         }}

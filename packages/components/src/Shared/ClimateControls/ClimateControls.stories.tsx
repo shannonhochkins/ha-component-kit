@@ -5,7 +5,7 @@ import { HassConnect } from "@hass-connect-fake";
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Row gap="1rem" fullHeight fullWidth>
         <ClimateControls {...args} entity="climate.air_conditioner" />
       </Row>

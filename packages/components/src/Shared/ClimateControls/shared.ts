@@ -15,12 +15,12 @@ export const colors: HvacModeData<string[]> = {
 };
 
 export const activeColors: HvacModeData<string> = {
-  auto: "var(--ha-primary-active)",
-  heat_cool: "var(--ha-primary-active)",
+  auto: "var(--ha-300)",
+  heat_cool: "var(--ha-300)",
   heat: "#cd5401",
   cool: "#2c8e98",
-  off: "#848484",
-  fan_only: "var(--ha-primary-active)",
+  off: "var(--ha-A400)",
+  fan_only: "var(--ha-300)",
   dry: "#ffc0bd",
 };
 

@@ -23,7 +23,7 @@ exports[`<ButtonCard /> should render without an entity 1`] = `
   -webkit-justify-content: space-between;
   justify-content: space-between;
   cursor: pointer;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-S200);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
   transition: var(--ha-transition-duration) var(--ha-easing);
@@ -35,7 +35,7 @@ exports[`<ButtonCard /> should render without an entity 1`] = `
 }
 
 .emotion-0:hover {
-  background-color: var(--ha-primary-background-hover);
+  background-color: var(--ha-S300);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
 }
 

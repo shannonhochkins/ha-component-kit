@@ -80,7 +80,7 @@ export const entities: HassEntities = {
     state: '12',
     attributes: {
       device_class: 'battery',
-      icon: 'mdi:curtain',
+      icon: 'mdi:curtains',
       friendly_name: 'Office curtain sensor',
       unit_of_measurement: '%'
     }
