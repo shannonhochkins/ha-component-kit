@@ -20,7 +20,7 @@ function Template(args?: Partial<ColorPickerProps>) {
 
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Column gap={"1rem"}>
         <ColorPicker
           entity="light.fake_light_1"

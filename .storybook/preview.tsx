@@ -7,7 +7,7 @@ export default {
   decorators: [
     (Story, args) => {
       const centered = args.parameters.centered ? {
-        width: 'calc(100% - 2rem)',
+        width: '100%',
         display: 'flex',
         justifyContent: 'center',
         padding: '1rem',
@@ -28,10 +28,11 @@ export default {
       return <div id="storybook-inner-preview">
         <div style={{
           padding: args.parameters.padding ?? '2rem',
-          width: args.parameters.width ?? 'calc(100% - 4rem)',
+          width: args.parameters.width ?? '100%',
           height: args.parameters.height,
           ...centered,
         }}><div style={{
+          width: args.parameters.fillWidth ? '100%' : undefined,
           height: args.parameters.fillHeight ? '100%' : undefined,
         }}><Story /></div></div>
       </div>

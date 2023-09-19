@@ -7,7 +7,7 @@ import office from "./office.jpg";
 function Template(args: PictureCardProps) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <PictureCard {...args} />
     </HassConnect>
   );

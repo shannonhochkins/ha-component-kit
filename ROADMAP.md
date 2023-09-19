@@ -3,8 +3,8 @@ These are listed in order of priority, but are subject to change. I will attempt
 
 ### Short Term
 
-* ThemeProvider (WIP) - updates to make this easier to apply themes from a primary color.
-* SensorCard - a card to display sensor entities with graphs of history (history may not be available via websockets)
+* SensorCard (WIP) - a card to display sensor entities with graphs of history (history may not be available via websockets)
+* EntitiesCard - updates to allow simple controls like toggling a light/switch, or opening a cover
 * CameraCard - a card to display camera entities
 * CalendarCard - a card to display calendar events
 * VacuumCard - a card to display vacuum entities

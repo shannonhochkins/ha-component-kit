@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, FabCard, FabCardProps } from "@components";
+import { ThemeProvider, FabCard, FabCardProps, Row } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(
@@ -7,18 +7,20 @@ function Template(
 ) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
-      <FabCard
-        {...args}
-        onClick={(entity) => {
-          entity.api.toggle();
-        }}
-      />
-      <FabCard
-        onClick={() => {
-          console.log("entity");
-        }}
-      />
+      <ThemeProvider includeThemeControls />
+      <Row gap="1rem">
+        <FabCard
+          {...args}
+          onClick={(entity) => {
+            entity.api.toggle();
+          }}
+        />
+        <FabCard
+          onClick={() => {
+            console.log("entity");
+          }}
+        />
+      </Row>
     </HassConnect>
   );
 }

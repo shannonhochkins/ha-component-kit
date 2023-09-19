@@ -24,7 +24,7 @@ exports[`<WeatherCard /> renders WeatherCard with title from entity 1`] = `
   -webkit-justify-content: flex-start;
   justify-content: flex-start;
   cursor: default;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-S200);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   -webkit-transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
   transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
@@ -32,7 +32,7 @@ exports[`<WeatherCard /> renders WeatherCard with title from entity 1`] = `
 }
 
 .emotion-0:hover {
-  background-color: var(--ha-primary-background-hover);
+  background-color: var(--ha-S300);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -330,7 +330,7 @@ exports[`<WeatherCard /> should show without current & custom temperature suffix
   -webkit-justify-content: flex-start;
   justify-content: flex-start;
   cursor: default;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-S200);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   -webkit-transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
   transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
@@ -338,7 +338,7 @@ exports[`<WeatherCard /> should show without current & custom temperature suffix
 }
 
 .emotion-0:hover {
-  background-color: var(--ha-primary-background-hover);
+  background-color: var(--ha-S300);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -565,7 +565,7 @@ exports[`<WeatherCard /> should show without forecast and custom icon 1`] = `
   -webkit-justify-content: flex-start;
   justify-content: flex-start;
   cursor: default;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-S200);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   -webkit-transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
   transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
@@ -573,7 +573,7 @@ exports[`<WeatherCard /> should show without forecast and custom icon 1`] = `
 }
 
 .emotion-0:hover {
-  background-color: var(--ha-primary-background-hover);
+  background-color: var(--ha-S300);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
 }
 

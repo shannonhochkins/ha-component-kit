@@ -14,7 +14,7 @@ import { HassConnect } from "@hass-connect-fake";
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Row gap="1rem">
         <ButtonCard {...args} />
         <FabCard entity="light.fake_light_2" service="toggle" />
@@ -48,7 +48,7 @@ function RenderCustom() {
   const [open, setOpen] = useState(false);
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Column gap="1rem">
         <Source dark code={exampleSetup} />
         <FabCard

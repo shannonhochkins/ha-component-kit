@@ -17,7 +17,7 @@ import livingRoom from "./living-room.jpg";
 function Template(args: RoomCardProps) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Row fullHeight>
         <RoomCard {...args}>The {args.hash} room is active!</RoomCard>
       </Row>
@@ -28,7 +28,7 @@ function Template(args: RoomCardProps) {
 function MultiRoomExample() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Row gap="1rem" fullWidth>
         <RoomCard
           {...{

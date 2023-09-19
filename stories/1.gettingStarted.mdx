@@ -47,7 +47,7 @@ import { ThemeProvider } from '@hakit/components';
 const HASS_URL = 'http://localhost:8123';
 function App() {
   return <HassConnect hassUrl={HASS_URL}>
-    <ThemeProvider />
+    <ThemeProvider includeThemeControls />
     <p>This will render when connected!</p>
   </HassConnect>
 }
