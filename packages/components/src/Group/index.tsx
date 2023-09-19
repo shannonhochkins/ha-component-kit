@@ -72,7 +72,7 @@ function _Group({
             style={{
               overflow: "hidden",
             }}
-            key="content"
+            key={`content-${title}`}
             initial="collapsed"
             animate="open"
             exit="collapsed"

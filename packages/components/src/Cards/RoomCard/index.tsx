@@ -79,6 +79,7 @@ const PictureCardFooter = styled(motion.div)`
 const NavBar = styled(PictureCardFooter)`
   background-color: var(--ha-S200);
   inset: 0 0 auto 0;
+  z-index: calc(var(--ha-device-room-card-z-index) + 1);
 `;
 
 const StyledRoomCard = styled(motion.div)`
@@ -106,12 +107,13 @@ const FullScreen = styled(motion.div)`
 
 const ChildContainer = styled(motion.div)`
   opacity: 0;
-  padding-top: 4rem;
-  padding: 4rem 1.5rem 1.5rem;
+  padding: 1rem 1.5rem 1.5rem;
+  margin-top: 5rem;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
+  overflow-y: auto;
 `;
 
 function _RoomCard({

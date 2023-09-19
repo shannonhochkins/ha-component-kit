@@ -1,11 +1,13 @@
 # @hakit/components
 ## 1.1.0
-- NEW - Massive changes to the core styles for components, ThemeProvider now accepts hue, saturation, lightness, tint, contrastThreshold and darkMode as props, light/dark mode fully supported, interactive color sliders to visualize the theme changes on the overview page and on every single storybook component page. The default colors have also been changed which is why this has been released as a new minor release.
+- NEW - Massive changes to the core styles for components, ThemeProvider now accepts hue, saturation, lightness, tint, contrastThreshold and darkMode as props, light/dark mode fully supported, interactive color sliders to visualize the theme changes on the overview page and on every single storybook component page. The default colors have also been changed which is why this has been released as a new minor release. If you prefer the grayscale look of previous versions, set the "tint" prop to 0 for ThemeProvider
+- CHANGE - ClimateCard - now has tooltips for hvac actions, and more information displayed under the title at a glance.
 - NEW - scroll-bars have been re-themed and supported in more browsers
 - NEW - RangeSlider - a simple slider to get/set values between a min/max range
 - NEW - Title - a new component to display titles which has been connected to some components by default to help display more information about the entities.
 - BUGFIX - multiple styling bug fixes, every component has been touched at some point during this refactor to ensure the styles are consistent and work as expected for the new Theme controls.
 - BUGFIX - animations with sidebar were really jumpy before, this has been fixed.
+- BUGFIX - RoomCard popup never had overflow set when the content was larger than the screen, this has been fixed, additionally by default content is now aligned to the top not the center.
 - BREAKING - the entire theme module has been rebuilt, if you were using any of the default css variables like --ha-text or --ha-primary-x or --ha-secondary-x etc, these have been deprecated.
 
 # @hakit/core

@@ -112,13 +112,27 @@ function Template() {
           </Row>
           <Row gap="1rem">
             <RoomCard icon="mdi:office-chair" title="Office" hash="office" image={office}>
-              <Group title="Lights & Switches">
-                <ButtonCard entity="light.fake_light_1" service="toggle" />
-                <ButtonCard entity="light.fake_light_2" service="toggle" />
-                <ButtonCard entity="light.fake_light_3" service="toggle" />
-                <ButtonCard entity="switch.fake_switch" service="toggle" />
-                <ButtonCard entity="vacuum.robot_vacuum" service="toggle" />
-              </Group>
+              <Column fullWidth gap="1rem">
+                <Group title="Lights & Switches">
+                  <ButtonCard entity="light.fake_light_1" service="toggle" />
+                  <ButtonCard entity="light.fake_light_2" service="toggle" />
+                  <ButtonCard entity="light.fake_light_3" service="toggle" />
+                  <ButtonCard entity="switch.fake_switch" service="toggle" />
+                  <ButtonCard entity="vacuum.robot_vacuum" service="toggle" />
+                </Group>
+                <Group title="Random Stuff">
+                  <EntitiesCard includeLastUpdated entities={['sensor.date', 'sensor.time', 'automation.dim_lights']} />
+                  <MediaPlayerCard entity="media_player.fake_speaker" layout="slim" />
+                  <TriggerCard entity="scene.good_morning" />
+                </Group>
+                <Group title="Lights & Switches Fabs">
+                  <FabCard entity="light.fake_light_1" service="toggle" />
+                  <FabCard entity="light.fake_light_2" service="toggle" icon="mdi:power" />
+                  <FabCard entity="light.fake_light_3" service="toggle" />
+                  <FabCard entity="switch.fake_switch" service="toggle" />
+                  <FabCard entity="vacuum.robot_vacuum" service="toggle" />
+                </Group>
+              </Column>
             </RoomCard>
             <RoomCard icon="mdi:sofa" title="Living Room" hash="living-room" image={livingRoom}>
               <Group title="Living Entities">
