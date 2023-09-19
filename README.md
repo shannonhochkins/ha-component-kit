@@ -28,6 +28,11 @@ Or, if you want to install manually on an existing project:
 
 There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
 
+### Known Issues
+- Responsive layout - it's something i'm actively working on, ensuring everything looks great from mobile -> desktop
+- Fluid Design - The cards at the momoment are all fixed width, idealy I'd want the cards to be resizable to fill/grow any space
+- Anything else? Please, if you notice anything that doesn't feel / look right, please report it, i rely on user testing to make improvements.
+
 ### What's next?
 Have your say! Vote for what you'd like to see next in [upcoming features!](https://github.com/shannonhochkins/ha-component-kit/discussions/28)
 
