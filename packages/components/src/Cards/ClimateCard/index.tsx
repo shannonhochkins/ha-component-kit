@@ -10,7 +10,7 @@ import {
   OFF,
   isUnavailableState,
 } from "@hakit/core";
-import { Ripples, fallback } from "@components";
+import { Ripples, fallback, mq } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { useLongPress } from "react-use";
@@ -43,6 +43,20 @@ const StyledClimateCard = styled(motion.div)`
     background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
+  ${mq(['mobile', 'tablet', 'smallScreen'], `
+    width: calc(100% - 2rem);
+  `)}
+`;
+
+const StyledRipples = styled(Ripples)`
+  ${mq(['mobile'], `
+    width: 100%;
+    flex-shrink: 1;
+  `)}
+  ${mq(['tablet', 'smallScreen'], `
+    width: calc(50% - var(--gap) / 2);
+    flex-shrink: 1;
+  `)}
 `;
 
 const Gap = styled.div`
@@ -135,7 +149,7 @@ function _ClimateCard({
 
   return (
     <>
-      <Ripples
+      <StyledRipples
         disabled={disabled || isUnavailable}
         borderRadius="1rem"
         whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
@@ -204,7 +218,7 @@ function _ClimateCard({
             ))}
           </Row>
         </StyledClimateCard>
-      </Ripples>
+      </StyledRipples>
       <ModalByEntityDomain
         hvacModes={hvacModes}
         hideCurrentTemperature={hideCurrentTemperature}

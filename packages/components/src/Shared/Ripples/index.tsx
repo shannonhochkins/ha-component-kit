@@ -44,6 +44,7 @@ const StyledRipple = styled.div`
   height: 35px;
   transform: translate(-50%, -50%);
   pointer-events: none;
+  flex-shrink: 0;
 `;
 
 const ParentRipple = styled.div<{
@@ -66,6 +67,8 @@ const _Ripples = memo(
     children,
     disabled,
     preventPropagation = false,
+    style,
+    className,
     ...rest
   }: RipplesProps) => {
     const [rippleStyle, setRippleStyle] = useState<CSSProperties>({});
@@ -124,8 +127,9 @@ const _Ripples = memo(
     return (
       <ParentRipple
         borderRadius={borderRadius}
+        className={className ?? ''}
         style={{
-          flexShrink: 0,
+          ...style ?? {},
         }}
       >
         <motion.div
@@ -137,6 +141,7 @@ const _Ripples = memo(
           }}
           {...rest}
           style={{
+            width: '100%',
             ...boxStyle,
             borderRadius,
           }}

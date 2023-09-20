@@ -10,7 +10,7 @@ import {
   isUnavailableState,
 } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
-import { Ripples, fallback } from "@components";
+import { Ripples, fallback, mq, useDevice } from "@components";
 import { motion } from "framer-motion";
 import { MotionProps } from "framer-motion";
 
@@ -39,6 +39,19 @@ const StyledTriggerCard = styled(motion.button)`
     background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
+  ${mq(['mobile', 'tablet', 'smallScreen'], `
+    width: calc(100% - 2rem);
+  `)}
+`;
+const StyledRipples = styled(Ripples)`
+  ${mq(['mobile'], `
+    width: 100%;
+    flex-shrink: 1;
+  `)}
+  ${mq(['tablet', 'smallScreen'], `
+    width: calc(50% - var(--gap) / 2);
+    flex-shrink: 1;
+  `)}
 `;
 
 const ToggleMessage = styled.span<ToggleProps>`
@@ -166,6 +179,7 @@ function _TriggerCard<E extends EntityName>({
   hideArrow = false,
   ...rest
 }: TriggerCardProps<E>): JSX.Element {
+  const devices = useDevice();
   const domain = computeDomain(_entity);
   const entity = useEntity(_entity);
   const entityIcon = useIconByEntity(_entity);
@@ -192,7 +206,7 @@ function _TriggerCard<E extends EntityName>({
   }, [entity, onClick, activeStateDuration, isUnavailable]);
 
   return (
-    <Ripples
+    <StyledRipples
       borderRadius="1rem"
       disabled={disabled}
       whileTap={{ scale: disabled ? 1 : 0.9 }}
@@ -228,7 +242,7 @@ function _TriggerCard<E extends EntityName>({
           </Toggle>
         </LayoutBetween>
       </StyledTriggerCard>
-    </Ripples>
+    </StyledRipples>
   );
 }
 /** The TriggerCard is a simple to use component to make it easy to trigger and a scene, automation, script or any other entity to trigger. */

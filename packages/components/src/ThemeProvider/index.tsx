@@ -49,7 +49,7 @@ const ThemeControlsBox = styled(motion.div)`
   position: fixed;
   top: 1rem;
   right: 1rem;
-  z-index: 0;
+  z-index: 1;
 `;
 
 // Function to generate light and dark variants
@@ -244,26 +244,24 @@ function _ThemeProvider<T extends object>({
 
           * {
             box-sizing: border-box;
+            scrollbar-width: thin;
+            scrollbar-color: var(--ha-S500) var(--ha-S200);
             ::-webkit-scrollbar-corner {
               background: rgba(0, 0, 0, 0.5);
             }
 
-            * {
-              scrollbar-width: thin;
-              scrollbar-color: var(--ha-S500) var(--ha-S200);
-            }
 
             /* Works on Chrome, Edge, and Safari */
-            *::-webkit-scrollbar {
+            &::-webkit-scrollbar {
               width: 12px;
               height: 12px;
             }
 
-            *::-webkit-scrollbar-track {
+            &::-webkit-scrollbar-track {
               background: var(--ha-S200); // track background color
             }
 
-            *::-webkit-scrollbar-thumb {
+            &::-webkit-scrollbar-thumb {
               background-color: var(--ha-S500);
               border-radius: 20px;
               border: 3px solid var(--ha-S200);
@@ -279,7 +277,7 @@ function _ThemeProvider<T extends object>({
           }
           body {
             -webkit-font-smoothing: antialiased;
-            -webkit-tap-highlight-color: var(--ha-S100-contrast);
+            -webkit-tap-highlight-color: transparent;
             -webkit-overflow-scrolling: touch;
             -moz-osx-font-smoothing: grayscale;
             scroll-behavior: smooth;
