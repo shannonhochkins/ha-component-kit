@@ -298,7 +298,9 @@ function _SidebarCard({
       <StyledSidebarCard
         animate={{
           width: "100%",
-          maxWidth: `var(--ha-sidebar-max-width)`
+          maxWidth: open
+            ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
+            : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`,
         }}
         initial={false}
         key={`ha-sidebar-closed`}
