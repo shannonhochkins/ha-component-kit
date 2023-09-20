@@ -252,7 +252,7 @@ function _RangeSlider({
           value={value}
           onInput={(event: React.ChangeEvent<HTMLInputElement>) => {
             setValue(event.target.valueAsNumber);
-            setActive(true);
+            if (!active) setActive(true);
           }}
           onChange={(event) => {
             debouncedOnChange(event.target.valueAsNumber);

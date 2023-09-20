@@ -129,15 +129,22 @@ function Template() {
               </Column>
             </RoomCard>
             <RoomCard icon="mdi:sofa" title="Living Room" hash="living-room" image={livingRoom}>
-              <Row gap="1rem" fullWidth>
-                <FabCard entity="switch.fake_switch" service="toggle" />
-                <FabCard entity="vacuum.robot_vacuum" service="toggle" />
-              </Row>
-              <Group title="Living Entities">
-                <ButtonCard entity="light.fake_light_2" service="toggle" />
-                <ButtonCard entity="light.fake_light_3" service="toggle" />
-                <ButtonCard entity="vacuum.robot_vacuum" service="toggle" />
-              </Group>
+              <Column fullWidth gap="1rem">
+                <Row gap="1rem" fullWidth>
+                  <ButtonCard entity="light.fake_light_1" service="toggle" />
+                  <ButtonCard entity="switch.fake_switch" service="toggle" />
+                  <ButtonCard entity="media_player.fake_speaker" service="toggle" />
+                </Row>
+                <Row gap="1rem" fullWidth>
+                  <FabCard entity="switch.fake_switch" service="toggle" />
+                  <FabCard entity="vacuum.robot_vacuum" service="toggle" />
+                </Row>
+                <Group title="Living Entities">
+                  <ButtonCard entity="light.fake_light_2" service="toggle" />
+                  <ButtonCard entity="light.fake_light_3" service="toggle" />
+                  <ButtonCard entity="vacuum.robot_vacuum" service="toggle" />
+                </Group>
+              </Column>
             </RoomCard>
             <RoomCard icon="mdi:dining" title="Dining Room" hash="dining-room" image={diningRoom}>
               <Group title="Dining Entities">
