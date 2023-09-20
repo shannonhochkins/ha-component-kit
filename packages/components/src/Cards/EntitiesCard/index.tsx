@@ -9,7 +9,7 @@ import {
 } from "@hakit/core";
 import type { EntityName, AllDomains, HassEntityWithApi } from "@hakit/core";
 import { Icon } from "@iconify/react";
-import { Row, Column, fallback } from "@components";
+import { Row, Column, fallback, mq } from "@components";
 import type { MotionProps } from "framer-motion";
 import { motion } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
@@ -37,6 +37,21 @@ const StyledEntitiesCard = styled(motion.button)`
   &:hover {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
+
+  ${mq(
+    ["mobile"],
+    `
+    width: 100%;
+    flex-shrink: 1;
+  `,
+  )}
+  ${mq(
+    ["tablet", "smallScreen"],
+    `
+    width: calc(50% - var(--gap) / 2);
+    flex-shrink: 1;
+  `,
+  )}
 `;
 
 const IconWrapper = styled(Row)`

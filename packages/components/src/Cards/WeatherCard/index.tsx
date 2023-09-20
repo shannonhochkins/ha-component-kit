@@ -4,7 +4,7 @@ import { useEntity, useHass, isUnavailableState } from "@hakit/core";
 import type { FilterByDomain, EntityName } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { capitalize } from "lodash";
-import { Row, Column, fallback } from "@components";
+import { Row, Column, fallback, mq } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
@@ -67,6 +67,20 @@ const Card = styled(motion.div)`
     background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
+  ${mq(
+    ["mobile"],
+    `
+    width: calc(100% - 2rem);
+    flex-shrink: 1;
+  `,
+  )}
+  ${mq(
+    ["tablet", "smallScreen"],
+    `
+    width: calc((50% - var(--gap) / 2) - 2rem);
+    flex-shrink: 1;
+  `,
+  )}
 `;
 
 const Title = styled.h4`

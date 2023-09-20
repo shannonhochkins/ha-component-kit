@@ -25,6 +25,9 @@ export default {
           panel.parentElement.style.display = 'flex';
         }
       }
+      if (args.parameters.standalone) {
+        return <Story />;
+      }
       return <div id="storybook-inner-preview">
         <div style={{
           padding: args.parameters.padding ?? '2rem',

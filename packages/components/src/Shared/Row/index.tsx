@@ -27,6 +27,7 @@ export const Row = styled(m.div)<RowProps>`
     typeof props.gap === "string" &&
     `
     gap: ${props.gap};
+    --gap: ${props.gap ?? 0};
   `}
   ${(props) => props.fullHeight && `height: 100%;`}
   ${(props) => props.fullWidth && `width: 100%;`}

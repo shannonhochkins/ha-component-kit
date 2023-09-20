@@ -137,7 +137,7 @@ function _Tooltip({ placement = "top", title = null, children }: TooltipProps) {
     }
   }, [calculatePosition]);
 
-  const handleMouseLeave = useCallback(() => {
+  const handleHide = useCallback(() => {
     const tooltipEl = tooltipRef.current;
     if (tooltipEl) {
       tooltipEl.style.opacity = "0";
@@ -152,9 +152,12 @@ function _Tooltip({ placement = "top", title = null, children }: TooltipProps) {
   return (
     <div
       ref={childRef}
-      onBlur={handleMouseLeave}
+      onBlur={handleHide}
+      onTouchEnd={handleHide}
+      onTouchStart={handleMouseEnter}
+      onMouseUp={handleHide}
       onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseLeave={handleHide}
     >
       {children}
       {typeof document !== "undefined" &&

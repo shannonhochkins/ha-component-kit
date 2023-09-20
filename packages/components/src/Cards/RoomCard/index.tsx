@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { useEffect, useCallback, useState } from "react";
 import { useHass } from "@hakit/core";
-import { Row, FabCard, fallback } from "@components";
+import { Row, FabCard, fallback, mq } from "@components";
 import type { PictureCardProps } from "@components";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,8 +28,8 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  width: var(--ha-device-picture-card-width);
   display: flex;
+  width: var(--ha-device-picture-card-width);
   aspect-ratio: 16 / 9;
   flex-direction: column;
   align-items: stretch;
@@ -41,6 +41,13 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   transition-property: background-color, box-shadow, background-image;
   will-change: width, height;
   color: var(--ha-S200-contrast);
+  ${mq(
+    ["mobile", "tablet", "smallScreen"],
+    `
+    width: calc(100% - 2rem);
+    flex-shrink: 1;
+  `,
+  )}
   svg {
     color: var(--ha-S200-contrast);
     transition: color var(--ha-transition-duration) var(--ha-easing);
@@ -77,9 +84,12 @@ const PictureCardFooter = styled(motion.div)`
 `;
 
 const NavBar = styled(PictureCardFooter)`
-  background-color: var(--ha-S200);
+  padding: 0.95rem;
+  color: var(--ha-S100-contrast);
+  background-color: var(--ha-S50);
   inset: 0 0 auto 0;
   z-index: calc(var(--ha-device-room-card-z-index) + 1);
+  border-bottom: 1px solid var(--ha-S200);
 `;
 
 const StyledRoomCard = styled(motion.div)`
@@ -87,6 +97,21 @@ const StyledRoomCard = styled(motion.div)`
   button {
     max-height: 100%;
   }
+
+  ${mq(
+    ["mobile"],
+    `
+    width: 100%;
+    flex-shrink: 1;
+  `,
+  )}
+  ${mq(
+    ["tablet", "smallScreen"],
+    `
+    width: calc(50% - var(--gap) / 2);
+    flex-shrink: 1;
+  `,
+  )}
 `;
 
 const FullScreen = styled(motion.div)`
@@ -103,6 +128,12 @@ const FullScreen = styled(motion.div)`
   align-items: stretch;
   transition: left var(--ha-transition-duration) var(--ha-easing);
   color: var(--ha-S50-contrast);
+  ${mq(
+    ["mobile", "tablet"],
+    `
+    left: 0;
+  `,
+  )}
 `;
 
 const ChildContainer = styled(motion.div)`
@@ -110,10 +141,11 @@ const ChildContainer = styled(motion.div)`
   padding: 1rem 1.5rem 1.5rem;
   margin-top: 5rem;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  justify-content: flex-start;
+  align-items: center;
   width: 100%;
   overflow-y: auto;
+  flex-direction: column;
 `;
 
 function _RoomCard({
@@ -251,9 +283,6 @@ function _RoomCard({
       </AnimatePresence>
       <StyledRoomCard layoutId={`layout-${hash}`}>
         <StyledPictureCard
-          style={{
-            width: "var(--ha-device-room-card-width)",
-          }}
           whileTap={{ scale: 0.9 }}
           {...rest}
           image={image}

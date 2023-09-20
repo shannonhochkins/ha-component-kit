@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
-import { Row, Column, fallback } from "@components";
+import { Row, Column, fallback, mq } from "@components";
 import { motion, AnimatePresence } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -29,6 +29,14 @@ const StyledGroup = styled.div<{
       color: var(--ha-A400);
     }
   }
+  ${({ collapsed }) => `
+    ${mq(
+      ["mobile", "tablet"],
+      `
+      padding: ${collapsed ? "0 1rem" : "0 1rem 1rem"};
+    `,
+    )}
+  `};
 `;
 
 export interface GroupProps extends Omit<React.ComponentProps<"div">, "title"> {
