@@ -30,11 +30,13 @@ const StyledGroup = styled.div<{
     }
   }
   ${({ collapsed }) => `
-    ${mq(['mobile', 'tablet'], `
-      padding: ${(collapsed ? "0 1rem" : "0 1rem 1rem")};
-    `)}
+    ${mq(
+      ["mobile", "tablet"],
+      `
+      padding: ${collapsed ? "0 1rem" : "0 1rem 1rem"};
+    `,
+    )}
   `};
-  
 `;
 
 export interface GroupProps extends Omit<React.ComponentProps<"div">, "title"> {

@@ -127,9 +127,9 @@ const _Ripples = memo(
     return (
       <ParentRipple
         borderRadius={borderRadius}
-        className={className ?? ''}
+        className={className ?? ""}
         style={{
-          ...style ?? {},
+          ...(style ?? {}),
         }}
       >
         <motion.div
@@ -141,7 +141,7 @@ const _Ripples = memo(
           }}
           {...rest}
           style={{
-            width: '100%',
+            width: "100%",
             ...boxStyle,
             borderRadius,
           }}

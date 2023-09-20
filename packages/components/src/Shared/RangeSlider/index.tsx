@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, ReactNode, useCallback, FocusEventHandler } from "react";
+import { useState, useEffect, useRef, ReactNode } from "react";
 import styled from "@emotion/styled";
 import { useDebouncedCallback } from "use-debounce";
 import { fallback, mq } from "@components";
@@ -13,9 +13,12 @@ const StyledRange = styled.div<{
     position: relative;
     isolation: isolate;
 
-    ${mq(['mobile', 'tablet', 'smallScreen'], `
+    ${mq(
+      ["mobile", "tablet", "smallScreen"],
+      `
       min-width: 0;
-    `)}
+    `,
+    )}
 
     z-index: 1;
 
@@ -224,7 +227,6 @@ function _RangeSlider({
     }
   }, [value, _min, _max, _step, formatTooltipValue, hideTooltip]);
 
-
   const debouncedOnChange = useDebouncedCallback((value: number) => {
     if (typeof onChange === "function") {
       onChange(value);
@@ -239,7 +241,7 @@ function _RangeSlider({
       <StyledRange
         ref={parentRangeRef}
         handleSize={handleSize}
-        className={`range-slider ${className ?? ''} ${active ? 'active' : ''}`}
+        className={`range-slider ${className ?? ""} ${active ? "active" : ""}`}
       >
         <input
           {...rest}

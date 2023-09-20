@@ -45,14 +45,20 @@ const MediaPlayerWrapper = styled(motion.div)<{
     `
     width: calc(var(--ha-device-media-card-width) * 1.5);
   `}
-  ${mq(['mobile'], `
+  ${mq(
+    ["mobile"],
+    `
     width: 100%;
     flex-shrink: 1;
-  `)}
-  ${mq(['tablet', 'smallScreen'], `
+  `,
+  )}
+  ${mq(
+    ["tablet", "smallScreen"],
+    `
     width: calc(50% - var(--gap) / 2);
     flex-shrink: 1;
-  `)}
+  `,
+  )}
   ${(props) => {
     if (props.backgroundImage) {
       return `
@@ -217,9 +223,12 @@ const VolumeSlider = styled.label<{
   color: rgba(0, 0, 0, 0.87);
   font-size: 1rem;
   line-height: 1.5;
-  ${mq(['mobile', 'tablet', 'smallScreen'], `
+  ${mq(
+    ["mobile", "tablet", "smallScreen"],
+    `
     width: auto;
-  `)}
+  `,
+  )}
 `;
 
 type VolumeLayout = "slider" | "buttons";
@@ -557,7 +566,7 @@ function _MediaPlayerCard({
     (media_duration?: number, media_position?: number) => {
       if (!media_duration || !media_position) return 0;
       const progress = (media_position / media_duration) * 100;
-      console.log('media', media_position, media_duration, progress)
+      console.log("media", media_position, media_duration, progress);
       if (playerRef.current) {
         playerRef.current.style.setProperty(
           `--progress-${snakeCase(_entity)}-width`,

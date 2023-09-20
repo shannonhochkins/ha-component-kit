@@ -23,10 +23,13 @@ const ModalContainer = styled(motion.div)`
   justify-content: space-between;
   background-color: var(--ha-S200);
   z-index: var(--ha-modal-z-index);
-  ${mq(['tablet', 'mobile'], `
+  ${mq(
+    ["tablet", "mobile"],
+    `
     max-width: 95vw;
     margin-left: calc(95vw / -2);
-  `)}
+  `,
+  )}
 `;
 const ModalInner = styled.div`
   display: flex;

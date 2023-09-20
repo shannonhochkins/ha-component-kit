@@ -41,10 +41,13 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   transition-property: background-color, box-shadow, background-image;
   will-change: width, height;
   color: var(--ha-S200-contrast);
-  ${mq(['mobile', 'tablet', 'smallScreen'], `
+  ${mq(
+    ["mobile", "tablet", "smallScreen"],
+    `
     width: calc(100% - 2rem);
     flex-shrink: 1;
-  `)}
+  `,
+  )}
   svg {
     color: var(--ha-S200-contrast);
     transition: color var(--ha-transition-duration) var(--ha-easing);
@@ -95,14 +98,20 @@ const StyledRoomCard = styled(motion.div)`
     max-height: 100%;
   }
 
-  ${mq(['mobile'], `
+  ${mq(
+    ["mobile"],
+    `
     width: 100%;
     flex-shrink: 1;
-  `)}
-  ${mq(['tablet', 'smallScreen'], `
+  `,
+  )}
+  ${mq(
+    ["tablet", "smallScreen"],
+    `
     width: calc(50% - var(--gap) / 2);
     flex-shrink: 1;
-  `)}
+  `,
+  )}
 `;
 
 const FullScreen = styled(motion.div)`
@@ -119,9 +128,12 @@ const FullScreen = styled(motion.div)`
   align-items: stretch;
   transition: left var(--ha-transition-duration) var(--ha-easing);
   color: var(--ha-S50-contrast);
-  ${mq(['mobile', 'tablet'], `
+  ${mq(
+    ["mobile", "tablet"],
+    `
     left: 0;
-  `)}
+  `,
+  )}
 `;
 
 const ChildContainer = styled(motion.div)`

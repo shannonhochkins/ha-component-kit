@@ -1,3 +1,12 @@
+# 1.1.1
+## @hakit/components
+ - Massive changes to responsive layout, all cards / components now have changes to styles based on screen size.
+ - Fixed a few layout bugs
+ - introduced mq and useDevice - mq is a helper for media queries, and useDevice returns an object with the current device size and a boolean if the device is active.
+
+## @hakit/core
+ - no changes
+
 # @hakit/components
 ## 1.1.0
 - NEW - Massive changes to the core styles for components, ThemeProvider now accepts hue, saturation, lightness, tint, contrastThreshold and darkMode as props, light/dark mode fully supported, interactive color sliders to visualize the theme changes on the overview page and on every single storybook component page. The default colors have also been changed which is why this has been released as a new minor release. If you prefer the grayscale look of previous versions, set the "tint" prop to 0 for ThemeProvider
