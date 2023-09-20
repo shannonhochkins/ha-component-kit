@@ -32,7 +32,13 @@ There's extensive [documentation](https://shannonhochkins.github.io/ha-component
 - Anything else? Please, if you notice anything that doesn't feel / look right, please report it, i rely on user testing to make improvements.
 
 ### What's next?
+
+There's a Roadmap.md file with a few things i'm working on!
 Have your say! Vote for what you'd like to see next in [upcoming features!](https://github.com/shannonhochkins/ha-component-kit/discussions/28)
+
+### Vision
+
+homeassistant hacs integration - an integration that behaves similar to the lovelace dashboard, drag & drop, resizing, fluid containers using https://github.com/bokuweb/react-rnd - storing the layouts inside home assistant, card picker for slots, would be a game changer! I would love some help with this part whilst im improving and adding cards / functionality
 
 ### Contributors!
 
