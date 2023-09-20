@@ -250,7 +250,6 @@ function _ThemeProvider<T extends object>({
               background: rgba(0, 0, 0, 0.5);
             }
 
-
             /* Works on Chrome, Edge, and Safari */
             &::-webkit-scrollbar {
               width: 12px;

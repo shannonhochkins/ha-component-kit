@@ -38,14 +38,20 @@ const StyledEntitiesCard = styled(motion.button)`
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
 
-  ${mq(['mobile'], `
+  ${mq(
+    ["mobile"],
+    `
     width: 100%;
     flex-shrink: 1;
-  `)}
-  ${mq(['tablet', 'smallScreen'], `
+  `,
+  )}
+  ${mq(
+    ["tablet", "smallScreen"],
+    `
     width: calc(50% - var(--gap) / 2);
     flex-shrink: 1;
-  `)}
+  `,
+  )}
 `;
 
 const IconWrapper = styled(Row)`

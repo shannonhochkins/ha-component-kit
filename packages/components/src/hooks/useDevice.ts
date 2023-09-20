@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { STANDARD_BREAKPOINTS } from './constants';
-import type { StandardResponsiveTypes } from './constants';
+import { useEffect, useState } from "react";
+import { STANDARD_BREAKPOINTS } from "./constants";
+import type { StandardResponsiveTypes } from "./constants";
 
 export function useDevice(): { [key in StandardResponsiveTypes]: boolean } {
   const initialMatches: { [key in StandardResponsiveTypes]: boolean } = {
@@ -14,11 +14,16 @@ export function useDevice(): { [key in StandardResponsiveTypes]: boolean } {
   const [matches, setMatches] = useState(initialMatches);
 
   useEffect(() => {
-    const handleChange = (type: StandardResponsiveTypes, mediaQueryList: MediaQueryList) => {
+    const handleChange = (
+      type: StandardResponsiveTypes,
+      mediaQueryList: MediaQueryList,
+    ) => {
       setMatches((prev) => ({ ...prev, [type]: mediaQueryList.matches }));
     };
 
-    const mediaQueryLists: { [key in StandardResponsiveTypes]: MediaQueryList } = {
+    const mediaQueryLists: {
+      [key in StandardResponsiveTypes]: MediaQueryList;
+    } = {
       mobile: window.matchMedia(STANDARD_BREAKPOINTS.mobile),
       tablet: window.matchMedia(STANDARD_BREAKPOINTS.tablet),
       smallScreen: window.matchMedia(STANDARD_BREAKPOINTS.smallScreen),
@@ -28,20 +33,33 @@ export function useDevice(): { [key in StandardResponsiveTypes]: boolean } {
 
     // Initialize
     Object.keys(mediaQueryLists).forEach((type) => {
-      handleChange(type as StandardResponsiveTypes, mediaQueryLists[type as StandardResponsiveTypes]);
+      handleChange(
+        type as StandardResponsiveTypes,
+        mediaQueryLists[type as StandardResponsiveTypes],
+      );
     });
 
     // Add listeners
     Object.keys(mediaQueryLists).forEach((type) => {
       const mediaQueryList = mediaQueryLists[type as StandardResponsiveTypes];
-      mediaQueryList.addEventListener('change', (event) => handleChange(type as StandardResponsiveTypes, event.currentTarget as MediaQueryList));
+      mediaQueryList.addEventListener("change", (event) =>
+        handleChange(
+          type as StandardResponsiveTypes,
+          event.currentTarget as MediaQueryList,
+        ),
+      );
     });
 
     // Cleanup listeners
     return () => {
       Object.keys(mediaQueryLists).forEach((type) => {
         const mediaQueryList = mediaQueryLists[type as StandardResponsiveTypes];
-        mediaQueryList.removeEventListener('change', (event) => handleChange(type as StandardResponsiveTypes, event.currentTarget as MediaQueryList));
+        mediaQueryList.removeEventListener("change", (event) =>
+          handleChange(
+            type as StandardResponsiveTypes,
+            event.currentTarget as MediaQueryList,
+          ),
+        );
       });
     };
   }, []);

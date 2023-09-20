@@ -3,7 +3,15 @@ import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { Icon } from "@iconify/react";
 import { useHass, useHash } from "@hakit/core";
-import { TimeCard, WeatherCard, Row, Column, fallback, mq, useDevice } from "@components";
+import {
+  TimeCard,
+  WeatherCard,
+  Row,
+  Column,
+  fallback,
+  mq,
+  useDevice,
+} from "@components";
 import { motion, AnimatePresence } from "framer-motion";
 import type { WeatherCardProps, TimeCardProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -50,13 +58,16 @@ const StyledSidebarCard = styled(motion.div)`
     transition: var(--ha-transition-duration) var(--ha-easing);
     transition-property: padding;
   }
-  ${mq(['tablet', 'mobile'], `
+  ${mq(
+    ["tablet", "mobile"],
+    `
     position: fixed;
     top: 0;
     bottom: 0;
     left: var(--ha-sidebar-offset);
     z-index: calc(var(--ha-device-room-card-z-index) - 1);
-  `)}
+  `,
+  )}
 `;
 
 const Menu = styled(motion.ul)<{
@@ -172,7 +183,9 @@ const HamburgerMenu = styled(Menu)`
     }
   }
 
-  ${mq(['tablet', 'mobile'], `
+  ${mq(
+    ["tablet", "mobile"],
+    `
     left: 0;
     top: 0;
     li {
@@ -180,7 +193,8 @@ const HamburgerMenu = styled(Menu)`
         background-color: transparent;
       }
     }
-  `)}
+  `,
+  )}
 `;
 
 const Filler = styled.div`
@@ -290,8 +304,12 @@ function _SidebarCard({
             --ha-room-card-expanded-offset: ${open
               ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
               : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
-            --ha-sidebar-max-width: ${open ? `var(--ha-device-sidebar-card-width-expanded, 19rem)` : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
-            --ha-sidebar-offset: ${open ? `0` : `calc(var(--ha-sidebar-max-width) * -1)`};
+            --ha-sidebar-max-width: ${open
+              ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
+              : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
+            --ha-sidebar-offset: ${open
+              ? `0`
+              : `calc(var(--ha-sidebar-max-width) * -1)`};
           }
         `}
       />
@@ -339,8 +357,14 @@ function _SidebarCard({
                 open={open}
                 key="hamburger-menu-open"
                 animate={{
-                  width: (devices.mobile || devices.tablet) ? 'auto' : !open ? "100%" : "40%",
-                  position: (devices.mobile || devices.tablet) ? "fixed" : "relative",
+                  width:
+                    devices.mobile || devices.tablet
+                      ? "auto"
+                      : !open
+                      ? "100%"
+                      : "40%",
+                  position:
+                    devices.mobile || devices.tablet ? "fixed" : "relative",
                 }}
               >
                 <motion.li
