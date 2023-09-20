@@ -38,7 +38,7 @@ Have your say! Vote for what you'd like to see next in [upcoming features!](http
 
 ### Vision
 
-homeassistant hacs integration - an integration that behaves similar to the lovelace dashboard, drag & drop, resizing, fluid containers using https://github.com/bokuweb/react-rnd - storing the layouts inside home assistant, card picker for slots, would be a game changer! I would love some help with this part whilst im improving and adding cards / functionality
+homeassistant hacs integration - an integration that behaves similar to the lovelace dashboard, drag & drop, resizing, fluid containers using [https://github.com/bokuweb/react-rnd](https://github.com/react-grid-layout/react-grid-layout) - storing the layouts inside home assistant, card picker for slots, would be a game changer! I would love some help with this part whilst im improving and adding cards / functionality
 
 ### Contributors!
 
