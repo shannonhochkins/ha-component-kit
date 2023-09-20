@@ -154,6 +154,7 @@ function _Tooltip({ placement = "top", title = null, children }: TooltipProps) {
       ref={childRef}
       onBlur={handleHide}
       onTouchEnd={handleHide}
+      onTouchStart={handleMouseEnter}
       onMouseUp={handleHide}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleHide}

@@ -49,7 +49,7 @@ const ThemeControlsBox = styled(motion.div)`
   position: fixed;
   top: 1rem;
   right: 1rem;
-  z-index: 0;
+  z-index: 1;
 `;
 
 // Function to generate light and dark variants
