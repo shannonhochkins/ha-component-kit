@@ -244,26 +244,24 @@ function _ThemeProvider<T extends object>({
 
           * {
             box-sizing: border-box;
+            scrollbar-width: thin;
+            scrollbar-color: var(--ha-S500) var(--ha-S200);
             ::-webkit-scrollbar-corner {
               background: rgba(0, 0, 0, 0.5);
             }
 
-            * {
-              scrollbar-width: thin;
-              scrollbar-color: var(--ha-S500) var(--ha-S200);
-            }
 
             /* Works on Chrome, Edge, and Safari */
-            *::-webkit-scrollbar {
+            &::-webkit-scrollbar {
               width: 12px;
               height: 12px;
             }
 
-            *::-webkit-scrollbar-track {
+            &::-webkit-scrollbar-track {
               background: var(--ha-S200); // track background color
             }
 
-            *::-webkit-scrollbar-thumb {
+            &::-webkit-scrollbar-thumb {
               background-color: var(--ha-S500);
               border-radius: 20px;
               border: 3px solid var(--ha-S200);

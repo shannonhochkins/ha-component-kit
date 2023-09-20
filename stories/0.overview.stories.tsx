@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Story } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 import { css, Global } from "@emotion/react";
@@ -18,7 +17,8 @@ import {
   MediaPlayerCard,
   EntitiesCard,
   TriggerCard,
-  GarbageCollectionCard
+  GarbageCollectionCard,
+  useDevice,
 } from '@components';
 // @ts-expect-error - don't need to type this
 import office from './office.jpg';
@@ -28,20 +28,14 @@ import livingRoom from './living-room.jpg';
 import diningRoom from './dining-room.jpg';
 
 function Template() {
+  const device = useDevice();
   return <HassConnect hassUrl="https://homeassistant.local:8123">
     <ThemeProvider includeThemeControls darkMode={true} />
-    <Global
-      styles={css`
-        :root {
-          --ha-hide-body-overflow-y: hidden;
-        }
-      `}
-    />
     <Row fullWidth wrap="nowrap" fullHeight alignItems="stretch">
       <SidebarCard startOpen={false} />
       <Column fullWidth gap="1rem" wrap="nowrap" justifyContent="flex-start" style={{
-        padding: '2rem',
-        overflow: 'auto'
+        padding: device.mobile || device.tablet ? '1rem' : '2rem',
+        overflowY: 'auto',
       }}>
         <Group title="Time & Date">
         <TimeCard />
@@ -159,10 +153,7 @@ function Template() {
 export default {
   title: "INTRODUCTION/Overview",
   parameters: {
-    padding: 0,
-    fillHeight: true,
-    height: "100%",
-    width: "100%",
+    standalone: true,
     addons: {
       showPanel: false,
     },
