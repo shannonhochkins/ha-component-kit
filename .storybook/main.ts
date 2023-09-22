@@ -25,7 +25,8 @@ export default ({
   staticDirs: ['../static'],
   framework: {
     name: getAbsolutePath("@storybook/react-vite"),
-    options: {}
+    options: {
+    }
   },
   docs: {
     autodocs: 'tag'

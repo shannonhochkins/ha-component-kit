@@ -7,8 +7,9 @@ export function useDevice(): { [key in StandardResponsiveTypes]: boolean } {
     mobile: false,
     tablet: false,
     smallScreen: false,
+    mediumScreen: false,
     desktop: false,
-    extraLarge: false,
+    largeDesktop: false,
   };
 
   const [matches, setMatches] = useState(initialMatches);
@@ -27,8 +28,9 @@ export function useDevice(): { [key in StandardResponsiveTypes]: boolean } {
       mobile: window.matchMedia(STANDARD_BREAKPOINTS.mobile),
       tablet: window.matchMedia(STANDARD_BREAKPOINTS.tablet),
       smallScreen: window.matchMedia(STANDARD_BREAKPOINTS.smallScreen),
+      mediumScreen: window.matchMedia(STANDARD_BREAKPOINTS.mediumScreen),
       desktop: window.matchMedia(STANDARD_BREAKPOINTS.desktop),
-      extraLarge: window.matchMedia(STANDARD_BREAKPOINTS.extraLarge),
+      largeDesktop: window.matchMedia(STANDARD_BREAKPOINTS.largeDesktop),
     };
 
     // Initialize

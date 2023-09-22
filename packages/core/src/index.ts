@@ -3,7 +3,7 @@ export * from "./utils";
 // custom data types
 export * from "./data";
 // HassConnect
-export type { HassContextProps, Route } from "./HassConnect/Provider";
+export type { HassContextProps, Route, Store } from "./HassConnect/Provider";
 export type { HassConnectProps } from "./HassConnect";
 export { HassConnect } from "./HassConnect";
 export { HassContext } from "./HassConnect/Provider";

@@ -1,29 +1,31 @@
 import React, {
-  useState,
   useCallback,
   useMemo,
   useRef,
   useEffect,
 } from "react";
 import type {
-  // types
-  Connection,
   HassEntities,
   HassConfig,
   Auth,
+  HaWebSocket,
 } from "home-assistant-js-websocket";
+import { Connection } from "home-assistant-js-websocket";
 import type {
   ServiceData,
   DomainService,
   SnakeOrCamelDomains,
   Target,
   Route,
-  HassContextProps,
+  Store,
 } from "@hakit/core";
 import { isArray } from "lodash";
 import { HassContext, useHash } from '@hakit/core';
 import { entities as ENTITIES } from './mocks/mockEntities';
 import fakeApi from './mocks/fake-call-service';
+import { create } from 'zustand';
+import type { ServiceArgs } from './mocks/fake-call-service/types';
+import mockHistory from './mock-history';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
@@ -88,29 +90,110 @@ const fakeAuth: Auth = {
   }
 }
 
+class MockWebSocket {
+  addEventListener() {}
+  removeEventListener() {}
+  send() {}
+  close() {}
+}
+
+class MockConnection extends Connection {
+  private _mockListeners: { [event: string]: ((data: any) => void)[] };
+  private _mockResponses: {
+    [type: string]: object | ((message: object) => object) | undefined
+  };
+
+  constructor() {
+    super(new MockWebSocket() as unknown  as HaWebSocket, {
+      setupRetry: 0,
+      createSocket: async () => new MockWebSocket() as unknown  as HaWebSocket,
+    });
+    this._mockListeners = {};
+    this._mockResponses = {};
+  }
+
+  // hass events
+  async subscribeEvents<EventType>(
+    eventCallback: (ev: EventType) => void,
+    eventType?: string,
+  ) {
+    if (!eventType) {
+      throw new Error("mock all events not implemented");
+    }
+    if (!(eventType in this._mockListeners)) {
+      this._mockListeners[eventType] = [];
+    }
+    this._mockListeners[eventType].push(eventCallback);
+    return () => Promise.resolve();
+  }
+
+  mockEvent(event: string, data: object) {
+    this._mockListeners[event].forEach((cb) => cb(data));
+  }
+
+  mockResponse(type: string, data: object) {
+    this._mockResponses[type] = data;
+  }
+  
+  async subscribeMessage<Result>(callback: (result: Result) => void): Promise<() => Promise<void>> {
+    callback(mockHistory as Result);
+    return () => Promise.resolve();
+  }
+}
+
+const useStore = create<Store>((set) => ({
+  routes: [],
+  setRoutes: (routes) => set(() => ({ routes })),
+  entities: ENTITIES,
+  setEntities: (newEntities) => set(state => {
+    const entitiesCopy = { ...state.entities };
+    let hasChanged = false;
+
+    Object.keys(newEntities).forEach(entityId => {
+      // Check if this entity actually changed
+      entitiesCopy[entityId] = {
+        ...state.entities[entityId],
+        ...newEntities[entityId],
+      };
+      hasChanged = true;
+    });
+
+    if (hasChanged) {
+      return { entities: entitiesCopy };
+    }
+    return state;
+  }),
+  connection: new MockConnection(),
+  setConnection: (connection) => set({ connection }),
+  cannotConnect: false,
+  setCannotConnect: (cannotConnect) => set({ cannotConnect }),
+  ready: true,
+  setReady: (ready) => set({ ready }),
+  lastUpdated: new Date(),
+  setLastUpdated: (lastUpdated) => set({ lastUpdated }),
+  auth: fakeAuth,
+  setAuth: (auth) => set({ auth }),
+  config: fakeConfig,
+  setConfig: (config) => set({ config }),
+  error: null,
+  setError: (error) => set({ error }),
+}))
+
 function HassProvider({
   children,
 }: HassProviderProps) {
   const [_hash] = useHash();
-  const [routes, setRoutes] = useState<Route[]>([]);
-  const [connection, setConnection] = useState<Connection | null>(null);
-  const [lastUpdated] = useState<Date>(new Date());
-  const [entities, setEntities] = useState<HassEntities>(ENTITIES);
+  const routes = useStore(store => store.routes);
+  const setRoutes = useStore(store => store.setRoutes);
+  const entities = useStore(store => store.entities);
+  const setEntities = useStore(store => store.setEntities);
+  const ready = useStore(store => store.ready);
   const clock = useRef<NodeJS.Timeout | null>(null);
-  const [ready] = useState(true);
   const getStates = async () => null;
   const getServices = async () => null;
   const getConfig = async () => fakeConfig;
   const getUser = async () => null;
   const getAllEntities = useMemo(() => () => entities, [entities]);
-  const getEntity = (entity: string, returnNullIfNotFound: boolean) => {
-    const found = entities[entity];
-    if (!found) {
-      if (returnNullIfNotFound || entity === 'unknown') return null;
-      throw new Error(`Entity ${entity} not found`);
-    }
-    return found;
-  }
 
   const callService = useCallback(
     async <T extends SnakeOrCamelDomains, M extends DomainService<T>>({
@@ -121,15 +204,17 @@ function HassProvider({
     }: CallServiceArgs<T, M>) => {
       if (typeof target !== 'string' && !isArray(target)) return;
       const now = new Date().toISOString();
-      
       if (domain in fakeApi) {
-        // @ts-expect-error - unable to retrieve correct type at this level
-        const api = fakeApi[domain];
+        const api = fakeApi[domain as 'scene'] as (params: ServiceArgs<'scene'>) => boolean;
         const skip = api({
-          setEntities,
+          setEntities(cb: (entities: HassEntities) => HassEntities) {
+            setEntities(cb(entities));
+          },
           now,
           target,
+          // @ts-expect-error - don't know domain
           service,
+          // @ts-expect-error - don't know domain
           serviceData,
         });
         if (!skip) return;
@@ -142,27 +227,23 @@ function HassProvider({
       switch(service) {
         case 'turn_on':
         case 'turnOn':
-          return setEntities(entities => {
-            const attributes = {
-              ...entities[target].attributes,
-              ...serviceData || {},
+          const attributes = {
+            ...entities[target].attributes,
+            ...serviceData || {},
+          }
+          return setEntities({
+            [target]: {
+              ...entities[target],
+              attributes: {
+                ...attributes,
+              },
+              ...dates,
+              state: 'on'
             }
-            return {
-              ...entities,
-              [target]: {
-                ...entities[target],
-                attributes: {
-                  ...attributes,
-                },
-                ...dates,
-                state: 'on'
-              }
-            };
-          });
+          })
         case 'turn_off':
         case 'turnOff':
-          return setEntities(entities => ({
-            ...entities,
+          return setEntities({
             [target]: {
               ...entities[target],
               attributes: {
@@ -172,10 +253,9 @@ function HassProvider({
               ...dates,
               state: 'off'
             }
-          }))
+          })
         case 'toggle':
-          return setEntities(entities => ({
-            ...entities,
+          return setEntities({
             [target]: {
               ...entities[target],
               attributes: {
@@ -186,18 +266,17 @@ function HassProvider({
               ...dates,
               state: entities[target].state === 'on' ? 'off' : 'on'
             }
-          }));
+          });
         default:
-          return setEntities(entities => ({
-            ...entities,
+          return setEntities({
             [target]: {
               ...entities[target],
               ...dates,
             }
-          }));
+          });
       }
     },
-    []
+    [entities, setEntities]
   );
 
   useEffect(() => {
@@ -209,47 +288,41 @@ function HassProvider({
         last_changed: now.toISOString(),
         last_updated: now.toISOString(),
       }
-      setEntities(entities => ({
-        ...entities,
+      setEntities({
         ['sensor.time']: {
           ...entities['sensor.time'],
           ...dates,
           state: formatted
         }
-      }));
+      });
     }, 60000);
     return () => {
       if (clock.current) clearInterval(clock.current);
     }
-  });
+  }, []);
 
-  useEffect(() => {
-    setRoutes((routes) =>
-      routes.map((route) => {
+  const addRoute = useCallback(
+    (route: Omit<Route, "active">) => {
+      const exists = routes.find((_route) => _route.hash === route.hash) !== undefined;
+      if (!exists) {
         // if the current has value is the same as the hash, we're active
         const hashWithoutPound = _hash.replace("#", "");
         const active =
           hashWithoutPound !== "" && hashWithoutPound === route.hash;
-        return {
-          ...route,
-          active,
-        };
-      })
-    );
-  }, [_hash]);
-
-  const addRoute = useCallback((route: Route) => {
-    setRoutes((routes) => {
-      const exists =
-        routes.find((_route) => _route.hash === route.hash) !== undefined;
-      if (!exists) {
-        return [...routes, route];
+        setRoutes([
+          ...routes,
+          {
+            ...route,
+            active,
+          },
+        ]);
       }
-      return routes;
-    });
-  }, []);
+    },
+    [_hash, routes, setRoutes],
+  );
 
-  const useRoute = useCallback(
+
+  const getRoute = useCallback(
     (hash: string) => {
       const route = routes.find((route) => route.hash === hash);
       return route || null;
@@ -260,23 +333,16 @@ function HassProvider({
   return (
     <HassContext.Provider
       value={{
-        connection,
-        setConnection,
-        getEntity: getEntity as HassContextProps["getEntity"],
-        getAllEntities,
-        callService,
+        useStore,
+        logout: () => {},
+        addRoute,
+        getRoute,
         getStates,
         getServices,
         getConfig,
         getUser,
-        addRoute,
-        useRoute,
-        ready,
-        routes,
-        lastUpdated,
-        auth: fakeAuth,
-        config: fakeConfig,
-        logout: () => null,
+        getAllEntities,
+        callService,
       }}
     >
       {children(ready)}

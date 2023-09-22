@@ -1,3 +1,30 @@
+# 2.0.0
+
+## @hakit/components
+- NEW - Sensor card - Very similar to the home assistant SensorCard, this card will display the current state of the sensor, additionally you can add a graph to display the history of the sensor, this is a very powerful card and can be used for many different sensors.
+- CHANGE - Another change to responsive layouts, previously under the theme object, you could control the width of cards, this has been removed in favor of responsive design, the cards have been specifically designed to fill the available space and will automatically layout in columns / rows with a default nice fluid width
+- BUGFIX - fixed bug with RangeSlider which was causing flickering with media player card.
+## @hakit/core
+- BREAKING CHANGES - Complete refactor of the main core providers, after introducing history i noticed that every component was being re-rendered even when the entity used on a card/component wasn't changing, it was also causing child components to unmount and remount unexpectedly on every state change.
+  1. HassConnect previously allowed a throttle value, this has been removed and moved to be controlled from the useEntity hook instead which has a default throttle of 150ms, this means that individual components can subscribe to updates either faster or slower than others.
+  2. The store pattern is now using zustand to subscribe to updates which makes updates much more performant as we're only updating the state to values that we're subscribed to, this follows through to all hooks which means significant performance improvements.
+  3. previously, the Provider had multiple useEffects causing multiple updates to the store values, this has been optimised dramatically.
+  4. useHass - this was previously allowing access to internal store values, this has been refactored so only documented methods are available from useHass to avoid any mistaken use of the hook / store values, getEntity has also been removed from useHass in favor of the new hook useSubscribeEntity which will only update the component when the entity changes.
+  5. NEW - useSubscribeEntity - a replacement for the getEntity function that was previously provided in useHass, logically it's also changed as you can only retrieve one entity with this hook so that it can subscribe to updates for an individual entity. If you need to retrieve multiple entities, you can retrieve the entities from the store, 
+  ```
+      const { getAllEntities } = useHass();
+      // extract what you need from entities
+      const entities = getAllEntities();
+      // this is not the most optimal way to retrieve multiple entities as it will cause a rerender
+      // on the component every time any entity changes
+      
+  ```
+  6. NEW - useHistory - a hook to retrieve history for an entity, in it's raw form, it may be difficult to understand, so i've converted values to coordinates if you want to plot your own data.
+  7. Fixed countless memory leaks
+  8. useRoute has been renamed to getRoute from useHass.
+  9. SceneCard has been removed and renamed to TriggerCard
+  10. useEntity will now by default return history for the entity, you can control the options for this in the options object as the second argument.
+
 # 1.1.1
 ## @hakit/components
  - Massive changes to responsive layout, all cards / components now have changes to styles based on screen size.
@@ -20,6 +47,7 @@
 - BREAKING - the entire theme module has been rebuilt, if you were using any of the default css variables like --ha-text or --ha-primary-x or --ha-secondary-x etc, these have been deprecated.
 
 # @hakit/core
+## 1.1.0
 - NEW - color theme variables connected to the getCssColor value, if you're not using @hakit/components you'll need to provide these yourself.
 
 # @hakit/core

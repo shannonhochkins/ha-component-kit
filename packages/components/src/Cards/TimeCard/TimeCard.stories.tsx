@@ -5,7 +5,7 @@ import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<TimeCardProps>) {
   return (
-    <HassConnect hassUrl="http://localhost:8123">
+    <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />
       <TimeCard {...args} />
     </HassConnect>
@@ -26,7 +26,7 @@ export default {
   component: TimeCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    standalone: true,
   },
   argTypes: {
     title: { control: "text" },

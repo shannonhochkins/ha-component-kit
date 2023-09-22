@@ -25,7 +25,6 @@ export function climateUpdates({
   }
   if (typeof target !== 'string') return;
   return setEntities(entities => ({
-    ...entities,
     [target]: {
       ...entities[target],
       attributes: {

@@ -15,7 +15,7 @@ function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
-      <Row gap="1rem">
+      <Row gap="1rem" fullWidth>
         <ButtonCard {...args} />
         <FabCard entity="light.fake_light_2" service="toggle" />
       </Row>
@@ -49,7 +49,7 @@ function RenderCustom() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
-      <Column gap="1rem">
+      <Column gap="1rem" fullWidth>
         <Source dark code={exampleSetup} />
         <FabCard
           onClick={() => setOpen(true)}
@@ -77,11 +77,17 @@ const exampleRenderByDomain = `
     const [open, setOpen] = useState(false);
     return (
       <>
-        <-- The trigger element can be any motion element, in this case we use a FabCard which is a motion.button element -->
+        <-- The trigger element can be any motion element, 
+        in this case we use a FabCard which is a motion.button element -->
         <FabCard layoutId="custom-modal" onClick={() => setOpen(true)} icon="mdi:cog" />
-        <ModalByEntityDomain id="custom-modal" entity="light.fake_light_1" open={open} title="Settings" onClose={() => {
-          setOpen(false);
-        }} />
+        <ModalByEntityDomain
+          id="custom-modal"
+          entity="light.fake_light_1"
+          open={open}
+          title="Settings"
+          onClose={() => {
+            setOpen(false);
+          }} />
       </>
     );
   
@@ -90,7 +96,7 @@ const exampleRenderByDomain = `
 function RenderModalByDomain() {
   return (
     <>
-      <Column>
+      <Column fullWidth>
         <p>
           There's a helper component that will automatically load up pre-defined
           modals by entity/domain.
@@ -113,7 +119,7 @@ export default {
   component: Modal,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
 } satisfies Meta<typeof Modal>;
 export type ModalStory = StoryObj<typeof ButtonCard<"light.fake_light_1">>;

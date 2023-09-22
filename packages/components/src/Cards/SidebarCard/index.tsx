@@ -25,6 +25,7 @@ const StyledTimeCard = styled(TimeCard)<{
   box-shadow: none;
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: padding;
+  border-radius: 0;
   &:hover {
     box-shadow: none;
     background: transparent;
@@ -41,6 +42,12 @@ const StyledTimeCard = styled(TimeCard)<{
       font-size: 0.7rem;
     }
   `}
+  ${mq(
+    ["mobile", "tablet", "smallScreen", 'mediumScreen', 'desktop', 'largeDesktop'],
+    `
+    width: 100%;
+  `,
+  )}
 `;
 
 const StyledSidebarCard = styled(motion.div)`
@@ -212,6 +219,12 @@ const StyledWeatherCard = styled(WeatherCard)`
     box-shadow: none;
     background: transparent;
   }
+  ${mq(
+    ["mobile", "tablet", "smallScreen", 'mediumScreen', 'desktop', 'largeDesktop'],
+    `
+    width: 100%;
+  `,
+  )}
 `;
 
 const WeatherCardCustom = styled(StyledWeatherCard)<{
@@ -275,7 +288,8 @@ function _SidebarCard({
   includeTimeCard = true,
 }: SidebarCardProps) {
   const [open, setOpen] = useState(startOpen);
-  const { routes } = useHass();
+  const { useStore } = useHass();
+  const routes = useStore((state) => state.routes);
   const [hash, setHash] = useHash();
   const devices = useDevice();
   const concatenatedMenuItems = useMemo<MenuItem[]>(() => {

@@ -29,7 +29,7 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   overflow: hidden;
   border-radius: 1rem;
   display: flex;
-  width: var(--ha-device-picture-card-width);
+  width: calc(100% - 2rem);
   aspect-ratio: 16 / 9;
   flex-direction: column;
   align-items: stretch;
@@ -41,13 +41,7 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   transition-property: background-color, box-shadow, background-image;
   will-change: width, height;
   color: var(--ha-S200-contrast);
-  ${mq(
-    ["mobile", "tablet", "smallScreen"],
-    `
-    width: calc(100% - 2rem);
-    flex-shrink: 1;
-  `,
-  )}
+  flex-shrink: 1;
   svg {
     color: var(--ha-S200-contrast);
     transition: color var(--ha-transition-duration) var(--ha-easing);
@@ -108,7 +102,21 @@ const StyledRoomCard = styled(motion.div)`
   ${mq(
     ["tablet", "smallScreen"],
     `
-    width: calc(50% - var(--gap) / 2);
+    width: calc(50% - var(--gap, 0rem) / 2);
+    flex-shrink: 1;
+  `,
+  )}
+  ${mq(
+    ["desktop", 'mediumScreen'],
+    `
+    width: calc(((100% - 2 * var(--gap, 0rem)) / 3));
+    flex-shrink: 1;
+  `,
+  )}
+  ${mq(
+    ["largeDesktop"],
+    `
+    width: calc(((100% - 3 * var(--gap, 0rem)) / 4));
     flex-shrink: 1;
   `,
   )}
@@ -157,11 +165,11 @@ function _RoomCard({
   animationDuration = 0.25,
   ...rest
 }: RoomCardProps) {
-  const { addRoute, useRoute } = useHass();
+  const { addRoute, getRoute } = useHass();
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   const [forceRender, setForceRender] = useState(false);
   const [animateChildren, setAnimateChildren] = useState(false);
-  const route = useRoute(hash);
+  const route = getRoute(hash);
   const actualHash = window.location.hash;
   const active = actualHash.replace("#", "") === hash.replace("#", "");
   // starts the trigger to close the full screen card

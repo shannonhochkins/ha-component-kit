@@ -24,7 +24,7 @@ const Card = styled(motion.div)`
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  width: var(--ha-device-garbage-collection-card-width);
+  width: calc(100% - 2rem);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -33,6 +33,7 @@ const Card = styled(motion.div)`
   background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
+  flex-shrink: 1;
   &:hover {
     background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
@@ -40,15 +41,25 @@ const Card = styled(motion.div)`
   ${mq(
     ["mobile"],
     `
-    width: calc(100% - 2rem)
-    flex-shrink: 1;
+    width: calc(100% - 2rem);
   `,
   )}
   ${mq(
     ["tablet", "smallScreen"],
     `
-    width: calc((50% - var(--gap) / 2) - 2rem);
-    flex-shrink: 1;
+    width: calc((50% - var(--gap, 0rem) / 2) - 2rem);
+  `,
+  )}
+  ${mq(
+    ["desktop", 'mediumScreen'],
+    `
+    width: calc(((100% - 2 * var(--gap, 0rem)) / 3) - 2rem);
+  `,
+  )}
+  ${mq(
+    ["largeDesktop"],
+    `
+    width: calc(((100% - 3 * var(--gap, 0rem)) / 4) - 2rem);
   `,
   )}
 `;

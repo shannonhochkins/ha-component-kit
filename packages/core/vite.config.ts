@@ -50,6 +50,8 @@ export default defineConfig(configEnv => {
             '@emotion/cache': '@emotion/cache',
             '@emotion/serialize': '@emotion/serialize',
             '@emotion/utils': '@emotion/utils',
+            'zustand': 'zustand',
+            'deep-object-diff': 'deep-object-diff',
           }
         }
       },

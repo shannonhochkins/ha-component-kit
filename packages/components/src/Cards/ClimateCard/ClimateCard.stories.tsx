@@ -16,7 +16,7 @@ export default {
   component: ClimateCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
 } satisfies Meta<typeof ClimateCard>;
 export type ClimateStory = StoryObj<typeof ClimateCard>;

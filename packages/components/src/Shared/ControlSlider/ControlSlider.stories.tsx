@@ -45,7 +45,7 @@ function Template(args?: Partial<ControlSliderProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
-      <Row gap={"1rem"}>
+      <Row gap={"1rem"} fullWidth>
         {sliders.map(({ value, thickness, sliderColor, ref }, index) => (
           <Column key={index} gap="0.5rem">
             <ControlSlider
@@ -75,7 +75,7 @@ export default {
   component: ControlSlider,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
 } satisfies Meta<typeof ControlSlider>;
 export type TimeStory = StoryObj<typeof ControlSlider>;

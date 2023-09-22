@@ -7,7 +7,7 @@ function Template(args?: Partial<AlertProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
-      <Column gap="1rem">
+      <Column gap="1rem" fullWidth>
         <Alert {...args} type="error" />
         <Alert {...args} type="info" />
         <Alert {...args} type="warning" />
@@ -22,7 +22,7 @@ export default {
   component: Alert,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fillWidth: true,
   },
 } satisfies Meta<typeof Alert>;
 export type TimeStory = StoryObj<typeof Alert>;

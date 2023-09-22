@@ -7,7 +7,7 @@ import type {
 } from "@hakit/core";
 
 export interface ServiceArgs<D extends SnakeOrCamelDomains> {
-  setEntities: React.Dispatch<React.SetStateAction<HassEntities>>;
+  setEntities: (cb: (entities: HassEntities) => HassEntities) => void;
   now: string;
   target: string | string[];
   service: DomainService<D>;
