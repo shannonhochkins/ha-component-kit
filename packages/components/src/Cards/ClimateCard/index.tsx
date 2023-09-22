@@ -24,7 +24,7 @@ const StyledClimateCard = styled(motion.div)`
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  width: var(--ha-device-climate-card-width);
+  width: calc(100% - 2rem);
   aspect-ratio: 2/0.74;
   display: flex;
   flex-direction: column;
@@ -43,27 +43,32 @@ const StyledClimateCard = styled(motion.div)`
     background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
-  ${mq(
-    ["mobile", "tablet", "smallScreen"],
-    `
-    width: calc(100% - 2rem);
-  `,
-  )}
 `;
 
 const StyledRipples = styled(Ripples)`
+  flex-shrink: 1;
   ${mq(
     ["mobile"],
     `
     width: 100%;
-    flex-shrink: 1;
   `,
   )}
   ${mq(
     ["tablet", "smallScreen"],
     `
-    width: calc(50% - var(--gap) / 2);
-    flex-shrink: 1;
+    width: calc(50% - var(--gap, 0rem) / 2);
+  `,
+  )}
+  ${mq(
+    ["desktop", "mediumScreen"],
+    `
+    width: calc((100% - 2 * var(--gap, 0rem)) / 3);
+  `,
+  )}
+  ${mq(
+    ["largeDesktop"],
+    `
+    width: calc((100% - 3 * var(--gap, 0rem)) / 4);
   `,
   )}
 `;

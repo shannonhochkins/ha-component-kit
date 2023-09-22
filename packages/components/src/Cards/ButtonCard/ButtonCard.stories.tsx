@@ -10,7 +10,7 @@ function Template(args?: Partial<ButtonCardProps<"switch.fake_switch">>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
-      <Group title="Examples">
+      <Group title="Examples" alignItems="stretch">
         <ButtonCard
           {...args}
           entity="switch.fake_switch"
@@ -160,7 +160,7 @@ export default {
   component: ButtonCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
   argTypes: {
     title: { control: "text" },

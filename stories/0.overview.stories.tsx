@@ -19,6 +19,7 @@ import {
   TriggerCard,
   GarbageCollectionCard,
   useDevice,
+  SensorCard
 } from '@components';
 // @ts-expect-error - don't need to type this
 import office from './office.jpg';
@@ -37,8 +38,9 @@ function Template() {
         padding: device.mobile || device.tablet ? '1rem' : '2rem',
         overflowY: 'auto',
       }}>
-        <Group title="Time & Date">
-        <TimeCard />
+        <Group title="Time & Date" layout="column">
+          <TimeCard />
+          <SensorCard entity="sensor.air_conditioner_inside_temperature" />
         </Group>
         <Group title="Lights & Switches">
           <ButtonCard entity="light.fake_light_1" service="toggle" />
@@ -59,8 +61,6 @@ function Template() {
             <EntitiesCard includeLastUpdated entities={['sensor.date', 'sensor.time', 'automation.dim_lights']} />
             <MediaPlayerCard entity="media_player.fake_speaker_2" layout="slim" />
             <TriggerCard entity="scene.good_morning" />
-          </Row>
-          <Row gap="1rem" alignItems="stretch" fullWidth>
             <ClimateCard entity="climate.air_conditioner" />
             <WeatherCard entity="weather.entity" />
             <GarbageCollectionCard description="Here's the upcoming garbage collection schedule." schedules={[
@@ -103,8 +103,6 @@ function Template() {
                 ],
               },
             ]} />
-          </Row>
-          <Row gap="1rem" fullWidth>
             <RoomCard icon="mdi:office-chair" title="Office" hash="office" image={office}>
               <Column fullWidth gap="1rem">
                 <Group title="Lights & Switches">

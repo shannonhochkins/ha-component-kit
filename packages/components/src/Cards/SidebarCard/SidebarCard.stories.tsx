@@ -24,6 +24,10 @@ const MakeFullScreen = () => {
         #storybook-inner-preview > div > div {
           height: 100%;
         }
+        .docs-story > div {
+          padding: 0;
+          margin: 0;
+        }
       `}
     />
   );
@@ -41,10 +45,17 @@ function Template(args?: Partial<SidebarCardProps>) {
         fullHeight
         wrap="nowrap"
       >
-        <SidebarCard {...args}>
+        <SidebarCard startOpen={false} {...args}>
           <p>You can insert any children in the sidebar here</p>
         </SidebarCard>
-        <Row fullWidth fullHeight gap="0.5rem">
+        <Row
+          fullWidth
+          fullHeight
+          gap="0.5rem"
+          style={{
+            padding: "1rem",
+          }}
+        >
           <RoomCard
             hash="office"
             image={office}

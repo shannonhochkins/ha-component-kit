@@ -231,6 +231,7 @@ export const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
   const rootRef = useRef<HTMLDivElement>(null);
   const containerRef = (ref as MutableRefObject<HTMLDivElement>) || rootRef;
   const marqueeRef = useRef<HTMLDivElement>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
   // Calculate width of container and marquee and set multiplier
   const calculateWidth = useCallback(() => {
@@ -267,13 +268,9 @@ export const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
 
     calculateWidth();
     if (marqueeRef.current && containerRef.current) {
-      const resizeObserver = new ResizeObserver(() => calculateWidth());
-      resizeObserver.observe(containerRef.current);
-      resizeObserver.observe(marqueeRef.current);
-      return () => {
-        if (!resizeObserver) return;
-        resizeObserver.disconnect();
-      };
+      resizeObserverRef.current = new ResizeObserver(() => calculateWidth());
+      resizeObserverRef.current.observe(containerRef.current);
+      resizeObserverRef.current.observe(marqueeRef.current);
     }
   }, [calculateWidth, containerRef, isMounted]);
 
@@ -284,6 +281,10 @@ export const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
 
   useEffect(() => {
     setIsMounted(true);
+    return () => {
+      if (!resizeObserverRef.current) return;
+      resizeObserverRef.current.disconnect();
+    };
   }, []);
 
   // Runs the onMount callback, if it is a function, when Marquee is mounted.

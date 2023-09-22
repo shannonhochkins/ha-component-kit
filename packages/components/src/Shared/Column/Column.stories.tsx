@@ -21,7 +21,7 @@ export default {
   component: Column,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
   argTypes: {
     theme: { table: { disable: true } },
@@ -41,5 +41,6 @@ export const ColumnExample: TimeStory = {
   render: Template,
   args: {
     gap: "0.5rem",
+    fullWidth: true,
   },
 };

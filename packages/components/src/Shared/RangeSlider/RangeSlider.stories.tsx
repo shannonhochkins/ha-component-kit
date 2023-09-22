@@ -7,7 +7,13 @@ function Template(props: RangeSliderProps): JSX.Element {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />
-      <RangeSlider {...props} />
+      <RangeSlider
+        {...props}
+        style={{
+          width: "100%",
+          maxWidth: "12rem",
+        }}
+      />
     </HassConnect>
   );
 }
@@ -17,7 +23,7 @@ export default {
   component: RangeSlider,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
   argTypes: {},
 } satisfies Meta<typeof RangeSlider>;

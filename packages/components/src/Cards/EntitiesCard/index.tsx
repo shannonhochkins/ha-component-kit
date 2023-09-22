@@ -20,7 +20,7 @@ const StyledEntitiesCard = styled(motion.button)`
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  width: var(--ha-device-entities-card-width);
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -30,7 +30,7 @@ const StyledEntitiesCard = styled(motion.button)`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow;
-
+  flex-shrink: 1;
   &:active {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
@@ -42,14 +42,24 @@ const StyledEntitiesCard = styled(motion.button)`
     ["mobile"],
     `
     width: 100%;
-    flex-shrink: 1;
   `,
   )}
   ${mq(
     ["tablet", "smallScreen"],
     `
-    width: calc(50% - var(--gap) / 2);
-    flex-shrink: 1;
+    width: calc(50% - var(--gap, 0rem) / 2);
+  `,
+  )}
+  ${mq(
+    ["desktop", "mediumScreen"],
+    `
+    width: calc((100% - 2 * var(--gap, 0rem)) / 3);
+  `,
+  )}
+  ${mq(
+    ["largeDesktop"],
+    `
+    width: calc((100% - 3 * var(--gap, 0rem)) / 4);
   `,
   )}
 `;

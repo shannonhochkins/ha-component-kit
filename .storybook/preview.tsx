@@ -35,7 +35,7 @@ export default {
           height: args.parameters.height,
           ...centered,
         }}><div style={{
-          width: args.parameters.fillWidth ? '100%' : undefined,
+          width: args.parameters.fillWidth || args.parameters.fullWidth ? '100%' : undefined,
           height: args.parameters.fillHeight ? '100%' : undefined,
         }}><Story /></div></div>
       </div>

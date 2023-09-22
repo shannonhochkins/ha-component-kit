@@ -8,7 +8,7 @@ function Template(
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
-      <Row gap="1rem">
+      <Row gap="1rem" fullWidth>
         <FabCard
           {...args}
           onClick={(entity) => {
@@ -30,7 +30,7 @@ export default {
   component: FabCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
   argTypes: {
     title: { control: "text" },

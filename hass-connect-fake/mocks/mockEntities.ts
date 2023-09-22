@@ -93,6 +93,13 @@ export const entities: HassEntities = {
       friendly_name: "Date",
     },
   }),
+  ...createSensor('sensor.air_conditioner_inside_temperature', {
+    state: "21",
+    attributes: {
+      unit_of_measurement: "°C",
+      friendly_name: "Air Conditioner Inside Temperature",
+    },
+  }),
   ...createSensor('sensor.curtain', {
     state: '12',
     attributes: {

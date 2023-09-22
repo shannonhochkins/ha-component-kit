@@ -31,7 +31,7 @@ function Template(args?: Partial<ColorTempPickerProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
-      <Column gap={"1rem"}>
+      <Column gap={"1rem"} fullWidth>
         <ColorTempPicker
           entity={"light.fake_light_1"}
           {...args}
@@ -50,7 +50,7 @@ export default {
   component: ColorTempPicker,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
 } satisfies Meta<typeof ColorTempPicker>;
 export type TimeStory = StoryObj<typeof ColorTempPicker>;

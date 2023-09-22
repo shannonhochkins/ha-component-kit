@@ -16,10 +16,6 @@ export type { RowProps } from "./Shared/Row";
 // column
 export { Column } from "./Shared/Column";
 export type { ColumnProps } from "./Shared/Column";
-// these imports can be removed when we drop support for SceneCard
-import { TriggerCard } from "./Cards/TriggerCard";
-import type { TriggerCardProps } from "./Cards/TriggerCard";
-import type { EntityName } from "@hakit/core";
 // ErorrBoundary fallback
 export { fallback } from "./Shared/ErrorBoundary";
 // ButtonCard
@@ -28,15 +24,12 @@ export type { ButtonCardProps } from "./Cards/ButtonCard";
 // TriggerCard
 export { TriggerCard } from "./Cards/TriggerCard";
 export type { TriggerCardProps } from "./Cards/TriggerCard";
-/**
- * @deprecated SceneCardProps is deprecated and will be removed in future versions. Use TriggerCardProps instead.
- */
-export type SceneCardProps<E extends EntityName> = TriggerCardProps<E>;
-
-/**
- * @deprecated SceneCard is deprecated and will be removed in future versions. Use TriggerCard instead.
- */
-export const SceneCard = TriggerCard;
+// svg graph
+export { SvgGraph } from "./Shared/SvgGraph";
+export type { SvgGraphProps } from "./Shared/SvgGraph";
+// SensorCard
+export { SensorCard } from "./Cards/SensorCard";
+export type { SensorCardProps } from "./Cards/SensorCard";
 // Group
 export { Group } from "./Group";
 export type { GroupProps } from "./Group";

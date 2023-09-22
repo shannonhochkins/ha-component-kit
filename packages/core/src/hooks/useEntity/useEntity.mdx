@@ -2,8 +2,8 @@ import { Source, Meta } from '@storybook/blocks';
 
 <Meta title="HOOKS/useEntity" />
 # useEntity()
-###### `useEntity(entity: string)`
-This hook is designed to retrieve an entity and return all it's information.
+###### `useEntity(entity: string, options?: UseEntityOptions)`
+This hook is designed to retrieve an entity and return all it's information including history and the api for the entity.
 
 This is a memoized wrapper for the getEntity helper from `useHass()` allowing your component to only update
 when the entity actually changes.
@@ -48,6 +48,7 @@ useEntity takes a second parameter which is an object of options.
 The options are:
 - `returnNullIfNotFound` - boolean - if true the hook will return null if not found, and not throw an error. Default is false.
 - `throttle` - number - how long to wait to throttle the updates, default is 150ms
+- `historyOptions` - object - options to pass to receive different history data.
 
 Example:
 
@@ -56,7 +57,11 @@ import { HassConnect, useEntity } from '@hakit/core';
 function Office() {
   const lightStrip = useEntity('light.office_striplight', {
     returnNullIfNotFound: true,
+    history: {
+      hoursToShow: 96 // defaults to 24
+    }
   });
+  console.log('light history', lightStrip.history);
   // can now access all properties relating to the light
   return lightStrip?.state ?? 'unknown';
 }

@@ -8,7 +8,7 @@ const StyledRange = styled.div<{
   handleSize: number;
 }>`
   ${(props) => `
-    min-width: 12rem;
+    min-width: 6rem;
     width: 100%;
     position: relative;
     isolation: isolate;
@@ -185,6 +185,7 @@ function _RangeSlider({
   label,
   description,
   className,
+  style,
   tooltipSize = 2,
   handleSize = 15,
   min: _min = 0,
@@ -199,10 +200,10 @@ function _RangeSlider({
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (typeof value === "number") {
-      setValue(value);
+    if (typeof _value === "number") {
+      setValue(_value);
     }
-  }, [value]);
+  }, [_value]);
 
   useEffect(() => {
     if (!rangeRef.current || hideTooltip) return;
@@ -235,7 +236,7 @@ function _RangeSlider({
   }, 300);
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", ...(style ?? {}) }}>
       {label && <Label>{label}</Label>}
       {description && <Description>{description}</Description>}
       <StyledRange

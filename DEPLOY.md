@@ -21,7 +21,7 @@ git fetch origin && git checkout master && git pull
 git flow release start "1.0.0"
 # ... perform any final adjustments on the release branch, bump version numbers, etc. ...
 npx changeset
-npm changeset version
+npx changeset version
 ## release core or components
 npm run release:core
 npm run release:components

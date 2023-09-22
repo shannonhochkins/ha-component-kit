@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useMemo } from "react";
+import { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import {
   useApi,
   useHass,
@@ -34,29 +34,36 @@ const MediaPlayerWrapper = styled(motion.div)<{
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
+  width: 100%;
+  flex-shrink: 1;
+
   ${(props) =>
     props.layoutName === "card" &&
     `
-    width: var(--ha-device-media-card-width);
-    height: var(--ha-device-media-card-width);
-  `}
-  ${(props) =>
-    props.layoutName === "slim" &&
-    `
-    width: calc(var(--ha-device-media-card-width) * 1.5);
+    aspect-ratio: 1/1;
   `}
   ${mq(
     ["mobile"],
     `
     width: 100%;
-    flex-shrink: 1;
   `,
   )}
   ${mq(
     ["tablet", "smallScreen"],
     `
-    width: calc(50% - var(--gap) / 2);
-    flex-shrink: 1;
+    width: calc(50% - var(--gap, 0rem) / 2);
+  `,
+  )}
+  ${mq(
+    ["desktop", "mediumScreen"],
+    `
+    width: calc(((100% - 2 * var(--gap, 0rem)) / 3));
+  `,
+  )}
+  ${mq(
+    ["largeDesktop"],
+    `
+    width: calc(((100% - 3 * var(--gap, 0rem)) / 4));
   `,
   )}
   ${(props) => {
@@ -219,14 +226,21 @@ const VolumeSlider = styled.label<{
   layout: Layout;
 }>`
   display: inline-block;
-  width: ${(props) => (props.layout === "card" ? "80%" : "65%")};
+  width: auto;
   color: rgba(0, 0, 0, 0.87);
   font-size: 1rem;
   line-height: 1.5;
   ${mq(
-    ["mobile", "tablet", "smallScreen"],
+    ["mobile"],
     `
-    width: auto;
+    width: 40%;
+  `,
+  )}
+
+  ${mq(
+    ["tablet", "smallScreen"],
+    `
+    width: 60%;
   `,
   )}
 `;
@@ -381,13 +395,30 @@ function VolumeControls({
   layout,
 }: VolumeProps) {
   const entity = useEntity(_entity);
-  const api = useApi("mediaPlayer");
   const { volume_level, is_volume_muted } = entity.attributes;
+  const [volume, _setVolume] = useState(volume_level);
+  const api = useApi("mediaPlayer");
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const supportsVolumeSet = supportsFeatureFromAttributes(entity.attributes, 4);
   const supportsVolumeMute = supportsFeatureFromAttributes(
     entity.attributes,
     8,
   );
+  const setVolume = useCallback(
+    (volume: number) => {
+      _setVolume(volume);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      timerRef.current = setTimeout(() => {
+        api.volumeSet(allEntityIds, {
+          volume_level: volume,
+        });
+      }, 500);
+    },
+    [api, allEntityIds, _setVolume],
+  );
+
   return (
     <>
       {!hideMute && supportsVolumeMute && (
@@ -426,14 +457,10 @@ function VolumeControls({
             max={1}
             disabled={disabled}
             step={0.02}
-            value={is_volume_muted ? 0 : volume_level}
+            value={is_volume_muted ? 0 : volume}
             formatTooltipValue={(value) => `${Math.round(value * 100)}%`}
             tooltipSize={2.2}
-            onChange={(value) => {
-              api.volumeSet(allEntityIds, {
-                volume_level: value,
-              });
-            }}
+            onChange={(value) => setVolume(value)}
           />
         </VolumeSlider>
       )}
@@ -483,13 +510,14 @@ function _MediaPlayerCard({
 }: MediaPlayerCardProps) {
   const entity = useEntity(_entity);
   const api = useApi("mediaPlayer");
+  const { useStore } = useHass();
+  const entities = useStore((state) => state.entities);
   const interval = useRef<NodeJS.Timeout | null>(null);
-  const { getEntity } = useHass();
   const progressRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
   const clockRef = useRef<HTMLDivElement>(null);
   const groupedEntities = groupMembers
-    .map((entity) => getEntity(entity, true))
+    .map((entity) => entities[entity] ?? null)
     .filter(
       (entity): entity is HassEntity =>
         entity !== null && !isUnavailableState(entity.state),
@@ -752,7 +780,12 @@ function _MediaPlayerCard({
             </Row>
 
             {!isUnavailable ? (
-              <Row gap="0.5rem" wrap="nowrap" fullWidth>
+              <Row
+                gap="0rem"
+                justifyContent="space-between"
+                wrap="nowrap"
+                fullWidth
+              >
                 {!isOff && <VolumeControls {...volumeProps} />}
                 {layout === "slim" && (
                   <PlaybackControls

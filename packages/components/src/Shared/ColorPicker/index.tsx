@@ -361,14 +361,18 @@ function _ColorPicker({
           rgb: hex2rgb(hex.current as string),
           hs: _localValue.current,
         });
-      return () => {
-        if (!parentRef.current) return;
-        parentRef.current.style.removeProperty("--value-x");
-        parentRef.current.style.removeProperty("--value-y");
-      };
     },
     [disabled, _getValueFromCoord, onChange, updateColours],
   );
+
+  useEffect(() => {
+    const ref = parentRef.current;
+    return () => {
+      if (!ref) return;
+      ref.style.removeProperty("--value-x");
+      ref.style.removeProperty("--value-y");
+    };
+  }, []);
 
   useEffect(() => {
     if (!supportsColor || lightColors.hs === undefined) return;

@@ -38,7 +38,7 @@ function MultiRoomExample() {
             icon: "mdi:office-chair",
           }}
         >
-          <Row gap="1rem">
+          <Row gap="1rem" fullWidth>
             <ButtonCard
               entity="light.fake_light_1"
               service="toggle"
@@ -61,7 +61,7 @@ function MultiRoomExample() {
             icon: "mdi:sofa",
           }}
         >
-          <Row gap="1rem">
+          <Row gap="1rem" fullWidth>
             <ButtonCard
               entity="light.fake_light_2"
               service="toggle"
@@ -99,7 +99,7 @@ function TemplateFull() {
 function UseHashExample() {
   const [, setHash] = useHash();
   return (
-    <Row fullHeight>
+    <Row fullHeight fullWidth>
       <RoomCard
         image={office}
         title="Office"

@@ -6,7 +6,7 @@ function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
-      <Column gap="1rem">
+      <Column gap="1rem" fullWidth>
         <TriggerCard
           entity="scene.good_morning"
           {...args}
@@ -43,7 +43,7 @@ export default {
   component: TriggerCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fillWidth: true,
   },
   argTypes: {
     title: { control: "text" },

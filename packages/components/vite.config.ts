@@ -50,6 +50,8 @@ export default defineConfig(configEnv => {
             '@emotion/cache': '@emotion/cache',
             '@emotion/serialize': '@emotion/serialize',
             '@emotion/utils': '@emotion/utils',
+            "chart.js": "chart.js",
+            "react-chartjs-2": "react-chartjs-2"
           }
         }
       },

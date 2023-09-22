@@ -9,3 +9,6 @@ export { useLightTemperature } from "./useLightTemperature";
 export { useLightColor } from "./useLightColor";
 export { useLowDevices } from "./useLowDevices";
 export type { LowDevicesOptions } from "./useLowDevices";
+export { useHistory } from "./useHistory";
+export type { HistoryOptions } from "./useHistory";
+export { useSubscribeEntity } from "./useSubscribeEntity";

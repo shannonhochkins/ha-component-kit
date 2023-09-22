@@ -89,11 +89,13 @@ export const HassConnect = ({
   options = {},
 }: HassConnectProps): JSX.Element => {
   const onReadyCalled = useRef(false);
+
   if (!hassUrl) {
     return (
       <>{`Provide the hassUrl prop with the url to your home assistant instance.`}</>
     );
   }
+
   return (
     <HassProvider hassUrl={hassUrl} {...options}>
       {(ready) => (

@@ -23,7 +23,7 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  width: var(--ha-device-picture-card-width);
+  width: calc(100% - 2rem);
   display: flex;
   aspect-ratio: 16 / 9;
   flex-direction: column;
@@ -35,6 +35,7 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow, background-image;
   will-change: width, height;
+  flex-shrink: 1;
 
   ${(props) =>
     props.image &&
@@ -53,14 +54,24 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
     ["mobile"],
     `
     width: calc(100% - 2rem);
-    flex-shrink: 1;
   `,
   )}
   ${mq(
     ["tablet", "smallScreen"],
     `
-    width: calc((50% - var(--gap) / 2) - 2rem);
-    flex-shrink: 1;
+    width: calc((50% - var(--gap, 0rem) / 2) - 2rem);
+  `,
+  )}
+  ${mq(
+    ["desktop", "mediumScreen"],
+    `
+    width: calc(((100% - 2 * var(--gap, 0rem)) / 3) - 2rem);
+  `,
+  )}
+  ${mq(
+    ["largeDesktop"],
+    `
+    width: calc(((100% - 3 * var(--gap, 0rem)) / 4) - 2rem);
   `,
   )}
 `;

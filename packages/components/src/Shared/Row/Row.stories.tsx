@@ -21,7 +21,7 @@ export default {
   component: Row,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
   argTypes: {
     theme: { table: { disable: true } },
@@ -35,5 +35,6 @@ export const RowExample: TimeStory = {
   render: Template,
   args: {
     gap: "0.5rem",
+    fullWidth: true,
   },
 };
