@@ -65,7 +65,6 @@ export function SvgGraph({ coordinates, strokeWidth = 5 }: SvgGraphProps) {
   const idRef = useRef(`svg-${Math.random().toString(36).substr(2, 9)}`);
   const id = idRef.current;
 
-
   return (
     <SVGWrapper width="100%" height="100%" viewBox="0 0 500 100">
       <g>

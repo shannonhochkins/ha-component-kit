@@ -60,7 +60,7 @@ const StyledRipples = styled(Ripples)`
   `,
   )}
   ${mq(
-    ["desktop", 'mediumScreen'],
+    ["desktop", "mediumScreen"],
     `
     width: calc(((100% - 2 * var(--gap, 0rem)) / 3));
   `,
@@ -187,7 +187,9 @@ function _SensorCard<E extends EntityName>({
           </LayoutBetween>
         </Inner>
         <div>
-          {entity.history.loading ? <Alert description="Loading..." /> : entity.history.coordinates.length > 0 ? (
+          {entity.history.loading ? (
+            <Alert description="Loading..." />
+          ) : entity.history.coordinates.length > 0 ? (
             <SvgGraph coordinates={entity.history.coordinates} />
           ) : (
             <Alert description="No state history found." />

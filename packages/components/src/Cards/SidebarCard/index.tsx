@@ -43,7 +43,14 @@ const StyledTimeCard = styled(TimeCard)<{
     }
   `}
   ${mq(
-    ["mobile", "tablet", "smallScreen", 'mediumScreen', 'desktop', 'largeDesktop'],
+    [
+      "mobile",
+      "tablet",
+      "smallScreen",
+      "mediumScreen",
+      "desktop",
+      "largeDesktop",
+    ],
     `
     width: 100%;
   `,
@@ -220,7 +227,14 @@ const StyledWeatherCard = styled(WeatherCard)`
     background: transparent;
   }
   ${mq(
-    ["mobile", "tablet", "smallScreen", 'mediumScreen', 'desktop', 'largeDesktop'],
+    [
+      "mobile",
+      "tablet",
+      "smallScreen",
+      "mediumScreen",
+      "desktop",
+      "largeDesktop",
+    ],
     `
     width: 100%;
   `,

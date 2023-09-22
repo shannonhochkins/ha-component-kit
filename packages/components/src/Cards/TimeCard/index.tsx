@@ -47,7 +47,7 @@ const Card = styled(motion.div)`
   `,
   )}
   ${mq(
-    ["desktop", 'mediumScreen'],
+    ["desktop", "mediumScreen"],
     `
     width: calc(((100% - 2 * var(--gap, 0rem)) / 3) - 2rem);
   `,
