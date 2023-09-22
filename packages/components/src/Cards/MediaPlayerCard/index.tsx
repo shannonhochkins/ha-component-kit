@@ -385,22 +385,6 @@ function VolumeControls({
     [api, allEntityIds, _setVolume],
   );
 
-  // useEffect(() => {
-  // if (
-  //   volume_level !== volume &&
-  //   volume !== undefined &&
-  //   volume_level !== undefined
-  // ) {
-  //   _setVolume(volume_level);
-  // }
-  //   return () => {
-  //     if (timerRef.current) {
-  //       console.log('unmounting')
-  //       clearTimeout(timerRef.current);
-  //     }
-  //   }
-  // }, [volume, _setVolume, volume_level]);
-
   return (
     <>
       {!hideMute && supportsVolumeMute && (

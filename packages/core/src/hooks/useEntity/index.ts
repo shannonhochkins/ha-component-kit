@@ -13,6 +13,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { getCssColorValue } from "@utils/colors";
 import { computeDomain } from "@utils/computeDomain";
 import { diff } from "deep-object-diff";
+import type { HistoryOptions } from "../useHistory";
 
 // English.
 import en from "javascript-time-ago/locale/en.json";
@@ -35,11 +36,17 @@ interface UseEntityOptions {
   /** The amount of time to throttle updates in milliseconds */
   throttle?: number;
   returnNullIfNotFound?: boolean;
+  historyOptions?: HistoryOptions
 }
 
 const DEFAULT_OPTIONS: UseEntityOptions = {
   throttle: 150,
   returnNullIfNotFound: false,
+  historyOptions: {
+    hoursToShow: 24,
+    significantChangesOnly: true,
+    minimalResponse: true,
+  }
 };
 
 type UseEntityReturnType<
@@ -53,7 +60,7 @@ export function useEntity<
   E extends EntityName,
   O extends UseEntityOptions = UseEntityOptions,
 >(entity: E, options: O = DEFAULT_OPTIONS as O): UseEntityReturnType<E, O> {
-  const { throttle, returnNullIfNotFound } = {
+  const { throttle, returnNullIfNotFound, historyOptions } = {
     ...DEFAULT_OPTIONS,
     ...options,
   };
@@ -61,7 +68,7 @@ export function useEntity<
   const matchedEntity = getEntity(returnNullIfNotFound);
   const domain = computeDomain(entity) as ExtractDomain<E>;
   const api = useApi(domain, entity);
-  const history = useHistory(entity);
+  const history = useHistory(entity, historyOptions);
   const formatEntity = useCallback((entity: HassEntity): HassEntityCustom => {
     const now = new Date();
     const then = new Date(

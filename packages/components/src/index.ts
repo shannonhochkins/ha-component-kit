@@ -21,6 +21,9 @@ export type { ButtonCardProps } from "./Cards/ButtonCard";
 // TriggerCard
 export { TriggerCard } from "./Cards/TriggerCard";
 export type { TriggerCardProps } from "./Cards/TriggerCard";
+// svg graph
+export { SvgGraph } from "./Shared/SvgGraph";
+export type { SvgGraphProps } from "./Shared/SvgGraph";
 // SensorCard
 export { SensorCard } from "./Cards/SensorCard";
 export type { SensorCardProps } from "./Cards/SensorCard";

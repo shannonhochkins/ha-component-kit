@@ -7,54 +7,81 @@ import {
   HassConfig,
 } from "home-assistant-js-websocket";
 import { subscribeHistory, computeHistory } from "./history";
-import type { TimelineState } from "./history";
+import type { TimelineState, EntityHistoryState } from "./history";
+import { coordinatesMinimalResponseCompressedState } from "./coordinates";
 
-export const useHistory = (entityId: EntityName) => {
+
+export interface HistoryOptions {
+  /** the number of hours to show @default 24 */
+  hoursToShow?: number;
+  /** only show significant changes @default true */
+  significantChangesOnly?: boolean;
+  /** minimal response data @default true */
+  minimalResponse?: boolean;
+  /** data limits for coordinates */
+  limits?: { min?: number; max?: number };
+}
+export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
   const { useStore } = useHass();
   const connection = useStore((state) => state.connection);
   const config = useStore((state) => state.config);
   const getEntity = useSubscribeEntity(entityId);
   const unsubscribe = useRef<Promise<() => Promise<void>> | null>(null);
-  const [history, setHistory] = useState<TimelineState[]>([]);
+  const [history, setHistory] = useState<{
+    timeline: TimelineState[];
+    entityHistory: EntityHistoryState[];
+    coordinates: number[][]
+  }>({
+    timeline: [],
+    entityHistory: [],
+    coordinates: []
+  });
 
   if (unsubscribe.current === null) {
     const entity = getEntity(true);
     if (entity !== null) {
-      const start = new Date();
-      start.setHours(start.getHours() - 1, 0, 0, 0);
-      const startDate = start;
-
-      const end = new Date();
-      end.setHours(end.getHours() + 2, 0, 0, 0);
-      const endDate = end;
       const entities = {
         [entityId]: entity,
       } satisfies HassEntities;
-      const ids = [entityId];
-      unsubscribe.current = subscribeHistory(
-        connection as Connection,
+      unsubscribe.current = subscribeHistory({
+        connection: connection as Connection,
         entities,
-        (history) => {
+        significantChangesOnly: options?.significantChangesOnly,
+        minimalResponse: options?.minimalResponse,
+        hoursToShow: options?.hoursToShow,
+        callbackFunction: (history) => {
+          console.log('history', history, unsubscribe.current);
           const computedHistory = computeHistory(
             config as HassConfig,
             entities,
             history,
           );
           const matchedHistory = computedHistory.timeline.filter(
-            ({ entity_id }) => ids.includes(entity_id as EntityName),
+            ({ entity_id }) => entity_id === entityId,
           );
-          if (matchedHistory.length > 0 && unsubscribe.current !== null) {
-            const [entityHistory] = matchedHistory;
-            setHistory(entityHistory.data);
-          }
+          // if (unsubscribe.current !== null) {
+            const coordinates = 
+            coordinatesMinimalResponseCompressedState(
+              history[entityId],
+              options?.hoursToShow ?? 24,
+              500, // viewbox of the svgGraph
+              typeof options?.significantChangesOnly === 'undefined' || options?.significantChangesOnly === true ? 1 : 2,
+              options?.limits
+            ) ?? [];
+            console.log('coordinates', coordinates);
+            setHistory({
+              timeline: matchedHistory.length > 0 ? matchedHistory[0].data : [],
+              entityHistory: history[entityId],
+              coordinates
+            });
+          // }
         },
-        startDate,
-        endDate,
-        ids,
-      );
+      });
       unsubscribe.current.catch(() => {
+      console.log('xxxx', unsubscribe.current);
         if (unsubscribe.current) {
           unsubscribe.current.then((unsubscribe) => unsubscribe?.());
+          unsubscribe.current = null;
         }
       });
     }
@@ -63,6 +90,7 @@ export const useHistory = (entityId: EntityName) => {
   useEffect(() => {
     return () => {
       if (unsubscribe.current !== null) {
+        console.log('xxxx2', unsubscribe.current);
         unsubscribe.current.then((unsubscribe) => unsubscribe?.());
         unsubscribe.current = null;
       }

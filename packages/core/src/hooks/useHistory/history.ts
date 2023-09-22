@@ -4,6 +4,7 @@ import {
   HassEntity,
   HassConfig,
   HassEntityAttributeBase,
+  MessageBase,
 } from "home-assistant-js-websocket";
 import { computeDomain } from "@core";
 import type { EntityName } from "@core";
@@ -94,7 +95,7 @@ export const computeStateNameFromEntityAttributes = (
   entityId: string,
   attributes: HassEntity["attributes"],
 ): string =>
-  attributes.friendly_name === undefined
+  attributes?.friendly_name === undefined
     ? computeObjectId(entityId).replace(/_/g, " ")
     : attributes.friendly_name || "";
 
@@ -104,26 +105,41 @@ export const entityIdHistoryNeedsAttributes = (
 ) =>
   !entities[entityId] ||
   NEED_ATTRIBUTE_DOMAINS.includes(computeDomain(entityId as EntityName));
-
-export const subscribeHistory = (
+interface SubscribeOptions {
   connection: Connection,
   entities: HassEntities,
   callbackFunction: (data: HistoryStates) => void,
-  startTime: Date,
-  endTime: Date,
-  entityIds: string[],
-): Promise<() => Promise<void>> => {
-  const params = {
+  hoursToShow?: number,
+  minimalResponse?: boolean,
+  significantChangesOnly?: boolean,
+  noAttributes?: boolean
+}
+
+export const subscribeHistory = ({
+  connection,
+  entities,
+  callbackFunction,
+  hoursToShow = 24,
+  minimalResponse = true,
+  significantChangesOnly = true,
+  noAttributes,
+}: SubscribeOptions): Promise<() => Promise<void>> => {
+  const entityIds = Object.keys(entities);
+  const params: MessageBase = {
     type: "history/stream",
     entity_ids: entityIds,
-    start_time: startTime.toISOString(),
-    end_time: endTime.toISOString(),
-    minimal_response: true,
-    no_attributes: !entityIds.some((entityId) =>
-      entityIdHistoryNeedsAttributes(entities, entityId),
-    ),
+    start_time: new Date(
+      new Date().getTime() - 60 * 60 * hoursToShow * 1000
+    ).toISOString(),
+    minimal_response: minimalResponse,
+    significant_changes_only: significantChangesOnly,
+    no_attributes:
+      noAttributes ??
+      !entityIds.some((entityId) =>
+        entityIdHistoryNeedsAttributes(entities, entityId)
+      ),
   };
-  const stream = new HistoryStream(connection);
+  const stream = new HistoryStream(connection, hoursToShow);
   return connection.subscribeMessage<HistoryStreamMessage>(
     (message) => callbackFunction(stream.processMessage(message)),
     params,

@@ -3,9 +3,18 @@
 ## @hakit/core
 - Complete refactor of the main core providers, after introducing history i noticed that every component was being re-rendered even when the entity used on a card/component wasn't changing, it was also causing child components to unmount and remount unexpectedly on every state change.
   1. HassConnect previously allowed a throttle value, this has been removed and moved to be controlled from the useEntity hook instead which has a default throttle of 150ms, this means that individual components can subscribe to updates either faster or slower than others.
-  2. The store pattern is now using react 18's useSyncExternalStore to subscribe to updates which makes updates much more performant as we're only updating the state to values that we're subscribed to, this follows through to all hooks which means significant performance improvements.
-  3. previously, the Provider had multiple useEffects causing multiple updates to the store values, this has been refactored to a single useEffect meaning significantly less updates.
-  4. useHass - this was previously allowing access to internal store values, this has been refactored so only documented methods are available from useHass to avoid any mistaken use of the hook / store values.
+  2. The store pattern is now using zustand to subscribe to updates which makes updates much more performant as we're only updating the state to values that we're subscribed to, this follows through to all hooks which means significant performance improvements.
+  3. previously, the Provider had multiple useEffects causing multiple updates to the store values, this has been optimised dramatically.
+  4. useHass - this was previously allowing access to internal store values, this has been refactored so only documented methods are available from useHass to avoid any mistaken use of the hook / store values, getEntity has also been removed from useHass in favor of the new hook useSubscribeEntity which will only update the component when the entity changes.
+  5. useSubscribeEntity - a replacement for the getEntity function that was previously provided in useHass, logically it's also changed as you can only retrieve one entity with this hook so that it can subscribe to updates for an individual entity. If you need to retrieve multiple entities, you can retrieve the entities from the store, 
+  ```
+      const { getAllEntities } = useHass();
+      // extract what you need from entities
+      const entities = getAllEntities();
+      // this is not the most optimal way to retrieve multiple entities as it will cause a rerender
+      // on the component every time any entity changes
+      
+  ```
 
 # @hakit/components
 ## 1.1.0

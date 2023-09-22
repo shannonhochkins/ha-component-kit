@@ -89,13 +89,42 @@ const useStore = create<Store>((set) => ({
   entities: {},
   setEntities: (newEntities) =>
     set((state) => {
-      // update the stateEntities with the newEntities with the keys that have changed
-      Object.keys(newEntities).forEach((entityId) => {
-        state.entities[entityId] = {
-          ...state.entities[entityId],
-          ...newEntities[entityId],
-        };
-      });
+      const entitiesDiffChanged = diff(
+        ignoreForDiffCheck(state.entities),
+        ignoreForDiffCheck(newEntities),
+      ) as HassEntities;
+      if (!isEmpty(entitiesDiffChanged)) {
+        // purposely not making this throttle configurable
+        // because lights can animate etc, which doesn't need to reflect in the UI
+        // simply throttle updates every 50ms
+        const updatedEntities = Object.keys(
+          entitiesDiffChanged,
+        ).reduce<HassEntities>(
+          (acc, entityId) => ({
+            ...acc,
+            [entityId]: newEntities[entityId],
+          }),
+          {},
+        );
+        // update the stateEntities with the newEntities with the keys that have changed
+        Object.keys(updatedEntities).forEach((entityId) => {
+          state.entities[entityId] = {
+            ...state.entities[entityId],
+            ...newEntities[entityId],
+          };
+        });
+        if (!state.ready) {
+          return {
+            ready: true,
+            lastUpdated: new Date(),
+            entities: state.entities,
+          }
+        }
+        return {
+          lastUpdated: new Date(),
+          entities: state.entities,
+        }
+      }
       return state;
     }),
   connection: null,
@@ -501,55 +530,22 @@ export function HassProvider({
     [connection, ready],
   );
 
+  // const shouldSet = !ready && connection !== null && config !== null;
+  if (connection && entityUnsubscribe.current === null) {
+    entityUnsubscribe.current = subscribeEntities(connection, ($entities) => {
+      setEntities($entities);
+    });
+  }
+
   useEffect(() => {
-    const shouldSet = !ready && connection !== null && config !== null;
-    // subscribe to the entities sockets when we have a connection, don't re-subscribe if we already have
-    if (connection && entityUnsubscribe.current === null) {
-      // now subscribe to the entities
-      entityUnsubscribe.current = subscribeEntities(connection, ($entities) => {
-        const entitiesDiffChanged = diff(
-          ignoreForDiffCheck(entities),
-          ignoreForDiffCheck($entities),
-        ) as HassEntities;
-        if (!isEmpty(entitiesDiffChanged)) {
-          if (timerRef.current) clearTimeout(timerRef.current);
-          // purposely not making this throttle configurable
-          // because lights can animate etc, which doesn't need to reflect in the UI
-          // simply throttle updates every 50ms
-          const newEntities = Object.keys(
-            entitiesDiffChanged,
-          ).reduce<HassEntities>(
-            (acc, entityId) => ({
-              ...acc,
-              [entityId]: $entities[entityId],
-            }),
-            {},
-          );
-          timerRef.current = setTimeout(() => {
-            setEntities(newEntities);
-            setLastUpdated(new Date());
-          }, 50);
-          if (!ready) {
-            setReady(shouldSet);
-          }
-        }
-      });
-    }
     return () => {
       if (entityUnsubscribe.current) {
         entityUnsubscribe.current();
         entityUnsubscribe.current = null;
       }
     };
-  }, [
-    connection,
-    entities,
-    config,
-    ready,
-    setEntities,
-    setLastUpdated,
-    setReady,
-  ]);
+  }, []);
+
   // authenticate with ha
   if (!authenticating.current) {
     authenticating.current = true;

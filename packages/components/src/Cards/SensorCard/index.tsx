@@ -9,18 +9,17 @@ import {
   isUnavailableState,
 } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
-import { Ripples, fallback } from "@components";
+import { Ripples, fallback, SvgGraph } from "@components";
 import { motion } from "framer-motion";
 import { MotionProps } from "framer-motion";
+import { HistoryOptions } from "packages/core/src/hooks/useHistory";
 
 const StyledSensorCard = styled(motion.button)`
   all: unset;
-  padding: 1rem;
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
   width: var(--ha-device-scene-card-width);
-  aspect-ratio: 2/0.74;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -38,6 +37,11 @@ const StyledSensorCard = styled(motion.button)`
     background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
+`;
+
+const Inner = styled.div`
+  width: 100%;
+  padding: 1rem;
 `;
 
 const Gap = styled.div`
@@ -91,6 +95,8 @@ export interface SensorCardProps<E extends EntityName> extends Extendable {
   activeStateDuration?: number;
   /** display the arrow icon in the slider @default false */
   hideArrow?: boolean;
+  /** options to pass to the history request */
+  historyOptions?: HistoryOptions;
 }
 
 function _SensorCard<E extends EntityName>({
@@ -99,11 +105,14 @@ function _SensorCard<E extends EntityName>({
   description,
   disabled: _disabled,
   icon: _icon,
+  historyOptions,
   ...rest
 }: SensorCardProps<E>): JSX.Element {
   const domain = computeDomain(_entity);
-  const entity = useEntity(_entity);
-  console.log("entity", entity);
+  const entity = useEntity(_entity, {
+    historyOptions: historyOptions
+  });
+  console.log('entity', entity);
   const entityIcon = useIconByEntity(_entity);
   const domainIcon = useIconByDomain(domain);
   const icon = useIcon(_icon ?? null);
@@ -123,20 +132,23 @@ function _SensorCard<E extends EntityName>({
           console.log("test");
         }}
       >
-        <LayoutBetween>
-          <Description disabled={disabled}>
-            {title || entity.attributes.friendly_name || _entity}
-            {description && <span>{description}</span>}
-          </Description>
-          {icon ?? entityIcon ?? domainIcon}
-        </LayoutBetween>
-        <Gap />
-        <LayoutBetween>
-          <Title>
-            {entity.custom.relativeTime}
-            {disabled ? ` - ${entity.state}` : ""}
-          </Title>
-        </LayoutBetween>
+        <Inner>
+          <LayoutBetween>
+            <Description disabled={disabled}>
+              {title || entity.attributes.friendly_name || _entity}
+              {description && <span>{description}</span>}
+            </Description>
+            {icon ?? entityIcon ?? domainIcon}
+          </LayoutBetween>
+          <Gap />
+          <LayoutBetween>
+            <Title>
+              {entity.custom.relativeTime}
+              {disabled ? ` - ${entity.state}` : ""}
+            </Title>
+          </LayoutBetween>
+        </Inner>
+        <div><SvgGraph coordinates={entity.history.coordinates} /></div>
       </StyledSensorCard>
     </Ripples>
   );

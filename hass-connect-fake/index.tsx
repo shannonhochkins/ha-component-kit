@@ -18,13 +18,15 @@ import type {
   Target,
   Route,
   Store,
+  HistoryStreamMessage,
 } from "@hakit/core";
 import { isArray } from "lodash";
 import { HassContext, useHash } from '@hakit/core';
 import { entities as ENTITIES } from './mocks/mockEntities';
 import fakeApi from './mocks/fake-call-service';
 import { create } from 'zustand';
-import type { ServiceArgs } from './mocks/fake-call-service/types'
+import type { ServiceArgs } from './mocks/fake-call-service/types';
+import mockHistory from './mock-history';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
@@ -132,9 +134,10 @@ class MockConnection extends Connection {
   mockResponse(type: string, data: object) {
     this._mockResponses[type] = data;
   }
-
-  async subscribeMessage() {
-    return () => Promise.resolve();
+  
+  async subscribeMessage<T>(cb: (message: T) => void, params: { [key: string]: any;}): Promise<boolean> {
+    cb(mockHistory as T);
+    return Promise.resolve(true);
   }
 }
 

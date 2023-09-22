@@ -17,7 +17,8 @@ import {
   MediaPlayerCard,
   EntitiesCard,
   TriggerCard,
-  GarbageCollectionCard
+  GarbageCollectionCard,
+  SensorCard
 } from '@components';
 // @ts-expect-error - don't need to type this
 import office from './office.jpg';
@@ -42,8 +43,9 @@ function Template() {
         padding: '2rem',
         overflow: 'auto'
       }}>
-        <Group title="Time & Date">
-        <TimeCard />
+        <Group title="Time & Date" layout="column">
+          <TimeCard />
+          <SensorCard entity="sensor.air_conditioner_inside_temperature" />
         </Group>
         <Group title="Lights & Switches">
           <ButtonCard entity="light.fake_light_1" service="toggle" />

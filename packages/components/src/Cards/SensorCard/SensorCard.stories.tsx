@@ -1,25 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { SensorCard } from "@components";
-import { HassConnect, useEntity } from "@hakit/core";
+import { SensorCard, ThemeProvider } from "@components";
+import { HassConnect } from "@hakit/core";
 
-function Child() {
-  const entity = useEntity("light.all_office_downlights");
-  console.log("rerender", entity);
-  return (
-    <div
-      style={{
-        backgroundColor: entity.custom.rgbColor,
-      }}
-    >
-      {entity.state}
-    </div>
-  );
-}
 
 function Render() {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
-      <Child />
+      <ThemeProvider />
+      <SensorCard entity="sensor.air_conditioner_inside_temperature" />
     </HassConnect>
   );
 }
