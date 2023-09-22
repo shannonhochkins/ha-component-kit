@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { SensorCard, SensorCardProps, ThemeProvider } from "@components";
-import { HassConnect } from "@hakit/core";
+import { HassConnect } from "@hass-connect-fake";
 
 function Render(args: SensorCardProps) {
   return (
