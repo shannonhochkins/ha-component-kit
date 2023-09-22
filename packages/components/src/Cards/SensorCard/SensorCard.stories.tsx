@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { SensorCard, SensorCardProps, ThemeProvider } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
-function Render(args: SensorCardProps) {
+function Render(args: SensorCardProps<'sensor.air_conditioner_inside_temperature'> {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider />
