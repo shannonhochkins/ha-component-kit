@@ -1,3 +1,6 @@
+// media query helpers
+export { useDevice } from "./hooks/useDevice";
+export { mq } from "./hooks/mq";
 // tooltip
 export { Tooltip } from "./Shared/Tooltip";
 export type { TooltipProps } from "./Shared/Tooltip";

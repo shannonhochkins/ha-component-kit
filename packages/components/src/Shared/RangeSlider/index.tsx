@@ -1,17 +1,24 @@
 import { useState, useEffect, useRef, ReactNode } from "react";
 import styled from "@emotion/styled";
 import { useDebouncedCallback } from "use-debounce";
-import { fallback } from "@components";
+import { fallback, mq } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
 const StyledRange = styled.div<{
   handleSize: number;
 }>`
   ${(props) => `
-    min-width: 12rem;
+    min-width: 6rem;
     width: 100%;
     position: relative;
     isolation: isolate;
+
+    ${mq(
+      ["mobile", "tablet", "smallScreen"],
+      `
+      min-width: 0;
+    `,
+    )}
 
     z-index: 1;
 
@@ -85,7 +92,7 @@ const StyledRange = styled.div<{
     }
 
     
-    &:hover {
+    &:hover, &.active {
       .tooltip-holder {
         > div {
           transform: translate(-50%, -1rem) rotate(-45deg) scale(1);
@@ -178,6 +185,7 @@ function _RangeSlider({
   label,
   description,
   className,
+  style,
   tooltipSize = 2,
   handleSize = 15,
   min: _min = 0,
@@ -186,7 +194,9 @@ function _RangeSlider({
   ...rest
 }: RangeSliderProps) {
   const [value, setValue] = useState(_value ?? 0);
+  const [active, setActive] = useState(false);
   const rangeRef = useRef<HTMLInputElement>(null);
+  const parentRangeRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -222,15 +232,17 @@ function _RangeSlider({
     if (typeof onChange === "function") {
       onChange(value);
     }
+    setActive(false);
   }, 300);
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", ...(style ?? {}) }}>
       {label && <Label>{label}</Label>}
       {description && <Description>{description}</Description>}
       <StyledRange
+        ref={parentRangeRef}
         handleSize={handleSize}
-        className={`range-slider ${className}`}
+        className={`range-slider ${className ?? ""} ${active ? "active" : ""}`}
       >
         <input
           {...rest}
@@ -243,6 +255,7 @@ function _RangeSlider({
           value={value}
           onInput={(event: React.ChangeEvent<HTMLInputElement>) => {
             setValue(event.target.valueAsNumber);
+            if (!active) setActive(true);
           }}
           onChange={(event) => {
             debouncedOnChange(event.target.valueAsNumber);

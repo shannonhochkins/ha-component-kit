@@ -18,7 +18,7 @@ export default {
   component: PictureCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
   argTypes: {
     title: { control: "text" },

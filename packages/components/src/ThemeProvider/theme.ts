@@ -10,42 +10,14 @@ export interface ThemeParams {
     infoColor: string;
   };
   device: {
-    buttonCard: {
-      width: string;
-    };
-    sceneCard: {
-      width: string;
-    };
-    climateCard: {
-      width: string;
-    };
-    weatherCard: {
-      width: string;
-    };
-    timeCard: {
-      width: string;
-    };
-    pictureCard: {
-      width: string;
-    };
     roomCard: {
-      width: string;
       zIndex: number;
-    };
-    entitiesCard: {
-      width: string;
-    };
-    mediaCard: {
-      width: string;
     };
     sidebarCard: {
       width: {
         collapsed: string;
         expanded: string;
       };
-    };
-    garbageCollectionCard: {
-      width: string;
     };
   };
   modal: {
@@ -66,42 +38,14 @@ export const theme: ThemeParams = {
     infoColor: "#039be5",
   },
   device: {
-    buttonCard: {
-      width: "9.375rem", // 150px
-    },
-    sceneCard: {
-      width: "18.75rem", // 300px
-    },
-    climateCard: {
-      width: "18.75rem", // 300px
-    },
-    weatherCard: {
-      width: "18.75rem", // 300px
-    },
-    timeCard: {
-      width: "18.75rem", // 300px
-    },
-    pictureCard: {
-      width: "18.75rem", // 300px
-    },
     roomCard: {
-      width: "18.75rem", // 300px
-      zIndex: 20,
-    },
-    entitiesCard: {
-      width: "18.75rem", // 300px
+      zIndex: 20
     },
     sidebarCard: {
       width: {
         collapsed: "5rem",
         expanded: "19rem",
       },
-    },
-    mediaCard: {
-      width: "18.75rem",
-    },
-    garbageCollectionCard: {
-      width: "18.75rem",
     },
   },
   modal: {

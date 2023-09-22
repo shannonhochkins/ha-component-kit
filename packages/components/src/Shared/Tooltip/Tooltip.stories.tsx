@@ -31,6 +31,7 @@ export default {
   tags: ["autodocs"],
   parameters: {
     centered: true,
+    fullWidth: true,
     fillHeight: true,
   },
   argTypes: {},

@@ -1,0 +1,18 @@
+import { Source, Meta } from '@storybook/blocks';
+
+<Meta title="HOOKS/useHass/useStore" />
+
+# useStore(selector: (store: HassStore) => any): any
+This will return all the information from the store, you can also pass through a selector through as the function to only
+subscribe to updates for that particular value.
+
+
+### Example Usage
+
+```ts
+function useStoreExample() {
+
+  const { useStore } = useHass();
+  const entities = useStore(store => store.entities);
+  return <p>{JSON.stringify(entities, null, 2)}</p>
+}

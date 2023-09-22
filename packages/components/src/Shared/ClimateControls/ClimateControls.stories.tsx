@@ -18,7 +18,7 @@ export default {
   component: ClimateControls,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
 } satisfies Meta<typeof ClimateControls>;
 export type ClimateStory = StoryObj<typeof ClimateControls>;

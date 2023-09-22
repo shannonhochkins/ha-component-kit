@@ -118,12 +118,12 @@ const useStore = create<Store>((set) => ({
             ready: true,
             lastUpdated: new Date(),
             entities: state.entities,
-          }
+          };
         }
         return {
           lastUpdated: new Date(),
           entities: state.entities,
-        }
+        };
       }
       return state;
     }),
@@ -313,8 +313,6 @@ export function HassProvider({
   const setReady = useStore((store) => store.setReady);
   const config = useStore((store) => store.config);
   const setConfig = useStore((store) => store.setConfig);
-  const setLastUpdated = useStore((store) => store.setLastUpdated);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const reset = useCallback(() => {
     // when the hassUrl changes, reset some properties and re-authenticate

@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 // Get the value at the end of a path in a nested object
 const midPoint = (
   _Ax: number,
   _Ay: number,
   _Bx: number,
-  _By: number
+  _By: number,
 ): number[] => {
   const _Zx = (_Ax - _Bx) / 2 + _Bx;
   const _Zy = (_Ay - _By) / 2 + _By;
@@ -46,7 +46,6 @@ const SVGWrapper = styled.svg`
   }
 `;
 
-
 export interface SvgGraphProps {
   coordinates?: number[][];
   strokeWidth?: number;
@@ -57,18 +56,22 @@ export function SvgGraph({ coordinates, strokeWidth = 5 }: SvgGraphProps) {
 
   useEffect(() => {
     if (coordinates) {
-      // Implement your logic for deriving the 'path' from 'coordinates' here
-      const newPath = getPath(coordinates); // This is just a placeholder
-      setPath(newPath as string);
+      const newPath = getPath(coordinates);
+      setPath(newPath);
     }
   }, [coordinates]);
+  // needs to be unique per components so the mask/fill works correctly.
+  // Generate a unique ID for this component instance.
+  const idRef = useRef(`svg-${Math.random().toString(36).substr(2, 9)}`);
+  const id = idRef.current;
+
 
   return (
     <SVGWrapper width="100%" height="100%" viewBox="0 0 500 100">
       <g>
         {!!path && coordinates ? (
           <>
-            <mask id="fill">
+            <mask id={`${id}-fill`}>
               <path
                 className="fill"
                 fill="white"
@@ -78,11 +81,10 @@ export function SvgGraph({ coordinates, strokeWidth = 5 }: SvgGraphProps) {
             <rect
               height="100%"
               width="100%"
-              id="fill-rect"
               fill="var(--ha-A400)"
-              mask="url(#fill)"
+              mask={`url(#${id}-fill)`}
             />
-            <mask id="line">
+            <mask id={`${id}-line`}>
               <path
                 fill="none"
                 stroke="var(--ha-A400)"
@@ -95,9 +97,8 @@ export function SvgGraph({ coordinates, strokeWidth = 5 }: SvgGraphProps) {
             <rect
               height="100%"
               width="100%"
-              id="rect"
               fill="var(--ha-A400)"
-              mask="url(#line)"
+              mask={`url(#${id}-line)`}
             />
           </>
         ) : (

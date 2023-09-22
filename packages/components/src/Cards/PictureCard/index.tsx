@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Icon } from "@iconify/react";
-import { Row, fallback } from "@components";
+import { Row, fallback, mq } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
@@ -23,7 +23,7 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  width: var(--ha-device-picture-card-width);
+  width: calc(100% - 2rem);
   display: flex;
   aspect-ratio: 16 / 9;
   flex-direction: column;
@@ -35,6 +35,7 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow, background-image;
   will-change: width, height;
+  flex-shrink: 1;
 
   ${(props) =>
     props.image &&
@@ -49,6 +50,30 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
     background-color: var(--ha-S400);
   }
+  ${mq(
+    ["mobile"],
+    `
+    width: calc(100% - 2rem);
+  `,
+  )}
+  ${mq(
+    ["tablet", "smallScreen"],
+    `
+    width: calc((50% - var(--gap, 0rem) / 2) - 2rem);
+  `,
+  )}
+  ${mq(
+    ["desktop", 'mediumScreen'],
+    `
+    width: calc(((100% - 2 * var(--gap, 0rem)) / 3) - 2rem);
+  `,
+  )}
+  ${mq(
+    ["largeDesktop"],
+    `
+    width: calc(((100% - 3 * var(--gap, 0rem)) / 4) - 2rem);
+  `,
+  )}
 `;
 
 const PictureCardFooter = styled(motion.h4)`

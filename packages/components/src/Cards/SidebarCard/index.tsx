@@ -3,7 +3,15 @@ import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { Icon } from "@iconify/react";
 import { useHass, useHash } from "@hakit/core";
-import { TimeCard, WeatherCard, Row, Column, fallback } from "@components";
+import {
+  TimeCard,
+  WeatherCard,
+  Row,
+  Column,
+  fallback,
+  mq,
+  useDevice,
+} from "@components";
 import { motion, AnimatePresence } from "framer-motion";
 import type { WeatherCardProps, TimeCardProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -17,6 +25,7 @@ const StyledTimeCard = styled(TimeCard)<{
   box-shadow: none;
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: padding;
+  border-radius: 0;
   &:hover {
     box-shadow: none;
     background: transparent;
@@ -33,6 +42,12 @@ const StyledTimeCard = styled(TimeCard)<{
       font-size: 0.7rem;
     }
   `}
+  ${mq(
+    ["mobile", "tablet", "smallScreen", 'mediumScreen', 'desktop', 'largeDesktop'],
+    `
+    width: 100%;
+  `,
+  )}
 `;
 
 const StyledSidebarCard = styled(motion.div)`
@@ -43,13 +58,23 @@ const StyledSidebarCard = styled(motion.div)`
   overflow: hidden;
   justify-content: flex-start;
   transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: min-width;
+  transition-property: left;
   transform-origin: left center;
   gap: 1rem;
   > * {
     transition: var(--ha-transition-duration) var(--ha-easing);
     transition-property: padding;
   }
+  ${mq(
+    ["tablet", "mobile"],
+    `
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: var(--ha-sidebar-offset);
+    z-index: calc(var(--ha-device-room-card-z-index) - 1);
+  `,
+  )}
 `;
 
 const Menu = styled(motion.ul)<{
@@ -164,6 +189,19 @@ const HamburgerMenu = styled(Menu)`
       }
     }
   }
+
+  ${mq(
+    ["tablet", "mobile"],
+    `
+    left: 0;
+    top: 0;
+    li {
+      a {
+        background-color: transparent;
+      }
+    }
+  `,
+  )}
 `;
 
 const Filler = styled.div`
@@ -181,6 +219,12 @@ const StyledWeatherCard = styled(WeatherCard)`
     box-shadow: none;
     background: transparent;
   }
+  ${mq(
+    ["mobile", "tablet", "smallScreen", 'mediumScreen', 'desktop', 'largeDesktop'],
+    `
+    width: 100%;
+  `,
+  )}
 `;
 
 const WeatherCardCustom = styled(StyledWeatherCard)<{
@@ -247,6 +291,7 @@ function _SidebarCard({
   const { useStore } = useHass();
   const routes = useStore((state) => state.routes);
   const [hash, setHash] = useHash();
+  const devices = useDevice();
   const concatenatedMenuItems = useMemo<MenuItem[]>(() => {
     const mappedRoutes = routes.map((route) => ({
       ...route,
@@ -273,6 +318,12 @@ function _SidebarCard({
             --ha-room-card-expanded-offset: ${open
               ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
               : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
+            --ha-sidebar-max-width: ${open
+              ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
+              : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
+            --ha-sidebar-offset: ${open
+              ? `0`
+              : `calc(var(--ha-sidebar-max-width) * -1)`};
           }
         `}
       />
@@ -320,7 +371,14 @@ function _SidebarCard({
                 open={open}
                 key="hamburger-menu-open"
                 animate={{
-                  width: !open ? "100%" : "40%",
+                  width:
+                    devices.mobile || devices.tablet
+                      ? "auto"
+                      : !open
+                      ? "100%"
+                      : "40%",
+                  position:
+                    devices.mobile || devices.tablet ? "fixed" : "relative",
                 }}
               >
                 <motion.li

@@ -361,13 +361,12 @@ function _ColorPicker({
           rgb: hex2rgb(hex.current as string),
           hs: _localValue.current,
         });
-
     },
     [disabled, _getValueFromCoord, onChange, updateColours],
   );
 
   useEffect(() => {
-    const ref = parentRef.current
+    const ref = parentRef.current;
     return () => {
       if (!ref) return;
       ref.style.removeProperty("--value-x");

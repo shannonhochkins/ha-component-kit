@@ -18,6 +18,7 @@ import {
   EntitiesCard,
   TriggerCard,
   GarbageCollectionCard,
+  useDevice,
   SensorCard
 } from '@components';
 // @ts-expect-error - don't need to type this
@@ -28,20 +29,14 @@ import livingRoom from './living-room.jpg';
 import diningRoom from './dining-room.jpg';
 
 function Template() {
+  const device = useDevice();
   return <HassConnect hassUrl="https://homeassistant.local:8123">
     <ThemeProvider includeThemeControls darkMode={true} />
-    <Global
-      styles={css`
-        :root {
-          --ha-hide-body-overflow-y: hidden;
-        }
-      `}
-    />
     <Row fullWidth wrap="nowrap" fullHeight alignItems="stretch">
       <SidebarCard startOpen={false} />
       <Column fullWidth gap="1rem" wrap="nowrap" justifyContent="flex-start" style={{
-        padding: '2rem',
-        overflow: 'auto'
+        padding: device.mobile || device.tablet ? '1rem' : '2rem',
+        overflowY: 'auto',
       }}>
         <Group title="Time & Date" layout="column">
           <TimeCard />
@@ -62,12 +57,10 @@ function Template() {
           <FabCard entity="vacuum.robot_vacuum" service="toggle" />
         </Group>
         <Group title="Miscellaneous" layout="column" gap="1rem">
-          <Row gap="1rem" alignItems="stretch">
+          <Row gap="1rem" alignItems="stretch" fullWidth>
             <EntitiesCard includeLastUpdated entities={['sensor.date', 'sensor.time', 'automation.dim_lights']} />
-            <MediaPlayerCard entity="media_player.fake_speaker" layout="slim" />
+            <MediaPlayerCard entity="media_player.fake_speaker_2" layout="slim" />
             <TriggerCard entity="scene.good_morning" />
-          </Row>
-          <Row gap="1rem" alignItems="stretch">
             <ClimateCard entity="climate.air_conditioner" />
             <WeatherCard entity="weather.entity" />
             <GarbageCollectionCard description="Here's the upcoming garbage collection schedule." schedules={[
@@ -110,8 +103,6 @@ function Template() {
                 ],
               },
             ]} />
-          </Row>
-          <Row gap="1rem">
             <RoomCard icon="mdi:office-chair" title="Office" hash="office" image={office}>
               <Column fullWidth gap="1rem">
                 <Group title="Lights & Switches">
@@ -123,7 +114,7 @@ function Template() {
                 </Group>
                 <Group title="Random Stuff">
                   <EntitiesCard includeLastUpdated entities={['sensor.date', 'sensor.time', 'automation.dim_lights']} />
-                  <MediaPlayerCard entity="media_player.fake_speaker" layout="slim" />
+                  <MediaPlayerCard entity="media_player.fake_speaker" />
                   <TriggerCard entity="scene.good_morning" />
                 </Group>
                 <Group title="Lights & Switches Fabs">
@@ -136,11 +127,22 @@ function Template() {
               </Column>
             </RoomCard>
             <RoomCard icon="mdi:sofa" title="Living Room" hash="living-room" image={livingRoom}>
-              <Group title="Living Entities">
-                <ButtonCard entity="light.fake_light_2" service="toggle" />
-                <ButtonCard entity="light.fake_light_3" service="toggle" />
-                <ButtonCard entity="vacuum.robot_vacuum" service="toggle" />
-              </Group>
+              <Column fullWidth gap="1rem">
+                <Row gap="1rem" fullWidth>
+                  <ButtonCard entity="light.fake_light_1" service="toggle" />
+                  <ButtonCard entity="switch.fake_switch" service="toggle" />
+                  <ButtonCard entity="media_player.fake_speaker" service="toggle" />
+                </Row>
+                <Row gap="1rem" fullWidth>
+                  <FabCard entity="switch.fake_switch" service="toggle" />
+                  <FabCard entity="vacuum.robot_vacuum" service="toggle" />
+                </Row>
+                <Group title="Living Entities">
+                  <ButtonCard entity="light.fake_light_2" service="toggle" />
+                  <ButtonCard entity="light.fake_light_3" service="toggle" />
+                  <ButtonCard entity="vacuum.robot_vacuum" service="toggle" />
+                </Group>
+              </Column>
             </RoomCard>
             <RoomCard icon="mdi:dining" title="Dining Room" hash="dining-room" image={diningRoom}>
               <Group title="Dining Entities">
@@ -160,10 +162,7 @@ function Template() {
 export default {
   title: "INTRODUCTION/Overview",
   parameters: {
-    padding: 0,
-    fillHeight: true,
-    height: "100%",
-    width: "100%",
+    standalone: true,
     addons: {
       showPanel: false,
     },

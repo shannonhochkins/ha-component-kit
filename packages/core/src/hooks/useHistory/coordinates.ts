@@ -13,7 +13,7 @@ const calcPoints = (
   width: number,
   detail: number,
   min: number,
-  max: number
+  max: number,
 ): number[][] => {
   const coords = [] as number[][];
   const height = 80;
@@ -28,7 +28,7 @@ const calcPoints = (
   const getCoords = (item: any[], i: number, offset = 0, depth = 1): void => {
     if (depth > 1 && item) {
       return item.forEach((subItem, index) =>
-        getCoords(subItem, i, index, depth - 1)
+        getCoords(subItem, i, index, depth - 1),
       );
     }
 
@@ -62,7 +62,7 @@ export const coordinates = (
   hours: number,
   width: number,
   detail: number,
-  limits?: { min?: number; max?: number }
+  limits?: { min?: number; max?: number },
 ): number[][] | undefined => {
   history.forEach((item) => {
     item.state = Number(item.state);
@@ -79,7 +79,11 @@ export const coordinates = (
       : Math.max(...history.map((item) => item.state));
   const now = new Date().getTime();
 
-  const reduce = (res: NumericEntityHistoryState[][], item: NumericEntityHistoryState, point: boolean): AccumulatorType => {
+  const reduce = (
+    res: NumericEntityHistoryState[][],
+    item: NumericEntityHistoryState,
+    point: boolean,
+  ): AccumulatorType => {
     const age = now - new Date(item.last_changed).getTime();
 
     let key = Math.abs(age / (1000 * 3600) - hours);
@@ -96,11 +100,15 @@ export const coordinates = (
     return res;
   };
   // @ts-expect-error - bad typing, fix later
-  history = history.reduce<NumericEntityHistoryState[][]>((res, item) => reduce(res, item, false), []);
+  history = history.reduce<NumericEntityHistoryState[][]>(
+    // @ts-expect-error - bad typing, fix later
+    (res, item) => reduce(res, item, false),
+    [],
+  );
   if (detail > 1) {
     history = history.map((entry) =>
       // @ts-expect-error - bad typing, fix later
-      entry.reduce((res, item) => reduce(res, item, true), [])
+      entry.reduce((res, item) => reduce(res, item, true), []),
     );
   }
   if (!history.length) {
@@ -120,7 +128,7 @@ export const coordinatesMinimalResponseCompressedState = (
   hours: number,
   width: number,
   detail: number,
-  limits?: { min?: number; max?: number }
+  limits?: { min?: number; max?: number },
 ): number[][] | undefined => {
   if (!history) {
     return undefined;

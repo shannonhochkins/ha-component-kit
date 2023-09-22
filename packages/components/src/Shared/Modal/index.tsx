@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { useKeyPress } from "react-use";
-import { FabCard, fallback, Column } from "@components";
+import { FabCard, fallback, Column, mq } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
 const ModalContainer = styled(motion.div)`
@@ -23,6 +23,13 @@ const ModalContainer = styled(motion.div)`
   justify-content: space-between;
   background-color: var(--ha-S200);
   z-index: var(--ha-modal-z-index);
+  ${mq(
+    ["tablet", "mobile"],
+    `
+    max-width: 95vw;
+    margin-left: calc(95vw / -2);
+  `,
+  )}
 `;
 const ModalInner = styled.div`
   display: flex;

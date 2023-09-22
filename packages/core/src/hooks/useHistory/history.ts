@@ -106,13 +106,13 @@ export const entityIdHistoryNeedsAttributes = (
   !entities[entityId] ||
   NEED_ATTRIBUTE_DOMAINS.includes(computeDomain(entityId as EntityName));
 interface SubscribeOptions {
-  connection: Connection,
-  entities: HassEntities,
-  callbackFunction: (data: HistoryStates) => void,
-  hoursToShow?: number,
-  minimalResponse?: boolean,
-  significantChangesOnly?: boolean,
-  noAttributes?: boolean
+  connection: Connection;
+  entities: HassEntities;
+  callbackFunction: (data: HistoryStates) => void;
+  hoursToShow?: number;
+  minimalResponse?: boolean;
+  significantChangesOnly?: boolean;
+  noAttributes?: boolean;
 }
 
 export const subscribeHistory = ({
@@ -129,14 +129,14 @@ export const subscribeHistory = ({
     type: "history/stream",
     entity_ids: entityIds,
     start_time: new Date(
-      new Date().getTime() - 60 * 60 * hoursToShow * 1000
+      new Date().getTime() - 60 * 60 * hoursToShow * 1000,
     ).toISOString(),
     minimal_response: minimalResponse,
     significant_changes_only: significantChangesOnly,
     no_attributes:
       noAttributes ??
       !entityIds.some((entityId) =>
-        entityIdHistoryNeedsAttributes(entities, entityId)
+        entityIdHistoryNeedsAttributes(entities, entityId),
       ),
   };
   const stream = new HistoryStream(connection, hoursToShow);

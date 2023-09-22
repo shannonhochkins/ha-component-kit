@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { SensorCard, ThemeProvider } from "@components";
 import { HassConnect } from "@hakit/core";
 
-
 function Render() {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
@@ -17,7 +16,7 @@ export default {
   component: SensorCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
   argTypes: {
     title: { control: "text" },

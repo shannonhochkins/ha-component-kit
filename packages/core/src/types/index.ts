@@ -5,9 +5,17 @@ import type {
 import type { DefaultServices } from "./supported-services";
 import type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 export type { DefinedPropertiesByDomain } from "./entitiesByDomain";
-import type { TimelineState, EntityHistoryState } from "../hooks/useHistory/history";
+import type {
+  TimelineState,
+  EntityHistoryState,
+} from "../hooks/useHistory/history";
 
-export type { HistoryStreamMessage, TimelineState, HistoryResult, EntityHistoryState } from "../hooks/useHistory/history";
+export type {
+  HistoryStreamMessage,
+  TimelineState,
+  HistoryResult,
+  EntityHistoryState,
+} from "../hooks/useHistory/history";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - ignore the next check as this is extendable from the client side.
@@ -75,7 +83,8 @@ export type HassEntityWithApi<T extends AllDomains> = HassEntityCustom &
     history: {
       timeline: TimelineState[];
       entityHistory: EntityHistoryState[];
-      coordinates: number[][]
+      coordinates: number[][];
+      loading: boolean;
     };
     api: SnakeToCamel<T> extends keyof SupportedServices<"no-target">
       ? SupportedServices<"no-target">[SnakeToCamel<T>]

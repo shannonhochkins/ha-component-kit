@@ -10,7 +10,7 @@ import {
   OFF,
   isUnavailableState,
 } from "@hakit/core";
-import { Ripples, fallback } from "@components";
+import { Ripples, fallback, mq } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { useLongPress } from "react-use";
@@ -24,7 +24,7 @@ const StyledClimateCard = styled(motion.div)`
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  width: var(--ha-device-climate-card-width);
+  width: calc(100% - 2rem);
   aspect-ratio: 2/0.74;
   display: flex;
   flex-direction: column;
@@ -43,6 +43,34 @@ const StyledClimateCard = styled(motion.div)`
     background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
+`;
+
+const StyledRipples = styled(Ripples)`
+  flex-shrink: 1;
+  ${mq(
+    ["mobile"],
+    `
+    width: 100%;
+  `,
+  )}
+  ${mq(
+    ["tablet", "smallScreen"],
+    `
+    width: calc(50% - var(--gap, 0rem) / 2);
+  `,
+  )}
+  ${mq(
+    ["desktop", 'mediumScreen'],
+    `
+    width: calc((100% - 2 * var(--gap, 0rem)) / 3);
+  `,
+  )}
+  ${mq(
+    ["largeDesktop"],
+    `
+    width: calc((100% - 3 * var(--gap, 0rem)) / 4);
+  `,
+  )}
 `;
 
 const Gap = styled.div`
@@ -135,7 +163,7 @@ function _ClimateCard({
 
   return (
     <>
-      <Ripples
+      <StyledRipples
         disabled={disabled || isUnavailable}
         borderRadius="1rem"
         whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
@@ -204,7 +232,7 @@ function _ClimateCard({
             ))}
           </Row>
         </StyledClimateCard>
-      </Ripples>
+      </StyledRipples>
       <ModalByEntityDomain
         hvacModes={hvacModes}
         hideCurrentTemperature={hideCurrentTemperature}

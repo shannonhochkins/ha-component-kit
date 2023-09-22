@@ -18,7 +18,6 @@ import type {
   Target,
   Route,
   Store,
-  HistoryStreamMessage,
 } from "@hakit/core";
 import { isArray } from "lodash";
 import { HassContext, useHash } from '@hakit/core';
@@ -97,6 +96,7 @@ class MockWebSocket {
   send() {}
   close() {}
 }
+
 class MockConnection extends Connection {
   private _mockListeners: { [event: string]: ((data: any) => void)[] };
   private _mockResponses: {
@@ -135,9 +135,9 @@ class MockConnection extends Connection {
     this._mockResponses[type] = data;
   }
   
-  async subscribeMessage<T>(cb: (message: T) => void, params: { [key: string]: any;}): Promise<boolean> {
-    cb(mockHistory as T);
-    return Promise.resolve(true);
+  async subscribeMessage<Result>(callback: (result: Result) => void): Promise<() => Promise<void>> {
+    callback(mockHistory as Result);
+    return () => Promise.resolve();
   }
 }
 

@@ -17,12 +17,12 @@ function Detailed() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
-      <Column gap="1rem" alignItems="flex-start">
+      <Column gap="1rem" alignItems="flex-start" fullWidth>
         <p>
           If you normally get your bins picked up on a weekly interval on a
           Thursday, and it's red one week, and green the next:
         </p>
-        <Row gap="1rem">
+        <Row gap="1rem" fullWidth>
           <GarbageCollectionCard
             schedules={[
               {
@@ -65,7 +65,7 @@ function Detailed() {
           If you get one bin picked up fortnightly, and another weekly, just
           omit the bin from the week:
         </p>
-        <Row gap="1rem">
+        <Row gap="1rem" fullWidth>
           <GarbageCollectionCard
             schedules={[
               {
@@ -108,7 +108,7 @@ function Detailed() {
           If you get your bins picked up fortnightly, set the frequency to
           fortnightly, and set the weeks that don't have pickup to null
         </p>
-        <Row gap="1rem">
+        <Row gap="1rem" fullWidth>
           <GarbageCollectionCard
             schedules={[
               {
@@ -157,7 +157,7 @@ export default {
   component: GarbageCollectionCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
   argTypes: {},
 } satisfies Meta<typeof GarbageCollectionCard>;

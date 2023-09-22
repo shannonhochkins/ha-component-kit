@@ -1,6 +1,10 @@
 # Overview
 
 This repository contains functionality to easily generate custom dashboards for Home Assistant using the official web socket connection that the standard lovelace dashboards use.
+
+Try it out now! [Demo](https://shannonhochkins.github.io/ha-component-kit/iframe.html?args=&id=introduction-overview--default&viewMode=story#)
+
+
 If you like anything here, be sure to 🌟 [my repo!](https://github.com/shannonhochkins/ha-component-kit)
 
 ![DEMO](https://github.com/shannonhochkins/ha-component-kit/blob/master/stories/hakit-demo.gif?raw=true)
@@ -24,8 +28,17 @@ Or, if you want to install manually on an existing project:
 
 There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
 
+### Known Issues
+- Anything else? Please, if you notice anything that doesn't feel / look right, please report it, i rely on user testing to make improvements.
+
 ### What's next?
+
+There's a Roadmap.md file with a few things i'm working on!
 Have your say! Vote for what you'd like to see next in [upcoming features!](https://github.com/shannonhochkins/ha-component-kit/discussions/28)
+
+### Vision
+
+homeassistant hacs integration - an integration that behaves similar to the lovelace dashboard, drag & drop, resizing, fluid containers using [react-grid-layoutd](https://github.com/react-grid-layout/react-grid-layout) - storing the layouts inside home assistant, card picker for slots, would be a game changer! I would love some help with this part whilst im improving and adding cards / functionality
 
 ### Contributors!
 

@@ -23,6 +23,11 @@ import { useLongPress } from "react-use";
 import { startCase, lowerCase } from "lodash";
 import { ErrorBoundary } from "react-error-boundary";
 
+const StyledRipples = styled(Ripples)`
+  flex-grow: 0;
+  flex-shrink: 0;
+`;
+
 const StyledFabCard = styled(motion.button)<{
   size: number;
   active: boolean;
@@ -38,6 +43,8 @@ const StyledFabCard = styled(motion.button)<{
   color: ${(props) =>
     props.active ? `var(--ha-A400)` : `var(--ha-S500-contrast)`};
   display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
   justify-content: center;
   align-items: center;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
@@ -180,7 +187,7 @@ function _FabCard<E extends EntityName>({
           entity?.state ? ` - ${entity.state}` : ""
         }`}
       >
-        <Ripples
+        <StyledRipples
           preventPropagation={preventPropagation}
           disabled={disabled || isUnavailable}
           borderRadius="50%"
@@ -201,7 +208,7 @@ function _FabCard<E extends EntityName>({
             {noIcon !== true && (iconElement || entityIcon || domainIcon)}
             {typeof children !== "undefined" ? children : undefined}
           </StyledFabCard>
-        </Ripples>
+        </StyledRipples>
       </Tooltip>
       {typeof _entity === "string" && (
         <ModalByEntityDomain

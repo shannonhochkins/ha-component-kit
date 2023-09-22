@@ -11,7 +11,7 @@ import { snakeCase, clamp } from "lodash";
 import { useGesture } from "@use-gesture/react";
 import type { HassEntity } from "home-assistant-js-websocket";
 import type { EntityName, FilterByDomain } from "@hakit/core";
-import { FabCard, fallback, Row, Column, RangeSlider } from "@components";
+import { FabCard, fallback, Row, Column, RangeSlider, mq } from "@components";
 import type { RowProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
@@ -34,17 +34,38 @@ const MediaPlayerWrapper = styled(motion.div)<{
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
+  width: 100%;
+  flex-shrink: 1;
+
   ${(props) =>
     props.layoutName === "card" &&
     `
-    width: var(--ha-device-media-card-width);
-    height: var(--ha-device-media-card-width);
+    aspect-ratio: 1/1;
   `}
-  ${(props) =>
-    props.layoutName === "slim" &&
+  ${mq(
+    ["mobile"],
     `
-    width: calc(var(--ha-device-media-card-width) * 1.5);
-  `}
+    width: 100%;
+  `,
+  )}
+  ${mq(
+    ["tablet", "smallScreen"],
+    `
+    width: calc(50% - var(--gap, 0rem) / 2);
+  `,
+  )}
+  ${mq(
+    ["desktop", 'mediumScreen'],
+    `
+    width: calc(((100% - 2 * var(--gap, 0rem)) / 3));
+  `,
+  )}
+  ${mq(
+    ["largeDesktop"],
+    `
+    width: calc(((100% - 3 * var(--gap, 0rem)) / 4));
+  `,
+  )}
   ${(props) => {
     if (props.backgroundImage) {
       return `
@@ -205,10 +226,23 @@ const VolumeSlider = styled.label<{
   layout: Layout;
 }>`
   display: inline-block;
-  width: ${(props) => (props.layout === "card" ? "80%" : "65%")};
+  width: auto;
   color: rgba(0, 0, 0, 0.87);
   font-size: 1rem;
   line-height: 1.5;
+  ${mq(
+    ["mobile"],
+    `
+    width: 40%;
+  `,
+  )}
+
+  ${mq(
+    ["tablet", "smallScreen"],
+    `
+    width: 60%;
+  `,
+  )}
 `;
 
 type VolumeLayout = "slider" | "buttons";
@@ -560,10 +594,11 @@ function _MediaPlayerCard({
     (media_duration?: number, media_position?: number) => {
       if (!media_duration || !media_position) return 0;
       const progress = (media_position / media_duration) * 100;
+      console.log("media", media_position, media_duration, progress);
       if (playerRef.current) {
         playerRef.current.style.setProperty(
           `--progress-${snakeCase(_entity)}-width`,
-          `${progress}%`,
+          `${clamp(progress, 0, 100)}%`,
         );
       }
     },
@@ -745,7 +780,12 @@ function _MediaPlayerCard({
             </Row>
 
             {!isUnavailable ? (
-              <Row gap="0.5rem" wrap="nowrap" fullWidth>
+              <Row
+                gap="0rem"
+                justifyContent="space-between"
+                wrap="nowrap"
+                fullWidth
+              >
                 {!isOff && <VolumeControls {...volumeProps} />}
                 {layout === "slim" && (
                   <PlaybackControls

@@ -26,7 +26,7 @@ export default {
   component: TimeCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    standalone: true,
   },
   argTypes: {
     title: { control: "text" },

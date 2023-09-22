@@ -11,12 +11,12 @@ function Template(args?: Partial<MediaPlayerCardProps>) {
   return (
     <HassConnect hassUrl={"http://homeassistant.local:8123"}>
       <ThemeProvider includeThemeControls />
-      <Column gap="1rem">
-        <Column gap="1rem">
+      <Column gap="1rem" fullWidth>
+        <Column gap="1rem" fullWidth>
           <p>Default Display</p>
           <MediaPlayerCard entity="media_player.fake_speaker" {...args} />
         </Column>
-        <Column gap="1rem">
+        <Column gap="1rem" fullWidth>
           <p>Volume controls as buttons, no thumbnail</p>
           <MediaPlayerCard
             entity="media_player.fake_speaker"
@@ -25,7 +25,7 @@ function Template(args?: Partial<MediaPlayerCardProps>) {
             {...args}
           />
         </Column>
-        <Column gap="1rem">
+        <Column gap="1rem" fullWidth>
           <p>Slim Card - default layout</p>
           <MediaPlayerCard
             layout="slim"
@@ -33,7 +33,7 @@ function Template(args?: Partial<MediaPlayerCardProps>) {
             {...args}
           />
         </Column>
-        <Column gap="1rem">
+        <Column gap="1rem" fullWidth>
           <p>Slim Card - volume buttons, no thumbnail</p>
           <MediaPlayerCard
             layout="slim"
@@ -53,7 +53,7 @@ export default {
   component: MediaPlayerCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
   argTypes: {
     entity: { control: "text" },

@@ -9,7 +9,7 @@ import {
 } from "@hakit/core";
 import type { EntityName, AllDomains, HassEntityWithApi } from "@hakit/core";
 import { Icon } from "@iconify/react";
-import { Row, Column, fallback } from "@components";
+import { Row, Column, fallback, mq } from "@components";
 import type { MotionProps } from "framer-motion";
 import { motion } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
@@ -20,7 +20,7 @@ const StyledEntitiesCard = styled(motion.button)`
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  width: var(--ha-device-entities-card-width);
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -30,13 +30,38 @@ const StyledEntitiesCard = styled(motion.button)`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow;
-
+  flex-shrink: 1;
   &:active {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
   &:hover {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
+
+  ${mq(
+    ["mobile"],
+    `
+    width: 100%;
+  `,
+  )}
+  ${mq(
+    ["tablet", "smallScreen"],
+    `
+    width: calc(50% - var(--gap, 0rem) / 2);
+  `,
+  )}
+  ${mq(
+    ["desktop", 'mediumScreen'],
+    `
+    width: calc((100% - 2 * var(--gap, 0rem)) / 3);
+  `,
+  )}
+  ${mq(
+    ["largeDesktop"],
+    `
+    width: calc((100% - 3 * var(--gap, 0rem)) / 4);
+  `,
+  )}
 `;
 
 const IconWrapper = styled(Row)`

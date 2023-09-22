@@ -15,7 +15,7 @@ import {
   useIconByEntity,
   isUnavailableState,
 } from "@hakit/core";
-import { Ripples, ModalByEntityDomain, fallback } from "@components";
+import { Ripples, ModalByEntityDomain, fallback, mq } from "@components";
 import { computeDomain } from "@utils/computeDomain";
 import type { MotionProps } from "framer-motion";
 import { motion } from "framer-motion";
@@ -28,7 +28,6 @@ const StyledButtonCard = styled(motion.button)`
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  width: var(--ha-device-button-card-width);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -38,6 +37,7 @@ const StyledButtonCard = styled(motion.button)`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color, box-shadow;
+  width: calc(100% - 2rem);
 
   &:disabled {
     cursor: not-allowed;
@@ -51,6 +51,46 @@ const StyledButtonCard = styled(motion.button)`
     background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
+  
+`;
+const StyledRipples = styled(Ripples)`
+  flex-shrink: 1;
+  ${mq(
+    ["mobile"],
+    `
+    width: 100%;
+  `,
+  )}
+  ${mq(
+    ["tablet"],
+    `
+    width: calc(50% - var(--gap, 0rem) / 2);
+  `,
+  )}
+  ${mq(
+    ["smallScreen"],
+    `
+    width: calc((100% - 2 * var(--gap, 0rem)) / 3);
+  `,
+  )}
+  ${mq(
+    ["mediumScreen"],
+    `
+    width: calc((100% - 3 * var(--gap, 0rem)) / 4);
+  `,
+  )}
+  ${mq(
+    ["desktop"],
+    `
+    width: calc((100% - 5 * var(--gap, 0rem)) / 6);
+  `,
+  )}
+  ${mq(
+    ["largeDesktop"],
+    `
+    width: calc((100% - 7 * var(--gap, 0rem)) / 8);
+  `,
+  )}
 `;
 
 interface ToggleProps {
@@ -260,7 +300,7 @@ function _ButtonCard<E extends EntityName>({
   );
   return (
     <>
-      <Ripples
+      <StyledRipples
         borderRadius="1rem"
         disabled={disabled || isUnavailable}
         whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
@@ -328,7 +368,7 @@ function _ButtonCard<E extends EntityName>({
             )}
           </LayoutRow>
         </StyledButtonCard>
-      </Ripples>
+      </StyledRipples>
       {typeof _entity === "string" && (
         <ModalByEntityDomain
           entity={_entity as EntityName}

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useHass, useSubscribeEntity } from "@core";
 import type { EntityName } from "@core";
 import {
@@ -9,7 +9,6 @@ import {
 import { subscribeHistory, computeHistory } from "./history";
 import type { TimelineState, EntityHistoryState } from "./history";
 import { coordinatesMinimalResponseCompressedState } from "./coordinates";
-
 
 export interface HistoryOptions {
   /** the number of hours to show @default 24 */
@@ -26,31 +25,41 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
   const connection = useStore((state) => state.connection);
   const config = useStore((state) => state.config);
   const getEntity = useSubscribeEntity(entityId);
-  const unsubscribe = useRef<Promise<() => Promise<void>> | null>(null);
   const [history, setHistory] = useState<{
     timeline: TimelineState[];
     entityHistory: EntityHistoryState[];
-    coordinates: number[][]
+    coordinates: number[][];
+    loading: boolean;
   }>({
+    loading: true,
     timeline: [],
     entityHistory: [],
-    coordinates: []
+    coordinates: [],
   });
 
-  if (unsubscribe.current === null) {
+  useEffect(() => {
     const entity = getEntity(true);
+    setHistory({
+      loading: true,
+      timeline: [],
+      entityHistory: [],
+      coordinates: [],
+    });
+    let isMounted = true; // To check if the component is still mounted
     if (entity !== null) {
       const entities = {
         [entityId]: entity,
       } satisfies HassEntities;
-      unsubscribe.current = subscribeHistory({
+      // Create a local variable to hold the unsubscribe function
+      let localUnsubscribe: null | (() => Promise<void>) = null;
+      subscribeHistory({
         connection: connection as Connection,
         entities,
         significantChangesOnly: options?.significantChangesOnly,
         minimalResponse: options?.minimalResponse,
         hoursToShow: options?.hoursToShow,
         callbackFunction: (history) => {
-          console.log('history', history, unsubscribe.current);
+          if (!isMounted) return;
           const computedHistory = computeHistory(
             config as HassConfig,
             entities,
@@ -59,43 +68,37 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
           const matchedHistory = computedHistory.timeline.filter(
             ({ entity_id }) => entity_id === entityId,
           );
-          // if (unsubscribe.current !== null) {
-            const coordinates = 
+          const coordinates =
             coordinatesMinimalResponseCompressedState(
               history[entityId],
               options?.hoursToShow ?? 24,
               500, // viewbox of the svgGraph
-              typeof options?.significantChangesOnly === 'undefined' || options?.significantChangesOnly === true ? 1 : 2,
-              options?.limits
+              typeof options?.significantChangesOnly === "undefined" ||
+                options?.significantChangesOnly === true
+                ? 1
+                : 2,
+              options?.limits,
             ) ?? [];
-            console.log('coordinates', coordinates);
-            setHistory({
-              timeline: matchedHistory.length > 0 ? matchedHistory[0].data : [],
-              entityHistory: history[entityId],
-              coordinates
-            });
-          // }
+          setHistory({
+            loading: false,
+            timeline: matchedHistory.length > 0 ? matchedHistory[0].data : [],
+            entityHistory: history[entityId],
+            coordinates,
+          });
         },
-      });
-      unsubscribe.current.catch(() => {
-      console.log('xxxx', unsubscribe.current);
-        if (unsubscribe.current) {
-          unsubscribe.current.then((unsubscribe) => unsubscribe?.());
-          unsubscribe.current = null;
-        }
-      });
+      })
+        .then((unsubscribe) => {
+          localUnsubscribe = unsubscribe;
+        })
+        .catch(() => {
+          localUnsubscribe?.();
+        });
+      return () => {
+        isMounted = false;
+        localUnsubscribe?.();
+      };
     }
-  }
-
-  useEffect(() => {
-    return () => {
-      if (unsubscribe.current !== null) {
-        console.log('xxxx2', unsubscribe.current);
-        unsubscribe.current.then((unsubscribe) => unsubscribe?.());
-        unsubscribe.current = null;
-      }
-    };
-  }, []);
+  }, [entityId, options, connection, config, getEntity]);
 
   return useMemo(() => history, [history]);
 };

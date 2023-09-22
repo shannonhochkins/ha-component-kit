@@ -10,7 +10,7 @@ import {
   isUnavailableState,
 } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
-import { Ripples, fallback } from "@components";
+import { Ripples, fallback, mq } from "@components";
 import { motion } from "framer-motion";
 import { MotionProps } from "framer-motion";
 
@@ -20,7 +20,7 @@ const StyledTriggerCard = styled(motion.button)`
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  width: var(--ha-device-scene-card-width);
+  width: calc(100% - 2rem);
   aspect-ratio: 2/0.74;
   display: flex;
   flex-direction: column;
@@ -31,6 +31,7 @@ const StyledTriggerCard = styled(motion.button)`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: box-shadow, background-color;
+  flex-shrink: 1;
   &:disabled {
     cursor: not-allowed;
     opacity: 0.8;
@@ -39,6 +40,32 @@ const StyledTriggerCard = styled(motion.button)`
     background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
+`;
+const StyledRipples = styled(Ripples)`
+  ${mq(
+    ["mobile"],
+    `
+    width: 100%;
+  `,
+  )}
+  ${mq(
+    ["tablet", "smallScreen"],
+    `
+    width: calc(50% - var(--gap, 0rem) / 2);
+  `,
+  )}
+  ${mq(
+    ["desktop", 'mediumScreen'],
+    `
+    width: calc(((100% - 2 * var(--gap, 0rem)) / 3));
+  `,
+  )}
+  ${mq(
+    ["largeDesktop"],
+    `
+    width: calc(((100% - 3 * var(--gap, 0rem)) / 4));
+  `,
+  )}
 `;
 
 const ToggleMessage = styled.span<ToggleProps>`
@@ -192,7 +219,7 @@ function _TriggerCard<E extends EntityName>({
   }, [entity, onClick, activeStateDuration, isUnavailable]);
 
   return (
-    <Ripples
+    <StyledRipples
       borderRadius="1rem"
       disabled={disabled}
       whileTap={{ scale: disabled ? 1 : 0.9 }}
@@ -228,7 +255,7 @@ function _TriggerCard<E extends EntityName>({
           </Toggle>
         </LayoutBetween>
       </StyledTriggerCard>
-    </Ripples>
+    </StyledRipples>
   );
 }
 /** The TriggerCard is a simple to use component to make it easy to trigger and a scene, automation, script or any other entity to trigger. */

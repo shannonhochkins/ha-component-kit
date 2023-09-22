@@ -36,7 +36,7 @@ interface UseEntityOptions {
   /** The amount of time to throttle updates in milliseconds */
   throttle?: number;
   returnNullIfNotFound?: boolean;
-  historyOptions?: HistoryOptions
+  historyOptions?: HistoryOptions;
 }
 
 const DEFAULT_OPTIONS: UseEntityOptions = {
@@ -46,7 +46,7 @@ const DEFAULT_OPTIONS: UseEntityOptions = {
     hoursToShow: 24,
     significantChangesOnly: true,
     minimalResponse: true,
-  }
+  },
 };
 
 type UseEntityReturnType<
