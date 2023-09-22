@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { SensorCard, ThemeProvider } from "@components";
+import { SensorCard, SensorCardProps, ThemeProvider } from "@components";
 import { HassConnect } from "@hakit/core";
 
-function Render() {
+function Render(args: SensorCardProps) {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider />
-      <SensorCard entity="sensor.air_conditioner_inside_temperature" />
+      <SensorCard entity="sensor.air_conditioner_inside_temperature" {...args} />
     </HassConnect>
   );
 }
