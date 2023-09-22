@@ -39,7 +39,7 @@ export const theme: ThemeParams = {
   },
   device: {
     roomCard: {
-      zIndex: 20
+      zIndex: 20,
     },
     sidebarCard: {
       width: {

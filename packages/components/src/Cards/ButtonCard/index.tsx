@@ -51,7 +51,6 @@ const StyledButtonCard = styled(motion.button)`
     background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
-  
 `;
 const StyledRipples = styled(Ripples)`
   flex-shrink: 1;
