@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Story } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 import { css, Global } from "@emotion/react";

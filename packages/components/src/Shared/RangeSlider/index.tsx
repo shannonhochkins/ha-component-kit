@@ -190,10 +190,10 @@ function _RangeSlider({
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (typeof _value === "number" && value !== _value) {
+    if (typeof _value === "number") {
       setValue(_value);
     }
-  }, [_value, value]);
+  }, [_value]);
 
   useEffect(() => {
     if (!rangeRef.current || hideTooltip) return;

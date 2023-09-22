@@ -244,7 +244,8 @@ function _SidebarCard({
   includeTimeCard = true,
 }: SidebarCardProps) {
   const [open, setOpen] = useState(startOpen);
-  const { routes } = useHass();
+  const { useStore } = useHass();
+  const routes = useStore((state) => state.routes);
   const [hash, setHash] = useHash();
   const concatenatedMenuItems = useMemo<MenuItem[]>(() => {
     const mappedRoutes = routes.map((route) => ({

@@ -125,11 +125,11 @@ function _RoomCard({
   animationDuration = 0.25,
   ...rest
 }: RoomCardProps) {
-  const { addRoute, useRoute } = useHass();
+  const { addRoute, getRoute } = useHass();
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   const [forceRender, setForceRender] = useState(false);
   const [animateChildren, setAnimateChildren] = useState(false);
-  const route = useRoute(hash);
+  const route = getRoute(hash);
   const actualHash = window.location.hash;
   const active = actualHash.replace("#", "") === hash.replace("#", "");
   // starts the trigger to close the full screen card

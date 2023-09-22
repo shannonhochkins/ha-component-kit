@@ -90,7 +90,10 @@
     "outDir": "dist/sync/cli"
   },
   "peerDependencies": {
+    "@emotion/react": ">=10.x",
+    "@emotion/styled": ">=10.x",
     "@iconify/react": ">=4.x",
+    "framer-motion": ">=10.x",
     "home-assistant-js-websocket": ">=8.x",
     "javascript-time-ago": ">=2.x",
     "lodash": ">=4.x",
@@ -100,21 +103,22 @@
     "react-router-dom": ">=6.x",
     "use-debounce": ">=9.x",
     "ws": ">=8.x.x",
-    "yargs": ">=17.x.x",
-    "@emotion/react": ">=10.x",
-    "@emotion/styled": ">=10.x",
-    "framer-motion": ">=10.x"
+    "yargs": ">=17.x.x"
   },
   "devDependencies": {
     "@liuli-util/vite-plugin-node": "^0.6.0",
     "@swc/core": "^1.3.78",
     "@types/javascript-time-ago": "^2.0.3",
     "@types/ws": "^8.5.5",
+    "deep-object-diff": "^1.1.9",
     "home-assistant-js-websocket": "^8.1.0",
     "prettier": "^3.0.2",
     "simple-git": "^3.19.1",
     "ts-morph": "^19.0.0",
     "ts-node": "^10.9.1",
     "tsup": "^7.1.0"
+  },
+  "dependencies": {
+    "zustand": "^4.4.1"
   }
 }

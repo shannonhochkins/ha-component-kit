@@ -76,7 +76,9 @@
     "react-error-boundary": "^4.x",
     "react-router-dom": ">=6.x",
     "react-thermostat": "^2.0.2",
-    "react-use": ">=17.x"
+    "react-use": ">=17.x",
+    "chart.js": "^4.x",
+    "react-chartjs-2": "^5.x"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.x",

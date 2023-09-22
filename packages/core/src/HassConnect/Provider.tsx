@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-} from "react";
+import React, { createContext, useEffect, useCallback, useRef } from "react";
 // types
 import type {
   Connection,
@@ -32,8 +26,7 @@ import {
   ERR_INVALID_AUTH,
   ERR_INVALID_HTTPS_TO_HTTP,
 } from "home-assistant-js-websocket";
-import { isArray, snakeCase } from "lodash";
-import { useDebouncedCallback } from "use-debounce";
+import { isArray, snakeCase, isEqual, isEmpty } from "lodash";
 import {
   ServiceData,
   SnakeOrCamelDomains,
@@ -42,8 +35,9 @@ import {
 } from "@typings";
 import { useHash } from "@core";
 import { saveTokens, loadTokens } from "./token-storage";
-import { subscribeHistory, computeHistory } from "./history";
-import type { HistoryResult } from "./history";
+import { diff } from "deep-object-diff";
+import { create } from "zustand";
+
 export interface CallServiceArgs<
   T extends SnakeOrCamelDomains,
   M extends DomainService<T>,
@@ -60,26 +54,70 @@ export interface Route {
   icon: string;
   active: boolean;
 }
-
-export interface HassContextProps {
+export interface Store {
+  entities: HassEntities;
+  setEntities: (entities: HassEntities) => void;
   /** The connection object from home-assistant-js-websocket */
   connection: Connection | null;
-  /** This is an internal function, no need to use this */
-  setConnection: (connection: Connection) => void;
-  /** will retrieve a HassEntity from the context */
-  getEntity: {
-    (entity: string): HassEntity;
-    (entity: string, returnNullIfNotFound?: boolean): HassEntity | null;
-    (entity: string, returnNullIfNotFound?: true): HassEntity | null;
-    (entity: string, returnNullIfNotFound?: false): HassEntity;
-  };
-  /** will retrieve all HassEntities from the context */
-  getAllEntities: () => HassEntities;
-  /** will call a service for home assistant */
-  callService: <T extends SnakeOrCamelDomains, M extends DomainService<T>>(
-    args: CallServiceArgs<T, M>,
-  ) => void;
-  getHistory: () => HistoryResult;
+  setConnection: (connection: Connection | null) => void;
+  /** any errors caught during core authentication */
+  error: null | string;
+  setError: (error: string | null) => void;
+  /** if there was an issue connecting to HA */
+  cannotConnect: boolean;
+  setCannotConnect: (cannotConnect: boolean) => void;
+  /** This is an internal value, no need to use this */
+  ready: boolean;
+  setReady: (ready: boolean) => void;
+  /** The last time the context object was updated */
+  lastUpdated: Date;
+  setLastUpdated: (lastUpdated: Date) => void;
+  /** returns available routes */
+  routes: Route[];
+  setRoutes: (routes: Route[]) => void;
+  /** the home assistant authentication object */
+  auth: Auth | null;
+  setAuth: (auth: Auth | null) => void;
+  /** the home assistant configuration */
+  config: HassConfig | null;
+  setConfig: (config: HassConfig | null) => void;
+}
+
+const useStore = create<Store>((set) => ({
+  routes: [],
+  setRoutes: (routes) => set(() => ({ routes })),
+  entities: {},
+  setEntities: (newEntities) =>
+    set((state) => {
+      // update the stateEntities with the newEntities with the keys that have changed
+      Object.keys(newEntities).forEach((entityId) => {
+        state.entities[entityId] = {
+          ...state.entities[entityId],
+          ...newEntities[entityId],
+        };
+      });
+      return state;
+    }),
+  connection: null,
+  setConnection: (connection) => set({ connection }),
+  cannotConnect: false,
+  setCannotConnect: (cannotConnect) => set({ cannotConnect }),
+  ready: false,
+  setReady: (ready) => set({ ready }),
+  lastUpdated: new Date(),
+  setLastUpdated: (lastUpdated) => set({ lastUpdated }),
+  auth: null,
+  setAuth: (auth) => set({ auth }),
+  config: null,
+  setConfig: (config) => set({ config }),
+  error: null,
+  setError: (error) => set({ error }),
+}));
+
+export interface HassContextProps {
+  useStore: typeof useStore;
+  /** logout of HA */
+  logout: () => void;
   /** will retrieve all the HassEntities states */
   getStates: () => Promise<HassEntity[] | null>;
   /** will retrieve all the HassServices */
@@ -88,21 +126,16 @@ export interface HassContextProps {
   getConfig: () => Promise<HassConfig | null>;
   /** will retrieve HassUser */
   getUser: () => Promise<HassUser | null>;
-  /** This is an internal value, no need to use this */
-  ready: boolean;
-  /** The last time the context object was updated */
-  lastUpdated: Date;
+  /** function to call a service through web sockets */
+  callService: <T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+    args: CallServiceArgs<T, M>,
+  ) => void;
   /** add a new route to the provider */
   addRoute(route: Route): void;
-  useRoute(hash: string): Route | null;
-  /** returns available routes */
-  routes: Route[];
-  /** the home assistant authentication object */
-  auth: Auth;
-  /** the home assistant configuration */
-  config: HassConfig | null;
-  /** logout of HA */
-  logout: () => void;
+  /** retrieve a route by name */
+  getRoute(hash: string): Route | null;
+  /** will retrieve all HassEntities from the context */
+  getAllEntities: () => HassEntities;
 }
 
 export const HassContext = createContext<HassContextProps>(
@@ -114,8 +147,6 @@ export interface HassProviderProps {
   children: (ready: boolean) => React.ReactNode;
   /** the home assistant url */
   hassUrl: string;
-  /** the throttle controller for updated @default 150 */
-  throttle?: number;
   /** should you want to use a locally hosted home assistant instance, enable this flag @default false */
   allowNonSecure?: boolean;
 }
@@ -207,79 +238,80 @@ const tryConnection = async (
     auth,
   };
 };
+const IGNORE_KEYS_FOR_DIFF = ["last_changed", "last_updated", "context"];
+const ignoreForDiffCheck = (
+  obj: HassEntities,
+  keys: string[] = IGNORE_KEYS_FOR_DIFF,
+): {
+  [key: string]: Omit<HassEntity, "last_changed" | "last_updated" | "context">;
+} => {
+  return Object.fromEntries(
+    Object.entries(obj).map(([entityId, entityData]) => [
+      entityId,
+      Object.fromEntries(
+        Object.entries(entityData).filter(([key]) => !keys.includes(key)),
+      ),
+    ]),
+  ) as {
+    [key: string]: Omit<
+      HassEntity,
+      "last_changed" | "last_updated" | "context"
+    >;
+  };
+};
 
 export function HassProvider({
   children,
   hassUrl,
-  throttle = 150,
   allowNonSecure = false,
-}: HassProviderProps): JSX.Element {
-  const [_hash] = useHash();
-  const authenticating = useRef(false);
-  const [routes, setRoutes] = useState<Route[]>([]);
-  const [connection, setConnection] = useState<Connection | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
-  const [history, setHistory] = useState<HistoryResult>({
-    line: [],
-    timeline: [],
-  });
-  const [ready, setReady] = useState(false);
-  const [config, setConfig] = useState<HassConfig | null>(null);
-  const [cannotConnect, setCannotConnect] = useState(false);
-  const [auth, setAuth] = useState<Auth | null>(null);
+}: HassProviderProps) {
   const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
-  const historySubscription = useRef<null | Promise<() => Promise<void>>>();
-  const [_entities, setEntities] = useState<HassEntities>({});
-  const [error, setError] = useState<string | null>(null);
-  const getStates = useCallback(
-    async () => (connection === null ? null : await _getStates(connection)),
-    [connection],
-  );
-  const getServices = useCallback(
-    async () => (connection === null ? null : await _getServices(connection)),
-    [connection],
-  );
-  const getConfig = useCallback(
-    async () => (connection === null ? null : await _getConfig(connection)),
-    [connection],
-  );
-  const getUser = useCallback(
-    async () => (connection === null ? null : await _getUser(connection)),
-    [connection],
-  );
-  const getAllEntities = useCallback(() => _entities, [_entities]);
-  const getEntity = (entity: string, returnNullIfNotFound: boolean) => {
-    if (entity === "unknown") {
-      return null;
-    }
-    const found = _entities[entity];
-    if (!found) {
-      if (returnNullIfNotFound || entity === "unknown") return null;
-      throw new Error(`Entity ${entity} not found`);
-    }
-    return found;
-  };
-
-  const setEntitiesDebounce = useDebouncedCallback<
-    (entities: HassEntities) => void
-  >((entities) => {
-    setEntities(entities);
-    setLastUpdated(new Date());
-    if (!ready) setReady(true);
-  }, throttle);
+  const authenticating = useRef(false);
+  const fetchedConfig = useRef(false);
+  const [_hash] = useHash();
+  const routes = useStore((store) => store.routes);
+  const setRoutes = useStore((store) => store.setRoutes);
+  const connection = useStore((store) => store.connection);
+  const setConnection = useStore((store) => store.setConnection);
+  const entities = useStore((store) => store.entities);
+  const setEntities = useStore((store) => store.setEntities);
+  const error = useStore((store) => store.error);
+  const setError = useStore((store) => store.setError);
+  const cannotConnect = useStore((store) => store.cannotConnect);
+  const setCannotConnect = useStore((store) => store.setCannotConnect);
+  const setAuth = useStore((store) => store.setAuth);
+  const ready = useStore((store) => store.ready);
+  const setReady = useStore((store) => store.setReady);
+  const config = useStore((store) => store.config);
+  const setConfig = useStore((store) => store.setConfig);
+  const setLastUpdated = useStore((store) => store.setLastUpdated);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const reset = useCallback(() => {
     // when the hassUrl changes, reset some properties and re-authenticate
-    setReady(false);
-    setEntities({});
-    setConnection(null);
     setAuth(null);
+    setConnection(null);
+    setEntities({});
+    setConfig(null);
+    setError(null);
+    setCannotConnect(false);
+    setReady(false);
+    setRoutes([]);
     authenticating.current = false;
     if (entityUnsubscribe.current) {
       entityUnsubscribe.current();
       entityUnsubscribe.current = null;
     }
-  }, []);
+  }, [
+    setAuth,
+    setCannotConnect,
+    setConfig,
+    setConnection,
+    setEntities,
+    setError,
+    setReady,
+    setRoutes,
+  ]);
 
   const logout = useCallback(async () => {
     try {
@@ -289,42 +321,7 @@ export function HassProvider({
     } catch (err: unknown) {
       setError("Unable to log out!");
     }
-  }, [reset]);
-
-  const callService = useCallback(
-    async <T extends SnakeOrCamelDomains, M extends DomainService<T>>({
-      domain,
-      service,
-      serviceData,
-      target: _target,
-    }: CallServiceArgs<T, M>) => {
-      const target =
-        typeof _target === "string" || isArray(_target)
-          ? {
-              entity_id: _target,
-            }
-          : _target;
-      if (typeof service !== "string") {
-        throw new Error("service must be a string");
-      }
-      if (connection && ready) {
-        try {
-          return await _callService(
-            connection,
-            snakeCase(domain),
-            snakeCase(service),
-            // purposely cast here as we know it's correct
-            serviceData as object,
-            target,
-          );
-        } catch (e) {
-          // TODO - raise error to client here
-        }
-      }
-      return false;
-    },
-    [connection, ready],
-  );
+  }, [reset, setError]);
 
   const handleConnect = useCallback(async () => {
     let connectionResponse: ConnectionResponse;
@@ -374,42 +371,168 @@ export function HassProvider({
     } else if (connectionResponse.type === "failed") {
       setCannotConnect(true);
     } else if (connectionResponse.type === "success") {
-      // // store a reference to the authentication object
+      // store a reference to the authentication object
       setAuth(connectionResponse.auth);
-      // // store the connection to pass to the provider
+      // store the connection to pass to the provider
       setConnection(connectionResponse.connection);
+      return;
     }
     authenticating.current = false;
-  }, [hassUrl, allowNonSecure]);
+  }, [
+    hassUrl,
+    allowNonSecure,
+    setError,
+    setAuth,
+    setConnection,
+    setCannotConnect,
+  ]);
 
-  useEffect(() => {
-    if (!authenticating.current) {
-      authenticating.current = true;
-      handleConnect();
-    }
-  }, [handleConnect]);
+  const getStates = useCallback(
+    async () => (connection === null ? null : await _getStates(connection)),
+    [connection],
+  );
+  const getServices = useCallback(
+    async () => (connection === null ? null : await _getServices(connection)),
+    [connection],
+  );
+  const getConfig = useCallback(
+    async () => (connection === null ? null : await _getConfig(connection)),
+    [connection],
+  );
+  const getUser = useCallback(
+    async () => (connection === null ? null : await _getUser(connection)),
+    [connection],
+  );
 
-  useEffect(() => {
-    // if preloadConfiguration is set to true, load it if we haven't already
-    if (config === null) {
-      getConfig().then((config) => {
+  if (config === null && !fetchedConfig.current && connection !== null) {
+    fetchedConfig.current = true;
+    getConfig()
+      .then((config) => {
         setConfig(config);
+      })
+      .catch((e) => {
+        fetchedConfig.current = false;
+        setError(
+          `Error retrieving configuration from Home Assistant: ${
+            e?.message ?? e
+          }`,
+        );
       });
-    }
-  }, [getConfig, config]);
+  }
 
-  const getHistory = useCallback(() => {
-    return history;
-  }, [history]);
+  const addRoute = useCallback(
+    (route: Omit<Route, "active">) => {
+      const exists =
+        routes.find((_route) => _route.hash === route.hash) !== undefined;
+      if (!exists) {
+        // if the current has value is the same as the hash, we're active
+        const hashWithoutPound = _hash.replace("#", "");
+        const active =
+          hashWithoutPound !== "" && hashWithoutPound === route.hash;
+        setRoutes([
+          ...routes,
+          {
+            ...route,
+            active,
+          },
+        ]);
+      }
+    },
+    [_hash, routes, setRoutes],
+  );
+
+  const getRoute = useCallback(
+    (hash: string) => {
+      const route = routes.find((route) => route.hash === hash);
+      return route || null;
+    },
+    [routes],
+  );
 
   useEffect(() => {
-    // don't re-subscribe if we already are
-    if (entityUnsubscribe.current) return;
-    // subscribe to the entities sockets when we have a connection
-    if (connection) {
+    const newRoutes = routes.map((route) => {
+      // if the current has value is the same as the hash, we're active
+      const hashWithoutPound = _hash.replace("#", "");
+      const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
+      return {
+        ...route,
+        active,
+      };
+    });
+    if (!isEqual(newRoutes, routes)) {
+      setRoutes(newRoutes);
+    }
+  }, [_hash, routes, setRoutes]);
+
+  const getAllEntities = useCallback(() => entities, [entities]);
+
+  const callService = useCallback(
+    async <T extends SnakeOrCamelDomains, M extends DomainService<T>>({
+      domain,
+      service,
+      serviceData,
+      target: _target,
+    }: CallServiceArgs<T, M>) => {
+      const target =
+        typeof _target === "string" || isArray(_target)
+          ? {
+              entity_id: _target,
+            }
+          : _target;
+      if (typeof service !== "string") {
+        throw new Error("service must be a string");
+      }
+      if (connection && ready) {
+        try {
+          return await _callService(
+            connection,
+            snakeCase(domain),
+            snakeCase(service),
+            // purposely cast here as we know it's correct
+            serviceData as object,
+            target,
+          );
+        } catch (e) {
+          // TODO - raise error to client here
+        }
+      }
+      return false;
+    },
+    [connection, ready],
+  );
+
+  useEffect(() => {
+    const shouldSet = !ready && connection !== null && config !== null;
+    // subscribe to the entities sockets when we have a connection, don't re-subscribe if we already have
+    if (connection && entityUnsubscribe.current === null) {
       // now subscribe to the entities
       entityUnsubscribe.current = subscribeEntities(connection, ($entities) => {
-        setEntitiesDebounce($entities);
+        const entitiesDiffChanged = diff(
+          ignoreForDiffCheck(entities),
+          ignoreForDiffCheck($entities),
+        ) as HassEntities;
+        if (!isEmpty(entitiesDiffChanged)) {
+          if (timerRef.current) clearTimeout(timerRef.current);
+          // purposely not making this throttle configurable
+          // because lights can animate etc, which doesn't need to reflect in the UI
+          // simply throttle updates every 50ms
+          const newEntities = Object.keys(
+            entitiesDiffChanged,
+          ).reduce<HassEntities>(
+            (acc, entityId) => ({
+              ...acc,
+              [entityId]: $entities[entityId],
+            }),
+            {},
+          );
+          timerRef.current = setTimeout(() => {
+            setEntities(newEntities);
+            setLastUpdated(new Date());
+          }, 50);
+          if (!ready) {
+            setReady(shouldSet);
+          }
+        }
       });
     }
     return () => {
@@ -418,98 +541,20 @@ export function HassProvider({
         entityUnsubscribe.current = null;
       }
     };
-  }, [connection, setEntitiesDebounce]);
-
-  const unsubscribeHistory = useCallback(() => {
-    if (historySubscription.current) {
-      historySubscription.current.then((unsubscribe) => unsubscribe?.());
-      historySubscription.current = null;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!connection || !config) return;
-    unsubscribeHistory();
-    const start = new Date();
-    start.setHours(start.getHours() - 1, 0, 0, 0);
-    const startDate = start;
-
-    const end = new Date();
-    end.setHours(end.getHours() + 2, 0, 0, 0);
-    const endDate = end;
-    const entityIds = Object.keys(_entities);
-    historySubscription.current = subscribeHistory(
-      connection,
-      _entities,
-      (history) => {
-        const computedHistory = computeHistory(config, _entities, history);
-        setHistory(computedHistory);
-
-        // this._stateHistory = computeHistory(
-        //   this.hass,
-        //   history,
-        //   this.hass.localize
-        // );
-      },
-      startDate,
-      endDate,
-      entityIds,
-    );
-    historySubscription.current.catch((err) => {
-      console.log("cathing error", err);
-      unsubscribeHistory();
-    });
-    return () => {
-      unsubscribeHistory();
-    };
-  }, [config, connection, _entities, unsubscribeHistory]);
-
-  useEffect(() => {
-    setRoutes((routes) =>
-      routes.map((route) => {
-        // if the current has value is the same as the hash, we're active
-        const hashWithoutPound = _hash.replace("#", "");
-        const active =
-          hashWithoutPound !== "" && hashWithoutPound === route.hash;
-        return {
-          ...route,
-          active,
-        };
-      }),
-    );
-  }, [_hash]);
-
-  const addRoute = useCallback(
-    (route: Omit<Route, "active">) => {
-      setRoutes((routes) => {
-        const exists =
-          routes.find((_route) => _route.hash === route.hash) !== undefined;
-        if (!exists) {
-          // if the current has value is the same as the hash, we're active
-          const hashWithoutPound = _hash.replace("#", "");
-          const active =
-            hashWithoutPound !== "" && hashWithoutPound === route.hash;
-          return [
-            ...routes,
-            {
-              ...route,
-              active,
-            },
-          ];
-        }
-        return routes;
-      });
-    },
-    [_hash],
-  );
-
-  const useRoute = useCallback(
-    (hash: string) => {
-      const route = routes.find((route) => route.hash === hash);
-      return route || null;
-    },
-    [routes],
-  );
+  }, [
+    connection,
+    entities,
+    config,
+    ready,
+    setEntities,
+    setLastUpdated,
+    setReady,
+  ]);
+  // authenticate with ha
+  if (!authenticating.current) {
+    authenticating.current = true;
+    handleConnect();
+  }
 
   if (cannotConnect) {
     return (
@@ -519,30 +564,19 @@ export function HassProvider({
       </p>
     );
   }
-
   return (
     <HassContext.Provider
       value={{
-        connection,
-        setConnection,
-        // purposely cast here so we have correct types on usage side
-        getEntity: getEntity as HassContextProps["getEntity"],
-        getAllEntities,
-        getHistory,
-        callService,
+        useStore,
+        logout,
+        addRoute,
+        getRoute,
         getStates,
         getServices,
         getConfig,
         getUser,
-        addRoute,
-        useRoute,
-        routes,
-        ready,
-        lastUpdated,
-        logout,
-        /** simply wont be able to read this value unless authentication is successful, okay to cast here */
-        auth: auth as Auth,
-        config,
+        getAllEntities,
+        callService,
       }}
     >
       {error === null ? children(ready) : error}

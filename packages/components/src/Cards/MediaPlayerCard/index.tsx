@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useMemo } from "react";
+import { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import {
   useApi,
   useHass,
@@ -361,13 +361,46 @@ function VolumeControls({
   layout,
 }: VolumeProps) {
   const entity = useEntity(_entity);
-  const api = useApi("mediaPlayer");
   const { volume_level, is_volume_muted } = entity.attributes;
+  const [volume, _setVolume] = useState(volume_level);
+  const api = useApi("mediaPlayer");
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const supportsVolumeSet = supportsFeatureFromAttributes(entity.attributes, 4);
   const supportsVolumeMute = supportsFeatureFromAttributes(
     entity.attributes,
     8,
   );
+  const setVolume = useCallback(
+    (volume: number) => {
+      _setVolume(volume);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      timerRef.current = setTimeout(() => {
+        api.volumeSet(allEntityIds, {
+          volume_level: volume,
+        });
+      }, 500);
+    },
+    [api, allEntityIds, _setVolume],
+  );
+
+  // useEffect(() => {
+  // if (
+  //   volume_level !== volume &&
+  //   volume !== undefined &&
+  //   volume_level !== undefined
+  // ) {
+  //   _setVolume(volume_level);
+  // }
+  //   return () => {
+  //     if (timerRef.current) {
+  //       console.log('unmounting')
+  //       clearTimeout(timerRef.current);
+  //     }
+  //   }
+  // }, [volume, _setVolume, volume_level]);
+
   return (
     <>
       {!hideMute && supportsVolumeMute && (
@@ -406,14 +439,10 @@ function VolumeControls({
             max={1}
             disabled={disabled}
             step={0.02}
-            value={is_volume_muted ? 0 : volume_level}
+            value={is_volume_muted ? 0 : volume}
             formatTooltipValue={(value) => `${Math.round(value * 100)}%`}
             tooltipSize={2.2}
-            onChange={(value) => {
-              api.volumeSet(allEntityIds, {
-                volume_level: value,
-              });
-            }}
+            onChange={(value) => setVolume(value)}
           />
         </VolumeSlider>
       )}
@@ -463,13 +492,14 @@ function _MediaPlayerCard({
 }: MediaPlayerCardProps) {
   const entity = useEntity(_entity);
   const api = useApi("mediaPlayer");
+  const { useStore } = useHass();
+  const entities = useStore((state) => state.entities);
   const interval = useRef<NodeJS.Timeout | null>(null);
-  const { getEntity } = useHass();
   const progressRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
   const clockRef = useRef<HTMLDivElement>(null);
   const groupedEntities = groupMembers
-    .map((entity) => getEntity(entity, true))
+    .map((entity) => entities[entity] ?? null)
     .filter(
       (entity): entity is HassEntity =>
         entity !== null && !isUnavailableState(entity.state),

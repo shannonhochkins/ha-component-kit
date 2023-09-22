@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { isEqual, omit } from "lodash";
+import { isEmpty, omit } from "lodash";
 import TimeAgo from "javascript-time-ago";
-
 import type {
   HassEntityWithApi,
   HassEntityCustom,
@@ -9,10 +8,11 @@ import type {
   EntityName,
 } from "@typings";
 import type { HassEntity } from "home-assistant-js-websocket";
-import { useHass, useApi, useHistory } from "@core";
+import { useApi, useHistory, useSubscribeEntity } from "@core";
 import { useDebouncedCallback } from "use-debounce";
 import { getCssColorValue } from "@utils/colors";
 import { computeDomain } from "@utils/computeDomain";
+import { diff } from "deep-object-diff";
 
 // English.
 import en from "javascript-time-ago/locale/en.json";
@@ -57,9 +57,8 @@ export function useEntity<
     ...DEFAULT_OPTIONS,
     ...options,
   };
-  const { getEntity } = useHass();
-  const timeSensor = getEntity("sensor.time", true);
-  const matchedEntity = getEntity(entity, returnNullIfNotFound);
+  const getEntity = useSubscribeEntity(entity);
+  const matchedEntity = getEntity(returnNullIfNotFound);
   const domain = computeDomain(entity) as ExtractDomain<E>;
   const api = useApi(domain, entity);
   const history = useHistory(entity);
@@ -103,20 +102,20 @@ export function useEntity<
 
   useEffect(() => {
     setEntity((entity) => (entity === null ? null : formatEntity(entity)));
-  }, [formatEntity, timeSensor]);
+  }, [formatEntity]);
 
   useEffect(() => {
-    const foundEntity = getEntity(entity, true);
-    if (
-      foundEntity &&
-      !isEqual(
-        omit(foundEntity, "custom", "last_changed", "last_updated"),
-        omit($entity, "custom", "last_changed", "last_updated"),
-      )
-    ) {
-      debounceUpdate(foundEntity);
+    const foundEntity = getEntity(true);
+    if (foundEntity && $entity) {
+      const diffed = diff(
+        omit(foundEntity, "custom", "last_changed", "last_updated", "context"),
+        omit($entity, "custom", "last_changed", "last_updated", "context"),
+      );
+      if (!isEmpty(diffed)) {
+        debounceUpdate(foundEntity);
+      }
     }
-  }, [$entity, matchedEntity, debounceUpdate, entity, getEntity]);
+  }, [$entity, debounceUpdate, getEntity]);
 
   return useMemo(() => {
     if ($entity === null) {
@@ -128,5 +127,5 @@ export function useEntity<
       history,
       api,
     } as unknown as UseEntityReturnType<E, O>;
-  }, [$entity, api, history]);
+  }, [$entity, history, api]);
 }

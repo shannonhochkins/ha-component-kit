@@ -5,9 +5,9 @@ import type {
 import type { DefaultServices } from "./supported-services";
 import type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 export type { DefinedPropertiesByDomain } from "./entitiesByDomain";
-import type { TimelineState } from "../HassConnect/history";
+import type { TimelineState } from "../hooks/useHistory/history";
 
-export type { TimelineState, HistoryResult } from "../HassConnect/history";
+export type { TimelineState, HistoryResult } from "../hooks/useHistory/history";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - ignore the next check as this is extendable from the client side.

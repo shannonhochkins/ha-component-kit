@@ -1,13 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, TimeCard } from "@components";
 import type { TimeCardProps } from "@components";
-import { HassConnect } from "@hakit/core";
+import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<TimeCardProps>) {
   return (
-    <HassConnect hassUrl="http://homeassistant.local:8123" options={{
-      allowNonSecure: true
-    }}>
+    <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />
       <TimeCard {...args} />
     </HassConnect>
