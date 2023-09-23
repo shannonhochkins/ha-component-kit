@@ -43,6 +43,16 @@ There's extensive [documentation](https://shannonhochkins.github.io/ha-component
 12. [TriggerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-triggercard--docs)
 13. [WeatherCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-weathercard--docs)
 
+### Other Useful Components
+1. [Group](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-group--docs) - a component that allows collapsible sections for other cards/components
+2. [Alert](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-shared-alert--docs) - Display warnings, errors, success and general information
+3. [Column](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-shared-column--docs) - A card to layout components in a column with all flex properties available
+4. [ControlSlider](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-shared-controlslider--docs) - If you're used to the slider to control brightness, curtain position in home assistant, this is identical 
+5. [Row](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-shared-row--docs) - A card to layout components in a Row supporting all flex properties
+6. [RangeSlider](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-shared-rangeslider--docs) - A simple slider similar to a volume slider 
+7. [Tooltip](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-shared-tooltip--docs) - A simple tooltip component to wrap around anything and provide more information on hover
+8. [Modal](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-shared-modal--docs) - A Popup/Modal to show more information, can be triggered by any action
+
 ### Known Issues
 - Anything else? Please, if you notice anything that doesn't feel / look right, please report it, i rely on user testing to make improvements.
 
