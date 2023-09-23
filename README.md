@@ -41,7 +41,7 @@ There's extensive [documentation](https://shannonhochkins.github.io/ha-component
 10. [SidebarCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-sidebarcard--docs)
 11. [TimeCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-timecard--docs)
 12. [TriggerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-triggercard--docs)
-13 [WeatherCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-weathercard--docs)
+13. [WeatherCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-weathercard--docs)
 
 ### Known Issues
 - Anything else? Please, if you notice anything that doesn't feel / look right, please report it, i rely on user testing to make improvements.
