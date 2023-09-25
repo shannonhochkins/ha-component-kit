@@ -81,5 +81,8 @@
   "devDependencies": {
     "@emotion/babel-plugin": "^11.x",
     "vite-plugin-svgr": "^3.2.0"
+  },
+  "dependencies": {
+    "weather-formulas": "^1.0.2"
   }
 }
