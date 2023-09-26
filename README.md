@@ -28,6 +28,12 @@ Or, if you want to install [@hakit/core](https://www.npmjs.com/package/@hakit/co
 
 There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
 
+### NEWS!
+
+I'm working on a home assistant addon to create dashboards with these components, also making it easier to introduce custom components from the public and making it easier to apply style changes
+
+[Home Assistant Addon](https://github.com/shannonhochkins/hakit) - 🌟 it if you're interested
+
 ### Supported Cards
 1. [ButtonCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-buttoncard--docs)
 2. [ClimateCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-climatecard--docs)
