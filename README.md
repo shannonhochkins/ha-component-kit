@@ -21,7 +21,7 @@ There's an npm create command which will setup react, typescript, vite & hakit a
   npm create hakit@latest
 ```
 
-Or, if you want to install manually on an existing project:
+Or, if you want to install [@hakit/core](https://www.npmjs.com/package/@hakit/core) or [@hakit/components](https://www.npmjs.com/package/@hakit/components) manually on an existing project:
 ```
   npm install @hakit/core @hakit/components
 ```
