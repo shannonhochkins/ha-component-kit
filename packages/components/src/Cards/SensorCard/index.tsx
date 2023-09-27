@@ -153,14 +153,15 @@ function _SensorCard<E extends EntityName>({
   const icon = useIcon(_icon ?? null);
   const isUnavailable = isUnavailableState(entity.state);
   const disabled = _disabled || isUnavailable;
+  const hasOnClick = typeof onClick === "function";
   const useApiHandler = useCallback(() => {
     if (typeof onClick === "function" && !isUnavailable) onClick(entity);
   }, [entity, onClick, isUnavailable]);
   return (
     <StyledRipples
       borderRadius="1rem"
-      disabled={disabled}
-      whileTap={{ scale: disabled ? 1 : 0.9 }}
+      disabled={disabled || !hasOnClick}
+      whileTap={{ scale: disabled || !hasOnClick ? 1 : 0.9 }}
     >
       <StyledSensorCard disabled={disabled} {...rest} onClick={useApiHandler}>
         <Inner>

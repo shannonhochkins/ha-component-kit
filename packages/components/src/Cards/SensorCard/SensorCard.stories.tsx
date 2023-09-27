@@ -26,5 +26,7 @@ export default {
 export type Story = StoryObj<typeof SensorCard>;
 export const Example: Story = {
   render: Render,
-  args: {},
+  args: {
+    onClick: undefined
+  },
 };
