@@ -16,7 +16,7 @@ import {
   ON,
 } from "@hakit/core";
 import type { LightColor, EntityName, FilterByDomain } from "@hakit/core";
-import { fallback } from "@components";
+import { fallback, mq } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
 const RENDER_SIZE = 400;
@@ -125,6 +125,14 @@ const ColorPickerWrapper = styled.div`
     height: 45vh;
     max-height: 320px;
     min-height: 200px;
+    ${mq(
+      ["mobile"],
+      `
+      min-height: 0;
+      height: 35vh;
+      max-height: 100%;
+    `,
+    )}
     .container {
       position: relative;
       width: 100%;

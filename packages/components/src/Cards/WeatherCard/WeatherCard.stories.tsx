@@ -2,13 +2,57 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, WeatherCard } from "@components";
 import type { WeatherCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
+import { HassEntityWithApi } from "@hakit/core";
 
 function Template(args?: Partial<WeatherCardProps>) {
   return (
-    <HassConnect hassUrl="http://localhost:8123">
+    <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />
-      <WeatherCard {...args} entity="weather.entity" />
+      <WeatherCard entity="weather.entity" {...args} />
     </HassConnect>
+  );
+}
+
+function WithSensors(args?: Partial<WeatherCardProps>) {
+  function convertUvIndexToText(uvi: number | null): string | null {
+    if (!uvi) return null;
+    if (uvi >= 0 && uvi <= 2) return "Low";
+    if (uvi >= 3 && uvi <= 5) return "Moderate";
+    if (uvi >= 6 && uvi <= 7) return "High";
+    if (uvi >= 8 && uvi <= 10) return "Very High";
+    if (uvi >= 11) return "Extreme";
+    return null;
+  }
+  return (
+    <div>
+      <h2>
+        WeatherCard with additional sensor information and different intervals
+      </h2>
+      <Template
+        entity="weather.openweathermap"
+        details={[
+          {
+            entity: "sensor.openweathermap_uv_index",
+            render(entity: HassEntityWithApi<"sensor">) {
+              return (
+                <span>UVI - {convertUvIndexToText(Number(entity.state))}</span>
+              );
+            },
+          },
+          {
+            entity: "sensor.openweathermap_pressure",
+          },
+          {
+            entity: "sensor.openweathermap_humidity",
+            icon: "mdi:water-percent",
+          },
+          {
+            entity: "sensor.openweathermap_wind_speed",
+          },
+        ]}
+        {...args}
+      />
+    </div>
   );
 }
 
@@ -57,5 +101,9 @@ export const WithoutForecastExample: WeatherStory = {
 
 export const WithoutCurrentExample: WeatherStory = {
   render: WithoutCurrent,
+  args: {},
+};
+export const WithSensorsExamples: WeatherStory = {
+  render: WithSensors,
   args: {},
 };

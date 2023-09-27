@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback } from "react";
 import styled from "@emotion/styled";
 import { useGesture } from "@use-gesture/react";
-import { fallback } from "@components";
+import { fallback, mq } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
 export interface ControlSliderProps {
@@ -78,6 +78,14 @@ const Slider = styled.div<
         height: 45vh;
         max-height: 320px;
         min-height: 200px;
+        ${mq(
+          ["mobile"],
+          `
+          min-height: 0;
+          height: 35vh;
+          max-height: 100%;
+        `,
+        )}
       }
       .slider {
         position: relative;

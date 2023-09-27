@@ -7,6 +7,7 @@ import {
   FabCard,
   ColorTempPicker,
   ColorPicker,
+  useDevice,
 } from "@components";
 import type { ModalProps } from "@components";
 import { AnimatePresence } from "framer-motion";
@@ -138,6 +139,7 @@ export function ModalLightControls({
   const entity = useEntity(_entity);
   const stateRef = useRef<HTMLDivElement>(null);
   const brightnessValue = useLightBrightness(entity);
+  const device = useDevice();
   const titleValue = useMemo(() => {
     if (entity.state === OFF) {
       return "Off";
@@ -157,7 +159,15 @@ export function ModalLightControls({
 
   return (
     <Modal {...rest}>
-      <Column fullHeight fullWidth wrap="nowrap">
+      <Column
+        fullHeight
+        fullWidth
+        wrap="nowrap"
+        justifyContent={device.mobile ? "flext-start" : "center"}
+        style={{
+          padding: device.mobile ? "1rem" : "0",
+        }}
+      >
         <State ref={stateRef}>{titleValue}</State>
         <Updated>{entity.custom.relativeTime}</Updated>
         <Column>
@@ -188,7 +198,7 @@ export function ModalLightControls({
                   sliderColor={entity.custom.color}
                   min={1}
                   max={100}
-                  thickness={100}
+                  thickness={device.mobile ? 70 : 100}
                   borderRadius={24}
                   value={brightnessValue}
                   disabled={entity.state === "off"}

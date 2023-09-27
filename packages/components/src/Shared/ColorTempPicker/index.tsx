@@ -12,7 +12,7 @@ import {
 } from "@hakit/core";
 import type { EntityName, FilterByDomain } from "@hakit/core";
 import { useGesture } from "@use-gesture/react";
-import { fallback } from "@components";
+import { fallback, mq } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
 const RENDER_SIZE = 400;
@@ -48,6 +48,14 @@ const Picker = styled.div`
     height: 45vh;
     max-height: 320px;
     min-height: 200px;
+    ${mq(
+      ["mobile"],
+      `
+      min-height: 0;
+      height: 35vh;
+      max-height: 100%;
+    `,
+    )}
     touch-action: none;
     .container {
       position: relative;

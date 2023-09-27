@@ -2,7 +2,7 @@ import { useRef, useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { Thermostat } from "react-thermostat";
-import { Column, FabCard, Row, fallback } from "@components";
+import { Column, FabCard, Row, fallback, mq } from "@components";
 import type { EntityName, FilterByDomain } from "@hakit/core";
 import { useEntity, OFF, useHass, HvacMode } from "@hakit/core";
 import type { HassConfig } from "home-assistant-js-websocket";
@@ -59,6 +59,12 @@ const ThermostatSize = styled.div`
   min-height: 300px;
   margin-bottom: 2rem;
   position: relative;
+  ${mq(
+    ["mobile"],
+    `
+    max-height: 40vh;
+  `,
+  )}
 `;
 
 const FanModeColumn = styled(Column)`

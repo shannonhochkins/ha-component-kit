@@ -104,7 +104,9 @@ function Template() {
               },
             ]} />
             <RoomCard icon="mdi:office-chair" title="Office" hash="office" image={office}>
-              <Column fullWidth gap="1rem">
+              <Column fullWidth gap="1rem" style={{
+                padding: '1rem',
+              }}>
                 <Group title="Lights & Switches">
                   <ButtonCard entity="light.fake_light_1" service="toggle" />
                   <ButtonCard entity="light.fake_light_2" service="toggle" />
@@ -127,7 +129,9 @@ function Template() {
               </Column>
             </RoomCard>
             <RoomCard icon="mdi:sofa" title="Living Room" hash="living-room" image={livingRoom}>
-              <Column fullWidth gap="1rem">
+              <Column fullWidth gap="1rem" style={{
+                padding: '1rem',
+              }}>
                 <Row gap="1rem" fullWidth>
                   <ButtonCard entity="light.fake_light_1" service="toggle" />
                   <ButtonCard entity="switch.fake_switch" service="toggle" />
@@ -145,11 +149,15 @@ function Template() {
               </Column>
             </RoomCard>
             <RoomCard icon="mdi:dining" title="Dining Room" hash="dining-room" image={diningRoom}>
-              <Group title="Dining Entities">
-                <ButtonCard entity="light.fake_light_1" service="toggle" />
-                <ButtonCard entity="light.fake_light_2" service="toggle" />
-                <ButtonCard entity="light.fake_light_3" service="toggle" />
-              </Group>
+              <Column fullWidth gap="1rem" style={{
+                padding: '1rem',
+              }}>
+                <Group title="Dining Entities">
+                  <ButtonCard entity="light.fake_light_1" service="toggle" />
+                  <ButtonCard entity="light.fake_light_2" service="toggle" />
+                  <ButtonCard entity="light.fake_light_3" service="toggle" />
+                </Group>
+              </Column>
             </RoomCard>
           </Row>
         </Group>
