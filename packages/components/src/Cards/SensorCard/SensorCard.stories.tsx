@@ -6,7 +6,10 @@ function Render(args: Args) {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider />
-      <SensorCard entity="sensor.air_conditioner_inside_temperature" {...args} />
+      <SensorCard
+        entity="sensor.air_conditioner_inside_temperature"
+        {...args}
+      />
     </HassConnect>
   );
 }
@@ -27,6 +30,6 @@ export type Story = StoryObj<typeof SensorCard>;
 export const Example: Story = {
   render: Render,
   args: {
-    onClick: undefined
+    onClick: undefined,
   },
 };

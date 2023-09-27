@@ -1,7 +1,12 @@
 import styled from "@emotion/styled";
 import React, { useState, useEffect, useMemo, ReactNode } from "react";
 import { useEntity, useHass, isUnavailableState } from "@hakit/core";
-import type { FilterByDomain, EntityName, HassEntityWithApi, ExtractDomain } from "@hakit/core";
+import type {
+  FilterByDomain,
+  EntityName,
+  HassEntityWithApi,
+  ExtractDomain,
+} from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { capitalize } from "lodash";
 import { Row, Column, fallback, Tooltip, mq, useDevice } from "@components";
@@ -9,7 +14,7 @@ import type { RowProps } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
-import { getAdditionalWeatherInformation } from './helpers'
+import { getAdditionalWeatherInformation } from "./helpers";
 
 function weatherIconName(name: string) {
   switch (name) {
@@ -159,9 +164,12 @@ const TemperatureLow = styled.div`
 
 const DetailsRow = styled(Row)`
   width: calc(50% - 1rem);
-  ${mq(['mobile'], `
+  ${mq(
+    ["mobile"],
+    `
     width: 100%;
-  `)}
+  `,
+  )}
 `;
 
 const State = styled.div`
@@ -172,7 +180,7 @@ const State = styled.div`
   text-overflow: ellipsis;
 `;
 
-interface DetailsProps extends Omit<RowProps, 'title'> {
+interface DetailsProps extends Omit<RowProps, "title"> {
   icon?: string;
   entity: EntityName;
   title?: ReactNode;
@@ -180,21 +188,38 @@ interface DetailsProps extends Omit<RowProps, 'title'> {
   render?: (value: HassEntityWithApi<ExtractDomain<EntityName>>) => ReactNode;
 }
 
-function Details({ icon, entity, title, suffix, render, ...rest }: DetailsProps) {
+function Details({
+  icon,
+  entity,
+  title,
+  suffix,
+  render,
+  ...rest
+}: DetailsProps) {
   const _entity = useEntity(entity);
-  const _title = title ?? _entity.attributes.friendly_name ?? '';
-  return <DetailsRow gap="0rem" justifyContent="flex-start" {...rest}>
-    <Tooltip title={_title ?? 'unknown title'}>
-      <Row fullWidth gap="0.5rem" justifyContent="flex-start">
-        <Icon icon={icon ?? _entity.attributes.icon ?? 'mdi:info'} />
-        <State>{typeof render === 'function' ? render(_entity) : `${_title ? `${_title} - ` : ''}${_entity.state ?? ''}${!suffix && _entity.attributes.unit_of_measurement ? `${_entity.attributes.unit_of_measurement}` : suffix ?? ''}`}</State>
-      </Row>
-    </Tooltip>
-  </DetailsRow>
+  const _title = title ?? _entity.attributes.friendly_name ?? "";
+  return (
+    <DetailsRow gap="0rem" justifyContent="flex-start" {...rest}>
+      <Tooltip title={_title ?? "unknown title"}>
+        <Row fullWidth gap="0.5rem" justifyContent="flex-start">
+          <Icon icon={icon ?? _entity.attributes.icon ?? "mdi:info"} />
+          <State>
+            {typeof render === "function"
+              ? render(_entity)
+              : `${_title ? `${_title} - ` : ""}${_entity.state ?? ""}${
+                  !suffix && _entity.attributes.unit_of_measurement
+                    ? `${_entity.attributes.unit_of_measurement}`
+                    : suffix ?? ""
+                }`}
+          </State>
+        </Row>
+      </Tooltip>
+    </DetailsRow>
+  );
 }
 
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
-export interface WeatherCardProps extends Omit<Extendable, 'title'> {
+export interface WeatherCardProps extends Omit<Extendable, "title"> {
   /** The name of your entity */
   entity: FilterByDomain<EntityName, "weather">;
   /** Override the default title pulled from the entity */
@@ -224,7 +249,7 @@ function _WeatherCard({
   includeCurrent = true,
   includeTime = true,
   details = [],
-  apparentTemperatureAttribute = 'apparent_temperature',
+  apparentTemperatureAttribute = "apparent_temperature",
   ...rest
 }: WeatherCardProps): JSX.Element {
   const { getConfig } = useHass();
@@ -248,17 +273,32 @@ function _WeatherCard({
   });
 
   const weatherDetails = useMemo(() => {
-    const { humidity, temperature, wind_speed, wind_speed_unit, temperature_unit } = weather.attributes;
-    const additional = getAdditionalWeatherInformation(temperature, temperature_unit, wind_speed, wind_speed_unit, humidity);
-    const apparentTemperature = weather.attributes[apparentTemperatureAttribute] as number | null | undefined;
+    const {
+      humidity,
+      temperature,
+      wind_speed,
+      wind_speed_unit,
+      temperature_unit,
+    } = weather.attributes;
+    const additional = getAdditionalWeatherInformation(
+      temperature,
+      temperature_unit,
+      wind_speed,
+      wind_speed_unit,
+      humidity,
+    );
+    const apparentTemperature = weather.attributes[
+      apparentTemperatureAttribute
+    ] as number | null | undefined;
     return {
       apparent_temperature: apparentTemperature ?? null,
       ...weather.attributes,
-      ...additional ?? {},
-    }
+      ...(additional ?? {}),
+    };
   }, [weather.attributes, apparentTemperatureAttribute]);
-  
-  const feelsLikeBase = weatherDetails.apparent_temperature ?? weatherDetails.feelsLike;
+
+  const feelsLikeBase =
+    weatherDetails.apparent_temperature ?? weatherDetails.feelsLike;
   const feelsLike = feelsLikeBase === temperature ? null : feelsLikeBase;
   return (
     <Card {...rest}>
@@ -272,41 +312,55 @@ function _WeatherCard({
             </Title>
             <SubTitle>
               {temperature}
-              {temperatureSuffix || unit}, {capitalize(weather.state)}{feelsLike ? `, Feels like: ${feelsLike}${temperatureSuffix || unit}` : ''}
+              {temperatureSuffix || unit}, {capitalize(weather.state)}
+              {feelsLike
+                ? `, Feels like: ${feelsLike}${temperatureSuffix || unit}`
+                : ""}
             </SubTitle>
           </Column>
         </Row>
       )}
-      {(details ?? []).length > 0 && <Row gap="0.5rem">
-        {(details ?? []).map((props, index) => <Details key={index} {...props} />)}
-      </Row>}
+      {(details ?? []).length > 0 && (
+        <Row gap="0.5rem">
+          {(details ?? []).map((props, index) => (
+            <Details key={index} {...props} />
+          ))}
+        </Row>
+      )}
       {includeForecast && !isUnavailable && (
         <Row
           style={{
             justifyContent: "space-between",
           }}
         >
-          {(weather.attributes.forecast ?? []).slice(0, device.mobile ? 7 : 10).map((forecast, index) => {
-            const dateFormatted = convertDateTime(forecast.datetime, timeZone);
-            const [day, , hour] = dateFormatted.split(",");
-            return (
-              <Forecast key={index}>
-                <Day>{day}</Day>
-                {includeTime && <Time>{hour}</Time>}
-                <ForecastIcon
-                  icon={weatherIconName(forecast.condition as string)}
-                />
-                <Temperature>
-                  {forecast.temperature}
-                  {temperatureSuffix || unit}
-                </Temperature>
-                {forecast.templow && <TemperatureLow>
-                  {forecast.templow}
-                  {temperatureSuffix || unit}
-                </TemperatureLow>}
-              </Forecast>
-            );
-          })}
+          {(weather.attributes.forecast ?? [])
+            .slice(0, device.mobile ? 7 : 10)
+            .map((forecast, index) => {
+              const dateFormatted = convertDateTime(
+                forecast.datetime,
+                timeZone,
+              );
+              const [day, , hour] = dateFormatted.split(",");
+              return (
+                <Forecast key={index}>
+                  <Day>{day}</Day>
+                  {includeTime && <Time>{hour}</Time>}
+                  <ForecastIcon
+                    icon={weatherIconName(forecast.condition as string)}
+                  />
+                  <Temperature>
+                    {forecast.temperature}
+                    {temperatureSuffix || unit}
+                  </Temperature>
+                  {forecast.templow && (
+                    <TemperatureLow>
+                      {forecast.templow}
+                      {temperatureSuffix || unit}
+                    </TemperatureLow>
+                  )}
+                </Forecast>
+              );
+            })}
         </Row>
       )}
       {isUnavailable && weather.state}

@@ -59,9 +59,12 @@ const ThermostatSize = styled.div`
   min-height: 300px;
   margin-bottom: 2rem;
   position: relative;
-  ${mq(['mobile'], `
+  ${mq(
+    ["mobile"],
+    `
     max-height: 40vh;
-  `)}
+  `,
+  )}
 `;
 
 const FanModeColumn = styled(Column)`
