@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj, Args } from "@storybook/react";
 import { SensorCard, ThemeProvider } from "@components";
-import { HassConnect } from "@hakit/core";
+import { HassConnect } from "@hass-connect-fake";
 
-function Render() {
+function Render(args: Args) {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider />
-      <SensorCard entity="sensor.air_conditioner_inside_temperature" />
+      <SensorCard entity="sensor.air_conditioner_inside_temperature" {...args} />
     </HassConnect>
   );
 }
@@ -26,5 +26,7 @@ export default {
 export type Story = StoryObj<typeof SensorCard>;
 export const Example: Story = {
   render: Render,
-  args: {},
+  args: {
+    onClick: undefined
+  },
 };

@@ -1,13 +1,15 @@
 import styled from "@emotion/styled";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, ReactNode } from "react";
 import { useEntity, useHass, isUnavailableState } from "@hakit/core";
-import type { FilterByDomain, EntityName } from "@hakit/core";
+import type { FilterByDomain, EntityName, HassEntityWithApi, ExtractDomain } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { capitalize } from "lodash";
-import { Row, Column, fallback, mq } from "@components";
+import { Row, Column, fallback, Tooltip, mq, useDevice } from "@components";
+import type { RowProps } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
+import { getAdditionalWeatherInformation } from './helpers'
 
 function weatherIconName(name: string) {
   switch (name) {
@@ -122,7 +124,6 @@ function convertDateTime(datetime: string, timezone: string) {
     month: "short",
     day: "numeric",
     hour: "numeric",
-    minute: "numeric",
     hour12: true,
   } satisfies Intl.DateTimeFormatOptions;
   return new Intl.DateTimeFormat("en-US", options).format(new Date(datetime));
@@ -143,6 +144,10 @@ const ForecastIcon = styled(Icon)`
 const Day = styled.div`
   color: var(--ha-S50-contrast);
 `;
+const Time = styled.div`
+  color: var(--ha-S200-contrast);
+  font-size: 0.8rem;
+`;
 const Temperature = styled.div`
   color: var(--ha-S50-contrast);
   font-size: 0.8rem;
@@ -152,21 +157,64 @@ const TemperatureLow = styled.div`
   font-size: 0.75rem;
 `;
 
+const DetailsRow = styled(Row)`
+  width: calc(50% - 1rem);
+  ${mq(['mobile'], `
+    width: 100%;
+  `)}
+`;
+
+const State = styled.div`
+  color: var(--ha-S500-contrast);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+interface DetailsProps extends Omit<RowProps, 'title'> {
+  icon?: string;
+  entity: EntityName;
+  title?: ReactNode;
+  suffix?: ReactNode;
+  render?: (value: HassEntityWithApi<ExtractDomain<EntityName>>) => ReactNode;
+}
+
+function Details({ icon, entity, title, suffix, render, ...rest }: DetailsProps) {
+  const _entity = useEntity(entity);
+  const _title = title ?? _entity.attributes.friendly_name ?? '';
+  return <DetailsRow gap="0rem" justifyContent="flex-start" {...rest}>
+    <Tooltip title={_title ?? 'unknown title'}>
+      <Row fullWidth gap="0.5rem" justifyContent="flex-start">
+        <Icon icon={icon ?? _entity.attributes.icon ?? 'mdi:info'} />
+        <State>{typeof render === 'function' ? render(_entity) : `${_title ? `${_title} - ` : ''}${_entity.state ?? ''}${!suffix && _entity.attributes.unit_of_measurement ? `${_entity.attributes.unit_of_measurement}` : suffix ?? ''}`}</State>
+      </Row>
+    </Tooltip>
+  </DetailsRow>
+}
+
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
-export interface WeatherCardProps extends Extendable {
+export interface WeatherCardProps extends Omit<Extendable, 'title'> {
   /** The name of your entity */
   entity: FilterByDomain<EntityName, "weather">;
   /** Override the default title pulled from the entity */
-  title?: string;
+  title?: ReactNode;
   /** override the icon displayed before the title */
   icon?: string;
-  /** override the temperature suffix that's pulled from the entity */
-  temperatureSuffix?: string;
+  /** override the temperature suffix that's pulled from the entity @default "temperature_unit from entity"  */
+  temperatureSuffix?: ReactNode;
   /** include the forecast @default true */
   includeForecast?: boolean;
   /** include the current forecast row, @default true */
   includeCurrent?: boolean;
+  /** any related entities/sensors you want to include in the details section @default [] */
+  details?: DetailsProps[];
+  /** include time value under day name @default true */
+  includeTime?: boolean;
+  /** property on the weather entity attributes that returns the "feels like" temperature or "apparent temperature" @default "apparent_temperature" */
+  apparentTemperatureAttribute?: string;
 }
+
 function _WeatherCard({
   entity,
   title,
@@ -174,9 +222,13 @@ function _WeatherCard({
   temperatureSuffix,
   includeForecast = true,
   includeCurrent = true,
+  includeTime = true,
+  details = [],
+  apparentTemperatureAttribute = 'apparent_temperature',
   ...rest
 }: WeatherCardProps): JSX.Element {
   const { getConfig } = useHass();
+  const device = useDevice();
   const [timeZone, setTimeZone] = useState<string>("UTC");
   const weather = useEntity(entity);
   const isUnavailable = isUnavailableState(weather.state);
@@ -194,6 +246,20 @@ function _WeatherCard({
     }
     getTimeZone();
   });
+
+  const weatherDetails = useMemo(() => {
+    const { humidity, temperature, wind_speed, wind_speed_unit, temperature_unit } = weather.attributes;
+    const additional = getAdditionalWeatherInformation(temperature, temperature_unit, wind_speed, wind_speed_unit, humidity);
+    const apparentTemperature = weather.attributes[apparentTemperatureAttribute] as number | null | undefined;
+    return {
+      apparent_temperature: apparentTemperature ?? null,
+      ...weather.attributes,
+      ...additional ?? {},
+    }
+  }, [weather.attributes, apparentTemperatureAttribute]);
+  
+  const feelsLikeBase = weatherDetails.apparent_temperature ?? weatherDetails.feelsLike;
+  const feelsLike = feelsLikeBase === temperature ? null : feelsLikeBase;
   return (
     <Card {...rest}>
       {includeCurrent && !isUnavailable && (
@@ -206,23 +272,27 @@ function _WeatherCard({
             </Title>
             <SubTitle>
               {temperature}
-              {temperatureSuffix || unit}, {capitalize(weather.state)}
+              {temperatureSuffix || unit}, {capitalize(weather.state)}{feelsLike ? `, Feels like: ${feelsLike}${temperatureSuffix || unit}` : ''}
             </SubTitle>
           </Column>
         </Row>
       )}
+      {(details ?? []).length > 0 && <Row gap="0.5rem">
+        {(details ?? []).map((props, index) => <Details key={index} {...props} />)}
+      </Row>}
       {includeForecast && !isUnavailable && (
         <Row
           style={{
             justifyContent: "space-between",
           }}
         >
-          {(weather.attributes.forecast ?? []).map((forecast, index) => {
+          {(weather.attributes.forecast ?? []).slice(0, device.mobile ? 7 : 10).map((forecast, index) => {
             const dateFormatted = convertDateTime(forecast.datetime, timeZone);
-            const [day] = dateFormatted.split(",");
+            const [day, , hour] = dateFormatted.split(",");
             return (
               <Forecast key={index}>
                 <Day>{day}</Day>
+                {includeTime && <Time>{hour}</Time>}
                 <ForecastIcon
                   icon={weatherIconName(forecast.condition as string)}
                 />
@@ -230,10 +300,10 @@ function _WeatherCard({
                   {forecast.temperature}
                   {temperatureSuffix || unit}
                 </Temperature>
-                <TemperatureLow>
+                {forecast.templow && <TemperatureLow>
                   {forecast.templow}
                   {temperatureSuffix || unit}
-                </TemperatureLow>
+                </TemperatureLow>}
               </Forecast>
             );
           })}
