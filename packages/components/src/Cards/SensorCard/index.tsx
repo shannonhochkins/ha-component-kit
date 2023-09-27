@@ -156,7 +156,6 @@ function _SensorCard<E extends EntityName>({
   const useApiHandler = useCallback(() => {
     if (typeof onClick === "function" && !isUnavailable) onClick(entity);
   }, [entity, onClick, isUnavailable]);
-
   return (
     <StyledRipples
       borderRadius="1rem"

@@ -146,7 +146,6 @@ const FullScreen = styled(motion.div)`
 
 const ChildContainer = styled(motion.div)`
   opacity: 0;
-  padding: 1rem 1.5rem 1.5rem;
   margin-top: 5rem;
   display: flex;
   justify-content: flex-start;

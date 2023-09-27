@@ -10,7 +10,6 @@ import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
 import { getAdditionalWeatherInformation } from './helpers'
-import { toBeRequired } from "@testing-library/jest-dom/matchers";
 
 function weatherIconName(name: string) {
   switch (name) {
@@ -212,6 +211,8 @@ export interface WeatherCardProps extends Omit<Extendable, 'title'> {
   details?: DetailsProps[];
   /** include time value under day name */
   includeTime?: boolean;
+  /** property on the weather entity attributes that returns the "feels like" temperature or "apparent temperature" @default "apparent_temperature" */
+  apparentTemperatureAttribute?: string;
 }
 
 function _WeatherCard({
@@ -223,6 +224,7 @@ function _WeatherCard({
   includeCurrent = true,
   includeTime = true,
   details = [],
+  apparentTemperatureAttribute = 'apparent_temperature',
   ...rest
 }: WeatherCardProps): JSX.Element {
   const { getConfig } = useHass();
@@ -248,16 +250,16 @@ function _WeatherCard({
   const weatherDetails = useMemo(() => {
     const { humidity, temperature, wind_speed, wind_speed_unit, temperature_unit } = weather.attributes;
     const additional = getAdditionalWeatherInformation(temperature, temperature_unit, wind_speed, wind_speed_unit, humidity);
+    const apparentTemperature = weather.attributes[apparentTemperatureAttribute] as number | null | undefined;
     return {
-      apparent_temperature: null,
+      apparent_temperature: apparentTemperature ?? null,
       ...weather.attributes,
       ...additional ?? {},
     }
-  }, [weather.attributes]);
-
+  }, [weather.attributes, apparentTemperatureAttribute]);
+  
   const feelsLikeBase = weatherDetails.apparent_temperature ?? weatherDetails.feelsLike;
   const feelsLike = feelsLikeBase === temperature ? null : feelsLikeBase;
-  console.log('weather', weather);
   return (
     <Card {...rest}>
       {includeCurrent && !isUnavailable && (
