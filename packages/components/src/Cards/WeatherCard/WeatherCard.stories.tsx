@@ -2,13 +2,13 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, WeatherCard } from "@components";
 import type { WeatherCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
-import { HassEntityWithApi } from '@hakit/core';
+import { HassEntityWithApi } from "@hakit/core";
 
 function Template(args?: Partial<WeatherCardProps>) {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />
-      <WeatherCard entity="weather.entity" {...args}  />
+      <WeatherCard entity="weather.entity" {...args} />
     </HassConnect>
   );
 }
@@ -25,20 +25,33 @@ function WithSensors(args?: Partial<WeatherCardProps>) {
   }
   return (
     <div>
-      <h2>WeatherCard with additional sensor information and different intervals</h2>
-      <Template entity="weather.openweathermap" details={[{
-        entity: 'sensor.openweathermap_uv_index',
-        render(entity: HassEntityWithApi<'sensor'> ) {
-          return <span>UVI - {convertUvIndexToText(Number(entity.state))}</span>
-        }
-      }, {
-        entity: 'sensor.openweathermap_pressure'
-      }, {
-        entity: 'sensor.openweathermap_humidity',
-        icon: 'mdi:water-percent'
-      }, {
-        entity: 'sensor.openweathermap_wind_speed'
-      }]} {...args} />
+      <h2>
+        WeatherCard with additional sensor information and different intervals
+      </h2>
+      <Template
+        entity="weather.openweathermap"
+        details={[
+          {
+            entity: "sensor.openweathermap_uv_index",
+            render(entity: HassEntityWithApi<"sensor">) {
+              return (
+                <span>UVI - {convertUvIndexToText(Number(entity.state))}</span>
+              );
+            },
+          },
+          {
+            entity: "sensor.openweathermap_pressure",
+          },
+          {
+            entity: "sensor.openweathermap_humidity",
+            icon: "mdi:water-percent",
+          },
+          {
+            entity: "sensor.openweathermap_wind_speed",
+          },
+        ]}
+        {...args}
+      />
     </div>
   );
 }
@@ -94,4 +107,3 @@ export const WithSensorsExamples: WeatherStory = {
   render: WithSensors,
   args: {},
 };
-

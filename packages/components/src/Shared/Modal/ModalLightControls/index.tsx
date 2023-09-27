@@ -7,7 +7,7 @@ import {
   FabCard,
   ColorTempPicker,
   ColorPicker,
-  useDevice
+  useDevice,
 } from "@components";
 import type { ModalProps } from "@components";
 import { AnimatePresence } from "framer-motion";
@@ -159,9 +159,15 @@ export function ModalLightControls({
 
   return (
     <Modal {...rest}>
-      <Column fullHeight fullWidth wrap="nowrap" justifyContent={device.mobile ? 'flext-start' : 'center'} style={{
-        padding: device.mobile ? '1rem' : '0'
-      }}>
+      <Column
+        fullHeight
+        fullWidth
+        wrap="nowrap"
+        justifyContent={device.mobile ? "flext-start" : "center"}
+        style={{
+          padding: device.mobile ? "1rem" : "0",
+        }}
+      >
         <State ref={stateRef}>{titleValue}</State>
         <Updated>{entity.custom.relativeTime}</Updated>
         <Column>

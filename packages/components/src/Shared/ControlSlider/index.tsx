@@ -78,11 +78,14 @@ const Slider = styled.div<
         height: 45vh;
         max-height: 320px;
         min-height: 200px;
-        ${mq(['mobile'], `
+        ${mq(
+          ["mobile"],
+          `
           min-height: 0;
           height: 35vh;
           max-height: 100%;
-        `)}
+        `,
+        )}
       }
       .slider {
         position: relative;
