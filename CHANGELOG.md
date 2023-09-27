@@ -1,3 +1,14 @@
+# 2.0.1
+## @hakit/components
+- BUGFIX - sensor card demo wasn't displaying the mock data correctly to indicate how it behaves, now generates random data for this particular demo
+- BUGFIX - sensor card previously was showing the scale animation and ripple effect when clicking on the card, this has been removed unless the onClick function is provided.
+- NEW - WeatherCard - now has the ability to provide additional sensors/details via the new details prop
+- NEW - WeatherCard - previously if the forecast was set to daily, it was trying to cram 24 hours worth of data into the card, this has been limited to 10 items for desktop and 7 for mobile (for hourly & daily)
+- NEW - WeatherCard - the time can be included in the forecast under the day value by default now, this can be removed by providing the includeTime as false
+- NEW - WeatherCard - now has the "feels like" or "apparent temperature" value displayed in the card if available, there's calculations to determine this if it's not available using wind / chill index. By default, this attempts to read the "apparent_temperature" attribute on the weather entity, if this property is different for you then you can provide the "apparentTemperatureAttribute" prop to override this.
+- BUGFIX - RoomCard / Modal previously had some padding issues for mobile, I've removed the inner padding on modals and popups and allowing the user to decide if padding should be included in the template within.
+## @hakit/core - no changes
+
 # 2.0.0
 
 ## @hakit/components

@@ -201,15 +201,15 @@ export interface WeatherCardProps extends Omit<Extendable, 'title'> {
   title?: ReactNode;
   /** override the icon displayed before the title */
   icon?: string;
-  /** override the temperature suffix that's pulled from the entity */
+  /** override the temperature suffix that's pulled from the entity @default "temperature_unit from entity"  */
   temperatureSuffix?: ReactNode;
   /** include the forecast @default true */
   includeForecast?: boolean;
   /** include the current forecast row, @default true */
   includeCurrent?: boolean;
-  /** any related entities/sensors you want to include in the details section */
+  /** any related entities/sensors you want to include in the details section @default [] */
   details?: DetailsProps[];
-  /** include time value under day name */
+  /** include time value under day name @default true */
   includeTime?: boolean;
   /** property on the weather entity attributes that returns the "feels like" temperature or "apparent temperature" @default "apparent_temperature" */
   apparentTemperatureAttribute?: string;
