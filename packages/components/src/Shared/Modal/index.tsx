@@ -1,5 +1,5 @@
 import { useEffect, Fragment, ReactNode } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, HTMLMotionProps } from "framer-motion";
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { useKeyPress } from "react-use";
@@ -80,7 +80,7 @@ const ModalBackdrop = styled(motion.div)`
   backdrop-filter: blur(2em) brightness(0.75);
 `;
 
-export interface ModalProps {
+export interface ModalProps extends Omit<HTMLMotionProps<'div'>, 'title'> {
   /** triggers the modal opening */
   open: boolean;
   /** the id to provide for framer-motion, this should link back to another layoutId property on the element triggering the Modal */
@@ -93,6 +93,8 @@ export interface ModalProps {
   description?: ReactNode;
   /** triggered when the users pressed the close button, this is also triggered when the escape key is pressed */
   onClose: () => void;
+  /** any prop to pass to the backdrop element */
+  backdropProps: HTMLMotionProps<'div'>;
 }
 function _Modal({
   open,
@@ -101,6 +103,10 @@ function _Modal({
   description,
   children,
   onClose,
+  backdropProps,
+  style,
+  className,
+  ...rest
 }: ModalProps) {
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   useEffect(() => {
@@ -114,6 +120,7 @@ function _Modal({
         <Fragment key={`${id}-fragment`}>
           <ModalBackdrop
             key={`${id}-backdrop`}
+            className="modal-backdrop"
             initial={{
               opacity: 0,
             }}
@@ -127,22 +134,27 @@ function _Modal({
               opacity: 0,
             }}
             onClick={onClose}
+            {...backdropProps}
           />
           <ModalContainer
             style={{
               borderRadius: "1rem",
               boxShadow: "0px 2px 4px var(--ha-S50)",
+              ...style
             }}
             layout
             layoutId={id}
             key={`${id}-container`}
+            className={`modal-container ${className}`}
+            {...rest}
           >
-            <ModalHeader>
-              <Column alignItems="flex-start">
-                {title && <Title>{title}</Title>}
-                {description && <Description>{description}</Description>}
+            <ModalHeader className={`modal-header`}>
+              <Column alignItems="flex-start"  className={`modal-column`}>
+                {title && <Title className={`modal-title`}>{title}</Title>}
+                {description && <Description className={`modal-description`}>{description}</Description>}
               </Column>
               <FabCard
+                 className={`modal-close-button`}
                 tooltipPlacement="left"
                 title="Close"
                 layout
@@ -150,8 +162,8 @@ function _Modal({
                 onClick={onClose}
               />
             </ModalHeader>
-            <ModalOverflow>
-              <ModalInner>{children}</ModalInner>
+            <ModalOverflow className={`modal-overflow`}>
+              <ModalInner className={`modal-inner`}>{children}</ModalInner>
             </ModalOverflow>
           </ModalContainer>
         </Fragment>
