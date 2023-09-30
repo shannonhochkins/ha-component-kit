@@ -80,7 +80,7 @@ const ModalBackdrop = styled(motion.div)`
   backdrop-filter: blur(2em) brightness(0.75);
 `;
 
-export interface ModalProps extends Omit<HTMLMotionProps<'div'>, 'title'> {
+export interface ModalProps extends Omit<HTMLMotionProps<"div">, "title"> {
   /** triggers the modal opening */
   open: boolean;
   /** the id to provide for framer-motion, this should link back to another layoutId property on the element triggering the Modal */
@@ -94,7 +94,7 @@ export interface ModalProps extends Omit<HTMLMotionProps<'div'>, 'title'> {
   /** triggered when the users pressed the close button, this is also triggered when the escape key is pressed */
   onClose: () => void;
   /** any prop to pass to the backdrop element */
-  backdropProps: HTMLMotionProps<'div'>;
+  backdropProps?: HTMLMotionProps<"div">;
 }
 function _Modal({
   open,
@@ -140,7 +140,7 @@ function _Modal({
             style={{
               borderRadius: "1rem",
               boxShadow: "0px 2px 4px var(--ha-S50)",
-              ...style
+              ...style,
             }}
             layout
             layoutId={id}
@@ -149,12 +149,16 @@ function _Modal({
             {...rest}
           >
             <ModalHeader className={`modal-header`}>
-              <Column alignItems="flex-start"  className={`modal-column`}>
+              <Column alignItems="flex-start" className={`modal-column`}>
                 {title && <Title className={`modal-title`}>{title}</Title>}
-                {description && <Description className={`modal-description`}>{description}</Description>}
+                {description && (
+                  <Description className={`modal-description`}>
+                    {description}
+                  </Description>
+                )}
               </Column>
               <FabCard
-                 className={`modal-close-button`}
+                className={`modal-close-button`}
                 tooltipPlacement="left"
                 title="Close"
                 layout

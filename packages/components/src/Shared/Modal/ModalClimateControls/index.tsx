@@ -2,7 +2,7 @@ import { Modal, ClimateControls } from "@components";
 import type { ClimateControlsProps, ModalProps } from "@components";
 
 export type ModalClimateControlsProps = Omit<ModalProps, "children"> &
-  ClimateControlsProps;
+  Omit<ClimateControlsProps, "style">;
 
 export function ModalClimateControls({
   entity,

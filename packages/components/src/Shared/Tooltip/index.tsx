@@ -89,7 +89,12 @@ export interface TooltipProps {
   children: React.ReactNode;
 }
 
-function _Tooltip({ placement = "top", title = null, children, ...rest }: TooltipProps) {
+function _Tooltip({
+  placement = "top",
+  title = null,
+  children,
+  ...rest
+}: TooltipProps) {
   const tooltipRef = useRef<HTMLSpanElement | null>(null);
   const childRef = useRef<HTMLDivElement | null>(null);
 
@@ -163,7 +168,11 @@ function _Tooltip({ placement = "top", title = null, children, ...rest }: Toolti
       {children}
       {typeof document !== "undefined" &&
         createPortal(
-          <TooltipSpan className="tooltip-inner" placement={placement} ref={tooltipRef}>
+          <TooltipSpan
+            className="tooltip-inner"
+            placement={placement}
+            ref={tooltipRef}
+          >
             {title}
           </TooltipSpan>,
           document.body,

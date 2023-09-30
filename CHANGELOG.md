@@ -1,3 +1,8 @@
+# 2.0.3
+## @hakit/components
+- Small improvements to Tooltip and Modal to provide better classnames for elements for re-styling
+## @hakit/core - no changes
+
 # 2.0.1
 ## @hakit/components
 - BUGFIX - sensor card demo wasn't displaying the mock data correctly to indicate how it behaves, now generates random data for this particular demo
