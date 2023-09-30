@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "private": false,
   "keywords": [
     "react",
@@ -67,7 +67,7 @@
   "peerDependencies": {
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
-    "@hakit/core": "^2.0.2",
+    "@hakit/core": "^2.0.3",
     "@use-gesture/react": ">=10.x",
     "framer-motion": ">=10.x",
     "lodash": ">=4.x",
