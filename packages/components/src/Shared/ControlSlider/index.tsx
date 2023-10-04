@@ -1,10 +1,12 @@
 import { useRef, useEffect, useCallback } from "react";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useGesture } from "@use-gesture/react";
 import { fallback, mq } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
-export interface ControlSliderProps {
+export interface ControlSliderProps
+  extends Omit<React.ComponentPropsWithoutRef<"div">, "onChange"> {
   /** the orientation of the slider @default true */
   vertical?: boolean;
   /** hide the handle on the slider @default false */
@@ -254,6 +256,8 @@ function _ControlSlider({
   sliderColor = [70, 70, 70],
   onChangeApplied,
   onChange,
+  cssStyles,
+  className,
   ...rest
 }: ControlSliderProps) {
   const trackBarRef = useRef<HTMLDivElement>(null);
@@ -404,9 +408,12 @@ function _ControlSlider({
   return (
     <Slider
       ref={parentRef}
-      className={`slider-host ${disabled ? "disabled" : ""} ${
-        vertical ? "vertical" : "horizontal"
-      }`}
+      className={`${className ?? ""} slider-host ${
+        disabled ? "disabled" : ""
+      } ${vertical ? "vertical" : "horizontal"}`}
+      css={css`
+        ${cssStyles ?? ""}
+      `}
       showHandle={showHandle && !disabled}
       sliderColor={sliderColor}
       vertical={vertical}

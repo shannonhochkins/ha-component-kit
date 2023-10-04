@@ -14,8 +14,15 @@ import {
   useIcon,
   useIconByEntity,
   isUnavailableState,
+  ON,
 } from "@hakit/core";
-import { Ripples, ModalByEntityDomain, fallback, mq } from "@components";
+import {
+  Ripples,
+  ModalByEntityDomain,
+  fallback,
+  Column,
+  mq,
+} from "@components";
 import { computeDomain } from "@utils/computeDomain";
 import type { MotionProps } from "framer-motion";
 import { motion } from "framer-motion";
@@ -50,6 +57,21 @@ const StyledButtonCard = styled(motion.button)`
   &:not(:disabled):hover {
     background-color: var(--ha-S400);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+  }
+  .slim & {
+    .fab-card-inner {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+  .slim-vertical & {
+    .fab-card-inner {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+  .children {
+    width: 100%;
   }
 `;
 const StyledRipples = styled(Ripples)`
@@ -90,6 +112,44 @@ const StyledRipples = styled(Ripples)`
     width: calc((100% - 7 * var(--gap, 0rem)) / 8);
   `,
   )}
+  &.slim {
+    ${mq(
+      ["mobile"],
+      `
+      width: 100%;
+    `,
+    )}
+    ${mq(
+      ["tablet"],
+      `
+      width: calc(50% - var(--gap, 0rem) / 2);
+    `,
+    )}
+    ${mq(
+      ["smallScreen"],
+      `
+      width: calc((100% - 2 * var(--gap, 0rem)) / 3);
+    `,
+    )}
+    ${mq(
+      ["mediumScreen"],
+      `
+      width: calc((100% - 3 * var(--gap, 0rem)) / 4);
+    `,
+    )}
+    ${mq(
+      ["desktop"],
+      `
+      width: calc((100% - 4 * var(--gap, 0rem)) / 5);
+    `,
+    )}
+    ${mq(
+      ["largeDesktop"],
+      `
+      width: calc((100% - 5 * var(--gap, 0rem)) / 6);
+    `,
+    )}
+  }
 `;
 
 interface ToggleProps {
@@ -117,7 +177,7 @@ const ToggleState = styled.div<ToggleProps>`
 const Toggle = styled.div<ToggleProps>`
   position: relative;
   background-color: ${(props) =>
-    props.active ? "var(--ha-A400)" : "var(--ha-S50)"};
+    props.active ? "var(--ha-A400)" : "var(--ha-S100)"};
   border-radius: 10px;
   width: 40px;
   height: 20px;
@@ -137,6 +197,7 @@ const Fab = styled.div<{
   width: 2rem;
   height: 2rem;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
@@ -168,21 +229,27 @@ const LayoutBetween = styled.div`
   align-items: center;
   justify-content: space-between;
   flex-direction: row;
-  margin-bottom: 20px;
   gap: 10px;
+  &.vertical {
+    flex-direction: column;
+  }
 `;
 
-const LayoutRow = styled.div`
+const Footer = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
   flex-direction: row;
+  margin-top: 20px;
 `;
 
 const Title = styled.div`
   color: var(--ha-S500-contrast);
   font-size: 0.7rem;
   margin: 2px 0;
+  &.slim-vertical {
+    text-align: center;
+  }
 `;
 
 const Description = styled.div`
@@ -216,8 +283,16 @@ export interface ButtonCardProps<E extends EntityName> extends Extendable {
     : (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
   /** Optional active param, By default this is updated via home assistant */
   active?: boolean;
-  /** the layout of the button card, this changes slightly, just preferences really @default default */
-  defaultLayout?: "default" | "slim";
+  /** The layout of the button card, mimics the style of HA mushroom cards in slim/slim-vertical @default default */
+  defaultLayout?: "default" | "slim" | "slim-vertical";
+  /** Hide the state value */
+  hideState?: boolean;
+  /** Hide the last updated time */
+  hideLastUpdated?: boolean;
+  /** The children to render at the bottom of the card */
+  children?: React.ReactNode;
+  /** This forces hideState, hideLastUpdated and will only show the entity name / description prop */
+  hideDetails?: boolean;
 }
 function _ButtonCard<E extends EntityName>({
   service,
@@ -232,6 +307,13 @@ function _ButtonCard<E extends EntityName>({
   defaultLayout,
   disabled = false,
   className,
+  id,
+  style,
+  cssStyles,
+  hideState,
+  hideLastUpdated,
+  children,
+  hideDetails,
   ...rest
 }: ButtonCardProps<E>): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
@@ -248,6 +330,8 @@ function _ButtonCard<E extends EntityName>({
   });
   const isDefaultLayout =
     defaultLayout === "default" || defaultLayout === undefined;
+  const isSlimLayout =
+    defaultLayout === "slim" || defaultLayout === "slim-vertical";
   const isUnavailable =
     typeof entity?.state === "string"
       ? isUnavailableState(entity.state)
@@ -297,28 +381,60 @@ function _ButtonCard<E extends EntityName>({
     () => _title || (domain !== null ? startCase(lowerCase(domain)) : null),
     [_title, domain],
   );
+
+  function renderState() {
+    if (hideState) return null;
+    if (typeof active === "boolean") {
+      // static usage without entity
+      return active ? "- on" : "- off";
+    }
+    if (entity && entity.state === ON && domain === "light") {
+      // dynamic usage with entity if it's a light
+      return `- ${entity.custom.brightnessValue}%`;
+    }
+    if (entity) {
+      return entity.state;
+    }
+    return null;
+  }
+
   return (
     <>
       <StyledRipples
+        id={id ?? undefined}
         borderRadius="1rem"
         disabled={disabled || isUnavailable}
         whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
+        className={`${className ?? ""} ${
+          defaultLayout ?? "default"
+        } button-card`}
+        cssStyles={cssStyles}
+        style={{
+          ...(style ?? {}),
+        }}
       >
         <StyledButtonCard
           {...longPressEvent}
           disabled={disabled || isUnavailable}
           layoutId={
-            typeof _entity === "string" ? `${_entity}-button-card` : undefined
+            typeof _entity === "string"
+              ? `${_entity}-${id ? `${id}-` : ""}button-card`
+              : undefined
           }
-          className={`${active ? "active " : ""}${className}`}
+          className={`${active ? "active " : ""}`}
           {...rest}
           onClick={onClickHandler}
         >
-          <LayoutBetween>
+          <LayoutBetween
+            className={`layout-between ${
+              defaultLayout === "slim-vertical" ? "vertical" : ""
+            }`}
+          >
             <Fab
               brightness={
                 (on && entity?.custom.brightness) || "brightness(100%)"
               }
+              className={`fab-card-inner icon`}
               backgroundColor={on ? "var(--ha-S500)" : "var(--ha-S400)"}
               textColor={
                 entity
@@ -333,39 +449,56 @@ function _ButtonCard<E extends EntityName>({
               {iconElement || entityIcon || domainIcon}
             </Fab>
             {isDefaultLayout && (
-              <Toggle active={on}>
-                {!isUnavailable && <ToggleState active={on} />}
+              <Toggle active={on} className="toggle">
+                {!isUnavailable && (
+                  <ToggleState active={on} className="toggle-state" />
+                )}
               </Toggle>
             )}
-            {!isDefaultLayout && <Description>{description}</Description>}
-          </LayoutBetween>
-          <LayoutRow>
-            {!isDefaultLayout && (
-              <Title>
-                {title}{" "}
-                {typeof active === "boolean"
-                  ? active
-                    ? "- on"
-                    : "- off"
-                  : entity
-                  ? `- ${entity.state}`
-                  : ""}
-                {entity ? ` - ${entity.custom.relativeTime}` : ""}
-              </Title>
-            )}
-            {isDefaultLayout && (
-              <Title>
-                {title && (
-                  <Title>
-                    {title}
-                    {isUnavailable && entity ? ` - ${entity.state}` : ""}
+            {isSlimLayout && (
+              <Column
+                fullWidth
+                alignItems={
+                  defaultLayout === "slim-vertical" ? "center" : "flex-start"
+                }
+              >
+                <Description className="description">{description}</Description>
+                {!hideDetails && (
+                  <Title className={`title ${defaultLayout ?? ""}`}>
+                    {title} {renderState()}
+                    {entity && !hideLastUpdated
+                      ? ` - ${entity.custom.relativeTime}`
+                      : ""}
                   </Title>
                 )}
-                {description && <Description>{description}</Description>}
-                {entity && <Title>Updated: {entity.custom.relativeTime}</Title>}
-              </Title>
+              </Column>
             )}
-          </LayoutRow>
+          </LayoutBetween>
+          {isDefaultLayout && (
+            <Footer className="footer">
+              <Title className="title">
+                {!hideDetails && title && (
+                  <Title className="title">
+                    {title}
+                    {isUnavailable && entity && !hideState
+                      ? ` - ${entity.state}`
+                      : ""}
+                  </Title>
+                )}
+                {description && (
+                  <Description className="description">
+                    {description}
+                  </Description>
+                )}
+                {!hideDetails && entity && !hideLastUpdated && (
+                  <Title className="title">
+                    Updated: {entity.custom.relativeTime}
+                  </Title>
+                )}
+              </Title>
+            </Footer>
+          )}
+          {children && <div className="children">{children}</div>}
         </StyledButtonCard>
       </StyledRipples>
       {typeof _entity === "string" && (
@@ -376,13 +509,16 @@ function _ButtonCard<E extends EntityName>({
             setOpenModal(false);
           }}
           open={openModal}
-          id={`${_entity}-button-card`}
+          id={`${_entity}-${id ? `${id}-` : ""}button-card`}
         />
       )}
     </>
   );
 }
-/** The ButtonCard component is an easy way to represent the state and control of an entity with a simple button, eventually I'll provide further options per domain, like being able to set the colours for lights etc... */
+/**
+ * The ButtonCard component is an easy way to represent the state and control of an entity with a simple button, eventually I'll provide further options per domain, like being able to set the colours for lights etc...
+ * Below are a few examples of layouts that the ButtonCard supports
+ * */
 export function ButtonCard<E extends EntityName>(props: ButtonCardProps<E>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ButtonCard" })}>

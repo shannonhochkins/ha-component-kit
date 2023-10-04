@@ -36,10 +36,28 @@ const argv = yargs(hideBin(process.argv))
     type: 'array',
     description: 'A whitelist of services to generate types for',
   })
+  .option('serviceBlacklist', {
+    alias: 'sb',
+    requiresArg: false,
+    type: 'array',
+    description: 'A blacklist of services to generate types for',
+  })
+  .option('domainWhitelist', {
+    alias: 'dw',
+    requiresArg: false,
+    type: 'array',
+    description: 'A whitelist of domain to generate types for',
+  })
+  .option('domainBlacklist', {
+    alias: 'db',
+    requiresArg: false,
+    type: 'array',
+    description: 'A blacklist of domain to generate types for',
+  })
   .help()
   .parseSync();
 
-const { url, token, serviceWhitelist = [], outDir, filename } = argv;
+const { url, token, domainBlacklist = [], domainWhitelist = [], serviceBlacklist = [], serviceWhitelist = [], outDir, filename } = argv;
 
 
 async function main() {
@@ -48,6 +66,9 @@ async function main() {
       url: url as string,
       token: token as string,
       serviceWhitelist: serviceWhitelist as string[],
+      serviceBlacklist: serviceBlacklist as string[],
+      domainWhitelist: domainWhitelist as string[],
+      domainBlacklist: domainBlacklist as string[],
       outDir,
       filename,
     });

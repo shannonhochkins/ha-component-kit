@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { Row, Column, fallback, mq } from "@components";
 import { motion, AnimatePresence } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
@@ -63,6 +64,8 @@ function _Group({
   alignItems = "center",
   layout = "row",
   collapsed = false,
+  className,
+  cssStyles,
   ...rest
 }: GroupProps): JSX.Element {
   const [_collapsed, setCollapsed] = useState(collapsed);
@@ -72,11 +75,19 @@ function _Group({
     alignItems,
   };
   return (
-    <StyledGroup collapsed={_collapsed} {...rest}>
+    <StyledGroup
+      css={css`
+        ${cssStyles ?? ""}
+      `}
+      className={`${className ?? ""} group`}
+      collapsed={_collapsed}
+      {...rest}
+    >
       <h3 onClick={() => setCollapsed(!_collapsed)}>{title}</h3>
       <AnimatePresence initial={false}>
         {!_collapsed && (
           <motion.section
+            className="content"
             style={{
               overflow: "hidden",
             }}
@@ -91,9 +102,13 @@ function _Group({
             transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
           >
             {layout === "row" ? (
-              <Row {...cssProps}>{children}</Row>
+              <Row className="row" {...cssProps}>
+                {children}
+              </Row>
             ) : (
-              <Column {...cssProps}>{children}</Column>
+              <Column className="column" {...cssProps}>
+                {children}
+              </Column>
             )}
           </motion.section>
         )}

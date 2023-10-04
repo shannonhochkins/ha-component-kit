@@ -24,7 +24,6 @@ export default {
     fullWidth: true,
   },
   argTypes: {
-    theme: { table: { disable: true } },
     justifyContent: {
       control: "text",
       description: "standard flex css properties for justify-content",

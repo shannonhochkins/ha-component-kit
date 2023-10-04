@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import React, { useState, useEffect, useMemo, ReactNode } from "react";
 import { useEntity, useHass, isUnavailableState } from "@hakit/core";
 import type {
@@ -199,11 +200,19 @@ function Details({
   const _entity = useEntity(entity);
   const _title = title ?? _entity.attributes.friendly_name ?? "";
   return (
-    <DetailsRow gap="0rem" justifyContent="flex-start" {...rest}>
+    <DetailsRow
+      className="details"
+      gap="0rem"
+      justifyContent="flex-start"
+      {...rest}
+    >
       <Tooltip title={_title ?? "unknown title"}>
-        <Row fullWidth gap="0.5rem" justifyContent="flex-start">
-          <Icon icon={icon ?? _entity.attributes.icon ?? "mdi:info"} />
-          <State>
+        <Row className="row" fullWidth gap="0.5rem" justifyContent="flex-start">
+          <Icon
+            className="icon"
+            icon={icon ?? _entity.attributes.icon ?? "mdi:info"}
+          />
+          <State className="state">
             {typeof render === "function"
               ? render(_entity)
               : `${_title ? `${_title} - ` : ""}${_entity.state ?? ""}${
@@ -250,6 +259,8 @@ function _WeatherCard({
   includeTime = true,
   details = [],
   apparentTemperatureAttribute = "apparent_temperature",
+  cssStyles,
+  className,
   ...rest
 }: WeatherCardProps): JSX.Element {
   const { getConfig } = useHass();
@@ -301,16 +312,25 @@ function _WeatherCard({
     weatherDetails.apparent_temperature ?? weatherDetails.feelsLike;
   const feelsLike = feelsLikeBase === temperature ? null : feelsLikeBase;
   return (
-    <Card {...rest}>
+    <Card
+      {...rest}
+      css={css`
+        ${cssStyles ?? ""}
+      `}
+      className={`${className ?? ""} weater-card`}
+    >
       {includeCurrent && !isUnavailable && (
-        <Row>
-          <StyledIcon icon={icon} />
-          <Column>
-            <Title>
-              <LocationIcon icon={_icon || "mdi:location"} />
+        <Row className="row">
+          <StyledIcon icon={icon} className="icon" />
+          <Column className="column">
+            <Title className="title">
+              <LocationIcon
+                className="location-icon icon"
+                icon={_icon || "mdi:location"}
+              />
               {title || friendly_name}
             </Title>
-            <SubTitle>
+            <SubTitle className="sub-title">
               {temperature}
               {temperatureSuffix || unit}, {capitalize(weather.state)}
               {feelsLike
@@ -321,7 +341,7 @@ function _WeatherCard({
         </Row>
       )}
       {(details ?? []).length > 0 && (
-        <Row gap="0.5rem">
+        <Row gap="0.5rem" className="row">
           {(details ?? []).map((props, index) => (
             <Details key={index} {...props} />
           ))}
@@ -329,6 +349,7 @@ function _WeatherCard({
       )}
       {includeForecast && !isUnavailable && (
         <Row
+          className="row"
           style={{
             justifyContent: "space-between",
           }}
@@ -342,18 +363,19 @@ function _WeatherCard({
               );
               const [day, , hour] = dateFormatted.split(",");
               return (
-                <Forecast key={index}>
-                  <Day>{day}</Day>
-                  {includeTime && <Time>{hour}</Time>}
+                <Forecast key={index} className="forecast">
+                  <Day className="day">{day}</Day>
+                  {includeTime && <Time className="time">{hour}</Time>}
                   <ForecastIcon
+                    className="icon forecast-icon"
                     icon={weatherIconName(forecast.condition as string)}
                   />
-                  <Temperature>
+                  <Temperature className="temperature">
                     {forecast.temperature}
                     {temperatureSuffix || unit}
                   </Temperature>
                   {forecast.templow && (
-                    <TemperatureLow>
+                    <TemperatureLow className="temperature-low">
                       {forecast.templow}
                       {temperatureSuffix || unit}
                     </TemperatureLow>

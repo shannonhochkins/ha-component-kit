@@ -39,6 +39,10 @@ export default ({
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
       propFilter: (prop: any) => {
+        // Exclude the 'css' prop
+        if (prop.name === 'css') {
+          return false;
+        }
         const res = /react-thermostat/.test(prop.parent?.fileName) || !/node_modules/.test(prop.parent?.fileName);
         return prop.parent ? res : true;
       },

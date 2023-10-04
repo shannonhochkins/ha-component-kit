@@ -16,8 +16,7 @@ export interface RowProps extends Extendable {
   /** should the row stretch to the width of the parent */
   fullWidth?: boolean;
 }
-/** A simple helper component to layout child components in a row, justify/align properties as well as gap are supported */
-export const Row = styled(m.div)<RowProps>`
+const _Row = styled(m.div)<RowProps>`
   display: flex;
   flex-direction: row;
   flex-wrap: ${({ wrap }) => wrap || "wrap"};
@@ -32,3 +31,8 @@ export const Row = styled(m.div)<RowProps>`
   ${(props) => props.fullHeight && `height: 100%;`}
   ${(props) => props.fullWidth && `width: 100%;`}
 `;
+
+/** A simple helper component to layout child components in a row, justify/align properties as well as gap are supported */
+export function Row(props: RowProps) {
+  return <_Row {...props} />;
+}

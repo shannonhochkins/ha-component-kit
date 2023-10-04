@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { Icon } from "@iconify/react";
 import { Row, fallback, mq } from "@components";
 import { motion } from "framer-motion";
@@ -92,10 +93,16 @@ function _PictureCard({
   title,
   image,
   icon,
+  className,
+  cssStyles,
   ...rest
 }: PictureCardProps): JSX.Element {
   return (
     <StyledPictureCard
+      className={`picture-card ${className ?? ""}`}
+      css={css`
+        ${cssStyles ?? ""}
+      `}
       {...rest}
       whileTap={{ scale: 0.9 }}
       image={image}
@@ -103,9 +110,9 @@ function _PictureCard({
         if (typeof onClick === "function") onClick();
       }}
     >
-      <PictureCardFooter>
-        <Row gap={"0.5rem"}>
-          {icon && <Icon icon={icon} />}
+      <PictureCardFooter className="footer">
+        <Row gap={"0.5rem"} className="row">
+          {icon && <Icon icon={icon} className="icon" />}
           {title}
         </Row>
       </PictureCardFooter>

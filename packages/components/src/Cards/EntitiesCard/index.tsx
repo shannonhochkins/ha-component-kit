@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   useEntity,
   useIconByDomain,
@@ -134,29 +135,35 @@ function EntityRow({
   const iconColor = on ? entity.custom.hexColor : "var(--ha-S500-contrast)";
 
   return (
-    <EntityRowInner>
+    <EntityRowInner className={`entities-card-row`}>
       <Row
+        className={`row`}
         wrap="nowrap"
         gap="1rem"
         fullWidth
         onClick={() => onClick && onClick(entity)}
       >
         <IconWrapper
+          className={`icon-wrapper`}
           style={{
             opacity: isUnavailable ? "0.3" : "1",
             color: iconColor,
             filter: (on && entity?.custom.brightness) || "brightness(100%)",
           }}
         >
-          {_icon ? <Icon icon={_icon} /> : entityIcon ?? domainIcon}
+          {_icon ? (
+            <Icon className={`icon`} icon={_icon} />
+          ) : (
+            entityIcon ?? domainIcon
+          )}
         </IconWrapper>
-        <Name>
+        <Name className={`name`}>
           {_name ??
             entity.attributes.friendly_name ??
             entity.attributes.entity_id}
           {includeLastUpdated && <span>{entity.custom.relativeTime}</span>}
         </Name>
-        <State>
+        <State className={`state`}>
           {typeof renderState === "function" ? (
             renderState(entity)
           ) : isUnavailable ? (
@@ -189,11 +196,21 @@ export interface EntitiesCardProps extends Extendable {
 function _EntitiesCard({
   entities,
   includeLastUpdated = false,
+  className,
+  id,
+  cssStyles,
   ...rest
 }: EntitiesCardProps): JSX.Element {
   return (
-    <StyledEntitiesCard {...rest}>
-      <Column fullWidth fullHeight>
+    <StyledEntitiesCard
+      id={id ?? ""}
+      cssStyles={css`
+        ${cssStyles ?? ""}
+      `}
+      className={`entities-card ${className ?? ""}`}
+      {...rest}
+    >
+      <Column fullWidth fullHeight className={`column`}>
         {entities?.map((entity, index) => {
           const props: EntityItem =
             typeof entity === "string"

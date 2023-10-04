@@ -128,6 +128,8 @@ function _ClimateCard({
   hideUpdated,
   disabled,
   className,
+  cssStyles,
+  id,
   ...rest
 }: ClimateCardProps): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
@@ -164,15 +166,18 @@ function _ClimateCard({
   return (
     <>
       <StyledRipples
+        id={id}
+        className={`${disabled || isUnavailable ? "disabled" : ""} ${
+          isUnavailable ? "unavailable" : ""
+        } ${className ?? ""}`}
         disabled={disabled || isUnavailable}
         borderRadius="1rem"
+        cssStyles={cssStyles}
         whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
       >
         <StyledClimateCard
           {...longPressEvent}
-          className={`${
-            disabled || isUnavailable ? "disabled" : ""
-          } ${className}`}
+          className={`${disabled || isUnavailable ? "disabled" : ""}`}
           layoutId={`${_entity}-climate-card`}
           {...rest}
           onClick={() => {

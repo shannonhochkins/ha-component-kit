@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { css, Global } from "@emotion/react";
+import { CSSInterpolation } from "@emotion/serialize";
 import styled from "@emotion/styled";
 import { merge } from "lodash";
 import { theme as defaultTheme } from "./theme";
@@ -43,6 +44,8 @@ export interface ThemeProviderProps<T extends object> {
   themeControlStyles?: React.CSSProperties;
   /** the theme properties */
   theme?: DeepPartial<ThemeParams> & T;
+  /** any global style overrides */
+  globalStyles?: CSSInterpolation;
 }
 
 const ThemeControlsBox = styled(motion.div)`
@@ -151,6 +154,7 @@ function _ThemeProvider<T extends object>({
   contrastThreshold: c = DEFAULT_THEME_OPTIONS.contrastThreshold,
   includeThemeControls = false,
   themeControlStyles,
+  globalStyles,
 }: ThemeProviderProps<T>): JSX.Element {
   const getTheme = useCallback(() => {
     return {
@@ -287,6 +291,7 @@ function _ThemeProvider<T extends object>({
             overflow-x: hidden;
             overflow-y: var(--ha-hide-body-overflow-y);
           }
+          ${globalStyles ?? ""}
         `}
       />
       {includeThemeControls && (

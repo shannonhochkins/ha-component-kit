@@ -27,7 +27,8 @@ interface ApiTesterProps {
 }
 
 function ApiTester({ domains, entities }: ApiTesterProps) {
-  const { callService, getAllEntities, config } = useHass();
+  const { callService, getAllEntities, useStore } = useHass();
+  const config = useStore(store => store.config);
   const [domain, setDomain] = useState<string>("light");
   const [service, setService] = useState<string>("");
   const [entity, setEntity] = useState<string>("");
@@ -246,7 +247,7 @@ export function Test${upperFirst(camelCase(domain))}{
 }
 
 function UseData() {
-  const { getAllEntities, getServices, config } = useContext(HassContext);
+  const { getAllEntities, getServices } = useContext(HassContext);
   const entities = getAllEntities();
   const [services, setServices] = useState<HassServices | null>(null);
   const hasEntities = useMemo(
@@ -345,7 +346,6 @@ function Template() {
       </CssBaseline>
         {ready && <HassConnect hassUrl={hassUrl} options={{
           allowNonSecure: true,
-          preloadConfiguration: true,
         }}>
           <UseData />
         </HassConnect>}

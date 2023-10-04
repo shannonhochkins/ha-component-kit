@@ -121,6 +121,8 @@ function _FabCard<E extends EntityName>({
   disabled = false,
   className,
   preventPropagation = false,
+  id,
+  cssStyles,
   ...rest
 }: FabCardProps<E>): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
@@ -188,12 +190,18 @@ function _FabCard<E extends EntityName>({
         }`}
       >
         <StyledRipples
+          id={id}
+          className={`fab-card ${className ?? ""} ${
+            disabled ? "disabled" : ""
+          } ${active ? "active" : ""} ${isUnavailable ? "unavailable" : ""}`}
           preventPropagation={preventPropagation}
           disabled={disabled || isUnavailable}
           borderRadius="50%"
+          cssStyles={cssStyles}
           whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
         >
           <StyledFabCard
+            className={`icon ${active ? "active " : ""}`}
             disabled={disabled || isUnavailable}
             active={active}
             layoutId={
@@ -203,7 +211,6 @@ function _FabCard<E extends EntityName>({
             {...longPressEvent}
             {...rest}
             onClick={onClickHandler}
-            className={`${active ? "active " : ""}${className ?? ""}`}
           >
             {noIcon !== true && (iconElement || entityIcon || domainIcon)}
             {typeof children !== "undefined" ? children : undefined}

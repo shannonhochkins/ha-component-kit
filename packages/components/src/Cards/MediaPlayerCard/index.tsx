@@ -15,7 +15,8 @@ import { FabCard, fallback, Row, Column, RangeSlider, mq } from "@components";
 import type { RowProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
-import { motion } from "framer-motion";
+import { css } from "@emotion/react";
+import { motion, MotionProps } from "framer-motion";
 import { Marquee } from "./Marquee";
 import type { MarqueeProps } from "./Marquee";
 import { useThrottledCallback } from "use-debounce";
@@ -193,7 +194,6 @@ const Base = styled(Column)`
 const Empty = styled.span``;
 
 const StyledFab = styled(FabCard)`
-  background-color: white;
   &:not(.active) {
     color: black;
   }
@@ -206,7 +206,6 @@ const StyledFab = styled(FabCard)`
     &:hover,
     &:active {
       opacity: 1;
-      background-color: white;
       color: black;
     }
   }
@@ -280,12 +279,14 @@ function PlaybackControls({
   return (
     <>
       <StyledFab
+        className="skip-previous"
         disabled={disabled || isOff || !supportsPreviousTrack}
         size={size}
         icon="mdi:skip-previous"
         onClick={() => api.mediaPreviousTrack(allEntityIds)}
       />
       <StyledFab
+        className="play-pause"
         disabled={disabled || isOff || !supportsPlay}
         size={size * (feature ? 2 : 1)}
         icon={playing ? "mdi:pause" : "mdi:play"}
@@ -298,6 +299,7 @@ function PlaybackControls({
         }}
       />
       <StyledFab
+        className="skip-next"
         disabled={disabled || isOff || !supportsNextTrack}
         size={size}
         icon="mdi:skip-next"
@@ -347,9 +349,10 @@ function AlternateControls({
     [api, allEntityIds, entity.entity_id],
   );
   return (
-    <Row gap="0.5rem" wrap="nowrap">
+    <Row gap="0.5rem" wrap="nowrap" className="row">
       {supportsGrouping && (
         <StyledFab
+          className="speaker-group"
           active={groups.length > 0}
           disabled={disabled}
           size={DEFAULT_FAB_SIZE}
@@ -361,6 +364,7 @@ function AlternateControls({
       )}
       {(isUnavailable || isOff) && <SmallText>{entity.state}</SmallText>}
       <StyledFab
+        className="media-player-power"
         active={!isOff && !isUnavailable}
         disabled={disabled || !supportsTurnOn || !supportsTurnOff}
         size={DEFAULT_FAB_SIZE}
@@ -423,6 +427,7 @@ function VolumeControls({
     <>
       {!hideMute && supportsVolumeMute && (
         <StyledFab
+          className={`volume-mute ${is_volume_muted ? "muted" : "not-muted"}`}
           disabled={disabled}
           size={DEFAULT_FAB_SIZE}
           icon={is_volume_muted ? "mdi:volume-off" : "mdi:volume-high"}
@@ -436,12 +441,14 @@ function VolumeControls({
       {volumeLayout === "buttons" && supportsVolumeSet && (
         <>
           <StyledFab
+            className="volume-down"
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}
             icon="mdi:volume-minus"
             onClick={() => api.volumeDown(allEntityIds)}
           />
           <StyledFab
+            className="volume-up"
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}
             icon="mdi:volume-plus"
@@ -450,7 +457,7 @@ function VolumeControls({
         </>
       )}
       {volumeLayout === "slider" && supportsVolumeSet && (
-        <VolumeSlider layout={layout}>
+        <VolumeSlider className="volume-slider" layout={layout}>
           <RangeSlider
             type="range"
             min={0}
@@ -467,8 +474,9 @@ function VolumeControls({
     </>
   );
 }
-
-export interface MediaPlayerCardProps {
+type Extendable = Omit<React.ComponentProps<"div">, "ref"> &
+  Omit<MotionProps, "layout">;
+export interface MediaPlayerCardProps extends Extendable {
   /** the entity_id of the media_player to control */
   entity: FilterByDomain<EntityName, "media_player">;
   /** if the entity supports grouping, you can provide the groupMembers as a list to join them together */
@@ -506,7 +514,10 @@ function _MediaPlayerCard({
   hideAppName = false,
   hideEntityName = false,
   disabled: _disabled = false,
+  cssStyles,
   marqueeProps,
+  className,
+  ...rest
 }: MediaPlayerCardProps) {
   const entity = useEntity(_entity);
   const api = useApi("mediaPlayer");
@@ -702,6 +713,12 @@ function _MediaPlayerCard({
   return (
     <>
       <MediaPlayerWrapper
+        className={`media-player-card ${disabled ? "disabled" : ""} ${
+          isUnavailable ? "unavailable" : ""
+        } ${className ?? ""}}`}
+        css={css`
+          ${cssStyles ?? ""}
+        `}
         ref={playerRef}
         layoutName={layout}
         backgroundImage={
@@ -709,21 +726,23 @@ function _MediaPlayerCard({
             ? artworkUrl
             : undefined
         }
+        {...rest}
       >
         <Column
           fullHeight
           fullWidth
-          className="content"
+          className="column content"
           justifyContent="space-between"
         >
-          <Empty />
+          <Empty className="empty" />
           {layout === "card" && (
-            <Row gap="1rem" fullWidth>
+            <Row gap="1rem" fullWidth className="row">
               <PlaybackControls {...playbackControlsProps} feature size={40} />
             </Row>
           )}
 
           <Base
+            className="base"
             fullWidth
             gap="0.5rem"
             style={{
@@ -734,11 +753,16 @@ function _MediaPlayerCard({
                 : "1rem",
             }}
           >
-            <Row gap="0.5rem" wrap="nowrap" fullWidth>
+            <Row className="row" gap="0.5rem" wrap="nowrap" fullWidth>
               {hideThumbnail === false && artworkUrl !== null && (
-                <Thumbnail backgroundImage={artworkUrl} size={thumbnailSize} />
+                <Thumbnail
+                  className="thumbnail"
+                  backgroundImage={artworkUrl}
+                  size={thumbnailSize}
+                />
               )}
               <Column
+                className="column"
                 gap="0.5rem"
                 alignItems="flex-start"
                 style={{
@@ -748,9 +772,9 @@ function _MediaPlayerCard({
                       : "100%",
                 }}
               >
-                <Row justifyContent="space-between" fullWidth>
+                <Row className="row" justifyContent="space-between" fullWidth>
                   {deviceName && !hideEntityName && (
-                    <Title className="deviceName">
+                    <Title className="title device-name">
                       {hideEntityName ? "" : deviceName}
                       {buffering ? " - buffering" : ""}
                     </Title>
@@ -770,7 +794,7 @@ function _MediaPlayerCard({
                     play={playing}
                     autoFill
                     {...marqueeProps}
-                    className="title"
+                    className="title marquee"
                   >
                     {title}
                     {appName && !hideAppName ? ` - ${appName}` : ""}
@@ -781,6 +805,7 @@ function _MediaPlayerCard({
 
             {!isUnavailable ? (
               <Row
+                className="row"
                 gap="0rem"
                 justifyContent="space-between"
                 wrap="nowrap"

@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ComponentPropsWithoutRef } from "react";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 // Get the value at the end of a path in a nested object
 const midPoint = (
   _Ax: number,
@@ -46,12 +47,18 @@ const SVGWrapper = styled.svg`
   }
 `;
 
-export interface SvgGraphProps {
+export interface SvgGraphProps extends ComponentPropsWithoutRef<"svg"> {
   coordinates?: number[][];
   strokeWidth?: number;
 }
 
-export function SvgGraph({ coordinates, strokeWidth = 5 }: SvgGraphProps) {
+export function SvgGraph({
+  coordinates,
+  strokeWidth = 5,
+  cssStyles,
+  className,
+  ...rest
+}: SvgGraphProps) {
   const [path, setPath] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -66,7 +73,16 @@ export function SvgGraph({ coordinates, strokeWidth = 5 }: SvgGraphProps) {
   const id = idRef.current;
 
   return (
-    <SVGWrapper width="100%" height="100%" viewBox="0 0 500 100">
+    <SVGWrapper
+      className={`${className ?? ""} svg-graph`}
+      width="100%"
+      height="100%"
+      viewBox="0 0 500 100"
+      css={css`
+        ${cssStyles ?? ""}
+      `}
+      {...rest}
+    >
       <g>
         {!!path && coordinates ? (
           <>
@@ -86,7 +102,7 @@ export function SvgGraph({ coordinates, strokeWidth = 5 }: SvgGraphProps) {
             <mask id={`${id}-line`}>
               <path
                 fill="none"
-                stroke="var(--ha-A400)"
+                stroke="var(--ha-A100)"
                 strokeWidth={strokeWidth}
                 strokeLinecap="round"
                 strokeLinejoin="round"

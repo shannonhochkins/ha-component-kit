@@ -80,6 +80,7 @@ export default defineConfig(configEnv => {
         include: [path.resolve(__dirname, './src')],
         exclude: ['node_modules/**', 'framer-motion'],
         clearPureImport: true,
+        copyDtsFiles: true,
         insertTypesEntry: false,
         aliasesExclude: ['@hakit/core'],
         beforeWriteFile: (filePath, content) => {
@@ -87,6 +88,10 @@ export default defineConfig(configEnv => {
           const replace = path.resolve(__dirname, './dist/types');
           if (filePath.includes('test.d.ts')) return false;
           if (filePath.includes('stories.d.ts')) return false;
+          if (filePath.includes('src/index.d.ts')) {
+            content = `/// <reference path="./.d.ts" />
+${content}`
+          }
           return {
             filePath: filePath.replace(base, replace),
             content,

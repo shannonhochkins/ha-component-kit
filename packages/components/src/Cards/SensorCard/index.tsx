@@ -94,7 +94,7 @@ const Title = styled.div`
   font-size: 0.7rem;
 `;
 const State = styled.div`
-  color: var(--ha-50);
+  color: var(--ha-S500-contrast);
   font-size: 0.9rem;
   font-weight: bold;
   margin-top: 0.5rem;
@@ -142,6 +142,8 @@ function _SensorCard<E extends EntityName>({
   historyOptions,
   unit,
   onClick,
+  cssStyles,
+  className,
   ...rest
 }: SensorCardProps<E>): JSX.Element {
   const domain = computeDomain(_entity);
@@ -159,40 +161,50 @@ function _SensorCard<E extends EntityName>({
   }, [entity, onClick, isUnavailable]);
   return (
     <StyledRipples
+      cssStyles={cssStyles}
+      className={`${className ?? ""} sensor-card`}
       borderRadius="1rem"
       disabled={disabled || !hasOnClick}
       whileTap={{ scale: disabled || !hasOnClick ? 1 : 0.9 }}
     >
-      <StyledSensorCard disabled={disabled} {...rest} onClick={useApiHandler}>
-        <Inner>
-          <LayoutBetween>
-            <Description disabled={disabled}>
+      <StyledSensorCard
+        className={"wrapper"}
+        disabled={disabled}
+        {...rest}
+        onClick={useApiHandler}
+      >
+        <Inner className={"inner"}>
+          <LayoutBetween className={"layout-between"}>
+            <Description disabled={disabled} className={"description"}>
               {title || entity.attributes.friendly_name || _entity}
               {entity.state && (
-                <State>
+                <State className={"state"}>
                   {entity.state}
                   {unit ?? entity.attributes.unit_of_measurement ?? ""}
                 </State>
               )}
-              {description && <span>{description}</span>}
+              {description && <span className={"text"}>{description}</span>}
             </Description>
             {icon ?? entityIcon ?? domainIcon}
           </LayoutBetween>
-          <Gap />
-          <LayoutBetween>
-            <Title>
+          <Gap className={"gap"} />
+          <LayoutBetween className={"layout-between"}>
+            <Title className={"title"}>
               {entity.custom.relativeTime}
               {disabled ? ` - ${entity.state}` : ""}
             </Title>
           </LayoutBetween>
         </Inner>
-        <div>
+        <div className={"history"}>
           {entity.history.loading ? (
-            <Alert description="Loading..." />
+            <Alert className={"loading"} description="Loading..." />
           ) : entity.history.coordinates.length > 0 ? (
             <SvgGraph coordinates={entity.history.coordinates} />
           ) : (
-            <Alert description="No state history found." />
+            <Alert
+              className={"no-state-history"}
+              description="No state history found."
+            />
           )}
         </div>
       </StyledSensorCard>
