@@ -42,12 +42,26 @@ function Template() {
           <TimeCard />
           <SensorCard entity="sensor.air_conditioner_inside_temperature" />
         </Group>
-        <Group title="Lights & Switches">
-          <ButtonCard entity="light.fake_light_1" service="toggle" />
-          <ButtonCard entity="light.fake_light_2" service="toggle" icon="mdi:power" />
-          <ButtonCard entity="light.fake_light_3" service="toggle" />
-          <ButtonCard entity="switch.fake_switch" service="toggle" />
-          <ButtonCard entity="vacuum.robot_vacuum" service="toggle" />
+        <Group title="Button Card - Default Layout" alignItems="stretch">
+          <ButtonCard id="default" entity="light.fake_light_1" service="toggle" />
+          <ButtonCard id="default" entity="light.fake_light_2" service="toggle" icon="mdi:power" />
+          <ButtonCard id="default" entity="light.fake_light_3" service="toggle" />
+          <ButtonCard id="default" entity="switch.fake_switch" service="toggle" />
+          <ButtonCard id="default" entity="vacuum.robot_vacuum" service="toggle" />
+        </Group>
+        <Group title="ButtonCard - Slim Layout" alignItems="stretch">
+          <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_1" service="toggle" />
+          <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_2" service="toggle" icon="mdi:power" />
+          <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_3" service="toggle" />
+          <ButtonCard id="slim" defaultLayout="slim" entity="switch.fake_switch" service="toggle" />
+          <ButtonCard id="slim" defaultLayout="slim" entity="vacuum.robot_vacuum" service="toggle" />
+        </Group>
+        <Group title="ButtonCard - Slim Vertical Layout" alignItems="stretch">
+          <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_1" service="toggle" />
+          <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_2" service="toggle" icon="mdi:power" />
+          <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_3" service="toggle" />
+          <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="switch.fake_switch" service="toggle" />
+          <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="vacuum.robot_vacuum" service="toggle" />
         </Group>
         <Group title="Lights & Switches Fabs">
           <FabCard entity="light.fake_light_1" service="toggle" />

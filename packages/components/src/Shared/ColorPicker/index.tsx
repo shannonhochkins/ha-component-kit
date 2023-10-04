@@ -1,4 +1,5 @@
 import { useRef, useCallback, useEffect } from "react";
+import { css } from "@emotion/react";
 import { useGesture } from "@use-gesture/react";
 import styled from "@emotion/styled";
 import {
@@ -198,7 +199,8 @@ export interface ColorPickerOutputColors {
   hs?: HueSaturation;
 }
 
-export interface ColorPickerProps {
+export interface ColorPickerProps
+  extends Omit<React.ComponentPropsWithoutRef<"div">, "onChange"> {
   disabled?: boolean;
   /** the name of the light entity to control */
   entity: FilterByDomain<EntityName, "light">;
@@ -212,6 +214,8 @@ function _ColorPicker({
   entity: _entity,
   onChange,
   onChangeApplied,
+  className,
+  cssStyles,
 }: ColorPickerProps) {
   const entity = useEntity(_entity);
   const lightColors = useLightColor(entity);
@@ -565,7 +569,14 @@ function _ColorPicker({
   );
 
   return supportsColor ? (
-    <ColorPickerWrapper ref={parentRef} {...bind()}>
+    <ColorPickerWrapper
+      css={css`
+        ${cssStyles ?? ""}
+      `}
+      className={`${className ?? ""} color-picker`}
+      ref={parentRef}
+      {...bind()}
+    >
       <div className={`container ${disabled ? "disabled" : ""}`}>
         <canvas ref={canvasRef} width={canvasSize} height={canvasSize}></canvas>
         <svg

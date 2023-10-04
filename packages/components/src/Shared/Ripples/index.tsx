@@ -7,6 +7,7 @@ import React, {
   useEffect,
 } from "react";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { fallback } from "@components";
@@ -69,6 +70,8 @@ const _Ripples = memo(
     preventPropagation = false,
     style,
     className,
+    cssStyles,
+    id,
     ...rest
   }: RipplesProps) => {
     const [rippleStyle, setRippleStyle] = useState<CSSProperties>({});
@@ -127,7 +130,11 @@ const _Ripples = memo(
     return (
       <ParentRipple
         borderRadius={borderRadius}
+        id={id ?? ""}
         className={className ?? ""}
+        css={css`
+          ${cssStyles ?? ""}
+        `}
         style={{
           ...(style ?? {}),
         }}

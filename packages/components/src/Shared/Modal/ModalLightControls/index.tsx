@@ -72,8 +72,11 @@ const Separator = styled.div`
 type MainControl = "brightness" | "color_temp" | "color";
 
 const FabCardColor = styled(FabCard)`
-  background-color: transparent;
-  transition: background var(--ha-transition-duration) var(--ha-easing);
+  position: relative;
+  .icon {
+    background-color: transparent;
+    transition: background var(--ha-transition-duration) var(--ha-easing);
+  }
   &:after {
     content: "";
     position: absolute;
@@ -84,11 +87,15 @@ const FabCardColor = styled(FabCard)`
     background-size: 101%;
     transition: var(--ha-transition-duration) var(--ha-easing);
     transition-property: inset, border;
+    pointer-events: none;
   }
   ${(props) =>
     props.active &&
     `
-    background-color: white;
+    .icon {
+      background-color: white;
+      transition: background var(--ha-transition-duration) var(--ha-easing);
+    }
     &:after {
       inset: 2px;
       border: 2px solid var(--ha-S200);
@@ -100,14 +107,18 @@ const FabCardColor = styled(FabCard)`
 `;
 
 const FabCardTemp = styled(FabCard)`
-  background-color: transparent;
-  transition: background var(--ha-transition-duration) var(--ha-easing);
+  position: relative;
+  .icon {
+    background-color: transparent;
+    transition: background var(--ha-transition-duration) var(--ha-easing);
+  }
   &:after {
     content: "";
     position: absolute;
     inset: 0px;
     border-radius: 50%;
     border: 0px;
+    pointer-events: none;
     background: linear-gradient(
       0deg,
       rgb(166, 209, 255) 0%,
@@ -120,7 +131,9 @@ const FabCardTemp = styled(FabCard)`
   ${(props) =>
     props.active &&
     `
-    background-color: white;
+    .icon {
+      background-color: white;
+    }
     &:after {
       inset: 2px;
       border: 2px solid var(--ha-S200);

@@ -24,7 +24,6 @@ export default {
     fullWidth: true,
   },
   argTypes: {
-    theme: { table: { disable: true } },
     justifyContent: { control: "text" },
     alignItems: { control: "text" },
     gap: { control: "text" },

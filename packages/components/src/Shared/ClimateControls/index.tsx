@@ -1,6 +1,6 @@
 import { useRef, useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
-import { keyframes } from "@emotion/react";
+import { keyframes, css } from "@emotion/react";
 import { Thermostat } from "react-thermostat";
 import { Column, FabCard, Row, fallback, mq } from "@components";
 import type { EntityName, FilterByDomain } from "@hakit/core";
@@ -128,6 +128,8 @@ function _ClimateControls({
   hideFanMode,
   hideState,
   hideUpdated,
+  cssStyles,
+  className,
   ...rest
 }: ClimateControlsProps) {
   const entity = useEntity(_entity);
@@ -173,11 +175,27 @@ function _ClimateControls({
   );
 
   return (
-    <Column fullHeight fullWidth wrap="nowrap" {...rest}>
-      {!hideState && <State ref={stateRef}>{titleValue}</State>}
-      {!hideUpdated && <Updated>{entity.custom.relativeTime}</Updated>}
+    <Column
+      className={`${className ?? ""} climate-controls`}
+      css={css`
+        ${cssStyles ?? ""}
+      `}
+      fullHeight
+      fullWidth
+      wrap="nowrap"
+      {...rest}
+    >
+      {!hideState && (
+        <State className="state" ref={stateRef}>
+          {titleValue}
+        </State>
+      )}
+      {!hideUpdated && (
+        <Updated className="last-updated">{entity.custom.relativeTime}</Updated>
+      )}
       <ThermostatSize>
         <Thermostat
+          className="thermostat"
           valueSuffix={config?.unit_system.temperature}
           track={{
             colors: colors[entity.state as HvacMode],
@@ -191,8 +209,9 @@ function _ClimateControls({
           }}
         />
         {!hideFanMode && !isOff && (
-          <FanModeColumn gap="0.5rem">
+          <FanModeColumn gap="0.5rem" className="column">
             <FanMode
+              className="fan-mode"
               size={40}
               disabled={isOff}
               title="Fan Mode"
@@ -216,17 +235,18 @@ function _ClimateControls({
           </FanModeColumn>
         )}
         {!hideCurrentTemperature && (
-          <CurrentTemperature>
+          <CurrentTemperature className="current-temperature">
             {current_temperature}
             <span>{config?.unit_system.temperature}</span>
-            <Current>CURRENT</Current>
+            <Current className="text">CURRENT</Current>
           </CurrentTemperature>
         )}
       </ThermostatSize>
 
-      <Row gap="0.5rem" wrap="nowrap">
+      <Row gap="0.5rem" wrap="nowrap" className="row">
         {(hvacModes || hvac_modes || []).concat().map((mode) => (
           <FabCard
+            className="mode"
             size={40}
             iconColor={
               currentMode === mode ? activeColors[mode] : `var(--ha-300)`

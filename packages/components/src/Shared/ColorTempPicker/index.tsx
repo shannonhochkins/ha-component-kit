@@ -1,5 +1,6 @@
 import { useRef, useCallback, useEffect } from "react";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import {
   temperature2rgb,
   rgb2hex,
@@ -172,6 +173,8 @@ function _ColorTempPicker({
   entity: _entity,
   onChangeApplied,
   onChange,
+  className,
+  cssStyles,
   ...rest
 }: ColorTempPickerProps) {
   const entity = useEntity(_entity);
@@ -405,7 +408,15 @@ function _ColorTempPicker({
   );
 
   return supportsColorTemp ? (
-    <Picker ref={parentRef} {...bind()} {...rest}>
+    <Picker
+      css={css`
+        ${cssStyles ?? ""}
+      `}
+      className={`${className ?? ""} color-temp-picker`}
+      ref={parentRef}
+      {...bind()}
+      {...rest}
+    >
       <div className={`container ${disabled ? "disabled" : ""}`}>
         <canvas ref={canvasRef} width={canvasSize} height={canvasSize}></canvas>
         <svg

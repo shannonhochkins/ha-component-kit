@@ -162,6 +162,9 @@ function _RoomCard({
   title,
   image,
   animationDuration = 0.25,
+  cssStyles,
+  className,
+  id,
   ...rest
 }: RoomCardProps) {
   const { addRoute, getRoute } = useHass();
@@ -211,6 +214,8 @@ function _RoomCard({
           <FullScreen
             key={`layout-${hash}`}
             layoutId={`layout-${hash}`}
+            id={`${id ?? hash}-expanded`}
+            className={"full-screen"}
             initial={{ opacity: 0 }}
             transition={{
               duration: animationDuration,
@@ -236,15 +241,20 @@ function _RoomCard({
               `}
             />
             <NavBar
+              className={"nav-bar"}
               animate={{
                 transition: {
                   duration: animationDuration,
                 },
               }}
             >
-              <Row gap="0.5rem" justifyContent="space-between">
-                <Row gap="0.5rem">
-                  {icon && <Icon icon={icon} />}
+              <Row
+                gap="0.5rem"
+                justifyContent="space-between"
+                className={"row"}
+              >
+                <Row gap="0.5rem" className={"row"}>
+                  {icon && <Icon className={"icon"} icon={icon} />}
                   {title}
                 </Row>
                 <FabCard
@@ -267,6 +277,7 @@ function _RoomCard({
             >
               {animateChildren && (
                 <ChildContainer
+                  className={"child-container"}
                   initial={{ opacity: 0 }}
                   transition={{
                     duration: animationDuration,
@@ -288,7 +299,14 @@ function _RoomCard({
           </FullScreen>
         )}
       </AnimatePresence>
-      <StyledRoomCard layoutId={`layout-${hash}`}>
+      <StyledRoomCard
+        id={`${id ?? hash}`}
+        layoutId={`layout-${hash}`}
+        className={`${className ?? ""}`}
+        css={css`
+          ${cssStyles ?? ""}
+        `}
+      >
         <StyledPictureCard
           whileTap={{ scale: 0.9 }}
           {...rest}
@@ -298,15 +316,17 @@ function _RoomCard({
           }}
         >
           <PictureCardFooter
+            className={"footer"}
             animate={{
               transition: {
                 duration: animationDuration,
               },
             }}
           >
-            <Row gap={"0.5rem"}>
+            <Row gap={"0.5rem"} className={"row"}>
               {icon && (
                 <Icon
+                  className={"icon"}
                   icon={icon}
                   style={{
                     color: `var(--ha-500-contrast)`,

@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { Icon } from "@iconify/react";
 
 const ALERT_ICONS = {
@@ -115,12 +116,18 @@ export function Alert({
   onClick,
   className,
   children,
+  cssStyles,
   ...rest
 }: AlertProps) {
   return (
     <StyledAlert
+      css={css`
+        ${cssStyles ?? ""}
+      `}
       onClick={onClick}
-      className={`issue-type ${title ? "" : "no-title"} ${type} ${className}`}
+      className={`alert issue-type ${title ? "" : "no-title"} ${type} ${
+        className ?? ""
+      }`}
       role="alert"
       {...rest}
     >
