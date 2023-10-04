@@ -177,7 +177,7 @@ const ToggleState = styled.div<ToggleProps>`
 const Toggle = styled.div<ToggleProps>`
   position: relative;
   background-color: ${(props) =>
-    props.active ? "var(--ha-A400)" : "var(--ha-S50)"};
+    props.active ? "var(--ha-A400)" : "var(--ha-S100)"};
   border-radius: 10px;
   width: 40px;
   height: 20px;
@@ -515,7 +515,10 @@ function _ButtonCard<E extends EntityName>({
     </>
   );
 }
-/** The ButtonCard component is an easy way to represent the state and control of an entity with a simple button, eventually I'll provide further options per domain, like being able to set the colours for lights etc... */
+/**
+ * The ButtonCard component is an easy way to represent the state and control of an entity with a simple button, eventually I'll provide further options per domain, like being able to set the colours for lights etc...
+ * Below are a few examples of layouts that the ButtonCard supports
+ * */
 export function ButtonCard<E extends EntityName>(props: ButtonCardProps<E>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ButtonCard" })}>

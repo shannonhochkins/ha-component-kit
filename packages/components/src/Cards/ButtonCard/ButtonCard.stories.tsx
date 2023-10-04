@@ -1,6 +1,6 @@
 import { Source } from "@storybook/blocks";
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, Group, ButtonCard } from "@components";
+import { ThemeProvider, Group, Column, ButtonCard } from "@components";
 import type { ButtonCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 // @ts-expect-error - Don't have types for jsx-to-string
@@ -44,31 +44,6 @@ function TemplateOnclick(
           });
         }}
       />
-    </HassConnect>
-  );
-}
-
-function LayoutExampleTemplate() {
-  return (
-    <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
-      <Group title="Examples">
-        <ButtonCard
-          defaultLayout="slim"
-          entity="light.fake_light_1"
-          service="toggle"
-        />
-        <ButtonCard
-          defaultLayout="slim-vertical"
-          entity="light.fake_light_2"
-          service="toggle"
-        />
-        <ButtonCard
-          defaultLayout="default"
-          entity="light.fake_light_3"
-          service="toggle"
-        />
-      </Group>
     </HassConnect>
   );
 }
@@ -129,22 +104,12 @@ function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
-      <ButtonCard {...args} />
-    </HassConnect>
-  );
-}
-
-function RenderClimate(args?: Args) {
-  return (
-    <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
-      <ButtonCard
-        {...args}
-        entity="climate.air_conditioner"
-        onClick={(entity) => {
-          entity.state === "off" ? entity.api.turnOn() : entity.api.turnOff();
-        }}
-      />
+      <Column gap="1rem" fullWidth>
+        <ButtonCard {...args} />
+        <ButtonCard {...args} entity="light.fake_light_1" service="toggle" defaultLayout="slim" />
+        <ButtonCard {...args} entity="light.fake_light_2" service="toggle" defaultLayout="slim-vertical" />
+      </Column>
+      
     </HassConnect>
   );
 }
@@ -160,35 +125,19 @@ export default {
     title: { control: "text" },
   },
 } satisfies Meta<typeof ButtonCard>;
-export type LightStory = StoryObj<typeof ButtonCard<"light.fake_light_1">>;
-export const LightExample: LightStory = {
-  render: Render,
-  args: {
-    service: "toggle",
-    entity: "light.fake_light_1",
-  },
-};
 
-export const ClimateExample: StoryObj<
-  typeof ButtonCard<"climate.air_conditioner">
-> = {
-  render: RenderClimate,
-  args: {},
-};
-export type SwitchStory = StoryObj<typeof ButtonCard<"switch.fake_switch">>;
-export const SwitchExample: SwitchStory = {
+export type ExamplesStory = StoryObj<typeof ButtonCard<"switch.fake_switch">>;
+export const Examples: ExamplesStory = {
   render: Render,
   args: {
     service: "toggle",
     entity: "switch.fake_switch",
   },
 };
+
+
 export type GroupStory = StoryObj<typeof ExampleDocs>;
 export const DetailedExample: GroupStory = {
   render: ExampleDocs,
 };
 
-export type LayoutStory = StoryObj<typeof LayoutExampleTemplate>;
-export const LayoutExample: LayoutStory = {
-  render: LayoutExampleTemplate,
-};
