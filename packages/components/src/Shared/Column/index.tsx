@@ -17,8 +17,7 @@ export interface ColumnProps extends Extendable {
   /** should the column stretch to the width of the parent */
   fullWidth?: boolean;
 }
-/** A simple helper component to layout child components in a column, justify/align properties as well as gap are supported */
-export const Column = styled(m.div)<ColumnProps>`
+const _Column = styled(m.div)<ColumnProps>`
   display: flex;
   flex-direction: column;
   flex-wrap: ${({ wrap }) => wrap || "wrap"};
@@ -33,3 +32,8 @@ export const Column = styled(m.div)<ColumnProps>`
   ${(props) => props.fullHeight && `height: 100%;`}
   ${(props) => props.fullWidth && `width: 100%;`}
 `;
+
+/** A simple helper component to layout child components in a column, justify/align properties as well as gap are supported */
+export function Column(props: ColumnProps) {
+  return <_Column {...props} />;
+}

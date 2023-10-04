@@ -191,6 +191,9 @@ function _TriggerCard<E extends EntityName>({
   sliderTextInactive,
   activeStateDuration = 5000,
   hideArrow = false,
+  cssStyles,
+  className,
+  id,
   ...rest
 }: TriggerCardProps<E>): JSX.Element {
   const domain = computeDomain(_entity);
@@ -222,29 +225,41 @@ function _TriggerCard<E extends EntityName>({
     <StyledRipples
       borderRadius="1rem"
       disabled={disabled}
+      cssStyles={cssStyles}
+      id={id ?? ""}
+      className={`${className ?? ""} trigger-card`}
       whileTap={{ scale: disabled ? 1 : 0.9 }}
     >
-      <StyledTriggerCard disabled={disabled} {...rest} onClick={useApiHandler}>
-        <LayoutBetween>
-          <Description disabled={disabled}>
+      <StyledTriggerCard
+        className={`inner`}
+        disabled={disabled}
+        {...rest}
+        onClick={useApiHandler}
+      >
+        <LayoutBetween className={`layout-between`}>
+          <Description disabled={disabled} className={`description`}>
             {title || entity.attributes.friendly_name || _entity}
             {description && <span>{description}</span>}
           </Description>
           {icon ?? entityIcon ?? domainIcon}
         </LayoutBetween>
-        <Gap />
-        <LayoutBetween>
-          <Title>
+        <Gap className={`gap`} />
+        <LayoutBetween className={`layout-between`}>
+          <Title className={`title`}>
             {entity.custom.relativeTime}
             {disabled ? ` - ${entity.state}` : ""}
           </Title>
-          <Toggle active={disabled ? false : active}>
+          <Toggle active={disabled ? false : active} className={`toggle`}>
             {disabled ? null : (
               <>
-                <ToggleState active={active}>
+                <ToggleState active={active} className={`toggle-state`}>
                   {sliderIcon ?? powerIcon}
                 </ToggleState>
-                <ToggleMessage hideArrow={hideArrow} active={active}>
+                <ToggleMessage
+                  hideArrow={hideArrow}
+                  active={active}
+                  className={`toggle-message`}
+                >
                   {active
                     ? sliderTextActive ?? "Success..."
                     : sliderTextInactive ?? `Run ${domain}`}{" "}

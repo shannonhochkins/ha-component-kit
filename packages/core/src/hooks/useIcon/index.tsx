@@ -25,8 +25,6 @@ export function useIconByDomain<
       case "light":
         return "octicon:light-bulb-24";
       case "automation":
-      case "nodered":
-        return "fad:automation-4p";
       case "button":
       case "inputButton":
         return "teenyicons:button-outline";
@@ -101,7 +99,6 @@ export function useIconByDomain<
         return "mdi:air-humidifier";
       // un-categorized
       case "profiler":
-      case "mqtt":
       case "deviceTracker":
         return "octicon:info-24";
       case "unknown":
@@ -121,8 +118,6 @@ export function useIconByDomain<
         return "mdi:robot-mower";
       case "calendar":
         return "mdi:calendar";
-      case "ring":
-        return "mdi:doorbell-video";
 
       // Add more cases for other domains and their respective icons if needed
 

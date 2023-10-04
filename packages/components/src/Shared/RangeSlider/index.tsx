@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, ReactNode } from "react";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { useDebouncedCallback } from "use-debounce";
 import { fallback, mq } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -150,7 +151,7 @@ const Description = styled.span`
 
 export interface RangeSliderProps
   extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
+    React.ComponentPropsWithoutRef<"input">,
     "onInput" | "onChange"
   > {
   /** The minimum value for the input @default 0 */
@@ -191,6 +192,7 @@ function _RangeSlider({
   min: _min = 0,
   max: _max = 100,
   step: _step = 1,
+  cssStyles,
   ...rest
 }: RangeSliderProps) {
   const [value, setValue] = useState(_value ?? 0);
@@ -236,13 +238,21 @@ function _RangeSlider({
   }, 300);
 
   return (
-    <div style={{ position: "relative", ...(style ?? {}) }}>
-      {label && <Label>{label}</Label>}
-      {description && <Description>{description}</Description>}
+    <div
+      className={`${className ?? ""} ${active ? "active" : ""} range-slider`}
+      style={{ position: "relative", ...(style ?? {}) }}
+      css={css`
+        ${cssStyles ?? ""}
+      `}
+    >
+      {label && <Label className="label">{label}</Label>}
+      {description && (
+        <Description className="description">{description}</Description>
+      )}
       <StyledRange
         ref={parentRangeRef}
         handleSize={handleSize}
-        className={`range-slider ${className ?? ""} ${active ? "active" : ""}`}
+        className={`range-slider-inner ${active ? "active" : ""}`}
       >
         <input
           {...rest}

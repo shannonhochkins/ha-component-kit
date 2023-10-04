@@ -15,6 +15,8 @@ export interface TypeSyncOptions {
   custom?: boolean;
   domainWhitelist?: string[];
   domainBlacklist?: string[];
+  serviceWhitelist?: string[];
+  serviceBlacklist?: string[];
   prettier?: {
     options: Options;
     disable: boolean;
@@ -28,6 +30,8 @@ export async function typeSync({
   filename = DEFAULT_FILENAME,
   domainWhitelist = [],
   domainBlacklist = [],
+  serviceWhitelist = [],
+  serviceBlacklist = [],
   custom = true,
   prettier,
 }: TypeSyncOptions) {
@@ -39,7 +43,12 @@ export async function typeSync({
   `;
   
   const { services, states } = await connect(url, token);
-  const serviceInterfaces = await generateServiceTypes(services, typeof domainWhitelist === 'string' ? [domainWhitelist] : domainWhitelist.map(x => `${x}`), domainBlacklist);
+  const serviceInterfaces = await generateServiceTypes(services, {
+    domainWhitelist,
+    domainBlacklist,
+    serviceWhitelist,
+    serviceBlacklist,
+  });
   const output = custom ? `
     ${warning}
     import { ServiceFunction, ServiceFunctionTypes } from "@hakit/core";

@@ -1,5 +1,11 @@
 import { useEffect, Fragment, ReactNode } from "react";
-import { AnimatePresence, motion, HTMLMotionProps } from "framer-motion";
+import { css } from "@emotion/react";
+import {
+  AnimatePresence,
+  motion,
+  MotionProps,
+  HTMLMotionProps,
+} from "framer-motion";
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { useKeyPress } from "react-use";
@@ -80,7 +86,8 @@ const ModalBackdrop = styled(motion.div)`
   backdrop-filter: blur(2em) brightness(0.75);
 `;
 
-export interface ModalProps extends Omit<HTMLMotionProps<"div">, "title"> {
+type Extendable = React.ComponentPropsWithoutRef<"div"> & MotionProps;
+export interface ModalProps extends Omit<Extendable, "title"> {
   /** triggers the modal opening */
   open: boolean;
   /** the id to provide for framer-motion, this should link back to another layoutId property on the element triggering the Modal */
@@ -106,6 +113,7 @@ function _Modal({
   backdropProps,
   style,
   className,
+  cssStyles,
   ...rest
 }: ModalProps) {
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
@@ -121,6 +129,7 @@ function _Modal({
           <ModalBackdrop
             key={`${id}-backdrop`}
             className="modal-backdrop"
+            id={`${id}-backdrop`}
             initial={{
               opacity: 0,
             }}
@@ -142,10 +151,14 @@ function _Modal({
               boxShadow: "0px 2px 4px var(--ha-S50)",
               ...style,
             }}
+            css={css`
+              ${cssStyles ?? ""}
+            `}
             layout
             layoutId={id}
+            id={id}
             key={`${id}-container`}
-            className={`modal-container ${className}`}
+            className={`modal-container ${className ?? ""}`}
             {...rest}
           >
             <ModalHeader className={`modal-header`}>

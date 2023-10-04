@@ -55,24 +55,18 @@ function LayoutExampleTemplate() {
       <Group title="Examples">
         <ButtonCard
           defaultLayout="slim"
-          title="Slim example"
-          entity="switch.fake_switch"
+          entity="light.fake_light_1"
           service="toggle"
         />
         <ButtonCard
-          defaultLayout="slim"
-          title="Slim example"
-          entity="light.unavailable"
+          defaultLayout="slim-vertical"
+          entity="light.fake_light_2"
           service="toggle"
         />
         <ButtonCard
           defaultLayout="default"
-          title="Default example"
-          entity="switch.fake_switch"
+          entity="light.fake_light_3"
           service="toggle"
-          onClick={(entity) => {
-            entity.api.toggle();
-          }}
         />
       </Group>
     </HassConnect>

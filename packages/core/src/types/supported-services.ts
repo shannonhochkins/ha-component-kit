@@ -1272,36 +1272,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  mqtt: {
-    // Publishes a message to an MQTT topic.
-    publish: ServiceFunction<
-      T,
-      {
-        // Topic to publish to. @example /homeassistant/hello
-        topic: string;
-        // The payload to publish. @example This is great
-        payload?: string;
-        // Template to render as a payload value. If a payload is provided, the template is ignored. @example {{ states('sensor.temperature') }}
-        payload_template?: object;
-        // Quality of Service to use. O. At most once. 1: At least once. 2: Exactly once.
-        qos?: "0" | "1" | "2";
-        // If the message should have the retain flag set. If set, the broker stores the most recent message on a topic.
-        retain?: boolean;
-      }
-    >;
-    // Writes all messages on a specific topic into the `mqtt_dump.txt` file in your configuration folder.
-    dump: ServiceFunction<
-      T,
-      {
-        // Topic to listen to. @example OpenZWave/#
-        topic?: string;
-        // How long we should listen for messages in seconds.
-        duration?: number;
-      }
-    >;
-    // Reloads MQTT entities from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
-  };
   number: {
     // Sets the value of a number.
     setValue: ServiceFunction<
@@ -1761,48 +1731,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         data?: object;
       }
     >;
-    // Sends a notification message using the mobile_app_natashas_iphone integration.
-    mobileAppNatashasIphone: ServiceFunction<
-      T,
-      {
-        // undefined @example The garage door has been open for 10 minutes.
-        message: string;
-        // undefined @example Your Garage Door Friend
-        title?: string;
-        // undefined @example platform specific
-        target?: object;
-        // undefined @example platform specific
-        data?: object;
-      }
-    >;
-    // Sends a notification message using the mobile_app_sm_t220 integration.
-    mobileAppSmT220: ServiceFunction<
-      T,
-      {
-        // undefined @example The garage door has been open for 10 minutes.
-        message: string;
-        // undefined @example Your Garage Door Friend
-        title?: string;
-        // undefined @example platform specific
-        target?: object;
-        // undefined @example platform specific
-        data?: object;
-      }
-    >;
-    // Sends a notification message using the mobile_app_shannons_phone integration.
-    mobileAppShannonsPhone: ServiceFunction<
-      T,
-      {
-        // undefined @example The garage door has been open for 10 minutes.
-        message: string;
-        // undefined @example Your Garage Door Friend
-        title?: string;
-        // undefined @example platform specific
-        target?: object;
-        // undefined @example platform specific
-        data?: object;
-      }
-    >;
     // Sends a notification message using the notify service.
     notify: ServiceFunction<
       T,
@@ -1891,25 +1819,5 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   template: {
     // Reloads template entities from the YAML-configuration.
     reload: ServiceFunction<T, object>;
-  };
-  ring: {
-    // Updates the data we have for all your ring devices.
-    update: ServiceFunction<T, object>;
-  };
-  nodered: {
-    // Trigger a Node-RED Node
-    trigger: ServiceFunction<
-      T,
-      {
-        // Entity Id to trigger the event node with. Only needed if the node is not triggered by a single entity. @example sun.sun
-        trigger_entity_id?: object;
-        // Skip conditions of the node (defaults to false) @example true
-        skip_condition?: object;
-        // Which output of the node to use (defaults to true, the top output). Only used when skip_condition is set to true. @example true
-        output_path?: object;
-        // The payload the node will output when triggered. Works only when triggering an entity node, not an event node.
-        payload?: object;
-      }
-    >;
   };
 }

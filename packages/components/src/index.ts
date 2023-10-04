@@ -1,3 +1,5 @@
+import "./.d.ts";
+/// <reference path=".d.ts" />
 // media query helpers
 export { useDevice } from "./hooks/useDevice";
 export { mq } from "./hooks/mq";
@@ -16,7 +18,7 @@ export type { RowProps } from "./Shared/Row";
 // column
 export { Column } from "./Shared/Column";
 export type { ColumnProps } from "./Shared/Column";
-// ErorrBoundary fallback
+// ErrorBoundary fallback
 export { fallback } from "./Shared/ErrorBoundary";
 // ButtonCard
 export { ButtonCard } from "./Cards/ButtonCard";

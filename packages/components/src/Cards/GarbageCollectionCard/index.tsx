@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import React, {
   useMemo,
   useEffect,
@@ -218,6 +219,8 @@ function _GarbageCollectionCard({
   svg,
   title = "Garbage Collection",
   description,
+  cssStyles,
+  className,
   ...rest
 }: GarbageCollectionCardProps): JSX.Element {
   const dateSensor = useEntity("sensor.date", {
@@ -274,7 +277,12 @@ function _GarbageCollectionCard({
           : bin?.iconColor ?? defaultSVGProperties.iconColor;
       const icon = typeof bin === "string" ? undefined : bin?.icon;
       return (
-        <Bin key={key} textColor={textColor} iconColor={iconColor}>
+        <Bin
+          className="bin-group"
+          key={key}
+          textColor={textColor}
+          iconColor={iconColor}
+        >
           {typeof bin !== "string" &&
             typeof bin !== "undefined" &&
             typeof bin.name === "string" && (
@@ -282,7 +290,7 @@ function _GarbageCollectionCard({
             )}
           {typeof icon === "string" && (
             <Icon
-              className="bin-icon"
+              className="icon bin-icon"
               icon={icon}
               style={{
                 fontSize: size / 2.7,
@@ -290,6 +298,7 @@ function _GarbageCollectionCard({
             />
           )}
           <GarbageBin
+            className="garbage-bin"
             style={{
               color,
               width: size,
@@ -395,12 +404,19 @@ function _GarbageCollectionCard({
     ],
   );
   return (
-    <Card {...rest}>
-      <Title>{title}</Title>
+    <Card
+      css={css`
+        ${cssStyles ?? ""}
+      `}
+      className={`garbage-collection-card ${className ?? ""}`}
+      {...rest}
+    >
+      <Title className="title">{title}</Title>
       {typeof description !== "undefined" && (
-        <Description>{description}</Description>
+        <Description className="description">{description}</Description>
       )}
       <Row
+        className="row"
         fullHeight
         fullWidth
         wrap="nowrap"
@@ -413,13 +429,13 @@ function _GarbageCollectionCard({
           .filter((collection) => collection.bins !== null)
           .map((collection, index) => {
             return (
-              <BinBox key={index}>
+              <BinBox className="bin-box" key={index}>
                 {typeof collection.schedule.title !== "undefined" && (
                   <div className="collection-title">
                     {collection.schedule.title}
                   </div>
                 )}
-                <Row wrap="nowrap" gap="1rem">
+                <Row className="row" wrap="nowrap" gap="1rem">
                   {collection.bins &&
                     collection.bins.map((bin, index) => renderBin(bin, index))}
                 </Row>

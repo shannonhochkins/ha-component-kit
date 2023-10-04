@@ -24,6 +24,7 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+*.tgz
 
 supported-types.d.ts
 .ha-repo-cache

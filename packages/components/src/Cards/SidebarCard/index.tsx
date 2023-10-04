@@ -12,7 +12,7 @@ import {
   mq,
   useDevice,
 } from "@components";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, MotionProps } from "framer-motion";
 import type { WeatherCardProps, TimeCardProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -272,7 +272,8 @@ export interface MenuItem {
   onClick: (event: React.MouseEvent<HTMLLIElement>) => void;
 }
 
-export interface SidebarCardProps {
+type Extendable = Omit<React.ComponentProps<"div">, "ref"> & MotionProps;
+export interface SidebarCardProps extends Extendable {
   /** should the time card be included by default @default true */
   includeTimeCard?: boolean;
   /** should the sidebar start opened @default true */
@@ -300,6 +301,9 @@ function _SidebarCard({
   children,
   autoIncludeRoutes = true,
   includeTimeCard = true,
+  className,
+  cssStyles,
+  ...rest
 }: SidebarCardProps) {
   const [open, setOpen] = useState(startOpen);
   const { useStore } = useHass();
@@ -342,6 +346,10 @@ function _SidebarCard({
         `}
       />
       <StyledSidebarCard
+        css={css`
+          ${cssStyles ?? ""}
+        `}
+        className={`${className ?? ""} sidebar-card`}
         animate={{
           width: "100%",
           maxWidth: open
@@ -350,16 +358,19 @@ function _SidebarCard({
         }}
         initial={false}
         key={`ha-sidebar-closed`}
+        {...rest}
       >
         <Column
+          className="column"
           wrap="nowrap"
           fullHeight
           fullWidth
           alignItems="flex-start"
           justifyContent="space-between"
         >
-          <Filler>
+          <Filler className="filler">
             <Row
+              className="row"
               wrap="nowrap"
               style={{
                 padding: open ? "0.28rem 0" : "0",
@@ -369,6 +380,7 @@ function _SidebarCard({
               {includeTimeCard && (
                 <StyledTimeCard
                   key="sidebar-large-time-card"
+                  className="sidebar-time-card"
                   open={open}
                   initial={{ opacity: 0 }}
                   animate={{
@@ -383,6 +395,7 @@ function _SidebarCard({
               )}
               <HamburgerMenu
                 open={open}
+                className="hamburger-menu"
                 key="hamburger-menu-open"
                 animate={{
                   width:
@@ -406,13 +419,16 @@ function _SidebarCard({
                       justifyContent: "center",
                     }}
                   >
-                    <Icon icon={open ? "mdi:close" : "mdi:menu"} />
+                    <Icon
+                      className="icon"
+                      icon={open ? "mdi:close" : "mdi:menu"}
+                    />
                   </a>
                 </motion.li>
               </HamburgerMenu>
             </Row>
-            <Divider />
-            <Menu open={open}>
+            <Divider className="divider" />
+            <Menu open={open} className="menu">
               <AnimatePresence>
                 {concatenatedMenuItems.map((item, index) => {
                   return (
@@ -426,7 +442,7 @@ function _SidebarCard({
                     >
                       <a>
                         {typeof item.icon === "string" ? (
-                          <Icon icon={item.icon} />
+                          <Icon className="icon" icon={item.icon} />
                         ) : (
                           item.icon
                         )}
@@ -444,11 +460,12 @@ function _SidebarCard({
                 })}
               </AnimatePresence>
             </Menu>
-            {children && open && <Filler>{children}</Filler>}
+            {children && open && <Filler className="filler">{children}</Filler>}
           </Filler>
           <AnimatePresence mode="wait">
             {weatherCardProps && (
               <motion.div
+                className="weather-wrapper"
                 key="sidebar-weather-large"
                 animate={{
                   width: "100%",
@@ -456,6 +473,7 @@ function _SidebarCard({
                 }}
               >
                 <WeatherCardCustom
+                  className="weather-card-sidebar"
                   open={open}
                   initial={{ opacity: 0 }}
                   animate={{

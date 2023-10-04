@@ -72,6 +72,7 @@ const Separator = styled.div`
 type MainControl = "brightness" | "color_temp" | "color";
 
 const FabCardColor = styled(FabCard)`
+  position: relative;
   background-color: transparent;
   transition: background var(--ha-transition-duration) var(--ha-easing);
   &:after {
@@ -100,6 +101,7 @@ const FabCardColor = styled(FabCard)`
 `;
 
 const FabCardTemp = styled(FabCard)`
+  position: relative;
   background-color: transparent;
   transition: background var(--ha-transition-duration) var(--ha-easing);
   &:after {

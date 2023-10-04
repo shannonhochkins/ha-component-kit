@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { useEntity } from "@hakit/core";
 import { Icon } from "@iconify/react";
@@ -174,6 +175,8 @@ function _TimeCard({
   includeIcon = true,
   center = false,
   icon,
+  cssStyles,
+  className,
   ...rest
 }: TimeCardProps): JSX.Element {
   const timeSensor = useEntity("sensor.time", {
@@ -193,20 +196,28 @@ function _TimeCard({
     return <Warning />;
   }
   return (
-    <Card {...rest}>
+    <Card
+      css={css`
+        ${cssStyles ?? ""}
+      `}
+      className={`${className ?? ""} time-card`}
+      {...rest}
+    >
       <Column
+        className="column"
         gap="0.5rem"
         alignItems={center ? "center" : "flex-start"}
         fullHeight
       >
-        <Row gap="0.5rem" alignItems="center" wrap="nowrap">
+        <Row className="row" gap="0.5rem" alignItems="center" wrap="nowrap">
           {includeIcon && (
             <StyledIcon
+              className="icon"
               icon={icon || dateSensor.attributes.icon || "mdi:calendar"}
             />
           )}
-          <Time>{formatted}</Time>
-          <AmOrPm>{amOrPm}</AmOrPm>
+          <Time className="time">{formatted}</Time>
+          <AmOrPm className="time-suffix">{amOrPm}</AmOrPm>
         </Row>
         {includeDate && <Row>{formatDate(dateSensor.state)}</Row>}
       </Column>
