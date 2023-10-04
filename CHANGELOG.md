@@ -1,3 +1,30 @@
+# 2.1.0
+
+## @hakit/components
+- NEW - ButtonCard - slim and slim-vertical layout options added (preview available on the storybook home page) - These mimic the styles of the Mushroom cards from home assistant, additionally in preparation for the HA addon, there's now more customizable props to hide / show certain information on the card.
+- NEW - ThemeProvider - globalStyles - a new prop available to pass a string literal of css to be applied globally to the document, this is useful for adding fonts or other global styles.
+- NEW - cssStyles - a prop available on every single component to provide custom isolated styles for individual components, this supports styled css, meaning you can write selectors similar to scss, ie:
+```
+  cssStyles={`
+    .my-custom-class {
+      background-color: var(--ha-S50);
+      .something-else {
+        color: var(--ha-S50-contrast);
+      }
+    }
+  `}
+```
+  This feature was added for part of a feature that will be added to the home assistant addon so users can write css in the UI.
+- NEW - classNames - have been added to nearly every element as an identifier in preparation for the css overrides prop above, this will allow you to target specific elements and override the styles.
+- HOTFIX - Modal - previously, if you included two ButtonCards with the same entity, the modals would clash and the animations were failing to render correctly, this can now be fixed by providing and id attribute as well as the entity.
+- HOTFIX - There was many components who's types didn't have the correct extended props not allowing you to add standard HTML properties which has been fixed.
+
+## @hakit/core
+- NEW - serviceWhitelist and serviceBlacklist added to syncTypes script, this allows you to filter out services that you don't want to sync to your local types.
+- HOTFIX - CLI script had a few missing params for options which have been addressed.
+- HOTFIX - Types for Row/Column were previously littered with every available prop from react/emotion which has been addressed.
+
+
 # 2.0.3
 ## @hakit/components
 - Small improvements to Tooltip and Modal to provide better classnames for elements for re-styling
