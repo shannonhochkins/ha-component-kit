@@ -37,7 +37,6 @@ export function ModalByEntityDomain<E extends EntityName>({
       );
     case "climate":
       return (
-        // @ts-expect-error - types are fine
         <ModalClimateControls
           entity={entity as FilterByDomain<EntityName, "climate">}
           {...rest}
