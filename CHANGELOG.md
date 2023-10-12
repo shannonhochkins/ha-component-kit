@@ -25,6 +25,13 @@
 - HOTFIX - Modal - previously, if you included two ButtonCards with the same entity, the modals would clash and the animations were failing to render correctly, this can now be fixed by providing and id attribute as well as the entity.
 - HOTFIX - There was many components who's types didn't have the correct extended props not allowing you to add standard HTML properties which has been fixed.
 
+## @hakit/core
+- NEW - serviceWhitelist and serviceBlacklist added to syncTypes script, this allows you to filter out services that you don't want to sync to your local types.
+- HOTFIX - CLI script had a few missing params for options which have been addressed.
+- HOTFIX - Types for Row/Column were previously littered with every available prop from react/emotion which has been addressed.
+
+
+
 # 2.0.3
 ## @hakit/components
 - Small improvements to Tooltip and Modal to provide better classnames for elements for re-styling
