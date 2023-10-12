@@ -17,7 +17,7 @@ This is the release process I'm using, it's a bit manual but it works for now.
 # Step 1: Make sure your local master is up-to-date with the remote
 git fetch origin && git checkout master && git pull
 
-# Step 2: Create a release branch
+# Step 2: Checkout development branch, pull latest, Create a release branch
 git flow release start "1.0.0"
 # ... perform any final adjustments on the release branch, bump version numbers, etc. ...
 npx changeset
