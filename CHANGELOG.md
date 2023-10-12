@@ -1,3 +1,9 @@
+# 2.0.4
+## @hakit/components
+- Small style fixes for the new button card layouts
+- updating some documentation
+## @hakit/core
+- Updating types after latest home assistant release
 # 2.0.3
 ## @hakit/components
 - Small improvements to Tooltip and Modal to provide better classnames for elements for re-styling

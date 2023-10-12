@@ -95,4 +95,5 @@ export type { AlertProps } from "./Shared/Alert";
 // ThemeProvider
 export { ThemeProvider } from "./ThemeProvider";
 export { theme } from "./ThemeProvider/theme";
+export * from "./ThemeProvider/constants";
 export type { ThemeProviderProps } from "./ThemeProvider";

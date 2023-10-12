@@ -59,12 +59,14 @@ const StyledButtonCard = styled(motion.button)`
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   }
   .slim & {
+    justify-content: center;
     .fab-card-inner {
       width: 3rem;
       height: 3rem;
     }
   }
   .slim-vertical & {
+    justify-content: center;
     .fab-card-inner {
       width: 3rem;
       height: 3rem;

@@ -87,15 +87,15 @@ export interface FabCardProps<E extends EntityName> extends Extendable {
   serviceData?: ServiceData<ExtractDomain<E>, DomainService<ExtractDomain<E>>>;
   /** The name of your entity */
   entity?: E;
-  /** the title used for the tooltip and or modal that will expands, defaults to entity name or domain name @default "entitiy_name" */
+  /** the title used for the tooltip and or modal that will expands, defaults to entity name or domain name  */
   title?: string;
-  /** the tooltip placement @default 'top' */
+  /** the tooltip placement @default "top" */
   tooltipPlacement?: TooltipProps["placement"];
   /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
   onClick?: E extends undefined
     ? (entity: null) => void
     : (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
-  /** optional override to set the Fab to an active state @defaults to entity value */
+  /** optional override to set the Fab to an active state, defaults to entity value */
   active?: boolean;
   /** the children of the fabCard, useful or small text */
   children?: React.ReactNode;

@@ -50,9 +50,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       T,
       {
         // Latitude of your location. @example 32.87336
-        latitude: string;
+        latitude: number;
         // Longitude of your location. @example 117.22743
-        longitude: string;
+        longitude: number;
+        // Elevation of your location. @example 120
+        elevation?: number;
       }
     >;
     // Reloads Jinja2 templates found in the `custom_templates` folder in your config. New values will be applied on the next render of the template.
@@ -65,7 +67,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         entry_id?: string;
       }
     >;
-    //
+    // Reload all YAML configuration that can be reloaded without restarting Home Assistant.
     reloadAll: ServiceFunction<T, object>;
   };
   systemLog: {
@@ -341,8 +343,16 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         agent_id?: object;
       }
     >;
-    //
-    reload: ServiceFunction<T, object>;
+    // Reloads the intent configuration.
+    reload: ServiceFunction<
+      T,
+      {
+        // Language to clear cached intents for. Defaults to server language. @example NL
+        language?: string;
+        // Conversation agent to reload. @example homeassistant
+        agent_id?: object;
+      }
+    >;
   };
   commandLine: {
     // Reloads command line configuration from the YAML-configuration.
@@ -744,62 +754,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  counter: {
-    // Increments a counter.
-    increment: ServiceFunction<T, object>;
-    // Decrements a counter.
-    decrement: ServiceFunction<T, object>;
-    // Resets a counter.
-    reset: ServiceFunction<T, object>;
-    // Sets the counter value.
-    setValue: ServiceFunction<
-      T,
-      {
-        // The new counter value the entity should be set to.
-        value: number;
-      }
-    >;
-    //
-    configure: ServiceFunction<T, object>;
-  };
-  zone: {
-    // Reloads zones from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
-  };
-  cover: {
-    // Opens a cover.
-    openCover: ServiceFunction<T, object>;
-    // Closes a cover.
-    closeCover: ServiceFunction<T, object>;
-    // Moves a cover to a specific position.
-    setCoverPosition: ServiceFunction<
-      T,
-      {
-        // Target position.
-        position: number;
-      }
-    >;
-    // Stops the cover movement.
-    stopCover: ServiceFunction<T, object>;
-    // Toggles a cover open/closed.
-    toggle: ServiceFunction<T, object>;
-    // Tilts a cover open.
-    openCoverTilt: ServiceFunction<T, object>;
-    // Tilts a cover to close.
-    closeCoverTilt: ServiceFunction<T, object>;
-    // Stops a tilting cover movement.
-    stopCoverTilt: ServiceFunction<T, object>;
-    // Moves a cover tilt to a specific position.
-    setCoverTiltPosition: ServiceFunction<
-      T,
-      {
-        // Target tilt positition.
-        tilt_position: number;
-      }
-    >;
-    // Toggles a cover tilt open/closed.
-    toggleCoverTilt: ServiceFunction<T, object>;
-  };
   group: {
     // Reloads group configuration, entities, and notify services from YAML-configuration.
     reload: ServiceFunction<T, object>;
@@ -836,6 +790,54 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Reloads schedules from the YAML-configuration.
     reload: ServiceFunction<T, object>;
   };
+  zone: {
+    // Reloads zones from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
+  };
+  inputButton: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
+    // Mimics the physical button press on the device.
+    press: ServiceFunction<T, object>;
+  };
+  cover: {
+    // Opens a cover.
+    openCover: ServiceFunction<T, object>;
+    // Closes a cover.
+    closeCover: ServiceFunction<T, object>;
+    // Moves a cover to a specific position.
+    setCoverPosition: ServiceFunction<
+      T,
+      {
+        // Target position.
+        position: number;
+      }
+    >;
+    // Stops the cover movement.
+    stopCover: ServiceFunction<T, object>;
+    // Toggles a cover open/closed.
+    toggle: ServiceFunction<T, object>;
+    // Tilts a cover open.
+    openCoverTilt: ServiceFunction<T, object>;
+    // Tilts a cover to close.
+    closeCoverTilt: ServiceFunction<T, object>;
+    // Stops a tilting cover movement.
+    stopCoverTilt: ServiceFunction<T, object>;
+    // Moves a cover tilt to a specific position.
+    setCoverTiltPosition: ServiceFunction<
+      T,
+      {
+        // Target tilt positition.
+        tilt_position: number;
+      }
+    >;
+    // Toggles a cover tilt open/closed.
+    toggleCoverTilt: ServiceFunction<T, object>;
+  };
+  template: {
+    // Reloads template entities from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
+  };
   inputNumber: {
     // Reloads helpers from the YAML-configuration.
     reload: ServiceFunction<T, object>;
@@ -852,61 +854,43 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Decrements the current value by 1 step.
     decrement: ServiceFunction<T, object>;
   };
-  inputDatetime: {
+  inputSelect: {
     // Reloads helpers from the YAML-configuration.
     reload: ServiceFunction<T, object>;
-    // Sets the date and/or time.
-    setDatetime: ServiceFunction<
+    // Selects the first option.
+    selectFirst: ServiceFunction<T, object>;
+    // Selects the last option.
+    selectLast: ServiceFunction<T, object>;
+    // Select the next option.
+    selectNext: ServiceFunction<
       T,
       {
-        // The target date. @example '2019-04-20'
-        date?: string;
-        // The target time. @example '05:04:20'
-        time?: object;
-        // The target date & time. @example '2019-04-20 05:04:20'
-        datetime?: string;
-        // The target date & time, expressed by a UNIX timestamp.
-        timestamp?: number;
+        // If the option should cycle from the last to the first option on the list.
+        cycle?: boolean;
       }
     >;
-  };
-  inputButton: {
-    //
-    reload: ServiceFunction<T, object>;
-    // Mimics the physical button press on the device.
-    press: ServiceFunction<T, object>;
-  };
-  scene: {
-    // Reloads the scenes from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
-    // Activates a scene with configuration.
-    apply: ServiceFunction<
+    // Selects an option.
+    selectOption: ServiceFunction<
       T,
       {
-        // List of entities and their target state. @example light.kitchen: 'on' light.ceiling:   state: 'on'   brightness: 80
-        entities: object;
-        // Time it takes the devices to transition into the states defined in the scene.
-        transition?: number;
+        // Option to be selected. @example 'Item A'
+        option: string;
       }
     >;
-    // Creates a new scene.
-    create: ServiceFunction<
+    // Selects the previous option.
+    selectPrevious: ServiceFunction<
       T,
       {
-        // The entity ID of the new scene. @example all_lights
-        scene_id: string;
-        // List of entities and their target state. If your entities are already in the target state right now, use `snapshot_entities` instead. @example light.tv_back_light: 'on' light.ceiling:   state: 'on'   brightness: 200
-        entities?: object;
-        // List of entities to be included in the snapshot. By taking a snapshot, you record the current state of those entities. If you do not want to use the current state of all your entities for this scene, you can combine the `snapshot_entities` with `entities`. @example - light.ceiling - light.kitchen
-        snapshot_entities?: object;
+        // If the option should cycle from the last to the first option on the list.
+        cycle?: boolean;
       }
     >;
-    // Activates a scene.
-    turnOn: ServiceFunction<
+    // Sets the options.
+    setOptions: ServiceFunction<
       T,
       {
-        // Time it takes the devices to transition into the states defined in the scene.
-        transition?: number;
+        // List of options. @example ['Item A', 'Item B', 'Item C']
+        options: object;
       }
     >;
   };
@@ -1016,48 +1000,110 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  inputSelect: {
+  inputDatetime: {
     // Reloads helpers from the YAML-configuration.
     reload: ServiceFunction<T, object>;
-    // Selects the first option.
-    selectFirst: ServiceFunction<T, object>;
-    // Selects the last option.
-    selectLast: ServiceFunction<T, object>;
-    // Select the next option.
-    selectNext: ServiceFunction<
+    // Sets the date and/or time.
+    setDatetime: ServiceFunction<
       T,
       {
-        // If the option should cycle from the last to the first option on the list.
-        cycle?: boolean;
-      }
-    >;
-    // Selects an option.
-    selectOption: ServiceFunction<
-      T,
-      {
-        // Option to be selected. @example 'Item A'
-        option: string;
-      }
-    >;
-    // Selects the previous option.
-    selectPrevious: ServiceFunction<
-      T,
-      {
-        // If the option should cycle from the last to the first option on the list.
-        cycle?: boolean;
-      }
-    >;
-    // Sets the options.
-    setOptions: ServiceFunction<
-      T,
-      {
-        // List of options. @example ['Item A', 'Item B', 'Item C']
-        options: object;
+        // The target date. @example '2019-04-20'
+        date?: string;
+        // The target time. @example '05:04:20'
+        time?: object;
+        // The target date & time. @example '2019-04-20 05:04:20'
+        datetime?: string;
+        // The target date & time, expressed by a UNIX timestamp.
+        timestamp?: number;
       }
     >;
   };
-  timer: {
+  counter: {
+    // Increments a counter.
+    increment: ServiceFunction<T, object>;
+    // Decrements a counter.
+    decrement: ServiceFunction<T, object>;
+    // Resets a counter.
+    reset: ServiceFunction<T, object>;
+    // Sets the counter value.
+    setValue: ServiceFunction<
+      T,
+      {
+        // The new counter value the entity should be set to.
+        value: number;
+      }
+    >;
     //
+    configure: ServiceFunction<T, object>;
+  };
+  scene: {
+    // Reloads the scenes from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
+    // Activates a scene with configuration.
+    apply: ServiceFunction<
+      T,
+      {
+        // List of entities and their target state. @example light.kitchen: 'on' light.ceiling:   state: 'on'   brightness: 80
+        entities: object;
+        // Time it takes the devices to transition into the states defined in the scene.
+        transition?: number;
+      }
+    >;
+    // Creates a new scene.
+    create: ServiceFunction<
+      T,
+      {
+        // The entity ID of the new scene. @example all_lights
+        scene_id: string;
+        // List of entities and their target state. If your entities are already in the target state right now, use `snapshot_entities` instead. @example light.tv_back_light: 'on' light.ceiling:   state: 'on'   brightness: 200
+        entities?: object;
+        // List of entities to be included in the snapshot. By taking a snapshot, you record the current state of those entities. If you do not want to use the current state of all your entities for this scene, you can combine the `snapshot_entities` with `entities`. @example - light.ceiling - light.kitchen
+        snapshot_entities?: object;
+      }
+    >;
+    // Activates a scene.
+    turnOn: ServiceFunction<
+      T,
+      {
+        // Time it takes the devices to transition into the states defined in the scene.
+        transition?: number;
+      }
+    >;
+  };
+  script: {
+    // Reloads all the available scripts.
+    reload: ServiceFunction<T, object>;
+    // Runs the sequence of actions defined in a script.
+    turnOn: ServiceFunction<T, object>;
+    // Stops a running script.
+    turnOff: ServiceFunction<T, object>;
+    // Toggle a script. Starts it, if isn't running, stops it otherwise.
+    toggle: ServiceFunction<T, object>;
+  };
+  inputText: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
+    // Sets the value.
+    setValue: ServiceFunction<
+      T,
+      {
+        // The target value. @example This is an example text
+        value: string;
+      }
+    >;
+  };
+  inputBoolean: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
+    // Turns on the helper.
+    turnOn: ServiceFunction<T, object>;
+    // Turns off the helper.
+    turnOff: ServiceFunction<T, object>;
+    // Toggles the helper on/off.
+    toggle: ServiceFunction<T, object>;
+  };
+  timer: {
+    // Reloads timers from the YAML-configuration.
     reload: ServiceFunction<T, object>;
     // Starts a timer.
     start: ServiceFunction<
@@ -1082,51 +1128,13 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  script: {
-    //
-    gamingLightColorChanger: ServiceFunction<T, object>;
-    //
-    randomLightColour: ServiceFunction<T, object>;
-    // Reloads all the available scripts.
-    reload: ServiceFunction<T, object>;
-    // Runs the sequence of actions defined in a script.
-    turnOn: ServiceFunction<T, object>;
-    // Stops a running script.
+  switch: {
+    // Turns a switch off.
     turnOff: ServiceFunction<T, object>;
-    // Toggle a script. Starts it, if isn't running, stops it otherwise.
-    toggle: ServiceFunction<T, object>;
-  };
-  inputBoolean: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
-    // Turns on the helper.
+    // Turns a switch on.
     turnOn: ServiceFunction<T, object>;
-    // Turns off the helper.
-    turnOff: ServiceFunction<T, object>;
-    // Toggles the helper on/off.
+    // Toggles a switch on/off.
     toggle: ServiceFunction<T, object>;
-  };
-  inputText: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
-    // Sets the value.
-    setValue: ServiceFunction<
-      T,
-      {
-        // The target value. @example This is an example text
-        value: string;
-      }
-    >;
-  };
-  weather: {
-    // Get weather forecast.
-    getForecast: ServiceFunction<
-      T,
-      {
-        // Forecast type: daily, hourly or twice daily.
-        type: "daily" | "hourly" | "twice_daily";
-      }
-    >;
   };
   climate: {
     // Turns climate device on.
@@ -1210,10 +1218,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  button: {
-    // Press the button entity.
-    press: ServiceFunction<T, object>;
-  };
   alarmControlPanel: {
     // Disarms the alarm.
     alarmDisarm: ServiceFunction<
@@ -1272,13 +1276,33 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  number: {
-    // Sets the value of a number.
-    setValue: ServiceFunction<
+  select: {
+    // Selects the first option.
+    selectFirst: ServiceFunction<T, object>;
+    // Selects the last option.
+    selectLast: ServiceFunction<T, object>;
+    // Selects the next option.
+    selectNext: ServiceFunction<
       T,
       {
-        // The target value to set. @example 42
-        value?: string;
+        // If the option should cycle from the last to the first.
+        cycle?: boolean;
+      }
+    >;
+    // Selects an option.
+    selectOption: ServiceFunction<
+      T,
+      {
+        // Option to be selected. @example 'Item A'
+        option: string;
+      }
+    >;
+    // Selects the previous option.
+    selectPrevious: ServiceFunction<
+      T,
+      {
+        // If the option should cycle from the first to the last.
+        cycle?: boolean;
       }
     >;
   };
@@ -1346,6 +1370,20 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
+  number: {
+    // Sets the value of a number.
+    setValue: ServiceFunction<
+      T,
+      {
+        // The target value to set. @example 42
+        value?: string;
+      }
+    >;
+  };
+  button: {
+    // Press the button entity.
+    press: ServiceFunction<T, object>;
+  };
   lock: {
     // Unlocks a lock.
     unlock: ServiceFunction<
@@ -1390,33 +1428,13 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Toggles the siren on/off.
     toggle: ServiceFunction<T, object>;
   };
-  select: {
-    // Selects the first option.
-    selectFirst: ServiceFunction<T, object>;
-    // Selects the last option.
-    selectLast: ServiceFunction<T, object>;
-    // Selects the next option.
-    selectNext: ServiceFunction<
+  weather: {
+    // Get weather forecast.
+    getForecast: ServiceFunction<
       T,
       {
-        // If the option should cycle from the last to the first.
-        cycle?: boolean;
-      }
-    >;
-    // Selects an option.
-    selectOption: ServiceFunction<
-      T,
-      {
-        // Option to be selected. @example 'Item A'
-        option: string;
-      }
-    >;
-    // Selects the previous option.
-    selectPrevious: ServiceFunction<
-      T,
-      {
-        // If the option should cycle from the first to the last.
-        cycle?: boolean;
+        // Forecast type: daily, hourly or twice daily.
+        type: "daily" | "hourly" | "twice_daily";
       }
     >;
   };
@@ -1496,6 +1514,30 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
+  automation: {
+    // Triggers the actions of an automation.
+    trigger: ServiceFunction<
+      T,
+      {
+        // Defines whether or not the conditions will be skipped.
+        skip_condition?: boolean;
+      }
+    >;
+    // Toggles (enable / disable) an automation.
+    toggle: ServiceFunction<T, object>;
+    // Enables an automation.
+    turnOn: ServiceFunction<T, object>;
+    // Disables an automation.
+    turnOff: ServiceFunction<
+      T,
+      {
+        // Stops currently running actions.
+        stop_actions?: boolean;
+      }
+    >;
+    // Reloads the automation configuration.
+    reload: ServiceFunction<T, object>;
+  };
   deviceTracker: {
     // Records a seen tracked device.
     see: ServiceFunction<
@@ -1542,6 +1584,24 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
+  lawnMower: {
+    // Starts the mowing task.
+    startMowing: ServiceFunction<T, object>;
+    // Pauses the mowing task.
+    pause: ServiceFunction<T, object>;
+    // Stops the mowing task and returns to the dock.
+    dock: ServiceFunction<T, object>;
+  };
+  text: {
+    // Sets the value.
+    setValue: ServiceFunction<
+      T,
+      {
+        // Enter your text. @example Hello world!
+        value: string;
+      }
+    >;
+  };
   vacuum: {
     // Starts a new cleaning task.
     turnOn: ServiceFunction<T, object>;
@@ -1582,16 +1642,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  text: {
-    // Sets the value.
-    setValue: ServiceFunction<
-      T,
-      {
-        // Enter your text. @example Hello world!
-        value: string;
-      }
-    >;
-  };
   waterHeater: {
     // Turns water heater on.
     turnOn: ServiceFunction<T, object>;
@@ -1623,38 +1673,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         operation_mode: string;
       }
     >;
-  };
-  lawnMower: {
-    // Starts the mowing task.
-    startMowing: ServiceFunction<T, object>;
-    // Pauses the mowing task.
-    pause: ServiceFunction<T, object>;
-    // Stops the mowing task and returns to the dock.
-    dock: ServiceFunction<T, object>;
-  };
-  automation: {
-    // Triggers the actions of an automation.
-    trigger: ServiceFunction<
-      T,
-      {
-        // Defines whether or not the conditions will be skipped.
-        skip_condition?: boolean;
-      }
-    >;
-    // Toggles (enable / disable) an automation.
-    toggle: ServiceFunction<T, object>;
-    // Enables an automation.
-    turnOn: ServiceFunction<T, object>;
-    // Disables an automation.
-    turnOff: ServiceFunction<
-      T,
-      {
-        // Stops currently running actions.
-        stop_actions?: boolean;
-      }
-    >;
-    // Reloads the automation configuration.
-    reload: ServiceFunction<T, object>;
   };
   profiler: {
     // Starts the Profiler.
@@ -1710,14 +1728,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Logs what is scheduled in the event loop.
     logEventLoopScheduled: ServiceFunction<T, object>;
   };
-  switch: {
-    // Turns a switch off.
-    turnOff: ServiceFunction<T, object>;
-    // Turns a switch on.
-    turnOn: ServiceFunction<T, object>;
-    // Toggles a switch on/off.
-    toggle: ServiceFunction<T, object>;
-  };
   notify: {
     // Sends a notification that is visible in the **Notifications** panel.
     persistentNotification: ServiceFunction<
@@ -1728,6 +1738,20 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // Title of the notification. @example Your Garage Door Friend
         title?: string;
         // Some integrations provide extended functionality. For information on how to use _data_, refer to the integration documentation.. @example platform specific
+        data?: object;
+      }
+    >;
+    // Sends a notification message using the google_assistant_sdk service.
+    googleAssistantSdk: ServiceFunction<
+      T,
+      {
+        // undefined @example The garage door has been open for 10 minutes.
+        message: string;
+        // undefined @example Your Garage Door Friend
+        title?: string;
+        // undefined @example platform specific
+        target?: object;
+        // undefined @example platform specific
         data?: object;
       }
     >;
@@ -1743,20 +1767,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         target?: object;
         // undefined @example platform specific
         data?: object;
-      }
-    >;
-  };
-  cast: {
-    // Shows a dashboard view on a Chromecast device.
-    showLovelaceView: ServiceFunction<
-      T,
-      {
-        // Media player entity to show the dashboard view on.
-        entity_id: string;
-        // The URL path of the dashboard to show. @example lovelace-cast
-        dashboard_path: string;
-        // The path of the dashboard view to show. @example downstairs
-        view_path?: string;
       }
     >;
   };
@@ -1816,8 +1826,18 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  template: {
-    // Reloads template entities from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
+  cast: {
+    // Shows a dashboard view on a Chromecast device.
+    showLovelaceView: ServiceFunction<
+      T,
+      {
+        // Media player entity to show the dashboard view on.
+        entity_id: string;
+        // The URL path of the dashboard to show. @example lovelace-cast
+        dashboard_path: string;
+        // The path of the dashboard view to show. @example downstairs
+        view_path?: string;
+      }
+    >;
   };
 }

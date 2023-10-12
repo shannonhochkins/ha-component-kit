@@ -11,14 +11,31 @@ import type { TimelineState, EntityHistoryState } from "./history";
 import { coordinatesMinimalResponseCompressedState } from "./coordinates";
 
 export interface HistoryOptions {
-  /** the number of hours to show @default 24 */
+  /** the number of hours to show
+   * @minimum 0
+   * @default 24
+   * @TJS-type integer
+   */
   hoursToShow?: number;
   /** only show significant changes @default true */
   significantChangesOnly?: boolean;
   /** minimal response data @default true */
   minimalResponse?: boolean;
-  /** data limits for coordinates */
-  limits?: { min?: number; max?: number };
+  /* data limits for coordinates, this squashes the upper or lower limits of the data */
+  limits?: {
+    /**
+     * The minimum value to show
+     * @minimum 0
+     * @TJS-type integer
+     */
+    min?: number;
+    /**
+     * The maximum value to show
+     * @minimum 0
+     * @TJS-type integer
+     */
+    max?: number;
+  };
 }
 export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
   const { useStore } = useHass();

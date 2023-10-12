@@ -163,6 +163,9 @@ function _ClimateCard({
     return hvac_action;
   }, [hvac_action, entity.state, isUnavailable, isOff]);
 
+  const havacModesToUse =
+    (hvacModes ?? []).length === 0 ? hvac_modes : hvacModes ?? [];
+
   return (
     <>
       <StyledRipples
@@ -216,25 +219,28 @@ function _ClimateCard({
           </Row>
           <Gap />
           <Row fullWidth gap="0.5rem" wrap="nowrap">
-            {(hvacModes || hvac_modes || []).concat().map((mode) => (
-              <StyledFabCard
-                size={35}
-                disabled={disabled || isUnavailable}
-                iconColor={
-                  currentMode === mode ? activeColors[mode] : undefined
-                }
-                preventPropagation
-                key={mode}
-                title={capitalize(mode.replace(/_/g, " "))}
-                active={currentMode === mode}
-                icon={icons[mode]}
-                onClick={() => {
-                  entity.api.setHvacMode({
-                    hvac_mode: mode,
-                  });
-                }}
-              />
-            ))}
+            {havacModesToUse
+              .concat()
+              .filter((x) => !!x)
+              .map((mode) => (
+                <StyledFabCard
+                  size={35}
+                  disabled={disabled || isUnavailable}
+                  iconColor={
+                    currentMode === mode ? activeColors[mode] : undefined
+                  }
+                  preventPropagation
+                  key={mode}
+                  title={capitalize(mode.replace(/_/g, " "))}
+                  active={currentMode === mode}
+                  icon={icons[mode]}
+                  onClick={() => {
+                    entity.api.setHvacMode({
+                      hvac_mode: mode,
+                    });
+                  }}
+                />
+              ))}
           </Row>
         </StyledClimateCard>
       </StyledRipples>

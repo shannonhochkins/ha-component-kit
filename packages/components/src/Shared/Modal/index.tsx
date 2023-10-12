@@ -42,6 +42,7 @@ const ModalInner = styled.div`
   padding: 0rem 1rem 2rem;
   height: 100%;
   align-items: flex-start;
+  flex-direction: column;
 `;
 const ModalOverflow = styled.div`
   overflow-y: auto;

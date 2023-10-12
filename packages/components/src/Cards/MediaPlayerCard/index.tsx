@@ -715,7 +715,7 @@ function _MediaPlayerCard({
       <MediaPlayerWrapper
         className={`media-player-card ${disabled ? "disabled" : ""} ${
           isUnavailable ? "unavailable" : ""
-        } ${className ?? ""}}`}
+        } ${className ?? ""}`}
         css={css`
           ${cssStyles ?? ""}
         `}
