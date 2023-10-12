@@ -14,7 +14,7 @@ These commands will build everything needed to deploy before it actually release
 
 This is the release process I'm using, it's a bit manual but it works for now.
 ```bash
-# Step 1: Make sure your local master is up-to-date with the remote
+# Step 1: Make sure your local master is up-to-date with the remote, merge master into development if need be
 git fetch origin && git checkout master && git pull
 
 # Step 2: Checkout development branch, pull latest, Create a release branch
