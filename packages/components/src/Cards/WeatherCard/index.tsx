@@ -235,7 +235,7 @@ export interface WeatherCardProps extends Omit<Extendable, "title"> {
   title?: ReactNode;
   /** override the icon displayed before the title */
   icon?: string;
-  /** override the temperature suffix that's pulled from the entity @default "temperature_unit from entity"  */
+  /** override the temperature suffix that's pulled from the entity, will retrieve the temperature_unit from entity by default"  */
   temperatureSuffix?: ReactNode;
   /** include the forecast @default true */
   includeForecast?: boolean;
@@ -317,7 +317,7 @@ function _WeatherCard({
       css={css`
         ${cssStyles ?? ""}
       `}
-      className={`${className ?? ""} weater-card`}
+      className={`${className ?? ""} weather-card`}
     >
       {includeCurrent && !isUnavailable && (
         <Row className="row">

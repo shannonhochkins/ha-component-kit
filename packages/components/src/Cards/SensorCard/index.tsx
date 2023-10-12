@@ -144,6 +144,7 @@ function _SensorCard<E extends EntityName>({
   onClick,
   cssStyles,
   className,
+  id,
   ...rest
 }: SensorCardProps<E>): JSX.Element {
   const domain = computeDomain(_entity);
@@ -162,6 +163,7 @@ function _SensorCard<E extends EntityName>({
   return (
     <StyledRipples
       cssStyles={cssStyles}
+      id={id ?? ""}
       className={`${className ?? ""} sensor-card`}
       borderRadius="1rem"
       disabled={disabled || !hasOnClick}

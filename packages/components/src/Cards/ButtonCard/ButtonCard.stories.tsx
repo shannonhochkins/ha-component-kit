@@ -106,10 +106,19 @@ function Render(args?: Args) {
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" fullWidth>
         <ButtonCard {...args} />
-        <ButtonCard {...args} entity="light.fake_light_1" service="toggle" defaultLayout="slim" />
-        <ButtonCard {...args} entity="light.fake_light_2" service="toggle" defaultLayout="slim-vertical" />
+        <ButtonCard
+          {...args}
+          entity="light.fake_light_1"
+          service="toggle"
+          defaultLayout="slim"
+        />
+        <ButtonCard
+          {...args}
+          entity="light.fake_light_2"
+          service="toggle"
+          defaultLayout="slim-vertical"
+        />
       </Column>
-      
     </HassConnect>
   );
 }
@@ -135,9 +144,7 @@ export const Examples: ExamplesStory = {
   },
 };
 
-
 export type GroupStory = StoryObj<typeof ExampleDocs>;
 export const DetailedExample: GroupStory = {
   render: ExampleDocs,
 };
-

@@ -169,9 +169,9 @@ export interface TriggerCardProps<E extends EntityName> extends Extendable {
   icon?: string;
   /** optional override for the slider icon */
   sliderIcon?: string;
-  /** override for the slider text when the state is active @default "Success..." */
+  /** override for the slider text when the state is active */
   sliderTextActive?: string;
-  /** override for the slider text when the state is active @default "Run {domain}" */
+  /** override for the slider text when the state is inactive */
   sliderTextInactive?: string;
   /** how much time in milliseconds must pass before the active state reverts to it's default state @default 5000 */
   activeStateDuration?: number;

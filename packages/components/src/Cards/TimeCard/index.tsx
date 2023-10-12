@@ -208,6 +208,7 @@ function _TimeCard({
         gap="0.5rem"
         alignItems={center ? "center" : "flex-start"}
         fullHeight
+        wrap="nowrap"
       >
         <Row className="row" gap="0.5rem" alignItems="center" wrap="nowrap">
           {includeIcon && (
