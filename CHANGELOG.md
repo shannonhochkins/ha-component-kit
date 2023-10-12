@@ -1,3 +1,9 @@
+# 2.1.1
+## @hakit/components
+- Small style fixes for the new button card layouts
+- updating some documentation
+## @hakit/core
+- Updating types after latest home assistant release
 # 2.1.0
 
 ## @hakit/components
@@ -25,10 +31,16 @@
 - HOTFIX - Types for Row/Column were previously littered with every available prop from react/emotion which has been addressed.
 
 
+
 # 2.0.3
 ## @hakit/components
 - Small improvements to Tooltip and Modal to provide better classnames for elements for re-styling
 ## @hakit/core - no changes
+
+## @hakit/core
+- NEW - serviceWhitelist and serviceBlacklist added to syncTypes script, this allows you to filter out services that you don't want to sync to your local types.
+- HOTFIX - CLI script had a few missing params for options which have been addressed.
+- HOTFIX - Types for Row/Column were previously littered with every available prop from react/emotion which has been addressed.
 
 # 2.0.1
 ## @hakit/components

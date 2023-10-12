@@ -11,7 +11,7 @@ require('dotenv').config();
     filename: 'supported-services.ts',
     custom: false,
     // filter out domains that may not be relevant to users
-    domainBlacklist: ['localtuya', 'nodered', 'wakeOnLan', 'ring', 'mqtt', 'ffmpeg', 'tplink', 'samsungtvSmart', 'deconz'],
-    serviceBlacklist: ['mobileAppS7Tablet', 'mobileAppNatashasIphone', 'mobileAppSmT220', 'mobileAppShannonsPhone'],
+    domainBlacklist: ['localtuya', 'nodered', 'wakeOnLan', 'ring', 'mqtt', 'ffmpeg', 'tplink', 'samsungtvSmart', 'deconz', "fullyKiosk", "googleAssistantSdk"],
+    serviceBlacklist: ['mobileAppS7Tablet', 'mobileAppNatashasIphone', 'mobileAppSmT220', 'mobileAppShannonsPhone', 'gamingLightColorChanger', 'randomLightColour', 'saySomething'],
   })
 })();
