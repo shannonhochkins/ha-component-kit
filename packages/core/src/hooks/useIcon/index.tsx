@@ -118,6 +118,8 @@ export function useIconByDomain<
         return "mdi:robot-mower";
       case "calendar":
         return "mdi:calendar";
+      case "google":
+        return "mdi:google";
 
       // Add more cases for other domains and their respective icons if needed
 

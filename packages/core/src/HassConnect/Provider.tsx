@@ -81,12 +81,18 @@ export interface Store {
   /** the home assistant configuration */
   config: HassConfig | null;
   setConfig: (config: HassConfig | null) => void;
+  /** the hassUrl provided to the HassConnect component */
+  hassUrl: string | null;
+  /** set the hassUrl */
+  setHassUrl: (hassUrl: string | null) => void;
 }
 
 const useStore = create<Store>((set) => ({
   routes: [],
   setRoutes: (routes) => set(() => ({ routes })),
   entities: {},
+  setHassUrl: (hassUrl) => set({ hassUrl }),
+  hassUrl: null,
   setEntities: (newEntities) =>
     set((state) => {
       const entitiesDiffChanged = diff(
@@ -165,6 +171,8 @@ export interface HassContextProps {
   getRoute(hash: string): Route | null;
   /** will retrieve all HassEntities from the context */
   getAllEntities: () => HassEntities;
+  /** call the home assistant api */
+  callApi: <T>(endpoint: string, options: RequestInit) => Promise<T>;
 }
 
 export const HassContext = createContext<HassContextProps>(
@@ -313,6 +321,7 @@ export function HassProvider({
   const setReady = useStore((store) => store.setReady);
   const config = useStore((store) => store.config);
   const setConfig = useStore((store) => store.setConfig);
+  const setHassUrl = useStore((store) => store.setHassUrl);
 
   const reset = useCallback(() => {
     // when the hassUrl changes, reset some properties and re-authenticate
@@ -414,6 +423,10 @@ export function HassProvider({
     setCannotConnect,
   ]);
 
+  useEffect(() => {
+    setHassUrl(hassUrl);
+  }, [hassUrl, setHassUrl]);
+
   const getStates = useCallback(
     async () => (connection === null ? null : await _getStates(connection)),
     [connection],
@@ -429,6 +442,26 @@ export function HassProvider({
   const getUser = useCallback(
     async () => (connection === null ? null : await _getUser(connection)),
     [connection],
+  );
+
+  const callApi = useCallback(
+    async (endpoint: string, options: RequestInit) => {
+      try {
+        return fetch(`${hassUrl}/api${endpoint}`, {
+          ...options,
+          headers: {
+            Authorization: "Bearer " + connection?.options.auth?.accessToken,
+            "Content-type": "application/json;charset=UTF-8",
+          },
+        }).then((response) => response.json());
+      } catch (e) {
+        console.error(e);
+        throw new Error(
+          `Error with request to Home Assistant for endpoint: "${endpoint}", please check your request params are correct.`,
+        );
+      }
+    },
+    [connection?.options.auth?.accessToken, hassUrl],
   );
 
   if (config === null && !fetchedConfig.current && connection !== null) {
@@ -569,6 +602,7 @@ export function HassProvider({
         getServices,
         getConfig,
         getUser,
+        callApi,
         getAllEntities,
         callService,
       }}

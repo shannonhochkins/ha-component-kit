@@ -8,6 +8,7 @@ import { createWeather } from './createWeather';
 import { createClimate } from './createClimate';
 import { createVacuum } from './createVacuum';
 import { createAutomation } from './createAutomation';
+import { createCalendar } from './createCalendar';
 
 export const entities: HassEntities = {
   ...createLight('light.unavailable', {
@@ -171,6 +172,7 @@ export const entities: HassEntities = {
       unit_of_measurement: '%'
     }
   }),
+  ...createCalendar("calendar.google_calendar"),
   ...createWeather("weather.entity"),
   ...createWeather('weather.openweathermap', {
     "entity_id": "weather.openweathermap",

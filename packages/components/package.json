@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "private": false,
   "keywords": [
     "react",
@@ -70,13 +70,16 @@
     "@hakit/core": "^2.1.1",
     "@use-gesture/react": ">=10.x",
     "framer-motion": ">=10.x",
+    "fullcalendar": "^6.1.9",
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
     "react-error-boundary": "^4.x",
     "react-router-dom": ">=6.x",
     "react-thermostat": "^2.0.2",
-    "react-use": ">=17.x"
+    "react-use": ">=17.x",
+    "@fullcalendar/react": "^6.1.9",
+    "react-resize-detector": "^9.1.0"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.x",

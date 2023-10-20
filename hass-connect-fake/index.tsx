@@ -26,6 +26,7 @@ import fakeApi from './mocks/fake-call-service';
 import { create } from 'zustand';
 import type { ServiceArgs } from './mocks/fake-call-service/types';
 import mockHistory from './mock-history';
+import { mockCallApi } from './mocks/fake-call-api'
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
@@ -177,6 +178,11 @@ const useStore = create<Store>((set) => ({
   setConfig: (config) => set({ config }),
   error: null,
   setError: (error) => set({ error }),
+  hassUrl: '',
+  setHassUrl: (hassUrl) => set({ hassUrl }),
+  callApi: async () => {
+    return {};
+  }
 }))
 
 function HassProvider({
@@ -329,6 +335,14 @@ function HassProvider({
     },
     [routes]
   );
+  const callApi = useCallback(
+    async (endpoint: string): Promise<any> => {
+      console.log('calling api');
+      return await mockCallApi(endpoint);
+    },
+    []
+  );
+  console.log('provider');
 
   return (
     <HassContext.Provider
@@ -343,6 +357,7 @@ function HassProvider({
         getUser,
         getAllEntities,
         callService,
+        callApi,
       }}
     >
       {children(ready)}
