@@ -67,16 +67,20 @@
   "peerDependencies": {
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
+    "@fullcalendar/react": "^6.1.9",
     "@hakit/core": "^2.1.1",
     "@use-gesture/react": ">=10.x",
     "framer-motion": ">=10.x",
+    "fullcalendar": "^6.1.9",
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
     "react-error-boundary": "^4.x",
+    "react-resize-detector": "^9.1.0",
     "react-router-dom": ">=6.x",
-    "react-thermostat": "^2.0.2",
-    "react-use": ">=17.x"
+    "react-thermostat": "^2.x.x",
+    "react-use": ">=17.x",
+    "autolinker": ">=4.x"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.x",

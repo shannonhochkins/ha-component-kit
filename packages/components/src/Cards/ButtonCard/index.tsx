@@ -281,8 +281,11 @@ export interface ButtonCardProps<E extends EntityName> extends Extendable {
   entity?: E;
   /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
   onClick?: E extends undefined
-    ? (entity: null) => void
-    : (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
+    ? (entity: null, event: React.MouseEvent<HTMLButtonElement>) => void
+    : (
+        entity: HassEntityWithApi<ExtractDomain<E>>,
+        event: React.MouseEvent<HTMLButtonElement>,
+      ) => void;
   /** Optional active param, By default this is updated via home assistant */
   active?: boolean;
   /** The layout of the button card, mimics the style of HA mushroom cards in slim/slim-vertical @default default */
@@ -356,19 +359,22 @@ function _ButtonCard<E extends EntityName>({
     },
   );
 
-  const onClickHandler = useCallback(() => {
-    if (disabled) return;
-    // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
-    if (typeof service === "string" && entity && !isUnavailable) {
-      // @ts-expect-error - we don't actually know the service at this level
-      const caller = entity.api[service];
-      caller(serviceData);
-    }
-    if (typeof onClick === "function") {
-      // @ts-expect-error - types are accurate, we just don't know the domain entity type
-      onClick(entity);
-    }
-  }, [service, disabled, entity, serviceData, onClick, isUnavailable]);
+  const onClickHandler = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (disabled) return;
+      // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
+      if (typeof service === "string" && entity && !isUnavailable) {
+        // @ts-expect-error - we don't actually know the service at this level
+        const caller = entity.api[service];
+        caller(serviceData);
+      }
+      if (typeof onClick === "function") {
+        // @ts-expect-error - types are accurate, we just don't know the domain entity type
+        onClick(entity, event);
+      }
+    },
+    [service, disabled, entity, serviceData, onClick, isUnavailable],
+  );
   // use the input description if provided, else use the friendly name if available, else entity name, else null
   const description = useMemo(() => {
     return _description === null
@@ -437,7 +443,13 @@ function _ButtonCard<E extends EntityName>({
                 (on && entity?.custom.brightness) || "brightness(100%)"
               }
               className={`fab-card-inner icon`}
-              backgroundColor={on ? "var(--ha-S500)" : "var(--ha-S400)"}
+              backgroundColor={
+                on
+                  ? domain === "light"
+                    ? entity?.custom?.rgbaColor ?? "var(--ha-A400)"
+                    : "var(--ha-A400)"
+                  : "var(--ha-S400)"
+              }
               textColor={
                 entity
                   ? on

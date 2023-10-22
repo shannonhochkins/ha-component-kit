@@ -326,9 +326,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Removes the skipped version marker from an update.
     clearSkipped: ServiceFunction<T, object>;
   };
-  restCommand: {
-    //
-    assistantRelay: ServiceFunction<T, object>;
+  commandLine: {
+    // Reloads command line configuration from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
   };
   conversation: {
     // Launches a conversation from a transcribed text.
@@ -354,9 +354,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  commandLine: {
-    // Reloads command line configuration from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
+  restCommand: {
+    //
+    assistantRelay: ServiceFunction<T, object>;
   };
   light: {
     // Turn on one or more lights and adjust properties of the light, even when they are turned on already.
@@ -738,22 +738,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  logbook: {
-    // Creates a custom entry in the logbook.
-    log: ServiceFunction<
-      T,
-      {
-        // Custom name for an entity, can be referenced using an `entity_id`. @example Kitchen
-        name: string;
-        // Message of the logbook entry. @example is being used
-        message: string;
-        // Entity to reference in the logbook entry.
-        entity_id?: string;
-        // Determines which icon is used in the logbook entry. The icon illustrates the integration domain related to this logbook entry. @example light
-        domain?: string;
-      }
-    >;
-  };
   group: {
     // Reloads group configuration, entities, and notify services from YAML-configuration.
     reload: ServiceFunction<T, object>;
@@ -786,73 +770,25 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
+  logbook: {
+    // Creates a custom entry in the logbook.
+    log: ServiceFunction<
+      T,
+      {
+        // Custom name for an entity, can be referenced using an `entity_id`. @example Kitchen
+        name: string;
+        // Message of the logbook entry. @example is being used
+        message: string;
+        // Entity to reference in the logbook entry.
+        entity_id?: string;
+        // Determines which icon is used in the logbook entry. The icon illustrates the integration domain related to this logbook entry. @example light
+        domain?: string;
+      }
+    >;
+  };
   schedule: {
     // Reloads schedules from the YAML-configuration.
     reload: ServiceFunction<T, object>;
-  };
-  zone: {
-    // Reloads zones from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
-  };
-  inputButton: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
-    // Mimics the physical button press on the device.
-    press: ServiceFunction<T, object>;
-  };
-  cover: {
-    // Opens a cover.
-    openCover: ServiceFunction<T, object>;
-    // Closes a cover.
-    closeCover: ServiceFunction<T, object>;
-    // Moves a cover to a specific position.
-    setCoverPosition: ServiceFunction<
-      T,
-      {
-        // Target position.
-        position: number;
-      }
-    >;
-    // Stops the cover movement.
-    stopCover: ServiceFunction<T, object>;
-    // Toggles a cover open/closed.
-    toggle: ServiceFunction<T, object>;
-    // Tilts a cover open.
-    openCoverTilt: ServiceFunction<T, object>;
-    // Tilts a cover to close.
-    closeCoverTilt: ServiceFunction<T, object>;
-    // Stops a tilting cover movement.
-    stopCoverTilt: ServiceFunction<T, object>;
-    // Moves a cover tilt to a specific position.
-    setCoverTiltPosition: ServiceFunction<
-      T,
-      {
-        // Target tilt positition.
-        tilt_position: number;
-      }
-    >;
-    // Toggles a cover tilt open/closed.
-    toggleCoverTilt: ServiceFunction<T, object>;
-  };
-  template: {
-    // Reloads template entities from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
-  };
-  inputNumber: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<T, object>;
-    // Sets the value.
-    setValue: ServiceFunction<
-      T,
-      {
-        // The target value.
-        value: number;
-      }
-    >;
-    // Increments the value by 1 step.
-    increment: ServiceFunction<T, object>;
-    // Decrements the current value by 1 step.
-    decrement: ServiceFunction<T, object>;
   };
   inputSelect: {
     // Reloads helpers from the YAML-configuration.
@@ -893,6 +829,40 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         options: object;
       }
     >;
+  };
+  cover: {
+    // Opens a cover.
+    openCover: ServiceFunction<T, object>;
+    // Closes a cover.
+    closeCover: ServiceFunction<T, object>;
+    // Moves a cover to a specific position.
+    setCoverPosition: ServiceFunction<
+      T,
+      {
+        // Target position.
+        position: number;
+      }
+    >;
+    // Stops the cover movement.
+    stopCover: ServiceFunction<T, object>;
+    // Toggles a cover open/closed.
+    toggle: ServiceFunction<T, object>;
+    // Tilts a cover open.
+    openCoverTilt: ServiceFunction<T, object>;
+    // Tilts a cover to close.
+    closeCoverTilt: ServiceFunction<T, object>;
+    // Stops a tilting cover movement.
+    stopCoverTilt: ServiceFunction<T, object>;
+    // Moves a cover tilt to a specific position.
+    setCoverTiltPosition: ServiceFunction<
+      T,
+      {
+        // Target tilt positition.
+        tilt_position: number;
+      }
+    >;
+    // Toggles a cover tilt open/closed.
+    toggleCoverTilt: ServiceFunction<T, object>;
   };
   mediaPlayer: {
     // Turns on the power of the media player.
@@ -1000,41 +970,31 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  inputDatetime: {
+  template: {
+    // Reloads template entities from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
+  };
+  inputNumber: {
     // Reloads helpers from the YAML-configuration.
     reload: ServiceFunction<T, object>;
-    // Sets the date and/or time.
-    setDatetime: ServiceFunction<
-      T,
-      {
-        // The target date. @example '2019-04-20'
-        date?: string;
-        // The target time. @example '05:04:20'
-        time?: object;
-        // The target date & time. @example '2019-04-20 05:04:20'
-        datetime?: string;
-        // The target date & time, expressed by a UNIX timestamp.
-        timestamp?: number;
-      }
-    >;
-  };
-  counter: {
-    // Increments a counter.
-    increment: ServiceFunction<T, object>;
-    // Decrements a counter.
-    decrement: ServiceFunction<T, object>;
-    // Resets a counter.
-    reset: ServiceFunction<T, object>;
-    // Sets the counter value.
+    // Sets the value.
     setValue: ServiceFunction<
       T,
       {
-        // The new counter value the entity should be set to.
+        // The target value.
         value: number;
       }
     >;
-    //
-    configure: ServiceFunction<T, object>;
+    // Increments the value by 1 step.
+    increment: ServiceFunction<T, object>;
+    // Decrements the current value by 1 step.
+    decrement: ServiceFunction<T, object>;
+  };
+  inputButton: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
+    // Mimics the physical button press on the device.
+    press: ServiceFunction<T, object>;
   };
   scene: {
     // Reloads the scenes from the YAML-configuration.
@@ -1070,15 +1030,45 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  script: {
-    // Reloads all the available scripts.
+  counter: {
+    // Increments a counter.
+    increment: ServiceFunction<T, object>;
+    // Decrements a counter.
+    decrement: ServiceFunction<T, object>;
+    // Resets a counter.
+    reset: ServiceFunction<T, object>;
+    // Sets the counter value.
+    setValue: ServiceFunction<
+      T,
+      {
+        // The new counter value the entity should be set to.
+        value: number;
+      }
+    >;
+    //
+    configure: ServiceFunction<T, object>;
+  };
+  inputDatetime: {
+    // Reloads helpers from the YAML-configuration.
     reload: ServiceFunction<T, object>;
-    // Runs the sequence of actions defined in a script.
-    turnOn: ServiceFunction<T, object>;
-    // Stops a running script.
-    turnOff: ServiceFunction<T, object>;
-    // Toggle a script. Starts it, if isn't running, stops it otherwise.
-    toggle: ServiceFunction<T, object>;
+    // Sets the date and/or time.
+    setDatetime: ServiceFunction<
+      T,
+      {
+        // The target date. @example '2019-04-20'
+        date?: string;
+        // The target time. @example '05:04:20'
+        time?: object;
+        // The target date & time. @example '2019-04-20 05:04:20'
+        datetime?: string;
+        // The target date & time, expressed by a UNIX timestamp.
+        timestamp?: number;
+      }
+    >;
+  };
+  zone: {
+    // Reloads zones from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
   };
   inputText: {
     // Reloads helpers from the YAML-configuration.
@@ -1092,14 +1082,24 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  inputBoolean: {
-    // Reloads helpers from the YAML-configuration.
+  weather: {
+    // Get weather forecast.
+    getForecast: ServiceFunction<
+      T,
+      {
+        // Forecast type: daily, hourly or twice daily.
+        type: "daily" | "hourly" | "twice_daily";
+      }
+    >;
+  };
+  script: {
+    // Reloads all the available scripts.
     reload: ServiceFunction<T, object>;
-    // Turns on the helper.
+    // Runs the sequence of actions defined in a script.
     turnOn: ServiceFunction<T, object>;
-    // Turns off the helper.
+    // Stops a running script.
     turnOff: ServiceFunction<T, object>;
-    // Toggles the helper on/off.
+    // Toggle a script. Starts it, if isn't running, stops it otherwise.
     toggle: ServiceFunction<T, object>;
   };
   timer: {
@@ -1128,13 +1128,91 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  switch: {
-    // Turns a switch off.
-    turnOff: ServiceFunction<T, object>;
-    // Turns a switch on.
+  inputBoolean: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<T, object>;
+    // Turns on the helper.
     turnOn: ServiceFunction<T, object>;
-    // Toggles a switch on/off.
+    // Turns off the helper.
+    turnOff: ServiceFunction<T, object>;
+    // Toggles the helper on/off.
     toggle: ServiceFunction<T, object>;
+  };
+  calendar: {
+    // Adds a new calendar event.
+    createEvent: ServiceFunction<
+      T,
+      {
+        // Defines the short summary or subject for the event. @example Department Party
+        summary: string;
+        // A more complete description of the event than the one provided by the summary. @example Meeting to provide technical review for 'Phoenix' design.
+        description?: string;
+        // The date and time the event should start. @example 2022-03-22 20:00:00
+        start_date_time?: object;
+        // The date and time the event should end. @example 2022-03-22 22:00:00
+        end_date_time?: object;
+        // The date the all-day event should start. @example 2022-03-22
+        start_date?: object;
+        // The date the all-day event should end (exclusive). @example 2022-03-23
+        end_date?: object;
+        // Days or weeks that you want to create the event in. @example {'days': 2} or {'weeks': 2}
+        in?: object;
+        // The location of the event. @example Conference Room - F123, Bldg. 002
+        location?: string;
+      }
+    >;
+    // Lists events on a calendar within a time range.
+    listEvents: ServiceFunction<
+      T,
+      {
+        // Returns active events after this time (exclusive). When not set, defaults to now. @example 2022-03-22 20:00:00
+        start_date_time?: object;
+        // Returns active events before this time (exclusive). Cannot be used with 'duration'. @example 2022-03-22 22:00:00
+        end_date_time?: object;
+        // Returns active events from start_date_time until the specified duration.
+        duration?: object;
+      }
+    >;
+  };
+  camera: {
+    // Enables the motion detection.
+    enableMotionDetection: ServiceFunction<T, object>;
+    // Disables the motion detection.
+    disableMotionDetection: ServiceFunction<T, object>;
+    // Turns off the camera.
+    turnOff: ServiceFunction<T, object>;
+    // Turns on the camera.
+    turnOn: ServiceFunction<T, object>;
+    // Takes a snapshot from a camera.
+    snapshot: ServiceFunction<
+      T,
+      {
+        // Template of a filename. Variable available is `entity_id`. @example /tmp/snapshot_{{ entity_id.name }}.jpg
+        filename: string;
+      }
+    >;
+    // Plays the camera stream on a supported media player.
+    playStream: ServiceFunction<
+      T,
+      {
+        // Media players to stream to.
+        media_player: string;
+        // Stream format supported by the media player.
+        format?: "hls";
+      }
+    >;
+    // Creates a recording of a live camera feed.
+    record: ServiceFunction<
+      T,
+      {
+        // Template of a filename. Variable available is `entity_id`. Must be mp4. @example /tmp/snapshot_{{ entity_id.name }}.mp4
+        filename: string;
+        // Planned duration of the recording. The actual duration may vary.
+        duration?: number;
+        // Planned lookback period to include in the recording (in addition to the duration). Only available if there is currently an active HLS stream. The actual length of the lookback period may vary.
+        lookback?: number;
+      }
+    >;
   };
   climate: {
     // Turns climate device on.
@@ -1218,6 +1296,60 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
+  profiler: {
+    // Starts the Profiler.
+    start: ServiceFunction<
+      T,
+      {
+        // The number of seconds to run the profiler.
+        seconds?: number;
+      }
+    >;
+    // Starts the Memory Profiler.
+    memory: ServiceFunction<
+      T,
+      {
+        // The number of seconds to run the memory profiler.
+        seconds?: number;
+      }
+    >;
+    // Starts logging growth of objects in memory.
+    startLogObjects: ServiceFunction<
+      T,
+      {
+        // The number of seconds between logging objects.
+        scan_interval?: number;
+      }
+    >;
+    // Stops logging growth of objects in memory.
+    stopLogObjects: ServiceFunction<T, object>;
+    // Starts logging sources of new objects in memory.
+    startLogObjectSources: ServiceFunction<
+      T,
+      {
+        // The number of seconds between logging objects.
+        scan_interval?: number;
+        // The maximum number of objects to log.
+        max_objects?: number;
+      }
+    >;
+    // Stops logging sources of new objects in memory.
+    stopLogObjectSources: ServiceFunction<T, object>;
+    // Dumps the repr of all matching objects to the log.
+    dumpLogObjects: ServiceFunction<
+      T,
+      {
+        // The type of objects to dump to the log. @example State
+        type: string;
+      }
+    >;
+    // Logs the stats of all lru caches.
+    lruStats: ServiceFunction<T, object>;
+    // Logs the current frames for all threads.
+    logThreadFrames: ServiceFunction<T, object>;
+    // Logs what is scheduled in the event loop.
+    logEventLoopScheduled: ServiceFunction<T, object>;
+  };
   alarmControlPanel: {
     // Disarms the alarm.
     alarmDisarm: ServiceFunction<
@@ -1276,33 +1408,29 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  select: {
-    // Selects the first option.
-    selectFirst: ServiceFunction<T, object>;
-    // Selects the last option.
-    selectLast: ServiceFunction<T, object>;
-    // Selects the next option.
-    selectNext: ServiceFunction<
+  button: {
+    // Press the button entity.
+    press: ServiceFunction<T, object>;
+  };
+  deviceTracker: {
+    // Records a seen tracked device.
+    see: ServiceFunction<
       T,
       {
-        // If the option should cycle from the last to the first.
-        cycle?: boolean;
-      }
-    >;
-    // Selects an option.
-    selectOption: ServiceFunction<
-      T,
-      {
-        // Option to be selected. @example 'Item A'
-        option: string;
-      }
-    >;
-    // Selects the previous option.
-    selectPrevious: ServiceFunction<
-      T,
-      {
-        // If the option should cycle from the first to the last.
-        cycle?: boolean;
+        // MAC address of the device. @example FF:FF:FF:FF:FF:FF
+        mac?: string;
+        // ID of the device (find the ID in `known_devices.yaml`). @example phonedave
+        dev_id?: string;
+        // Hostname of the device. @example Dave
+        host_name?: string;
+        // Name of the location where the device is located. The options are: `home`, `not_home`, or the name of the zone. @example home
+        location_name?: string;
+        // GPS coordinates where the device is located, specified by latitude and longitude (for example: [51.513845, -0.100539]). @example [51.509802, -0.086692]
+        gps?: object;
+        // Accuracy of the GPS coordinates.
+        gps_accuracy?: number;
+        // Battery level of the device.
+        battery?: number;
       }
     >;
   };
@@ -1370,196 +1498,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  number: {
-    // Sets the value of a number.
-    setValue: ServiceFunction<
-      T,
-      {
-        // The target value to set. @example 42
-        value?: string;
-      }
-    >;
-  };
-  button: {
-    // Press the button entity.
-    press: ServiceFunction<T, object>;
-  };
-  lock: {
-    // Unlocks a lock.
-    unlock: ServiceFunction<
-      T,
-      {
-        // Code used to unlock the lock. @example 1234
-        code?: string;
-      }
-    >;
-    // Locks a lock.
-    lock: ServiceFunction<
-      T,
-      {
-        // Code used to lock the lock. @example 1234
-        code?: string;
-      }
-    >;
-    // Opens a lock.
-    open: ServiceFunction<
-      T,
-      {
-        // Code used to open the lock. @example 1234
-        code?: string;
-      }
-    >;
-  };
-  siren: {
-    // Turns the siren on.
-    turnOn: ServiceFunction<
-      T,
-      {
-        // The tone to emit. When `available_tones` property is a map, either the key or the value can be used. Must be supported by the integration. @example fire
-        tone?: string;
-        // The volume. 0 is inaudible, 1 is the maximum volume. Must be supported by the integration. @example 0.5
-        volume_level?: number;
-        // Number of seconds the sound is played. Must be supported by the integration. @example 15
-        duration?: string;
-      }
-    >;
-    // Turns the siren off.
-    turnOff: ServiceFunction<T, object>;
-    // Toggles the siren on/off.
-    toggle: ServiceFunction<T, object>;
-  };
-  weather: {
-    // Get weather forecast.
-    getForecast: ServiceFunction<
-      T,
-      {
-        // Forecast type: daily, hourly or twice daily.
-        type: "daily" | "hourly" | "twice_daily";
-      }
-    >;
-  };
-  calendar: {
-    // Adds a new calendar event.
-    createEvent: ServiceFunction<
-      T,
-      {
-        // Defines the short summary or subject for the event. @example Department Party
-        summary: string;
-        // A more complete description of the event than the one provided by the summary. @example Meeting to provide technical review for 'Phoenix' design.
-        description?: string;
-        // The date and time the event should start. @example 2022-03-22 20:00:00
-        start_date_time?: object;
-        // The date and time the event should end. @example 2022-03-22 22:00:00
-        end_date_time?: object;
-        // The date the all-day event should start. @example 2022-03-22
-        start_date?: object;
-        // The date the all-day event should end (exclusive). @example 2022-03-23
-        end_date?: object;
-        // Days or weeks that you want to create the event in. @example {'days': 2} or {'weeks': 2}
-        in?: object;
-        // The location of the event. @example Conference Room - F123, Bldg. 002
-        location?: string;
-      }
-    >;
-    // Lists events on a calendar within a time range.
-    listEvents: ServiceFunction<
-      T,
-      {
-        // Returns active events after this time (exclusive). When not set, defaults to now. @example 2022-03-22 20:00:00
-        start_date_time?: object;
-        // Returns active events before this time (exclusive). Cannot be used with 'duration'. @example 2022-03-22 22:00:00
-        end_date_time?: object;
-        // Returns active events from start_date_time until the specified duration.
-        duration?: object;
-      }
-    >;
-  };
-  camera: {
-    // Enables the motion detection.
-    enableMotionDetection: ServiceFunction<T, object>;
-    // Disables the motion detection.
-    disableMotionDetection: ServiceFunction<T, object>;
-    // Turns off the camera.
-    turnOff: ServiceFunction<T, object>;
-    // Turns on the camera.
-    turnOn: ServiceFunction<T, object>;
-    // Takes a snapshot from a camera.
-    snapshot: ServiceFunction<
-      T,
-      {
-        // Template of a filename. Variable available is `entity_id`. @example /tmp/snapshot_{{ entity_id.name }}.jpg
-        filename: string;
-      }
-    >;
-    // Plays the camera stream on a supported media player.
-    playStream: ServiceFunction<
-      T,
-      {
-        // Media players to stream to.
-        media_player: string;
-        // Stream format supported by the media player.
-        format?: "hls";
-      }
-    >;
-    // Creates a recording of a live camera feed.
-    record: ServiceFunction<
-      T,
-      {
-        // Template of a filename. Variable available is `entity_id`. Must be mp4. @example /tmp/snapshot_{{ entity_id.name }}.mp4
-        filename: string;
-        // Planned duration of the recording. The actual duration may vary.
-        duration?: number;
-        // Planned lookback period to include in the recording (in addition to the duration). Only available if there is currently an active HLS stream. The actual length of the lookback period may vary.
-        lookback?: number;
-      }
-    >;
-  };
-  automation: {
-    // Triggers the actions of an automation.
-    trigger: ServiceFunction<
-      T,
-      {
-        // Defines whether or not the conditions will be skipped.
-        skip_condition?: boolean;
-      }
-    >;
-    // Toggles (enable / disable) an automation.
-    toggle: ServiceFunction<T, object>;
-    // Enables an automation.
-    turnOn: ServiceFunction<T, object>;
-    // Disables an automation.
-    turnOff: ServiceFunction<
-      T,
-      {
-        // Stops currently running actions.
-        stop_actions?: boolean;
-      }
-    >;
-    // Reloads the automation configuration.
-    reload: ServiceFunction<T, object>;
-  };
-  deviceTracker: {
-    // Records a seen tracked device.
-    see: ServiceFunction<
-      T,
-      {
-        // MAC address of the device. @example FF:FF:FF:FF:FF:FF
-        mac?: string;
-        // ID of the device (find the ID in `known_devices.yaml`). @example phonedave
-        dev_id?: string;
-        // Hostname of the device. @example Dave
-        host_name?: string;
-        // Name of the location where the device is located. The options are: `home`, `not_home`, or the name of the zone. @example home
-        location_name?: string;
-        // GPS coordinates where the device is located, specified by latitude and longitude (for example: [51.513845, -0.100539]). @example [51.509802, -0.086692]
-        gps?: object;
-        // Accuracy of the GPS coordinates.
-        gps_accuracy?: number;
-        // Battery level of the device.
-        battery?: number;
-      }
-    >;
-  };
   humidifier: {
     // Turns the humidifier on.
     turnOn: ServiceFunction<T, object>;
@@ -1592,6 +1530,16 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Stops the mowing task and returns to the dock.
     dock: ServiceFunction<T, object>;
   };
+  number: {
+    // Sets the value of a number.
+    setValue: ServiceFunction<
+      T,
+      {
+        // The target value to set. @example 42
+        value?: string;
+      }
+    >;
+  };
   text: {
     // Sets the value.
     setValue: ServiceFunction<
@@ -1599,6 +1547,94 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       {
         // Enter your text. @example Hello world!
         value: string;
+      }
+    >;
+  };
+  select: {
+    // Selects the first option.
+    selectFirst: ServiceFunction<T, object>;
+    // Selects the last option.
+    selectLast: ServiceFunction<T, object>;
+    // Selects the next option.
+    selectNext: ServiceFunction<
+      T,
+      {
+        // If the option should cycle from the last to the first.
+        cycle?: boolean;
+      }
+    >;
+    // Selects an option.
+    selectOption: ServiceFunction<
+      T,
+      {
+        // Option to be selected. @example 'Item A'
+        option: string;
+      }
+    >;
+    // Selects the previous option.
+    selectPrevious: ServiceFunction<
+      T,
+      {
+        // If the option should cycle from the first to the last.
+        cycle?: boolean;
+      }
+    >;
+  };
+  lock: {
+    // Unlocks a lock.
+    unlock: ServiceFunction<
+      T,
+      {
+        // Code used to unlock the lock. @example 1234
+        code?: string;
+      }
+    >;
+    // Locks a lock.
+    lock: ServiceFunction<
+      T,
+      {
+        // Code used to lock the lock. @example 1234
+        code?: string;
+      }
+    >;
+    // Opens a lock.
+    open: ServiceFunction<
+      T,
+      {
+        // Code used to open the lock. @example 1234
+        code?: string;
+      }
+    >;
+  };
+  waterHeater: {
+    // Turns water heater on.
+    turnOn: ServiceFunction<T, object>;
+    // Turns water heater off.
+    turnOff: ServiceFunction<T, object>;
+    // Turns away mode on/off.
+    setAwayMode: ServiceFunction<
+      T,
+      {
+        // New value of away mode.
+        away_mode: boolean;
+      }
+    >;
+    // Sets the target temperature.
+    setTemperature: ServiceFunction<
+      T,
+      {
+        // New target temperature for the water heater.
+        temperature: number;
+        // New value of the operation mode. For a list of possible modes, refer to the integration documentation. @example eco
+        operation_mode?: string;
+      }
+    >;
+    // Sets the operation mode.
+    setOperationMode: ServiceFunction<
+      T,
+      {
+        // New value of the operation mode. For a list of possible modes, refer to the integration documentation. @example eco
+        operation_mode: string;
       }
     >;
   };
@@ -1642,91 +1678,55 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  waterHeater: {
-    // Turns water heater on.
-    turnOn: ServiceFunction<T, object>;
-    // Turns water heater off.
+  siren: {
+    // Turns the siren on.
+    turnOn: ServiceFunction<
+      T,
+      {
+        // The tone to emit. When `available_tones` property is a map, either the key or the value can be used. Must be supported by the integration. @example fire
+        tone?: string;
+        // The volume. 0 is inaudible, 1 is the maximum volume. Must be supported by the integration. @example 0.5
+        volume_level?: number;
+        // Number of seconds the sound is played. Must be supported by the integration. @example 15
+        duration?: string;
+      }
+    >;
+    // Turns the siren off.
     turnOff: ServiceFunction<T, object>;
-    // Turns away mode on/off.
-    setAwayMode: ServiceFunction<
-      T,
-      {
-        // New value of away mode.
-        away_mode: boolean;
-      }
-    >;
-    // Sets the target temperature.
-    setTemperature: ServiceFunction<
-      T,
-      {
-        // New target temperature for the water heater.
-        temperature: number;
-        // New value of the operation mode. For a list of possible modes, refer to the integration documentation. @example eco
-        operation_mode?: string;
-      }
-    >;
-    // Sets the operation mode.
-    setOperationMode: ServiceFunction<
-      T,
-      {
-        // New value of the operation mode. For a list of possible modes, refer to the integration documentation. @example eco
-        operation_mode: string;
-      }
-    >;
+    // Toggles the siren on/off.
+    toggle: ServiceFunction<T, object>;
   };
-  profiler: {
-    // Starts the Profiler.
-    start: ServiceFunction<
+  automation: {
+    // Triggers the actions of an automation.
+    trigger: ServiceFunction<
       T,
       {
-        // The number of seconds to run the profiler.
-        seconds?: number;
+        // Defines whether or not the conditions will be skipped.
+        skip_condition?: boolean;
       }
     >;
-    // Starts the Memory Profiler.
-    memory: ServiceFunction<
+    // Toggles (enable / disable) an automation.
+    toggle: ServiceFunction<T, object>;
+    // Enables an automation.
+    turnOn: ServiceFunction<T, object>;
+    // Disables an automation.
+    turnOff: ServiceFunction<
       T,
       {
-        // The number of seconds to run the memory profiler.
-        seconds?: number;
+        // Stops currently running actions.
+        stop_actions?: boolean;
       }
     >;
-    // Starts logging growth of objects in memory.
-    startLogObjects: ServiceFunction<
-      T,
-      {
-        // The number of seconds between logging objects.
-        scan_interval?: number;
-      }
-    >;
-    // Stops logging growth of objects in memory.
-    stopLogObjects: ServiceFunction<T, object>;
-    // Starts logging sources of new objects in memory.
-    startLogObjectSources: ServiceFunction<
-      T,
-      {
-        // The number of seconds between logging objects.
-        scan_interval?: number;
-        // The maximum number of objects to log.
-        max_objects?: number;
-      }
-    >;
-    // Stops logging sources of new objects in memory.
-    stopLogObjectSources: ServiceFunction<T, object>;
-    // Dumps the repr of all matching objects to the log.
-    dumpLogObjects: ServiceFunction<
-      T,
-      {
-        // The type of objects to dump to the log. @example State
-        type: string;
-      }
-    >;
-    // Logs the stats of all lru caches.
-    lruStats: ServiceFunction<T, object>;
-    // Logs the current frames for all threads.
-    logThreadFrames: ServiceFunction<T, object>;
-    // Logs what is scheduled in the event loop.
-    logEventLoopScheduled: ServiceFunction<T, object>;
+    // Reloads the automation configuration.
+    reload: ServiceFunction<T, object>;
+  };
+  switch: {
+    // Turns a switch off.
+    turnOff: ServiceFunction<T, object>;
+    // Turns a switch on.
+    turnOn: ServiceFunction<T, object>;
+    // Toggles a switch on/off.
+    toggle: ServiceFunction<T, object>;
   };
   notify: {
     // Sends a notification that is visible in the **Notifications** panel.
@@ -1741,8 +1741,8 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         data?: object;
       }
     >;
-    // Sends a notification message using the google_assistant_sdk service.
-    googleAssistantSdk: ServiceFunction<
+    // Sends a notification message using the notify service.
+    notify: ServiceFunction<
       T,
       {
         // undefined @example The garage door has been open for 10 minutes.
@@ -1755,8 +1755,8 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         data?: object;
       }
     >;
-    // Sends a notification message using the notify service.
-    notify: ServiceFunction<
+    // Sends a notification message using the google_assistant_sdk service.
+    googleAssistantSdk: ServiceFunction<
       T,
       {
         // undefined @example The garage door has been open for 10 minutes.
@@ -1837,6 +1837,52 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         dashboard_path: string;
         // The path of the dashboard view to show. @example downstairs
         view_path?: string;
+      }
+    >;
+  };
+  google: {
+    // Adds a new calendar event.
+    addEvent: ServiceFunction<
+      T,
+      {
+        // The id of the calendar you want. @example Your email
+        calendar_id: string;
+        // Acts as the title of the event. @example Bowling
+        summary: string;
+        // The description of the event. Optional. @example Birthday bowling
+        description?: string;
+        // The date and time the event should start. @example 2019-03-22 20:00:00
+        start_date_time?: string;
+        // The date and time the event should end. @example 2019-03-22 22:00:00
+        end_date_time?: string;
+        // The date the whole day event should start. @example 2019-03-10
+        start_date?: string;
+        // The date the whole day event should end. @example 2019-03-11
+        end_date?: string;
+        // Days or weeks that you want to create the event in. @example 'days': 2 or 'weeks': 2
+        in?: object;
+      }
+    >;
+    // Add a new calendar event.
+    createEvent: ServiceFunction<
+      T,
+      {
+        // Acts as the title of the event. @example Bowling
+        summary: string;
+        // The description of the event. Optional. @example Birthday bowling
+        description?: string;
+        // The date and time the event should start. @example 2022-03-22 20:00:00
+        start_date_time?: string;
+        // The date and time the event should end. @example 2022-03-22 22:00:00
+        end_date_time?: string;
+        // The date the whole day event should start. @example 2022-03-10
+        start_date?: string;
+        // The date the whole day event should end. @example 2022-03-11
+        end_date?: string;
+        // Days or weeks that you want to create the event in. @example 'days': 2 or 'weeks': 2
+        in?: object;
+        // The location of the event. Optional. @example Conference Room - F123, Bldg. 002
+        location?: string;
       }
     >;
   };
