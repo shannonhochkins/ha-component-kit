@@ -22,9 +22,10 @@ git flow release start "1.0.0"
 # ... perform any final adjustments on the release branch, bump version numbers, etc. ...
 npx changeset
 npx changeset version
-## release core or components
+## release core or components or create-hakit
 npm run release:core
 npm run release:components
+npm run release:create-hakit
 # commit files
 # Step 3: Push the tag to the remote
 git flow release finish "1.0.0"
