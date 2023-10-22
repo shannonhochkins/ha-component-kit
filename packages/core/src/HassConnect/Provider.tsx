@@ -258,6 +258,7 @@ const tryConnection = async (
     // Clear url if we have a auth callback in url.
     if (location && location.search.includes("auth_callback=1")) {
       history.replaceState(null, "", location.pathname);
+      location.reload();
     }
   }
   let connection: Connection;

@@ -31,7 +31,7 @@ export function createService<T extends SnakeOrCamelDomains>(
             ? (args[0] as ServiceData<T, S>)
             : args[1];
 
-          console.log(`fCalling ${domain}.${service} with`, {
+          console.log(`Calling ${domain}.${service} with`, {
             target,
             serviceData,
           });

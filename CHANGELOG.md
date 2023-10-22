@@ -2,9 +2,17 @@
 ## @hakit/components
 - NEW - CalendarCard - A new component that replicates the same functionality as home assistants calendar
 - NEW - ButtonGroup - A shared component to group buttons together, this is used by the CalendarCard for the views
+- BUGFIX - ButtonCard / FabCard on click will now return the event in the onClick callback
+- BUGFIX - ButtonCard / FabCard - "active" color now changed to accent color so it's clear what's active
+- NEW - FabCard - can now specify the borderRadius as a prop which also updates the ripple
 
 ## @hakit/core
 - NEW - callApi - a new function returned from useHass() to trigger an api request! This requires some setup in the configuration.yaml file which is documented in the docs.
+- Updated home-assistant-js-websocket to latest version
+- BUGFIX - The auth flow with home assistant the first time triggers a bad request with the auth token, however a simple refresh fixes this so i've included this into the workflow to ensure the first time you authenticate, it will refresh the page to ensure the auth token is valid.
+
+## @hakit/create
+- fixed a few small bugs where missing dependencies weren't included by default
 
 # 2.1.1
 ## @hakit/components
