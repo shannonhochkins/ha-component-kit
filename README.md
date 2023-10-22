@@ -48,6 +48,7 @@ I'm working on a home assistant addon to create dashboards with these components
 11. [TimeCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-timecard--docs)
 12. [TriggerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-triggercard--docs)
 13. [WeatherCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-weathercard--docs)
+14. [CalendarCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-calendarcard--docs)
 
 ### Other Useful Components
 1. [Group](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-group--docs) - a component that allows collapsible sections for other cards/components

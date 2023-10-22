@@ -37,7 +37,7 @@
     "release": "npm run release --workspaces --if-present",
     "release:core": "npm run release --workspace=@hakit/core",
     "release:components": "npm run release --workspace=@hakit/components",
-    "release:create": "npm run release --workspace=create-hakit",
+    "release:create-hakit": "npm run release --workspace=create-hakit",
     "test:dashboard": " cd test-dashboard && npm start",
     "sync-local-types": "npm run sync-local-types --workspace=@hakit/core"
   },

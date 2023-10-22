@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { CSSProperties, useCallback, useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
@@ -31,6 +31,8 @@ const StyledRipples = styled(Ripples)`
 const StyledFabCard = styled(motion.button)<{
   size: number;
   active: boolean;
+  borderRadius?: CSSProperties["borderRadius"];
+  hasChildren?: boolean;
 }>`
   all: unset;
   position: relative;
@@ -38,7 +40,7 @@ const StyledFabCard = styled(motion.button)<{
   cursor: pointer;
   flex-shrink: 0;
   text-align: center;
-  border-radius: 50%;
+  border-radius: ${(props) => props.borderRadius};
   background-color: var(--ha-S300);
   color: ${(props) =>
     props.active ? `var(--ha-A400)` : `var(--ha-S500-contrast)`};
@@ -60,12 +62,19 @@ const StyledFabCard = styled(motion.button)<{
     cursor: not-allowed;
     opacity: 0.8;
   }
-  font-size: 0.7rem;
+
   ${(props) =>
     props.size &&
     `
+    font-size: ${props.size * 0.37}px;
     height: ${props.size}px;
-    width: ${props.size}px;
+    ${
+      props.hasChildren
+        ? `padding: 0 ${props.size * 0.2}px;`
+        : `
+      width: ${props.size}px;
+    `
+    }
   `}
 `;
 
@@ -93,8 +102,11 @@ export interface FabCardProps<E extends EntityName> extends Extendable {
   tooltipPlacement?: TooltipProps["placement"];
   /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
   onClick?: E extends undefined
-    ? (entity: null) => void
-    : (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
+    ? (entity: null, event: React.MouseEvent<HTMLButtonElement>) => void
+    : (
+        entity: HassEntityWithApi<ExtractDomain<E>>,
+        event: React.MouseEvent<HTMLButtonElement>,
+      ) => void;
   /** optional override to set the Fab to an active state, defaults to entity value */
   active?: boolean;
   /** the children of the fabCard, useful or small text */
@@ -103,6 +115,10 @@ export interface FabCardProps<E extends EntityName> extends Extendable {
   disabled?: boolean;
   /** passed to the ripple component to stop double scaling effect @default true */
   preventPropagation?: boolean;
+  /** the border radius of the fab button @default "50%" */
+  borderRadius?: CSSProperties["borderRadius"];
+  /** disables the scale effect when clicking the button */
+  disableScaleEffect?: boolean;
 }
 
 function _FabCard<E extends EntityName>({
@@ -123,6 +139,8 @@ function _FabCard<E extends EntityName>({
   preventPropagation = false,
   id,
   cssStyles,
+  borderRadius = "50%",
+  disableScaleEffect,
   ...rest
 }: FabCardProps<E>): JSX.Element {
   const [openModal, setOpenModal] = useState(false);
@@ -153,19 +171,22 @@ function _FabCard<E extends EntityName>({
       : entity === null
       ? false
       : entity.state !== "off" && !isUnavailable;
-  const onClickHandler = useCallback(() => {
-    if (disabled) return;
-    // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
-    if (typeof service === "string" && entity && !isUnavailable) {
-      // @ts-expect-error - we don't actually know the service at this level
-      const caller = entity.api[service];
-      caller(serviceData);
-    }
-    if (typeof onClick === "function") {
-      // @ts-expect-error - nothing wrong with the types here, service will be accurate, inspect later
-      onClick(entity);
-    }
-  }, [service, entity, serviceData, disabled, isUnavailable, onClick]);
+  const onClickHandler = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (disabled) return;
+      // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
+      if (typeof service === "string" && entity && !isUnavailable) {
+        // @ts-expect-error - we don't actually know the service at this level
+        const caller = entity.api[service];
+        caller(serviceData);
+      }
+      if (typeof onClick === "function") {
+        // @ts-expect-error - nothing wrong with the types here, service will be accurate, inspect later
+        onClick(entity, event);
+      }
+    },
+    [service, entity, serviceData, disabled, isUnavailable, onClick],
+  );
   const longPressEvent = useLongPress(
     (e) => {
       // ignore on right click
@@ -196,9 +217,11 @@ function _FabCard<E extends EntityName>({
           } ${active ? "active" : ""} ${isUnavailable ? "unavailable" : ""}`}
           preventPropagation={preventPropagation}
           disabled={disabled || isUnavailable}
-          borderRadius="50%"
+          borderRadius={borderRadius}
           cssStyles={cssStyles}
-          whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
+          whileTap={{
+            scale: disabled || isUnavailable || disableScaleEffect ? 1 : 0.9,
+          }}
         >
           <StyledFabCard
             className={`icon ${active ? "active " : ""}`}
@@ -208,8 +231,10 @@ function _FabCard<E extends EntityName>({
               typeof _entity === "string" ? `${_entity}-fab-card` : undefined
             }
             size={size}
+            borderRadius={borderRadius}
             {...longPressEvent}
             {...rest}
+            hasChildren={typeof children !== "undefined"}
             onClick={onClickHandler}
           >
             {noIcon !== true && (iconElement || entityIcon || domainIcon)}
