@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "private": false,
   "keywords": [
     "react",
@@ -68,7 +68,7 @@
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
     "@fullcalendar/react": "^6.1.9",
-    "@hakit/core": "^2.1.1",
+    "@hakit/core": "^2.1.2",
     "@use-gesture/react": ">=10.x",
     "framer-motion": ">=10.x",
     "fullcalendar": "^6.1.9",
