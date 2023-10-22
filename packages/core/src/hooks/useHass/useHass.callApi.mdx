@@ -10,25 +10,43 @@ You will at least need to add the following to your configuration.yaml in home a
 
 <Source dark language="yaml" code={`
 api:
+`} />
+
+**NOTE**: If you're developing locally, you'll need to add the port of your local server to the `cors_allowed_origins` list, example:
+
+<Source dark language="yaml" code={`
 http:
   cors_allowed_origins: 
     - http://localhost:8080
 `} />
 
-**NOTE**: If you're developing locally, you'll need to add the port of your local server to the `cors_allowed_origins` list.
-
 ### Example Usage
 
 <Source dark language="ts" code={`
+import { useCallback, useState } from 'react';
+import { useHass } from '@hakit/core';
+interface Event {
+  uid?: string;
+  recurrence_id?: string;
+  summary: string;
+  dtstart: string;
+  dtend: string;
+  start?: string;
+  end?: string;
+  rrule?: string;
+  description?: string;
+}
 function CallApiExample() {
   const { callApi } = useHass();
+  const [events, setEvents] = useState<Event[]>([]);
   const retrieveCalendarEvents = useCallback(() => {
-    const events = await callApi('/calendars/calendar.google_calendar?start=2023-09-30T14:00:00.000Z&end=2023-11-11T13:00:00.000Z');
-    console.log('events', events);
+    const events = await callApi<Event[]>('/calendars/calendar.google_calendar?start=2023-09-30T14:00:00.000Z&end=2023-11-11T13:00:00.000Z');
+    setEvents(events);
   }, [callApi]);
-  return <Button onClick={retrieveCalendarEvents}>
-    REQUEST EVENTS
-  </Button>
+  return <>
+    <FabCard icon="mdi:view-module" onClick={retrieveCalendarEvents}></FabCard>
+    {events.length ? `There is ${events.length} events!` : 'No events'}
+  </>
 }
 `} />
 
