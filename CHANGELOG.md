@@ -1,3 +1,11 @@
+# 2.1.2
+## @hakit/components
+- NEW - CalendarCard - A new component that replicates the same functionality as home assistants calendar
+- NEW - ButtonGroup - A shared component to group buttons together, this is used by the CalendarCard for the views
+
+## @hakit/core
+- NEW - callApi - a new function returned from useHass() to trigger an api request! This requires some setup in the configuration.yaml file which is documented in the docs.
+
 # 2.1.1
 ## @hakit/components
 - Small style fixes for the new button card layouts

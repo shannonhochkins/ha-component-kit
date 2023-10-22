@@ -13,6 +13,9 @@ function Template(args?: Partial<ButtonGroupProps>) {
           {
             title: "Click me Title",
             children: "CLICK ME",
+            onClick() {
+              console.log("CLICKED");
+            },
           },
           {
             title: "Power me!",

@@ -337,12 +337,10 @@ function HassProvider({
   );
   const callApi = useCallback(
     async (endpoint: string): Promise<any> => {
-      console.log('calling api');
       return await mockCallApi(endpoint);
     },
     []
   );
-  console.log('provider');
 
   return (
     <HassContext.Provider

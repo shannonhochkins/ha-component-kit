@@ -54,8 +54,6 @@ export default defineConfig(configEnv => {
             '@emotion/cache': '@emotion/cache',
             '@emotion/serialize': '@emotion/serialize',
             '@emotion/utils': '@emotion/utils',
-            "chart.js": "chart.js",
-            "react-chartjs-2": "react-chartjs-2",
             "react-resize-detector": "react-resize-detector",
             "@fullcalendar/react": "@fullcalendar/react",
             "fullcalendar": "fullcalendar",
@@ -63,6 +61,7 @@ export default defineConfig(configEnv => {
             "@fullcalendar/daygrid": "@fullcalendar/daygrid",
             "@fullcalendar/interaction": "@fullcalendar/interaction",
             "@fullcalendar/list": "@fullcalendar/list",
+            'autolinker': 'autolinker',
           }
         }
       },

@@ -173,6 +173,7 @@ export const entities: HassEntities = {
     }
   }),
   ...createCalendar("calendar.google_calendar"),
+  ...createCalendar("calendar.another_google_calendar"),
   ...createWeather("weather.entity"),
   ...createWeather('weather.openweathermap', {
     "entity_id": "weather.openweathermap",

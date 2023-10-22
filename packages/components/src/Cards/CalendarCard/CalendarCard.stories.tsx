@@ -4,10 +4,16 @@ import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
   return (
-    <HassConnect hassUrl="http://homeassistant.local:8123">
+    <HassConnect hassUrl="https://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" fullWidth>
-        <CalendarCard entities={["calendar.google_calendar"]} {...args} />
+        <CalendarCard
+          entities={[
+            "calendar.google_calendar",
+            "calendar.another_google_calendar",
+          ]}
+          {...args}
+        />
       </Column>
     </HassConnect>
   );
@@ -24,7 +30,5 @@ export default {
 export type LightStory = StoryObj<typeof CalendarCard>;
 export const Example: LightStory = {
   render: Render,
-  args: {
-    entities: ["calendar.google_calendar"],
-  },
+  args: {},
 };

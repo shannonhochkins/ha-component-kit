@@ -172,7 +172,19 @@ export interface HassContextProps {
   /** will retrieve all HassEntities from the context */
   getAllEntities: () => HassEntities;
   /** call the home assistant api */
-  callApi: <T>(endpoint: string, options: RequestInit) => Promise<T>;
+  callApi: <T>(
+    endpoint: string,
+    options: RequestInit,
+  ) => Promise<
+    | {
+        data: T;
+        status: "success";
+      }
+    | {
+        data: string;
+        status: "error";
+      }
+  >;
 }
 
 export const HassContext = createContext<HassContextProps>(
@@ -444,25 +456,46 @@ export function HassProvider({
     [connection],
   );
 
-  const callApi = useCallback(
-    async (endpoint: string, options: RequestInit) => {
-      try {
-        return fetch(`${hassUrl}/api${endpoint}`, {
-          ...options,
-          headers: {
-            Authorization: "Bearer " + connection?.options.auth?.accessToken,
-            "Content-type": "application/json;charset=UTF-8",
-          },
-        }).then((response) => response.json());
-      } catch (e) {
-        console.error(e);
-        throw new Error(
-          `Error with request to Home Assistant for endpoint: "${endpoint}", please check your request params are correct.`,
-        );
+  async function callApi<T>(
+    endpoint: string,
+    options: RequestInit,
+  ): Promise<
+    | {
+        data: T;
+        status: "success";
       }
-    },
-    [connection?.options.auth?.accessToken, hassUrl],
-  );
+    | {
+        data: string;
+        status: "error";
+      }
+  > {
+    try {
+      const response = await fetch(`${hassUrl}/api${endpoint}`, {
+        ...options,
+        headers: {
+          Authorization: "Bearer " + connection?.options.auth?.accessToken,
+          "Content-type": "application/json;charset=UTF-8",
+          ...(options?.headers ?? {}),
+        },
+      });
+      if (response.status === 200) {
+        const data = await response.json();
+        return {
+          status: "success",
+          data,
+        };
+      }
+      return {
+        status: "error",
+        data: response.statusText,
+      };
+    } catch (e) {
+      return {
+        status: "error",
+        data: `API Request failed for endpoint "${endpoint}", follow instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/hooks-usehass-callapi--docs.`,
+      };
+    }
+  }
 
   if (config === null && !fetchedConfig.current && connection !== null) {
     fetchedConfig.current = true;

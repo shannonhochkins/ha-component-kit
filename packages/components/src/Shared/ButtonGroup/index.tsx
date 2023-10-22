@@ -72,6 +72,7 @@ function _ButtonGroup({
               borderRadius={0}
               noIcon={buttonProps.icon ? false : true}
               key={index}
+              size={35}
               {...buttonProps}
             >
               {children}

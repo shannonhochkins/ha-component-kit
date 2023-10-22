@@ -5,17 +5,28 @@ import type {
   CalendarApi,
   EventClickArg,
   MoreLinkArg,
+  EventSourceFuncArg,
+  EventInput,
 } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import { Icon } from "@iconify/react";
-import { isUnavailableState, useHass } from "@hakit/core";
+import { isUnavailableState, useHass, getColorByIndex } from "@hakit/core";
 import type { FilterByDomain, EntityName } from "@hakit/core";
 import { HassEntity } from "home-assistant-js-websocket";
 import { useResizeDetector } from "react-resize-detector";
-import { Row, Column, fallback, mq, Modal, ButtonGroup } from "@components";
+import Autolinker from "autolinker";
+import {
+  Row,
+  Column,
+  fallback,
+  mq,
+  Modal,
+  ButtonGroup,
+  Alert,
+} from "@components";
 import type { MotionProps } from "framer-motion";
 import { motion } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
@@ -308,12 +319,13 @@ const Header = styled.div`
 const EventBody = styled.div`
   overflow-wrap: break-word;
   color: var(--ha-S200-contrast);
+  padding-top: 1rem;
+  width: 100%;
 `;
 
 type Extendable = Omit<React.ComponentProps<"div">, "onClick" | "ref"> &
   MotionProps;
 
-/** Object used to render a calendar event in fullcalendar. */
 export interface CalendarEvent {
   title: string;
   start: string;
@@ -331,7 +343,7 @@ export interface CalendarEventData {
   summary: string;
   dtstart: string;
   dtend: string;
-  start: string;
+  start?: string;
   end?: string;
   rrule?: string;
   description?: string;
@@ -348,6 +360,8 @@ export interface CalendarCardProps extends Extendable {
   timeZone?: string;
   /** the default rendered view @default "dayGridMonth" */
   view?: "dayGridMonth" | "listWeek" | "dayGridDay";
+  /** include the header controls @default true */
+  includeHeader?: boolean;
 }
 
 const getCalendarDate = (
@@ -372,8 +386,6 @@ const getCalendarDate = (
 
   return undefined;
 };
-
-const urlRegex = /(https?:\/\/[^\s]+)/g;
 
 function formatDate(dateString: string) {
   const optionsDate: Intl.DateTimeFormatOptions = {
@@ -412,7 +424,6 @@ const defaultFullCalendarConfig: CalendarOptions = {
   initialView: "dayGridMonth",
   dayMaxEventRows: true,
   height: "parent",
-  eventDisplay: "list-item",
   views: {
     listWeek: {
       type: "list",
@@ -433,18 +444,21 @@ function _CalendarCard({
   cssStyles,
   timeZone,
   view,
+  includeHeader = true,
   ...rest
 }: CalendarCardProps): JSX.Element {
   const { useStore } = useHass();
-  const store = useStore();
+  const config = useStore((store) => store.config);
   const calRef = useRef<FullCalendar>(null);
-  const initialFetch = useRef(false);
+  const requesting = useRef(false);
+  const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const [narrow, setNarrow] = useState<boolean>(false);
-  // const { width, ref } = useResizeDetector({
-  //   refreshMode: "debounce",
-  //   refreshRate: 500,
-  // });
+  const { width, ref: widthRef } = useResizeDetector({
+    refreshMode: "debounce",
+    refreshRate: 500,
+  });
   const { callApi, getAllEntities } = useHass();
   const [currentEvent, setCurrentEvent] =
     useState<CalendarEventWithEntity | null>(null);
@@ -453,43 +467,40 @@ function _CalendarCard({
     view ?? "dayGridMonth",
   );
   const calEntities = entities.map((entity) => allEntities[entity]);
-  const _entities = calEntities.filter(
+  const calendars = calEntities.filter(
     (entity) => !isUnavailableState(entity?.state),
   );
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
   const fetchEvents = useCallback(
-    async (start: Date, end: Date) => {
+    async (
+      info: EventSourceFuncArg,
+      successCallback: (events: EventInput[]) => void,
+    ): Promise<void> => {
+      setError(null);
       const params = encodeURI(
-        `?start=${start.toISOString()}&end=${end.toISOString()}`,
+        `?start=${info.start.toISOString()}&end=${info.end.toISOString()}`,
       );
       const calEvents: CalendarEvent[] = [];
       const errors: string[] = [];
-      const apiCalls = _entities.map((entity) =>
-        callApi<CalendarEventData[]>(
-          `/calendars/${entity.entity_id}${params}`,
-          {
-            method: "GET",
-          },
-        ).then(
-          (result) => ({ result, error: null, entityId: entity.entity_id }),
-          (error) => ({ error, result: null, entityId: entity.entity_id }),
+      const apiCalls = entities.map(async (entity) =>
+        callApi<CalendarEventData[]>(`/calendars/${entity}${params}`, {
+          method: "GET",
+        }).then(
+          (result) => ({
+            result: result,
+            error: result.status === "error" ? result.data : null,
+            entityId: entity,
+          }),
+          (error) => ({ error, result: null, entityId: entity }),
         ),
       );
       const responses = await Promise.all(apiCalls);
-
-      responses.forEach(({ result, error, entityId }) => {
-        if (error || !result) {
-          errors.push(entityId);
+      responses.forEach(({ result, error, entityId }, index) => {
+        const backgroundColor = getColorByIndex(index);
+        if (error || !result || result.status === "error") {
+          errors.push(`${entityId} - ${error}`);
           return;
         }
-
-        const cal = _entities.find((entity) => entity.entity_id === entityId);
-
-        if (!cal) {
-          return;
-        }
-
-        (result ?? []).forEach((ev) => {
+        (result.data ?? []).forEach((ev) => {
           const eventStart = getCalendarDate(ev.start);
           const eventEnd = getCalendarDate(ev.end);
           if (!eventStart || !eventEnd) {
@@ -501,8 +512,6 @@ function _CalendarCard({
             description: ev.description,
             dtstart: eventStart,
             dtend: eventEnd,
-            start: ev.start,
-            end: ev.end,
             recurrence_id: ev.recurrence_id,
             rrule: ev.rrule,
           };
@@ -510,16 +519,40 @@ function _CalendarCard({
             start: eventStart,
             end: eventEnd,
             title: ev.summary,
-            calendar: cal.entity_id,
+            backgroundColor: backgroundColor,
+            borderColor: backgroundColor,
+            calendar: entities[index],
             eventData: eventData,
           };
 
           calEvents.push(event);
         });
       });
-      setEvents(calEvents);
+      requesting.current = false;
+      if (errors.length > 0) {
+        setError(`Error retrieving events for: "${errors.join(", ")}".`);
+        // return [];
+        successCallback([]);
+      } else {
+        successCallback(calEvents);
+      }
     },
-    [callApi, _entities],
+    [callApi, entities],
+  );
+
+  const changeView = useCallback(
+    (fn: (api: CalendarApi) => void) => {
+      if (!calRef.current) return;
+      const calendarApi = calRef.current.getApi();
+      // @ts-expect-error - this does exist.
+      calendarApi.batchRendering(() => {
+        calendarApi.removeAllEventSources();
+        fn(calendarApi);
+        calendarApi.addEventSource(fetchEvents);
+        setTitle(calendarApi.view.title);
+      });
+    },
+    [fetchEvents],
   );
 
   const measureCard = useCallback(
@@ -528,10 +561,11 @@ function _CalendarCard({
         const calendarApi = calRef.current.getApi();
         calRef.current.requestResize();
         if (width < 400 && calendarApi.view.type !== "listWeek") {
-          calendarApi.setOption("eventDisplay", "auto");
-          calendarApi.changeView("listWeek");
-          setActiveView("listWeek");
-          setTitle(calendarApi.view.title);
+          changeView((api) => {
+            api.setOption("eventDisplay", "auto");
+            api.changeView("listWeek");
+            setActiveView("listWeek");
+          });
           if (!narrow) {
             setNarrow(true);
           }
@@ -541,155 +575,173 @@ function _CalendarCard({
         }
       }
     },
-    [narrow],
+    [narrow, changeView],
   );
-  // console.log("width", width);
-  // useEffect(() => {
-  //   if (width) {
-  //     console.log("widget", width);
-  //     measureCard(width);
-  //   }
-  // }, [width, measureCard]);
+  useEffect(() => {
+    if (width) {
+      measureCard(width);
+    }
+  }, [width, measureCard]);
+
+  const _handleNext = useCallback(() => {
+    changeView((api) => api.next());
+  }, [changeView]);
+
+  const _handlePrev = useCallback(() => {
+    changeView((api) => api.prev());
+  }, [changeView]);
+
+  const _handleToday = useCallback(() => {
+    changeView((api) => api.today());
+  }, [changeView]);
+  const _handleView = useCallback(
+    (newView: CalendarCardProps["view"]): void => {
+      if (newView === activeView || !calRef.current) return;
+      const eventDisplay = newView === "dayGridMonth" ? "list-item" : "auto";
+      changeView((api) => {
+        api.setOption("eventDisplay", eventDisplay);
+        api.changeView(newView as string);
+        setActiveView(newView);
+      });
+    },
+    [activeView, changeView],
+  );
+
+  const _handleEventClick = useCallback(
+    (info: EventClickArg): void => {
+      const entityStateObj = calendars.find(
+        (entity) => entity.entity_id === info.event.extendedProps.calendar,
+      );
+      setCurrentEvent({
+        ...info.event.extendedProps,
+        entity: entityStateObj ?? null,
+      } as CalendarEventWithEntity);
+    },
+    [calendars],
+  );
+
+  const _handleDateClick = useCallback(
+    (info: DateClickArg | MoreLinkArg): void => {
+      if (info.view.type !== "dayGridMonth") {
+        return;
+      }
+      changeView((api) => {
+        api.gotoDate(info.date);
+        api.changeView("dayGridDay");
+        setActiveView("dayGridDay");
+      });
+    },
+    [changeView],
+  );
 
   useEffect(() => {
-    if (initialFetch.current || !calRef.current) {
-      return;
+    // initially request the events
+    if (!view) {
+      const defaultView = "dayGridMonth";
+      const eventDisplay =
+        defaultView === "dayGridMonth" ? "list-item" : "auto";
+      changeView((api) => {
+        api.setOption("eventDisplay", eventDisplay);
+        api.changeView(defaultView as string);
+        setActiveView(defaultView);
+      });
+    } else {
+      changeView((api) => {
+        api.changeView(view);
+      });
     }
-    initialFetch.current = true;
-    const calendarApi = calRef.current.getApi();
-    setTitle(calendarApi.view.title);
-    fetchEvents(calendarApi.view.activeStart, calendarApi.view.activeEnd);
-  }, [fetchEvents]);
+  }, [changeView, view]);
 
-  function changeView(fn: (api: CalendarApi) => void) {
-    if (!calRef.current) return;
-    const calendarApi = calRef.current.getApi();
-    calendarApi.removeAllEventSources();
-    fn(calendarApi);
-    setTitle(calendarApi.view.title);
-    fetchEvents(calendarApi.view.activeStart, calendarApi.view.activeEnd);
-  }
-
-  function _handleNext() {
-    changeView((api) => api.next());
-  }
-
-  function _handlePrev() {
-    changeView((api) => api.prev());
-  }
-
-  function _handleToday() {
-    changeView((api) => api.today());
-  }
-  function _handleView(newView: CalendarCardProps["view"]): void {
-    if (newView === activeView || !calRef.current) return;
-    const eventDisplay = newView === "dayGridMonth" ? "list-item" : "auto";
-    changeView((api) => {
-      api.setOption("eventDisplay", eventDisplay);
-      api.changeView(newView as string);
-      setActiveView(newView);
-    });
-  }
-
-  function _handleEventClick(info: EventClickArg): void {
-    const entityStateObj = _entities.find(
-      (entity) => entity.entity_id === info.event.extendedProps.calendar,
-    );
-    setCurrentEvent({
-      ...info.event.extendedProps,
-      entity: entityStateObj ?? null,
-    } as CalendarEventWithEntity);
-  }
-
-  function _handleDateClick(info: DateClickArg | MoreLinkArg): void {
-    if (info.view.type !== "dayGridMonth") {
-      return;
-    }
-    changeView((api) => {
-      api.gotoDate(info.date);
-      api.changeView("dayGridDay");
-      setActiveView("dayGridDay");
-    });
-  }
   return (
     <StyledCalendarCard
       id={id ?? ""}
-      // ref={ref}
       cssStyles={css`
         ${cssStyles ?? ""}
       `}
       className={`calendar-card ${className ?? ""} ${narrow ? "narrow" : ""}`}
       {...rest}
     >
-      <Header className="header">
-        <Row justifyContent="space-between">
-          <Column>
-            <h3 className="title">{title}</h3>
-          </Column>
-          <ButtonGroup
-            className="button-group-nav"
-            buttons={[
-              {
-                icon: "mdi:navigate-before",
-                size: 35,
-                onClick: () => _handlePrev(),
-                title: "Previous",
-              },
-              {
-                icon: "mdi:navigate-next",
-                size: 35,
-                onClick: () => _handleNext(),
-                title: "Next",
-              },
-            ]}
-          />
-        </Row>
-        <Row justifyContent="flex-end">
-          <ButtonGroup
-            className="button-group-views"
-            buttons={[
-              {
-                size: 35,
-                onClick: () => _handleToday(),
-                title: "Today",
-                children: <>TODAY</>,
-              },
-              {
-                icon: "mdi:view-module",
-                size: 35,
-                onClick: () => _handleView("dayGridMonth"),
-                title: "Monthly View",
-                className: "monthly-toggle-view",
-                active: activeView === "dayGridMonth",
-              },
-              {
-                icon: "mdi:view-week",
-                size: 35,
-                onClick: () => _handleView("listWeek"),
-                title: "7 day View",
-                active: activeView === "listWeek",
-              },
-              {
-                icon: "mdi:view-day",
-                size: 35,
-                onClick: () => _handleView("dayGridDay"),
-                title: "Daily View",
-                active: activeView === "dayGridDay",
-              },
-            ].filter((button) => button !== null)}
-          />
-        </Row>
-      </Header>
-      <div className="calendar">
+      {includeHeader && (
+        <Header className="header">
+          <Row justifyContent="space-between">
+            <Column>
+              <h3 className="title">{title}</h3>
+            </Column>
+            <ButtonGroup
+              className="button-group-nav"
+              buttons={[
+                {
+                  icon: "mdi:navigate-before",
+                  size: 35,
+                  disabled: loading,
+                  onClick: () => _handlePrev(),
+                  title: "Previous",
+                },
+                {
+                  icon: "mdi:navigate-next",
+                  size: 35,
+                  disabled: loading,
+                  onClick: () => _handleNext(),
+                  title: "Next",
+                },
+              ]}
+            />
+          </Row>
+          <Row justifyContent="flex-end">
+            <ButtonGroup
+              className="button-group-views"
+              buttons={[
+                {
+                  size: 35,
+                  onClick: () => _handleToday(),
+                  title: "Today",
+                  disabled: loading,
+                  children: <>TODAY</>,
+                },
+                {
+                  icon: "mdi:view-module",
+                  size: 35,
+                  onClick: () => _handleView("dayGridMonth"),
+                  title: "Monthly View",
+                  disabled: loading,
+                  className: "monthly-toggle-view",
+                  active: activeView === "dayGridMonth",
+                },
+                {
+                  icon: "mdi:view-week",
+                  size: 35,
+                  disabled: loading,
+                  onClick: () => _handleView("listWeek"),
+                  title: "7 day View",
+                  active: activeView === "listWeek",
+                },
+                {
+                  icon: "mdi:view-day",
+                  size: 35,
+                  disabled: loading,
+                  onClick: () => _handleView("dayGridDay"),
+                  title: "Daily View",
+                  active: activeView === "dayGridDay",
+                },
+              ]}
+            />
+          </Row>
+        </Header>
+      )}
+      <div className="calendar" ref={widthRef}>
         <FullCalendar
           dateClick={_handleDateClick}
           moreLinkClick={_handleDateClick}
           eventClick={_handleEventClick}
+          editable={false}
           ref={calRef}
-          locale={store.config?.language}
+          loading={(isLoading) => {
+            setLoading(isLoading);
+          }}
+          locale={config?.language}
           timeZone={timeZone ?? "local"}
+          progressiveEventRendering
           {...defaultFullCalendarConfig}
-          events={events}
         />
       </div>
       {currentEvent && (
@@ -725,21 +777,30 @@ function _CalendarCard({
             {currentEvent.eventData.description && (
               <EventBody
                 dangerouslySetInnerHTML={{
-                  __html: currentEvent.eventData.description
-                    .replace(urlRegex, function (url: string) {
-                      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-                    })
-                    .replace(/\n/g, "<br/>"),
+                  __html: Autolinker.link(
+                    currentEvent.eventData.description.replace(/\n/g, "<br/>"),
+                    { newWindow: true, stripPrefix: false },
+                  ),
                 }}
               />
             )}
           </Column>
         </Modal>
       )}
+      {error && (
+        <Alert title="Event Retrieval" type="error">
+          {error}
+        </Alert>
+      )}
     </StyledCalendarCard>
   );
 }
-/** The CalendarCard is very similar to the home assistant calendar card, with the exception of not having delete/edit event functionality, the preview here contains only a month (the current month) of fake events to preview the functionality */
+
+/**
+ * The CalendarCard is very similar to the home assistant calendar card, with the exception of not having delete/edit event functionality, the preview here contains only a month (the current month) of fake events to preview the functionality
+ *
+ * This component uses the REST API to retrieve events from home assistant, ensure you've followed the instructions [here](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/hooks-usehass-callapi--docs)
+ * */
 export function CalendarCard(props: CalendarCardProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "CalendarCard" })}>
