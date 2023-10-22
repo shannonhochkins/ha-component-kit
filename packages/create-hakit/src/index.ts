@@ -138,7 +138,7 @@ const createProject = async () => {
     let envFileContent = fs.readFileSync(envFile, 'utf-8');
     write('.env', root, templateDir, envFileContent
       .replace('{FOLDER_NAME}', cdProjectName)
-      .replace('VITE_HA_URL=', `VITE_HA_URL=${haUrl ?? ''}`));
+      .replace('VITE_HA_URL=', `VITE_HA_URL=${(haUrl ?? '').replace(/\/$/, '')}`));
 
     
 
@@ -238,11 +238,13 @@ function updatePackageJson({
   };
   pkg.devDependencies = {
     ...pkg.devDependencies,
+    "@types/node": "^20.8.7",
+    "dotenv": "^16.3.1",
     "node-scp": "^0.0.22",
   };
   pkg.scripts = {
     ...pkg.scripts,
-    "sync-types": "ts-node --esm ./sync-types.ts",
+    "sync-types": "npx ts-node --esm ./sync-types.ts",
     "prebuild": "npm run sync-types"
   }
   write('package.json', root, templateDir, JSON.stringify(pkg, null, 2));

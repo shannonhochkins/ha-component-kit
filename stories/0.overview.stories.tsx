@@ -19,7 +19,8 @@ import {
   TriggerCard,
   GarbageCollectionCard,
   useDevice,
-  SensorCard
+  SensorCard,
+  CalendarCard,
 } from '@components';
 // @ts-expect-error - don't need to type this
 import office from './office.jpg';
@@ -117,6 +118,7 @@ function Template() {
                 ],
               },
             ]} />
+            <CalendarCard entities={["calendar.google_calendar"]} />
             <RoomCard icon="mdi:office-chair" title="Office" hash="office" image={office}>
               <Column fullWidth gap="1rem" style={{
                 padding: '1rem',

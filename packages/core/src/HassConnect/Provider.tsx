@@ -81,12 +81,18 @@ export interface Store {
   /** the home assistant configuration */
   config: HassConfig | null;
   setConfig: (config: HassConfig | null) => void;
+  /** the hassUrl provided to the HassConnect component */
+  hassUrl: string | null;
+  /** set the hassUrl */
+  setHassUrl: (hassUrl: string | null) => void;
 }
 
 const useStore = create<Store>((set) => ({
   routes: [],
   setRoutes: (routes) => set(() => ({ routes })),
   entities: {},
+  setHassUrl: (hassUrl) => set({ hassUrl }),
+  hassUrl: null,
   setEntities: (newEntities) =>
     set((state) => {
       const entitiesDiffChanged = diff(
@@ -165,6 +171,20 @@ export interface HassContextProps {
   getRoute(hash: string): Route | null;
   /** will retrieve all HassEntities from the context */
   getAllEntities: () => HassEntities;
+  /** call the home assistant api */
+  callApi: <T>(
+    endpoint: string,
+    options: RequestInit,
+  ) => Promise<
+    | {
+        data: T;
+        status: "success";
+      }
+    | {
+        data: string;
+        status: "error";
+      }
+  >;
 }
 
 export const HassContext = createContext<HassContextProps>(
@@ -238,6 +258,7 @@ const tryConnection = async (
     // Clear url if we have a auth callback in url.
     if (location && location.search.includes("auth_callback=1")) {
       history.replaceState(null, "", location.pathname);
+      location.reload();
     }
   }
   let connection: Connection;
@@ -313,6 +334,7 @@ export function HassProvider({
   const setReady = useStore((store) => store.setReady);
   const config = useStore((store) => store.config);
   const setConfig = useStore((store) => store.setConfig);
+  const setHassUrl = useStore((store) => store.setHassUrl);
 
   const reset = useCallback(() => {
     // when the hassUrl changes, reset some properties and re-authenticate
@@ -414,6 +436,10 @@ export function HassProvider({
     setCannotConnect,
   ]);
 
+  useEffect(() => {
+    setHassUrl(hassUrl);
+  }, [hassUrl, setHassUrl]);
+
   const getStates = useCallback(
     async () => (connection === null ? null : await _getStates(connection)),
     [connection],
@@ -430,6 +456,47 @@ export function HassProvider({
     async () => (connection === null ? null : await _getUser(connection)),
     [connection],
   );
+
+  async function callApi<T>(
+    endpoint: string,
+    options: RequestInit,
+  ): Promise<
+    | {
+        data: T;
+        status: "success";
+      }
+    | {
+        data: string;
+        status: "error";
+      }
+  > {
+    try {
+      const response = await fetch(`${hassUrl}/api${endpoint}`, {
+        ...options,
+        headers: {
+          Authorization: "Bearer " + connection?.options.auth?.accessToken,
+          "Content-type": "application/json;charset=UTF-8",
+          ...(options?.headers ?? {}),
+        },
+      });
+      if (response.status === 200) {
+        const data = await response.json();
+        return {
+          status: "success",
+          data,
+        };
+      }
+      return {
+        status: "error",
+        data: response.statusText,
+      };
+    } catch (e) {
+      return {
+        status: "error",
+        data: `API Request failed for endpoint "${endpoint}", follow instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/hooks-usehass-callapi--docs.`,
+      };
+    }
+  }
 
   if (config === null && !fetchedConfig.current && connection !== null) {
     fetchedConfig.current = true;
@@ -569,6 +636,7 @@ export function HassProvider({
         getServices,
         getConfig,
         getUser,
+        callApi,
         getAllEntities,
         callService,
       }}
