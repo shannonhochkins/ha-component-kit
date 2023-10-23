@@ -605,7 +605,6 @@ function _MediaPlayerCard({
     (media_duration?: number, media_position?: number) => {
       if (!media_duration || !media_position) return 0;
       const progress = (media_position / media_duration) * 100;
-      console.log("media", media_position, media_duration, progress);
       if (playerRef.current) {
         playerRef.current.style.setProperty(
           `--progress-${snakeCase(_entity)}-width`,

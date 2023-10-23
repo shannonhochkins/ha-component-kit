@@ -117,8 +117,7 @@ function Template() {
                   ["#b62525", "#c8c804"],
                 ],
               },
-            ]} />
-            <CalendarCard entities={["calendar.google_calendar"]} />
+            ]} />            
             <RoomCard icon="mdi:office-chair" title="Office" hash="office" image={office}>
               <Column fullWidth gap="1rem" style={{
                 padding: '1rem',
