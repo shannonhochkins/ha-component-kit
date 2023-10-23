@@ -18,7 +18,7 @@ describe("useEntity", () => {
     });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     act(() => {
-      result.current.api.turnOn({
+      result.current.service.turnOn({
         color_name: "red",
       });
     });

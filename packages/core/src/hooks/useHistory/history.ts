@@ -99,15 +99,11 @@ export const computeStateNameFromEntityAttributes = (
     ? computeObjectId(entityId).replace(/_/g, " ")
     : attributes.friendly_name || "";
 
-export const entityIdHistoryNeedsAttributes = (
-  entities: HassEntities,
-  entityId: string,
-) =>
-  !entities[entityId] ||
-  NEED_ATTRIBUTE_DOMAINS.includes(computeDomain(entityId as EntityName));
+export const entityIdHistoryNeedsAttributes = (entityId: EntityName) =>
+  NEED_ATTRIBUTE_DOMAINS.includes(computeDomain(entityId));
 interface SubscribeOptions {
   connection: Connection;
-  entities: HassEntities;
+  entityIds: EntityName[];
   callbackFunction: (data: HistoryStates) => void;
   hoursToShow?: number;
   minimalResponse?: boolean;
@@ -117,14 +113,13 @@ interface SubscribeOptions {
 
 export const subscribeHistory = ({
   connection,
-  entities,
+  entityIds,
   callbackFunction,
   hoursToShow = 24,
   minimalResponse = true,
   significantChangesOnly = true,
   noAttributes,
 }: SubscribeOptions): Promise<() => Promise<void>> => {
-  const entityIds = Object.keys(entities);
   const params: MessageBase = {
     type: "history/stream",
     entity_ids: entityIds,
@@ -135,9 +130,7 @@ export const subscribeHistory = ({
     significant_changes_only: significantChangesOnly,
     no_attributes:
       noAttributes ??
-      !entityIds.some((entityId) =>
-        entityIdHistoryNeedsAttributes(entities, entityId),
-      ),
+      !entityIds.some((entityId) => entityIdHistoryNeedsAttributes(entityId)),
   };
   const stream = new HistoryStream(connection, hoursToShow);
   return connection.subscribeMessage<HistoryStreamMessage>(

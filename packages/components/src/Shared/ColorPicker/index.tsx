@@ -399,7 +399,7 @@ function _ColorPicker({
         brightness_pct: number;
       },
     ) => {
-      entity.api.turnOn({
+      entity.service.turnOn({
         ...color,
         ...params,
       });

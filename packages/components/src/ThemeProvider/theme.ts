@@ -10,7 +10,7 @@ export interface ThemeParams {
     infoColor: string;
   };
   device: {
-    roomCard: {
+    areaCard: {
       zIndex: number;
     };
     sidebarCard: {
@@ -38,7 +38,7 @@ export const theme: ThemeParams = {
     infoColor: "#039be5",
   },
   device: {
-    roomCard: {
+    areaCard: {
       zIndex: 20,
     },
     sidebarCard: {
@@ -50,6 +50,6 @@ export const theme: ThemeParams = {
   },
   modal: {
     width: "40rem",
-    zIndex: 21, // this should be higher than the room card
+    zIndex: 21, // this should be higher than the area card
   },
 };

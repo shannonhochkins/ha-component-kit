@@ -1,10 +1,10 @@
 import { Source, Meta } from '@storybook/blocks';
 
-<Meta title="HOOKS/useApi" />
+<Meta title="HOOKS/useService" />
 
-# useApi()
-###### `useApi(domain?: SnakeOrCamelDomain, rootTarget?: Target)`
-This hook is designed to make it easy to make api calls programmatically.
+# useService()
+###### `useService(domain?: SnakeOrCamelDomain, rootTarget?: Target)`
+This hook is designed to make it easy to make service calls programmatically.
 
 This is a memoized wrapper for the [callService()](/docs/hooks-usehass-callservice--docs) helper from [useHass()](/docs/hooks-usehass--docs) to make it
 easier to call services.
@@ -16,18 +16,18 @@ This hook should be used inside the context of `<HassConnect />` and not outside
 the authenticated home assistant API.
 
 ### Preferred usage
-The `useApi()` hook is integrated with the `useEntity` hook so you can use it directly from the entity object.
+The `useService()` hook is integrated with the `useEntity` hook so you can use it directly from the entity object.
 Everything is typed so it makes it very easy to use and develop with.
 
 <Source dark code={`
-import { HassConnect, useApi } from '@hakit/core';
-function UseApiExample() {
+import { HassConnect, useService } from '@hakit/core';
+function UseServiceExample() {
   const entity = useEntity('light.some_light_entity');
-  return <button onClick={() => entity.api.toggle()} >TOGGLE LIGHT</button>
+  return <button onClick={() => entity.service.toggle()} >TOGGLE LIGHT</button>
 }
 function App() {
   return <HassConnect hassUrl="http://localhost:1234">
-    <UseApiExample />
+    <UseServiceExample />
   </HassConnect>
 }
 `} />
@@ -35,16 +35,16 @@ function App() {
 ### Service level usage
 We can use the hook to retrieve all the available services for a specific domain, eg "light, mediaPlayer etc...".
 <Source dark code={`
-import { HassConnect, useApi } from '@hakit/core';
-function UseApiExample() {
-  const lightService = useApi('light');
+import { HassConnect, useService } from '@hakit/core';
+function UseServiceExample() {
+  const lightService = useService('light');
   return (
     <button onClick={() => lightService.toggle('light.some_light_entity')}>TOGGLE LIGHT</button>
   );
 }
 function App() {
   return <HassConnect hassUrl="http://localhost:1234">
-    <UseApiExample />
+    <UseServiceExample />
   </HassConnect>
 }
 `} />
@@ -52,9 +52,9 @@ function App() {
 ## Root level usage
 We can also use the hook to retrieve all the available services and use them as needed.
 <Source dark code={`
-import { HassConnect, useApi } from '@hakit/core';
-function UseApiExample() {
-  const api = useApi();
+import { HassConnect, useService } from '@hakit/core';
+function UseServiceExample() {
+  const api = useService();
   return (
     <button onClick={() => api('light').toggle('light.some_light_entity')}>TOGGLE LIGHT</button>
     <button onClick={() => api('switch').toggle('switch.some_switch_entity')}>TOGGLE SWITCH</button>

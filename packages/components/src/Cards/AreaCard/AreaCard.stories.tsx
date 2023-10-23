@@ -6,31 +6,31 @@ import {
   ArgTypes,
   Source,
 } from "@storybook/blocks";
-import { ThemeProvider, RoomCard, Row, ButtonCard } from "@components";
-import type { RoomCardProps } from "@components";
+import { ThemeProvider, AreaCard, Row, ButtonCard } from "@components";
+import type { AreaCardProps } from "@components";
 import { useHash } from "@hakit/core";
 // @ts-expect-error - Don't have types for jsx-to-string
 import jsxToString from "jsx-to-string";
 import { HassConnect } from "@hass-connect-fake";
 import office from "./office.jpg";
 import livingRoom from "./living-room.jpg";
-function Template(args: RoomCardProps) {
+function Template(args: AreaCardProps) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
       <Row fullHeight>
-        <RoomCard {...args}>The {args.hash} room is active!</RoomCard>
+        <AreaCard {...args}>The {args.hash} area is active!</AreaCard>
       </Row>
     </HassConnect>
   );
 }
 
-function MultiRoomExample() {
+function MultiAreaExample() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
       <Row gap="1rem" fullWidth>
-        <RoomCard
+        <AreaCard
           {...{
             hash: "office",
             image: office,
@@ -52,8 +52,8 @@ function MultiRoomExample() {
               description={"An office TV"}
             />
           </Row>
-        </RoomCard>
-        <RoomCard
+        </AreaCard>
+        <AreaCard
           {...{
             hash: "living-room",
             image: livingRoom,
@@ -75,7 +75,7 @@ function MultiRoomExample() {
               description={"Striplights bottom shelf"}
             />
           </Row>
-        </RoomCard>
+        </AreaCard>
       </Row>
     </HassConnect>
   );
@@ -84,11 +84,11 @@ function MultiRoomExample() {
 function TemplateFull() {
   return (
     <>
-      <MultiRoomExample />
+      <MultiAreaExample />
       <h2>Full source example of the above</h2>
       <Source
         dark
-        code={jsxToString(MultiRoomExample(), {
+        code={jsxToString(MultiAreaExample(), {
           useFunctionCode: true,
         })}
       />
@@ -100,14 +100,14 @@ function UseHashExample() {
   const [, setHash] = useHash();
   return (
     <Row fullHeight fullWidth>
-      <RoomCard
+      <AreaCard
         image={office}
         title="Office"
         icon="mdi:office-chair"
         hash="office"
       >
         The office is active!
-      </RoomCard>
+      </AreaCard>
       <ButtonCard
         title="Trigger the office!"
         onClick={() => {
@@ -119,8 +119,8 @@ function UseHashExample() {
 }
 
 export default {
-  title: "COMPONENTS/Cards/RoomCard",
-  component: RoomCard,
+  title: "COMPONENTS/Cards/AreaCard",
+  component: AreaCard,
   tags: ["autodocs"],
   parameters: {
     docs: {
@@ -129,12 +129,12 @@ export default {
           <Title />
           <Description />
           <p>
-            When the room is clicked, the URL hash will be set, so you can
-            refresh the page and the room will become active again.
+            When the area is clicked, the URL hash will be set, so you can
+            refresh the page and the area will become active again.
           </p>
           <Primary />
           <p>
-            You can set the hash programmatically from anywhere and the room
+            You can set the hash programmatically from anywhere and the area
             will activate! There's a helper hook designed to help with this!
           </p>
           <Source
@@ -152,9 +152,9 @@ export default {
   argTypes: {
     hash: { control: "text" },
   },
-} satisfies Meta<typeof RoomCard>;
-export type RoomStory = StoryObj<typeof RoomCard>;
-export const RoomExample: RoomStory = {
+} satisfies Meta<typeof AreaCard>;
+export type AreaStory = StoryObj<typeof AreaCard>;
+export const AreaExample: AreaStory = {
   render: Template,
   args: {
     hash: "office",
@@ -164,7 +164,7 @@ export const RoomExample: RoomStory = {
   },
 };
 
-export const MultipleRoomsExample: RoomStory = {
+export const MultipleAreasExample: AreaStory = {
   render: TemplateFull,
   args: {},
 };

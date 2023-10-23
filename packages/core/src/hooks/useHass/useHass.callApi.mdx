@@ -6,21 +6,25 @@ import { Source, Meta } from '@storybook/blocks';
 ###### `callApi(endpoint: string, options: FetchOptions)`
 This will trigger a request to the [REST API](https://developers.home-assistant.io/docs/api/rest/#actions) for home assistant.
 
-You will at least need to add the following to your configuration.yaml in home assistant to enable the api:
+You will at least need to add the following to your configuration.yaml in home assistant to [enable the api](https://www.home-assistant.io/integrations/api):
 
 <Source dark language="yaml" code={`
+# Example configuration.yaml entry
 api:
 `} />
 
-**NOTE**: If you're developing locally, you'll need to add the port of your local server to the `cors_allowed_origins` list, example:
+**NOTE**: If you're developing locally, you'll need to add the port of your local server to the `cors_allowed_origins` list in your configuration.yaml, example:
 
 <Source dark language="yaml" code={`
+# Example configuration.yaml entry
 http:
   cors_allowed_origins: 
     - http://localhost:8080
 `} />
 
 ### Example Usage
+The below is an example of how to use the hook to retrieve calendar events from home assistant.
+I recomend you read the documentation for the [REST API](https://developers.home-assistant.io/docs/api/rest/#actions) before attempting to use the callApi function as it will help you understand what you need to pass to the function and what you can expect to get back.
 
 <Source dark language="ts" code={`
 import { useCallback, useState } from 'react';
@@ -36,7 +40,7 @@ interface Event {
   rrule?: string;
   description?: string;
 }
-function CallApiExample() {
+export function CallApiExample() {
   const { callApi } = useHass();
   const [events, setEvents] = useState<Event[]>([]);
   const retrieveCalendarEvents = useCallback(() => {
@@ -44,8 +48,8 @@ function CallApiExample() {
     setEvents(events);
   }, [callApi]);
   return <>
-    <FabCard icon="mdi:view-module" onClick={retrieveCalendarEvents}></FabCard>
-    {events.length ? `There is ${events.length} events!` : 'No events'}
+    <FabCard icon="mdi:view-module" onClick={retrieveCalendarEvents} />
+    {events.length ? \`There is $\{events.length} events!\` : 'No events'}
   </>
 }
 `} />

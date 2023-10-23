@@ -220,7 +220,7 @@ export function ModalLightControls({
                     stateRef.current.innerText = `${Math.round(value)}%`;
                   }}
                   onChangeApplied={(value) => {
-                    entity.api.turnOn({
+                    entity.service.turnOn({
                       brightness_pct: value,
                     });
                     if (!stateRef.current) return;
@@ -236,7 +236,7 @@ export function ModalLightControls({
           <FabCard
             icon="mdi:power"
             onClick={() => {
-              entity.api.toggle();
+              entity.service.toggle();
             }}
           />
           {supportsColorTemp ||
