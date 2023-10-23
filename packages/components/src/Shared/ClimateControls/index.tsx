@@ -166,7 +166,7 @@ function _ClimateControls({
 
   useDebounce(
     () => {
-      entity.api.setTemperature({
+      entity.service.setTemperature({
         temperature: internalTemperature,
       });
     },
@@ -226,7 +226,7 @@ function _ClimateControls({
                   ? fan_modes[currentIndex + 1]
                   : fan_modes[0];
                 setInternalFanMode(fanMode);
-                entity.api.setFanMode({
+                entity.service.setFanMode({
                   fan_mode: fanMode,
                 });
               }}
@@ -256,7 +256,7 @@ function _ClimateControls({
             active={currentMode === mode}
             icon={icons[mode]}
             onClick={() => {
-              entity.api.setHvacMode({
+              entity.service.setHvacMode({
                 hvac_mode: mode,
               });
             }}

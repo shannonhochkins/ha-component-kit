@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import {
-  useApi,
+  useService,
   useHass,
   isUnavailableState,
   useEntity,
@@ -264,7 +264,7 @@ function PlaybackControls({
   allEntityIds,
 }: PlaybackControlsProps) {
   const entity = useEntity(_entity);
-  const api = useApi("mediaPlayer");
+  const mp = useService("mediaPlayer");
   const playing = entity.state === "playing";
   const isOff = entity.state === OFF;
   const supportsPreviousTrack = supportsFeatureFromAttributes(
@@ -283,7 +283,7 @@ function PlaybackControls({
         disabled={disabled || isOff || !supportsPreviousTrack}
         size={size}
         icon="mdi:skip-previous"
-        onClick={() => api.mediaPreviousTrack(allEntityIds)}
+        onClick={() => mp.mediaPreviousTrack(allEntityIds)}
       />
       <StyledFab
         className="play-pause"
@@ -292,9 +292,9 @@ function PlaybackControls({
         icon={playing ? "mdi:pause" : "mdi:play"}
         onClick={() => {
           if (playing) {
-            api.mediaPause(allEntityIds);
+            mp.mediaPause(allEntityIds);
           } else {
-            api.mediaPlay(allEntityIds);
+            mp.mediaPlay(allEntityIds);
           }
         }}
       />
@@ -303,7 +303,7 @@ function PlaybackControls({
         disabled={disabled || isOff || !supportsNextTrack}
         size={size}
         icon="mdi:skip-next"
-        onClick={() => api.mediaNextTrack(allEntityIds)}
+        onClick={() => mp.mediaNextTrack(allEntityIds)}
       />
     </>
   );
@@ -321,7 +321,7 @@ function AlternateControls({
   allEntityIds,
 }: AlternateControlsProps) {
   const entity = useEntity(_entity);
-  const api = useApi("mediaPlayer");
+  const mp = useService("mediaPlayer");
   const supportsGrouping = supportsFeatureFromAttributes(
     entity.attributes,
     524288,
@@ -335,18 +335,18 @@ function AlternateControls({
   const joinGroups = useCallback(
     (join: boolean) => {
       if (join) {
-        api.join(entity.entity_id, {
+        mp.join(entity.entity_id, {
           // @ts-expect-error - types are wrong....
           entity_id: entity.entity_id,
           group_members: allEntityIds.filter((id) => id !== entity.entity_id),
         });
       } else {
-        api.unjoin(entity.entity_id, {
+        mp.unjoin(entity.entity_id, {
           entity_id: entity.entity_id,
         });
       }
     },
-    [api, allEntityIds, entity.entity_id],
+    [mp, allEntityIds, entity.entity_id],
   );
   return (
     <Row gap="0.5rem" wrap="nowrap" className="row">
@@ -371,9 +371,9 @@ function AlternateControls({
         icon="mdi:power"
         onClick={() => {
           if (isOff) {
-            api.turnOn(allEntityIds);
+            mp.turnOn(allEntityIds);
           } else {
-            api.turnOff(allEntityIds);
+            mp.turnOff(allEntityIds);
           }
         }}
       />
@@ -401,7 +401,7 @@ function VolumeControls({
   const entity = useEntity(_entity);
   const { volume_level, is_volume_muted } = entity.attributes;
   const [volume, _setVolume] = useState(volume_level);
-  const api = useApi("mediaPlayer");
+  const mp = useService("mediaPlayer");
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const supportsVolumeSet = supportsFeatureFromAttributes(entity.attributes, 4);
   const supportsVolumeMute = supportsFeatureFromAttributes(
@@ -415,12 +415,12 @@ function VolumeControls({
         clearTimeout(timerRef.current);
       }
       timerRef.current = setTimeout(() => {
-        api.volumeSet(allEntityIds, {
+        mp.volumeSet(allEntityIds, {
           volume_level: volume,
         });
       }, 500);
     },
-    [api, allEntityIds, _setVolume],
+    [mp, allEntityIds, _setVolume],
   );
 
   return (
@@ -432,7 +432,7 @@ function VolumeControls({
           size={DEFAULT_FAB_SIZE}
           icon={is_volume_muted ? "mdi:volume-off" : "mdi:volume-high"}
           onClick={() => {
-            api.volumeMute(allEntityIds, {
+            mp.volumeMute(allEntityIds, {
               is_volume_muted: !is_volume_muted,
             });
           }}
@@ -445,14 +445,14 @@ function VolumeControls({
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}
             icon="mdi:volume-minus"
-            onClick={() => api.volumeDown(allEntityIds)}
+            onClick={() => mp.volumeDown(allEntityIds)}
           />
           <StyledFab
             className="volume-up"
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}
             icon="mdi:volume-plus"
-            onClick={() => api.volumeUp(allEntityIds)}
+            onClick={() => mp.volumeUp(allEntityIds)}
           />
         </>
       )}
@@ -520,7 +520,7 @@ function _MediaPlayerCard({
   ...rest
 }: MediaPlayerCardProps) {
   const entity = useEntity(_entity);
-  const api = useApi("mediaPlayer");
+  const mp = useService("mediaPlayer");
   const { useStore } = useHass();
   const entities = useStore((state) => state.entities);
   const interval = useRef<NodeJS.Timeout | null>(null);
@@ -659,11 +659,11 @@ function _MediaPlayerCard({
       const offsetX = x - rect.left;
       // Translate the click position into a percentage between 0-100
       const percentage = offsetX / rect.width;
-      api.mediaSeek(allEntityIds, {
+      mp.mediaSeek(allEntityIds, {
         seek_position: percentage * (media_duration ?? 0),
       });
     },
-    [api, allEntityIds, media_duration],
+    [mp, allEntityIds, media_duration],
   );
   // Calculate percentage viewed whenever mediaPosition or mediaDuration changes
   useEffect(() => {

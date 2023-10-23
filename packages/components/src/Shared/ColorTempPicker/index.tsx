@@ -329,7 +329,7 @@ function _ColorTempPicker({
           const colors = getColoursFromTemperature(updatedValue);
           onChangeApplied(updatedValue, colors);
         }
-        entity.api.turnOn({
+        entity.service.turnOn({
           kelvin: updatedValue,
         });
       }, 100);

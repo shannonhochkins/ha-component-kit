@@ -1,6 +1,5 @@
 import { Story } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
-import { css, Global } from "@emotion/react";
 import { HassConnect } from '@hass-connect-fake';
 import {
   ThemeProvider,
@@ -8,7 +7,7 @@ import {
   FabCard,
   Row,
   Column,
-  RoomCard,
+  AreaCard,
   ButtonCard,
   WeatherCard,
   TimeCard,
@@ -20,7 +19,6 @@ import {
   GarbageCollectionCard,
   useDevice,
   SensorCard,
-  CalendarCard,
 } from '@components';
 // @ts-expect-error - don't need to type this
 import office from './office.jpg';
@@ -117,9 +115,8 @@ function Template() {
                   ["#b62525", "#c8c804"],
                 ],
               },
-            ]} />
-            <CalendarCard entities={["calendar.google_calendar"]} />
-            <RoomCard icon="mdi:office-chair" title="Office" hash="office" image={office}>
+            ]} />            
+            <AreaCard icon="mdi:office-chair" title="Office" hash="office" image={office}>
               <Column fullWidth gap="1rem" style={{
                 padding: '1rem',
               }}>
@@ -143,8 +140,8 @@ function Template() {
                   <FabCard entity="vacuum.robot_vacuum" service="toggle" />
                 </Group>
               </Column>
-            </RoomCard>
-            <RoomCard icon="mdi:sofa" title="Living Room" hash="living-room" image={livingRoom}>
+            </AreaCard>
+            <AreaCard icon="mdi:sofa" title="Living Room" hash="living-room" image={livingRoom}>
               <Column fullWidth gap="1rem" style={{
                 padding: '1rem',
               }}>
@@ -163,8 +160,8 @@ function Template() {
                   <ButtonCard entity="vacuum.robot_vacuum" service="toggle" />
                 </Group>
               </Column>
-            </RoomCard>
-            <RoomCard icon="mdi:dining" title="Dining Room" hash="dining-room" image={diningRoom}>
+            </AreaCard>
+            <AreaCard icon="mdi:dining" title="Dining Room" hash="dining-room" image={diningRoom}>
               <Column fullWidth gap="1rem" style={{
                 padding: '1rem',
               }}>
@@ -174,7 +171,7 @@ function Template() {
                   <ButtonCard entity="light.fake_light_3" service="toggle" />
                 </Group>
               </Column>
-            </RoomCard>
+            </AreaCard>
           </Row>
         </Group>
       </Column>

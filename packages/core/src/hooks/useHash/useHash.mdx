@@ -6,21 +6,21 @@ import { Meta, Source } from '@storybook/blocks';
 ###### `useHash()`
 This hook is designed to retrieve the current hash from the URL bar and return it as a string.
 
-It will return a getter/setter, useful when you want to programmatically change the hash which can trigger a RoomCard to activate.
+It will return a getter/setter, useful when you want to programmatically change the hash which can trigger a AreaCard to activate.
 
 
 ### Example Usage
 
 <Source dark code={`
-import { RoomCard } from '@hakit/components';
+import { AreaCard } from '@hakit/components';
 import { HassConnect, useHash } from '@hakit/core';
 function Office() {
   const [hash, setHash] = useHash();
   // can now access all properties relating to the light
   return <div>
-    <RoomCard hash="office">
+    <AreaCard hash="office">
       This will display when the office is activated
-    </RoomCard>
+    </AreaCard>
     <button onClick={() => {
       setHash('office');
     }}>Activate Office</button>
