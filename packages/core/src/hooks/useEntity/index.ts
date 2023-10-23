@@ -133,6 +133,7 @@ export function useEntity<
       ...$entity,
       history,
       service,
+      api: service,
     } as unknown as UseEntityReturnType<E, O>;
   }, [$entity, history, service]);
 }

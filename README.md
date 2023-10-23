@@ -66,14 +66,7 @@ I'm working on a home assistant addon to create dashboards with these components
 ### What's next?
 
 There's a Roadmap.md file with a few things i'm working on!
-Have your say! Vote for what you'd like to see next in [upcoming features!](https://github.com/shannonhochkins/ha-component-kit/discussions/28), here's a few other small ideas i have!
-
-- WeatherCard - Add more detailed options for related sensors like UV Index, wind chill, humidity etc
-- EntitiesCard - Add Toggle for entities that support "toggle" service to allow an easy way to toggle/turnon/turnoff devices
-- ButtonCard - Different layout designs, including slider indicator for brightness and curtain position etc
-- ClimateCard - control temperature from initial card (popup already has this but it's something that users may want at a glance)
-- AreaCard - Allow alternate layouts, users may not just want a picture of the area but rather an icon / name layout
-- History - include existing history information on all cards as popup similar to home assistant
+Have your say! Vote for what you'd like to see next in [upcoming features!](https://github.com/shannonhochkins/ha-component-kit/discussions/28)
 
 ### Vision
 

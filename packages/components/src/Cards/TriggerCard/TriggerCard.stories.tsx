@@ -11,7 +11,7 @@ function Render(args?: Args) {
           entity="scene.good_morning"
           {...args}
           onClick={(entity) => {
-            entity.api.turnOn();
+            entity.service.turnOn();
           }}
         />
         <TriggerCard
@@ -23,14 +23,14 @@ function Render(args?: Args) {
           hideArrow
           {...args}
           onClick={(entity) => {
-            entity.api.turnOn();
+            entity.service.turnOn();
           }}
         />
         <TriggerCard
           entity="light.unavailable"
           onClick={(entity) => {
             // will not fire when unavailable
-            entity.api.turnOn();
+            entity.service.turnOn();
           }}
         />
       </Column>

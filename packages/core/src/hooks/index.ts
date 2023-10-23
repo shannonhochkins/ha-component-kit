@@ -2,11 +2,11 @@
 export { useHass } from "./useHass";
 export { useEntity } from "./useEntity";
 // Import useService from its location
-import { useService as NewUseApi } from "./useService";
+import { useService as useServiceActual } from "./useService";
 /**
  * @deprecated useApi has been renamed to useService. Please use {@link useService} instead.
  */
-export const useApi = NewUseApi;
+export const useApi = useServiceActual;
 export { useService, createService } from "./useService";
 export { useIconByDomain, useIcon, useIconByEntity } from "./useIcon";
 export { useHash } from "./useHash";

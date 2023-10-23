@@ -113,7 +113,7 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
                   icon={"mdi:arrow-up"}
                   onClick={(event) => {
                     event.stopPropagation();
-                    ac.api.setTemperature({
+                    ac.service.setTemperature({
                       hvac_mode: "cool",
                       temperature: ac.attributes.temperature + 1,
                     });
@@ -123,7 +123,7 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
                   icon={"mdi:arrow-down"}
                   onClick={(event) => {
                     event.stopPropagation();
-                    ac.api.setTemperature({
+                    ac.service.setTemperature({
                       hvac_mode: "cool",
                       temperature: ac.attributes.temperature - 1,
                     });
@@ -137,9 +137,9 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
           onClick(event) {
             event.stopPropagation();
             if (ac.state === "off") {
-              ac.api.turnOn();
+              ac.service.turnOn();
             } else {
-              ac.api.turnOff();
+              ac.service.turnOff();
             }
           },
         },
@@ -179,14 +179,14 @@ function Replica() {
           marginLeft: 10
         }} icon={'mdi:arrow-up'} onClick={(event) => {
           event.stopPropagation();
-          ac.api.setTemperature({
+          ac.service.setTemperature({
             hvac_mode: 'cool',
             temperature: ac.attributes.temperature + 1
           });
         }}/>
         <Icon icon={'mdi:arrow-down'} onClick={(event) => {
           event.stopPropagation();
-          ac.api.setTemperature({
+          ac.service.setTemperature({
             hvac_mode: 'cool',
             temperature: ac.attributes.temperature - 1
           });
@@ -196,9 +196,9 @@ function Replica() {
       onClick(event) {
         event.stopPropagation();
         if (ac.state === 'off') {
-          ac.api.turnOn();
+          ac.service.turnOn();
         } else {
-          ac.api.turnOff();
+          ac.service.turnOff();
         }
       },
     },

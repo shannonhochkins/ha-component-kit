@@ -235,7 +235,7 @@ function _ClimateCard({
                   active={currentMode === mode}
                   icon={icons[mode]}
                   onClick={() => {
-                    entity.api.setHvacMode({
+                    entity.service.setHvacMode({
                       hvac_mode: mode,
                     });
                   }}
