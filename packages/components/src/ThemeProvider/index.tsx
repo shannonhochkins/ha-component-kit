@@ -188,7 +188,7 @@ function _ThemeProvider<T extends object>({
             --ha-ripple-duration: 0.5s;
             --ha-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --ha-transition-duration: 0.25s;
-            --ha-room-card-expanded-offset: 0;
+            --ha-area-card-expanded-offset: 0;
             --ha-background-opaque: ${_theme.darkMode
               ? `hsla(var(--ha-h), calc(var(--ha-s) * 1%), 10%, 0.9)`
               : `hsla(var(--ha-h), calc(var(--ha-s) * 1%), 20%, 0.7)`};

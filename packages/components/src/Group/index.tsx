@@ -15,7 +15,7 @@ const StyledGroup = styled.div<{
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: padding, background-color;
   width: 100%;
-  h3 {
+  > h3 {
     color: var(--ha-S100-contrast);
     margin: 0;
     cursor: pointer;

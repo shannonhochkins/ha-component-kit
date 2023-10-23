@@ -13,12 +13,12 @@ import { ErrorBoundary } from "react-error-boundary";
 type Extendable = PictureCardProps &
   Omit<React.ComponentProps<"div">, "onClick" | "ref"> &
   MotionProps;
-export interface RoomCardProps extends Extendable {
-  /** the hash of the room, eg "office", "living-room", this will set the hash in the url bar and activate the room */
+export interface AreaCardProps extends Extendable {
+  /** the hash of the area, eg "office", "living-room", this will set the hash in the url bar and activate the area */
   hash: string;
-  /** The children to render when the room is activated */
+  /** The children to render when the area is activated */
   children: React.ReactNode;
-  /** the animation duration of the room expanding @default 0.25 */
+  /** the animation duration of the area expanding @default 0.25 */
   animationDuration?: number;
 }
 
@@ -82,11 +82,11 @@ const NavBar = styled(PictureCardFooter)`
   color: var(--ha-S100-contrast);
   background-color: var(--ha-S50);
   inset: 0 0 auto 0;
-  z-index: calc(var(--ha-device-room-card-z-index) + 1);
+  z-index: calc(var(--ha-device-area-card-z-index) + 1);
   border-bottom: 1px solid var(--ha-S200);
 `;
 
-const StyledRoomCard = styled(motion.div)`
+const StyledAreaCard = styled(motion.div)`
   position: relative;
   button {
     max-height: 100%;
@@ -125,12 +125,12 @@ const StyledRoomCard = styled(motion.div)`
 const FullScreen = styled(motion.div)`
   position: fixed;
   inset: 0;
-  left: var(--ha-room-card-expanded-offset);
+  left: var(--ha-area-card-expanded-offset);
   padding: 0;
   margin: 0;
   max-height: 100svh;
   background: var(--ha-S100);
-  z-index: var(--ha-device-room-card-z-index);
+  z-index: var(--ha-device-area-card-z-index);
   display: flex;
   justify-content: center;
   align-items: stretch;
@@ -155,7 +155,7 @@ const ChildContainer = styled(motion.div)`
   flex-direction: column;
 `;
 
-function _RoomCard({
+function _AreaCard({
   hash,
   children,
   icon,
@@ -166,7 +166,7 @@ function _RoomCard({
   className,
   id,
   ...rest
-}: RoomCardProps) {
+}: AreaCardProps) {
   const { addRoute, getRoute } = useHass();
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   const [forceRender, setForceRender] = useState(false);
@@ -209,7 +209,7 @@ function _RoomCard({
 
   return (
     <>
-      <AnimatePresence key={`${hash}-room-card-parent`}>
+      <AnimatePresence key={`${hash}-area-card-parent`}>
         {forceRender === true && (
           <FullScreen
             key={`layout-${hash}`}
@@ -299,7 +299,7 @@ function _RoomCard({
           </FullScreen>
         )}
       </AnimatePresence>
-      <StyledRoomCard
+      <StyledAreaCard
         id={`${id ?? hash}`}
         layoutId={`layout-${hash}`}
         className={`${className ?? ""}`}
@@ -337,15 +337,15 @@ function _RoomCard({
             </Row>
           </PictureCardFooter>
         </StyledPictureCard>
-      </StyledRoomCard>
+      </StyledAreaCard>
     </>
   );
 }
-/** The RoomCard component is a very simple way of categorizing all your entities into a single "PictureCard" which will show all the entities when clicked. */
-export function RoomCard(props: RoomCardProps) {
+/** The AreaCard component is a very simple way of categorizing all your entities into a single "PictureCard" which will show all the entities when clicked. */
+export function AreaCard(props: AreaCardProps) {
   return (
-    <ErrorBoundary {...fallback({ prefix: "RoomCard" })}>
-      <_RoomCard {...props} />
+    <ErrorBoundary {...fallback({ prefix: "AreaCard" })}>
+      <_AreaCard {...props} />
     </ErrorBoundary>
   );
 }

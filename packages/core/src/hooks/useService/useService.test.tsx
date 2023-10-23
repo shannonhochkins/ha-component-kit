@@ -5,15 +5,15 @@ import {
   connection,
 } from "@mocks/mockConnection";
 import { renderHook, act, waitFor } from "@testing-library/react";
-import { useApi } from "@core";
+import { useService } from "@core";
 
-describe("useApi", () => {
+describe("useService", () => {
   beforeEach(() => {
     onReady.mockClear();
   });
   it("should return service object with passed entity id and call the service", async () => {
     const { result } = renderHook(
-      () => useApi("light", { entity_id: "light.kitchen" }),
+      () => useService("light", { entity_id: "light.kitchen" }),
       {
         wrapper: TestWrapper,
       },
@@ -39,7 +39,7 @@ describe("useApi", () => {
   });
 
   it("should return api domain object and then call the service with the matching entity & data", async () => {
-    const { result } = renderHook(() => useApi("light"), {
+    const { result } = renderHook(() => useService("light"), {
       wrapper: TestWrapper,
     });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
@@ -63,7 +63,7 @@ describe("useApi", () => {
   });
 
   it("should return api function and then call the service with the matching entity & data", async () => {
-    const { result } = renderHook(() => useApi(), {
+    const { result } = renderHook(() => useService(), {
       wrapper: TestWrapper,
     });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));

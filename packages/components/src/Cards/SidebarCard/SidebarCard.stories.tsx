@@ -5,7 +5,7 @@ import {
   SidebarCard,
   ButtonCard,
   Row,
-  RoomCard,
+  AreaCard,
   Group,
   Column,
   TriggerCard,
@@ -14,8 +14,8 @@ import { Source } from "@storybook/blocks";
 import { useEntity } from "@hakit/core";
 import type { SidebarCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
-import office from "../RoomCard/office.jpg";
-import livingRoom from "../RoomCard/living-room.jpg";
+import office from "../AreaCard/office.jpg";
+import livingRoom from "../AreaCard/living-room.jpg";
 
 const MakeFullScreen = () => {
   return (
@@ -56,7 +56,7 @@ function Template(args?: Partial<SidebarCardProps>) {
             padding: "1rem",
           }}
         >
-          <RoomCard
+          <AreaCard
             hash="office"
             image={office}
             title="Office"
@@ -73,15 +73,15 @@ function Template(args?: Partial<SidebarCardProps>) {
                 data-testid="scene-card"
               />
             </Column>
-          </RoomCard>
-          <RoomCard
+          </AreaCard>
+          <AreaCard
             hash="living-room"
             image={livingRoom}
             title="Living Room"
             icon="mdi:sofa"
           >
             <div>LivingRoom</div>
-          </RoomCard>
+          </AreaCard>
         </Row>
       </Row>
     </HassConnect>

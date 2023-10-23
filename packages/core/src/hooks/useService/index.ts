@@ -47,17 +47,17 @@ export function createService<T extends SnakeOrCamelDomains>(
   );
 }
 
-export function useApi<T extends SnakeOrCamelDomains>(
+export function useService<T extends SnakeOrCamelDomains>(
   domain: T,
   rootTarget: Target,
 ): SupportedServices<"no-target">[SnakeToCamel<T>];
-export function useApi<T extends SnakeOrCamelDomains>(
+export function useService<T extends SnakeOrCamelDomains>(
   domain: T,
 ): SupportedServices[SnakeToCamel<T>];
-export function useApi(): <T extends SnakeOrCamelDomains>(
+export function useService(): <T extends SnakeOrCamelDomains>(
   domain: T,
 ) => SupportedServices[SnakeToCamel<T>];
-export function useApi<T extends SnakeOrCamelDomains>(
+export function useService<T extends SnakeOrCamelDomains>(
   domain?: T,
   rootTarget?: Target,
 ) {

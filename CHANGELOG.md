@@ -1,3 +1,20 @@
+# 2.1.3
+## @hakit/components
+- BREAKING - renamed RoomCard to AreaCard to align with naming convention of home assistant seeing as they use "areas" rather than "rooms". RoomCard is still available but marked as deprecated, this will be removed in future releases.
+- BUGFIX - styles with calendar card have been fixed for a few issues
+- BUGFIX - CalendarCard was previously requesting events multiple times initially on load.
+- NEW - added loading indicator to CalendarCard
+- BUGFIX - styles for GroupCard were too generic and inheriting on child components, this has been fixed.
+- BUGFIX - SensorCard will now only show the pointer cursor if the onClick prop is provided.
+- NEW - SensorCard now has the ability to hide the graph similar to home assistant.
+## @hakit/core
+- BREAKING - useApi renamed to useService - the previous name is misleading as it isn't the rest api but rather a proxy for websocket services, this is now renamed to useService to align with the home assistant api. useApi is still available but will be removed in future versions as this will in the future be the actual rest api helper hook.
+- NEW - Added useAreas hook to retrieve all areas from home assistant including related devices, entities and services, all information in home assistant is available from the picture, name down to the devices and entities, this hook uses three subscription models to achieve this which are also available from core:
+  - NEW - subscribeAreaRegistry - a subscription model to return all areas from home assistant
+  - NEW - subscribeEntityRegistry - a subscription model to return all entities from home assistant
+  - NEW - subscribeDeviceRegistry - a subscription model to return all devices from home assistant
+- BUGFIX - useHistory hook which is used by every component behind the scenes, was previously subscribing far too many times, this has been fixed and should improve performance and less invalid socket connections.
+
 # 2.1.2
 ## @hakit/components
 - NEW - CalendarCard - A new component that replicates the same functionality as home assistants calendar

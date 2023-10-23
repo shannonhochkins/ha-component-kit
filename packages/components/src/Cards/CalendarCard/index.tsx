@@ -319,8 +319,20 @@ const Header = styled.div`
 const EventBody = styled.div`
   overflow-wrap: break-word;
   color: var(--ha-S200-contrast);
-  padding-top: 1rem;
+  padding: 1rem 0;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+const StyledAlert = styled(Alert)`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  &:after {
+    border-radius: 0;
+  }
 `;
 
 type Extendable = Omit<React.ComponentProps<"div">, "onClick" | "ref"> &
@@ -450,7 +462,7 @@ function _CalendarCard({
   const { useStore } = useHass();
   const config = useStore((store) => store.config);
   const calRef = useRef<FullCalendar>(null);
-  const requesting = useRef(false);
+  const initialRequest = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -528,14 +540,13 @@ function _CalendarCard({
           calEvents.push(event);
         });
       });
-      requesting.current = false;
       if (errors.length > 0) {
         setError(`Error retrieving events for: "${errors.join(", ")}".`);
-        // return [];
         successCallback([]);
       } else {
         successCallback(calEvents);
       }
+      initialRequest.current = true;
     },
     [callApi, entities],
   );
@@ -635,6 +646,7 @@ function _CalendarCard({
   );
 
   useEffect(() => {
+    if (initialRequest.current) return;
     // initially request the events
     if (!view) {
       const defaultView = "dayGridMonth";
@@ -744,6 +756,9 @@ function _CalendarCard({
           {...defaultFullCalendarConfig}
         />
       </div>
+      {loading && (
+        <StyledAlert className={"loading"} description="Loading..." />
+      )}
       {currentEvent && (
         <Modal
           title={currentEvent.eventData.summary}

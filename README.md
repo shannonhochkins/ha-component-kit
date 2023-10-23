@@ -42,7 +42,7 @@ I'm working on a home assistant addon to create dashboards with these components
 5. [GarbageCollectionCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-garbagecollectioncard--docs)
 6. [MediaPlayerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-mediaplayercard--docs)
 7. [PictureCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-picturecard--docs)
-8. [RoomCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-roomcard--docs)
+8. [AreaCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-areacard--docs)
 9. [SensorCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-sensorcard--docs)
 10. [SidebarCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-sidebarcard--docs)
 11. [TimeCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-timecard--docs)
@@ -72,9 +72,8 @@ Have your say! Vote for what you'd like to see next in [upcoming features!](http
 - EntitiesCard - Add Toggle for entities that support "toggle" service to allow an easy way to toggle/turnon/turnoff devices
 - ButtonCard - Different layout designs, including slider indicator for brightness and curtain position etc
 - ClimateCard - control temperature from initial card (popup already has this but it's something that users may want at a glance)
-- RoomCard - Allow alternate layouts, users may not just want a picture of the room but rather an icon / name layout
+- AreaCard - Allow alternate layouts, users may not just want a picture of the area but rather an icon / name layout
 - History - include existing history information on all cards as popup similar to home assistant
-- CalendarCard - I do have a plan to integrate this, just need more time or help :) 
 
 ### Vision
 
