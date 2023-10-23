@@ -227,14 +227,14 @@ export function Test${upperFirst(camelCase(domain))}{
       )}
       {domain && entity && service && (
         <Grid item>
-          <h3>Example Usage with useApi hook</h3>
+          <h3>Example Usage with useService hook</h3>
           <p>This simply exports a button that will {camelCase(service)} the {camelCase(domain)} when pressed!</p>
           <Source
             dark
             language="ts"
             code={`
 export function Test${upperFirst(camelCase(domain))}{
-  const { ${camelCase(service)} } = useApi('${camelCase(domain)}');
+  const { ${camelCase(service)} } = useService('${camelCase(domain)}');
   return <button onClick={() => {
     ${camelCase(service)}('${entity}');
   }}

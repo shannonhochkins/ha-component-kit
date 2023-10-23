@@ -79,7 +79,7 @@ const StyledSidebarCard = styled(motion.div)`
     top: 0;
     bottom: 0;
     left: var(--ha-sidebar-offset);
-    z-index: calc(var(--ha-device-room-card-z-index) - 1);
+    z-index: calc(var(--ha-device-area-card-z-index) - 1);
   `,
   )}
 `;
@@ -333,7 +333,7 @@ function _SidebarCard({
       <Global
         styles={css`
           :root {
-            --ha-room-card-expanded-offset: ${open
+            --ha-area-card-expanded-offset: ${open
               ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
               : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
             --ha-sidebar-max-width: ${open
@@ -490,7 +490,7 @@ function _SidebarCard({
     </>
   );
 }
-/** This component is a nice way of organizing components / groups into an easy to navigate sidebar, the "Room Cards" will automatically insert into the sidebar items if they're present on the page, eg if you have 6 RoomCards, all 6 items will be added to the sidebar automatically, you can also add your own menu items to the start of the list, this all needs a bit more thought but for now it is pretty useful! The TimeCard and WeatherCard are integrate and themed slightly different in the sidebar, if the sidebar is present, the RoomCard will only expand to the available space and not cover the sidebar */
+/** This component is a nice way of organizing components / groups into an easy to navigate sidebar, the "Area Cards" will automatically insert into the sidebar items if they're present on the page, eg if you have 6 AreaCards, all 6 items will be added to the sidebar automatically, you can also add your own menu items to the start of the list, this all needs a bit more thought but for now it is pretty useful! The TimeCard and WeatherCard are integrate and themed slightly different in the sidebar, if the sidebar is present, the AreaCard will only expand to the available space and not cover the sidebar */
 export function SidebarCard(props: SidebarCardProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "SidebarCard" })}>

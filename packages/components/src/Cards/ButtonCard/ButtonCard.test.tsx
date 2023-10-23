@@ -59,7 +59,7 @@ describe("<ButtonCard />", () => {
             entity={entity as "light.fake_light_1"}
             service={service}
             onClick={(entity) => {
-              entity.api.turnOff();
+              entity.service.turnOff();
               mockFunction();
             }}
             data-testid="button-card"

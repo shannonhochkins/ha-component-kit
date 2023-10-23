@@ -12,7 +12,7 @@ function Template(
         <FabCard
           {...args}
           onClick={(entity) => {
-            entity.api.toggle();
+            entity.service.toggle();
           }}
         />
         <FabCard

@@ -30,7 +30,9 @@ const StyledSensorCard = styled(motion.button)`
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
-  cursor: pointer;
+  &.has-on-click {
+    cursor: pointer;
+  }
   background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
@@ -131,6 +133,8 @@ export interface SensorCardProps<E extends EntityName> extends Extendable {
   unit?: ReactNode;
   /** options to pass to the history request */
   historyOptions?: HistoryOptions;
+  /** hide the graph on the card */
+  hideGraph?: boolean;
 }
 
 function _SensorCard<E extends EntityName>({
@@ -145,6 +149,7 @@ function _SensorCard<E extends EntityName>({
   cssStyles,
   className,
   id,
+  hideGraph,
   ...rest
 }: SensorCardProps<E>): JSX.Element {
   const domain = computeDomain(_entity);
@@ -170,7 +175,7 @@ function _SensorCard<E extends EntityName>({
       whileTap={{ scale: disabled || !hasOnClick ? 1 : 0.9 }}
     >
       <StyledSensorCard
-        className={"wrapper"}
+        className={`wrapper ${hasOnClick ? "has-on-click" : ""}`}
         disabled={disabled}
         {...rest}
         onClick={useApiHandler}
@@ -197,18 +202,20 @@ function _SensorCard<E extends EntityName>({
             </Title>
           </LayoutBetween>
         </Inner>
-        <div className={"history"}>
-          {entity.history.loading ? (
-            <Alert className={"loading"} description="Loading..." />
-          ) : entity.history.coordinates.length > 0 ? (
-            <SvgGraph coordinates={entity.history.coordinates} />
-          ) : (
-            <Alert
-              className={"no-state-history"}
-              description="No state history found."
-            />
-          )}
-        </div>
+        {!hideGraph && (
+          <div className={"history"}>
+            {entity.history.loading ? (
+              <Alert className={"loading"} description="Loading..." />
+            ) : entity.history.coordinates.length > 0 ? (
+              <SvgGraph coordinates={entity.history.coordinates} />
+            ) : (
+              <Alert
+                className={"no-state-history"}
+                description="No state history found."
+              />
+            )}
+          </div>
+        )}
       </StyledSensorCard>
     </StyledRipples>
   );

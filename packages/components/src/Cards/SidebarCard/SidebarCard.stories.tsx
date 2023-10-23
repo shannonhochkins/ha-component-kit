@@ -5,7 +5,7 @@ import {
   SidebarCard,
   ButtonCard,
   Row,
-  RoomCard,
+  AreaCard,
   Group,
   Column,
   TriggerCard,
@@ -14,8 +14,8 @@ import { Source } from "@storybook/blocks";
 import { useEntity } from "@hakit/core";
 import type { SidebarCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
-import office from "../RoomCard/office.jpg";
-import livingRoom from "../RoomCard/living-room.jpg";
+import office from "../AreaCard/office.jpg";
+import livingRoom from "../AreaCard/living-room.jpg";
 
 const MakeFullScreen = () => {
   return (
@@ -56,7 +56,7 @@ function Template(args?: Partial<SidebarCardProps>) {
             padding: "1rem",
           }}
         >
-          <RoomCard
+          <AreaCard
             hash="office"
             image={office}
             title="Office"
@@ -73,15 +73,15 @@ function Template(args?: Partial<SidebarCardProps>) {
                 data-testid="scene-card"
               />
             </Column>
-          </RoomCard>
-          <RoomCard
+          </AreaCard>
+          <AreaCard
             hash="living-room"
             image={livingRoom}
             title="Living Room"
             icon="mdi:sofa"
           >
             <div>LivingRoom</div>
-          </RoomCard>
+          </AreaCard>
         </Row>
       </Row>
     </HassConnect>
@@ -113,7 +113,7 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
                   icon={"mdi:arrow-up"}
                   onClick={(event) => {
                     event.stopPropagation();
-                    ac.api.setTemperature({
+                    ac.service.setTemperature({
                       hvac_mode: "cool",
                       temperature: ac.attributes.temperature + 1,
                     });
@@ -123,7 +123,7 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
                   icon={"mdi:arrow-down"}
                   onClick={(event) => {
                     event.stopPropagation();
-                    ac.api.setTemperature({
+                    ac.service.setTemperature({
                       hvac_mode: "cool",
                       temperature: ac.attributes.temperature - 1,
                     });
@@ -137,9 +137,9 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
           onClick(event) {
             event.stopPropagation();
             if (ac.state === "off") {
-              ac.api.turnOn();
+              ac.service.turnOn();
             } else {
-              ac.api.turnOff();
+              ac.service.turnOff();
             }
           },
         },
@@ -179,14 +179,14 @@ function Replica() {
           marginLeft: 10
         }} icon={'mdi:arrow-up'} onClick={(event) => {
           event.stopPropagation();
-          ac.api.setTemperature({
+          ac.service.setTemperature({
             hvac_mode: 'cool',
             temperature: ac.attributes.temperature + 1
           });
         }}/>
         <Icon icon={'mdi:arrow-down'} onClick={(event) => {
           event.stopPropagation();
-          ac.api.setTemperature({
+          ac.service.setTemperature({
             hvac_mode: 'cool',
             temperature: ac.attributes.temperature - 1
           });
@@ -196,9 +196,9 @@ function Replica() {
       onClick(event) {
         event.stopPropagation();
         if (ac.state === 'off') {
-          ac.api.turnOn();
+          ac.service.turnOn();
         } else {
-          ac.api.turnOff();
+          ac.service.turnOff();
         }
       },
     },

@@ -43,9 +43,21 @@ export type { GarbageCollectionCardProps } from "./Cards/GarbageCollectionCard";
 // TimeCard
 export { TimeCard } from "./Cards/TimeCard";
 export type { TimeCardProps } from "./Cards/TimeCard";
-// RoomCard
-export { RoomCard } from "./Cards/RoomCard";
-export type { RoomCardProps } from "./Cards/RoomCard";
+// AreaCard
+export { AreaCard } from "./Cards/AreaCard";
+export type { AreaCardProps } from "./Cards/AreaCard";
+import {
+  AreaCard as ActualAreaCard,
+  AreaCardProps as ActualAreaCardProps,
+} from "./Cards/AreaCard";
+/**
+ * @deprecated RoomCard has been renamed to AreaCard. Please use {@link AreaCard} instead.
+ */
+export const RoomCard = ActualAreaCard;
+/**
+ * @deprecated RoomCardProps has been renamed to AreaCardProps. Please use {@link AreaCardProps} instead.
+ */
+export type RoomCardProps = ActualAreaCardProps;
 // picture card
 export { PictureCard } from "./Cards/PictureCard";
 export type { PictureCardProps } from "./Cards/PictureCard";

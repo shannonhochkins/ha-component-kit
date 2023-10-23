@@ -15,7 +15,7 @@ function Template(args?: Partial<ButtonCardProps<"switch.fake_switch">>) {
           {...args}
           entity="switch.fake_switch"
           onClick={(entity) => {
-            entity.api.toggle();
+            entity.service.toggle();
           }}
         />
         <ButtonCard service="toggle" entity="light.fake_light_1" />
@@ -36,10 +36,10 @@ function TemplateOnclick(
         {...args}
         entity="climate.air_conditioner"
         onClick={(entity) => {
-          entity.api.setHvacMode({
+          entity.service.setHvacMode({
             hvac_mode: entity.state === "off" ? "heat" : "off",
           });
-          entity.api.setTemperature({
+          entity.service.setTemperature({
             temperature: 25,
           });
         }}
@@ -78,10 +78,10 @@ function ExampleDocs() {
         <ButtonCard
           entity="climate.air_conditioner"
           onClick={entity => {
-            entity.api.setHvacMode({
+            entity.service.setHvacMode({
               hvac_mode: entity.state === 'off' ? 'heat' : 'off',
             });
-            entity.api.setTemperature({
+            entity.service.setTemperature({
               temperature: 25,
             });
           }}
