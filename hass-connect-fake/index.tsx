@@ -327,6 +327,7 @@ function HassProvider({
     [_hash, routes, setRoutes],
   );
 
+  const joinHassUrl = useCallback((path: string) => path, []);
 
   const getRoute = useCallback(
     (hash: string) => {
@@ -356,6 +357,7 @@ function HassProvider({
         getAllEntities,
         callService,
         callApi,
+        joinHassUrl,
       }}
     >
       {children(ready)}

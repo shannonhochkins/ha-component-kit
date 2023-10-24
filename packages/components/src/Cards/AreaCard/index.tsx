@@ -271,7 +271,6 @@ function _AreaCard({
             <AnimatePresence
               key={`layout-children-${hash}`}
               onExitComplete={() => {
-                window.location.hash = "";
                 resetAnimation();
               }}
             >
@@ -300,7 +299,7 @@ function _AreaCard({
         )}
       </AnimatePresence>
       <StyledAreaCard
-        id={`${id ?? hash}`}
+        id={`${id ?? hash}-area-card`}
         layoutId={`layout-${hash}`}
         className={`${className ?? ""}`}
         css={css`
