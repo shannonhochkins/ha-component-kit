@@ -33,6 +33,6 @@
       "@mocks/*": ["hass-connect-fake/mocks/*"]
     }
   },
-  "include": ["./stories/**/*", "./hass-connect-fake/**/*"],
+  "include": ["./stories", "./hass-connect-fake", ".d.ts"],
   "exclude": ["**/*./", "**/node_modules"]
 }

@@ -54,6 +54,7 @@ const StyledFabCard = styled(motion.button)<{
   transition-property: background-color, color, box-shadow;
   svg {
     transition: color var(--ha-transition-duration) var(--ha-easing);
+    ${(props) => (props.hasChildren ? `margin-right: 0.5rem;` : ``)}
   }
   &:not(:disabled):hover {
     background-color: var(--ha-S400);
@@ -153,6 +154,8 @@ function _FabCard<E extends EntityName>({
     fontSize: `${size / 1.7}px`,
     color: iconColor || "currentcolor",
   });
+  const hasChildren = typeof children !== "undefined";
+  const _borderRadius = hasChildren ? 10 : borderRadius;
   const isUnavailable =
     typeof entity?.state === "string"
       ? isUnavailableState(entity.state)
@@ -217,7 +220,7 @@ function _FabCard<E extends EntityName>({
           } ${active ? "active" : ""} ${isUnavailable ? "unavailable" : ""}`}
           preventPropagation={preventPropagation}
           disabled={disabled || isUnavailable}
-          borderRadius={borderRadius}
+          borderRadius={_borderRadius}
           cssStyles={cssStyles}
           whileTap={{
             scale: disabled || isUnavailable || disableScaleEffect ? 1 : 0.9,
@@ -231,14 +234,14 @@ function _FabCard<E extends EntityName>({
               typeof _entity === "string" ? `${_entity}-fab-card` : undefined
             }
             size={size}
-            borderRadius={borderRadius}
+            borderRadius={_borderRadius}
             {...longPressEvent}
             {...rest}
-            hasChildren={typeof children !== "undefined"}
+            hasChildren={hasChildren}
             onClick={onClickHandler}
           >
             {noIcon !== true && (iconElement || entityIcon || domainIcon)}
-            {typeof children !== "undefined" ? children : undefined}
+            {hasChildren ? children : undefined}
           </StyledFabCard>
         </StyledRipples>
       </Tooltip>

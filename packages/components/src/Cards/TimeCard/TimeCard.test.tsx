@@ -20,7 +20,7 @@ describe("<TimeCard />", () => {
 
   it("should render without the icon", async () => {
     const { getByTestId } = render(
-      <TimeCard data-testid="time-card" includeIcon={false} />,
+      <TimeCard data-testid="time-card" hideIcon />,
       {
         wrapper: TestWrapper,
       },
@@ -32,7 +32,7 @@ describe("<TimeCard />", () => {
 
   it("should render with the icon", async () => {
     const { getByTestId } = render(
-      <TimeCard icon="mdi:cross" data-testid="time-card" includeIcon={false} />,
+      <TimeCard icon="mdi:cross" data-testid="time-card" />,
       {
         wrapper: TestWrapper,
       },
@@ -44,7 +44,7 @@ describe("<TimeCard />", () => {
 
   it("should render without the date", async () => {
     const { getByTestId } = render(
-      <TimeCard data-testid="time-card" includeDate={false} />,
+      <TimeCard data-testid="time-card" hideDate />,
       {
         wrapper: TestWrapper,
       },

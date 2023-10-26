@@ -282,7 +282,7 @@ export interface SidebarCardProps extends Extendable {
   weatherCardProps?: WeatherCardProps;
   /** Adding menu items can also add routes by default, disabled this if need be @default true */
   autoIncludeRoutes?: boolean;
-  /** the props for the timeCard @default { includeIcon: false, includeDate: false, center: true }*/
+  /** the props for the timeCard @default { hideIcon: true, hideIcon: true, center: true }*/
   timeCardProps?: TimeCardProps;
   /** the menu items to add to the sidebar @default [] */
   menuItems?: MenuItem[];
@@ -292,8 +292,8 @@ export interface SidebarCardProps extends Extendable {
 function _SidebarCard({
   weatherCardProps,
   timeCardProps = {
-    includeIcon: false,
-    includeDate: false,
+    hideIcon: true,
+    hideDate: true,
     center: true,
   },
   startOpen = true,

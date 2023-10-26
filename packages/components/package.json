@@ -70,6 +70,7 @@
     "@fullcalendar/react": "^6.1.9",
     "@hakit/core": "^2.2.0",
     "@use-gesture/react": ">=10.x",
+    "autolinker": ">=4.x",
     "framer-motion": ">=10.x",
     "fullcalendar": "^6.1.9",
     "lodash": ">=4.x",
@@ -80,7 +81,7 @@
     "react-router-dom": ">=6.x",
     "react-thermostat": "^2.x.x",
     "react-use": ">=17.x",
-    "autolinker": ">=4.x"
+    "hls.js": "^1.4.12"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.x",

@@ -13,18 +13,27 @@ export { useHash } from "./useHash";
 export { useLightBrightness } from "./useLightBrightness";
 export { useLightTemperature } from "./useLightTemperature";
 export { useLightColor } from "./useLightColor";
-export { useLowDevices } from "./useLowDevices";
-export type { LowDevicesOptions } from "./useLowDevices";
-export { useHistory } from "./useHistory";
-export type { HistoryOptions } from "./useHistory";
+export { useLowDevices, type LowDevicesOptions } from "./useLowDevices";
+export { useHistory, type HistoryOptions } from "./useHistory";
 export { useSubscribeEntity } from "./useSubscribeEntity";
 
-export { useAreas } from "./useAreas";
-export type { Area } from "./useAreas";
+export { useAreas, type Area } from "./useAreas";
 // other subscription based models used by useAreas
-export { subscribeAreaRegistry } from "./useAreas/subscribe/areas";
-export { subscribeEntityRegistry } from "./useAreas/subscribe/entities";
-export { subscribeDeviceRegistry } from "./useAreas/subscribe/devices";
-export type { AreaRegistryEntry } from "./useAreas/subscribe/areas";
-export type { EntityRegistryEntry } from "./useAreas/subscribe/entities";
-export type { DeviceRegistryEntry } from "./useAreas/subscribe/devices";
+export {
+  subscribeAreaRegistry,
+  type AreaRegistryEntry,
+} from "./useAreas/subscribe/areas";
+export {
+  subscribeEntityRegistry,
+  type EntityRegistryEntry,
+} from "./useAreas/subscribe/entities";
+export {
+  subscribeDeviceRegistry,
+  type DeviceRegistryEntry,
+} from "./useAreas/subscribe/devices";
+export {
+  useCamera,
+  type CameraEntityExtended,
+  type UseCameraOptions,
+} from "./useCamera";
+export * from "./useCamera/constants";

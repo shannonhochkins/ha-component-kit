@@ -46,6 +46,7 @@ const DEFAULT_OPTIONS: UseEntityOptions = {
     hoursToShow: 24,
     significantChangesOnly: true,
     minimalResponse: true,
+    disable: true,
   },
 };
 
@@ -63,6 +64,10 @@ export function useEntity<
   const { throttle, returnNullIfNotFound, historyOptions } = {
     ...DEFAULT_OPTIONS,
     ...options,
+    historyOptions: {
+      ...DEFAULT_OPTIONS.historyOptions,
+      ...options.historyOptions,
+    },
   };
   const getEntity = useSubscribeEntity(entity);
   const matchedEntity = getEntity(returnNullIfNotFound);

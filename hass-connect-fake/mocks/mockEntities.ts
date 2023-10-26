@@ -9,14 +9,25 @@ import { createClimate } from './createClimate';
 import { createVacuum } from './createVacuum';
 import { createAutomation } from './createAutomation';
 import { createCalendar } from './createCalendar';
+import { createCamera } from './createCamera';
+import { createBinarySensor } from './createBinarySensor';
 
 export const entities: HassEntities = {
+  ...createCamera('camera.demo_camera'),
   ...createLight('light.unavailable', {
     "state": "unavailable",
     attributes: {
       friendly_name: 'Unavailable light demo',
     }
   }),
+  ...createSwitch('switch.record', {
+    attributes: {
+      icon: "mdi:record-rec",
+      friendly_name: "Backyard Record"
+    },
+    state: 'on'
+  }),
+  ...createBinarySensor('binary_sensor.vehicle'),
   ...createLight("light.fake_light_1", {
     attributes: {
       friendly_name: "Dining room light",

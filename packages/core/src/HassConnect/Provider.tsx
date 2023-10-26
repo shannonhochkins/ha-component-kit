@@ -171,10 +171,12 @@ export interface HassContextProps {
   getRoute(hash: string): Route | null;
   /** will retrieve all HassEntities from the context */
   getAllEntities: () => HassEntities;
+  /** join a path to the hassUrl */
+  joinHassUrl: (path: string) => string;
   /** call the home assistant api */
   callApi: <T>(
     endpoint: string,
-    options: RequestInit,
+    options?: RequestInit,
   ) => Promise<
     | {
         data: T;
@@ -318,6 +320,7 @@ export function HassProvider({
   const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
   const authenticating = useRef(false);
   const fetchedConfig = useRef(false);
+  const updatingRoutes = useRef(false);
   const [_hash] = useHash();
   const routes = useStore((store) => store.routes);
   const setRoutes = useStore((store) => store.setRoutes);
@@ -457,9 +460,16 @@ export function HassProvider({
     [connection],
   );
 
+  const joinHassUrl = useCallback(
+    (path: string) => {
+      return new URL(path, connection?.options.auth?.data.hassUrl).toString();
+    },
+    [connection],
+  );
+
   async function callApi<T>(
     endpoint: string,
-    options: RequestInit,
+    options?: RequestInit,
   ): Promise<
     | {
         data: T;
@@ -472,7 +482,8 @@ export function HassProvider({
   > {
     try {
       const response = await fetch(`${hassUrl}/api${endpoint}`, {
-        ...options,
+        method: "GET",
+        ...(options ?? {}),
         headers: {
           Authorization: "Bearer " + connection?.options.auth?.accessToken,
           "Content-type": "application/json;charset=UTF-8",
@@ -544,6 +555,7 @@ export function HassProvider({
   );
 
   useEffect(() => {
+    if (updatingRoutes.current) return;
     const newRoutes = routes.map((route) => {
       // if the current has value is the same as the hash, we're active
       const hashWithoutPound = _hash.replace("#", "");
@@ -554,7 +566,13 @@ export function HassProvider({
       };
     });
     if (!isEqual(newRoutes, routes)) {
+      updatingRoutes.current = true;
       setRoutes(newRoutes);
+      // as react can take longer to update vs the hash change, we wait 100ms before
+      // allowing another update the the routes
+      setTimeout(() => {
+        updatingRoutes.current = false;
+      }, 100);
     }
   }, [_hash, routes, setRoutes]);
 
@@ -595,7 +613,6 @@ export function HassProvider({
     [connection, ready],
   );
 
-  // const shouldSet = !ready && connection !== null && config !== null;
   if (connection && entityUnsubscribe.current === null) {
     entityUnsubscribe.current = subscribeEntities(connection, ($entities) => {
       setEntities($entities);
@@ -604,6 +621,7 @@ export function HassProvider({
 
   useEffect(() => {
     return () => {
+      authenticating.current = false;
       if (entityUnsubscribe.current) {
         entityUnsubscribe.current();
         entityUnsubscribe.current = null;
@@ -639,6 +657,7 @@ export function HassProvider({
         callApi,
         getAllEntities,
         callService,
+        joinHassUrl,
       }}
     >
       {error === null ? children(ready) : error}
