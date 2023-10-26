@@ -3,6 +3,7 @@ import type { FabCardProps } from "@components";
 import type { EntityName } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 
 type Extendable = React.ComponentPropsWithoutRef<"div">;
 export interface ButtonGroupProps extends Extendable {
@@ -36,12 +37,22 @@ const ButtonGroupInner = styled.div<Partial<ButtonGroupProps>>`
   overflow: hidden;
   border: 1px solid var(--ha-S500);
   > * {
+    height: 100%;
+    display: flex;
+    align-items: stretch;
     border-right: 1px solid var(--ha-S500);
     &:last-of-type {
       border-right: none;
     }
+    .fab-card {
+      height: 100%;
+      display: flex;
+      align-items: stretch;   
+    }
   }
 `;
+
+const DEFAULT_ICON_SIZE = 35;
 
 function _ButtonGroup({
   buttons,
@@ -49,17 +60,26 @@ function _ButtonGroup({
   justifyContent,
   wrap,
   style,
+  id,
+  className,
+  cssStyles, 
   ...rest
 }: ButtonGroupProps) {
   return (
     <ButtonGroupParent
+      id={id ?? ''}
+      css={css`
+        ${cssStyles ?? ""}
+      `}
+      className={`button-group ${className ?? ''}`}
       style={{
         ...(style ?? {}),
       }}
       {...rest}
     >
-      <FitContent>
+      <FitContent className="fit-content">
         <ButtonGroupInner
+          className="button-group-inner"
           {...{
             alignItems,
             justifyContent,
@@ -68,12 +88,18 @@ function _ButtonGroup({
         >
           {buttons.map(({ children, ...buttonProps }, index) => (
             <FabCard
+              className="button-group-item"
               disableScaleEffect
               borderRadius={0}
-              noIcon={buttonProps.icon ? false : true}
               key={index}
-              size={35}
+              size={DEFAULT_ICON_SIZE}
               {...buttonProps}
+              cssStyles={`
+                ${buttonProps?.cssStyles ?? ""}
+                button {
+                  height: var(--stretch, ${buttonProps.size ?? DEFAULT_ICON_SIZE}px);
+                }
+              `}
             >
               {children}
             </FabCard>
@@ -84,7 +110,10 @@ function _ButtonGroup({
   );
 }
 
-/** This is a very simple function that turns FabCards into a button group, you can use this with entities or just normal button elements */
+/**
+ * This is a very simple function that turns FabCards into a button group, you can use this with entities or just normal button elements
+ * 
+ * There's a known problem with the types when you provide an entity name, typescript will complain about the available services, this is something i'll address later * */
 export function ButtonGroup(props: ButtonGroupProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ButtonGroup" })}>

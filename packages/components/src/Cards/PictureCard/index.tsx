@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
-import { css } from "@emotion/react";
 import { Icon } from "@iconify/react";
-import { Row, fallback, mq } from "@components";
+import { css } from "@emotion/react";
+import { Row, fallback, mq, PreloadImage, type PreloadImageProps } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
@@ -16,15 +16,18 @@ export interface PictureCardProps extends Extendable {
   title: string;
   /** an optional icon to provide */
   icon?: string;
+  /** an object containing the props to pass to the preloader */
+  preloadProps?: PreloadImageProps;
 }
 
 const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
-  all: unset;
-  padding: 1rem;
+  outline: none;
+  border: 0;
+  padding: 0;
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  width: calc(100% - 2rem);
+  width: 100%;
   display: flex;
   aspect-ratio: 16 / 9;
   flex-direction: column;
@@ -37,16 +40,6 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   transition-property: background-color, box-shadow, background-image;
   will-change: width, height;
   flex-shrink: 1;
-
-  ${(props) =>
-    props.image &&
-    `
-    background-image: url(${props.image});
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  `}
-
   &:hover {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
     background-color: var(--ha-S400);
@@ -54,25 +47,25 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   ${mq(
     ["mobile"],
     `
-    width: calc(100% - 2rem);
+    width: 100%;
   `,
   )}
   ${mq(
     ["tablet", "smallScreen"],
     `
-    width: calc((50% - var(--gap, 0rem) / 2) - 2rem);
+    width: calc(((100% - 1 * var(--gap, 0rem)) / 2));
   `,
   )}
   ${mq(
     ["desktop", "mediumScreen"],
     `
-    width: calc(((100% - 2 * var(--gap, 0rem)) / 3) - 2rem);
+    width: calc(((100% - 2 * var(--gap, 0rem)) / 3));
   `,
   )}
   ${mq(
     ["largeDesktop"],
     `
-    width: calc(((100% - 3 * var(--gap, 0rem)) / 4) - 2rem);
+    width: calc(((100% - 4 * var(--gap, 0rem)) / 4));
   `,
   )}
 `;
@@ -95,6 +88,7 @@ function _PictureCard({
   icon,
   className,
   cssStyles,
+  preloadProps,
   ...rest
 }: PictureCardProps): JSX.Element {
   return (
@@ -105,17 +99,30 @@ function _PictureCard({
       `}
       {...rest}
       whileTap={{ scale: 0.9 }}
-      image={image}
       onClick={() => {
         if (typeof onClick === "function") onClick();
       }}
     >
-      <PictureCardFooter className="footer">
-        <Row gap={"0.5rem"} className="row">
-          {icon && <Icon icon={icon} className="icon" />}
-          {title}
-        </Row>
-      </PictureCardFooter>
+      <PreloadImage
+      {...preloadProps ?? {}}
+      src={image}
+      style={{
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+      }}
+      onClick={() => {
+        if (typeof onClick === "function") onClick();
+      }}
+      lazy
+      >
+        <PictureCardFooter className="footer">
+          <Row gap={"0.5rem"} className="row">
+            {icon && <Icon icon={icon} className="icon" />}
+            {title}
+          </Row>
+        </PictureCardFooter>
+      </PreloadImage>
     </StyledPictureCard>
   );
 }

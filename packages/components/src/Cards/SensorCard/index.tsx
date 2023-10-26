@@ -154,7 +154,10 @@ function _SensorCard<E extends EntityName>({
 }: SensorCardProps<E>): JSX.Element {
   const domain = computeDomain(_entity);
   const entity = useEntity(_entity, {
-    historyOptions: historyOptions,
+    historyOptions: {
+      disable: false,
+      ...historyOptions,
+    },
   });
   const entityIcon = useIconByEntity(_entity);
   const domainIcon = useIconByDomain(domain);

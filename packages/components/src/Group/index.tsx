@@ -15,19 +15,21 @@ const StyledGroup = styled.div<{
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: padding, background-color;
   width: 100%;
-  > h3 {
-    color: var(--ha-S100-contrast);
-    margin: 0;
+  > div {
     cursor: pointer;
     padding: ${({ collapsed }) => (collapsed ? "1.5rem 0" : "2rem 0")};
-    display: flex;
-    align-items: center;
-    transition: padding var(--ha-transition-duration) var(--ha-easing);
-    &:before {
-      content: "${({ collapsed }) => (collapsed ? "+" : "-")}";
-      display: inline-block;
-      margin-right: 0.5rem;
-      color: var(--ha-A400);
+    > h3 {
+      color: var(--ha-S100-contrast);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      transition: padding var(--ha-transition-duration) var(--ha-easing);
+      &:before {
+        content: "${({ collapsed }) => (collapsed ? "+" : "-")}";
+        display: inline-block;
+        color: var(--ha-A400);
+        width: 1rem;
+      }
     }
   }
   ${({ collapsed }) => `
@@ -40,9 +42,27 @@ const StyledGroup = styled.div<{
   `};
 `;
 
+const Description = styled.span`
+  color: var(--ha-S300-contrast);
+  font-size: 0.9rem;
+  margin: 0.5rem 0 0;
+  width: 100%;
+  display: block;
+  padding-left: 1rem;
+`;
+
+const Header = styled.div`
+
+`;
+const Title = styled.h3`
+
+`;
+
 export interface GroupProps extends Omit<React.ComponentProps<"div">, "title"> {
   /** the title of the group */
   title: string;
+  /** the optional description of the group */
+  description?: React.ReactNode;
   /** the children for the component to render */
   children: React.ReactNode;
   /** the layout of the group, either column or row, @default row */
@@ -58,6 +78,7 @@ export interface GroupProps extends Omit<React.ComponentProps<"div">, "title"> {
 }
 function _Group({
   title,
+  description,
   children,
   gap = "0.5rem",
   justifyContent = "center",
@@ -83,7 +104,11 @@ function _Group({
       collapsed={_collapsed}
       {...rest}
     >
-      <h3 onClick={() => setCollapsed(!_collapsed)}>{title}</h3>
+      <Header onClick={() => setCollapsed(!_collapsed)}>
+        <Title className="title">{title}</Title>
+        {description && <Description>{description}</Description>}
+      </Header>
+      
       <AnimatePresence initial={false}>
         {!_collapsed && (
           <motion.section

@@ -1,10 +1,34 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import styled from '@emotion/styled';
+import { css } from "@emotion/react";
+
+import { Icon } from '@iconify/react';
+import { MotionProps } from 'framer-motion';
 
 const Preloader = styled.div`
   position: relative;
 `;
-export interface PreloadImageProps extends Partial<Omit<HTMLImageElement, 'children' | 'style'>> {
+
+const PreloaderBackground = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transitionProperty: background-image, opacity;
+  opacity: 0;
+`;
+const StyledIcon = styled(Icon)`
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+`;
+
+type Extendable = Omit<React.ComponentPropsWithoutRef<"div"> & MotionProps, 'onLoad' | 'onError'>;
+export interface PreloadImageProps extends Extendable {
   lazy?: boolean;
   src: string;
   style?: React.CSSProperties;
@@ -17,10 +41,17 @@ export interface PreloadImageProps extends Partial<Omit<HTMLImageElement, 'child
   duration?: number;
   ease?: string;
   children?: React.ReactNode;
+  onClick?: () => void;
   onLoad?: () => void;
   onError?: () => void;
+  onLoading?: () => void;
 }
 
+/** The PreloadImage is a helper component to load an image into the background of the element, this component is pretty generic and requires additional styling to set the width/height of the
+ * background image element
+ * 
+ * It will automatically fade in the image once it's loaded, and will show a loading icon while it's loading, everything is pretty configurable and is completely documented
+ */
 export const PreloadImage = ({
   lazy,
   src,
@@ -31,35 +62,52 @@ export const PreloadImage = ({
   ease,
   children,
   onLoad,
+  onLoading,
   onError,
+  onClick,
+  cssStyles,
+  ...rest
 }: PreloadImageProps) => {
-  const [loaded, setLoaded] = useState(false);
-  const [imageSrc, setImageSrc] = useState<string>(`url(${src})`);
   const el = useRef<HTMLDivElement>(null);
+  const loadingIconRef = useRef<SVGSVGElement | null>(null);
+  const imageDivRef = useRef<HTMLDivElement | null>(null);
   const observer = useRef<IntersectionObserver | null>(null);
   const preloader = useRef<HTMLImageElement | null>(null);
   const duration = _duration ?? 300;
 
   const setPreloader = useCallback(() => {
+    if (!src) return;
     preloader.current = new Image();
-    setLoaded(false);
-    const timeout = setTimeout(() => {
-      setImageSrc(`url(${src})`);
-    }, duration);
+    onLoading && onLoading();
+    if (imageDivRef.current) {
+      imageDivRef.current.style.opacity = '0';
+      imageDivRef.current.style.backgroundImage = `url(${src})`;
+    }
+    if (loadingIconRef.current) {
+      loadingIconRef.current.style.opacity = '1';
+    }
 
     preloader.current.onload = () => {
-      setLoaded(true);
-      if (timeout) clearTimeout(timeout);
+      if (imageDivRef.current) {
+        imageDivRef.current.style.opacity = '1';
+      }
+      if (loadingIconRef.current) {
+        loadingIconRef.current.style.opacity = '0';
+      }
       onLoad && onLoad();
     };
     preloader.current.onerror = () => {
-      if (timeout) clearTimeout(timeout);
-      setLoaded(true);
+      if (imageDivRef.current) {
+        imageDivRef.current.style.opacity = '1';
+      }
+      if (loadingIconRef.current) {
+        loadingIconRef.current.style.opacity = '0';
+      }
       onError && onError();
     }
 
     preloader.current.src = src;
-  }, [src, duration, onLoad, onError]);
+  }, [src, onLoading, onLoad, onError]);
   
   const setObserver = useCallback(() => {
     observer.current = new IntersectionObserver((entries) => {
@@ -93,22 +141,20 @@ export const PreloadImage = ({
   const backgroundRepeat = innerStyle?.backgroundRepeat || "no-repeat";
 
   return (
-    <Preloader className={className} style={{ ...style }} ref={el}>
-      <div
+    <Preloader css={css`${cssStyles ?? ''}`} className={`preload-image ${className ?? ''}`} style={{ ...style }} ref={el} {...rest} onClick={onClick}>
+      <PreloaderBackground
+        className="preloader-background-image"
+        ref={imageDivRef}
         style={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
-          backgroundImage: imageSrc,
           backgroundSize: backgroundSize,
           backgroundPosition: backgroundPosition,
           backgroundRepeat: backgroundRepeat,
-          transition: `opacity ${duration}ms ${ease ?? 'cubic-bezier(0.215, 0.61, 0.355, 1)'}`,
-          opacity: loaded ? 1 : 0,
+          transitionProperty: 'background-image, opacity',
+          transitionDuration: `${duration}ms, ${duration}ms`,
+          transitionTimingFunction: `${ease ?? 'cubic-bezier(0.215, 0.61, 0.355, 1)'}, ${ease ?? 'cubic-bezier(0.215, 0.61, 0.355, 1)'}`,
         }}
-      ></div>
+      ></PreloaderBackground>
+      <StyledIcon ref={loadingIconRef} icon="eos-icons:three-dots-loading" className="preloader-loading-icon" />
       {children}
     </Preloader>
   );

@@ -9,6 +9,7 @@ import type {
   HassConfig,
   Auth,
   HaWebSocket,
+  MessageBase,
 } from "home-assistant-js-websocket";
 import { Connection } from "home-assistant-js-websocket";
 import type {
@@ -26,7 +27,9 @@ import fakeApi from './mocks/fake-call-service';
 import { create } from 'zustand';
 import type { ServiceArgs } from './mocks/fake-call-service/types';
 import mockHistory from './mock-history';
-import { mockCallApi } from './mocks/fake-call-api'
+import { mockCallApi } from './mocks/fake-call-api';
+// @ts-expect-error - it's a string
+import reolinkSnapshot from './assets/reolink-snapshot.jpg';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
@@ -139,6 +142,15 @@ class MockConnection extends Connection {
   async subscribeMessage<Result>(callback: (result: Result) => void): Promise<() => Promise<void>> {
     callback(mockHistory as Result);
     return () => Promise.resolve();
+  }
+  async sendMessagePromise<Result>(message: MessageBase): Promise<Result> {
+    // a mock for the proxy image for the camera
+    if (message.path && message.path.includes('camera_proxy')) {
+      return {
+        path: `${reolinkSnapshot}?`
+      } as Result;
+    }
+    return null as Result;
   }
 }
 

@@ -1,4 +1,3 @@
-
 export const MAX_IMAGE_WIDTH = 640;
 export const ASPECT_RATIO_DEFAULT = 9 / 16;
 export const CAMERA_ORIENTATIONS = [1, 2, 3, 4, 6, 8];

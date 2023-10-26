@@ -460,9 +460,12 @@ export function HassProvider({
     [connection],
   );
 
-  const joinHassUrl = useCallback((path: string) => {
-    return new URL(path, connection?.options.auth?.data.hassUrl).toString();
-  }, [connection]);
+  const joinHassUrl = useCallback(
+    (path: string) => {
+      return new URL(path, connection?.options.auth?.data.hassUrl).toString();
+    },
+    [connection],
+  );
 
   async function callApi<T>(
     endpoint: string,
@@ -479,8 +482,8 @@ export function HassProvider({
   > {
     try {
       const response = await fetch(`${hassUrl}/api${endpoint}`, {
-        method: 'GET',
-        ...options ?? {},
+        method: "GET",
+        ...(options ?? {}),
         headers: {
           Authorization: "Bearer " + connection?.options.auth?.accessToken,
           "Content-type": "application/json;charset=UTF-8",
@@ -610,7 +613,6 @@ export function HassProvider({
     [connection, ready],
   );
 
-  // const shouldSet = !ready && connection !== null && config !== null;
   if (connection && entityUnsubscribe.current === null) {
     entityUnsubscribe.current = subscribeEntities(connection, ($entities) => {
       setEntities($entities);
@@ -619,6 +621,7 @@ export function HassProvider({
 
   useEffect(() => {
     return () => {
+      authenticating.current = false;
       if (entityUnsubscribe.current) {
         entityUnsubscribe.current();
         entityUnsubscribe.current = null;

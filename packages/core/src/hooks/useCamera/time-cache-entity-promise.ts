@@ -1,12 +1,10 @@
-import {
-  Connection,
-} from "home-assistant-js-websocket";
+import { Connection } from "home-assistant-js-websocket";
 
 interface ResultCache<T> {
-  [entityId: string]: { timestamp: number, promise: Promise<T> } | undefined;
+  [entityId: string]: { timestamp: number; promise: Promise<T> } | undefined;
 }
 
-const cache: ResultCache<unknown> = {};  // Replace 'unknown' with your data type if known
+const cache: ResultCache<unknown> = {}; // Replace 'unknown' with your data type if known
 
 /**
  * Call a function with result caching per entity.
@@ -21,17 +19,21 @@ const cache: ResultCache<unknown> = {};  // Replace 'unknown' with your data typ
 export const timeCacheEntityPromiseFunc = async <T>(
   cacheKey: string,
   cacheTime: number,
-  func: (connection: Connection, entityId: string, ...args: unknown[]) => Promise<T>,
+  func: (
+    connection: Connection,
+    entityId: string,
+    ...args: unknown[]
+  ) => Promise<T>,
   connection: Connection,
   entityId: string,
   ...args: unknown[]
 ): Promise<T> => {
   const currentTime = Date.now();
   const _cacheKey = `${cacheKey}-${entityId}`;
-  
+
   // Check if the result is in the cache and still valid
   const cacheEntry = cache[_cacheKey];
-  if (cacheEntry && (currentTime - cacheEntry.timestamp < cacheTime)) {
+  if (cacheEntry && currentTime - cacheEntry.timestamp < cacheTime) {
     return cacheEntry.promise as Promise<T>;
   }
 

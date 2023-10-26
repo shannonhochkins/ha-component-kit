@@ -1,24 +1,12 @@
-import styled from '@emotion/styled';
 import type HlsType from "hls.js";
 import { useRef, useState, useCallback, useEffect } from "react";
-import { useHass } from '@hakit/core';
-
-// import { customElement, property, query, state } from "lit/decorators";
-// import { fireEvent } from "../common/dom/fire_event";
-// import { nextRender } from "../common/util/render-status";
-// import type { HomeAssistant } from "../types";
-// import "./ha-alert";
+import { Alert } from '@components';
+import { VideoPlayer, type VideoState } from './';
 
 type HlsLite = Omit<
   HlsType,
   "subtitleTrackController" | "audioTrackController" | "emeController"
 >;
-
-const Video = styled.video`
-  display: block;
-  width: 100%;
-  max-height: var(--video-max-height, calc(100vh - 97px));
-`;
 
 export interface HlsPlayerProps {
   url: string;
@@ -27,6 +15,7 @@ export interface HlsPlayerProps {
   muted?: boolean;
   autoPlay?: boolean;
   playsInline?: boolean;
+  onStateChange?: (state: VideoState) => void;
 }
 
 export function HlsPlayer({
@@ -36,14 +25,13 @@ export function HlsPlayer({
   muted = false,
   autoPlay = false,
   playsInline = false,
+  onStateChange,
 }: HlsPlayerProps) {
   const _videoEl = useRef<HTMLVideoElement>(null);
-  const [error, setError] = useState<string | undefined>(undefined);
   const [fatalError, setFatalError] = useState<string | null>(null);
   const [retryableError, setRetryableError] = useState<string | null>(null);
   const _hlsPolyfillInstance = useRef<HlsLite | undefined>(undefined);
   const started = useRef(false);
-  const { useStore } = useHass();
 
   const _renderHLSPolyfill = useCallback(async (
     videoEl: HTMLVideoElement,
@@ -61,11 +49,13 @@ export function HlsPlayer({
     _hlsPolyfillInstance.current = hls;
     hls.attachMedia(videoEl);
     hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-      // _resetError();
+      setRetryableError(null);
+      setFatalError(null);
       hls.loadSource(url);
     });
     hls.on(Hls.Events.FRAG_LOADED, (_event, _data: any) => {
-      // _resetError();
+      setRetryableError(null);
+      setFatalError(null);
     });
     hls.on(Hls.Events.ERROR, (_event, data: any) => {
       // Some errors are recovered automatically by the hls player itself, and the others handled
@@ -119,9 +109,6 @@ export function HlsPlayer({
     const Hls: typeof HlsType = (await import("hls.js/dist/hls.light.mjs"))
       .default;
     started.current = true;
-    // if (!this.isConnected) {
-    //   return;
-    // }
 
     let hlsSupported = Hls.isSupported();
 
@@ -196,14 +183,23 @@ export function HlsPlayer({
 
   useEffect(() => {
     _startHls();
-  }, [_startHls])
+  }, [_startHls]);
 
-  return <Video
+  if (fatalError) {
+    return <Alert type="error" description={fatalError} />;
+  }
+  if (retryableError) {
+    console.error(retryableError);
+  }
+
+  return <VideoPlayer
     ref={_videoEl}
+    type="application/vnd.apple.mpegurl"
     poster={posterUrl}
     autoPlay={autoPlay}
     muted={muted}
     playsInline={playsInline}
     controls={controls}
-  />
+    onVideoStateChange={onStateChange}
+  />;
 }

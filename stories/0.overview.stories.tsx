@@ -19,6 +19,8 @@ import {
   GarbageCollectionCard,
   useDevice,
   SensorCard,
+  CameraCard,
+  ButtonGroup,
 } from '@components';
 // @ts-expect-error - don't need to type this
 import office from './office.jpg';
@@ -37,40 +39,51 @@ function Template() {
         padding: device.mobile || device.tablet ? '1rem' : '2rem',
         overflowY: 'auto',
       }}>
-        <Group title="Time & Date" layout="column">
+        <Group title="Time & Date" layout="row" justifyContent="flex-start" alignItems="stretch" description="Displays some variations for the TimeCard">
           <TimeCard />
-          <SensorCard entity="sensor.air_conditioner_inside_temperature" />
+          <TimeCard hideDate center />
+          <TimeCard hideTime hideIcon center />
         </Group>
-        <Group title="Button Card - Default Layout" alignItems="stretch">
+        <Group title="Button Card" description="This is how the ButtonCards appear in the default layout" justifyContent="flex-start" alignItems="stretch">
           <ButtonCard id="default" entity="light.fake_light_1" service="toggle" />
           <ButtonCard id="default" entity="light.fake_light_2" service="toggle" icon="mdi:power" />
           <ButtonCard id="default" entity="light.fake_light_3" service="toggle" />
           <ButtonCard id="default" entity="switch.fake_switch" service="toggle" />
           <ButtonCard id="default" entity="vacuum.robot_vacuum" service="toggle" />
         </Group>
-        <Group title="ButtonCard - Slim Layout" alignItems="stretch">
+        <Group title="ButtonCard" description={<span>With defaultLayout="slim" we can change the layout of the ButtonCard</span>} justifyContent="flex-start" alignItems="stretch">
           <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_1" service="toggle" />
           <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_2" service="toggle" icon="mdi:power" />
           <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_3" service="toggle" />
           <ButtonCard id="slim" defaultLayout="slim" entity="switch.fake_switch" service="toggle" />
           <ButtonCard id="slim" defaultLayout="slim" entity="vacuum.robot_vacuum" service="toggle" />
         </Group>
-        <Group title="ButtonCard - Slim Vertical Layout" alignItems="stretch">
+        <Group title="ButtonCard"  description={<span>With defaultLayout="slim-vertical" we can change the layout of the ButtonCard</span>} justifyContent="flex-start" alignItems="stretch">
           <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_1" service="toggle" />
           <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_2" service="toggle" icon="mdi:power" />
           <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_3" service="toggle" />
           <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="switch.fake_switch" service="toggle" />
           <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="vacuum.robot_vacuum" service="toggle" />
         </Group>
-        <Group title="Lights & Switches Fabs">
+        <Group title="FabCard & ButtonGroup" justifyContent="flex-start" alignItems="stretch" description="FabCard is a great way to show simple entities you just want to perform a simple action and don't care about the name / data, there's a bunch of different ways to render and control entities">
           <FabCard entity="light.fake_light_1" service="toggle" />
           <FabCard entity="light.fake_light_2" service="toggle" icon="mdi:power" />
           <FabCard entity="light.fake_light_3" service="toggle" />
           <FabCard entity="switch.fake_switch" service="toggle" />
           <FabCard entity="vacuum.robot_vacuum" service="toggle" />
+          <FabCard entity="vacuum.robot_vacuum" service="toggle">
+            <span>Custom Content</span>
+          </FabCard>
+          <ButtonGroup buttons={[{
+            entity: 'switch.record',
+          }, {
+            entity: 'binary_sensor.vehicle',
+          }, {
+            entity: 'sensor.air_conditioner_inside_temperature',
+          }]} />
         </Group>
-        <Group title="Miscellaneous" layout="column" gap="1rem">
-          <Row gap="1rem" alignItems="stretch" fullWidth>
+        <Group title="Miscellaneous" description="items will stretch to fit the same height per row" layout="column" gap="1rem">
+          <Row gap="1rem" justifyContent="flex-start" alignItems="stretch" fullWidth>
             <EntitiesCard includeLastUpdated entities={['sensor.date', 'sensor.time', 'automation.dim_lights']} />
             <MediaPlayerCard entity="media_player.fake_speaker_2" layout="slim" />
             <TriggerCard entity="scene.good_morning" />
@@ -115,7 +128,17 @@ function Template() {
                   ["#b62525", "#c8c804"],
                 ],
               },
-            ]} />            
+            ]} />       
+            <CameraCard
+              entity="camera.demo_camera"
+              name="Only poster available in demo"
+              headerSensors={[{
+                entity: "binary_sensor.vehicle",
+              }, {
+                entity: "switch.record"
+              }]}
+            />
+            <SensorCard entity="sensor.air_conditioner_inside_temperature" />     
             <AreaCard icon="mdi:office-chair" title="Office" hash="office" image={office}>
               <Column fullWidth gap="1rem" style={{
                 padding: '1rem',

@@ -1,8 +1,6 @@
-import {
-  Connection,
-} from "home-assistant-js-websocket";
+import { Connection } from "home-assistant-js-websocket";
 import { timeCacheEntityPromiseFunc } from "./time-cache-entity-promise";
-import type { CameraEntity } from '@core';
+import type { CameraEntity } from "@core";
 
 export interface SignedPath {
   path: string;
@@ -10,8 +8,9 @@ export interface SignedPath {
 
 export const getSignedPath = (
   connection: Connection,
-  path: string
-): Promise<SignedPath> => connection.sendMessagePromise({ type: "auth/sign_path", path });
+  path: string,
+): Promise<SignedPath> =>
+  connection.sendMessagePromise({ type: "auth/sign_path", path });
 
 export interface CameraPreferences {
   preload_stream: boolean;
@@ -30,7 +29,7 @@ export interface Stream {
 export const cameraUrlWithWidthHeight = (
   base_url: string,
   width: number,
-  height: number
+  height: number,
 ) => `${base_url}&width=${width}&height=${height}`;
 
 export const computeMJPEGStreamUrl = (entity: CameraEntity) =>
@@ -40,30 +39,34 @@ export const fetchThumbnailUrlWithCache = async (
   connection: Connection,
   entityId: string,
   width: number,
-  height: number
+  height: number,
 ) => {
   const base_url = await timeCacheEntityPromiseFunc(
     "_cameraTmbUrl",
     9000,
     fetchThumbnailUrl,
     connection,
-    entityId
+    entityId,
   );
   return cameraUrlWithWidthHeight(base_url, width, height);
 };
 
 export const fetchThumbnailUrl = async (
   connection: Connection,
-  entityId: string
+  entityId: string,
 ) => {
-  const { path } = await getSignedPath(connection, `/api/camera_proxy/${entityId}`);
+  const { path } = await getSignedPath(
+    connection,
+    `/api/camera_proxy/${entityId}`,
+  );
+  console.log("path;", path);
   return path;
 };
 
 export const fetchStreamUrl = async (
   connection: Connection,
   entityId: string,
-  format?: "hls"
+  format?: "hls",
 ) => {
   const data = {
     type: "camera/stream",

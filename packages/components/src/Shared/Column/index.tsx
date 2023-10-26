@@ -23,6 +23,9 @@ const _Column = styled(m.div)<ColumnProps>`
   flex-wrap: ${({ wrap }) => wrap || "wrap"};
   justify-content: ${({ justifyContent }) => justifyContent || "center"};
   align-items: ${({ alignItems }) => alignItems || "center"};
+  ${({ justifyContent }) => `
+    --stretch: ${justifyContent === 'stretch' ? '100%' : 'false'};
+  `}
   ${(props) =>
     typeof props.gap === "string" &&
     `
@@ -35,5 +38,5 @@ const _Column = styled(m.div)<ColumnProps>`
 
 /** A simple helper component to layout child components in a column, justify/align properties as well as gap are supported */
 export function Column(props: ColumnProps) {
-  return <_Column {...props} />;
+  return <_Column {...props} className={`${props.className} ${props.fullHeight ? 'full-height' : ''} ${props.fullWidth ? 'full-width' : ''} ${props.justifyContent ? props.justifyContent : 'center'} ${props.alignItems ? props.alignItems : 'center'} ${props.wrap ? props.wrap : 'wrap'}`} />;
 }

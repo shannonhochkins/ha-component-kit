@@ -11,8 +11,12 @@ function Template(args?: Partial<ButtonGroupProps>) {
         {...args}
         buttons={[
           {
+            entity: "light.fake_light_1",
+          },
+          {
             title: "Click me Title",
             children: "CLICK ME",
+            noIcon: true,
             onClick() {
               console.log("CLICKED");
             },

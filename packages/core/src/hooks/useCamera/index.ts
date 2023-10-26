@@ -1,13 +1,22 @@
-import { useEntity, isUnavailableState, useHass, supportsFeatureFromAttributes } from '@core';
-import type { HassEntityWithApi, FilterByDomain, EntityName } from '@core';
+import {
+  useEntity,
+  isUnavailableState,
+  useHass,
+  supportsFeatureFromAttributes,
+} from "@core";
+import type { HassEntityWithApi, FilterByDomain, EntityName } from "@core";
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
-import { fetchThumbnailUrlWithCache, fetchStreamUrl, computeMJPEGStreamUrl } from './camera';
+import {
+  fetchThumbnailUrlWithCache,
+  fetchStreamUrl,
+  computeMJPEGStreamUrl,
+} from "./camera";
 import {
   ASPECT_RATIO_DEFAULT,
   MAX_IMAGE_WIDTH,
   CAMERA_SUPPORT_STREAM,
-  STREAM_TYPE_WEB_RTC
-} from './constants';
+  STREAM_TYPE_WEB_RTC,
+} from "./constants";
 
 export interface UseCameraOptions {
   /** the requested width of the poster image @default 640 */
@@ -26,20 +35,23 @@ export interface CameraEntityExtended extends HassEntityWithApi<"camera"> {
     loading: boolean;
     error: Error | undefined;
     refresh: () => Promise<void>;
-  },
+  };
   poster: {
     url: string | undefined;
     loading: boolean;
     error: Error | undefined;
     refresh: () => Promise<void>;
-  },
+  };
   mjpeg: {
-    url: string | undefined,
+    url: string | undefined;
     shouldRenderMJPEG: boolean;
-  }
+  };
 }
-
-export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?: UseCameraOptions): CameraEntityExtended {
+/** The useCamera hook is designed to return all the custom complex logic in an easy to retrieve structure, it supports streams, motion jpeg, posters and the camera entity */
+export function useCamera(
+  entity: FilterByDomain<EntityName, "camera">,
+  options?: UseCameraOptions,
+): CameraEntityExtended {
   const camera = useEntity(entity);
   const { useStore, joinHassUrl } = useHass();
   const connection = useStore((state) => state.connection);
@@ -49,9 +61,16 @@ export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?
   const [streamUrl, setStreamUrl] = useState<string | undefined>(undefined);
   const [streamError, setStreamError] = useState<Error | undefined>(undefined);
   const [posterError, setPosterError] = useState<Error | undefined>(undefined);
-  const [streamLoading, setStreamLoading] = useState<boolean>(options?.stream === false ? false : true);
-  const [posterLoading, setPosterLoading] = useState<boolean>(options?.poster === false ? false : true);
-  const mjpeg = useMemo(() => joinHassUrl(computeMJPEGStreamUrl(camera)), [camera, joinHassUrl]);
+  const [streamLoading, setStreamLoading] = useState<boolean>(
+    options?.stream === false ? false : true,
+  );
+  const [posterLoading, setPosterLoading] = useState<boolean>(
+    options?.poster === false ? false : true,
+  );
+  const mjpeg = useMemo(
+    () => joinHassUrl(computeMJPEGStreamUrl(camera)),
+    [camera, joinHassUrl],
+  );
 
   const _getPosterUrl = useCallback(async (): Promise<void> => {
     if (options?.poster === false) return;
@@ -63,14 +82,19 @@ export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?
     requestedPosterUrl.current = true;
     setPosterLoading(true);
     try {
-      const width = Math.ceil((options?.imageWidth ?? MAX_IMAGE_WIDTH) * devicePixelRatio);
-      const height = Math.ceil(width * (options?.aspectRatio ?? ASPECT_RATIO_DEFAULT));
+      const width = Math.ceil(
+        (options?.imageWidth ?? MAX_IMAGE_WIDTH) * devicePixelRatio,
+      );
+      const height = Math.ceil(
+        width * (options?.aspectRatio ?? ASPECT_RATIO_DEFAULT),
+      );
       const cameraImageSrc = await fetchThumbnailUrlWithCache(
         connection,
         camera.entity_id,
         width,
-        height
+        height,
       );
+      console.log("src", cameraImageSrc);
       setPosterUrl(joinHassUrl(cameraImageSrc));
       setPosterLoading(false);
     } catch (err) {
@@ -80,8 +104,15 @@ export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?
         setPosterError(err);
       }
     }
-  }, [camera.entity_id, joinHassUrl, camera.state, connection, options?.poster, options?.aspectRatio, options?.imageWidth]);
-
+  }, [
+    camera.entity_id,
+    joinHassUrl,
+    camera.state,
+    connection,
+    options?.poster,
+    options?.aspectRatio,
+    options?.imageWidth,
+  ]);
 
   const _getStreamUrl = useCallback(async (): Promise<void> => {
     if (options?.stream === false) return;
@@ -93,10 +124,7 @@ export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?
     requestedStreamUrl.current = true;
     setStreamLoading(true);
     try {
-      const url = await fetchStreamUrl(
-        connection,
-        camera.entity_id
-      );
+      const url = await fetchStreamUrl(connection, camera.entity_id);
       setStreamUrl(joinHassUrl(url));
       setStreamLoading(false);
     } catch (err) {
@@ -107,20 +135,26 @@ export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?
         setStreamError(err);
       }
     }
-  }, [camera.entity_id, joinHassUrl, camera.state, connection, options?.stream]);
+  }, [
+    camera.entity_id,
+    joinHassUrl,
+    camera.state,
+    connection,
+    options?.stream,
+  ]);
 
   const _shouldRenderMJPEG = useCallback(() => {
     if (streamError) {
       // Fallback when unable to fetch stream url
       return true;
     }
-    if (!supportsFeatureFromAttributes(camera.attributes, CAMERA_SUPPORT_STREAM)) {
+    if (
+      !supportsFeatureFromAttributes(camera.attributes, CAMERA_SUPPORT_STREAM)
+    ) {
       // Steaming is not supported by the camera so fallback to MJPEG stream
       return true;
     }
-    if (
-      camera.attributes.frontend_stream_type === STREAM_TYPE_WEB_RTC
-    ) {
+    if (camera.attributes.frontend_stream_type === STREAM_TYPE_WEB_RTC) {
       // Browser support required for WebRTC
       return typeof RTCPeerConnection === "undefined";
     }
@@ -131,7 +165,7 @@ export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?
   useEffect(() => {
     _getStreamUrl();
     _getPosterUrl();
-  }, [_getStreamUrl, _getPosterUrl])
+  }, [_getStreamUrl, _getPosterUrl]);
 
   return useMemo(() => {
     const stream = {
@@ -141,7 +175,7 @@ export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?
       refresh: async () => {
         requestedStreamUrl.current = false;
         return _getStreamUrl();
-      }
+      },
     };
     const poster = {
       url: posterUrl,
@@ -150,8 +184,8 @@ export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?
       refresh: async () => {
         requestedPosterUrl.current = false;
         return _getPosterUrl();
-      }
-    }
+      },
+    };
     const extendedCamera = {
       ...camera,
       stream,
@@ -162,5 +196,17 @@ export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?
       },
     } satisfies CameraEntityExtended;
     return extendedCamera;
-  }, [camera, streamUrl, _shouldRenderMJPEG, streamLoading, streamError, _getStreamUrl, posterUrl, posterLoading, posterError, mjpeg, _getPosterUrl]);
+  }, [
+    camera,
+    streamUrl,
+    _shouldRenderMJPEG,
+    streamLoading,
+    streamError,
+    _getStreamUrl,
+    posterUrl,
+    posterLoading,
+    posterError,
+    mjpeg,
+    _getPosterUrl,
+  ]);
 }

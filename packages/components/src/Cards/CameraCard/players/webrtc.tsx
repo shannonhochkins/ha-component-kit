@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Alert } from '@components';
 import { useHass, type EntityName, type FilterByDomain } from '@hakit/core';
-import styled from "@emotion/styled";
+import { VideoPlayer, type VideoState } from './';
 
 export interface WebRTCPlayerProps {
   /** The name of your entity */
@@ -11,6 +11,7 @@ export interface WebRTCPlayerProps {
   autoPlay?: boolean;
   playsInline?: boolean;
   posterUrl?: string;
+  onStateChange?: (state: VideoState) => void
 }
 
 interface WebRtcSettings {
@@ -20,12 +21,6 @@ interface WebRtcSettings {
 interface WebRtcAnswer {
   answer: string;
 }
-
-const Video = styled.video`
-  display: block;
-  width: 100%;
-  max-height: var(--video-max-height, calc(100vh - 97px));
-`;
 
 /**
  * A WebRTC stream is established by first sending an offer through a signal
@@ -39,6 +34,7 @@ export function WebRTCPlayer({
   autoPlay,
   playsInline,
   posterUrl,
+  onStateChange,
 }: WebRTCPlayerProps) {
   const { useStore } = useHass();
   const connection = useStore(store => store.connection);
@@ -47,10 +43,6 @@ export function WebRTCPlayer({
   const _peerConnection = useRef<RTCPeerConnection | undefined>(undefined);
   const _remoteStream = useRef<MediaStream | undefined>(undefined);
   const started = useRef(false);
-  console.log('rtsp_to_webrtc', connection);
-
-
-  
   const fetchWebRtcSettings = useCallback(async () =>
     connection?.sendMessagePromise<WebRtcSettings>({
       type: "rtsp_to_webrtc/get_settings",
@@ -171,25 +163,13 @@ export function WebRTCPlayer({
     return <Alert type="error" description={error} />
   }
 
-  return <Video
+  return <VideoPlayer
     ref={_videoEl}
+    poster={posterUrl}
     autoPlay={autoPlay}
     muted={muted}
     playsInline={playsInline}
     controls={controls}
-    poster={posterUrl}
+    onVideoStateChange={onStateChange}
   />;
 }
-
-
-
-  // protected override updated(changedProperties: PropertyValues<this>) {
-  //   if (!changedProperties.has("entityid")) {
-  //     return;
-  //   }
-  //   if (!this._videoEl) {
-  //     return;
-  //   }
-  //   this._startWebRtc();
-  // }
-

@@ -36,6 +36,8 @@ export interface HistoryOptions {
      */
     max?: number;
   };
+  /** disable the history subscription @default false */
+  disable?: boolean;
 }
 export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
   const { useStore } = useHass();
@@ -50,27 +52,44 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
     coordinates: number[][];
     loading: boolean;
   }>({
-    loading: true,
+    loading: options?.disable ? false : true,
     timeline: [],
     entityHistory: [],
     coordinates: [],
   });
 
+  const memoizedOptions = useMemo(() => {
+    return {
+      disable: options?.disable,
+      significantChangesOnly: options?.significantChangesOnly,
+      minimalResponse: options?.minimalResponse,
+      hoursToShow: options?.hoursToShow,
+      limits: options?.limits,
+    };
+  }, [
+    options?.disable,
+    options?.significantChangesOnly,
+    options?.minimalResponse,
+    options?.hoursToShow,
+    options?.limits,
+  ]);
+
   useEffect(() => {
-    if (!connection) return;
+    if (!connection || memoizedOptions?.disable) return;
     let isMounted = true; // To check if the component is still mounted
     // Create a local variable to hold the unsubscribe function
     let localUnsubscribe: null | (() => Promise<void>) = null;
     subscribeHistory({
       connection: connection,
       entityIds: [entityId],
-      significantChangesOnly: options?.significantChangesOnly,
-      minimalResponse: options?.minimalResponse,
-      hoursToShow: options?.hoursToShow,
+      significantChangesOnly: memoizedOptions?.significantChangesOnly,
+      minimalResponse: memoizedOptions?.minimalResponse,
+      hoursToShow: memoizedOptions?.hoursToShow,
       callbackFunction: (history) => {
         if (!isMounted) return;
         subscribed.current = true;
         setHistoryStates(history);
+        console.log(entityId, history);
       },
     })
       .then((unsubscribe) => {
@@ -85,11 +104,13 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
       localUnsubscribe?.();
       subscribed.current = false;
     };
-  }, [entityId, options, connection]);
+  }, [entityId, memoizedOptions, connection]);
 
   useEffect(() => {
-    const entity = getEntity(true);
-    if (entity !== null && subscribed.current) {
+    if (memoizedOptions?.disable) return;
+    if (subscribed.current) {
+      const entity = getEntity(true);
+      if (!entity) return;
       const entities = {
         [entityId]: entity,
       } satisfies HassEntities;
@@ -104,14 +125,15 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
       const coordinates =
         coordinatesMinimalResponseCompressedState(
           historyStates[entityId],
-          options?.hoursToShow ?? 24,
+          memoizedOptions?.hoursToShow ?? 24,
           500, // viewbox of the svgGraph
-          typeof options?.significantChangesOnly === "undefined" ||
-            options?.significantChangesOnly === true
+          typeof memoizedOptions?.significantChangesOnly === "undefined" ||
+            memoizedOptions?.significantChangesOnly === true
             ? 1
             : 2,
-          options?.limits,
+          memoizedOptions?.limits,
         ) ?? [];
+
       setHistory({
         loading: false,
         timeline: matchedHistory.length > 0 ? matchedHistory[0].data : [],
@@ -119,7 +141,7 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
         coordinates,
       });
     }
-  }, [entityId, config, options, getEntity, historyStates]);
+  }, [entityId, config, memoizedOptions, getEntity, historyStates]);
 
   return useMemo(() => history, [history]);
 };

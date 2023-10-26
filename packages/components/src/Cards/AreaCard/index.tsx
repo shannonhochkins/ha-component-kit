@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { useEffect, useCallback, useState } from "react";
 import { useHass } from "@hakit/core";
-import { Row, FabCard, fallback, mq } from "@components";
-import type { PictureCardProps } from "@components";
+import { Row, FabCard, fallback, mq, PreloadImage } from "@components";
+import type { PictureCardProps, PreloadImageProps } from "@components";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useKeyPress } from "react-use";
@@ -20,16 +20,19 @@ export interface AreaCardProps extends Extendable {
   children: React.ReactNode;
   /** the animation duration of the area expanding @default 0.25 */
   animationDuration?: number;
+  /** props to pass to the image preloader */
+  preloadProps?: PreloadImageProps;
 }
 
 const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   all: unset;
-  padding: 1rem;
+  box-sizing: border-box;
+  padding: 0;
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
   display: flex;
-  width: calc(100% - 2rem);
+  width: 100%;
   aspect-ratio: 16 / 9;
   flex-direction: column;
   align-items: stretch;
@@ -46,15 +49,6 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
     color: var(--ha-S200-contrast);
     transition: color var(--ha-transition-duration) var(--ha-easing);
   }
-  ${(props) =>
-    props.image &&
-    `
-    background-image: url(${props.image});
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  `}
-
   &:hover {
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
     background-color: var(--ha-S300);
@@ -63,6 +57,7 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
       color: var(--ha-S300-contrast);
     }
   }
+  height: var(--stretch, );
 `;
 
 const PictureCardFooter = styled(motion.div)`
@@ -165,6 +160,7 @@ function _AreaCard({
   cssStyles,
   className,
   id,
+  preloadProps,
   ...rest
 }: AreaCardProps) {
   const { addRoute, getRoute } = useHass();
@@ -309,32 +305,42 @@ function _AreaCard({
         <StyledPictureCard
           whileTap={{ scale: 0.9 }}
           {...rest}
-          image={image}
           onClick={() => {
             window.location.hash = hash;
           }}
         >
-          <PictureCardFooter
-            className={"footer"}
-            animate={{
-              transition: {
-                duration: animationDuration,
-              },
+          <PreloadImage
+            {...preloadProps ?? {}}
+            src={image}
+            style={{
+              width: '100%',
+              height: '100%',
+              position: 'absolute',
             }}
-          >
-            <Row gap={"0.5rem"} className={"row"}>
-              {icon && (
-                <Icon
-                  className={"icon"}
-                  icon={icon}
-                  style={{
-                    color: `var(--ha-500-contrast)`,
-                  }}
-                />
-              )}
-              {title}
-            </Row>
-          </PictureCardFooter>
+            lazy
+            >
+            <PictureCardFooter
+              className={"footer"}
+              animate={{
+                transition: {
+                  duration: animationDuration,
+                },
+              }}
+            >
+              <Row gap={"0.5rem"} className={"row"}>
+                {icon && (
+                  <Icon
+                    className={"icon"}
+                    icon={icon}
+                    style={{
+                      color: `var(--ha-500-contrast)`,
+                    }}
+                  />
+                )}
+                {title}
+              </Row>
+            </PictureCardFooter>
+          </PreloadImage>
         </StyledPictureCard>
       </StyledAreaCard>
     </>

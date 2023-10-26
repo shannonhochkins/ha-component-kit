@@ -1,45 +1,34 @@
-// import {
-//   css,
-//   CSSResultGroup,
-//   html,
-//   LitElement,
-//   PropertyValues,
-//   nothing,
-// } from "lit";
-// import { customElement, property, state } from "lit/decorators";
-// import { isComponentLoaded } from "../common/config/is_component_loaded";
-// import { computeStateName } from "../common/entity/compute_state_name";
-// import { supportsFeature } from "../common/entity/supports-feature";
-// import {
-//   CAMERA_SUPPORT_STREAM,
-//   computeMJPEGStreamUrl,
-//   STREAM_TYPE_HLS,
-//   STREAM_TYPE_WEB_RTC,
-// } from "../data/camera";
-import { supportsFeatureFromAttributes, useHass, useEntity, STREAM_TYPE_WEB_RTC, STREAM_TYPE_HLS, useCamera } from '@hakit/core';
-import type { CameraEntity, FilterByDomain, EntityName } from '@hakit/core';
-// import "./ha-hls-player";
-// import "./ha-web-rtc-player";
+import { STREAM_TYPE_WEB_RTC, STREAM_TYPE_HLS, useCamera } from '@hakit/core';
+import type { FilterByDomain, EntityName } from '@hakit/core';
 import { HlsPlayer } from '../players/hls';
 import { WebRTCPlayer } from '../players/webrtc';
 
-import { useEffect, useRef, useState, useCallback } from "react";
-
-interface CameraStreamProps {
+import type { VideoState } from '../players';
+export interface CameraStreamProps {
   /** The name of your entity */
   entity: FilterByDomain<EntityName, "camera">;
+  /** if the player should start muted @default false */
   muted?: boolean;
+  /** if the player should show the controls @default true */
   controls?: boolean;
+  /** if the player should play inline @default false */
   playsInline?: boolean;
+  /** if the player should start playing automatically @default false */
   autoPlay?: boolean;
+  /** called whenever the video changes state, not every listener is available, but most of the important listeners are supported */
+  onStateChange?: (state: VideoState) => void;
 }
 
+/**
+ * A Simple wrapper for HLS and WEBRTC to display a live feed of your camera entity. 
+ * This component will not render anything if your camera does not support HLS or WEBRTC */
 export function CameraStream({
   entity,
-  muted,
-  controls,
-  autoPlay,
-  playsInline,
+  muted = false,
+  controls = true,
+  autoPlay = false,
+  playsInline = false,
+  onStateChange,
 }: CameraStreamProps) {
   const camera = useCamera(entity);
   const { stream, poster, mjpeg } = camera;
@@ -53,6 +42,7 @@ export function CameraStream({
       controls={controls}
       playsInline={playsInline}
       posterUrl={poster.url}
+      onStateChange={onStateChange}
       url={stream.url} />;
   }
   if (camera.attributes.frontend_stream_type === STREAM_TYPE_WEB_RTC) {
@@ -62,85 +52,9 @@ export function CameraStream({
       muted={muted}
       controls={controls}
       entity={entity}
+      onStateChange={onStateChange}
       posterUrl={poster.url}
     />
   }
   return null;
 }
-
-// @customElement("ha-camera-stream")
-// export class HaCameraStream extends LitElement {
-
-
-//   public willUpdate(changedProps: PropertyValues): void {
-//     if (
-//       changedProps.has("stateObj") &&
-//       !this._shouldRenderMJPEG &&
-//       this.stateObj &&
-//       (changedProps.get("stateObj") as CameraEntity | undefined)?.entity_id !==
-//         this.stateObj.entity_id
-//     ) {
-//       this._getPosterUrl();
-//       if (this.stateObj!.attributes.frontend_stream_type === STREAM_TYPE_HLS) {
-//         this._forceMJPEG = undefined;
-//         this._url = undefined;
-//         this._getStreamUrl();
-//       }
-//     }
-//   }
-
-//   public connectedCallback() {
-//     super.connectedCallback();
-//     this._connected = true;
-//   }
-
-//   public disconnectedCallback() {
-//     super.disconnectedCallback();
-//     this._connected = false;
-//   }
-
-//   protected render() {
-//     if (!this.stateObj) {
-//       return nothing;
-//     }
-//     if (__DEMO__ || this._shouldRenderMJPEG) {
-//       return html`<img
-//         .src=${__DEMO__
-//           ? this.stateObj.attributes.entity_picture!
-//           : this._connected
-//           ? computeMJPEGStreamUrl(this.stateObj)
-//           : ""}
-//         .alt=${`Preview of the ${computeStateName(this.stateObj)} camera.`}
-//       />`;
-//     }
-//     if (this.stateObj.attributes.frontend_stream_type === STREAM_TYPE_HLS) {
-//       return this._url
-//         ? html`<ha-hls-player
-//             autoplay
-//             playsinline
-//             .allowExoPlayer=${this.allowExoPlayer}
-//             .muted=${this.muted}
-//             .controls=${this.controls}
-//             .hass=${this.hass}
-//             .url=${this._url}
-//             .posterUrl=${this._posterUrl}
-//           ></ha-hls-player>`
-//         : nothing;
-//     }
-//     if (this.stateObj.attributes.frontend_stream_type === STREAM_TYPE_WEB_RTC) {
-//       return html`<ha-web-rtc-player
-//         autoplay
-//         playsinline
-//         .muted=${this.muted}
-//         .controls=${this.controls}
-//         .hass=${this.hass}
-//         .entityid=${this.stateObj.entity_id}
-//         .posterUrl=${this._posterUrl}
-//       ></ha-web-rtc-player>`;
-//     }
-//     return nothing;
-//   }
-
-
-
-// }
