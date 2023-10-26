@@ -14,6 +14,6 @@
     }
   },
   "rootDir": "./src",
-  "include": ["src", ".d.ts", "bin", "mocks"],
+  "include": ["src", ".d.ts", "bin", "mocks", "../../.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -1,7 +1,8 @@
 import type HlsType from "hls.js";
+import { type ErrorData } from "hls.js";
 import { useRef, useState, useCallback, useEffect } from "react";
-import { Alert } from '@components';
-import { VideoPlayer, type VideoState } from './';
+import { Alert } from "@components";
+import { VideoPlayer, type VideoState } from "./";
 
 type HlsLite = Omit<
   HlsType,
@@ -33,72 +34,71 @@ export function HlsPlayer({
   const _hlsPolyfillInstance = useRef<HlsLite | undefined>(undefined);
   const started = useRef(false);
 
-  const _renderHLSPolyfill = useCallback(async (
-    videoEl: HTMLVideoElement,
-    Hls: typeof HlsType,
-    url: string
-  ) => {
-    const hls = new Hls({
-      backBufferLength: 60,
-      fragLoadingTimeOut: 30000,
-      manifestLoadingTimeOut: 30000,
-      levelLoadingTimeOut: 30000,
-      maxLiveSyncPlaybackRate: 2,
-      lowLatencyMode: _isLLHLSSupported(),
-    });
-    _hlsPolyfillInstance.current = hls;
-    hls.attachMedia(videoEl);
-    hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-      setRetryableError(null);
-      setFatalError(null);
-      hls.loadSource(url);
-    });
-    hls.on(Hls.Events.FRAG_LOADED, (_event, _data: any) => {
-      setRetryableError(null);
-      setFatalError(null);
-    });
-    hls.on(Hls.Events.ERROR, (_event, data: any) => {
-      // Some errors are recovered automatically by the hls player itself, and the others handled
-      // in this function require special actions to recover. Errors retried in this function
-      // are done with backoff to not cause unecessary failures.
-      if (!data.fatal) {
-        return;
-      }
-      if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-        switch (data.details) {
-          case Hls.ErrorDetails.MANIFEST_LOAD_ERROR: {
-            let error = "Error starting stream, see logs for details";
-            if (
-              data.response !== undefined &&
-              data.response.code !== undefined
-            ) {
-              if (data.response.code >= 500) {
-                error += " (Server failure)";
-              } else if (data.response.code >= 400) {
-                error += " (Stream never started)";
-              } else {
-                error += " (" + data.response.code + ")";
-              }
-            }
-            setRetryableError(error);
-            break;
-          }
-          case Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT:
-            setRetryableError("Timeout while starting stream");
-            break;
-          default:
-            setRetryableError("Stream network error");
-            break;
+  const _renderHLSPolyfill = useCallback(
+    async (videoEl: HTMLVideoElement, Hls: typeof HlsType, url: string) => {
+      const hls = new Hls({
+        backBufferLength: 60,
+        fragLoadingTimeOut: 30000,
+        manifestLoadingTimeOut: 30000,
+        levelLoadingTimeOut: 30000,
+        maxLiveSyncPlaybackRate: 2,
+        lowLatencyMode: _isLLHLSSupported(),
+      });
+      _hlsPolyfillInstance.current = hls;
+      hls.attachMedia(videoEl);
+      hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+        setRetryableError(null);
+        setFatalError(null);
+        hls.loadSource(url);
+      });
+      hls.on(Hls.Events.FRAG_LOADED, () => {
+        setRetryableError(null);
+        setFatalError(null);
+      });
+      hls.on(Hls.Events.ERROR, (_event, data: ErrorData) => {
+        // Some errors are recovered automatically by the hls player itself, and the others handled
+        // in this function require special actions to recover. Errors retried in this function
+        // are done with backoff to not cause unecessary failures.
+        if (!data.fatal) {
+          return;
         }
-        hls.startLoad();
-      } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-        setRetryableError("Error with media stream contents");
-        hls.recoverMediaError();
-      } else {
-        setFatalError("Error playing stream");
-      }
-    });
-  }, []);
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          switch (data.details) {
+            case Hls.ErrorDetails.MANIFEST_LOAD_ERROR: {
+              let error = "Error starting stream, see logs for details";
+              if (
+                data.response !== undefined &&
+                data.response.code !== undefined
+              ) {
+                if (data.response.code >= 500) {
+                  error += " (Server failure)";
+                } else if (data.response.code >= 400) {
+                  error += " (Stream never started)";
+                } else {
+                  error += " (" + data.response.code + ")";
+                }
+              }
+              setRetryableError(error);
+              break;
+            }
+            case Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT:
+              setRetryableError("Timeout while starting stream");
+              break;
+            default:
+              setRetryableError("Stream network error");
+              break;
+          }
+          hls.startLoad();
+        } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+          setRetryableError("Error with media stream contents");
+          hls.recoverMediaError();
+        } else {
+          setFatalError("Error playing stream");
+        }
+      });
+    },
+    [],
+  );
 
   const _startHls = useCallback(async (): Promise<void> => {
     if (!_videoEl.current || started.current) {
@@ -118,9 +118,7 @@ export function HlsPlayer({
     }
 
     if (!hlsSupported) {
-      setFatalError(
-        'video not supported'
-      );
+      setFatalError("video not supported");
       return;
     }
 
@@ -151,7 +149,6 @@ export function HlsPlayer({
     }
   }, [url, _renderHLSPolyfill]);
 
-
   function _isLLHLSSupported(): boolean {
     // LL-HLS keeps multiple requests in flight, which can run into browser limitations without
     // an http/2 proxy to pipeline requests. However, a small number of streams active at
@@ -169,12 +166,12 @@ export function HlsPlayer({
       return false;
     }
     const perfEntry = performance.getEntriesByType(
-      "resource"
+      "resource",
     )[0] as PerformanceResourceTiming;
     return "nextHopProtocol" in perfEntry && perfEntry.nextHopProtocol === "h2";
   }
 
-   async function _renderHLSNative(videoEl: HTMLVideoElement, url: string) {
+  async function _renderHLSNative(videoEl: HTMLVideoElement, url: string) {
     videoEl.src = url;
     videoEl.addEventListener("loadedmetadata", () => {
       videoEl.play();
@@ -192,14 +189,16 @@ export function HlsPlayer({
     console.error(retryableError);
   }
 
-  return <VideoPlayer
-    ref={_videoEl}
-    type="application/vnd.apple.mpegurl"
-    poster={posterUrl}
-    autoPlay={autoPlay}
-    muted={muted}
-    playsInline={playsInline}
-    controls={controls}
-    onVideoStateChange={onStateChange}
-  />;
+  return (
+    <VideoPlayer
+      ref={_videoEl}
+      type="application/vnd.apple.mpegurl"
+      poster={posterUrl}
+      autoPlay={autoPlay}
+      muted={muted}
+      playsInline={playsInline}
+      controls={controls}
+      onVideoStateChange={onStateChange}
+    />
+  );
 }

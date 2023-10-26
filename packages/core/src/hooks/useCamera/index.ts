@@ -94,7 +94,6 @@ export function useCamera(
         width,
         height,
       );
-      console.log("src", cameraImageSrc);
       setPosterUrl(joinHassUrl(cameraImageSrc));
       setPosterLoading(false);
     } catch (err) {

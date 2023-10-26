@@ -54,7 +54,7 @@ const StyledFabCard = styled(motion.button)<{
   transition-property: background-color, color, box-shadow;
   svg {
     transition: color var(--ha-transition-duration) var(--ha-easing);
-    ${props => props.hasChildren ? `margin-right: 0.5rem;` : ``}
+    ${(props) => (props.hasChildren ? `margin-right: 0.5rem;` : ``)}
   }
   &:not(:disabled):hover {
     background-color: var(--ha-S400);

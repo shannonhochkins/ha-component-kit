@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { Alert } from '@components';
-import { useHass, type EntityName, type FilterByDomain } from '@hakit/core';
-import { VideoPlayer, type VideoState } from './';
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Alert } from "@components";
+import { useHass, type EntityName, type FilterByDomain } from "@hakit/core";
+import { VideoPlayer, type VideoState } from "./";
 
 export interface WebRTCPlayerProps {
   /** The name of your entity */
@@ -11,7 +11,7 @@ export interface WebRTCPlayerProps {
   autoPlay?: boolean;
   playsInline?: boolean;
   posterUrl?: string;
-  onStateChange?: (state: VideoState) => void
+  onStateChange?: (state: VideoState) => void;
 }
 
 interface WebRtcSettings {
@@ -37,30 +37,34 @@ export function WebRTCPlayer({
   onStateChange,
 }: WebRTCPlayerProps) {
   const { useStore } = useHass();
-  const connection = useStore(store => store.connection);
+  const connection = useStore((store) => store.connection);
   const _videoEl = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string | undefined>(undefined);
   const _peerConnection = useRef<RTCPeerConnection | undefined>(undefined);
   const _remoteStream = useRef<MediaStream | undefined>(undefined);
   const started = useRef(false);
-  const fetchWebRtcSettings = useCallback(async () =>
-    connection?.sendMessagePromise<WebRtcSettings>({
-      type: "rtsp_to_webrtc/get_settings",
-    }), [connection]);
+  const fetchWebRtcSettings = useCallback(
+    async () =>
+      connection?.sendMessagePromise<WebRtcSettings>({
+        type: "rtsp_to_webrtc/get_settings",
+      }),
+    [connection],
+  );
 
-  const _fetchPeerConfiguration = useCallback(async (): Promise<RTCConfiguration> => {
-    const settings = await fetchWebRtcSettings();
-    if (!settings || !settings.stun_server) {
-      return {};
-    }
-    return {
-      iceServers: [
-        {
-          urls: [`stun:${settings.stun_server!}`],
-        },
-      ],
-    };
-  }, [fetchWebRtcSettings]);
+  const _fetchPeerConfiguration =
+    useCallback(async (): Promise<RTCConfiguration> => {
+      const settings = await fetchWebRtcSettings();
+      if (!settings || !settings.stun_server) {
+        return {};
+      }
+      return {
+        iceServers: [
+          {
+            urls: [`stun:${settings.stun_server!}`],
+          },
+        ],
+      };
+    }, [fetchWebRtcSettings]);
 
   const _startWebRtc = useCallback(async (): Promise<void> => {
     if (!connection || !_videoEl.current || started.current) return;
@@ -102,8 +106,11 @@ export function WebRTCPlayer({
         entity_id: entity,
         offer: offer_sdp,
       });
-    } catch (err: any) {
-      setError("Failed to start WebRTC stream: " + err.message)
+    } catch (err) {
+      console.error("err", err);
+      if (err instanceof Error) {
+        setError("Failed to start WebRTC stream: " + err.message);
+      }
       peerConnection.close();
       return;
     }
@@ -156,20 +163,22 @@ export function WebRTCPlayer({
         _peerConnection.current.close();
         _peerConnection.current = undefined;
       }
-    }
-  }, [])
+    };
+  }, []);
 
   if (error) {
-    return <Alert type="error" description={error} />
+    return <Alert type="error" description={error} />;
   }
 
-  return <VideoPlayer
-    ref={_videoEl}
-    poster={posterUrl}
-    autoPlay={autoPlay}
-    muted={muted}
-    playsInline={playsInline}
-    controls={controls}
-    onVideoStateChange={onStateChange}
-  />;
+  return (
+    <VideoPlayer
+      ref={_videoEl}
+      poster={posterUrl}
+      autoPlay={autoPlay}
+      muted={muted}
+      playsInline={playsInline}
+      controls={controls}
+      onVideoStateChange={onStateChange}
+    />
+  );
 }

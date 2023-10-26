@@ -16,8 +16,13 @@ export default {
           </h5>
           <Description />
           <p>The following is the use of the hook:</p>
-          <Source dark code={`const camera = useCamera('camera.some_camera');`} />
-          <p>Here's how you could use the hook to render the poster in an image:</p>
+          <Source
+            dark
+            code={`const camera = useCamera('camera.some_camera');`}
+          />
+          <p>
+            Here's how you could use the hook to render the poster in an image:
+          </p>
           <Source
             dark
             code={`
@@ -33,7 +38,12 @@ function RenderCamera() {
           `}
           />
           <h3>Motion JPEG</h3>
-          <p>If supported, the motion jpeg by default is the same size that the camera is setup to record with, if you wish to change this so it's a smaller image, you can do this through yaml in your configuration.yaml</p>
+          <p>
+            If supported, the motion jpeg by default is the same size that the
+            camera is setup to record with, if you wish to change this so it's a
+            smaller image, you can do this through yaml in your
+            configuration.yaml
+          </p>
           <Source
             dark
             language="yaml"
@@ -43,7 +53,8 @@ camera:
     entity_id: camera.<existingcamera>
     max_stream_width: <desired_width>
     max_stream_height: <desired_height>  # Optional          
-            `} />
+            `}
+          />
           <h3>Options</h3>
           <ArgTypes />
         </>
@@ -58,7 +69,7 @@ camera:
       control: "string",
       description: "The name of your camera entity",
     },
-    ['options.imageWidth']: {
+    ["options.imageWidth"]: {
       control: "number",
       description: "The requested width of the poster image",
       table: {
@@ -66,7 +77,7 @@ camera:
         defaultValue: { summary: "640" },
       },
     },
-    ['options.aspectRatio']: {
+    ["options.aspectRatio"]: {
       control: "number",
       description: "The requested aspect ratio of the image",
       table: {
@@ -74,17 +85,17 @@ camera:
         defaultValue: { summary: "9/16" },
       },
     },
-    ['options.poster']: {
-      control: 'boolean',
-      description: 'Enable/disable the request for the poster',
+    ["options.poster"]: {
+      control: "boolean",
+      description: "Enable/disable the request for the poster",
       table: {
         type: { summary: "boolean" },
         defaultValue: { summary: "true" },
       },
     },
-    ['options.stream']: {
-      control: 'boolean',
-      description: 'Enable/disable the request for the stream',
+    ["options.stream"]: {
+      control: "boolean",
+      description: "Enable/disable the request for the stream",
       table: {
         type: { summary: "boolean" },
         defaultValue: { summary: "true" },

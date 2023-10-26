@@ -16,7 +16,7 @@ function WithoutDate(args?: Partial<TimeCardProps>) {
   return (
     <div>
       <h2>TimeCard without the date</h2>
-      <Template includeDate={false} {...args} />
+      <Template hideDate {...args} />
     </div>
   );
 }
@@ -26,13 +26,7 @@ export default {
   component: TimeCard,
   tags: ["autodocs"],
   parameters: {
-    standalone: true,
-  },
-  argTypes: {
-    title: { control: "text" },
-    icon: { control: "text" },
-    includeDate: { control: "boolean" },
-    includeIcon: { control: "boolean" },
+    fullWidth: true,
   },
 } satisfies Meta<typeof TimeCard>;
 export type TimeStory = StoryObj<typeof TimeCard>;

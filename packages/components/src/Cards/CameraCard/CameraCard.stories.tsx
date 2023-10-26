@@ -9,11 +9,14 @@ function Render(args?: Args) {
       <Column gap="1rem" fullWidth>
         <CameraCard
           entity="camera.demo_camera"
-          headerSensors={[{
-            entity: "binary_sensor.vehicle",
-          }, {
-            entity: "switch.record"
-          }]}
+          headerSensors={[
+            {
+              entity: "binary_sensor.vehicle",
+            },
+            {
+              entity: "switch.record",
+            },
+          ]}
           {...args}
         />
       </Column>

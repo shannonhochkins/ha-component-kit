@@ -1,3 +1,41 @@
+# 2.3.0
+## @hakit/components
+- NEW - CameraCard - a component to render / preview a camera entity in home assistant, it supports live, motion and rolling poster views, this is a very complicated component and I'd love feedback if you have issues or even if it works for you!
+- NEW - AreaCard & PictureCard now preload the image with a loader, the preloaderProps are also configurable from these cards
+- BUGFIX - AreaCard wasn't stretching when inside a Row or Column in stretch mode, this has been fixed
+- NEW - FabCard - now changes border radius automatically when providing children to use as a normal button, this may trigger the component to be renamed to something more suitable later on
+- BUGFIX - SensorCard - wasn't allowing manual historyOptions to update
+- BREAKING - SidebarCard & TimeCard - includeIcon and includeDate have been renamed to hideIcon and hideDate to align with other component prop names - if you're using these properties you'll have to invert your logic
+- NEW - TimeCard - you can now hide individual elements on the card making it completely custom
+- NEW - GroupCard - you can now add an optional description to the group which will appear under the title
+- BUGFIX - ButtonGroup - wasn't stretching when inside a row/column with stretch
+- NEW - Row/Column now also adds the classes of the flex layout properties to the element for styling purposes
+- NEW - PreloadImage - a shared component allowing you to preload any image, this is used by AreaCard and PictureCard
+
+## @hakit/core
+- BREAKING - useEntity - previously was subsribing to history updates for every entity, this has been disabled for performance reasons, this now needs to be opted into subscription:
+  ```
+  const lightStrip = useEntity('light.office_striplight', {
+    returnNullIfNotFound: true,
+    history: {
+      disable: false,
+      hoursToShow: 96 // defaults to 24
+    }
+  });
+  ```
+- NEW - useCamera - a hook to return all the complex logic of fetching / retrieving poster, stream and mjpeg urls in a very simple hook.
+- NEW - joinHassUrl - a function exposed from useHass() that allows you to provide a pathname to an asset on your home assistant instance, and join it with your home assistant url. If your entity has a local path to an image, you can use this to request it from your instance.
+- BUGFIX - There's a bug with the route addition causing the page to completely freeze recursively due to the nature of hash updates and react updates not syncing correctly, this has been fixed
+- BUGFIX - callApi second argument options is now optional and will perform a GET request by default
+- BUGFIX - useAreas now returns a fully qualified picture url to your home assistant instance, this was previously returning a local path
+- NEW - there's a few other functions exposed from core to help with camera entites:
+  - fetchCameraPrefs
+  - isCameraMediaSource
+  - getEntityIdFromCameraMediaSource
+  - computeMJPEGStreamUrl
+  - fetchThumbnailUrlWithCache
+  - fetchStreamUrl
+
 # 2.2.0
 ## @hakit/components
 - BREAKING - renamed RoomCard to AreaCard to align with naming convention of home assistant seeing as they use "areas" rather than "rooms". RoomCard is still available but marked as deprecated, this will be removed in future releases.

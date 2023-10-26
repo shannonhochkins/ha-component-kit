@@ -1,7 +1,13 @@
 import styled from "@emotion/styled";
 import { Icon } from "@iconify/react";
 import { css } from "@emotion/react";
-import { Row, fallback, mq, PreloadImage, type PreloadImageProps } from "@components";
+import {
+  Row,
+  fallback,
+  mq,
+  PreloadImage,
+  type PreloadImageProps,
+} from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
@@ -65,7 +71,7 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
   ${mq(
     ["largeDesktop"],
     `
-    width: calc(((100% - 4 * var(--gap, 0rem)) / 4));
+    width: calc(((100% - 3 * var(--gap, 0rem)) / 4));
   `,
   )}
 `;
@@ -104,17 +110,17 @@ function _PictureCard({
       }}
     >
       <PreloadImage
-      {...preloadProps ?? {}}
-      src={image}
-      style={{
-        width: '100%',
-        height: '100%',
-        position: 'absolute',
-      }}
-      onClick={() => {
-        if (typeof onClick === "function") onClick();
-      }}
-      lazy
+        {...(preloadProps ?? {})}
+        src={image}
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "absolute",
+        }}
+        onClick={() => {
+          if (typeof onClick === "function") onClick();
+        }}
+        lazy
       >
         <PictureCardFooter className="footer">
           <Row gap={"0.5rem"} className="row">

@@ -57,7 +57,7 @@ const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
       color: var(--ha-S300-contrast);
     }
   }
-  height: var(--stretch, );
+  height: var(--stretch,);
 `;
 
 const PictureCardFooter = styled(motion.div)`
@@ -310,15 +310,15 @@ function _AreaCard({
           }}
         >
           <PreloadImage
-            {...preloadProps ?? {}}
+            {...(preloadProps ?? {})}
             src={image}
             style={{
-              width: '100%',
-              height: '100%',
-              position: 'absolute',
+              width: "100%",
+              height: "100%",
+              position: "absolute",
             }}
             lazy
-            >
+          >
             <PictureCardFooter
               className={"footer"}
               animate={{

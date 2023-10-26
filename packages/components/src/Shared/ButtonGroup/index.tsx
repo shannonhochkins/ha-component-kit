@@ -47,7 +47,7 @@ const ButtonGroupInner = styled.div<Partial<ButtonGroupProps>>`
     .fab-card {
       height: 100%;
       display: flex;
-      align-items: stretch;   
+      align-items: stretch;
     }
   }
 `;
@@ -62,16 +62,16 @@ function _ButtonGroup({
   style,
   id,
   className,
-  cssStyles, 
+  cssStyles,
   ...rest
 }: ButtonGroupProps) {
   return (
     <ButtonGroupParent
-      id={id ?? ''}
+      id={id ?? ""}
       css={css`
         ${cssStyles ?? ""}
       `}
-      className={`button-group ${className ?? ''}`}
+      className={`button-group ${className ?? ""}`}
       style={{
         ...(style ?? {}),
       }}
@@ -97,7 +97,9 @@ function _ButtonGroup({
               cssStyles={`
                 ${buttonProps?.cssStyles ?? ""}
                 button {
-                  height: var(--stretch, ${buttonProps.size ?? DEFAULT_ICON_SIZE}px);
+                  height: var(--stretch, ${
+                    buttonProps.size ?? DEFAULT_ICON_SIZE
+                  }px);
                 }
               `}
             >
@@ -112,7 +114,7 @@ function _ButtonGroup({
 
 /**
  * This is a very simple function that turns FabCards into a button group, you can use this with entities or just normal button elements
- * 
+ *
  * There's a known problem with the types when you provide an entity name, typescript will complain about the available services, this is something i'll address later * */
 export function ButtonGroup(props: ButtonGroupProps) {
   return (

@@ -213,18 +213,22 @@ function _TimeCard({
         fullHeight
         wrap="nowrap"
       >
-        {(!hideIcon || !hideTime) && <Row className="row" gap="0.5rem" alignItems="center" wrap="nowrap">
-          {!hideIcon && (
-            <StyledIcon
-              className="icon"
-              icon={icon || dateSensor.attributes.icon || "mdi:calendar"}
-            />
-          )}
-          {!hideTime && <>
-            <Time className="time">{formatted}</Time>
-            <AmOrPm className="time-suffix">{amOrPm}</AmOrPm>
-          </>}
-        </Row>}
+        {(!hideIcon || !hideTime) && (
+          <Row className="row" gap="0.5rem" alignItems="center" wrap="nowrap">
+            {!hideIcon && (
+              <StyledIcon
+                className="icon"
+                icon={icon || dateSensor.attributes.icon || "mdi:calendar"}
+              />
+            )}
+            {!hideTime && (
+              <>
+                <Time className="time">{formatted}</Time>
+                <AmOrPm className="time-suffix">{amOrPm}</AmOrPm>
+              </>
+            )}
+          </Row>
+        )}
         {!hideDate && <Row>{formatDate(dateSensor.state)}</Row>}
       </Column>
     </Card>

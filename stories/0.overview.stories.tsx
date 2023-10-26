@@ -22,11 +22,8 @@ import {
   CameraCard,
   ButtonGroup,
 } from '@components';
-// @ts-expect-error - don't need to type this
 import office from './office.jpg';
-// @ts-expect-error - don't need to type this
 import livingRoom from './living-room.jpg';
-// @ts-expect-error - don't need to type this
 import diningRoom from './dining-room.jpg';
 
 function Template() {

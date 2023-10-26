@@ -22,9 +22,9 @@ const _Row = styled(m.div)<RowProps>`
   flex-wrap: ${({ wrap }) => wrap || "wrap"};
   justify-content: ${({ justifyContent }) => justifyContent || "center"};
   align-items: ${({ alignItems }) => alignItems || "center"};
-  ${({ alignItems }) => 
+  ${({ alignItems }) =>
     `
-    --stretch: ${alignItems === 'stretch' ? '100%' : 'false'};
+    --stretch: ${alignItems === "stretch" ? "100%" : "false"};
   `}
   ${(props) =>
     typeof props.gap === "string" &&
@@ -38,5 +38,14 @@ const _Row = styled(m.div)<RowProps>`
 
 /** A simple helper component to layout child components in a row, justify/align properties as well as gap are supported */
 export function Row(props: RowProps) {
-  return <_Row {...props} className={`${props.className} ${props.fullHeight ? 'full-height' : ''} ${props.fullWidth ? 'full-width' : ''} ${props.justifyContent ? props.justifyContent : 'center'} ${props.alignItems ? props.alignItems : 'center'} ${props.wrap ? props.wrap : 'wrap'}`} />;
+  return (
+    <_Row
+      {...props}
+      className={`${props.className} ${props.fullHeight ? "full-height" : ""} ${
+        props.fullWidth ? "full-width" : ""
+      } ${props.justifyContent ? props.justifyContent : "center"} ${
+        props.alignItems ? props.alignItems : "center"
+      } ${props.wrap ? props.wrap : "wrap"}`}
+    />
+  );
 }

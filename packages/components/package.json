@@ -80,11 +80,11 @@
     "react-resize-detector": "^9.1.0",
     "react-router-dom": ">=6.x",
     "react-thermostat": "^2.x.x",
-    "react-use": ">=17.x"
+    "react-use": ">=17.x",
+    "hls.js": "^1.4.12"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.x",
-    "hls.js": "^1.4.12",
     "vite-plugin-svgr": "^3.2.0"
   }
 }

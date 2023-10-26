@@ -51,12 +51,8 @@ const Description = styled.span`
   padding-left: 1rem;
 `;
 
-const Header = styled.div`
-
-`;
-const Title = styled.h3`
-
-`;
+const Header = styled.div``;
+const Title = styled.h3``;
 
 export interface GroupProps extends Omit<React.ComponentProps<"div">, "title"> {
   /** the title of the group */
@@ -108,7 +104,7 @@ function _Group({
         <Title className="title">{title}</Title>
         {description && <Description>{description}</Description>}
       </Header>
-      
+
       <AnimatePresence initial={false}>
         {!_collapsed && (
           <motion.section

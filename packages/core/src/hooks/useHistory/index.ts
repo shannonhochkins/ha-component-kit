@@ -89,7 +89,6 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
         if (!isMounted) return;
         subscribed.current = true;
         setHistoryStates(history);
-        console.log(entityId, history);
       },
     })
       .then((unsubscribe) => {

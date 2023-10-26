@@ -28,7 +28,6 @@ import { create } from 'zustand';
 import type { ServiceArgs } from './mocks/fake-call-service/types';
 import mockHistory from './mock-history';
 import { mockCallApi } from './mocks/fake-call-api';
-// @ts-expect-error - it's a string
 import reolinkSnapshot from './assets/reolink-snapshot.jpg';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {

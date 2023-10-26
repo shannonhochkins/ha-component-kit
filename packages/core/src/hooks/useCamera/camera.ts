@@ -59,7 +59,6 @@ export const fetchThumbnailUrl = async (
     connection,
     `/api/camera_proxy/${entityId}`,
   );
-  console.log("path;", path);
   return path;
 };
 
@@ -85,21 +84,6 @@ export const fetchCameraPrefs = (connection: Connection, entityId: string) =>
     type: "camera/get_prefs",
     entity_id: entityId,
   });
-
-// type ValueOf<T extends any[]> = T[number];
-// export const updateCameraPrefs = (
-//   hass: HomeAssistant,
-//   entityId: string,
-//   prefs: {
-//     preload_stream?: boolean;
-//     orientation?: ValueOf<typeof CAMERA_ORIENTATIONS>;
-//   }
-// ) =>
-//   hass.callWS<CameraPreferences>({
-//     type: "camera/update_prefs",
-//     entity_id: entityId,
-//     ...prefs,
-//   });
 
 const CAMERA_MEDIA_SOURCE_PREFIX = "media-source://camera/";
 
