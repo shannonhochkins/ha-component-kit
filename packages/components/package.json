@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "3.0.0",
+  "version": "2.3.0",
   "private": false,
   "keywords": [
     "react",
