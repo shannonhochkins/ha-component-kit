@@ -241,11 +241,13 @@ function updatePackageJson({
     "@types/node": "^20.8.7",
     "dotenv": "^16.3.1",
     "node-scp": "^0.0.22",
+    "prettier": "2.8.7",
   };
   pkg.scripts = {
     ...pkg.scripts,
     "sync-types": "npx ts-node --esm ./sync-types.ts",
-    "prebuild": "npm run sync-types"
+    "prebuild": "npm run sync-types",
+    "deploy": "npx ts-node --esm scripts/deploy.ts"
   }
   write('package.json', root, templateDir, JSON.stringify(pkg, null, 2));
 }
