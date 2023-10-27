@@ -11,9 +11,7 @@ If you like anything here, be sure to 🌟 [my repo!](https://github.com/shannon
 
 ## Help me out?
 
-I've spent a lot of time on this, you're free to use it but would appreciate a small donation if you're feeling generous! Buy me a coffee!
-
-[Buy me a coffee!](https://www.buymeacoffee.com/jinglezzz)
+Please, as you can probably tell, 100s of hours have gone into this! I'd really appreciate a small donation as it will help me validate that my time is well spent and will guarantee future additional changes :) [Buy me a coffee!](https://www.buymeacoffee.com/jinglezzz)
 
 ### Get Started
 There's an npm create command which will setup react, typescript, vite & hakit automatically for you with a terminal wizard!
