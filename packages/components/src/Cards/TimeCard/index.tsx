@@ -141,10 +141,12 @@ function formatDate(dateString: string): string {
 }
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 export interface TimeCardProps extends Extendable {
-  /** set this to false this if you do not want to include the date, @default true */
-  includeDate?: boolean;
-  /** remove the icon before the time, @default true */
-  includeIcon?: boolean;
+  /** add this if you do not want to include the date, @default false */
+  hideDate?: boolean;
+  /** add this if you do not want to include the time, @default false */
+  hideTime?: boolean;
+  /** remove the icon before the time, @default false */
+  hideIcon?: boolean;
   /** the name of the icon, defaults to the sensor.date icon or mdi:calendar @default mdi:calendar */
   icon?: string;
   /** center everything instead of left aligned @default false */
@@ -171,8 +173,9 @@ const Warning = () => (
   </Alert>
 );
 function _TimeCard({
-  includeDate = true,
-  includeIcon = true,
+  hideDate = false,
+  hideIcon = false,
+  hideTime = false,
   center = false,
   icon,
   cssStyles,
@@ -210,17 +213,23 @@ function _TimeCard({
         fullHeight
         wrap="nowrap"
       >
-        <Row className="row" gap="0.5rem" alignItems="center" wrap="nowrap">
-          {includeIcon && (
-            <StyledIcon
-              className="icon"
-              icon={icon || dateSensor.attributes.icon || "mdi:calendar"}
-            />
-          )}
-          <Time className="time">{formatted}</Time>
-          <AmOrPm className="time-suffix">{amOrPm}</AmOrPm>
-        </Row>
-        {includeDate && <Row>{formatDate(dateSensor.state)}</Row>}
+        {(!hideIcon || !hideTime) && (
+          <Row className="row" gap="0.5rem" alignItems="center" wrap="nowrap">
+            {!hideIcon && (
+              <StyledIcon
+                className="icon"
+                icon={icon || dateSensor.attributes.icon || "mdi:calendar"}
+              />
+            )}
+            {!hideTime && (
+              <>
+                <Time className="time">{formatted}</Time>
+                <AmOrPm className="time-suffix">{amOrPm}</AmOrPm>
+              </>
+            )}
+          </Row>
+        )}
+        {!hideDate && <Row>{formatDate(dateSensor.state)}</Row>}
       </Column>
     </Card>
   );

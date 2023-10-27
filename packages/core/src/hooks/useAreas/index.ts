@@ -24,7 +24,7 @@ export interface Area {
 }
 
 export function useAreas(): Area[] {
-  const { useStore, getAllEntities } = useHass();
+  const { useStore, joinHassUrl, getAllEntities } = useHass();
   const [areas, setAreas] = useState<AreaRegistryEntry[]>([]);
   const [devices, setDevices] = useState<DeviceRegistryEntry[]>([]);
   const [entities, setEntities] = useState<EntityRegistryEntry[]>([]);
@@ -71,13 +71,13 @@ export function useAreas(): Area[] {
           matchedEntities.push(_entities[entity.entity_id]);
         }
       }
-
       return {
         ...area,
+        picture: area.picture ? joinHassUrl(area.picture) : area.picture,
         devices: matchedDevices,
         services: matchedServices,
         entities: matchedEntities,
       };
     });
-  }, [areas, devices, entities, _entities]);
+  }, [areas, devices, joinHassUrl, entities, _entities]);
 }

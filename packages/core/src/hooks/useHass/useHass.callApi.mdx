@@ -3,8 +3,10 @@ import { Source, Meta } from '@storybook/blocks';
 <Meta title="HOOKS/useHass/callApi" />
 
 # callApi()
-###### `callApi(endpoint: string, options: FetchOptions)`
+###### `callApi(endpoint: string, options?: FetchOptions)`
 This will trigger a request to the [REST API](https://developers.home-assistant.io/docs/api/rest/#actions) for home assistant.
+
+By default, this will trigger a GET request, you'll need to provide the options argument to update the method and body of the request of changing to POST.
 
 You will at least need to add the following to your configuration.yaml in home assistant to [enable the api](https://www.home-assistant.io/integrations/api):
 
@@ -29,23 +31,27 @@ I recomend you read the documentation for the [REST API](https://developers.home
 <Source dark language="ts" code={`
 import { useCallback, useState } from 'react';
 import { useHass } from '@hakit/core';
-interface Event {
+export type DateFormat = {
+  dateTime: string;
+  date: string;
+};
+
+export interface CalendarEvent {
+  start: DateFormat;
+  end: DateFormat;
+  summary: string;
+  location?: string;
+  description?: string;
   uid?: string;
   recurrence_id?: string;
-  summary: string;
-  dtstart: string;
-  dtend: string;
-  start?: string;
-  end?: string;
   rrule?: string;
-  description?: string;
 }
 export function CallApiExample() {
   const { callApi } = useHass();
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
   const retrieveCalendarEvents = useCallback(() => {
-    const events = await callApi<Event[]>('/calendars/calendar.google_calendar?start=2023-09-30T14:00:00.000Z&end=2023-11-11T13:00:00.000Z');
-    setEvents(events);
+    const response = await callApi<CalendarEvent[]>('/calendars/calendar.google_calendar?start=2023-09-30T14:00:00.000Z&end=2023-11-11T13:00:00.000Z');
+    setEvents(response);
   }, [callApi]);
   return <>
     <FabCard icon="mdi:view-module" onClick={retrieveCalendarEvents} />

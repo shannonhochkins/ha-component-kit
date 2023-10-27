@@ -1,25 +1,22 @@
 import { useEffect, useState, useCallback } from "react";
 
 export const useHash = (): [string, (newHash: string) => void] => {
-  const [hash, setHash] = useState(() =>
-    typeof location !== "undefined" ? location.hash : "",
-  );
-
-  const hashChangeHandler = useCallback(() => {
-    setHash(typeof location !== "undefined" ? location.hash : "");
-  }, []);
+  const [hash, setHash] = useState(() => location.hash);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    window.addEventListener("hashchange", hashChangeHandler);
+    function onHashChange() {
+      setHash(location.hash);
+    }
+    window.addEventListener("hashchange", onHashChange);
     return () => {
-      window.removeEventListener("hashchange", hashChangeHandler);
+      window.removeEventListener("hashchange", onHashChange);
     };
-  }, [hashChangeHandler]);
+  }, []);
 
   const _setHash = useCallback(
     (newHash: string) => {
-      if (newHash !== hash && typeof location !== "undefined") {
+      if (newHash !== hash) {
         location.hash = newHash;
       }
     },

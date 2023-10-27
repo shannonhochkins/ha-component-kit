@@ -17,11 +17,12 @@ I've spent a lot of time on this, you're free to use it but would appreciate a s
 
 ### Get Started
 There's an npm create command which will setup react, typescript, vite & hakit automatically for you with a terminal wizard!
+
 ```
   npm create hakit@latest
 ```
 
-Or, if you want to install [@hakit/core](https://www.npmjs.com/package/@hakit/core) or [@hakit/components](https://www.npmjs.com/package/@hakit/components) manually on an existing project:
+Or, if you want to install [@hakit/core](https://www.npmjs.com/package/@hakit/core) [![npm version](https://badge.fury.io/js/@hakit%2Fcore.svg)](https://www.npmjs.com/package/@hakit/core)  or [@hakit/components](https://www.npmjs.com/package/@hakit/components) [![npm version](https://badge.fury.io/js/@hakit%2Fcomponents.svg)](https://www.npmjs.com/package/@hakit/components) manually on an existing project:
 ```
   npm install @hakit/core @hakit/components
 ```
@@ -35,20 +36,21 @@ I'm working on a home assistant addon to create dashboards with these components
 [Home Assistant Addon](https://github.com/shannonhochkins/hakit) - 🌟 it if you're interested
 
 ### Supported Cards
-1. [ButtonCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-buttoncard--docs)
-2. [ClimateCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-climatecard--docs)
-3. [EntitiesCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-entitiescard--docs)
-4. [FabCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-fabcard--docs)
-5. [GarbageCollectionCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-garbagecollectioncard--docs)
-6. [MediaPlayerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-mediaplayercard--docs)
-7. [PictureCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-picturecard--docs)
-8. [AreaCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-areacard--docs)
-9. [SensorCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-sensorcard--docs)
-10. [SidebarCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-sidebarcard--docs)
-11. [TimeCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-timecard--docs)
-12. [TriggerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-triggercard--docs)
-13. [WeatherCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-weathercard--docs)
-14. [CalendarCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-calendarcard--docs)
+- [AreaCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-areacard--docs)
+- [ButtonCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-buttoncard--docs)
+- [ClimateCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-climatecard--docs)
+- NEW [CameraCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-cameracard--docs)
+- NEW [CalendarCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-calendarcard--docs)
+- [EntitiesCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-entitiescard--docs)
+- [FabCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-fabcard--docs)
+- [GarbageCollectionCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-garbagecollectioncard--docs)
+- [MediaPlayerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-mediaplayercard--docs)
+- [PictureCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-picturecard--docs)
+- [SensorCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-sensorcard--docs)
+- [SidebarCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-sidebarcard--docs)
+- [TimeCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-timecard--docs)
+- [TriggerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-triggercard--docs)
+- [WeatherCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-weathercard--docs)
 
 ### Other Useful Components
 1. [Group](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-group--docs) - a component that allows collapsible sections for other cards/components

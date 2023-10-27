@@ -3,7 +3,7 @@ import { Source, Meta } from '@storybook/blocks';
 <Meta title="HOOKS/useEntity" />
 # useEntity()
 ###### `useEntity(entity: string, options?: UseEntityOptions)`
-This hook is designed to retrieve an entity and return all it's information including history and the api for the entity.
+This hook is designed to retrieve an entity and return all it's information including history (if not disabled) and the services for the entity.
 
 This is a memoized wrapper for the getEntity helper from `useHass()` allowing your component to only update
 when the entity actually changes.
@@ -58,6 +58,7 @@ function Office() {
   const lightStrip = useEntity('light.office_striplight', {
     returnNullIfNotFound: true,
     history: {
+      disable: false,
       hoursToShow: 96 // defaults to 24
     }
   });
