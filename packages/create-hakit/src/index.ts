@@ -241,7 +241,6 @@ function updatePackageJson({
     "@types/node": "^20.8.7",
     "dotenv": "^16.3.1",
     "node-scp": "^0.0.22",
-    "prettier": "2.8.7",
   };
   pkg.scripts = {
     ...pkg.scripts,
