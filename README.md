@@ -29,9 +29,11 @@ Or, if you want to install [@hakit/core](https://www.npmjs.com/package/@hakit/co
 
 There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
 
-### NEWS!
+### WIP - Next Release
 
-I'm working on a home assistant addon to create dashboards with these components, also making it easier to introduce custom components from the public and making it easier to apply style changes
+- useLogs() - a hook to return logs for an entity
+- Extended modal popups for every entity on all cards, this will include attributes, a link to edit the entity, logs and history
+  a. In addition to the modal popup changes, i'll be adding sub controls for Switches, Curtains and more
 
 [Home Assistant Addon](https://github.com/shannonhochkins/hakit) - 🌟 it if you're interested
 
