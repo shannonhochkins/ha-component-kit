@@ -119,17 +119,19 @@ const createProject = async () => {
       if (mergeFiles[file]) continue;
       write(file, root, templateDir);
     }
-    const coreVersion = getLatestNpmVersion('@hakit/core');
-    const componentsVersion = getLatestNpmVersion('@hakit/components');
 
     updateTsconfig(targetDir, root, templateDir);
     updatePackageJson({
       targetDir,
       root,
       templateDir,
-      coreVersion,
-      componentsVersion
     });
+    updateViteFile({
+      targetDir,
+      root,
+      templateDir,
+      cdProjectName,
+    })
     updateReadme(targetDir, root, templateDir);
 
     write('src/index.css', root, templateDir, `#root { width: 100%; height: 100%; }`);
@@ -140,10 +142,8 @@ const createProject = async () => {
       .replace('{FOLDER_NAME}', cdProjectName)
       .replace('VITE_HA_URL=', `VITE_HA_URL=${(haUrl ?? '').replace(/\/$/, '')}`));
 
-    
-
-    console.log(blue(`\nEnsure you update ${cdProjectName}/.env with your HA_URL and HA_TOKEN`));
-    console.log(green(`\nOnce you've updated the .env file, run "npm run sync-types" to generate your types!`));
+    console.log(blue(`\nEnsure you update ${cdProjectName}/.env with your VITE_HA_URL and VITE_HA_TOKEN`));
+    console.log(green(`\nOnce you've updated the .env file, run "npm run sync" to generate your types!`));
     console.log(yellow(`\nAdd in the optional SSH values to ensure that "npm run deploy" will work correctly.`));
     console.log(yellow(`\nTo retrieve the SSH information, follow the instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-deploying--docs`));
     console.log();
@@ -220,15 +220,17 @@ function updatePackageJson({
   targetDir,
   root,
   templateDir,
-  coreVersion,
-  componentsVersion
 }: {
   targetDir: string;
   root: string;
   templateDir: string;
-  coreVersion: string;
-  componentsVersion: string;
 }) {
+  const coreVersion = getLatestNpmVersion('@hakit/core');
+  const componentsVersion = getLatestNpmVersion('@hakit/components');
+  const prettierVersion = getLatestNpmVersion('prettier');
+  const dotenvVersion = getLatestNpmVersion('dotenv');
+  const nodeScpVersion = getLatestNpmVersion('node-scp');
+  const nodeTypesVersion = getLatestNpmVersion('@types/node');
   const packageFile = path.resolve(targetDir, 'package.json');
   const pkg = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
   pkg.dependencies = {
@@ -238,17 +240,39 @@ function updatePackageJson({
   };
   pkg.devDependencies = {
     ...pkg.devDependencies,
-    "@types/node": "^20.8.7",
-    "dotenv": "^16.3.1",
-    "node-scp": "^0.0.22",
+    "prettier": `^${prettierVersion}`,
+    "dotenv": `^${dotenvVersion}`,
+    "@types/node": `^${nodeTypesVersion}`,
+    "node-scp": `^${nodeScpVersion}`,
   };
   pkg.scripts = {
     ...pkg.scripts,
-    "sync-types": "npx ts-node --esm ./sync-types.ts",
-    "prebuild": "npm run sync-types",
+    "prettier": "prettier --write .",
+    "sync": "npx ts-node --esm ./sync-types.ts",
+    "prebuild": "npm run prettier && npm run sync",
     "deploy": "npx ts-node --esm scripts/deploy.ts"
   }
   write('package.json', root, templateDir, JSON.stringify(pkg, null, 2));
+}
+
+function updateViteFile({
+  targetDir,
+  root,
+  templateDir,
+  cdProjectName
+}: {
+  targetDir: string;
+  root: string;
+  templateDir: string;
+  cdProjectName: string;
+}) {
+  const viteFile = path.resolve(targetDir, 'vite.config.ts');
+  const fileContent = fs.readFileSync(viteFile, 'utf-8');
+  const updatedContent = fileContent.replace(
+    /(defineConfig\(\{)/,
+    `$1\n  base: \'/local/${cdProjectName}/\',`
+  );
+  write('vite.config.ts', root, templateDir, updatedContent);
 }
 
 function updateReadme(targetDir: string, root: string, templateDir: string) {
