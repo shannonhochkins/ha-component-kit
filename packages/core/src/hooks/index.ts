@@ -16,7 +16,8 @@ export { useLightColor } from "./useLightColor";
 export { useLowDevices, type LowDevicesOptions } from "./useLowDevices";
 export { useHistory, type HistoryOptions } from "./useHistory";
 export { useSubscribeEntity } from "./useSubscribeEntity";
-
+export { useLogs, type UseLogOptions } from "./useLogs";
+export * from "./useLogs/logbook";
 export { useAreas, type Area } from "./useAreas";
 // other subscription based models used by useAreas
 export {

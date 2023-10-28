@@ -9,7 +9,7 @@ import {
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { useKeyPress } from "react-use";
-import { FabCard, fallback, Column, mq } from "@components";
+import { FabCard, fallback, Column, mq, Row } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
 const ModalContainer = styled(motion.div)`
@@ -40,7 +40,6 @@ const ModalContainer = styled(motion.div)`
 const ModalInner = styled.div`
   display: flex;
   padding: 0rem 1rem 2rem;
-  height: 100%;
   align-items: flex-start;
   flex-direction: column;
 `;
@@ -49,7 +48,7 @@ const ModalOverflow = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 5rem;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: stretch;
   width: 100%;
 `;
@@ -103,6 +102,8 @@ export interface ModalProps extends Omit<Extendable, "title"> {
   onClose: () => void;
   /** any prop to pass to the backdrop element */
   backdropProps?: HTMLMotionProps<"div">;
+  /** react elements to render next to the close button */
+  headerActions?: () => ReactNode;
 }
 function _Modal({
   open,
@@ -115,6 +116,7 @@ function _Modal({
   style,
   className,
   cssStyles,
+  headerActions,
   ...rest
 }: ModalProps) {
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
@@ -171,14 +173,17 @@ function _Modal({
                   </Description>
                 )}
               </Column>
-              <FabCard
-                className={`modal-close-button`}
-                tooltipPlacement="left"
-                title="Close"
-                layout
-                icon="mdi:close"
-                onClick={onClose}
-              />
+              <Row gap="0.5rem">
+                {headerActions && headerActions()}
+                <FabCard
+                  className={`modal-close-button`}
+                  tooltipPlacement="left"
+                  title="Close"
+                  layout
+                  icon="mdi:close"
+                  onClick={onClose}
+                />
+              </Row>
             </ModalHeader>
             <ModalOverflow className={`modal-overflow`}>
               <ModalInner className={`modal-inner`}>{children}</ModalInner>

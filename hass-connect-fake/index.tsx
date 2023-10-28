@@ -29,6 +29,7 @@ import type { ServiceArgs } from './mocks/fake-call-service/types';
 import mockHistory from './mock-history';
 import { mockCallApi } from './mocks/fake-call-api';
 import reolinkSnapshot from './assets/reolink-snapshot.jpg';
+import { logs } from './mocks/mockLogs';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
@@ -138,8 +139,34 @@ class MockConnection extends Connection {
     this._mockResponses[type] = data;
   }
   
-  async subscribeMessage<Result>(callback: (result: Result) => void): Promise<() => Promise<void>> {
-    callback(mockHistory as Result);
+  async subscribeMessage<Result>(callback: (result: Result) => void, params?: {
+    type: string,
+    entity_ids?: string[],
+    start_time?: string,
+    end_time?: string,
+  }): Promise<() => Promise<void>> {
+    console.log('params', params);
+    if (params && params.type === 'logbook/event_stream' && params.start_time && params.end_time) {
+      const isoStartTime = new Date(params.start_time);
+      const isoEndTime = new Date(params.end_time);
+
+      const unixStartTime = isoStartTime.getTime() / 1000;
+      const unixEndTime = isoEndTime.getTime() / 1000;
+      const newEvents = {
+        ...logs,
+        start_time: unixStartTime,
+        end_time: unixEndTime,
+        events: logs.events.map(event => ({
+          ...event,
+          entity_id: params?.entity_ids ? params?.entity_ids[0] : null,
+          when: unixStartTime + Math.random() * (unixEndTime - unixStartTime),
+        }))
+      };
+      console.log('newEvents', newEvents);
+      callback(newEvents as Result);
+    } else {
+      callback(mockHistory as Result);
+    }
     return () => Promise.resolve();
   }
   async sendMessagePromise<Result>(message: MessageBase): Promise<Result> {
@@ -148,6 +175,9 @@ class MockConnection extends Connection {
       return {
         path: `${reolinkSnapshot}?`
       } as Result;
+    }
+    if (message.path && message.path.includes('config/entity_registry/get')) {
+      return '123'as Result;
     }
     return null as Result;
   }

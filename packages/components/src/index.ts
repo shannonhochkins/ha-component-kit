@@ -58,6 +58,8 @@ export {
   ClimateControls,
   type ClimateControlsProps,
 } from "./Shared/ClimateControls";
+// LightControls
+export { LightControls, type LightControlsProps } from "./Shared/LightControls";
 // ClimateCard
 export { ClimateCard, type ClimateCardProps } from "./Cards/ClimateCard";
 // EntitiesCard
@@ -79,6 +81,7 @@ export {
 } from "./Cards/CameraCard/stream";
 // Modal
 export { Modal, type ModalProps } from "./Shared/Modal";
+export { LogBookRenderer, type LogBookRendererProps } from './Shared/LogBookRenderer';
 export {
   ModalLightControls,
   type ModalLightControlsProps,
@@ -104,6 +107,11 @@ export {
   type ColorPickerProps,
   type ColorPickerOutputColors,
 } from "./Shared/ColorPicker";
+// EntityAttributes
+export {
+  EntityAttributes,
+  type EntityAttributesProps,
+} from "./Shared/EntityAttributes";
 // ImagePreloader
 export { PreloadImage, type PreloadImageProps } from "./Shared/PreloadImage";
 // Alert
