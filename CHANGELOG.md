@@ -1,3 +1,13 @@
+## create-hakit - v1.1.0
+- added a lot more redundancy checks to the deploy script
+- updated documentation
+- fixed multiple bugs
+- thanks to @yann510 for making some improvements to create script
+- prettier introduced
+- updated dependencies
+- deploy script was previously broken and not even linked, this has been fixed
+- vite.config.ts updates with correct base path to build & deploy to home assistant.
+
 # 2.3.0
 ## @hakit/components
 - NEW - CameraCard - a component to render / preview a camera entity in home assistant, it supports live, motion and rolling poster views, this is a very complicated component and I'd love feedback if you have issues or even if it works for you!
