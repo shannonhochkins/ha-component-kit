@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { isEmpty, omit } from "lodash";
-import TimeAgo from "javascript-time-ago";
 import type {
-  HassEntityWithApi,
+  HassEntityWithService,
   HassEntityCustom,
   ExtractDomain,
   EntityName,
@@ -14,23 +13,7 @@ import { getCssColorValue } from "@utils/colors";
 import { computeDomain } from "@utils/computeDomain";
 import { diff } from "deep-object-diff";
 import type { HistoryOptions } from "../useHistory";
-
-// English.
-import en from "javascript-time-ago/locale/en.json";
-
-TimeAgo.addDefaultLocale({
-  ...en,
-  now: {
-    now: {
-      // too account for odd time differences, we set these to all be the same
-      current: "just now",
-      future: "just now",
-      past: "just now",
-    },
-  },
-});
-// Create formatter (English).
-const timeAgo = new TimeAgo("en-US");
+import { timeAgo } from "@utils/time/time-ago";
 
 interface UseEntityOptions {
   /** The amount of time to throttle updates in milliseconds */
@@ -54,8 +37,8 @@ type UseEntityReturnType<
   E,
   O extends UseEntityOptions,
 > = O["returnNullIfNotFound"] extends true
-  ? HassEntityWithApi<ExtractDomain<E>> | null
-  : HassEntityWithApi<ExtractDomain<E>>;
+  ? HassEntityWithService<ExtractDomain<E>> | null
+  : HassEntityWithService<ExtractDomain<E>>;
 
 export function useEntity<
   E extends EntityName,

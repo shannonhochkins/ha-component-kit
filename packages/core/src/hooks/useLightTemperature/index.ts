@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { LIGHT_COLOR_MODES, HassEntityWithApi, ON } from "@core";
+import { LIGHT_COLOR_MODES, HassEntityWithService, ON } from "@core";
 
-export const useLightTemperature = (entity: HassEntityWithApi<"light">) => {
+export const useLightTemperature = (entity: HassEntityWithService<"light">) => {
   return useMemo(() => {
     if (entity.state === ON) {
       return entity.attributes.color_mode === LIGHT_COLOR_MODES.COLOR_TEMP

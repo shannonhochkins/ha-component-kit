@@ -131,7 +131,7 @@ const _Ripples = memo(
       <ParentRipple
         borderRadius={borderRadius}
         id={id ?? ""}
-        className={className ?? ""}
+        className={`ripple-parent ${className ?? ""}`}
         css={css`
           ${cssStyles ?? ""}
         `}
@@ -140,6 +140,7 @@ const _Ripples = memo(
         }}
       >
         <motion.div
+          className="ripple-inner"
           layout
           onPointerDownCapture={(e) => {
             if (preventPropagation) {

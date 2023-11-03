@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { HassEntityWithApi, ON } from "@core";
+import { HassEntityWithService, ON } from "@core";
 
-export const useLightBrightness = (entity: HassEntityWithApi<"light">) => {
+export const useLightBrightness = (entity: HassEntityWithService<"light">) => {
   return useMemo(
     () =>
       entity.state === ON

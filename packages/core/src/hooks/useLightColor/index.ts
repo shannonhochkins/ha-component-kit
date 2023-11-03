@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import {
-  HassEntityWithApi,
+  HassEntityWithService,
   ON,
   lightSupportsColorMode,
   getLightCurrentModeRgbColor,
@@ -8,7 +8,7 @@ import {
   LIGHT_COLOR_MODES,
 } from "@core";
 
-export const useLightColor = (entity: HassEntityWithApi<"light">) => {
+export const useLightColor = (entity: HassEntityWithService<"light">) => {
   const brightnessAdjusted = useMemo<number | undefined>(() => {
     if (entity.state === ON) {
       if (

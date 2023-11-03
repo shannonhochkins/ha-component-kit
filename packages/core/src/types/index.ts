@@ -78,7 +78,7 @@ export type HassEntityHelper<T extends AllDomains> =
     ? DefinedPropertiesByDomain[CamelToSnake<T>]
     : HassEntity;
 
-export type HassEntityWithApi<T extends AllDomains> = HassEntityCustom &
+export type HassEntityWithService<T extends AllDomains> = HassEntityCustom &
   HassEntityHelper<SnakeToCamel<T>> & {
     history: {
       timeline: TimelineState[];

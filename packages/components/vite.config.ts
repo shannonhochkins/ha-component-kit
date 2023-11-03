@@ -62,6 +62,7 @@ export default defineConfig(configEnv => {
             "@fullcalendar/interaction": "@fullcalendar/interaction",
             "@fullcalendar/list": "@fullcalendar/list",
             'autolinker': 'autolinker',
+            'use-long-press': 'use-long-press',
           }
         }
       },

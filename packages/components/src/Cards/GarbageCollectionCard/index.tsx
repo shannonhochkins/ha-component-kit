@@ -11,7 +11,7 @@ import React, {
 } from "react";
 import { useEntity } from "@hakit/core";
 import { Icon } from "@iconify/react";
-import { fallback, Row, Column, mq } from "@components";
+import { fallback, Row, Column, mq, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
@@ -19,50 +19,16 @@ import { ReactComponent as GarbageBin } from "./garbage-bin.svg";
 
 const ASPECT_RATIO = 77.41 / 123.36;
 
-const Card = styled(motion.div)`
-  all: unset;
+const Card = styled(CardBase)`
+  
+`;
+const Contents = styled.div`
   padding: 1rem;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  width: calc(100% - 2rem);
-  display: flex;
+  width: 100%;
+  height: 100%;    
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
-  cursor: default;
-  background-color: var(--ha-S300);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
-  flex-shrink: 1;
-  &:hover {
-    background-color: var(--ha-S400);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-  }
-  ${mq(
-    ["mobile"],
-    `
-    width: calc(100% - 2rem);
-  `,
-  )}
-  ${mq(
-    ["tablet", "smallScreen"],
-    `
-    width: calc((50% - var(--gap, 0rem) / 2) - 2rem);
-  `,
-  )}
-  ${mq(
-    ["desktop", "mediumScreen"],
-    `
-    width: calc(((100% - 2 * var(--gap, 0rem)) / 3) - 2rem);
-  `,
-  )}
-  ${mq(
-    ["largeDesktop"],
-    `
-    width: calc(((100% - 3 * var(--gap, 0rem)) / 4) - 2rem);
-  `,
-  )}
 `;
 
 const Bin = styled.div<{
@@ -179,7 +145,6 @@ interface BinProperties extends SvgProperties {
   render?: (bin: BinProperties, key: Key) => React.ReactElement;
 }
 
-type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 type WeekConfig = Array<BinProperties | CSSProperties["color"]> | null;
 type Day =
   | "Sunday"
@@ -203,7 +168,7 @@ interface Schedule {
   hideNextCollection?: boolean;
 }
 
-export interface GarbageCollectionCardProps extends Omit<Extendable, "title"> {
+export interface GarbageCollectionCardProps extends Omit<CardBaseProps, "title" | 'entity' | 'children' | 'disabled' | 'active' | 'service' | 'serviceData' | 'modalProps' | 'longPressCallback'> {
   /** The title of the card @default 'Garbage Collection' */
   title?: React.ReactNode;
   /** The description of the card @default undefined */
@@ -219,7 +184,6 @@ function _GarbageCollectionCard({
   svg,
   title = "Garbage Collection",
   description,
-  cssStyles,
   className,
   ...rest
 }: GarbageCollectionCardProps): JSX.Element {
@@ -405,47 +369,48 @@ function _GarbageCollectionCard({
   );
   return (
     <Card
-      css={css`
-        ${cssStyles ?? ""}
-      `}
+      disableActiveState
+      disableRipples
+      disableScale
       className={`garbage-collection-card ${className ?? ""}`}
       {...rest}
     >
-      <Title className="title">{title}</Title>
-      {typeof description !== "undefined" && (
-        <Description className="description">{description}</Description>
-      )}
-      <Row
-        className="row"
-        fullHeight
-        fullWidth
-        wrap="nowrap"
-        justifyContent="space-between"
-        style={{
-          marginTop: "1rem",
-        }}
-      >
-        {collections
-          .filter((collection) => collection.bins !== null)
-          .map((collection, index) => {
-            return (
-              <BinBox className="bin-box" key={index}>
-                {typeof collection.schedule.title !== "undefined" && (
-                  <div className="collection-title">
-                    {collection.schedule.title}
+      <Contents>
+        <Title className="title">{title}</Title>
+        {typeof description !== "undefined" && (
+          <Description className="description">{description}</Description>
+        )}
+        <Row
+          className="row"
+          fullWidth
+          wrap="nowrap"
+          justifyContent="space-between"
+          style={{
+            marginTop: '0.5rem'
+          }}
+        >
+          {collections
+            .filter((collection) => collection.bins !== null)
+            .map((collection, index) => {
+              return (
+                <BinBox className="bin-box" key={index}>
+                  {typeof collection.schedule.title !== "undefined" && (
+                    <div className="collection-title">
+                      {collection.schedule.title}
+                    </div>
+                  )}
+                  <Row className="row" wrap="nowrap" gap="1rem">
+                    {collection.bins &&
+                      collection.bins.map((bin, index) => renderBin(bin, index))}
+                  </Row>
+                  <div className="collection-time">
+                    {collection.timeUntilCollection}
                   </div>
-                )}
-                <Row className="row" wrap="nowrap" gap="1rem">
-                  {collection.bins &&
-                    collection.bins.map((bin, index) => renderBin(bin, index))}
-                </Row>
-                <div className="collection-time">
-                  {collection.timeUntilCollection}
-                </div>
-              </BinBox>
-            );
-          })}
-      </Row>
+                </BinBox>
+              );
+            })}
+        </Row>
+      </Contents>
     </Card>
   );
 }
@@ -465,9 +430,17 @@ function _GarbageCollectionCard({
  * Here's an example of some of the customization achievable:
  * */
 export function GarbageCollectionCard(props: GarbageCollectionCardProps) {
+  const defaultColumns: AvailableQueries = {
+    xxs: 12,
+    xs: 6,
+    sm: 6,
+    md: 4,
+    lg: 4,
+    xlg: 3,
+  }
   return (
     <ErrorBoundary {...fallback({ prefix: "GarbageCollectionCard" })}>
-      <_GarbageCollectionCard {...props} />
+      <_GarbageCollectionCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

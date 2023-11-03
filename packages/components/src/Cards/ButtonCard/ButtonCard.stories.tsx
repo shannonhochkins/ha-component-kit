@@ -2,6 +2,7 @@ import { Source } from "@storybook/blocks";
 import type { Meta, StoryObj, Args } from "@storybook/react";
 import { ThemeProvider, Group, Column, ButtonCard } from "@components";
 import type { ButtonCardProps } from "@components";
+
 import { HassConnect } from "@hass-connect-fake";
 // @ts-expect-error - Don't have types for jsx-to-string
 import jsxToString from "jsx-to-string";
@@ -114,10 +115,11 @@ function Render(args?: Args) {
         />
         <ButtonCard
           {...args}
-          entity="light.fake_light_2"
+          entity="cover.cover_position_only"
           service="toggle"
           defaultLayout="slim-vertical"
         />
+        <ButtonCard service="toggle" entity="light.fake_light_1" />
       </Column>
     </HassConnect>
   );

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, WeatherCard } from "@components";
 import type { WeatherCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
-import { HassEntityWithApi } from "@hakit/core";
+import { HassEntityWithService } from "@hakit/core";
 
 function Template(args?: Partial<WeatherCardProps>) {
   return (
@@ -33,7 +33,7 @@ function WithSensors(args?: Partial<WeatherCardProps>) {
         details={[
           {
             entity: "sensor.openweathermap_uv_index",
-            render(entity: HassEntityWithApi<"sensor">) {
+            render(entity: HassEntityWithService<"sensor">) {
               return (
                 <span>UVI - {convertUvIndexToText(Number(entity.state))}</span>
               );

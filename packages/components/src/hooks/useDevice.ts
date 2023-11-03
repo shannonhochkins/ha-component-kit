@@ -1,52 +1,55 @@
-import { useEffect, useState } from "react";
-import { STANDARD_BREAKPOINTS } from "./constants";
-import type { StandardResponsiveTypes } from "./constants";
+import { useEffect, useState, useMemo } from "react";
+import { getBreakpoints, type BreakPoint } from "@components";
+import { useHass } from "@hakit/core";
 
-export function useDevice(): { [key in StandardResponsiveTypes]: boolean } {
-  const initialMatches: { [key in StandardResponsiveTypes]: boolean } = {
-    mobile: false,
-    tablet: false,
-    smallScreen: false,
-    mediumScreen: false,
-    desktop: false,
-    largeDesktop: false,
+export function useDevice(): { [key in BreakPoint]: boolean } {
+  const { useStore } = useHass();
+  const breakpoints = useStore(store => store.breakpoints);
+  const _queeries = useMemo(() => getBreakpoints(breakpoints), [breakpoints]);
+  const initialMatches: { [key in BreakPoint]: boolean } = {
+    xxs: false,
+    xs: false,
+    sm: false,
+    md: false,
+    lg: false,
+    xlg: false,
   };
 
   const [matches, setMatches] = useState(initialMatches);
 
   useEffect(() => {
     const handleChange = (
-      type: StandardResponsiveTypes,
+      type: BreakPoint,
       mediaQueryList: MediaQueryList,
     ) => {
       setMatches((prev) => ({ ...prev, [type]: mediaQueryList.matches }));
     };
 
     const mediaQueryLists: {
-      [key in StandardResponsiveTypes]: MediaQueryList;
+      [key in BreakPoint]: MediaQueryList;
     } = {
-      mobile: window.matchMedia(STANDARD_BREAKPOINTS.mobile),
-      tablet: window.matchMedia(STANDARD_BREAKPOINTS.tablet),
-      smallScreen: window.matchMedia(STANDARD_BREAKPOINTS.smallScreen),
-      mediumScreen: window.matchMedia(STANDARD_BREAKPOINTS.mediumScreen),
-      desktop: window.matchMedia(STANDARD_BREAKPOINTS.desktop),
-      largeDesktop: window.matchMedia(STANDARD_BREAKPOINTS.largeDesktop),
+      xxs: window.matchMedia(_queeries.xxs),
+      xs: window.matchMedia(_queeries.xs),
+      sm: window.matchMedia(_queeries.sm),
+      md: window.matchMedia(_queeries.md),
+      lg: window.matchMedia(_queeries.lg),
+      xlg: window.matchMedia(_queeries.xlg),
     };
 
     // Initialize
     Object.keys(mediaQueryLists).forEach((type) => {
       handleChange(
-        type as StandardResponsiveTypes,
-        mediaQueryLists[type as StandardResponsiveTypes],
+        type as BreakPoint,
+        mediaQueryLists[type as BreakPoint],
       );
     });
 
     // Add listeners
     Object.keys(mediaQueryLists).forEach((type) => {
-      const mediaQueryList = mediaQueryLists[type as StandardResponsiveTypes];
+      const mediaQueryList = mediaQueryLists[type as BreakPoint];
       mediaQueryList.addEventListener("change", (event) =>
         handleChange(
-          type as StandardResponsiveTypes,
+          type as BreakPoint,
           event.currentTarget as MediaQueryList,
         ),
       );
@@ -55,16 +58,16 @@ export function useDevice(): { [key in StandardResponsiveTypes]: boolean } {
     // Cleanup listeners
     return () => {
       Object.keys(mediaQueryLists).forEach((type) => {
-        const mediaQueryList = mediaQueryLists[type as StandardResponsiveTypes];
+        const mediaQueryList = mediaQueryLists[type as BreakPoint];
         mediaQueryList.removeEventListener("change", (event) =>
           handleChange(
-            type as StandardResponsiveTypes,
+            type as BreakPoint,
             event.currentTarget as MediaQueryList,
           ),
         );
       });
     };
-  }, []);
+  }, [_queeries]);
 
   return matches;
 }

@@ -15,7 +15,7 @@ const StyledRange = styled.div<{
     isolation: isolate;
 
     ${mq(
-      ["mobile", "tablet", "smallScreen"],
+      ["xxs", "xs", "sm"],
       `
       min-width: 0;
     `,

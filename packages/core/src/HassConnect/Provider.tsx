@@ -85,6 +85,10 @@ export interface Store {
   hassUrl: string | null;
   /** set the hassUrl */
   setHassUrl: (hassUrl: string | null) => void;
+  /** getter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
+  breakpoints: Record<'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xlg', number>;
+  /** setter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
+  setBreakpoints: (breakpoints: Record<'xxs' | 'xs' | 'sm' | 'md' | 'lg', number>) => void;
 }
 
 const useStore = create<Store>((set) => ({
@@ -147,6 +151,18 @@ const useStore = create<Store>((set) => ({
   setConfig: (config) => set({ config }),
   error: null,
   setError: (error) => set({ error }),
+  breakpoints: {
+    xxs: 0,
+    xs: 0,
+    sm: 0,
+    md: 0,
+    lg: 0,
+    xlg: 0,
+  },
+  setBreakpoints: (breakpoints) => set({ breakpoints: {
+    ...breakpoints,
+    xlg: breakpoints.lg + 1,
+  } }),
 }));
 
 export interface HassContextProps {

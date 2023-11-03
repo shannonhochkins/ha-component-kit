@@ -1,11 +1,10 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
-import { css } from "@emotion/react";
-import { Row, Column, fallback, mq } from "@components";
+import { Row, Column, fallback, CardBase, CardBaseProps, mq, type AvailableQueries } from "@components";
 import { motion, AnimatePresence } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
 
-const StyledGroup = styled.div<{
+const StyledGroup = styled(CardBase)<{
   collapsed: boolean;
 }>`
   background-color: var(--ha-S200);
@@ -15,7 +14,7 @@ const StyledGroup = styled.div<{
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: padding, background-color;
   width: 100%;
-  > div {
+  > div.contents > .header-title {
     cursor: pointer;
     padding: ${({ collapsed }) => (collapsed ? "1.5rem 0" : "2rem 0")};
     > h3 {
@@ -34,7 +33,7 @@ const StyledGroup = styled.div<{
   }
   ${({ collapsed }) => `
     ${mq(
-      ["mobile", "tablet"],
+      ["xxs", "xs"],
       `
       padding: ${collapsed ? "0 1rem" : "0 1rem 1rem"};
     `,
@@ -54,13 +53,11 @@ const Description = styled.span`
 const Header = styled.div``;
 const Title = styled.h3``;
 
-export interface GroupProps extends Omit<React.ComponentProps<"div">, "title"> {
+export interface GroupProps extends Omit<CardBaseProps, "title" | 'as' | 'layout' | 'entity' | 'serviceData' | 'service' | 'longPressCallback' | 'modalProps'> {
   /** the title of the group */
-  title: string;
+  title: React.ReactNode;
   /** the optional description of the group */
   description?: React.ReactNode;
-  /** the children for the component to render */
-  children: React.ReactNode;
   /** the layout of the group, either column or row, @default row */
   layout?: "row" | "column";
   /** standard flex css properties for align-items, @default center */
@@ -82,7 +79,6 @@ function _Group({
   layout = "row",
   collapsed = false,
   className,
-  cssStyles,
   ...rest
 }: GroupProps): JSX.Element {
   const [_collapsed, setCollapsed] = useState(collapsed);
@@ -93,14 +89,15 @@ function _Group({
   };
   return (
     <StyledGroup
-      css={css`
-        ${cssStyles ?? ""}
-      `}
+      onlyFunctionality
+      disableScale
+      disableActiveState
+      disableRipples
       className={`${className ?? ""} group`}
       collapsed={_collapsed}
       {...rest}
     >
-      <Header onClick={() => setCollapsed(!_collapsed)}>
+      <Header onClick={() => setCollapsed(!_collapsed)} className="header-title">
         <Title className="title">{title}</Title>
         {description && <Description>{description}</Description>}
       </Header>
@@ -139,9 +136,17 @@ function _Group({
 }
 /** The group component will automatically layout the children in a row with a predefined gap between the children. The Group component is handy when you want to be able to collapse sections of cards */
 export function Group(props: GroupProps) {
+  const defaultColumns: AvailableQueries = {
+    xxs: 12,
+    xs: 12,
+    sm: 12,
+    md: 12,
+    lg: 12,
+    xlg: 12,
+  }
   return (
     <ErrorBoundary {...fallback({ prefix: "Group" })}>
-      <_Group {...props} />
+      <_Group {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

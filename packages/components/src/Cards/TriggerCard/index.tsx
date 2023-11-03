@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 import styled from "@emotion/styled";
-import type { EntityName, ExtractDomain, HassEntityWithApi } from "@hakit/core";
+import type {
+  EntityName,
+} from "@hakit/core";
 import {
   useEntity,
   useIconByDomain,
@@ -10,62 +12,9 @@ import {
   isUnavailableState,
 } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
-import { Ripples, fallback, mq } from "@components";
-import { motion } from "framer-motion";
-import { MotionProps } from "framer-motion";
+import { fallback, CardBase, type AvailableQueries, type CardBaseProps } from "@components";
 
-const StyledTriggerCard = styled(motion.button)`
-  all: unset;
-  padding: 1rem;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  width: calc(100% - 2rem);
-  aspect-ratio: 2/0.74;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  cursor: pointer;
-  background-color: var(--ha-S300);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: box-shadow, background-color;
-  flex-shrink: 1;
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.8;
-  }
-  &:not(:disabled):hover {
-    background-color: var(--ha-S400);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-  }
-`;
-const StyledRipples = styled(Ripples)`
-  ${mq(
-    ["mobile"],
-    `
-    width: 100%;
-  `,
-  )}
-  ${mq(
-    ["tablet", "smallScreen"],
-    `
-    width: calc(50% - var(--gap, 0rem) / 2);
-  `,
-  )}
-  ${mq(
-    ["desktop", "mediumScreen"],
-    `
-    width: calc(((100% - 2 * var(--gap, 0rem)) / 3));
-  `,
-  )}
-  ${mq(
-    ["largeDesktop"],
-    `
-    width: calc(((100% - 3 * var(--gap, 0rem)) / 4));
-  `,
-  )}
+const StyledTriggerCard = styled(CardBase)`
 `;
 
 const ToggleMessage = styled.span<ToggleProps>`
@@ -128,6 +77,14 @@ const Toggle = styled.div<ToggleProps>`
   overflow: hidden;
 `;
 
+const Contents = styled.div`
+  padding: 1rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
 const LayoutBetween = styled.div`
   display: flex;
   align-items: center;
@@ -138,6 +95,7 @@ const LayoutBetween = styled.div`
 const Title = styled.div`
   color: var(--ha-S500-contrast);
   font-size: 0.7rem;
+  text-align:left;
 `;
 const Description = styled.div<{
   disabled?: boolean;
@@ -145,6 +103,7 @@ const Description = styled.div<{
   color: var(--ha-S500-contrast);
   ${(props) => props.disabled && `color: var(--ha-S50-contrast);`}
   font-size: 0.9rem;
+  text-align:left;
   span {
     display: block;
     width: 100%;
@@ -154,17 +113,11 @@ const Description = styled.div<{
     font-size: 0.7rem;
   }
 `;
-type Extendable = MotionProps &
-  Omit<React.ComponentPropsWithoutRef<"button">, "title" | "onClick">;
-export interface TriggerCardProps<E extends EntityName> extends Extendable {
-  /** An optional override for the title */
-  title?: string;
-  /** an optional description to add to the card */
-  description?: string;
+export interface TriggerCardProps<E extends EntityName> extends Omit<CardBaseProps<'button', E>, 'as' | 'entity'> {
   /** The name of your entity */
   entity: E;
-  /** the onClick handler is called when the card is pressed  */
-  onClick?: (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
+  /** an optional description to add to the card */
+  description?: string;
   /** optional override to replace the icon that appears in the card */
   icon?: string;
   /** optional override for the slider icon */
@@ -191,9 +144,9 @@ function _TriggerCard<E extends EntityName>({
   sliderTextInactive,
   activeStateDuration = 5000,
   hideArrow = false,
-  cssStyles,
   className,
-  id,
+  service,
+  serviceData,
   ...rest
 }: TriggerCardProps<E>): JSX.Element {
   const domain = computeDomain(_entity);
@@ -212,9 +165,9 @@ function _TriggerCard<E extends EntityName>({
   });
   const isUnavailable = isUnavailableState(entity.state);
   const disabled = _disabled || isUnavailable;
-  const useApiHandler = useCallback(() => {
+  const useApiHandler = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     setActive(true);
-    if (typeof onClick === "function" && !isUnavailable) onClick(entity);
+    if (typeof onClick === "function" && !isUnavailable) onClick(entity as never, event);
     if (timeRef.current) clearTimeout(timeRef.current);
     timeRef.current = setTimeout(() => {
       setActive(false);
@@ -222,20 +175,19 @@ function _TriggerCard<E extends EntityName>({
   }, [entity, onClick, activeStateDuration, isUnavailable]);
 
   return (
-    <StyledRipples
-      borderRadius="1rem"
-      disabled={disabled}
-      cssStyles={cssStyles}
-      id={id ?? ""}
+    <StyledTriggerCard
+      as="button"
       className={`${className ?? ""} trigger-card`}
-      whileTap={{ scale: disabled ? 1 : 0.9 }}
+      disabled={disabled}
+      entity={_entity}
+      // @ts-expect-error - don't know the entity name, so we can't know the service type
+      service={service}
+      // @ts-expect-error - don't know the entity name, so we can't know the service data
+      serviceData={serviceData}
+      onClick={useApiHandler}
+      {...rest}
     >
-      <StyledTriggerCard
-        className={`inner`}
-        disabled={disabled}
-        {...rest}
-        onClick={useApiHandler}
-      >
+      <Contents>
         <LayoutBetween className={`layout-between`}>
           <Description disabled={disabled} className={`description`}>
             {title || entity.attributes.friendly_name || _entity}
@@ -269,15 +221,23 @@ function _TriggerCard<E extends EntityName>({
             )}
           </Toggle>
         </LayoutBetween>
-      </StyledTriggerCard>
-    </StyledRipples>
+      </Contents>
+    </StyledTriggerCard>
   );
 }
 /** The TriggerCard is a simple to use component to make it easy to trigger and a scene, automation, script or any other entity to trigger. */
 export function TriggerCard<E extends EntityName>(props: TriggerCardProps<E>) {
+  const defaultColumns: AvailableQueries = {
+    xxs: 12,
+    xs: 6,
+    sm: 6,
+    md: 4,
+    lg: 4,
+    xlg: 3,
+  }
   return (
     <ErrorBoundary {...fallback({ prefix: "TriggerCard" })}>
-      <_TriggerCard {...props} />
+      <_TriggerCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

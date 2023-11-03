@@ -24,7 +24,7 @@ import { isArray } from "lodash";
 import { HassContext, useHash } from '@hakit/core';
 import { entities as ENTITIES } from './mocks/mockEntities';
 import fakeApi from './mocks/fake-call-service';
-import { create } from 'zustand';
+import { create } from "zustand";
 import type { ServiceArgs } from './mocks/fake-call-service/types';
 import mockHistory from './mock-history';
 import { mockCallApi } from './mocks/fake-call-api';
@@ -145,7 +145,6 @@ class MockConnection extends Connection {
     start_time?: string,
     end_time?: string,
   }): Promise<() => Promise<void>> {
-    console.log('params', params);
     if (params && params.type === 'logbook/event_stream' && params.start_time && params.end_time) {
       const isoStartTime = new Date(params.start_time);
       const isoEndTime = new Date(params.end_time);
@@ -223,7 +222,21 @@ const useStore = create<Store>((set) => ({
   setHassUrl: (hassUrl) => set({ hassUrl }),
   callApi: async () => {
     return {};
-  }
+  },
+  /** getter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
+  breakpoints: {
+    xxs: 0,
+    xs: 0,
+    sm: 0,
+    md: 0,
+    lg: 0,
+    xlg: 0,
+  },
+  /** setter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
+  setBreakpoints: (breakpoints) => set({ breakpoints: {
+    ...breakpoints,
+    xlg: breakpoints.lg + 1,
+  } }),
 }))
 
 function HassProvider({

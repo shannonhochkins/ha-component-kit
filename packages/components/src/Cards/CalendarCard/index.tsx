@@ -22,13 +22,15 @@ import {
   Row,
   Column,
   fallback,
-  mq,
   Modal,
-  ButtonGroup,
+  ButtonBar,
   Alert,
+  ButtonBarButton,
+  CardBase,
+  type CardBaseProps,
+  type AvailableQueries
 } from "@components";
 import type { MotionProps } from "framer-motion";
-import { motion } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
 import { useRef, useEffect, useState, useCallback } from "react";
 
@@ -38,56 +40,8 @@ export const enum CalendarEntityFeature {
   UPDATE_EVENT = 4,
 }
 
-const StyledCalendarCard = styled(motion.div)`
-  all: unset;
-  padding: 0;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: space-between;
-  cursor: pointer;
-  background-color: var(--ha-S300);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-color, box-shadow;
-  flex-shrink: 1;
-  &:active {
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-  }
-  &:hover {
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  ${mq(
-    ["mobile"],
-    `
-    width: 100%;
-  `,
-  )}
-  ${mq(
-    ["tablet", "smallScreen"],
-    `
-    width: calc(50% - var(--gap, 0rem) / 2);
-  `,
-  )}
-  ${mq(
-    ["desktop", "mediumScreen"],
-    `
-    width: calc((100% - 1 * var(--gap, 0rem)) / 2);
-  `,
-  )}
-  ${mq(
-    ["largeDesktop"],
-    `
-    width: calc((100% - 2 * var(--gap, 0rem)) / 3);
-  `,
-  )}
-
-  > .calendar > * {
+const StyledCalendarCard = styled(CardBase)`
+  .contents .calendar > * {
     flex-grow: 1;
     background-color: var(--ha-S300);
     min-height: 400px;
@@ -172,7 +126,7 @@ const StyledCalendarCard = styled(motion.div)`
     text-align: center;
     white-space: nowrap;
     background-color: var(--ha-A400);
-    color: var(--ha-A400-contrast);
+    color: var(--ha-900-contrast);
     line-height: 1.5rem;
     padding: 0;
     align-items: center;
@@ -335,8 +289,6 @@ const StyledAlert = styled(Alert)`
   }
 `;
 
-type Extendable = Omit<React.ComponentProps<"div">, "onClick" | "ref"> &
-  MotionProps;
 
 export interface CalendarEvent {
   title: string;
@@ -365,7 +317,7 @@ export interface CalendarEventWithEntity extends CalendarEvent {
   entity: HassEntity;
 }
 
-export interface CalendarCardProps extends Extendable {
+export interface CalendarCardProps extends Omit<CardBaseProps<'div', EntityName>, 'modalProps' | 'onClick' | 'children' | 'active' | 'as' | 'title' | 'disabled' | 'entity' | 'service' | 'serviceData'> {
   /** The names of your calendar entities */
   entities: FilterByDomain<EntityName, "calendar">[];
   /** if need be, you can provide a timezone to display time in a specific timezone */
@@ -452,8 +404,6 @@ const defaultFullCalendarConfig: CalendarOptions = {
 function _CalendarCard({
   entities,
   className,
-  id,
-  cssStyles,
   timeZone,
   view,
   includeHeader = true,
@@ -666,10 +616,9 @@ function _CalendarCard({
 
   return (
     <StyledCalendarCard
-      id={id ?? ""}
-      cssStyles={css`
-        ${cssStyles ?? ""}
-      `}
+      disableScale
+      disableActiveState
+      disableRipples
       className={`calendar-card ${className ?? ""} ${narrow ? "narrow" : ""}`}
       {...rest}
     >
@@ -679,64 +628,33 @@ function _CalendarCard({
             <Column>
               <h3 className="title">{title}</h3>
             </Column>
-            <ButtonGroup
+            <ButtonBar
               className="button-group-nav"
-              buttons={[
-                {
-                  icon: "mdi:navigate-before",
-                  size: 35,
-                  disabled: loading,
-                  onClick: () => _handlePrev(),
-                  title: "Previous",
-                },
-                {
-                  icon: "mdi:navigate-next",
-                  size: 35,
-                  disabled: loading,
-                  onClick: () => _handleNext(),
-                  title: "Next",
-                },
-              ]}
-            />
+            >
+              <ButtonBarButton title="Previous" size={35} disabled={loading} onClick={() => {
+                _handlePrev()
+              }} icon="mdi:navigate-before" />
+              <ButtonBarButton title="Next" size={35} disabled={loading} onClick={() => {
+                _handleNext()
+              }} icon="mdi:navigate-next" />
+            </ButtonBar>
           </Row>
           <Row justifyContent="flex-end">
-            <ButtonGroup
-              className="button-group-views"
-              buttons={[
-                {
-                  size: 35,
-                  onClick: () => _handleToday(),
-                  title: "Today",
-                  disabled: loading,
-                  children: <>TODAY</>,
-                },
-                {
-                  icon: "mdi:view-module",
-                  size: 35,
-                  onClick: () => _handleView("dayGridMonth"),
-                  title: "Monthly View",
-                  disabled: loading,
-                  className: "monthly-toggle-view",
-                  active: activeView === "dayGridMonth",
-                },
-                {
-                  icon: "mdi:view-week",
-                  size: 35,
-                  disabled: loading,
-                  onClick: () => _handleView("listWeek"),
-                  title: "7 day View",
-                  active: activeView === "listWeek",
-                },
-                {
-                  icon: "mdi:view-day",
-                  size: 35,
-                  disabled: loading,
-                  onClick: () => _handleView("dayGridDay"),
-                  title: "Daily View",
-                  active: activeView === "dayGridDay",
-                },
-              ]}
-            />
+            <ButtonBar
+              className="button-group-views">
+              <ButtonBarButton title="Today" size={35} disabled={loading} onClick={() => {
+                _handleToday();
+              }} noIcon>TODAY</ButtonBarButton>
+              <ButtonBarButton className="monthly-toggle-view" title="Monthly View" active={activeView === "dayGridMonth"} size={35} disabled={loading} onClick={() => {
+                _handleView("dayGridMonth");
+              }} icon="mdi:view-module" />
+              <ButtonBarButton title="7 day View" size={35} disabled={loading} onClick={() => {
+                _handleView("listWeek");
+              }} icon="mdi:view-week" />
+              <ButtonBarButton title="Daily View" size={35} disabled={loading} onClick={() => {
+                _handleView("dayGridDay");
+              }} icon="mdi:view-day" />
+            </ButtonBar>
           </Row>
         </Header>
       )}
@@ -817,9 +735,17 @@ function _CalendarCard({
  * This component uses the REST API to retrieve events from home assistant, ensure you've followed the instructions [here](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/hooks-usehass-callapi--docs)
  * */
 export function CalendarCard(props: CalendarCardProps) {
+  const defaultColumns: AvailableQueries = {
+    xxs: 12,
+    xs: 8,
+    sm: 6,
+    md: 6,
+    lg: 4,
+    xlg: 3,
+  }
   return (
     <ErrorBoundary {...fallback({ prefix: "CalendarCard" })}>
-      <_CalendarCard {...props} />
+      <_CalendarCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

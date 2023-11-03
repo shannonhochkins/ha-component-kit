@@ -1,9 +1,7 @@
-import { ReactNode, useCallback } from "react";
+import { ReactNode } from "react";
 import styled from "@emotion/styled";
 import type {
   EntityName,
-  HassEntityWithApi,
-  ExtractDomain,
   HistoryOptions,
 } from "@hakit/core";
 import {
@@ -15,64 +13,21 @@ import {
   isUnavailableState,
 } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
-import { Ripples, fallback, SvgGraph, Alert, mq } from "@components";
-import { motion } from "framer-motion";
-import { MotionProps } from "framer-motion";
+import { fallback, SvgGraph, Alert, AvailableQueries, CardBase, type CardBaseProps } from "@components";
 
-const StyledSensorCard = styled(motion.button)`
-  all: unset;
-  position: relative;
-  overflow: hidden;
-  padding: 0;
-  border-radius: 1rem;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: space-between;
+const StyledSensorCard = styled(CardBase)`
+  cursor: default;
   &.has-on-click {
     cursor: pointer;
   }
-  background-color: var(--ha-S300);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: box-shadow, background-color;
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.8;
-  }
-  &:not(:disabled):hover {
-    background-color: var(--ha-S400);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-  }
 `;
 
-const StyledRipples = styled(Ripples)`
-  flex-shrink: 1;
-  ${mq(
-    ["mobile"],
-    `
-    width: 100%;
-  `,
-  )}
-  ${mq(
-    ["tablet", "smallScreen"],
-    `
-    width: calc(50% - var(--gap, 0rem) / 2);
-  `,
-  )}
-  ${mq(
-    ["desktop", "mediumScreen"],
-    `
-    width: calc(((100% - 2 * var(--gap, 0rem)) / 3));
-  `,
-  )}
-  ${mq(
-    ["largeDesktop"],
-    `
-    width: calc(((100% - 3 * var(--gap, 0rem)) / 4));
-  `,
-  )}
+const Contents = styled.div`
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+width: 100%;
+height: 100%;
 `;
 
 const Inner = styled.div`
@@ -107,6 +62,7 @@ const Description = styled.div<{
   color: var(--ha-S500-contrast);
   ${(props) => props.disabled && `color: var(--ha-S50-contrast);`}
   font-size: 0.9rem;
+  text-align: left;
   span {
     display: block;
     width: 100%;
@@ -116,17 +72,13 @@ const Description = styled.div<{
     font-size: 0.7rem;
   }
 `;
-type Extendable = MotionProps &
-  Omit<React.ComponentPropsWithoutRef<"button">, "title" | "onClick">;
-export interface SensorCardProps<E extends EntityName> extends Extendable {
+export interface SensorCardProps<E extends EntityName> extends Omit<CardBaseProps<'button', E>, 'title' | 'entity' | 'active' | 'as'> {
   /** An optional override for the title */
   title?: ReactNode;
   /** an optional description to add to the card */
   description?: ReactNode;
   /** The name of your entity */
   entity: E;
-  /** the onClick handler is called when the card is pressed  */
-  onClick?: (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
   /** optional override to replace the icon that appears in the card */
   icon?: string;
   /** override the unit displayed alongside the state */
@@ -145,11 +97,10 @@ function _SensorCard<E extends EntityName>({
   icon: _icon,
   historyOptions,
   unit,
-  onClick,
-  cssStyles,
   className,
-  id,
   hideGraph,
+  service,
+  serviceData,
   ...rest
 }: SensorCardProps<E>): JSX.Element {
   const domain = computeDomain(_entity);
@@ -164,70 +115,76 @@ function _SensorCard<E extends EntityName>({
   const icon = useIcon(_icon ?? null);
   const isUnavailable = isUnavailableState(entity.state);
   const disabled = _disabled || isUnavailable;
-  const hasOnClick = typeof onClick === "function";
-  const useApiHandler = useCallback(() => {
-    if (typeof onClick === "function" && !isUnavailable) onClick(entity);
-  }, [entity, onClick, isUnavailable]);
+  const hasOnClick = typeof rest.onClick === "function";
   return (
-    <StyledRipples
-      cssStyles={cssStyles}
-      id={id ?? ""}
-      className={`${className ?? ""} sensor-card`}
-      borderRadius="1rem"
-      disabled={disabled || !hasOnClick}
+    <StyledSensorCard
+      as="button"
+      disableActiveState
+      title={title}
+      // @ts-expect-error - don't know the entity name, so we can't know the service type
+      service={service}
+      // @ts-expect-error - don't know the entity name, so we can't know the service data
+      serviceData={serviceData}
+      entity={_entity}
+      className={`sensor-card ${className ?? ""} ${hasOnClick ? "has-on-click" : ""}`}
+      disabled={disabled}
       whileTap={{ scale: disabled || !hasOnClick ? 1 : 0.9 }}
+      {...rest}
     >
-      <StyledSensorCard
-        className={`wrapper ${hasOnClick ? "has-on-click" : ""}`}
-        disabled={disabled}
-        {...rest}
-        onClick={useApiHandler}
-      >
-        <Inner className={"inner"}>
-          <LayoutBetween className={"layout-between"}>
-            <Description disabled={disabled} className={"description"}>
-              {title || entity.attributes.friendly_name || _entity}
-              {entity.state && (
-                <State className={"state"}>
-                  {entity.state}
-                  {unit ?? entity.attributes.unit_of_measurement ?? ""}
-                </State>
-              )}
-              {description && <span className={"text"}>{description}</span>}
-            </Description>
-            {icon ?? entityIcon ?? domainIcon}
-          </LayoutBetween>
-          <Gap className={"gap"} />
-          <LayoutBetween className={"layout-between"}>
-            <Title className={"title"}>
-              {entity.custom.relativeTime}
-              {disabled ? ` - ${entity.state}` : ""}
-            </Title>
-          </LayoutBetween>
-        </Inner>
-        {!hideGraph && (
-          <div className={"history"}>
-            {entity.history.loading ? (
-              <Alert className={"loading"} description="Loading..." />
-            ) : entity.history.coordinates.length > 0 ? (
-              <SvgGraph coordinates={entity.history.coordinates} />
-            ) : (
-              <Alert
-                className={"no-state-history"}
-                description="No state history found."
-              />
+      <Contents>
+      <Inner className={"inner"}>
+        <LayoutBetween className={"layout-between"}>
+          <Description disabled={disabled} className={"description"}>
+            {title || entity.attributes.friendly_name || _entity}
+            {entity.state && (
+              <State className={"state"}>
+                {entity.state}
+                {unit ?? entity.attributes.unit_of_measurement ?? ""}
+              </State>
             )}
-          </div>
-        )}
-      </StyledSensorCard>
-    </StyledRipples>
+            {description && <span className={"text"}>{description}</span>}
+          </Description>
+          {icon ?? entityIcon ?? domainIcon}
+        </LayoutBetween>
+        <Gap className={"gap"} />
+        <LayoutBetween className={"layout-between"}>
+          <Title className={"title"}>
+            {entity.custom.relativeTime}
+            {disabled ? ` - ${entity.state}` : ""}
+          </Title>
+        </LayoutBetween>
+      </Inner>
+      {!hideGraph && (
+        <div className={"history"}>
+          {entity.history.loading ? (
+            <Alert className={"loading"} description="Loading..." />
+          ) : entity.history.coordinates.length > 0 ? (
+            <SvgGraph coordinates={entity.history.coordinates} />
+          ) : (
+            <Alert
+              className={"no-state-history"}
+              description="No state history found."
+            />
+          )}
+        </div>
+      )}  
+      </Contents>
+    </StyledSensorCard>
   );
 }
 /** The SensorCard is a component similar to the SensorCard from home assistant, currently it doesn't do anything other than display the graph of the recent history data for the entity if available. */
 export function SensorCard<E extends EntityName>(props: SensorCardProps<E>) {
+  const defaultColumns: AvailableQueries = {
+    xxs: 12,
+    xs: 6,
+    sm: 6,
+    md: 4,
+    lg: 4,
+    xlg: 3,
+  }
   return (
     <ErrorBoundary {...fallback({ prefix: "SensorCard" })}>
-      <_SensorCard {...props} />
+      <_SensorCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

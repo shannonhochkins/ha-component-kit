@@ -21,7 +21,7 @@ const ModalContainer = styled(motion.div)`
   width: var(--ha-modal-width);
   margin-left: calc(var(--ha-modal-width) / -2);
   color: var(--ha-S50-contrast);
-  height: calc(100% - 4rem);
+  max-height: calc(100% - 4rem);
   overflow: hidden;
   display: flex;
   flex-direction: row;
@@ -29,8 +29,9 @@ const ModalContainer = styled(motion.div)`
   justify-content: space-between;
   background-color: var(--ha-S200);
   z-index: var(--ha-modal-z-index);
+  box-shadow: 0px 0px 10px hsla(var(--ha-h), calc(var(--ha-50-s) * 0.8), 3%, 0.6);
   ${mq(
-    ["tablet", "mobile"],
+    ["xxs", "xs"],
     `
     max-width: 95vw;
     margin-left: calc(95vw / -2);
@@ -57,6 +58,7 @@ const ModalHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
+  flex-wrap: nowrap;
   position: absolute;
   top: 0;
   left: 0;
@@ -64,12 +66,16 @@ const ModalHeader = styled.div`
 `;
 
 const Title = styled.h4`
-  all: unset;
+  margin: 0;
   font-size: 1.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
 `;
 
 const Description = styled.h4`
-  all: unset;
+  margin: 0;
   font-size: 0.9rem;
   color: var(--ha-S500-contrast);
 `;
@@ -81,7 +87,7 @@ const ModalBackdrop = styled(motion.div)`
   width: 100%;
   height: 100%;
   cursor: pointer;
-  background: var(--ha-background-opaque);
+  background: hsla(var(--ha-h), calc(var(--ha-s) * 1%), 10%, 0.3);
   z-index: var(--ha-modal-z-index);
   backdrop-filter: blur(2em) brightness(0.75);
 `;
@@ -151,7 +157,6 @@ function _Modal({
           <ModalContainer
             style={{
               borderRadius: "1rem",
-              boxShadow: "0px 2px 4px var(--ha-S50)",
               ...style,
             }}
             css={css`
@@ -165,7 +170,10 @@ function _Modal({
             {...rest}
           >
             <ModalHeader className={`modal-header`}>
-              <Column alignItems="flex-start" className={`modal-column`}>
+              <Column alignItems="flex-start" className={`modal-column`} style={{
+                flexShrink: 1,
+                maxWidth: '70%'
+              }}>
                 {title && <Title className={`modal-title`}>{title}</Title>}
                 {description && (
                   <Description className={`modal-description`}>
@@ -173,7 +181,9 @@ function _Modal({
                   </Description>
                 )}
               </Column>
-              <Row gap="0.5rem">
+              <Row gap="0.5rem" wrap="nowrap" style={{
+                flexShrink: 0,
+              }}>
                 {headerActions && headerActions()}
                 <FabCard
                   className={`modal-close-button`}

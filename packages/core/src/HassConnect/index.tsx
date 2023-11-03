@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { type ReactNode, memo } from "react";
 import { useRef } from "react";
 import { HassProvider } from "./Provider";
 import type { HassProviderProps } from "./Provider";
@@ -81,7 +81,7 @@ const MotionDiv = styled(motion.div)`
 `;
 
 /** This component will show the Home Assistant login form you're used to seeing normally when logging into HA, once logged in you shouldn't see this again unless you clear device storage, once authenticated it will render the child components of HassConnect and provide access to the api. */
-export const HassConnect = ({
+export const HassConnect = memo(({
   children,
   hassUrl,
   loading = <Loader />,
@@ -132,4 +132,4 @@ export const HassConnect = ({
       )}
     </HassProvider>
   );
-};
+});

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, memo } from "react";
 import { css, Global } from "@emotion/react";
 import { CSSInterpolation } from "@emotion/serialize";
 import styled from "@emotion/styled";
@@ -6,7 +6,7 @@ import { merge } from "lodash";
 import { theme as defaultTheme } from "./theme";
 import type { ThemeParams } from "./theme";
 import { convertToCssVars } from "./helpers";
-import { fallback, FabCard, Modal } from "@components";
+import { useDevice, fallback, FabCard, Modal, type BreakPoints } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { motion } from "framer-motion";
 import {
@@ -18,8 +18,10 @@ import {
   DIFF,
   DEFAULT_THEME_OPTIONS,
 } from "./constants";
+import { useHass } from '@hakit/core';
 import { ThemeControls } from "./ThemeControls";
 import type { ThemeControlsProps } from "./ThemeControls";
+import { generateColumnBreakpoints } from './breakpoints';
 
 type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
@@ -46,6 +48,15 @@ export interface ThemeProviderProps<T extends object> {
   theme?: DeepPartial<ThemeParams> & T;
   /** any global style overrides */
   globalStyles?: CSSInterpolation;
+  /** default breakpoint media query overrides @default {
+   * xxs: 600,
+   * xs: 900,
+   * sm: 1200,
+   * md: 1536,
+   * lg: 1700,
+   * 
+  */
+  breakpoints?: BreakPoints;
 }
 
 const ThemeControlsBox = styled(motion.div)`
@@ -152,10 +163,17 @@ function _ThemeProvider<T extends object>({
   saturation: s = DEFAULT_THEME_OPTIONS.saturation,
   lightness: l = DEFAULT_THEME_OPTIONS.lightness,
   contrastThreshold: c = DEFAULT_THEME_OPTIONS.contrastThreshold,
+  breakpoints = DEFAULT_THEME_OPTIONS.breakpoints,
   includeThemeControls = false,
   themeControlStyles,
   globalStyles,
 }: ThemeProviderProps<T>): JSX.Element {
+  const { useStore } = useHass();
+  const setBreakpoints = useStore(store => store.setBreakpoints);
+  const _breakpoints = useStore(store => store.breakpoints);
+  const device = useDevice();
+  console.log('_breakpoints', _breakpoints, device);
+
   const getTheme = useCallback(() => {
     return {
       hue: h,
@@ -173,6 +191,21 @@ function _ThemeProvider<T extends object>({
   const colorScheme = _theme.darkMode ? "dark" : "light";
 
   useEffect(() => {
+    setBreakpoints(breakpoints);
+  }, [setBreakpoints, breakpoints]);
+
+  useEffect(() => {
+    Object.entries(device).forEach(([breakpointKey, active]) => {
+      const className = `bp-${breakpointKey}`;
+      if (active) {
+        document.body.classList.add(className);
+      } else {
+        document.body.classList.remove(className);
+      }
+    });
+  }, [device])
+
+  useEffect(() => {
     const newTheme = getTheme();
     setTheme(newTheme);
   }, [c, darkMode, getTheme, h, l, s, t]);
@@ -185,7 +218,7 @@ function _ThemeProvider<T extends object>({
             --is-dark-theme: ${_theme.darkMode ? "1" : "0"};
             color-scheme: ${colorScheme};
             --ha-ripple-size: 50;
-            --ha-ripple-duration: 0.5s;
+            --ha-ripple-duration: 0.5s;            
             --ha-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --ha-transition-duration: 0.25s;
             --ha-area-card-expanded-offset: 0;
@@ -290,7 +323,9 @@ function _ThemeProvider<T extends object>({
             color: var(--ha-S100-contrast);
             overflow-x: hidden;
             overflow-y: var(--ha-hide-body-overflow-y);
+            user-select: none;
           }
+          ${generateColumnBreakpoints(_breakpoints)}
           ${globalStyles ?? ""}
         `}
       />
@@ -337,10 +372,10 @@ function _ThemeProvider<T extends object>({
  *
  * There's very little css shipped with this ThemeProvider, the main purpose of this provider is to create the css variables used for all components across @hakit/components, however it does ship with some base css to the body, html and scrollbars.
  * */
-export function ThemeProvider<T extends object>(props: ThemeProviderProps<T>) {
+export const ThemeProvider = memo(function ThemeProvider<T extends object>(props: ThemeProviderProps<T>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ThemeProvider" })}>
       <_ThemeProvider {...props} />
     </ErrorBoundary>
   );
-}
+})

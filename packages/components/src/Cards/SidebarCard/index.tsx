@@ -42,19 +42,6 @@ const StyledTimeCard = styled(TimeCard)<{
       font-size: 0.7rem;
     }
   `}
-  ${mq(
-    [
-      "mobile",
-      "tablet",
-      "smallScreen",
-      "mediumScreen",
-      "desktop",
-      "largeDesktop",
-    ],
-    `
-    width: 100%;
-  `,
-  )}
 `;
 
 const StyledSidebarCard = styled(motion.div)`
@@ -73,7 +60,7 @@ const StyledSidebarCard = styled(motion.div)`
     transition-property: padding;
   }
   ${mq(
-    ["tablet", "mobile"],
+    ["xxs", "xs"],
     `
     position: fixed;
     top: 0;
@@ -198,7 +185,7 @@ const HamburgerMenu = styled(Menu)`
   }
 
   ${mq(
-    ["tablet", "mobile"],
+    ["xxs", "xs"],
     `
     left: 0;
     top: 0;
@@ -226,19 +213,6 @@ const StyledWeatherCard = styled(WeatherCard)`
     box-shadow: none;
     background: transparent;
   }
-  ${mq(
-    [
-      "mobile",
-      "tablet",
-      "smallScreen",
-      "mediumScreen",
-      "desktop",
-      "largeDesktop",
-    ],
-    `
-    width: 100%;
-  `,
-  )}
 `;
 
 const WeatherCardCustom = styled(StyledWeatherCard)<{
@@ -333,7 +307,7 @@ function _SidebarCard({
       <Global
         styles={css`
           :root {
-            --ha-area-card-expanded-offset: ${open
+            --ha-area-card-expanded-offset: ${devices.xxs || devices.xs ? '0rem' : open
               ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
               : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
             --ha-sidebar-max-width: ${open
@@ -379,6 +353,7 @@ function _SidebarCard({
             >
               {includeTimeCard && (
                 <StyledTimeCard
+                  disableColumns
                   key="sidebar-large-time-card"
                   className="sidebar-time-card"
                   open={open}
@@ -399,13 +374,13 @@ function _SidebarCard({
                 key="hamburger-menu-open"
                 animate={{
                   width:
-                    devices.mobile || devices.tablet
+                    devices.xxs || devices.xs
                       ? "auto"
                       : !open
                       ? "100%"
                       : "40%",
                   position:
-                    devices.mobile || devices.tablet ? "fixed" : "relative",
+                    devices.xxs || devices.xs ? "fixed" : "relative",
                 }}
               >
                 <motion.li
@@ -473,6 +448,7 @@ function _SidebarCard({
                 }}
               >
                 <WeatherCardCustom
+                  disableColumns
                   className="weather-card-sidebar"
                   open={open}
                   initial={{ opacity: 0 }}

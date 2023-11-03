@@ -1,11 +1,7 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import styled from "@emotion/styled";
 import { lowerCase, startCase } from "lodash";
 import type {
-  DomainService,
-  ExtractDomain,
-  ServiceData,
-  HassEntityWithApi,
   EntityName,
 } from "@hakit/core";
 import {
@@ -17,141 +13,42 @@ import {
   ON,
 } from "@hakit/core";
 import {
-  Ripples,
-  ModalByEntityDomain,
   fallback,
   Column,
-  mq,
+  CardBase, type CardBaseProps,
+  type AvailableQueries,
 } from "@components";
 import { computeDomain } from "@utils/computeDomain";
-import type { MotionProps } from "framer-motion";
-import { motion } from "framer-motion";
-import { useLongPress } from "react-use";
 import { ErrorBoundary } from "react-error-boundary";
 
-const StyledButtonCard = styled(motion.button)`
-  all: unset;
+
+const StyledButtonCard = styled(CardBase)`
+  &.slim {
+    justify-content: center;
+    .fab-card-inner {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+
+  .children {
+    width: 100%;
+  }
+  &.slim-vertical {
+    justify-content: center;
+    .fab-card-inner {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+`;
+
+const Contents = styled.div`
   padding: 1rem;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
-  cursor: pointer;
-  background-color: var(--ha-S300);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-color, box-shadow;
-  width: calc(100% - 2rem);
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.8;
-  }
-
-  &:active {
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-  }
-  &:not(:disabled):hover {
-    background-color: var(--ha-S400);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-  }
-  .slim & {
-    justify-content: center;
-    .fab-card-inner {
-      width: 3rem;
-      height: 3rem;
-    }
-  }
-  .slim-vertical & {
-    justify-content: center;
-    .fab-card-inner {
-      width: 3rem;
-      height: 3rem;
-    }
-  }
-  .children {
-    width: 100%;
-  }
-`;
-const StyledRipples = styled(Ripples)`
-  flex-shrink: 1;
-  ${mq(
-    ["mobile"],
-    `
-    width: 100%;
-  `,
-  )}
-  ${mq(
-    ["tablet"],
-    `
-    width: calc(50% - var(--gap, 0rem) / 2);
-  `,
-  )}
-  ${mq(
-    ["smallScreen"],
-    `
-    width: calc((100% - 2 * var(--gap, 0rem)) / 3);
-  `,
-  )}
-  ${mq(
-    ["mediumScreen"],
-    `
-    width: calc((100% - 3 * var(--gap, 0rem)) / 4);
-  `,
-  )}
-  ${mq(
-    ["desktop"],
-    `
-    width: calc((100% - 5 * var(--gap, 0rem)) / 6);
-  `,
-  )}
-  ${mq(
-    ["largeDesktop"],
-    `
-    width: calc((100% - 7 * var(--gap, 0rem)) / 8);
-  `,
-  )}
-  &.slim {
-    ${mq(
-      ["mobile"],
-      `
-      width: 100%;
-    `,
-    )}
-    ${mq(
-      ["tablet"],
-      `
-      width: calc(50% - var(--gap, 0rem) / 2);
-    `,
-    )}
-    ${mq(
-      ["smallScreen"],
-      `
-      width: calc((100% - 2 * var(--gap, 0rem)) / 3);
-    `,
-    )}
-    ${mq(
-      ["mediumScreen"],
-      `
-      width: calc((100% - 3 * var(--gap, 0rem)) / 4);
-    `,
-    )}
-    ${mq(
-      ["desktop"],
-      `
-      width: calc((100% - 4 * var(--gap, 0rem)) / 5);
-    `,
-    )}
-    ${mq(
-      ["largeDesktop"],
-      `
-      width: calc((100% - 5 * var(--gap, 0rem)) / 6);
-    `,
-    )}
-  }
 `;
 
 interface ToggleProps {
@@ -249,6 +146,7 @@ const Title = styled.div`
   color: var(--ha-S500-contrast);
   font-size: 0.7rem;
   margin: 2px 0;
+  text-align: left;
   &.slim-vertical {
     text-align: center;
   }
@@ -259,35 +157,15 @@ const Description = styled.div`
   font-size: 0.8rem;
   font-weight: 500;
 `;
-type Extendable = Omit<
-  React.ComponentProps<"button">,
-  "title" | "onClick" | "ref"
-> &
-  MotionProps;
-export interface ButtonCardProps<E extends EntityName> extends Extendable {
+
+
+export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProps<'button', E>, 'as'> {
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
   icon?: string | null;
   /** the css color value of the icon */
   iconColor?: string | null;
-  /** By default, the title is retrieved from the domain name, or you can specify a manual title */
-  title?: string | null;
   /** By default, the description is retrieved from the friendly name of the entity, or you can specify a manual description */
   description?: string | null;
-  /** The service name, eg "toggle, turnOn ..." */
-  service?: DomainService<ExtractDomain<E>>;
-  /** The data to pass to the service */
-  serviceData?: ServiceData<ExtractDomain<E>, DomainService<ExtractDomain<E>>>;
-  /** The name of your entity */
-  entity?: E;
-  /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
-  onClick?: E extends undefined
-    ? (entity: null, event: React.MouseEvent<HTMLButtonElement>) => void
-    : (
-        entity: HassEntityWithApi<ExtractDomain<E>>,
-        event: React.MouseEvent<HTMLButtonElement>,
-      ) => void;
-  /** Optional active param, By default this is updated via home assistant */
-  active?: boolean;
   /** The layout of the button card, mimics the style of HA mushroom cards in slim/slim-vertical @default default */
   defaultLayout?: "default" | "slim" | "slim-vertical";
   /** Hide the state value */
@@ -300,28 +178,24 @@ export interface ButtonCardProps<E extends EntityName> extends Extendable {
   hideDetails?: boolean;
 }
 function _ButtonCard<E extends EntityName>({
-  service,
   entity: _entity,
+  service,
+  serviceData,
   iconColor,
   icon: _icon,
   active,
-  serviceData,
   onClick,
   description: _description,
   title: _title,
   defaultLayout,
   disabled = false,
   className,
-  id,
-  style,
-  cssStyles,
   hideState,
   hideLastUpdated,
   children,
   hideDetails,
   ...rest
 }: ButtonCardProps<E>): JSX.Element {
-  const [openModal, setOpenModal] = useState(false);
   const domain = _entity ? computeDomain(_entity) : null;
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
@@ -347,34 +221,6 @@ function _ButtonCard<E extends EntityName>({
   const iconElement = useIcon(icon, {
     color: iconColor || undefined,
   });
-  const longPressEvent = useLongPress(
-    (e) => {
-      // ignore on right click
-      if (("button" in e && e.button === 2) || disabled || isUnavailable)
-        return;
-      setOpenModal(true);
-    },
-    {
-      isPreventDefault: false,
-    },
-  );
-
-  const onClickHandler = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      if (disabled) return;
-      // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
-      if (typeof service === "string" && entity && !isUnavailable) {
-        // @ts-expect-error - we don't actually know the service at this level
-        const caller = entity.api[service];
-        caller(serviceData);
-      }
-      if (typeof onClick === "function") {
-        // @ts-expect-error - types are accurate, we just don't know the domain entity type
-        onClick(entity, event);
-      }
-    },
-    [service, disabled, entity, serviceData, onClick, isUnavailable],
-  );
   // use the input description if provided, else use the friendly name if available, else entity name, else null
   const description = useMemo(() => {
     return _description === null
@@ -407,32 +253,22 @@ function _ButtonCard<E extends EntityName>({
   }
 
   return (
-    <>
-      <StyledRipples
-        id={id ?? undefined}
-        borderRadius="1rem"
-        disabled={disabled || isUnavailable}
-        whileTap={{ scale: disabled || isUnavailable ? 1 : 0.9 }}
-        className={`${className ?? ""} ${
-          defaultLayout ?? "default"
-        } button-card`}
-        cssStyles={cssStyles}
-        style={{
-          ...(style ?? {}),
-        }}
-      >
-        <StyledButtonCard
-          {...longPressEvent}
-          disabled={disabled || isUnavailable}
-          layoutId={
-            typeof _entity === "string"
-              ? `${_entity}-${id ? `${id}-` : ""}button-card`
-              : undefined
-          }
-          className={`${active ? "active " : ""}`}
-          {...rest}
-          onClick={onClickHandler}
-        >
+    <StyledButtonCard
+      as="button"
+      // @ts-expect-error - don't know the entity name, so we can't know the service type
+      service={service}
+      // @ts-expect-error - don't know the entity name, so we can't know the service data
+      serviceData={serviceData}
+      active={active}
+      entity={_entity as EntityName}
+      title={title ?? undefined}
+      disabled={disabled || isUnavailable}
+      onClick={onClick}
+      className={`${className ?? ""} ${
+        defaultLayout ?? "default"
+      } button-card`}
+      {...rest}>
+        <Contents>
           <LayoutBetween
             className={`layout-between ${
               defaultLayout === "slim-vertical" ? "vertical" : ""
@@ -513,20 +349,8 @@ function _ButtonCard<E extends EntityName>({
             </Footer>
           )}
           {children && <div className="children">{children}</div>}
-        </StyledButtonCard>
-      </StyledRipples>
-      {typeof _entity === "string" && (
-        <ModalByEntityDomain
-          entity={_entity as EntityName}
-          title={title ?? "Unknown title"}
-          onClose={() => {
-            setOpenModal(false);
-          }}
-          open={openModal}
-          id={`${_entity}-${id ? `${id}-` : ""}button-card`}
-        />
-      )}
-    </>
+        </Contents>
+    </StyledButtonCard>
   );
 }
 /**
@@ -534,9 +358,17 @@ function _ButtonCard<E extends EntityName>({
  * Below are a few examples of layouts that the ButtonCard supports
  * */
 export function ButtonCard<E extends EntityName>(props: ButtonCardProps<E>) {
+  const defaultColumns: AvailableQueries = {
+    xxs: 12,
+    xs: 6,
+    sm: 4,
+    md: 3,
+    lg: 2,
+    xlg: 2,
+  }
   return (
     <ErrorBoundary {...fallback({ prefix: "ButtonCard" })}>
-      <_ButtonCard {...props} />
+      <_ButtonCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

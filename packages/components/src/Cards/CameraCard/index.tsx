@@ -10,27 +10,37 @@ import {
   STREAM_TYPE_HLS,
 } from "@hakit/core";
 import styled from "@emotion/styled";
-import { css } from "@emotion/react";
-import { motion, type MotionProps } from "framer-motion";
-import { useEffect, useCallback, useRef, useState, useMemo } from "react";
+import {
+  useEffect,
+  useCallback,
+  useRef,
+  useState,
+  useMemo,
+  Children,
+  isValidElement,
+  cloneElement
+} from "react";
 import {
   PreloadImage,
   fallback,
   Row,
-  mq,
   FabCard,
-  ButtonGroup,
-  ButtonGroupProps,
+  ButtonBar,
+  ButtonBarProps,
+  ButtonBarButton,
+  ButtonBarButtonProps,
+  CardBase,
+  type AvailableQueries,
+  type CardBaseProps
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { CameraStream } from "./stream";
 import { type VideoState } from "./players";
 import { Icon } from "@iconify/react";
 
-type Extendable = Omit<React.ComponentProps<"div">, "onClick" | "ref"> &
-  MotionProps;
+type Extendable = Omit<CardBaseProps<'div', FilterByDomain<EntityName, "camera">>, "onClick" | "ref" | 'entity' | 'title' | 'children' | 'active' | 'as'>
 export interface CameraCardProps extends Extendable {
-  /** The name of your camera entity */
+  /** the camera entity to display */
   entity: FilterByDomain<EntityName, "camera">;
   /** override the camera name displayed in the card */
   name?: string;
@@ -50,8 +60,8 @@ export interface CameraCardProps extends Extendable {
   playsInline?: boolean;
   /** the refresh rate for the poster image when in poster view @default 10000 */
   posterUpdateInterval?: number;
-  /** sensors to render in the header of the card */
-  headerSensors?: ButtonGroupProps["buttons"];
+  /** sensors to render in the header of the card */ 
+  headerSensors?: ButtonBarProps["children"];
   /** hide the footer of the card, this will hide all sensors @default false */
   hideFooter?: boolean;
   /** hide the view controls @default false */
@@ -88,50 +98,8 @@ const StateFabCard = styled(FabCard)`
   }
 `;
 
-const Wrapper = styled(motion.div)`
-  padding: 0;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  width: 100%;
+const Wrapper = styled(CardBase)`
   aspect-ratio: 16/9;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  cursor: pointer;
-  background-color: var(--ha-S300);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: box-shadow, background-color;
-  &.disabled {
-    cursor: not-allowed;
-    opacity: 0.8;
-  }
-  ${mq(
-    ["mobile"],
-    `
-    width: 100%;
-  `,
-  )}
-  ${mq(
-    ["tablet", "smallScreen"],
-    `
-    width: calc(((100% - 1 * var(--gap, 0rem)) / 2));
-  `,
-  )}
-  ${mq(
-    ["desktop", "mediumScreen"],
-    `
-    width: calc(((100% - 2 * var(--gap, 0rem)) / 3));
-  `,
-  )}
-  ${mq(
-    ["largeDesktop"],
-    `
-    width: calc(((100% - 3 * var(--gap, 0rem)) / 4));
-  `,
-  )}
 `;
 
 const CameraName = styled.div`
@@ -172,15 +140,15 @@ function _CameraCard({
   controls = false,
   playsInline = true,
   posterUpdateInterval = 10000,
-  id,
   className,
-  cssStyles,
   name,
   hideName,
   headerSensors,
   hideFooter,
   hideViewControls,
   onClick,
+  service,
+  serviceData,
   ...rest
 }: CameraCardProps) {
   const cameraUpdater = useRef<number | undefined>(undefined);
@@ -257,20 +225,11 @@ function _CameraCard({
     }
   }, []);
 
-  const _headerSensors = useMemo(
-    () =>
-      headerSensors?.map((sensor) => ({
-        size: DEFAULT_ICON_BUTTON_SIZE,
-        disabled: isUnavailable,
-        ...sensor,
-      })),
-    [headerSensors, isUnavailable],
-  );
-
   const viewButtons = useMemo(() => {
-    const buttons: ButtonGroupProps["buttons"] = [];
+    const buttons: ButtonBarProps["children"] = [];
     if (supportsLiveStream) {
-      buttons.push({
+      buttons.push(<ButtonBarButton {...{
+        key: "live",
         icon: "mdi:video",
         size: DEFAULT_ICON_BUTTON_SIZE,
         disabled: isUnavailable,
@@ -280,11 +239,12 @@ function _CameraCard({
         active: _view === "live",
         title: "Live View",
         tooltipPlacement: "top",
-      });
+      }} />);
     }
     buttons.push(
       ...([
-        {
+        <ButtonBarButton {...{
+          key: "motion",
           icon: "mdi:video-image",
           size: DEFAULT_ICON_BUTTON_SIZE,
           disabled: isUnavailable,
@@ -294,8 +254,9 @@ function _CameraCard({
           active: _view === "motion",
           title: "Motion View",
           tooltipPlacement: "top",
-        },
-        {
+        }} />,
+        <ButtonBarButton {...{
+          key: "poster",
           onClick: () => {
             setView("poster");
           },
@@ -305,110 +266,112 @@ function _CameraCard({
           active: _view === "poster",
           title: "Poster View",
           tooltipPlacement: "top",
-        },
-      ] satisfies ButtonGroupProps["buttons"]),
+        }} />
+      ] satisfies ButtonBarProps["children"]),
     );
     return buttons;
   }, [supportsLiveStream, isUnavailable, _view]);
 
+  const cameraName = useMemo(
+    () => name ?? camera.attributes.friendly_name ?? camera.entity_id,
+    [name, camera],
+  );
+
   return (
-    <Wrapper
-      id={id ?? ""}
-      cssStyles={css`
-        ${cssStyles ?? ""}
-      `}
-      className={`camera-card ${className ?? ""}`}
-      onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        event.stopPropagation();
-        if (onClick) onClick(camera, event);
-      }}
-      {...rest}
-    >
-      <Header justifyContent="space-between" gap="0.5rem">
-        <Row justifyContent="flex-start" gap="0.5rem">
-          <StateFabCard
-            active
-            borderRadius={10}
-            disableScaleEffect
-            size={30}
-            noIcon
-          >
-            <div ref={stateValueRef}>
-              {loading
-                ? "CONNECTING"
-                : _view === "live"
-                ? "loading"
-                : camera.state}
-            </div>
-          </StateFabCard>
-        </Row>
-        {isUnavailable && (
-          <CameraName>Unavailable {camera.entity_id}</CameraName>
-        )}
-        {!hideName && (
-          <CameraName>
-            {name ?? camera.attributes.friendly_name ?? camera.entity_id}
-          </CameraName>
-        )}
-      </Header>
-      {!hideFooter && (
-        <Footer justifyContent="space-between" gap="0.5rem" wrap="nowrap">
-          {_headerSensors && (
-            <Row justifyContent="flex-start" gap="0.5rem">
-              <ButtonGroup
-                cssStyles={`
-          button {
-            height: ${DEFAULT_ICON_BUTTON_SIZE}px !important;
-          }
-        `}
-                buttons={_headerSensors}
-              />
-            </Row>
+    <>
+      <Wrapper
+        entity={entity}
+        // @ts-expect-error - don't know the entity name, so we can't know the service type
+        service={service}
+        // @ts-expect-error - don't know the entity name, so we can't know the service data
+        serviceData={serviceData}
+        title={cameraName}
+        className={`camera-card ${className ?? ""}`}
+        onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+          if (onClick) onClick(camera, event);
+        }}
+        {...rest}
+      >
+        <Header justifyContent="space-between" gap="0.5rem">
+          <Row justifyContent="flex-start" gap="0.5rem">
+            <StateFabCard
+              active
+              borderRadius={10}
+              disableScale
+              size={30}
+              noIcon
+            >
+              <div ref={stateValueRef}>
+                {loading
+                  ? "CONNECTING"
+                  : _view === "live"
+                  ? "loading"
+                  : camera.state}
+              </div>
+            </StateFabCard>
+          </Row>
+          {isUnavailable && (
+            <CameraName>Unavailable {camera.entity_id}</CameraName>
           )}
-          {!hideViewControls && (
-            <Row justifyContent="flex-start" gap="0.5rem">
-              <ButtonGroup
-                cssStyles={`
-          button {
-            height: ${DEFAULT_ICON_BUTTON_SIZE}px !important;
-          }
-        `}
-                buttons={viewButtons}
-              />
-            </Row>
-          )}
-        </Footer>
-      )}
-      {_view !== "live" && (poster.url || mjpeg.url) && (
-        <PreloadImage
-          onLoad={onImageLoad}
-          onLoading={onImageLoading}
-          src={_view === "motion" && mjpeg.url ? mjpeg.url : poster.url ?? ""}
-          style={{
-            width: "100%",
-            height: "100%",
-            position: "absolute",
-          }}
-          lazy
-        />
-      )}
-      {_view === "live" && (
-        <>
-          <StyledIcon
-            ref={loadingIconRef}
-            icon="eos-icons:three-dots-loading"
+          {!hideName && <CameraName>{cameraName}</CameraName>}
+        </Header>
+        {!hideFooter && (
+          <Footer justifyContent="space-between" gap="0.5rem" wrap="nowrap">
+            {headerSensors && (
+              <Row justifyContent="flex-start" gap="0.5rem">
+                <ButtonBar>
+                  {Children.map(headerSensors, (child, index) => {
+                    if (isValidElement<ButtonBarButtonProps<EntityName>>(child)) {
+                      return cloneElement(child, {
+                        key: child.key || index,
+                        size: DEFAULT_ICON_BUTTON_SIZE,
+                      });
+                    }
+                    return child;
+                  })}
+                </ButtonBar>
+              </Row>
+            )}
+            {!hideViewControls && (
+              <Row justifyContent="flex-start" gap="0.5rem">
+                <ButtonBar>
+                  {viewButtons}
+                </ButtonBar>
+              </Row>
+            )}
+          </Footer>
+        )}
+        {_view !== "live" && (poster.url || mjpeg.url) && (
+          <PreloadImage
+            onLoad={onImageLoad}
+            onLoading={onImageLoading}
+            src={_view === "motion" && mjpeg.url ? mjpeg.url : poster.url ?? ""}
+            style={{
+              width: "100%",
+              height: "100%",
+              position: "absolute",
+            }}
+            lazy
           />
-          <CameraStream
-            autoPlay={autoPlay}
-            muted={muted}
-            controls={controls}
-            playsInline={playsInline}
-            onStateChange={onVideoStateChange}
-            entity={entity}
-          />
-        </>
-      )}
-    </Wrapper>
+        )}
+        {_view === "live" && (
+          <>
+            <StyledIcon
+              ref={loadingIconRef}
+              icon="eos-icons:three-dots-loading"
+            />
+            <CameraStream
+              autoPlay={autoPlay}
+              muted={muted}
+              controls={controls}
+              playsInline={playsInline}
+              onStateChange={onVideoStateChange}
+              entity={entity}
+            />
+          </>
+        )}
+      </Wrapper>
+    </>
   );
 }
 
@@ -426,9 +389,17 @@ function _CameraCard({
  * Note: If you want to just use the stream, you can also import CameraStream from @hakit/components to use the stream as a video player element.
  * */
 export function CameraCard(props: CameraCardProps) {
+  const defaultColumns: AvailableQueries = {
+    xxs: 12,
+    xs: 6,
+    sm: 6,
+    md: 4,
+    lg: 4,
+    xlg: 3,
+  }
   return (
     <ErrorBoundary {...fallback({ prefix: "CameraCard" })}>
-      <_CameraCard {...props} />
+      <_CameraCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

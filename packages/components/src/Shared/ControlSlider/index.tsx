@@ -27,8 +27,8 @@ export interface ControlSliderProps
   step?: number;
   /** should the slider be disabled @default false*/
   disabled?: boolean;
-  /** the colour to theme the slider, this should be in rgb format [number, number, number] @default [70, 70, 70] */
-  sliderColor?: [number, number, number];
+  /** the colour to theme the slider, this should be in rgb format or a css color value [number, number, number] @default [70, 70, 70] */
+  sliderColor?: [number, number, number] | string;
   /** called when the slider is being dragged around @default undefined */
   onChange?: (value: number) => void;
   /** called when the user has finished interacting with the slider @default undefined */
@@ -48,9 +48,14 @@ const Slider = styled.div<
 >`
   ${(props) => {
     const defaultColor = [70, 70, 70];
-    const color = props.disabled
-      ? defaultColor
-      : (props.sliderColor || defaultColor).join(",");
+    let color = `rgb(${defaultColor.join(", ")})`;
+    if (!props.disabled) {
+      if (typeof props.sliderColor === "string") {
+        color = props.sliderColor;
+      } else {
+        color = `rgb(${(props.sliderColor || defaultColor).join(",")})`;
+      }
+    }
     return `
       
       touch-action: none;
@@ -67,7 +72,7 @@ const Slider = styled.div<
       border-radius: var(--ha-slider-control-border-radius);
       outline: 0px;
       &:focus-visible {
-        box-shadow: 0 0 0 2px rgb(${color});
+        box-shadow: 0 0 0 2px ${color};
       }
       &:not([vertical]) {
         width: 100%;
@@ -81,7 +86,7 @@ const Slider = styled.div<
         max-height: 320px;
         min-height: 200px;
         ${mq(
-          ["mobile"],
+          ["xxs"],
           `
           min-height: 0;
           height: 35vh;
@@ -107,13 +112,14 @@ const Slider = styled.div<
         left: 0px;
         height: 100%;
         width: 100%;
-        background: rgba(${color}, 0.2);
+        background: ${color};
+        opacity: 0.2;
       }
       .slider-track-bar {
         position: absolute;
         height: 100%;
         width: 100%;
-        background-color: rgb(${color});
+        background-color: ${color};
         transition: transform 180ms ease-in-out, background-color 180ms ease-in-out;                
         &:after {
           display: ${props.showHandle ? "block" : "none"};
@@ -126,7 +132,7 @@ const Slider = styled.div<
       }
       .slider-track-cursor {
         position: absolute;
-        background-color: rgb(${color});
+        background-color: ${color};
         border-radius: var(--ha-slider-control-handle-size);
         transition:
           left 180ms ease-in-out,

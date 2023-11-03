@@ -1,24 +1,20 @@
 import styled from "@emotion/styled";
 import { Icon } from "@iconify/react";
-import { css } from "@emotion/react";
 import {
   Row,
   fallback,
-  mq,
   PreloadImage,
+  CardBase,
+  type CardBaseProps,
   type PreloadImageProps,
+  type AvailableQueries
 } from "@components";
 import { motion } from "framer-motion";
-import type { MotionProps } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
-
-type Extendable = Omit<React.ComponentProps<"button">, "onClick" | "ref"> &
-  MotionProps;
-export interface PictureCardProps extends Extendable {
-  onClick?: () => void;
-  /** an image to provide to the picture card */
+export interface PictureCardProps extends Omit<CardBaseProps<"button">, 'active' | 'as' | 'title'> {
+  /** an image to provide to the card */
   image: string;
-  /** a title of the picture card */
+  /** a title of the card */
   title: string;
   /** an optional icon to provide */
   icon?: string;
@@ -26,54 +22,13 @@ export interface PictureCardProps extends Extendable {
   preloadProps?: PreloadImageProps;
 }
 
-const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
-  outline: none;
-  border: 0;
-  padding: 0;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  width: 100%;
-  display: flex;
+const StyledPictureCard = styled(CardBase)`
   aspect-ratio: 16 / 9;
+`;
+const Inner = styled.div`
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
-  cursor: pointer;
-  background-color: var(--ha-S300);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-color, box-shadow, background-image;
-  will-change: width, height;
-  flex-shrink: 1;
-  &:hover {
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-    background-color: var(--ha-S400);
-  }
-  ${mq(
-    ["mobile"],
-    `
-    width: 100%;
-  `,
-  )}
-  ${mq(
-    ["tablet", "smallScreen"],
-    `
-    width: calc(((100% - 1 * var(--gap, 0rem)) / 2));
-  `,
-  )}
-  ${mq(
-    ["desktop", "mediumScreen"],
-    `
-    width: calc(((100% - 2 * var(--gap, 0rem)) / 3));
-  `,
-  )}
-  ${mq(
-    ["largeDesktop"],
-    `
-    width: calc(((100% - 3 * var(--gap, 0rem)) / 4));
-  `,
-  )}
 `;
 
 const PictureCardFooter = styled(motion.h4)`
@@ -88,55 +43,62 @@ const PictureCardFooter = styled(motion.h4)`
 `;
 
 function _PictureCard({
-  onClick,
   title,
   image,
   icon,
   className,
-  cssStyles,
   preloadProps,
+  children,
   ...rest
 }: PictureCardProps): JSX.Element {
   return (
     <StyledPictureCard
+      disableActiveState
+      disableScale={typeof rest.onClick === 'undefined'}
       className={`picture-card ${className ?? ""}`}
-      css={css`
-        ${cssStyles ?? ""}
-      `}
       {...rest}
-      whileTap={{ scale: 0.9 }}
-      onClick={() => {
-        if (typeof onClick === "function") onClick();
-      }}
     >
-      <PreloadImage
-        {...(preloadProps ?? {})}
-        src={image}
-        style={{
-          width: "100%",
-          height: "100%",
-          position: "absolute",
-        }}
-        onClick={() => {
-          if (typeof onClick === "function") onClick();
-        }}
-        lazy
-      >
-        <PictureCardFooter className="footer">
-          <Row gap={"0.5rem"} className="row">
-            {icon && <Icon icon={icon} className="icon" />}
-            {title}
-          </Row>
-        </PictureCardFooter>
-      </PreloadImage>
+      <Inner>
+        <PreloadImage
+          {...(preloadProps ?? {})}
+          src={image}
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+          }}
+          lazy
+        >
+          <PictureCardFooter className="footer">
+            <Row gap={"0.5rem"} className="row">
+              {icon && <Icon icon={icon} className="icon" />}
+              {title}
+            </Row>
+          </PictureCardFooter>
+        </PreloadImage>
+      </Inner>
+      {children && <div className="children">{children}</div>}
     </StyledPictureCard>
   );
 }
-/** A simple component to render an image with a title/icon similar to the lovelace picture card, you can also bind a click event to the card */
+/** A simple component to render an image with a title/icon similar to the lovelace picture card, you can also bind a click event to the card, which will also return the entity if provided
+ * @example
+ * <PictureCard entity="group.some_group_of_lights" onClick={(entity) => {
+ *  entity.service.toggle();
+ * }}
+ */
 export function PictureCard(props: PictureCardProps) {
+  const defaultColumns: AvailableQueries = {
+    xxs: 12,
+    xs: 6,
+    sm: 6,
+    md: 4,
+    lg: 4,
+    xlg: 3,
+  }
   return (
     <ErrorBoundary {...fallback({ prefix: "PictureCard" })}>
-      <_PictureCard {...props} />
+      <_PictureCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

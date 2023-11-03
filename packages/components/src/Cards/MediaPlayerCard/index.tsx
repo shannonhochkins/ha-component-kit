@@ -11,17 +11,16 @@ import { snakeCase, clamp } from "lodash";
 import { useGesture } from "@use-gesture/react";
 import type { HassEntity } from "home-assistant-js-websocket";
 import type { EntityName, FilterByDomain } from "@hakit/core";
-import { FabCard, fallback, Row, Column, RangeSlider, mq } from "@components";
-import type { RowProps } from "@components";
+import { FabCard, fallback, Row, Column, RangeSlider, CardBase, mq } from "@components";
+import type { CardBaseProps, RowProps, AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { motion, MotionProps } from "framer-motion";
 import { Marquee } from "./Marquee";
 import type { MarqueeProps } from "./Marquee";
 import { useThrottledCallback } from "use-debounce";
 
-const MediaPlayerWrapper = styled(motion.div)<{
+const MediaPlayerWrapper = styled(CardBase)<CardBaseProps<'div', FilterByDomain<EntityName, "media_player">> & {
   backgroundImage?: string;
   layoutName?: Layout;
 }>`
@@ -43,30 +42,6 @@ const MediaPlayerWrapper = styled(motion.div)<{
     `
     aspect-ratio: 1/1;
   `}
-  ${mq(
-    ["mobile"],
-    `
-    width: 100%;
-  `,
-  )}
-  ${mq(
-    ["tablet", "smallScreen"],
-    `
-    width: calc(50% - var(--gap, 0rem) / 2);
-  `,
-  )}
-  ${mq(
-    ["desktop", "mediumScreen"],
-    `
-    width: calc(((100% - 2 * var(--gap, 0rem)) / 3));
-  `,
-  )}
-  ${mq(
-    ["largeDesktop"],
-    `
-    width: calc(((100% - 3 * var(--gap, 0rem)) / 4));
-  `,
-  )}
   ${(props) => {
     if (props.backgroundImage) {
       return `
@@ -230,14 +205,14 @@ const VolumeSlider = styled.label<{
   font-size: 1rem;
   line-height: 1.5;
   ${mq(
-    ["mobile"],
+    ["xxs"],
     `
     width: 40%;
   `,
   )}
 
   ${mq(
-    ["tablet", "smallScreen"],
+    ["xs", "sm"],
     `
     width: 60%;
   `,
@@ -282,11 +257,13 @@ function PlaybackControls({
         className="skip-previous"
         disabled={disabled || isOff || !supportsPreviousTrack}
         size={size}
+        iconColor={`var(--ha-S200-contrast)`}
         icon="mdi:skip-previous"
         onClick={() => mp.mediaPreviousTrack(allEntityIds)}
       />
       <StyledFab
         className="play-pause"
+        iconColor={`var(--ha-S200-contrast)`}
         disabled={disabled || isOff || !supportsPlay}
         size={size * (feature ? 2 : 1)}
         icon={playing ? "mdi:pause" : "mdi:play"}
@@ -300,6 +277,7 @@ function PlaybackControls({
       />
       <StyledFab
         className="skip-next"
+        iconColor={`var(--ha-S200-contrast)`}
         disabled={disabled || isOff || !supportsNextTrack}
         size={size}
         icon="mdi:skip-next"
@@ -353,6 +331,7 @@ function AlternateControls({
       {supportsGrouping && (
         <StyledFab
           className="speaker-group"
+          iconColor={`var(--ha-S200-contrast)`}
           active={groups.length > 0}
           disabled={disabled}
           size={DEFAULT_FAB_SIZE}
@@ -365,6 +344,7 @@ function AlternateControls({
       {(isUnavailable || isOff) && <SmallText>{entity.state}</SmallText>}
       <StyledFab
         className="media-player-power"
+        iconColor={`var(--ha-S200-contrast)`}
         active={!isOff && !isUnavailable}
         disabled={disabled || !supportsTurnOn || !supportsTurnOff}
         size={DEFAULT_FAB_SIZE}
@@ -427,6 +407,7 @@ function VolumeControls({
     <>
       {!hideMute && supportsVolumeMute && (
         <StyledFab
+          iconColor={`var(--ha-S200-contrast)`}
           className={`volume-mute ${is_volume_muted ? "muted" : "not-muted"}`}
           disabled={disabled}
           size={DEFAULT_FAB_SIZE}
@@ -441,6 +422,7 @@ function VolumeControls({
       {volumeLayout === "buttons" && supportsVolumeSet && (
         <>
           <StyledFab
+            iconColor={`var(--ha-S200-contrast)`}
             className="volume-down"
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}
@@ -448,6 +430,7 @@ function VolumeControls({
             onClick={() => mp.volumeDown(allEntityIds)}
           />
           <StyledFab
+            iconColor={`var(--ha-S200-contrast)`}
             className="volume-up"
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}
@@ -474,11 +457,11 @@ function VolumeControls({
     </>
   );
 }
-type Extendable = Omit<React.ComponentProps<"div">, "ref"> &
-  Omit<MotionProps, "layout">;
-export interface MediaPlayerCardProps extends Extendable {
+export interface MediaPlayerCardProps extends Omit<CardBaseProps<'div', FilterByDomain<EntityName, "media_player">>, 'title' | 'as' | 'active' | 'layout' | 'entity'> {
   /** the entity_id of the media_player to control */
   entity: FilterByDomain<EntityName, "media_player">;
+  /** an optional override for the title of the entity */
+  title?: React.ReactNode;
   /** if the entity supports grouping, you can provide the groupMembers as a list to join them together */
   groupMembers?: FilterByDomain<EntityName, "media_player">[];
   /** the layout of the card @default 'card' */
@@ -514,14 +497,16 @@ function _MediaPlayerCard({
   hideAppName = false,
   hideEntityName = false,
   disabled: _disabled = false,
-  cssStyles,
+  service,
+  serviceData,
   marqueeProps,
   className,
+  title: _entityTitle,
   ...rest
 }: MediaPlayerCardProps) {
   const entity = useEntity(_entity);
   const mp = useService("mediaPlayer");
-  const { useStore } = useHass();
+  const { useStore, joinHassUrl } = useHass();
   const entities = useStore((state) => state.entities);
   const interval = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
@@ -546,12 +531,18 @@ function _MediaPlayerCard({
     media_position,
     media_position_updated_at,
   } = entity.attributes;
-  const deviceName = friendly_name ?? entity.entity_id;
+  const deviceName = _entityTitle ?? friendly_name ?? entity.entity_id;
   const title = media_title;
   const appName = app_name;
-  const artworkUrl = entity.attributes.entity_picture
+  const artworkUrl = useMemo(() => {
+    const url = entity.attributes.entity_picture
     ? entity.attributes.entity_picture
     : null;
+    if (url && url.startsWith('/')) {
+      return joinHassUrl(url);
+    }
+    return url;
+  }, [entity.attributes.entity_picture, joinHassUrl]);
   const isUnavailable = isUnavailableState(state);
   const isIdle = state === "idle";
   const isStandby = state === "standby";
@@ -712,13 +703,17 @@ function _MediaPlayerCard({
   return (
     <>
       <MediaPlayerWrapper
-        className={`media-player-card ${disabled ? "disabled" : ""} ${
-          isUnavailable ? "unavailable" : ""
-        } ${className ?? ""}`}
-        css={css`
-          ${cssStyles ?? ""}
-        `}
-        ref={playerRef}
+        disabled={disabled}
+        entity={_entity}
+        // @ts-expect-error - don't know the entity name, so we can't know the service type
+        service={service}
+        // @ts-expect-error - don't know the entity name, so we can't know the service data
+        serviceData={serviceData}
+        disableScale
+        disableActiveState
+        disableRipples
+        className={`media-player-card ${className ?? ""}`}
+        elRef={playerRef}
         layoutName={layout}
         backgroundImage={
           showArtworkBackground === true && artworkUrl !== null
@@ -775,7 +770,7 @@ function _MediaPlayerCard({
                   {deviceName && !hideEntityName && (
                     <Title className="title device-name">
                       {hideEntityName ? "" : deviceName}
-                      {buffering ? " - buffering" : ""}
+                      {buffering ? (hideEntityName ? '' : ' - ') + "buffering" : ""}
                     </Title>
                   )}
                   {(isOff || layout === "slim") && (
@@ -846,9 +841,17 @@ function _MediaPlayerCard({
 
 /** A MediaPlayerCard to control media similar to the mini-media-player from Hacs, this is a very complicated component and I will require feedback if it does not work for you, different features are enabled / shown based on the media_player provided, it supports group players if the media_players provided support grouping, however i myself do not have devices that do support it so i would love some feedback to determine if it works or not! It supports skip, previous, volume, mute, power, seeking, play, pause, grouping, artwork */
 export function MediaPlayerCard(props: MediaPlayerCardProps) {
+  const defaultColumns: AvailableQueries = {
+    xxs: 12,
+    xs: 6,
+    sm: 6,
+    md: 4,
+    lg: 4,
+    xlg: 3,
+  }
   return (
     <ErrorBoundary {...fallback({ prefix: "MediaPlayerCard" })}>
-      <_MediaPlayerCard {...props} />
+      <_MediaPlayerCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

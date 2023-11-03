@@ -4,7 +4,7 @@ import {
   useHass,
   supportsFeatureFromAttributes,
 } from "@core";
-import type { HassEntityWithApi, FilterByDomain, EntityName } from "@core";
+import type { HassEntityWithService, FilterByDomain, EntityName } from "@core";
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import {
   fetchThumbnailUrlWithCache,
@@ -29,7 +29,7 @@ export interface UseCameraOptions {
   stream?: boolean;
 }
 
-export interface CameraEntityExtended extends HassEntityWithApi<"camera"> {
+export interface CameraEntityExtended extends HassEntityWithService<"camera"> {
   stream: {
     url: string | undefined;
     loading: boolean;
