@@ -11,6 +11,8 @@ npm install
 #### Local Storybook
 To spin up the storybook interface, run the following command from the root of the repository, changes in the components src will reflect in storybook, core is a little bit more complicated (explained below):
 
+**Note:** You will have to build @hakit/core at least once, @hakit/core isn't pulled from the local dev but rather from the distrubutable files from the package, i haven't figured out how to resolve this yet as @hakit/core has a lot of complexities wrapped around it, but run `npm run build:core` and then you should be able to run `npm start` to kick off the local development storybook server.
+
 ```bash
 npm start
 ```
