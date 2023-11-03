@@ -1,15 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Global, css } from "@emotion/react";
-import {
-  ThemeProvider,
-  SidebarCard,
-  ButtonCard,
-  Row,
-  AreaCard,
-  Group,
-  Column,
-  TriggerCard,
-} from "@components";
+import { ThemeProvider, SidebarCard, ButtonCard, Row, AreaCard, Group, Column, TriggerCard } from "@components";
 import { Source } from "@storybook/blocks";
 import { useEntity } from "@hakit/core";
 import type { SidebarCardProps } from "@components";
@@ -38,13 +29,7 @@ function Template(args?: Partial<SidebarCardProps>) {
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
       <MakeFullScreen />
-      <Row
-        alignItems="stretch"
-        justifyContent="flex-start"
-        fullWidth
-        fullHeight
-        wrap="nowrap"
-      >
+      <Row alignItems="stretch" justifyContent="flex-start" fullWidth fullHeight wrap="nowrap">
         <SidebarCard startOpen={false} {...args}>
           <p>You can insert any children in the sidebar here</p>
         </SidebarCard>
@@ -56,30 +41,17 @@ function Template(args?: Partial<SidebarCardProps>) {
             padding: "1rem",
           }}
         >
-          <AreaCard
-            hash="office"
-            image={office}
-            title="Office"
-            icon="mdi:office-chair"
-          >
+          <AreaCard hash="office" image={office} title="Office" icon="mdi:office-chair">
             <Column gap="1rem">
               <Group title="Striplights">
                 <ButtonCard entity="light.fake_light_1" service="toggle" />
                 <ButtonCard entity="light.fake_light_2" service="toggle" />
                 <ButtonCard entity="light.fake_light_3" service="toggle" />
               </Group>
-              <TriggerCard
-                entity="scene.good_morning"
-                data-testid="scene-card"
-              />
+              <TriggerCard entity="scene.good_morning" data-testid="scene-card" />
             </Column>
           </AreaCard>
-          <AreaCard
-            hash="living-room"
-            image={livingRoom}
-            title="Living Room"
-            icon="mdi:sofa"
-          >
+          <AreaCard hash="living-room" image={livingRoom} title="Living Room" icon="mdi:sofa">
             <div>LivingRoom</div>
           </AreaCard>
         </Row>
@@ -98,10 +70,7 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
       menuItems={[
         {
           title: "Air Conditioner",
-          description:
-            ac.state !== "off"
-              ? `${ac.state} - currently ${ac.attributes.temperature}°`
-              : "Not running",
+          description: ac.state !== "off" ? `${ac.state} - currently ${ac.attributes.temperature}°` : "Not running",
           icon:
             ac.state !== "off" ? (
               <Row>
@@ -210,13 +179,7 @@ function TemplateMenuItems(args?: Partial<SidebarCardProps>) {
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
       <MakeFullScreen />
-      <Row
-        alignItems="stretch"
-        justifyContent="flex-start"
-        fullWidth
-        fullHeight
-        wrap="nowrap"
-      >
+      <Row alignItems="stretch" justifyContent="flex-start" fullWidth fullHeight wrap="nowrap">
         <SidebarMenuItems {...args} />
         <Row fullWidth fullHeight gap="0.5rem">
           <p
@@ -224,9 +187,8 @@ function TemplateMenuItems(args?: Partial<SidebarCardProps>) {
               maxWidth: 600,
             }}
           >
-            This is just an example of the level of customization achievable,
-            this isn't fully implemented as you will see when you collapse this
-            sidebar!
+            This is just an example of the level of customization achievable, this isn't fully implemented as you will see when you collapse
+            this sidebar!
           </p>
           <Source dark code={Replica()} />
         </Row>

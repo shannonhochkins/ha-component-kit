@@ -17,32 +17,13 @@ const fetchAreaRegistry = (conn: Connection) =>
   conn.sendMessagePromise<AreaRegistryEntry[]>({
     type: "config/area_registry/list",
   });
-const subscribeAreaRegistryUpdates = (
-  conn: Connection,
-  store: Store<AreaRegistryEntry[]>,
-) =>
+const subscribeAreaRegistryUpdates = (conn: Connection, store: Store<AreaRegistryEntry[]>) =>
   conn.subscribeEvents(
-    debounce(
-      () =>
-        fetchAreaRegistry(conn).then((areas: AreaRegistryEntry[]) =>
-          store.setState(areas, true),
-        ),
-      500,
-      {
-        leading: true,
-      },
-    ),
+    debounce(() => fetchAreaRegistry(conn).then((areas: AreaRegistryEntry[]) => store.setState(areas, true)), 500, {
+      leading: true,
+    }),
     "area_registry_updated",
   );
 
-export const subscribeAreaRegistry = (
-  conn: Connection,
-  onChange: (areas: AreaRegistryEntry[]) => void,
-) =>
-  createCollection<AreaRegistryEntry[]>(
-    "_areaRegistry",
-    fetchAreaRegistry,
-    subscribeAreaRegistryUpdates,
-    conn,
-    onChange,
-  );
+export const subscribeAreaRegistry = (conn: Connection, onChange: (areas: AreaRegistryEntry[]) => void) =>
+  createCollection<AreaRegistryEntry[]>("_areaRegistry", fetchAreaRegistry, subscribeAreaRegistryUpdates, conn, onChange);

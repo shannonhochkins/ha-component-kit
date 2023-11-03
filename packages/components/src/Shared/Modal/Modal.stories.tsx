@@ -1,14 +1,7 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
 import { Source } from "@storybook/blocks";
 import { useState } from "react";
-import {
-  ThemeProvider,
-  ButtonCard,
-  Modal,
-  FabCard,
-  Column,
-  Row,
-} from "@components";
+import { ThemeProvider, ButtonCard, Modal, FabCard, Column, Row } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
@@ -51,11 +44,7 @@ function RenderCustom() {
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" fullWidth>
         <Source dark code={exampleSetup} />
-        <FabCard
-          onClick={() => setOpen(true)}
-          layoutId="custom-modal"
-          icon="mdi:cog"
-        />
+        <FabCard onClick={() => setOpen(true)} layoutId="custom-modal" icon="mdi:cog" />
         <Modal
           id="custom-modal"
           open={open}
@@ -97,17 +86,10 @@ function RenderModalByDomain() {
   return (
     <>
       <Column fullWidth>
+        <p>There's a helper component that will automatically load up pre-defined modals by entity/domain.</p>
+        <p>If the entity you're using has no predefined layout, it won't render anything.</p>
         <p>
-          There's a helper component that will automatically load up pre-defined
-          modals by entity/domain.
-        </p>
-        <p>
-          If the entity you're using has no predefined layout, it won't render
-          anything.
-        </p>
-        <p>
-          Please note that this exact component is automatically wired up to the
-          FabCard and ButtonCard when you long press on the buttons.
+          Please note that this exact component is automatically wired up to the FabCard and ButtonCard when you long press on the buttons.
         </p>
         <Source dark code={exampleRenderByDomain} />
       </Column>

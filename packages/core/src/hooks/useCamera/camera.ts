@@ -6,10 +6,7 @@ export interface SignedPath {
   path: string;
 }
 
-export const getSignedPath = (
-  connection: Connection,
-  path: string,
-): Promise<SignedPath> =>
+export const getSignedPath = (connection: Connection, path: string): Promise<SignedPath> =>
   connection.sendMessagePromise({ type: "auth/sign_path", path });
 
 export interface CameraPreferences {
@@ -26,47 +23,22 @@ export interface Stream {
   url: string;
 }
 
-export const cameraUrlWithWidthHeight = (
-  base_url: string,
-  width: number,
-  height: number,
-) => `${base_url}&width=${width}&height=${height}`;
+export const cameraUrlWithWidthHeight = (base_url: string, width: number, height: number) => `${base_url}&width=${width}&height=${height}`;
 
 export const computeMJPEGStreamUrl = (entity: CameraEntity) =>
   `/api/camera_proxy_stream/${entity.entity_id}?token=${entity.attributes.access_token}`;
 
-export const fetchThumbnailUrlWithCache = async (
-  connection: Connection,
-  entityId: string,
-  width: number,
-  height: number,
-) => {
-  const base_url = await timeCacheEntityPromiseFunc(
-    "_cameraTmbUrl",
-    9000,
-    fetchThumbnailUrl,
-    connection,
-    entityId,
-  );
+export const fetchThumbnailUrlWithCache = async (connection: Connection, entityId: string, width: number, height: number) => {
+  const base_url = await timeCacheEntityPromiseFunc("_cameraTmbUrl", 9000, fetchThumbnailUrl, connection, entityId);
   return cameraUrlWithWidthHeight(base_url, width, height);
 };
 
-export const fetchThumbnailUrl = async (
-  connection: Connection,
-  entityId: string,
-) => {
-  const { path } = await getSignedPath(
-    connection,
-    `/api/camera_proxy/${entityId}`,
-  );
+export const fetchThumbnailUrl = async (connection: Connection, entityId: string) => {
+  const { path } = await getSignedPath(connection, `/api/camera_proxy/${entityId}`);
   return path;
 };
 
-export const fetchStreamUrl = async (
-  connection: Connection,
-  entityId: string,
-  format?: "hls",
-) => {
+export const fetchStreamUrl = async (connection: Connection, entityId: string, format?: "hls") => {
   const data = {
     type: "camera/stream",
     entity_id: entityId,
@@ -87,8 +59,6 @@ export const fetchCameraPrefs = (connection: Connection, entityId: string) =>
 
 const CAMERA_MEDIA_SOURCE_PREFIX = "media-source://camera/";
 
-export const isCameraMediaSource = (mediaContentId: string) =>
-  mediaContentId.startsWith(CAMERA_MEDIA_SOURCE_PREFIX);
+export const isCameraMediaSource = (mediaContentId: string) => mediaContentId.startsWith(CAMERA_MEDIA_SOURCE_PREFIX);
 
-export const getEntityIdFromCameraMediaSource = (mediaContentId: string) =>
-  mediaContentId.substring(CAMERA_MEDIA_SOURCE_PREFIX.length);
+export const getEntityIdFromCameraMediaSource = (mediaContentId: string) => mediaContentId.substring(CAMERA_MEDIA_SOURCE_PREFIX.length);

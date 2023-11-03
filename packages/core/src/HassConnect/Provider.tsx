@@ -27,21 +27,13 @@ import {
   ERR_INVALID_HTTPS_TO_HTTP,
 } from "home-assistant-js-websocket";
 import { isArray, snakeCase, isEqual, isEmpty } from "lodash";
-import {
-  ServiceData,
-  SnakeOrCamelDomains,
-  DomainService,
-  Target,
-} from "@typings";
+import { ServiceData, SnakeOrCamelDomains, DomainService, Target } from "@typings";
 import { useHash } from "@core";
 import { saveTokens, loadTokens } from "./token-storage";
 import { diff } from "deep-object-diff";
 import { create } from "zustand";
 
-export interface CallServiceArgs<
-  T extends SnakeOrCamelDomains,
-  M extends DomainService<T>,
-> {
+export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
   service: M;
   serviceData?: ServiceData<T, M>;
@@ -85,6 +77,10 @@ export interface Store {
   hassUrl: string | null;
   /** set the hassUrl */
   setHassUrl: (hassUrl: string | null) => void;
+  /** getter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
+  breakpoints: Record<"xxs" | "xs" | "sm" | "md" | "lg" | "xlg", number>;
+  /** setter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
+  setBreakpoints: (breakpoints: Record<"xxs" | "xs" | "sm" | "md" | "lg", number>) => void;
 }
 
 const useStore = create<Store>((set) => ({
@@ -95,17 +91,12 @@ const useStore = create<Store>((set) => ({
   hassUrl: null,
   setEntities: (newEntities) =>
     set((state) => {
-      const entitiesDiffChanged = diff(
-        ignoreForDiffCheck(state.entities),
-        ignoreForDiffCheck(newEntities),
-      ) as HassEntities;
+      const entitiesDiffChanged = diff(ignoreForDiffCheck(state.entities), ignoreForDiffCheck(newEntities)) as HassEntities;
       if (!isEmpty(entitiesDiffChanged)) {
         // purposely not making this throttle configurable
         // because lights can animate etc, which doesn't need to reflect in the UI
         // simply throttle updates every 50ms
-        const updatedEntities = Object.keys(
-          entitiesDiffChanged,
-        ).reduce<HassEntities>(
+        const updatedEntities = Object.keys(entitiesDiffChanged).reduce<HassEntities>(
           (acc, entityId) => ({
             ...acc,
             [entityId]: newEntities[entityId],
@@ -147,6 +138,21 @@ const useStore = create<Store>((set) => ({
   setConfig: (config) => set({ config }),
   error: null,
   setError: (error) => set({ error }),
+  breakpoints: {
+    xxs: 0,
+    xs: 0,
+    sm: 0,
+    md: 0,
+    lg: 0,
+    xlg: 0,
+  },
+  setBreakpoints: (breakpoints) =>
+    set({
+      breakpoints: {
+        ...breakpoints,
+        xlg: breakpoints.lg + 1,
+      },
+    }),
 }));
 
 export interface HassContextProps {
@@ -162,9 +168,7 @@ export interface HassContextProps {
   /** will retrieve HassUser */
   getUser: () => Promise<HassUser | null>;
   /** function to call a service through web sockets */
-  callService: <T extends SnakeOrCamelDomains, M extends DomainService<T>>(
-    args: CallServiceArgs<T, M>,
-  ) => void;
+  callService: <T extends SnakeOrCamelDomains, M extends DomainService<T>>(args: CallServiceArgs<T, M>) => void;
   /** add a new route to the provider */
   addRoute(route: Route): void;
   /** retrieve a route by name */
@@ -189,9 +193,7 @@ export interface HassContextProps {
   >;
 }
 
-export const HassContext = createContext<HassContextProps>(
-  {} as HassContextProps,
-);
+export const HassContext = createContext<HassContextProps>({} as HassContextProps);
 
 export interface HassProviderProps {
   /** components to render once authenticated, this accepts a child function which will pass if it is ready or not */
@@ -226,10 +228,7 @@ type ConnectionResponse =
       cannotConnect: true;
     };
 
-const tryConnection = async (
-  init: "auth-callback" | "user-request" | "saved-tokens",
-  hassUrl?: string,
-): Promise<ConnectionResponse> => {
+const tryConnection = async (init: "auth-callback" | "user-request" | "saved-tokens", hassUrl?: string): Promise<ConnectionResponse> => {
   const options: AuthOptions = {
     saveTokens,
     loadTokens: () => Promise.resolve(loadTokens()),
@@ -300,23 +299,14 @@ const ignoreForDiffCheck = (
   return Object.fromEntries(
     Object.entries(obj).map(([entityId, entityData]) => [
       entityId,
-      Object.fromEntries(
-        Object.entries(entityData).filter(([key]) => !keys.includes(key)),
-      ),
+      Object.fromEntries(Object.entries(entityData).filter(([key]) => !keys.includes(key))),
     ]),
   ) as {
-    [key: string]: Omit<
-      HassEntity,
-      "last_changed" | "last_updated" | "context"
-    >;
+    [key: string]: Omit<HassEntity, "last_changed" | "last_updated" | "context">;
   };
 };
 
-export function HassProvider({
-  children,
-  hassUrl,
-  allowNonSecure = false,
-}: HassProviderProps) {
+export function HassProvider({ children, hassUrl, allowNonSecure = false }: HassProviderProps) {
   const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
   const authenticating = useRef(false);
   const fetchedConfig = useRef(false);
@@ -354,16 +344,7 @@ export function HassProvider({
       entityUnsubscribe.current();
       entityUnsubscribe.current = null;
     }
-  }, [
-    setAuth,
-    setCannotConnect,
-    setConfig,
-    setConnection,
-    setEntities,
-    setError,
-    setReady,
-    setRoutes,
-  ]);
+  }, [setAuth, setCannotConnect, setConfig, setConnection, setEntities, setError, setReady, setRoutes]);
 
   const logout = useCallback(async () => {
     try {
@@ -391,9 +372,7 @@ export function HassProvider({
         return;
       }
       if (value.indexOf("://") === -1) {
-        setError(
-          "Please enter your full URL, including the protocol part (https://).",
-        );
+        setError("Please enter your full URL, including the protocol part (https://).");
         authenticating.current = false;
         return;
       }
@@ -407,11 +386,7 @@ export function HassProvider({
         return;
       }
 
-      if (
-        url.protocol === "http:" &&
-        url.hostname !== "localhost" &&
-        allowNonSecure === false
-      ) {
+      if (url.protocol === "http:" && url.hostname !== "localhost" && allowNonSecure === false) {
         setError(translateErr(ERR_INVALID_HTTPS_TO_HTTP));
         authenticating.current = false;
         return;
@@ -430,35 +405,16 @@ export function HassProvider({
       return;
     }
     authenticating.current = false;
-  }, [
-    hassUrl,
-    allowNonSecure,
-    setError,
-    setAuth,
-    setConnection,
-    setCannotConnect,
-  ]);
+  }, [hassUrl, allowNonSecure, setError, setAuth, setConnection, setCannotConnect]);
 
   useEffect(() => {
     setHassUrl(hassUrl);
   }, [hassUrl, setHassUrl]);
 
-  const getStates = useCallback(
-    async () => (connection === null ? null : await _getStates(connection)),
-    [connection],
-  );
-  const getServices = useCallback(
-    async () => (connection === null ? null : await _getServices(connection)),
-    [connection],
-  );
-  const getConfig = useCallback(
-    async () => (connection === null ? null : await _getConfig(connection)),
-    [connection],
-  );
-  const getUser = useCallback(
-    async () => (connection === null ? null : await _getUser(connection)),
-    [connection],
-  );
+  const getStates = useCallback(async () => (connection === null ? null : await _getStates(connection)), [connection]);
+  const getServices = useCallback(async () => (connection === null ? null : await _getServices(connection)), [connection]);
+  const getConfig = useCallback(async () => (connection === null ? null : await _getConfig(connection)), [connection]);
+  const getUser = useCallback(async () => (connection === null ? null : await _getUser(connection)), [connection]);
 
   const joinHassUrl = useCallback(
     (path: string) => {
@@ -517,23 +473,17 @@ export function HassProvider({
       })
       .catch((e) => {
         fetchedConfig.current = false;
-        setError(
-          `Error retrieving configuration from Home Assistant: ${
-            e?.message ?? e
-          }`,
-        );
+        setError(`Error retrieving configuration from Home Assistant: ${e?.message ?? e}`);
       });
   }
 
   const addRoute = useCallback(
     (route: Omit<Route, "active">) => {
-      const exists =
-        routes.find((_route) => _route.hash === route.hash) !== undefined;
+      const exists = routes.find((_route) => _route.hash === route.hash) !== undefined;
       if (!exists) {
         // if the current has value is the same as the hash, we're active
         const hashWithoutPound = _hash.replace("#", "");
-        const active =
-          hashWithoutPound !== "" && hashWithoutPound === route.hash;
+        const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
         setRoutes([
           ...routes,
           {
@@ -638,8 +588,7 @@ export function HassProvider({
   if (cannotConnect) {
     return (
       <p>
-        Unable to connect to ${loadTokens()!.hassUrl}, refresh the page and try
-        again, or <a onClick={logout}>Logout</a>.
+        Unable to connect to ${loadTokens()!.hassUrl}, refresh the page and try again, or <a onClick={logout}>Logout</a>.
       </p>
     );
   }

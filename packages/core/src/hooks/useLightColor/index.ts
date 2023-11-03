@@ -1,14 +1,7 @@
 import { useMemo } from "react";
-import {
-  HassEntityWithApi,
-  ON,
-  lightSupportsColorMode,
-  getLightCurrentModeRgbColor,
-  rgb2hs,
-  LIGHT_COLOR_MODES,
-} from "@core";
+import { HassEntityWithService, ON, lightSupportsColorMode, getLightCurrentModeRgbColor, rgb2hs, LIGHT_COLOR_MODES } from "@core";
 
-export const useLightColor = (entity: HassEntityWithApi<"light">) => {
+export const useLightColor = (entity: HassEntityWithService<"light">) => {
   const brightnessAdjusted = useMemo<number | undefined>(() => {
     if (entity.state === ON) {
       if (
@@ -32,8 +25,7 @@ export const useLightColor = (entity: HassEntityWithApi<"light">) => {
     const value =
       entity.state !== ON
         ? undefined
-        : entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBW &&
-          entity.attributes.rgbw_color
+        : entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBW && entity.attributes.rgbw_color
         ? Math.round((entity.attributes.rgbw_color[3] * 100) / 255)
         : undefined;
     return value != null ? (value * 255) / 100 : undefined;
@@ -42,8 +34,7 @@ export const useLightColor = (entity: HassEntityWithApi<"light">) => {
     const value =
       entity.state !== ON
         ? undefined
-        : entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBWW &&
-          entity.attributes.rgbww_color
+        : entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBWW && entity.attributes.rgbww_color
         ? Math.round((entity.attributes.rgbww_color[3] * 100) / 255)
         : undefined;
     return value != null ? (value * 255) / 100 : undefined;
@@ -52,8 +43,7 @@ export const useLightColor = (entity: HassEntityWithApi<"light">) => {
     const value =
       entity.state !== ON
         ? undefined
-        : entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBWW &&
-          entity.attributes.rgbww_color
+        : entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBWW && entity.attributes.rgbww_color
         ? Math.round((entity.attributes.rgbww_color[4] * 100) / 255)
         : undefined;
     return value != null ? (value * 255) / 100 : undefined;
@@ -61,19 +51,11 @@ export const useLightColor = (entity: HassEntityWithApi<"light">) => {
   const currentRgbColor = getLightCurrentModeRgbColor(entity);
   const colorBrightness = useMemo(() => {
     const value =
-      entity.state !== ON
-        ? undefined
-        : currentRgbColor
-        ? Math.round((Math.max(...currentRgbColor.slice(0, 3)) * 100) / 255)
-        : undefined;
+      entity.state !== ON ? undefined : currentRgbColor ? Math.round((Math.max(...currentRgbColor.slice(0, 3)) * 100) / 255) : undefined;
     return value != null ? (value * 255) / 100 : undefined;
   }, [entity, currentRgbColor]);
   const hs = useMemo(() => {
-    return entity.state !== ON
-      ? undefined
-      : currentRgbColor
-      ? rgb2hs(currentRgbColor.slice(0, 3) as [number, number, number])
-      : undefined;
+    return entity.state !== ON ? undefined : currentRgbColor ? rgb2hs(currentRgbColor.slice(0, 3) as [number, number, number]) : undefined;
   }, [entity, currentRgbColor]);
 
   return {

@@ -1,24 +1,9 @@
-import {
-  Connection,
-  HassEntities,
-  HassEntity,
-  HassConfig,
-  HassEntityAttributeBase,
-  MessageBase,
-} from "home-assistant-js-websocket";
+import { Connection, HassEntities, HassEntity, HassConfig, HassEntityAttributeBase, MessageBase } from "home-assistant-js-websocket";
 import { computeDomain } from "@core";
 import type { EntityName } from "@core";
 
 const DOMAINS_USE_LAST_UPDATED = ["climate", "humidifier", "water_heater"];
-const NEED_ATTRIBUTE_DOMAINS = [
-  "climate",
-  "humidifier",
-  "input_datetime",
-  "thermostat",
-  "water_heater",
-  "person",
-  "device_tracker",
-];
+const NEED_ATTRIBUTE_DOMAINS = ["climate", "humidifier", "input_datetime", "thermostat", "water_heater", "person", "device_tracker"];
 const LINE_ATTRIBUTES_TO_KEEP = [
   "temperature",
   "current_temperature",
@@ -88,19 +73,12 @@ export interface EntityHistoryState {
 }
 
 /** Compute the object ID of a state. */
-export const computeObjectId = (entityId: string): string =>
-  entityId.substr(entityId.indexOf(".") + 1);
+export const computeObjectId = (entityId: string): string => entityId.substr(entityId.indexOf(".") + 1);
 
-export const computeStateNameFromEntityAttributes = (
-  entityId: string,
-  attributes: HassEntity["attributes"],
-): string =>
-  attributes?.friendly_name === undefined
-    ? computeObjectId(entityId).replace(/_/g, " ")
-    : attributes.friendly_name || "";
+export const computeStateNameFromEntityAttributes = (entityId: string, attributes: HassEntity["attributes"]): string =>
+  attributes?.friendly_name === undefined ? computeObjectId(entityId).replace(/_/g, " ") : attributes.friendly_name || "";
 
-export const entityIdHistoryNeedsAttributes = (entityId: EntityName) =>
-  NEED_ATTRIBUTE_DOMAINS.includes(computeDomain(entityId));
+export const entityIdHistoryNeedsAttributes = (entityId: EntityName) => NEED_ATTRIBUTE_DOMAINS.includes(computeDomain(entityId));
 interface SubscribeOptions {
   connection: Connection;
   entityIds: EntityName[];
@@ -123,20 +101,13 @@ export const subscribeHistory = ({
   const params: MessageBase = {
     type: "history/stream",
     entity_ids: entityIds,
-    start_time: new Date(
-      new Date().getTime() - 60 * 60 * hoursToShow * 1000,
-    ).toISOString(),
+    start_time: new Date(new Date().getTime() - 60 * 60 * hoursToShow * 1000).toISOString(),
     minimal_response: minimalResponse,
     significant_changes_only: significantChangesOnly,
-    no_attributes:
-      noAttributes ??
-      !entityIds.some((entityId) => entityIdHistoryNeedsAttributes(entityId)),
+    no_attributes: noAttributes ?? !entityIds.some((entityId) => entityIdHistoryNeedsAttributes(entityId)),
   };
   const stream = new HistoryStream(connection, hoursToShow);
-  return connection.subscribeMessage<HistoryStreamMessage>(
-    (message) => callbackFunction(stream.processMessage(message)),
-    params,
-  );
+  return connection.subscribeMessage<HistoryStreamMessage>((message) => callbackFunction(stream.processMessage(message)), params);
 };
 
 class HistoryStream {
@@ -162,9 +133,7 @@ class HistoryStream {
       // indicate no more historical events
       return this.combinedHistory;
     }
-    const purgeBeforePythonTime = this.hoursToShow
-      ? (new Date().getTime() - 60 * 60 * this.hoursToShow * 1000) / 1000
-      : undefined;
+    const purgeBeforePythonTime = this.hoursToShow ? (new Date().getTime() - 60 * 60 * this.hoursToShow * 1000) / 1000 : undefined;
     const newHistory: HistoryStates = {};
     for (const entityId of Object.keys(this.combinedHistory)) {
       newHistory[entityId] = [];
@@ -173,23 +142,13 @@ class HistoryStream {
       newHistory[entityId] = [];
     }
     for (const entityId of Object.keys(newHistory)) {
-      if (
-        entityId in this.combinedHistory &&
-        entityId in streamMessage.states
-      ) {
+      if (entityId in this.combinedHistory && entityId in streamMessage.states) {
         const entityCombinedHistory = this.combinedHistory[entityId];
-        const lastEntityCombinedHistory =
-          entityCombinedHistory[entityCombinedHistory.length - 1];
-        newHistory[entityId] = entityCombinedHistory.concat(
-          streamMessage.states[entityId],
-        );
-        if (
-          streamMessage.states[entityId][0].lu < lastEntityCombinedHistory.lu
-        ) {
+        const lastEntityCombinedHistory = entityCombinedHistory[entityCombinedHistory.length - 1];
+        newHistory[entityId] = entityCombinedHistory.concat(streamMessage.states[entityId]);
+        if (streamMessage.states[entityId][0].lu < lastEntityCombinedHistory.lu) {
           // If the history is out of order we have to sort it.
-          newHistory[entityId] = newHistory[entityId].sort(
-            (a, b) => a.lu - b.lu,
-          );
+          newHistory[entityId] = newHistory[entityId].sort((a, b) => a.lu - b.lu);
         }
       } else if (entityId in this.combinedHistory) {
         newHistory[entityId] = this.combinedHistory[entityId];
@@ -198,19 +157,12 @@ class HistoryStream {
       }
       // Remove old history
       if (purgeBeforePythonTime && entityId in this.combinedHistory) {
-        const expiredStates = newHistory[entityId].filter(
-          (state) => state.lu < purgeBeforePythonTime,
-        );
+        const expiredStates = newHistory[entityId].filter((state) => state.lu < purgeBeforePythonTime);
         if (!expiredStates.length) {
           continue;
         }
-        newHistory[entityId] = newHistory[entityId].filter(
-          (state) => state.lu >= purgeBeforePythonTime,
-        );
-        if (
-          newHistory[entityId].length &&
-          newHistory[entityId][0].lu === purgeBeforePythonTime
-        ) {
+        newHistory[entityId] = newHistory[entityId].filter((state) => state.lu >= purgeBeforePythonTime);
+        if (newHistory[entityId].length && newHistory[entityId][0].lu === purgeBeforePythonTime) {
           continue;
         }
         // Update the first entry to the start time state
@@ -231,17 +183,9 @@ const equalState = (obj1: LineChartState, obj2: LineChartState) =>
   // Only compare attributes if both states have an attributes object.
   // When `minimal_response` is sent, only the first and last state
   // will have attributes except for domains in DOMAINS_USE_LAST_UPDATED.
-  (!obj1.attributes ||
-    !obj2.attributes ||
-    LINE_ATTRIBUTES_TO_KEEP.every(
-      (attr) => obj1.attributes![attr] === obj2.attributes![attr],
-    ));
+  (!obj1.attributes || !obj2.attributes || LINE_ATTRIBUTES_TO_KEEP.every((attr) => obj1.attributes![attr] === obj2.attributes![attr]));
 
-const processLineChartEntities = (
-  unit: string,
-  historyStates: HistoryStates,
-  entities: HassEntities,
-): LineChartUnit => {
+const processLineChartEntities = (unit: string, historyStates: HistoryStates, entities: HassEntities): LineChartUnit => {
   const data: LineChartEntity[] = [];
 
   Object.keys(historyStates).forEach((entityId) => {
@@ -277,10 +221,7 @@ const processLineChartEntities = (
 
       if (
         processedStates.length > 1 &&
-        equalState(
-          processedState,
-          processedStates[processedStates.length - 1],
-        ) &&
+        equalState(processedState, processedStates[processedStates.length - 1]) &&
         equalState(processedState, processedStates[processedStates.length - 2])
       ) {
         continue;
@@ -289,12 +230,7 @@ const processLineChartEntities = (
       processedStates.push(processedState);
     }
 
-    const attributes =
-      entityId in entities
-        ? entities[entityId].attributes
-        : "friendly_name" in first.a
-        ? first.a
-        : undefined;
+    const attributes = entityId in entities ? entities[entityId].attributes : "friendly_name" in first.a ? first.a : undefined;
 
     data.push({
       domain,
@@ -311,11 +247,7 @@ const processLineChartEntities = (
   };
 };
 
-const processTimelineEntity = (
-  entityId: string,
-  states: EntityHistoryState[],
-  current_state: HassEntity | undefined,
-): TimelineEntity => {
+const processTimelineEntity = (entityId: string, states: EntityHistoryState[], current_state: HassEntity | undefined): TimelineEntity => {
   const data: TimelineState[] = [];
   const first: EntityHistoryState = states[0];
   for (const state of states) {
@@ -337,26 +269,17 @@ const processTimelineEntity = (
   }
 
   return {
-    name: computeStateNameFromEntityAttributes(
-      entityId,
-      current_state?.attributes || first.a,
-    ),
+    name: computeStateNameFromEntityAttributes(entityId, current_state?.attributes || first.a),
     entity_id: entityId,
     data,
   };
 };
 
-const stateUsesUnits = (state: HassEntity) =>
-  attributesHaveUnits(state.attributes);
+const stateUsesUnits = (state: HassEntity) => attributesHaveUnits(state.attributes);
 
-const attributesHaveUnits = (attributes: HassEntity["attributes"]) =>
-  "unit_of_measurement" in attributes || "state_class" in attributes;
+const attributesHaveUnits = (attributes: HassEntity["attributes"]) => "unit_of_measurement" in attributes || "state_class" in attributes;
 
-export const computeHistory = (
-  config: HassConfig,
-  entities: HassEntities,
-  stateHistory: HistoryStates,
-): HistoryResult => {
+export const computeHistory = (config: HassConfig, entities: HassEntities, stateHistory: HistoryStates): HistoryResult => {
   const lineChartDevices: { [unit: string]: HistoryStates } = {};
   const timelineDevices: TimelineEntity[] = [];
   if (!stateHistory) {
@@ -369,9 +292,7 @@ export const computeHistory = (
     }
 
     const currentState = entityId in entities ? entities[entityId] : undefined;
-    const stateWithUnitorStateClass =
-      !currentState &&
-      stateInfo.find((state) => state.a && attributesHaveUnits(state.a));
+    const stateWithUnitorStateClass = !currentState && stateInfo.find((state) => state.a && attributesHaveUnits(state.a));
 
     let unit: string | undefined;
 
@@ -392,9 +313,7 @@ export const computeHistory = (
     }
 
     if (!unit) {
-      timelineDevices.push(
-        processTimelineEntity(entityId, stateInfo, currentState),
-      );
+      timelineDevices.push(processTimelineEntity(entityId, stateInfo, currentState));
     } else if (unit in lineChartDevices && entityId in lineChartDevices[unit]) {
       lineChartDevices[unit][entityId].push(...stateInfo);
     } else {
@@ -405,9 +324,7 @@ export const computeHistory = (
     }
   });
 
-  const unitStates = Object.keys(lineChartDevices).map((unit) =>
-    processLineChartEntities(unit, lineChartDevices[unit], entities),
-  );
+  const unitStates = Object.keys(lineChartDevices).map((unit) => processLineChartEntities(unit, lineChartDevices[unit], entities));
 
   return { line: unitStates, timeline: timelineDevices };
 };

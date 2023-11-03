@@ -20,6 +20,8 @@ export default {
           if (panel.parentElement.parentElement?.previousElementSibling) {
             // @ts-ignore - it's correct.
             panel.parentElement.parentElement.previousElementSibling.style.width = '100%';
+            // @ts-ignore - it's correct.
+            panel.parentElement.parentElement.previousElementSibling.style.height = '100%';
           }
         } else if (panel !== null && panel.parentElement !== null) {
           panel.parentElement.style.display = 'flex';

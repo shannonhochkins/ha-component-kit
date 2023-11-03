@@ -5,12 +5,15 @@ const theme = create({
     brandUrl: 'https://www.npmjs.com/package/@hakit/core',
     brandImage: process.env.NODE_ENV === 'production' ? '/ha-component-kit/logo.png' : '/logo.png',
     brandTarget: '_self',
+    appBg: '#0e1118'
 });
 
 import { addons } from '@storybook/manager-api';
 
 addons.setConfig({
     panelPosition: 'right',
+    showPanel: true,
+    showNav: true,
     theme
 });
 const layout = localStorage.getItem('storybook-layout');

@@ -1,12 +1,6 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-  Title,
-  Description,
-  Primary,
-  ArgTypes,
-  Source,
-} from "@storybook/blocks";
+import { Source } from "@storybook/blocks";
 import { ThemeProvider, theme, Group, Alert } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import { merge } from "lodash";
@@ -41,9 +35,7 @@ function CustomThemeProvider() {
 
 function Render(args: Story["args"]) {
   const theme = args?.theme || {};
-  const [customTheme, setCustomTheme] = useState<
-    Omit<ThemeControlsProps, "onChange">
-  >({
+  const [customTheme, setCustomTheme] = useState<Omit<ThemeControlsProps, "onChange">>({
     darkMode: DEFAULT_THEME_OPTIONS.darkMode,
     tint: DEFAULT_THEME_OPTIONS.tint,
     hue: DEFAULT_THEME_OPTIONS.hue,
@@ -55,8 +47,7 @@ function Render(args: Story["args"]) {
     <HassConnect hassUrl="http://localhost:8123" {...args}>
       <h2>Theme Provider</h2>
       <p>
-        A simple way of creating global styles and providing re-usable css
-        variables to re-use across your custom home assistant dashboard.
+        A simple way of creating global styles and providing re-usable css variables to re-use across your custom home assistant dashboard.
       </p>
       <Group title="Dynamic Theme Controls" collapsed>
         <ThemeControls
@@ -73,8 +64,7 @@ function Render(args: Story["args"]) {
           marginTop: "1rem",
         }}
       >
-        The dynamic theme controls above will update the code below so you can
-        copy/paste your desired theme.
+        The dynamic theme controls above will update the code below so you can copy/paste your desired theme.
       </Alert>
       <Source
         dark
@@ -93,9 +83,8 @@ function Render(args: Story["args"]) {
       <ThemeProvider {...customTheme} theme={args?.theme} />
       <h2>Other Properties</h2>
       <p>
-        You do not need to provide the following theme object, this is the
-        default, if you want to extend/change anything you can just pass in your
-        overrides.
+        You do not need to provide the following theme object, this is the default, if you want to extend/change anything you can just pass
+        in your overrides.
       </p>
       <Alert
         type="info"
@@ -104,52 +93,32 @@ function Render(args: Story["args"]) {
           marginTop: "1rem",
         }}
       >
-        You can pass anything to the theme object and the css variables will be
-        created!
+        You can pass anything to the theme object and the css variables will be created!
       </Alert>
-      <Source
-        dark
-        code={`<ThemeProvider theme={${JSON.stringify(theme, null, 2)}} />`}
-        language="tsx"
-      />
+      <Source dark code={`<ThemeProvider theme={${JSON.stringify(theme, null, 2)}} />`} language="tsx" />
       <p>Available CSS Variables:</p>
-      <Source
-        dark
-        code={`${convertToCssVars(theme).replace(/^\s+/gm, "")}`}
-        language="tsx"
-      />
+      <Source dark code={`${convertToCssVars(theme).replace(/^\s+/gm, "")}`} language="tsx" />
       <p>
-        The ThemeProvider can be used as is with no props and you'll have access
-        to all available css variables defined under the importable type
-        `ThemeParams` from `@hakit/components`;
+        The ThemeProvider can be used as is with no props and you'll have access to all available css variables defined under the importable
+        type `ThemeParams` from `@hakit/components`;
       </p>
       <p>
-        The css variables take the input theme object (which is of type
-        `ThemeParams`) and converts the keys & nested keys to kebab case to
+        The css variables take the input theme object (which is of type `ThemeParams`) and converts the keys & nested keys to kebab case to
         access easily.
       </p>
       <h3>Custom Example:</h3>
       <Source dark code={jsxToString(CustomThemeProvider())} />
 
       <p>
-        The above will not only apply the font family to pre-existing css
-        variable, it will also create a css variable for all the defaults and
-        your custom properties / overrides:
+        The above will not only apply the font family to pre-existing css variable, it will also create a css variable for all the defaults
+        and your custom properties / overrides:
       </p>
       <p>
-        <b>Note: </b>Strings are converted to raw values so if you're expecting
-        a "string" as the css value make sure you wrap in double quotes
-        `'"Arial"'`, additionally, any camelCase strings will be converted to
-        kebab case for the css variables
+        <b>Note: </b>Strings are converted to raw values so if you're expecting a "string" as the css value make sure you wrap in double
+        quotes `'"Arial"'`, additionally, any camelCase strings will be converted to kebab case for the css variables
       </p>
 
-      <Source
-        dark
-        code={convertToCssVars(merge(theme, customTheme) as object).replace(
-          /^\s+/gm,
-          "",
-        )}
-      />
+      <Source dark code={convertToCssVars(merge(theme, customTheme) as object).replace(/^\s+/gm, "")} />
       <p>Which you can use simply in emotion/scss/less/css etc:</p>
 
       <Source
@@ -168,19 +137,9 @@ function Render(args: Story["args"]) {
 export default {
   title: "COMPONENTS/ThemeProvider",
   component: ThemeProvider,
+  tags: ["autodocs"],
   parameters: {
     padding: "2rem",
-    docs: {
-      page: () => (
-        <>
-          <Title />
-          <Description />
-          <Primary />
-          <h2>Component Props</h2>
-          <ArgTypes />
-        </>
-      ),
-    },
   },
 } satisfies Meta<typeof ThemeProvider>;
 export type Story = StoryObj<typeof ThemeProvider>;

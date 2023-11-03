@@ -27,10 +27,7 @@ const StyledIcon = styled(Icon)`
   font-size: 2rem;
 `;
 
-type Extendable = Omit<
-  React.ComponentPropsWithoutRef<"div"> & MotionProps,
-  "onLoad" | "onError"
->;
+type Extendable = Omit<React.ComponentPropsWithoutRef<"div"> & MotionProps, "onLoad" | "onError">;
 export interface PreloadImageProps extends Extendable {
   lazy?: boolean;
   src: string;
@@ -162,16 +159,10 @@ export const PreloadImage = ({
           backgroundRepeat: backgroundRepeat,
           transitionProperty: "background-image, opacity",
           transitionDuration: `${duration}ms, ${duration}ms`,
-          transitionTimingFunction: `${
-            ease ?? "cubic-bezier(0.215, 0.61, 0.355, 1)"
-          }, ${ease ?? "cubic-bezier(0.215, 0.61, 0.355, 1)"}`,
+          transitionTimingFunction: `${ease ?? "cubic-bezier(0.215, 0.61, 0.355, 1)"}, ${ease ?? "cubic-bezier(0.215, 0.61, 0.355, 1)"}`,
         }}
       ></PreloaderBackground>
-      <StyledIcon
-        ref={loadingIconRef}
-        icon="eos-icons:three-dots-loading"
-        className="preloader-loading-icon"
-      />
+      <StyledIcon ref={loadingIconRef} icon="eos-icons:three-dots-loading" className="preloader-loading-icon" />
       {children}
     </Preloader>
   );

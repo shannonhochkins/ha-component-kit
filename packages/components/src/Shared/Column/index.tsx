@@ -1,4 +1,5 @@
 import { m } from "framer-motion";
+import { css } from "@emotion/react";
 import type { MotionProps } from "framer-motion";
 import styled from "@emotion/styled";
 
@@ -30,7 +31,7 @@ const _Column = styled(m.div)<ColumnProps>`
     typeof props.gap === "string" &&
     `
     gap: ${props.gap};
-    --gap: ${props.gap ?? 0};
+    --gap: ${props.gap ?? "0px"};
   `}
   ${(props) => props.fullHeight && `height: 100%;`}
   ${(props) => props.fullWidth && `width: 100%;`}
@@ -41,11 +42,12 @@ export function Column(props: ColumnProps) {
   return (
     <_Column
       {...props}
-      className={`${props.className} ${props.fullHeight ? "full-height" : ""} ${
-        props.fullWidth ? "full-width" : ""
-      } ${props.justifyContent ? props.justifyContent : "center"} ${
-        props.alignItems ? props.alignItems : "center"
-      } ${props.wrap ? props.wrap : "wrap"}`}
+      cssStyles={css`
+        ${props.cssStyles ?? ""}
+      `}
+      className={`${props.className ?? ""} ${props.fullHeight ? "full-height" : ""} ${props.fullWidth ? "full-width" : ""} ${
+        props.justifyContent ? props.justifyContent : "center"
+      } ${props.alignItems ? props.alignItems : "center"} ${props.wrap ? props.wrap : "wrap"}`}
     />
   );
 }

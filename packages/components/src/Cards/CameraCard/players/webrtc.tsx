@@ -27,15 +27,7 @@ interface WebRtcAnswer {
  * path via an integration. An answer is returned, then the rest of the stream
  * is handled entirely client side.
  */
-export function WebRTCPlayer({
-  entity,
-  controls,
-  muted,
-  autoPlay,
-  playsInline,
-  posterUrl,
-  onStateChange,
-}: WebRTCPlayerProps) {
+export function WebRTCPlayer({ entity, controls, muted, autoPlay, playsInline, posterUrl, onStateChange }: WebRTCPlayerProps) {
   const { useStore } = useHass();
   const connection = useStore((store) => store.connection);
   const _videoEl = useRef<HTMLVideoElement>(null);
@@ -51,20 +43,19 @@ export function WebRTCPlayer({
     [connection],
   );
 
-  const _fetchPeerConfiguration =
-    useCallback(async (): Promise<RTCConfiguration> => {
-      const settings = await fetchWebRtcSettings();
-      if (!settings || !settings.stun_server) {
-        return {};
-      }
-      return {
-        iceServers: [
-          {
-            urls: [`stun:${settings.stun_server!}`],
-          },
-        ],
-      };
-    }, [fetchWebRtcSettings]);
+  const _fetchPeerConfiguration = useCallback(async (): Promise<RTCConfiguration> => {
+    const settings = await fetchWebRtcSettings();
+    if (!settings || !settings.stun_server) {
+      return {};
+    }
+    return {
+      iceServers: [
+        {
+          urls: [`stun:${settings.stun_server!}`],
+        },
+      ],
+    };
+  }, [fetchWebRtcSettings]);
 
   const _startWebRtc = useCallback(async (): Promise<void> => {
     if (!connection || !_videoEl.current || started.current) return;
@@ -82,8 +73,7 @@ export function WebRTCPlayer({
       offerToReceiveAudio: true,
       offerToReceiveVideo: true,
     };
-    const offer: RTCSessionDescriptionInit =
-      await peerConnection.createOffer(offerOptions);
+    const offer: RTCSessionDescriptionInit = await peerConnection.createOffer(offerOptions);
     await peerConnection.setLocalDescription(offer);
 
     let candidates = ""; // Build an Offer SDP string with ice candidates

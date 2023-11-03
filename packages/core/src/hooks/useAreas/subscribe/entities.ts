@@ -24,32 +24,13 @@ const fetchEntityRegistry = (conn: Connection) =>
     type: "config/entity_registry/list",
   });
 
-const subscribeEntityRegistryUpdates = (
-  conn: Connection,
-  store: Store<EntityRegistryEntry[]>,
-) =>
+const subscribeEntityRegistryUpdates = (conn: Connection, store: Store<EntityRegistryEntry[]>) =>
   conn.subscribeEvents(
-    debounce(
-      () =>
-        fetchEntityRegistry(conn).then((entities) =>
-          store.setState(entities, true),
-        ),
-      500,
-      {
-        leading: true,
-      },
-    ),
+    debounce(() => fetchEntityRegistry(conn).then((entities) => store.setState(entities, true)), 500, {
+      leading: true,
+    }),
     "entity_registry_updated",
   );
 
-export const subscribeEntityRegistry = (
-  conn: Connection,
-  onChange: (entities: EntityRegistryEntry[]) => void,
-) =>
-  createCollection<EntityRegistryEntry[]>(
-    "_entityRegistry",
-    fetchEntityRegistry,
-    subscribeEntityRegistryUpdates,
-    conn,
-    onChange,
-  );
+export const subscribeEntityRegistry = (conn: Connection, onChange: (entities: EntityRegistryEntry[]) => void) =>
+  createCollection<EntityRegistryEntry[]>("_entityRegistry", fetchEntityRegistry, subscribeEntityRegistryUpdates, conn, onChange);

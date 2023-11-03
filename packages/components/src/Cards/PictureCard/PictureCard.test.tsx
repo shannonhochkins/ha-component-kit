@@ -10,14 +10,7 @@ describe("<PictureCard />", () => {
   it("renders PictureCard", async () => {
     const mockFunction = jest.fn();
     const { getByTestId } = render(
-      <PictureCard
-        title="Office"
-        image="FAKE"
-        id="test"
-        icon="mdi:cross"
-        onClick={mockFunction}
-        data-testid="picture-card"
-      />,
+      <PictureCard title="Office" image="FAKE" id="test" icon="mdi:cross" onClick={mockFunction} data-testid="picture-card" />,
       {
         wrapper: TestWrapper,
       },

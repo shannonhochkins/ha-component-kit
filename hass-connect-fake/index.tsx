@@ -24,11 +24,12 @@ import { isArray } from "lodash";
 import { HassContext, useHash } from '@hakit/core';
 import { entities as ENTITIES } from './mocks/mockEntities';
 import fakeApi from './mocks/fake-call-service';
-import { create } from 'zustand';
+import { create } from "zustand";
 import type { ServiceArgs } from './mocks/fake-call-service/types';
 import mockHistory from './mock-history';
 import { mockCallApi } from './mocks/fake-call-api';
 import reolinkSnapshot from './assets/reolink-snapshot.jpg';
+import { logs } from './mocks/mockLogs';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
@@ -138,8 +139,32 @@ class MockConnection extends Connection {
     this._mockResponses[type] = data;
   }
   
-  async subscribeMessage<Result>(callback: (result: Result) => void): Promise<() => Promise<void>> {
-    callback(mockHistory as Result);
+  async subscribeMessage<Result>(callback: (result: Result) => void, params?: {
+    type: string,
+    entity_ids?: string[],
+    start_time?: string,
+    end_time?: string,
+  }): Promise<() => Promise<void>> {
+    if (params && params.type === 'logbook/event_stream' && params.start_time && params.end_time) {
+      const isoStartTime = new Date(params.start_time);
+      const isoEndTime = new Date(params.end_time);
+
+      const unixStartTime = isoStartTime.getTime() / 1000;
+      const unixEndTime = isoEndTime.getTime() / 1000;
+      const newEvents = {
+        ...logs,
+        start_time: unixStartTime,
+        end_time: unixEndTime,
+        events: logs.events.map(event => ({
+          ...event,
+          entity_id: params?.entity_ids ? params?.entity_ids[0] : null,
+          when: unixStartTime + Math.random() * (unixEndTime - unixStartTime),
+        }))
+      };
+      callback(newEvents as Result);
+    } else {
+      callback(mockHistory as Result);
+    }
     return () => Promise.resolve();
   }
   async sendMessagePromise<Result>(message: MessageBase): Promise<Result> {
@@ -148,6 +173,9 @@ class MockConnection extends Connection {
       return {
         path: `${reolinkSnapshot}?`
       } as Result;
+    }
+    if (message.path && message.path.includes('config/entity_registry/get')) {
+      return '123'as Result;
     }
     return null as Result;
   }
@@ -193,7 +221,21 @@ const useStore = create<Store>((set) => ({
   setHassUrl: (hassUrl) => set({ hassUrl }),
   callApi: async () => {
     return {};
-  }
+  },
+  /** getter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
+  breakpoints: {
+    xxs: 0,
+    xs: 0,
+    sm: 0,
+    md: 0,
+    lg: 0,
+    xlg: 0,
+  },
+  /** setter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
+  setBreakpoints: (breakpoints) => set({ breakpoints: {
+    ...breakpoints,
+    xlg: breakpoints.lg + 1,
+  } }),
 }))
 
 function HassProvider({

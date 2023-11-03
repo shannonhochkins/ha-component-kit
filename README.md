@@ -2,7 +2,7 @@
 
 This repository contains functionality to easily generate custom dashboards for Home Assistant using the official web socket connection that the standard lovelace dashboards use.
 
-Try it out now! [Demo](https://shannonhochkins.github.io/ha-component-kit/iframe.html?args=&id=introduction-overview--default&viewMode=story#)
+Try it out now! [Demo](https://shannonhochkins.github.io/ha-component-kit/iframe.html?args=&id=introduction-demo--default&viewMode=story#)
 
 
 If you like anything here, be sure to 🌟 [my repo!](https://github.com/shannonhochkins/ha-component-kit)
@@ -29,8 +29,8 @@ There's extensive [documentation](https://shannonhochkins.github.io/ha-component
 
 ### WIP - Next Release
 
-- useLogs() - a hook to return logs for an entity
-- Extended modal popups for every entity on all cards, this will include attributes, a link to edit the entity, logs and history. In addition to the modal popup changes, i'll be adding sub controls for Switches, Curtains and more, all of the modal control components will also be available as individual components.
+- Theming - allow individual components to display different theme control, either by a hue shift or global change
+ - WeatherCard - add more information in the popup, adjust the forecast functionality to align with the new upcoming [release](https://www.home-assistant.io/blog/2023/09/06/release-20239/#:~:text=With%20this%20change%2C%20the%20forecast,being%20updated%20all%20the%20time), will also convert the details prop to align with other cards, to accept children rather than a configuration object.
 
 [Home Assistant Addon](https://github.com/shannonhochkins/hakit) - 🌟 it if you're interested
 

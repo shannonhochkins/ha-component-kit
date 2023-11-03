@@ -1,15 +1,10 @@
 import { useEffect, Fragment, ReactNode } from "react";
 import { css } from "@emotion/react";
-import {
-  AnimatePresence,
-  motion,
-  MotionProps,
-  HTMLMotionProps,
-} from "framer-motion";
+import { AnimatePresence, motion, MotionProps, HTMLMotionProps } from "framer-motion";
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { useKeyPress } from "react-use";
-import { FabCard, fallback, Column, mq } from "@components";
+import { FabCard, fallback, Column, mq, Row } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
 const ModalContainer = styled(motion.div)`
@@ -21,7 +16,7 @@ const ModalContainer = styled(motion.div)`
   width: var(--ha-modal-width);
   margin-left: calc(var(--ha-modal-width) / -2);
   color: var(--ha-S50-contrast);
-  height: calc(100% - 4rem);
+  max-height: calc(100% - 4rem);
   overflow: hidden;
   display: flex;
   flex-direction: row;
@@ -29,8 +24,9 @@ const ModalContainer = styled(motion.div)`
   justify-content: space-between;
   background-color: var(--ha-S200);
   z-index: var(--ha-modal-z-index);
+  box-shadow: 0px 0px 10px hsla(var(--ha-h), calc(var(--ha-50-s) * 0.8), 3%, 0.6);
   ${mq(
-    ["tablet", "mobile"],
+    ["xxs", "xs"],
     `
     max-width: 95vw;
     margin-left: calc(95vw / -2);
@@ -40,7 +36,6 @@ const ModalContainer = styled(motion.div)`
 const ModalInner = styled.div`
   display: flex;
   padding: 0rem 1rem 2rem;
-  height: 100%;
   align-items: flex-start;
   flex-direction: column;
 `;
@@ -49,7 +44,7 @@ const ModalOverflow = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 5rem;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: stretch;
   width: 100%;
 `;
@@ -58,6 +53,7 @@ const ModalHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
+  flex-wrap: nowrap;
   position: absolute;
   top: 0;
   left: 0;
@@ -65,12 +61,16 @@ const ModalHeader = styled.div`
 `;
 
 const Title = styled.h4`
-  all: unset;
+  margin: 0;
   font-size: 1.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
 `;
 
 const Description = styled.h4`
-  all: unset;
+  margin: 0;
   font-size: 0.9rem;
   color: var(--ha-S500-contrast);
 `;
@@ -82,7 +82,7 @@ const ModalBackdrop = styled(motion.div)`
   width: 100%;
   height: 100%;
   cursor: pointer;
-  background: var(--ha-background-opaque);
+  background: hsla(var(--ha-h), calc(var(--ha-s) * 1%), 10%, 0.3);
   z-index: var(--ha-modal-z-index);
   backdrop-filter: blur(2em) brightness(0.75);
 `;
@@ -103,6 +103,8 @@ export interface ModalProps extends Omit<Extendable, "title"> {
   onClose: () => void;
   /** any prop to pass to the backdrop element */
   backdropProps?: HTMLMotionProps<"div">;
+  /** react elements to render next to the close button */
+  headerActions?: () => ReactNode;
 }
 function _Modal({
   open,
@@ -115,6 +117,7 @@ function _Modal({
   style,
   className,
   cssStyles,
+  headerActions,
   ...rest
 }: ModalProps) {
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
@@ -149,7 +152,6 @@ function _Modal({
           <ModalContainer
             style={{
               borderRadius: "1rem",
-              boxShadow: "0px 2px 4px var(--ha-S50)",
               ...style,
             }}
             css={css`
@@ -163,22 +165,27 @@ function _Modal({
             {...rest}
           >
             <ModalHeader className={`modal-header`}>
-              <Column alignItems="flex-start" className={`modal-column`}>
+              <Column
+                alignItems="flex-start"
+                className={`modal-column`}
+                style={{
+                  flexShrink: 1,
+                  maxWidth: "70%",
+                }}
+              >
                 {title && <Title className={`modal-title`}>{title}</Title>}
-                {description && (
-                  <Description className={`modal-description`}>
-                    {description}
-                  </Description>
-                )}
+                {description && <Description className={`modal-description`}>{description}</Description>}
               </Column>
-              <FabCard
-                className={`modal-close-button`}
-                tooltipPlacement="left"
-                title="Close"
-                layout
-                icon="mdi:close"
-                onClick={onClose}
-              />
+              <Row
+                gap="0.5rem"
+                wrap="nowrap"
+                style={{
+                  flexShrink: 0,
+                }}
+              >
+                {headerActions && headerActions()}
+                <FabCard className={`modal-close-button`} tooltipPlacement="left" title="Close" layout icon="mdi:close" onClick={onClose} />
+              </Row>
             </ModalHeader>
             <ModalOverflow className={`modal-overflow`}>
               <ModalInner className={`modal-inner`}>{children}</ModalInner>

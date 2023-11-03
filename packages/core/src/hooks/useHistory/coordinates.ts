@@ -1,20 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { EntityHistoryState } from "./history";
 const STROKE_WIDTH = 5;
-const average = (items: any[]): number =>
-  items.reduce((sum, entry) => sum + parseFloat(entry.state), 0) / items.length;
+const average = (items: any[]): number => items.reduce((sum, entry) => sum + parseFloat(entry.state), 0) / items.length;
 
-const lastValue = (items: any[]): number =>
-  parseFloat(items[items.length - 1].state) || 0;
+const lastValue = (items: any[]): number => parseFloat(items[items.length - 1].state) || 0;
 
-const calcPoints = (
-  history: any,
-  hours: number,
-  width: number,
-  detail: number,
-  min: number,
-  max: number,
-): number[][] => {
+const calcPoints = (history: any, hours: number, width: number, detail: number, min: number, max: number): number[][] => {
   const coords = [] as number[][];
   const height = 80;
   let yRatio = (max - min) / height;
@@ -27,9 +18,7 @@ const calcPoints = (
 
   const getCoords = (item: any[], i: number, offset = 0, depth = 1): void => {
     if (depth > 1 && item) {
-      return item.forEach((subItem, index) =>
-        getCoords(subItem, i, index, depth - 1),
-      );
+      return item.forEach((subItem, index) => getCoords(subItem, i, index, depth - 1));
     }
 
     const x = xRatio * (i + offset / 6);
@@ -37,8 +26,7 @@ const calcPoints = (
     if (item) {
       last = [average(item), lastValue(item)];
     }
-    const y =
-      height + STROKE_WIDTH / 2 - ((item ? last[0] : last[1]) - min) / yRatio;
+    const y = height + STROKE_WIDTH / 2 - ((item ? last[0] : last[1]) - min) / yRatio;
     // @ts-expect-error - bad types FROM HOME ASSISTANT
     return coords.push([x, y]);
   };
@@ -69,21 +57,11 @@ export const coordinates = (
   });
   history = history.filter((item) => !Number.isNaN(item.state));
 
-  const min =
-    limits?.min !== undefined
-      ? limits.min
-      : Math.min(...history.map((item) => item.state));
-  const max =
-    limits?.max !== undefined
-      ? limits.max
-      : Math.max(...history.map((item) => item.state));
+  const min = limits?.min !== undefined ? limits.min : Math.min(...history.map((item) => item.state));
+  const max = limits?.max !== undefined ? limits.max : Math.max(...history.map((item) => item.state));
   const now = new Date().getTime();
 
-  const reduce = (
-    res: NumericEntityHistoryState[][],
-    item: NumericEntityHistoryState,
-    point: boolean,
-  ): AccumulatorType => {
+  const reduce = (res: NumericEntityHistoryState[][], item: NumericEntityHistoryState, point: boolean): AccumulatorType => {
     const age = now - new Date(item.last_changed).getTime();
 
     let key = Math.abs(age / (1000 * 3600) - hours);

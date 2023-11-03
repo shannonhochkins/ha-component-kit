@@ -2,9 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, FabCard, FabCardProps, Row } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
-function Template(
-  args?: Partial<FabCardProps<"light.fake_light_1" | "light.unavailable">>,
-) {
+function Template(args?: Partial<FabCardProps<"light.fake_light_1" | "light.unavailable">>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
@@ -37,9 +35,7 @@ export default {
     entity: { control: "text" },
   },
 } satisfies Meta<typeof FabCard>;
-export type FabCardStory = StoryObj<
-  typeof FabCard<"light.fake_light_1" | "light.unavailable">
->;
+export type FabCardStory = StoryObj<typeof FabCard<"light.fake_light_1" | "light.unavailable">>;
 export const FabCardExample: FabCardStory = {
   render: Template,
   args: {
