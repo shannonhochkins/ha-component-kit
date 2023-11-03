@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useRef } from "react";
 import { HassProvider } from "./Provider";
 import type { HassProviderProps } from "./Provider";
@@ -81,19 +81,11 @@ const MotionDiv = styled(motion.div)`
 `;
 
 /** This component will show the Home Assistant login form you're used to seeing normally when logging into HA, once logged in you shouldn't see this again unless you clear device storage, once authenticated it will render the child components of HassConnect and provide access to the api. */
-export const HassConnect = ({
-  children,
-  hassUrl,
-  loading = <Loader />,
-  onReady,
-  options = {},
-}: HassConnectProps): JSX.Element => {
+export const HassConnect = ({ children, hassUrl, loading = <Loader />, onReady, options = {} }: HassConnectProps): React.ReactNode => {
   const onReadyCalled = useRef(false);
 
   if (!hassUrl) {
-    return (
-      <>{`Provide the hassUrl prop with the url to your home assistant instance.`}</>
-    );
+    return <>{`Provide the hassUrl prop with the url to your home assistant instance.`}</>;
   }
 
   return (
@@ -101,13 +93,7 @@ export const HassConnect = ({
       {(ready) => (
         <AnimatePresence mode="wait">
           {ready ? (
-            <MotionDiv
-              key="children"
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              variants={fadeIn}
-            >
+            <MotionDiv key="children" initial="hidden" animate="visible" exit="exit" variants={fadeIn}>
               {onReady &&
                 !onReadyCalled.current &&
                 ((() => {
@@ -118,13 +104,7 @@ export const HassConnect = ({
               {children}
             </MotionDiv>
           ) : (
-            <MotionDiv
-              key="loading"
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              variants={fadeIn}
-            >
+            <MotionDiv key="loading" initial="hidden" animate="visible" exit="exit" variants={fadeIn}>
               {loading}
             </MotionDiv>
           )}

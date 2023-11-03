@@ -65,8 +65,7 @@ const StyledMarquee = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    animation: scroll var(--ha-marquee-duration) linear var(--ha-marquee-delay)
-      var(--ha-marquee-iteration-count);
+    animation: scroll var(--ha-marquee-duration) linear var(--ha-marquee-delay) var(--ha-marquee-iteration-count);
     animation-play-state: var(--ha-marquee-play);
     animation-delay: var(--ha-marquee-delay);
     animation-direction: var(--ha-marquee-direction);
@@ -248,11 +247,7 @@ export const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
       }
 
       if (autoFill && containerWidth && marqueeWidth) {
-        setMultiplier(
-          marqueeWidth < containerWidth
-            ? Math.ceil(containerWidth / marqueeWidth)
-            : 1,
-        );
+        setMultiplier(marqueeWidth < containerWidth ? Math.ceil(containerWidth / marqueeWidth) : 1);
       } else {
         setMultiplier(1);
       }
@@ -299,9 +294,7 @@ export const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
     if (autoFill) {
       return (marqueeWidth * multiplier) / speed;
     } else {
-      return marqueeWidth < containerWidth
-        ? containerWidth / speed
-        : marqueeWidth / speed;
+      return marqueeWidth < containerWidth ? containerWidth / speed : marqueeWidth / speed;
     }
   }, [autoFill, containerWidth, marqueeWidth, multiplier, speed]);
 
@@ -311,20 +304,10 @@ export const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
   const containerStyle = useMemo(
     () => ({
       ...style,
-      ["--ha-marquee-pause-on-hover" as string]:
-        !play || pauseOnHover ? "paused" : "running",
-      ["--ha-marquee-pause-on-click" as string]:
-        !play || (pauseOnHover && !pauseOnClick) || pauseOnClick
-          ? "paused"
-          : "running",
-      ["--ha-marquee-width" as string]:
-        direction === "up" || direction === "down" ? `100vh` : "100%",
-      ["--ha-marquee-transform" as string]:
-        direction === "up"
-          ? "rotate(-90deg)"
-          : direction === "down"
-          ? "rotate(90deg)"
-          : "none",
+      ["--ha-marquee-pause-on-hover" as string]: !play || pauseOnHover ? "paused" : "running",
+      ["--ha-marquee-pause-on-click" as string]: !play || (pauseOnHover && !pauseOnClick) || pauseOnClick ? "paused" : "running",
+      ["--ha-marquee-width" as string]: direction === "up" || direction === "down" ? `100vh` : "100%",
+      ["--ha-marquee-transform" as string]: direction === "up" ? "rotate(-90deg)" : direction === "down" ? "rotate(90deg)" : "none",
     }),
     [style, play, pauseOnHover, pauseOnClick, direction],
   );
@@ -332,10 +315,7 @@ export const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
   const gradientStyle = useMemo(
     () => ({
       ["--ha-marquee-gradient-color" as string]: `${rgbaGradientColor}, 1), ${rgbaGradientColor}, 0)`,
-      ["--ha-marquee-gradient-width" as string]:
-        typeof gradientWidth === "number"
-          ? `${gradientWidth}px`
-          : gradientWidth,
+      ["--ha-marquee-gradient-width" as string]: typeof gradientWidth === "number" ? `${gradientWidth}px` : gradientWidth,
     }),
     [rgbaGradientColor, gradientWidth],
   );
@@ -343,12 +323,10 @@ export const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
   const marqueeStyle = useMemo(
     () => ({
       ["--ha-marquee-play" as string]: play ? "running" : "paused",
-      ["--ha-marquee-direction" as string]:
-        direction === "left" ? "normal" : "reverse",
+      ["--ha-marquee-direction" as string]: direction === "left" ? "normal" : "reverse",
       ["--ha-marquee-duration" as string]: `${duration}s`,
       ["--ha-marquee-delay" as string]: `${delay}s`,
-      ["--ha-marquee-iteration-count" as string]:
-        loop > 0 ? `${loop}` : "infinite",
+      ["--ha-marquee-iteration-count" as string]: loop > 0 ? `${loop}` : "infinite",
       ["--ha-marquee-min-width" as string]: autoFill ? `auto` : "100%",
       ["--ha-marquee-padding-right" as string]: autoFill ? `4rem` : "0",
     }),
@@ -357,12 +335,7 @@ export const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
 
   const childStyle = useMemo(
     () => ({
-      ["--ha-marquee-transform" as string]:
-        direction === "up"
-          ? "rotate(90deg)"
-          : direction === "down"
-          ? "rotate(-90deg)"
-          : "none",
+      ["--ha-marquee-transform" as string]: direction === "up" ? "rotate(90deg)" : direction === "down" ? "rotate(-90deg)" : "none",
     }),
     [direction],
   );
@@ -370,22 +343,11 @@ export const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
   // Render {multiplier} number of children
   const multiplyChildren = useCallback(
     (multiplier: number) => {
-      return [
-        ...Array(
-          Number.isFinite(multiplier) && multiplier >= 0 ? multiplier : 0,
-        ),
-      ].map((_, i) => (
+      return [...Array(Number.isFinite(multiplier) && multiplier >= 0 ? multiplier : 0)].map((_, i) => (
         <Fragment key={i}>
           {Children.map(children, (child, index) => {
             return (
-              <div
-                style={childStyle}
-                className={`child ${
-                  index === Children.toArray(children).length - 1
-                    ? "last-child"
-                    : ""
-                }`}
-              >
+              <div style={childStyle} className={`child ${index === Children.toArray(children).length - 1 ? "last-child" : ""}`}>
                 {child}
               </div>
             );
@@ -397,29 +359,13 @@ export const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
   );
 
   return !isMounted ? null : (
-    <StyledMarquee
-      ref={containerRef}
-      style={containerStyle}
-      className={"marquee-container " + className}
-    >
+    <StyledMarquee ref={containerRef} style={containerStyle} className={"marquee-container " + className}>
       {gradient && <div style={gradientStyle} className="overlay" />}
-      <div
-        className="marquee"
-        style={marqueeStyle}
-        onAnimationIteration={onCycleComplete}
-        onAnimationEnd={onFinish}
-      >
+      <div className="marquee" style={marqueeStyle} onAnimationIteration={onCycleComplete} onAnimationEnd={onFinish}>
         <div className="initial-child-container" ref={marqueeRef}>
           {Children.map(children, (child, index) => {
             return (
-              <div
-                style={childStyle}
-                className={`child ${
-                  index === Children.toArray(children).length - 1
-                    ? "last-child"
-                    : ""
-                }`}
-              >
+              <div style={childStyle} className={`child ${index === Children.toArray(children).length - 1 ? "last-child" : ""}`}>
                 {child}
               </div>
             );

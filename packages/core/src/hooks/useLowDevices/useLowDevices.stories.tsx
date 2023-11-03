@@ -2,30 +2,28 @@ import { Story, Source, Title, Description, ArgTypes } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useLowDevices } from "@hakit/core";
 import type { EntityName } from "@hakit/core";
-import { EntitiesCard, ThemeProvider, Row, Column } from "@components";
+import { EntitiesCard, EntitiesCardRow, ThemeProvider, Row, Column } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function RenderDevices() {
   const devices = useLowDevices();
   return (
-    <EntitiesCard
-      includeLastUpdated
-      entities={devices.map((device) => ({
-        entity: device.entity_id as EntityName,
-        renderState(entity) {
-          return (
-            <div
-              style={{
-                color: "red",
-              }}
-            >
-              {entity.state}
-              {entity.attributes.unit_of_measurement}
-            </div>
-          );
-        },
-      }))}
-    />
+    <EntitiesCard includeLastUpdated>
+      {devices.map((device) => (
+        <EntitiesCardRow
+          key={device.entity_id}
+          entity={device.entity_id as EntityName}
+          renderState={(entity) => {
+            return (
+              <div>
+                {entity.state}
+                {entity.attributes.unit_of_measurement}
+              </div>
+            );
+          }}
+        />
+      ))}
+    </EntitiesCard>
   );
 }
 
@@ -34,11 +32,8 @@ function Template() {
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />
       <Column fullWidth gap="1rem">
-        <p>
-          The following renders the low battery devices in an EntitiesCard
-          component
-        </p>
-        <Row gap="1rem">
+        <p>The following renders the low battery devices in an EntitiesCard component</p>
+        <Row gap="1rem" fullWidth>
           <RenderDevices />
         </Row>
       </Column>
@@ -72,16 +67,18 @@ export default {
 function RenderDevices() {
   const devices = useLowDevices();
   return (
-    <EntitiesCard includeLastUpdated entities={devices.map(device => ({
-      entity: device.entity_id as EntityName,
-      renderState(entity) {
+    <EntitiesCard
+      includeLastUpdated
+    >
+      {devices.map(device => <EntitiesCardRow key={device.entity_id} entity={device.entity_id as EntityName} renderState={(entity) => {
         return (
-          <div style={{
-            color: 'red'
-          }}>{entity.state}{entity.attributes.unit_of_measurement}</div>
+          <div>
+            {entity.state}
+            {entity.attributes.unit_of_measurement}
+          </div>
         );
-      }
-    }))} />
+      }} />)}
+    </EntitiesCard>
   );
 }
           `}

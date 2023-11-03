@@ -1,18 +1,35 @@
 import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
-import { useEffect, useCallback, useState } from "react";
-import { useHass } from "@hakit/core";
-import { Row, FabCard, fallback, mq, PreloadImage } from "@components";
-import type { PictureCardProps, PreloadImageProps } from "@components";
+import { useEffect, useCallback, useState, useId, useMemo } from "react";
+import { useHass, type EntityName } from "@hakit/core";
+import { Row, FabCard, fallback, mq, PreloadImage, CardBase } from "@components";
+import type { PictureCardProps, CardBaseProps, AvailableQueries } from "@components";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useKeyPress } from "react-use";
-import type { MotionProps } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
 
-type Extendable = PictureCardProps &
-  Omit<React.ComponentProps<"div">, "onClick" | "ref"> &
-  MotionProps;
+type OmitProperties =
+  | "as"
+  | "active"
+  | "title"
+  | "entity"
+  | "modalProps"
+  | "ref"
+  | "entity"
+  | "serviceData"
+  | "service"
+  | "disableRipples"
+  | "disableScale"
+  | "disableActiveState"
+  | "rippleProps"
+  | "service"
+  | "serviceData"
+  | "longPressCallback"
+  | "onClick"
+  | "modalProps";
+
+type Extendable = PictureCardProps & Omit<CardBaseProps<"div", EntityName>, OmitProperties>;
 export interface AreaCardProps extends Extendable {
   /** the hash of the area, eg "office", "living-room", this will set the hash in the url bar and activate the area */
   hash: string;
@@ -20,42 +37,16 @@ export interface AreaCardProps extends Extendable {
   children: React.ReactNode;
   /** the animation duration of the area expanding @default 0.25 */
   animationDuration?: number;
-  /** props to pass to the image preloader */
-  preloadProps?: PreloadImageProps;
+  /** called when the card is pressed */
+  onClick?: () => void;
 }
 
-const StyledPictureCard = styled(motion.button)<Partial<PictureCardProps>>`
-  all: unset;
-  box-sizing: border-box;
-  padding: 0;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  display: flex;
-  width: 100%;
+const StyledAreaCard = styled(CardBase)<Partial<PictureCardProps>>`
   aspect-ratio: 16 / 9;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: space-between;
-  cursor: pointer;
-  background-color: var(--ha-S300);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-color, box-shadow, background-image;
-  will-change: width, height;
-  color: var(--ha-S200-contrast);
-  flex-shrink: 1;
-  svg {
-    color: var(--ha-S200-contrast);
-    transition: color var(--ha-transition-duration) var(--ha-easing);
-  }
-  &:hover {
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-    background-color: var(--ha-S300);
-    color: var(--ha-500-contrast);
-    svg {
-      color: var(--ha-S300-contrast);
-    }
+  background-color: transparent;
+  &:hover,
+  &:active {
+    background-color: transparent !important;
   }
   height: var(--stretch,);
 `;
@@ -81,42 +72,6 @@ const NavBar = styled(PictureCardFooter)`
   border-bottom: 1px solid var(--ha-S200);
 `;
 
-const StyledAreaCard = styled(motion.div)`
-  position: relative;
-  button {
-    max-height: 100%;
-  }
-
-  ${mq(
-    ["mobile"],
-    `
-    width: 100%;
-    flex-shrink: 1;
-  `,
-  )}
-  ${mq(
-    ["tablet", "smallScreen"],
-    `
-    width: calc(50% - var(--gap, 0rem) / 2);
-    flex-shrink: 1;
-  `,
-  )}
-  ${mq(
-    ["desktop", "mediumScreen"],
-    `
-    width: calc(((100% - 2 * var(--gap, 0rem)) / 3));
-    flex-shrink: 1;
-  `,
-  )}
-  ${mq(
-    ["largeDesktop"],
-    `
-    width: calc(((100% - 3 * var(--gap, 0rem)) / 4));
-    flex-shrink: 1;
-  `,
-  )}
-`;
-
 const FullScreen = styled(motion.div)`
   position: fixed;
   inset: 0;
@@ -132,7 +87,7 @@ const FullScreen = styled(motion.div)`
   transition: left var(--ha-transition-duration) var(--ha-easing);
   color: var(--ha-S50-contrast);
   ${mq(
-    ["mobile", "tablet"],
+    ["xxs", "xs"],
     `
     left: 0;
   `,
@@ -157,19 +112,18 @@ function _AreaCard({
   title,
   image,
   animationDuration = 0.25,
-  cssStyles,
   className,
-  id,
   preloadProps,
+  onClick,
   ...rest
 }: AreaCardProps) {
-  const { addRoute, getRoute } = useHass();
+  const _id = useId();
+  const { addRoute } = useHass();
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   const [forceRender, setForceRender] = useState(false);
   const [animateChildren, setAnimateChildren] = useState(false);
-  const route = getRoute(hash);
   const actualHash = window.location.hash;
-  const active = actualHash.replace("#", "") === hash.replace("#", "");
+  const active = useMemo(() => actualHash.replace("#", "") === hash.replace("#", ""), [hash, actualHash]);
   // starts the trigger to close the full screen card
   const resetAnimation = useCallback(() => {
     setForceRender(false);
@@ -177,8 +131,6 @@ function _AreaCard({
   useEffect(() => {
     if (actualHash && active && !forceRender) {
       setForceRender(true);
-    } else if (actualHash && active && forceRender && !animateChildren) {
-      setAnimateChildren(true);
     } else if (!active && (forceRender || animateChildren)) {
       setAnimateChildren(false);
       setForceRender(false);
@@ -197,20 +149,20 @@ function _AreaCard({
 
   // when the escape key is pressed and we're active, close the card
   useEffect(() => {
-    if (isPressed && route?.active === true) {
+    if (isPressed && active === true) {
       window.location.hash = "";
       resetAnimation();
     }
-  }, [isPressed, route?.active, resetAnimation]);
+  }, [isPressed, active, resetAnimation]);
 
   return (
     <>
-      <AnimatePresence key={`${hash}-area-card-parent`}>
+      <AnimatePresence key={`${_id}-area-card-parent`}>
         {forceRender === true && (
           <FullScreen
-            key={`layout-${hash}`}
-            layoutId={`layout-${hash}`}
-            id={`${id ?? hash}-expanded`}
+            key={`layout-${_id}`}
+            layoutId={`layout-${_id}`}
+            id={`${_id}-expanded`}
             className={"full-screen"}
             initial={{ opacity: 0 }}
             transition={{
@@ -228,6 +180,11 @@ function _AreaCard({
                 delay: 0,
               },
             }}
+            onAnimationComplete={() => {
+              if (!animateChildren) {
+                setAnimateChildren(true);
+              }
+            }}
           >
             <Global
               styles={css`
@@ -244,11 +201,7 @@ function _AreaCard({
                 },
               }}
             >
-              <Row
-                gap="0.5rem"
-                justifyContent="space-between"
-                className={"row"}
-              >
+              <Row gap="0.5rem" justifyContent="space-between" className={"row"}>
                 <Row gap="0.5rem" className={"row"}>
                   {icon && <Icon className={"icon"} icon={icon} />}
                   {title}
@@ -265,7 +218,7 @@ function _AreaCard({
               </Row>
             </NavBar>
             <AnimatePresence
-              key={`layout-children-${hash}`}
+              key={`layout-children-${_id}`}
               onExitComplete={() => {
                 resetAnimation();
               }}
@@ -274,15 +227,12 @@ function _AreaCard({
                 <ChildContainer
                   className={"child-container"}
                   initial={{ opacity: 0 }}
-                  transition={{
-                    duration: animationDuration,
-                  }}
                   exit={{
                     opacity: 0,
                   }}
                   animate={{
                     transition: {
-                      delay: animationDuration,
+                      duration: animationDuration,
                     },
                     opacity: 1,
                   }}
@@ -295,62 +245,66 @@ function _AreaCard({
         )}
       </AnimatePresence>
       <StyledAreaCard
-        id={`${id ?? hash}-area-card`}
-        layoutId={`layout-${hash}`}
-        className={`${className ?? ""}`}
-        css={css`
-          ${cssStyles ?? ""}
-        `}
+        id={`${_id}-area-card`}
+        layoutId={`layout-${_id}`}
+        className={`area-card ${className ?? ""}`}
+        onClick={() => {
+          window.location.hash = hash;
+          if (onClick) {
+            onClick();
+          }
+        }}
+        {...rest}
       >
-        <StyledPictureCard
-          whileTap={{ scale: 0.9 }}
-          {...rest}
-          onClick={() => {
-            window.location.hash = hash;
+        <PreloadImage
+          {...(preloadProps ?? {})}
+          src={image}
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
           }}
+          lazy
         >
-          <PreloadImage
-            {...(preloadProps ?? {})}
-            src={image}
-            style={{
-              width: "100%",
-              height: "100%",
-              position: "absolute",
+          <PictureCardFooter
+            className={"footer"}
+            animate={{
+              transition: {
+                duration: animationDuration,
+              },
             }}
-            lazy
           >
-            <PictureCardFooter
-              className={"footer"}
-              animate={{
-                transition: {
-                  duration: animationDuration,
-                },
-              }}
-            >
-              <Row gap={"0.5rem"} className={"row"}>
-                {icon && (
-                  <Icon
-                    className={"icon"}
-                    icon={icon}
-                    style={{
-                      color: `var(--ha-500-contrast)`,
-                    }}
-                  />
-                )}
-                {title}
-              </Row>
-            </PictureCardFooter>
-          </PreloadImage>
-        </StyledPictureCard>
+            <Row gap={"0.5rem"} className={"row"}>
+              {icon && (
+                <Icon
+                  className={"icon"}
+                  icon={icon}
+                  style={{
+                    color: `var(--ha-500-contrast)`,
+                  }}
+                />
+              )}
+              {title}
+            </Row>
+          </PictureCardFooter>
+        </PreloadImage>
       </StyledAreaCard>
     </>
   );
 }
 /** The AreaCard component is a very simple way of categorizing all your entities into a single "PictureCard" which will show all the entities when clicked. */
 export function AreaCard(props: AreaCardProps) {
+  const defaultColumns: AvailableQueries = {
+    xxs: 12,
+    xs: 6,
+    sm: 6,
+    md: 4,
+    lg: 4,
+    xlg: 3,
+  };
   return (
     <ErrorBoundary {...fallback({ prefix: "AreaCard" })}>
-      <_AreaCard {...props} />
+      <_AreaCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

@@ -1,3 +1,51 @@
+# 3.0.0
+## Storybook
+- BUGFIX - bug was preventing some props from being displayed in the props table, this has been fixed
+- NEW - Demo has been updated to include some demos of the new responsive layout options
+- NEW - page outlining how to use the responsive props
+
+## @hakit/components
+### Breaking Changes
+- mq - If you were using the `mq` function from @hakit/components, this has now changed to accept the breakpoint name rather than device name. Previously, you would use `mq('mobile')` to determine if the device was mobile, this has now changed to `mq('sm')` to determine if the device is small. This is to align with the new breakpoints that have been introduced.
+- useDevice has been renamed to useBreakpoint, and similarly to `mq`` changes, it will now return breakpoint key/value pairs if the breakpoint is active.
+- CameraCard - headerSensors will now only accept ButtonBarButton components rather than an array of props, this was changed as the intellisense wasn't available when using objects as there's no way to extract the generic type of the entity to provide proper intellisense, this also provides more control over what you want to render.
+- EntitiesCard - entities prop has been removed, and will now accept `EntitiesCardRow` as children for the card, this is to align with the other cards and provide more control over what you want to render:
+  ```
+    <EntitiesCard>
+      <EntitiesCardRow entity="light.some_light" />
+    </EntitiesCard>
+  ```
+### New Changes
+- NEW - CameraCard will now show the Live stream (if available) in the popup for the card
+- NEW - Responsive Props - previously, cards had predefined width values, this has been changed to a 12 column grid system, each card still has a predefined column assigned at different breakpoints however these are all configurable per card.
+- NEW - ThemeProvider - breakpoints are configurable from the theme provider, this is used by the responsive props to determine the column width at different breakpoints.
+- NEW - Massive overhaul to base styles of cards & functionality, ALL cards now share the same base styles and functionality, meaning popups, click events, ripples, scale effects etc are all available on every single card where necessary.
+- NEW - ButtonBar - a new shared component to display entity buttons in a bar, this is currently used by the CameraCard and the ClimateCard
+- NEW - ButtonGroup - a new shared component to display entity buttons in a bar, this is currently used by the Switch popup modal
+- NEW - ClimateCard - now has the ability to control temperature from the base card, as well as some styling changes, it will also display additional information about the current temperature in the description of the card.
+- NEW - cards using a switch entity, will now show a new controller UI element in the Popup
+- NEW - Cards using a cover entity will now have control over the cover position, tilt and more from the popup of the card.
+- NEW - Popups now render the attributes in the popup (similar to home assistant), useful for debugging or if you want to visualize the exact properties of the entity.
+- NEW - Logs - Logs are now rendered in the popup for cards that use entities, this will show recent events related to the entity.
+- NEW - ControlToggle - a new UI component to display a toggle switch, this is used by the Switch popup modal.
+- NEW - Overhaul to the ModalByEntityDomain component to make it simpler to integrate further UI controls by domain. All Layouts for every popup by domain are now also available as a shared component.
+- NEW - EntityAttributes - a new component to render entity attributes in a Group component.
+- NEW - LogBookRenderer - a component to render the logs of an entity in a list.
+
+### Bugfixes
+- BUGFIX - Long Pressing a card was previously activating on mobile as you would swipe on an element to scroll for too long, this has been fixed and scroll movement is will not trigger the popup.
+- BUGFIX - Massive changes to styles across the board, which has fixed multiple styling bugs.
+- BUGFIX - Memory performance fixes with the ThemeProvider, previously the ThemeProvider was re-rendering on every state change, this has been fixed and should improve performance.
+
+
+## @hakit/core
+- BREAKING - `HassEntityWithApi` typescript helper has been renamed to `HassEntityWithService`
+- NEW - breakpoints values are now available from the store
+- NEW - useLogs - hook to return the logs for an entity
+
+## Storybook
+- BUGFIX - Many properties weren't displayed in the component props tables, this has been fixed and now you should have much better visibility on what's available.
+
 ## create-hakit - v1.1.0
 - added a lot more redundancy checks to the deploy script
 - updated documentation

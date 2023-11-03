@@ -44,3 +44,12 @@ npm link @hakit/core @hakit/components
 If you now navigate to your node_modules under @hakit, you should see the packages linked to your local @hakit packages and changes you make in hakit should reflect on your dashboard.
 
 Now whenever you make changes in either core or components, the changes should reflect on your local test dashboard.
+
+
+### Demo Gif
+I've been using quick time to record the screen to mov, then using ffmpeg to convert the mov to gif
+
+```
+ffmpeg -i input.mov -filter_complex "[0:v] fps=12,scale=840:-1,split [a][b];[a] palettegen [p];[b][p] paletteuse" output.gif
+
+```

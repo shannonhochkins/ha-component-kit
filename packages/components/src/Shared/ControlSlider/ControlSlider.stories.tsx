@@ -54,12 +54,10 @@ function Template(args?: Partial<ControlSliderProps>) {
               value={value}
               {...args}
               onChange={(value) => {
-                if (ref.current)
-                  ref.current.innerText = Math.round(value).toString() + "%";
+                if (ref.current) ref.current.innerText = Math.round(value).toString() + "%";
               }}
               onChangeApplied={(value) => {
-                if (ref.current)
-                  ref.current.innerText = Math.round(value).toString() + "%";
+                if (ref.current) ref.current.innerText = Math.round(value).toString() + "%";
               }}
             />
             <span ref={ref}>{args?.disabled ? "disabled" : `${value}%`}</span>

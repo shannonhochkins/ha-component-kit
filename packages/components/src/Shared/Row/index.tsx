@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import type { MotionProps } from "framer-motion";
 import { m } from "framer-motion";
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
@@ -30,7 +31,7 @@ const _Row = styled(m.div)<RowProps>`
     typeof props.gap === "string" &&
     `
     gap: ${props.gap};
-    --gap: ${props.gap ?? 0};
+    --gap: ${props.gap ?? "0px"};
   `}
   ${(props) => props.fullHeight && `height: 100%;`}
   ${(props) => props.fullWidth && `width: 100%;`}
@@ -41,11 +42,12 @@ export function Row(props: RowProps) {
   return (
     <_Row
       {...props}
-      className={`${props.className} ${props.fullHeight ? "full-height" : ""} ${
-        props.fullWidth ? "full-width" : ""
-      } ${props.justifyContent ? props.justifyContent : "center"} ${
-        props.alignItems ? props.alignItems : "center"
-      } ${props.wrap ? props.wrap : "wrap"}`}
+      cssStyles={css`
+        ${props.cssStyles ?? ""}
+      `}
+      className={`${props.className ?? ""} ${props.fullHeight ? "full-height" : ""} ${props.fullWidth ? "full-width" : ""} ${
+        props.justifyContent ? props.justifyContent : "center"
+      } ${props.alignItems ? props.alignItems : "center"} ${props.wrap ? props.wrap : "wrap"}`}
     />
   );
 }

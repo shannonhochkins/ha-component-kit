@@ -11,3 +11,4 @@ export * from "./light";
 export * from "./colors.ts";
 export * from "./computeDomain";
 export * from "./supports-feature";
+export * from "./time/time-ago";

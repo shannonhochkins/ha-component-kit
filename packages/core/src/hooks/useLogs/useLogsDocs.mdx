@@ -1,0 +1,31 @@
+import { Meta, Source } from '@storybook/blocks';
+
+<Meta title="HOOKS/useLogs" />
+
+# useLogs()
+###### `useLogs(entityId: EntityName, options: UseLogOptions)`
+This hook is designed to retrieve the current log information from the entitiy if available.
+
+<b>NOTE:</b> This hook is already connected to the Modal via the LogBookRenderer component.
+
+This will automatically subscribe/unsubscribe for you so there's no need to manage anything.
+
+
+### Example Usage
+
+<Source dark code={`
+import { HassConnect, useLogs } from '@hakit/core';
+function Office() {
+  const logs = useLogs('light.some_light');
+  // can now access all properties relating to the logs for this light.
+  return <div>
+    DO SOMETHING WITH THE LOGS!
+  </div>
+}
+function App() {
+  return <HassConnect hassUrl="http://localhost:1234">
+    <Office />
+  </HassConnect>
+}
+`} />
+

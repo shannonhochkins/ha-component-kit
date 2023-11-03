@@ -7,13 +7,7 @@ function Render(args?: Args) {
     <HassConnect hassUrl="https://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" fullWidth>
-        <CalendarCard
-          entities={[
-            "calendar.google_calendar",
-            "calendar.another_google_calendar",
-          ]}
-          {...args}
-        />
+        <CalendarCard entities={["calendar.google_calendar", "calendar.another_google_calendar"]} {...args} />
       </Column>
     </HassConnect>
   );

@@ -1,13 +1,6 @@
 import { useMemo, useCallback } from "react";
 import { useHass } from "@core";
-import type {
-  SupportedServices,
-  DomainService,
-  SnakeOrCamelDomains,
-  ServiceData,
-  SnakeToCamel,
-  Target,
-} from "@typings";
+import type { SupportedServices, DomainService, SnakeOrCamelDomains, ServiceData, SnakeToCamel, Target } from "@typings";
 import type { HassContextProps } from "@core";
 
 export function createService<T extends SnakeOrCamelDomains>(
@@ -27,9 +20,7 @@ export function createService<T extends SnakeOrCamelDomains>(
         return function (...args: [Target?, ServiceData<T, S>?]) {
           // if rootTarget is available, use it. otherwise, use the first argument as target
           const target = rootTarget ?? (args[0] as Target);
-          const serviceData = rootTarget
-            ? (args[0] as ServiceData<T, S>)
-            : args[1];
+          const serviceData = rootTarget ? (args[0] as ServiceData<T, S>) : args[1];
 
           console.log(`Calling ${domain}.${service} with`, {
             target,
@@ -47,20 +38,10 @@ export function createService<T extends SnakeOrCamelDomains>(
   );
 }
 
-export function useService<T extends SnakeOrCamelDomains>(
-  domain: T,
-  rootTarget: Target,
-): SupportedServices<"no-target">[SnakeToCamel<T>];
-export function useService<T extends SnakeOrCamelDomains>(
-  domain: T,
-): SupportedServices[SnakeToCamel<T>];
-export function useService(): <T extends SnakeOrCamelDomains>(
-  domain: T,
-) => SupportedServices[SnakeToCamel<T>];
-export function useService<T extends SnakeOrCamelDomains>(
-  domain?: T,
-  rootTarget?: Target,
-) {
+export function useService<T extends SnakeOrCamelDomains>(domain: T, rootTarget: Target): SupportedServices<"no-target">[SnakeToCamel<T>];
+export function useService<T extends SnakeOrCamelDomains>(domain: T): SupportedServices[SnakeToCamel<T>];
+export function useService(): <T extends SnakeOrCamelDomains>(domain: T) => SupportedServices[SnakeToCamel<T>];
+export function useService<T extends SnakeOrCamelDomains>(domain?: T, rootTarget?: Target) {
   const { callService } = useHass();
 
   const service = useMemo(() => {

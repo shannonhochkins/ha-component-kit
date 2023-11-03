@@ -109,25 +109,14 @@ export interface AlertProps extends React.ComponentProps<"div"> {
   children?: React.ReactNode;
 }
 /** A simple Alert component to display messages or warnings if need be, this is currently used internally for error boundaries. */
-export function Alert({
-  title = "",
-  description = "",
-  type = "info",
-  onClick,
-  className,
-  children,
-  cssStyles,
-  ...rest
-}: AlertProps) {
+export function Alert({ title = "", description = "", type = "info", onClick, className, children, cssStyles, ...rest }: AlertProps) {
   return (
     <StyledAlert
       css={css`
         ${cssStyles ?? ""}
       `}
       onClick={onClick}
-      className={`alert issue-type ${title ? "" : "no-title"} ${type} ${
-        className ?? ""
-      }`}
+      className={`alert issue-type ${title ? "" : "no-title"} ${type} ${className ?? ""}`}
       role="alert"
       {...rest}
     >

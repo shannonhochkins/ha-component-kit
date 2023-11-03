@@ -3,15 +3,9 @@ import { clamp } from "lodash";
 const DEFAULT_MIN_KELVIN = 2700;
 const DEFAULT_MAX_KELVIN = 6500;
 
-export const temperature2rgb = (
-  temperature: number,
-): [number, number, number] => {
+export const temperature2rgb = (temperature: number): [number, number, number] => {
   const value = temperature / 100;
-  return [
-    temperatureRed(value),
-    temperatureGreen(value),
-    temperatureBlue(value),
-  ];
+  return [temperatureRed(value), temperatureGreen(value), temperatureBlue(value)];
 };
 
 const temperatureRed = (temperature: number): number => {
@@ -43,10 +37,7 @@ const temperatureBlue = (temperature: number): number => {
   return clamp(blue, 0, 255);
 };
 
-const matchMaxScale = (
-  inputColors: number[],
-  outputColors: number[],
-): number[] => {
+const matchMaxScale = (inputColors: number[], outputColors: number[]): number[] => {
   const maxIn: number = Math.max(...inputColors);
   const maxOut: number = Math.max(...outputColors);
   let factor: number;
@@ -58,11 +49,9 @@ const matchMaxScale = (
   return outputColors.map((value) => Math.round(value * factor));
 };
 
-const mired2kelvin = (miredTemperature: number) =>
-  Math.floor(1000000 / miredTemperature);
+const mired2kelvin = (miredTemperature: number) => Math.floor(1000000 / miredTemperature);
 
-const kelvin2mired = (kelvintTemperature: number) =>
-  Math.floor(1000000 / kelvintTemperature);
+const kelvin2mired = (kelvintTemperature: number) => Math.floor(1000000 / kelvintTemperature);
 
 export const rgbww2rgb = (
   rgbww: [number, number, number, number, number],
@@ -86,20 +75,14 @@ export const rgbww2rgb = (
   const whiteLevel = Math.max(cw, ww) / 255;
 
   // Add the white channels to the rgb channels.
-  const rgb = [
-    r + wR * whiteLevel,
-    g + wG * whiteLevel,
-    b + wB * whiteLevel,
-  ] as [number, number, number];
+  const rgb = [r + wR * whiteLevel, g + wG * whiteLevel, b + wB * whiteLevel] as [number, number, number];
 
   // Match the output maximum value to the input. This ensures the
   // output doesn't overflow.
   return matchMaxScale([r, g, b, cw, ww], rgb) as [number, number, number];
 };
 
-export const rgbw2rgb = (
-  rgbw: [number, number, number, number],
-): [number, number, number] => {
+export const rgbw2rgb = (rgbw: [number, number, number, number]): [number, number, number] => {
   const [r, g, b, w] = rgbw;
   const rgb = [r + w, g + w, b + w] as [number, number, number];
   return matchMaxScale([r, g, b, w], rgb) as [number, number, number];

@@ -8,11 +8,11 @@ I'm not using changesets to actually publish as they require payment to do so.
 
 ### Tagging & Releasing
 
-Releasing is relatively simple, run the following command:
+Releasing is relatively simple.
 
 These commands will build everything needed to deploy before it actually releases, so no need to run these before the release.
 
-This is the release process I'm using, it's a bit manual but it works for now.
+This is the release process is a bit manual but it works for now.
 ```bash
 # Step 1: Make sure your local master is up-to-date with the remote, merge master into development if need be
 git fetch origin && git checkout master && git pull
@@ -48,6 +48,8 @@ npx changeset version
 ```
 
 This command will also automatically update any inter-dependencies between packages, eg @hakit/components depends on the latest version of @hakit/core, this will update automatically.
+
+It will also create a changelog under each package, these should not be included as there's a main changelog.md in the root of the repository.
 
 Once you've done this, commit your changes, then run:
 

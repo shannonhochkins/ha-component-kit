@@ -48,14 +48,11 @@ export function ThemeControls({
   const [dark, setDark] = useState(darkMode);
   const [c, setContrastThreshold] = useState(contrastThreshold);
 
-  const debouncedOnChange = useDebouncedCallback(
-    (_theme: Required<Omit<ThemeControlsProps, "onChange">>) => {
-      if (typeof onChange === "function") {
-        onChange(_theme);
-      }
-    },
-    50,
-  );
+  const debouncedOnChange = useDebouncedCallback((_theme: Required<Omit<ThemeControlsProps, "onChange">>) => {
+    if (typeof onChange === "function") {
+      onChange(_theme);
+    }
+  }, 50);
 
   useEffect(() => {
     debouncedOnChange({
@@ -66,21 +63,7 @@ export function ThemeControls({
       contrastThreshold: c,
       darkMode: dark,
     });
-  }, [
-    c,
-    contrastThreshold,
-    dark,
-    darkMode,
-    h,
-    hue,
-    l,
-    lightness,
-    debouncedOnChange,
-    s,
-    saturation,
-    t,
-    tint,
-  ]);
+  }, [c, contrastThreshold, dark, darkMode, h, hue, l, lightness, debouncedOnChange, s, saturation, t, tint]);
 
   return (
     <Column
@@ -170,9 +153,7 @@ export function ThemeControls({
         />
       </Row>
       <Row justifyContent="flex-start" fullWidth>
-        <Alert>
-          Hover over the pallette's below to see the respective css variables.
-        </Alert>
+        <Alert>Hover over the pallette's below to see the respective css variables.</Alert>
       </Row>
       <Row wrap="nowrap" fullWidth justifyContent="flex-start">
         {LIGHT.map((color, index) => {

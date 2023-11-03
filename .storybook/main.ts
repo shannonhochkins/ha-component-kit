@@ -43,6 +43,9 @@ export default ({
         if (prop.name === 'css') {
           return false;
         }
+        if (prop.name === 'cssStyles' || prop.name === 'style') {
+          return true;
+        }
         const res = /react-thermostat/.test(prop.parent?.fileName) || !/node_modules/.test(prop.parent?.fileName);
         return prop.parent ? res : true;
       },
@@ -50,6 +53,14 @@ export default ({
       compilerOptions: {
         allowSyntheticDefaultImports: false,
         esModuleInterop: false,
+        baseUrl: ".",
+        paths: {
+          "@hakit/core": ["packages/core/dist"],
+          "@components": ["packages/components/src"],
+          "@hooks": ["packages/core/src/hooks"],
+          "@utils/*": ["packages/core/src/utils/*"],
+          "@typings": ["packages/core/src/types"],
+        }
       },
     }
   },
