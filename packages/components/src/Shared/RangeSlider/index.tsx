@@ -15,7 +15,7 @@ const StyledRange = styled.div<{
     isolation: isolate;
 
     ${mq(
-      ["mobile", "tablet", "smallScreen"],
+      ["xxs", "xs", "sm"],
       `
       min-width: 0;
     `,
@@ -149,11 +149,7 @@ const Description = styled.span`
   color: var(--ha-S500-contrast);
 `;
 
-export interface RangeSliderProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<"input">,
-    "onInput" | "onChange"
-  > {
+export interface RangeSliderProps extends Omit<React.ComponentPropsWithoutRef<"input">, "onInput" | "onChange"> {
   /** The minimum value for the input @default 0 */
   min?: number;
   /** The maximum value for the input @default 100 */
@@ -212,20 +208,12 @@ function _RangeSlider({
     const min = parseFloat(`${_min ?? 0}`);
     const max = parseFloat(`${_max ?? 100}`);
     const step = parseFloat(`${_step ?? 1}`);
-    const roundedValue = parseFloat(
-      rangeRef.current.valueAsNumber.toFixed(
-        step < 1 ? Math.abs(Math.log10(step)) : 0,
-      ),
-    );
-    const percentage =
-      ((rangeRef.current.valueAsNumber - min) / (max - min)) * 100;
+    const roundedValue = parseFloat(rangeRef.current.valueAsNumber.toFixed(step < 1 ? Math.abs(Math.log10(step)) : 0));
+    const percentage = ((rangeRef.current.valueAsNumber - min) / (max - min)) * 100;
 
     if (tooltipRef.current) {
       tooltipRef.current.style.left = `${percentage}%`;
-      const tooltipValue =
-        typeof formatTooltipValue === "function"
-          ? formatTooltipValue(roundedValue)
-          : roundedValue;
+      const tooltipValue = typeof formatTooltipValue === "function" ? formatTooltipValue(roundedValue) : roundedValue;
       tooltipRef.current.setAttribute("data-title", `${tooltipValue}`);
     }
   }, [value, _min, _max, _step, formatTooltipValue, hideTooltip]);
@@ -246,14 +234,8 @@ function _RangeSlider({
       `}
     >
       {label && <Label className="label">{label}</Label>}
-      {description && (
-        <Description className="description">{description}</Description>
-      )}
-      <StyledRange
-        ref={parentRangeRef}
-        handleSize={handleSize}
-        className={`range-slider-inner ${active ? "active" : ""}`}
-      >
+      {description && <Description className="description">{description}</Description>}
+      <StyledRange ref={parentRangeRef} handleSize={handleSize} className={`range-slider-inner ${active ? "active" : ""}`}>
         <input
           {...rest}
           min={_min}

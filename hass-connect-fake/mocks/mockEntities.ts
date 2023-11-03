@@ -11,8 +11,21 @@ import { createAutomation } from './createAutomation';
 import { createCalendar } from './createCalendar';
 import { createCamera } from './createCamera';
 import { createBinarySensor } from './createBinarySensor';
+import { createCover} from './createCover';
 
 export const entities: HassEntities = {
+  ...createCover('cover.cover_with_tilt'),
+  ...createCover('cover.cover_position_only', {
+    attributes: {
+      supported_features: 15,
+    }
+  }),
+  ...createCover('cover.cover_no_position', {
+    attributes: {
+      supported_features: 9,
+    }
+  }),
+  
   ...createCamera('camera.demo_camera'),
   ...createLight('light.unavailable', {
     "state": "unavailable",
@@ -51,6 +64,12 @@ export const entities: HassEntities = {
     },
   }),
   ...createSwitch('switch.fake_switch'),
+  ...createSwitch('switch.unavailable', {
+    state: "unavailable",
+    attributes: {
+      friendly_name: "Unavailable switch demo",
+    },
+  }),
   ...createSwitch('switch.coffee_machine', {
     attributes: {
       friendly_name: "Coffee Machine",

@@ -11,6 +11,8 @@ npm install
 #### Local Storybook
 To spin up the storybook interface, run the following command from the root of the repository, changes in the components src will reflect in storybook, core is a little bit more complicated (explained below):
 
+**Note:** You will have to build @hakit/core at least once, @hakit/core isn't pulled from the local dev but rather from the distrubutable files from the package, i haven't figured out how to resolve this yet as @hakit/core has a lot of complexities wrapped around it, but run `npm run build:core` and then you should be able to run `npm start` to kick off the local development storybook server.
+
 ```bash
 npm start
 ```
@@ -42,3 +44,12 @@ npm link @hakit/core @hakit/components
 If you now navigate to your node_modules under @hakit, you should see the packages linked to your local @hakit packages and changes you make in hakit should reflect on your dashboard.
 
 Now whenever you make changes in either core or components, the changes should reflect on your local test dashboard.
+
+
+### Demo Gif
+I've been using quick time to record the screen to mov, then using ffmpeg to convert the mov to gif
+
+```
+ffmpeg -i input.mov -filter_complex "[0:v] fps=12,scale=840:-1,split [a][b];[a] palettegen [p];[b][p] paletteuse" output.gif
+
+```

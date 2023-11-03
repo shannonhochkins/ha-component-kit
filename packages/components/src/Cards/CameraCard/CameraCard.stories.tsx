@@ -1,5 +1,5 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, CameraCard, Column } from "@components";
+import { ThemeProvider, CameraCard, ButtonBarButton, Column } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
@@ -9,14 +9,7 @@ function Render(args?: Args) {
       <Column gap="1rem" fullWidth>
         <CameraCard
           entity="camera.demo_camera"
-          headerSensors={[
-            {
-              entity: "binary_sensor.vehicle",
-            },
-            {
-              entity: "switch.record",
-            },
-          ]}
+          headerSensors={[<ButtonBarButton entity="binary_sensor.vehicle" />, <ButtonBarButton entity="switch.record" />]}
           {...args}
         />
       </Column>

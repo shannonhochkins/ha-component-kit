@@ -10,15 +10,10 @@ const rgb_hex = (component: number): string => {
 export const hex2rgb = (hex: string): [number, number, number] => {
   hex = expandHex(hex);
 
-  return [
-    parseInt(hex.substring(0, 2), 16),
-    parseInt(hex.substring(2, 4), 16),
-    parseInt(hex.substring(4, 6), 16),
-  ];
+  return [parseInt(hex.substring(0, 2), 16), parseInt(hex.substring(2, 4), 16), parseInt(hex.substring(4, 6), 16)];
 };
 
-export const rgb2hex = (rgb: [number, number, number]): string =>
-  `#${rgb_hex(rgb[0])}${rgb_hex(rgb[1])}${rgb_hex(rgb[2])}`;
+export const rgb2hex = (rgb: [number, number, number]): string => `#${rgb_hex(rgb[0])}${rgb_hex(rgb[1])}${rgb_hex(rgb[2])}`;
 
 // Conversion between LAB, XYZ and RGB from https://github.com/gka/chroma.js
 // Copyright (c) 2011-2019, Gregor Aisch
@@ -48,8 +43,7 @@ const xyz_lab = (t: number) => {
   return t / t2 + t0;
 };
 
-const xyz_rgb = (r: number) =>
-  255 * (r <= 0.00304 ? 12.92 * r : 1.055 * r ** (1 / 2.4) - 0.055);
+const xyz_rgb = (r: number) => 255 * (r <= 0.00304 ? 12.92 * r : 1.055 * r ** (1 / 2.4) - 0.055);
 
 const lab_xyz = (t: number) => (t > t1 ? t * t * t : t2 * (t - t0));
 
@@ -66,17 +60,13 @@ const rgb2xyz = (rgb: [number, number, number]): [number, number, number] => {
   return [x, y, z];
 };
 
-export const rgb2lab = (
-  rgb: [number, number, number],
-): [number, number, number] => {
+export const rgb2lab = (rgb: [number, number, number]): [number, number, number] => {
   const [x, y, z] = rgb2xyz(rgb);
   const l = 116 * y - 16;
   return [l < 0 ? 0 : l, 500 * (x - y), 200 * (y - z)];
 };
 
-export const lab2rgb = (
-  lab: [number, number, number],
-): [number, number, number] => {
+export const lab2rgb = (lab: [number, number, number]): [number, number, number] => {
   const [l, a, b] = lab;
 
   let y = (l + 16) / 116;
@@ -99,20 +89,15 @@ export const lab2hex = (lab: [number, number, number]): string => {
   return rgb2hex(rgb);
 };
 
-export const rgb2hsv = (
-  rgb: [number, number, number],
-): [number, number, number] => {
+export const rgb2hsv = (rgb: [number, number, number]): [number, number, number] => {
   const [r, g, b] = rgb;
   const v = Math.max(r, g, b);
   const c = v - Math.min(r, g, b);
-  const h =
-    c && (v === r ? (g - b) / c : v === g ? 2 + (b - r) / c : 4 + (r - g) / c);
+  const h = c && (v === r ? (g - b) / c : v === g ? 2 + (b - r) / c : 4 + (r - g) / c);
   return [60 * (h < 0 ? h + 6 : h), v && c / v, v];
 };
 
-export const hsv2rgb = (
-  hsv: [number, number, number],
-): [number, number, number] => {
+export const hsv2rgb = (hsv: [number, number, number]): [number, number, number] => {
   const [h, s, v] = hsv;
   const f = (n: number) => {
     const k = (n + h / 60) % 6;
@@ -121,8 +106,6 @@ export const hsv2rgb = (
   return [f(5), f(3), f(1)];
 };
 
-export const rgb2hs = (rgb: [number, number, number]): [number, number] =>
-  rgb2hsv(rgb).slice(0, 2) as [number, number];
+export const rgb2hs = (rgb: [number, number, number]): [number, number] => rgb2hsv(rgb).slice(0, 2) as [number, number];
 
-export const hs2rgb = (hs: [number, number]): [number, number, number] =>
-  hsv2rgb([hs[0], hs[1], 255]);
+export const hs2rgb = (hs: [number, number]): [number, number, number] => hsv2rgb([hs[0], hs[1], 255]);

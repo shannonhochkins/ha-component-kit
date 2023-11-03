@@ -25,32 +25,13 @@ const fetchDeviceRegistry = (conn: Connection) =>
     type: "config/device_registry/list",
   });
 
-const subscribeDeviceRegistryUpdates = (
-  conn: Connection,
-  store: Store<DeviceRegistryEntry[]>,
-) =>
+const subscribeDeviceRegistryUpdates = (conn: Connection, store: Store<DeviceRegistryEntry[]>) =>
   conn.subscribeEvents(
-    debounce(
-      () =>
-        fetchDeviceRegistry(conn).then((devices) =>
-          store.setState(devices, true),
-        ),
-      500,
-      {
-        leading: true,
-      },
-    ),
+    debounce(() => fetchDeviceRegistry(conn).then((devices) => store.setState(devices, true)), 500, {
+      leading: true,
+    }),
     "device_registry_updated",
   );
 
-export const subscribeDeviceRegistry = (
-  conn: Connection,
-  onChange: (devices: DeviceRegistryEntry[]) => void,
-) =>
-  createCollection<DeviceRegistryEntry[]>(
-    "_dr",
-    fetchDeviceRegistry,
-    subscribeDeviceRegistryUpdates,
-    conn,
-    onChange,
-  );
+export const subscribeDeviceRegistry = (conn: Connection, onChange: (devices: DeviceRegistryEntry[]) => void) =>
+  createCollection<DeviceRegistryEntry[]>("_dr", fetchDeviceRegistry, subscribeDeviceRegistryUpdates, conn, onChange);

@@ -73,6 +73,7 @@
     "autolinker": ">=4.x",
     "framer-motion": ">=10.x",
     "fullcalendar": "^6.1.9",
+    "hls.js": "^1.4.12",
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
@@ -81,7 +82,7 @@
     "react-router-dom": ">=6.x",
     "react-thermostat": "^2.x.x",
     "react-use": ">=17.x",
-    "hls.js": "^1.4.12"
+    "use-long-press": ">=3.2.0"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.x",

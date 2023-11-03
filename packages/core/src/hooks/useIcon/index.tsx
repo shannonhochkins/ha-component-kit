@@ -1,12 +1,7 @@
 import { useMemo } from "react";
 import { Icon as IconElement } from "@iconify/react";
 import type { IconProps } from "@iconify/react";
-import type {
-  AllDomains,
-  CamelToSnake,
-  SnakeToCamel,
-  EntityName,
-} from "@typings";
+import type { AllDomains, CamelToSnake, SnakeToCamel, EntityName } from "@typings";
 import { useEntity } from "@core";
 import { camelCase } from "lodash";
 
@@ -14,13 +9,12 @@ function assertNever(value: never): never {
   throw new Error(`Unhandled value: ${value}`);
 }
 
-export function useIconByDomain<
-  D extends AllDomains | CamelToSnake<AllDomains> | "unknown",
->(domain: D, iconProps?: Omit<IconProps, "icon">) {
+export function useIconByDomain<D extends AllDomains | CamelToSnake<AllDomains> | "unknown">(
+  domain: D,
+  iconProps?: Omit<IconProps, "icon">,
+) {
   const iconName = useMemo(() => {
-    const convertedDomainName = camelCase(domain) as
-      | SnakeToCamel<AllDomains>
-      | "unknown";
+    const convertedDomainName = camelCase(domain) as SnakeToCamel<AllDomains> | "unknown";
     switch (convertedDomainName) {
       case "light":
         return "octicon:light-bulb-24";
@@ -142,10 +136,7 @@ export function useIconByDomain<
   );
 }
 
-export function useIcon(
-  icon: string | null,
-  iconProps?: Omit<IconProps, "icon">,
-) {
+export function useIcon(icon: string | null, iconProps?: Omit<IconProps, "icon">) {
   const Icon = useMemo(() => {
     if (icon === null) return null;
     return (
@@ -161,10 +152,7 @@ export function useIcon(
   return Icon;
 }
 
-export function useIconByEntity<E extends EntityName>(
-  _entity: E,
-  iconProps?: Omit<IconProps, "icon">,
-) {
+export function useIconByEntity<E extends EntityName>(_entity: E, iconProps?: Omit<IconProps, "icon">) {
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
   });

@@ -6,12 +6,7 @@ export const stateColorBrightness = (
   css: string;
   raw: number;
 } => {
-  if (
-    entity &&
-    entity.attributes &&
-    entity.attributes.brightness &&
-    !entity.entity_id.startsWith("plant")
-  ) {
+  if (entity && entity.attributes && entity.attributes.brightness && !entity.entity_id.startsWith("plant")) {
     // lowest brightness will be around 50% (that's pretty dark)
     const brightness = entity.attributes.brightness;
     return {

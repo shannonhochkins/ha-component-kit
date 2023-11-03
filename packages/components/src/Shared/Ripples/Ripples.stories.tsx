@@ -3,13 +3,7 @@ import { ThemeProvider, Ripples } from "@components";
 import type { RipplesProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
-function Template({
-  duration,
-  color,
-  onClick,
-  borderRadius,
-  className,
-}: RipplesProps): JSX.Element {
+function Template({ duration, color, onClick, borderRadius, className }: RipplesProps): JSX.Element {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <Ripples

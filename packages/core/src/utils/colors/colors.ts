@@ -62,13 +62,7 @@ export function getColorByIndex(index: number) {
   return COLORS[index % COLORS.length];
 }
 
-export function getGraphColorByIndex(
-  index: number,
-  style: CSSStyleDeclaration,
-) {
+export function getGraphColorByIndex(index: number, style: CSSStyleDeclaration) {
   // The CSS vars for the colors use range 1..n, so we need to adjust the index from the internal 0..n color index range.
-  return (
-    style.getPropertyValue(`--graph-color-${index + 1}`) ||
-    getColorByIndex(index)
-  );
+  return style.getPropertyValue(`--graph-color-${index + 1}`) || getColorByIndex(index);
 }

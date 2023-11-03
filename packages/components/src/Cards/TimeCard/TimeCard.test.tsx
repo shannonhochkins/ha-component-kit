@@ -19,36 +19,27 @@ describe("<TimeCard />", () => {
   });
 
   it("should render without the icon", async () => {
-    const { getByTestId } = render(
-      <TimeCard data-testid="time-card" hideIcon />,
-      {
-        wrapper: TestWrapper,
-      },
-    );
+    const { getByTestId } = render(<TimeCard data-testid="time-card" hideIcon />, {
+      wrapper: TestWrapper,
+    });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("time-card");
     expect(buttonElement).toMatchSnapshot();
   });
 
   it("should render with the icon", async () => {
-    const { getByTestId } = render(
-      <TimeCard icon="mdi:cross" data-testid="time-card" />,
-      {
-        wrapper: TestWrapper,
-      },
-    );
+    const { getByTestId } = render(<TimeCard icon="mdi:cross" data-testid="time-card" />, {
+      wrapper: TestWrapper,
+    });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("time-card");
     expect(buttonElement).toMatchSnapshot();
   });
 
   it("should render without the date", async () => {
-    const { getByTestId } = render(
-      <TimeCard data-testid="time-card" hideDate />,
-      {
-        wrapper: TestWrapper,
-      },
-    );
+    const { getByTestId } = render(<TimeCard data-testid="time-card" hideDate />, {
+      wrapper: TestWrapper,
+    });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     const buttonElement = getByTestId("time-card");
     expect(buttonElement).toMatchSnapshot();

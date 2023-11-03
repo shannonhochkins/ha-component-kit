@@ -1,7 +1,6 @@
 import { AuthData } from "home-assistant-js-websocket";
 
-const storage =
-  typeof window !== "undefined" ? window.localStorage : ({} as Storage);
+const storage = typeof window !== "undefined" ? window.localStorage : ({} as Storage);
 
 type TokenCache = {
   tokens?: AuthData | null;

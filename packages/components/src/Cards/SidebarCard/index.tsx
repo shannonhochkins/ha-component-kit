@@ -3,15 +3,7 @@ import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { Icon } from "@iconify/react";
 import { useHass, useHash } from "@hakit/core";
-import {
-  TimeCard,
-  WeatherCard,
-  Row,
-  Column,
-  fallback,
-  mq,
-  useDevice,
-} from "@components";
+import { TimeCard, WeatherCard, Row, Column, fallback, mq, useBreakpoint } from "@components";
 import { motion, AnimatePresence, MotionProps } from "framer-motion";
 import type { WeatherCardProps, TimeCardProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -42,19 +34,6 @@ const StyledTimeCard = styled(TimeCard)<{
       font-size: 0.7rem;
     }
   `}
-  ${mq(
-    [
-      "mobile",
-      "tablet",
-      "smallScreen",
-      "mediumScreen",
-      "desktop",
-      "largeDesktop",
-    ],
-    `
-    width: 100%;
-  `,
-  )}
 `;
 
 const StyledSidebarCard = styled(motion.div)`
@@ -73,7 +52,7 @@ const StyledSidebarCard = styled(motion.div)`
     transition-property: padding;
   }
   ${mq(
-    ["tablet", "mobile"],
+    ["xxs", "xs"],
     `
     position: fixed;
     top: 0;
@@ -198,7 +177,7 @@ const HamburgerMenu = styled(Menu)`
   }
 
   ${mq(
-    ["tablet", "mobile"],
+    ["xxs", "xs"],
     `
     left: 0;
     top: 0;
@@ -226,19 +205,6 @@ const StyledWeatherCard = styled(WeatherCard)`
     box-shadow: none;
     background: transparent;
   }
-  ${mq(
-    [
-      "mobile",
-      "tablet",
-      "smallScreen",
-      "mediumScreen",
-      "desktop",
-      "largeDesktop",
-    ],
-    `
-    width: 100%;
-  `,
-  )}
 `;
 
 const WeatherCardCustom = styled(StyledWeatherCard)<{
@@ -309,7 +275,7 @@ function _SidebarCard({
   const { useStore } = useHass();
   const routes = useStore((state) => state.routes);
   const [hash, setHash] = useHash();
-  const devices = useDevice();
+  const devices = useBreakpoint();
   const concatenatedMenuItems = useMemo<MenuItem[]>(() => {
     const mappedRoutes = routes.map((route) => ({
       ...route,
@@ -333,15 +299,15 @@ function _SidebarCard({
       <Global
         styles={css`
           :root {
-            --ha-area-card-expanded-offset: ${open
+            --ha-area-card-expanded-offset: ${devices.xxs || devices.xs
+              ? "0rem"
+              : open
               ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
               : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
             --ha-sidebar-max-width: ${open
               ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
               : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
-            --ha-sidebar-offset: ${open
-              ? `0`
-              : `calc(var(--ha-sidebar-max-width) * -1)`};
+            --ha-sidebar-offset: ${open ? `0` : `calc(var(--ha-sidebar-max-width) * -1)`};
           }
         `}
       />
@@ -352,22 +318,13 @@ function _SidebarCard({
         className={`${className ?? ""} sidebar-card`}
         animate={{
           width: "100%",
-          maxWidth: open
-            ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
-            : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`,
+          maxWidth: open ? `var(--ha-device-sidebar-card-width-expanded, 19rem)` : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`,
         }}
         initial={false}
         key={`ha-sidebar-closed`}
         {...rest}
       >
-        <Column
-          className="column"
-          wrap="nowrap"
-          fullHeight
-          fullWidth
-          alignItems="flex-start"
-          justifyContent="space-between"
-        >
+        <Column className="column" wrap="nowrap" fullHeight fullWidth alignItems="flex-start" justifyContent="space-between">
           <Filler className="filler">
             <Row
               className="row"
@@ -379,6 +336,7 @@ function _SidebarCard({
             >
               {includeTimeCard && (
                 <StyledTimeCard
+                  disableColumns
                   key="sidebar-large-time-card"
                   className="sidebar-time-card"
                   open={open}
@@ -398,14 +356,8 @@ function _SidebarCard({
                 className="hamburger-menu"
                 key="hamburger-menu-open"
                 animate={{
-                  width:
-                    devices.mobile || devices.tablet
-                      ? "auto"
-                      : !open
-                      ? "100%"
-                      : "40%",
-                  position:
-                    devices.mobile || devices.tablet ? "fixed" : "relative",
+                  width: devices.xxs || devices.xs ? "auto" : !open ? "100%" : "40%",
+                  position: devices.xxs || devices.xs ? "fixed" : "relative",
                 }}
               >
                 <motion.li
@@ -419,10 +371,7 @@ function _SidebarCard({
                       justifyContent: "center",
                     }}
                   >
-                    <Icon
-                      className="icon"
-                      icon={open ? "mdi:close" : "mdi:menu"}
-                    />
+                    <Icon className="icon" icon={open ? "mdi:close" : "mdi:menu"} />
                   </a>
                 </motion.li>
               </HamburgerMenu>
@@ -441,17 +390,11 @@ function _SidebarCard({
                       className={item.active ? "active" : "inactive"}
                     >
                       <a>
-                        {typeof item.icon === "string" ? (
-                          <Icon className="icon" icon={item.icon} />
-                        ) : (
-                          item.icon
-                        )}
+                        {typeof item.icon === "string" ? <Icon className="icon" icon={item.icon} /> : item.icon}
                         {open && (
                           <div className="menu-inner">
                             {item.title}
-                            {item.description && (
-                              <span>{item.description}</span>
-                            )}
+                            {item.description && <span>{item.description}</span>}
                           </div>
                         )}
                       </a>
@@ -473,6 +416,7 @@ function _SidebarCard({
                 }}
               >
                 <WeatherCardCustom
+                  disableColumns
                   className="weather-card-sidebar"
                   open={open}
                   initial={{ opacity: 0 }}
