@@ -29,8 +29,7 @@ There's extensive [documentation](https://shannonhochkins.github.io/ha-component
 
 ### WIP - Next Release
 
-- useLogs() - a hook to return logs for an entity
-- Extended modal popups for every entity on all cards, this will include attributes, a link to edit the entity, logs and history. In addition to the modal popup changes, i'll be adding sub controls for Switches, Curtains and more, all of the modal control components will also be available as individual components.
+- Theming - allow individual components to display different theme control, either by a hue shift or global change
 
 [Home Assistant Addon](https://github.com/shannonhochkins/hakit) - 🌟 it if you're interested
 

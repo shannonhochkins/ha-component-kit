@@ -1,26 +1,11 @@
 import { useMemo } from "react";
 import styled from "@emotion/styled";
 import { lowerCase, startCase } from "lodash";
-import type {
-  EntityName,
-} from "@hakit/core";
-import {
-  useEntity,
-  useIconByDomain,
-  useIcon,
-  useIconByEntity,
-  isUnavailableState,
-  ON,
-} from "@hakit/core";
-import {
-  fallback,
-  Column,
-  CardBase, type CardBaseProps,
-  type AvailableQueries,
-} from "@components";
+import type { EntityName } from "@hakit/core";
+import { useEntity, useIconByDomain, useIcon, useIconByEntity, isUnavailableState, ON } from "@hakit/core";
+import { fallback, Column, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { computeDomain } from "@utils/computeDomain";
 import { ErrorBoundary } from "react-error-boundary";
-
 
 const StyledButtonCard = styled(CardBase)`
   &.slim {
@@ -67,16 +52,12 @@ const ToggleState = styled.div<ToggleProps>`
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: left, transform;
   left: ${(props) => (props.active ? "100%" : "0px")};
-  transform: ${(props) =>
-    props.active
-      ? "translate3d(calc(-100% - 2px), 0, 0)"
-      : "translate3d(calc(0% + 2px), 0, 0)"};
+  transform: ${(props) => (props.active ? "translate3d(calc(-100% - 2px), 0, 0)" : "translate3d(calc(0% + 2px), 0, 0)")};
 `;
 
 const Toggle = styled.div<ToggleProps>`
   position: relative;
-  background-color: ${(props) =>
-    props.active ? "var(--ha-A400)" : "var(--ha-S100)"};
+  background-color: ${(props) => (props.active ? "var(--ha-A400)" : "var(--ha-S100)")};
   border-radius: 10px;
   width: 40px;
   height: 20px;
@@ -158,8 +139,9 @@ const Description = styled.div`
   font-weight: 500;
 `;
 
+type OmitProperties = "as" | "children" | "ref";
 
-export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProps<'button', E>, 'as'> {
+export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
   icon?: string | null;
   /** the css color value of the icon */
@@ -207,34 +189,19 @@ function _ButtonCard<E extends EntityName>({
   const entityIcon = useIconByEntity(_entity || "unknown", {
     color: iconColor || undefined,
   });
-  const isDefaultLayout =
-    defaultLayout === "default" || defaultLayout === undefined;
-  const isSlimLayout =
-    defaultLayout === "slim" || defaultLayout === "slim-vertical";
-  const isUnavailable =
-    typeof entity?.state === "string"
-      ? isUnavailableState(entity.state)
-      : false;
-  const on = entity
-    ? entity.state !== "off" && !isUnavailable
-    : active || false;
+  const isDefaultLayout = defaultLayout === "default" || defaultLayout === undefined;
+  const isSlimLayout = defaultLayout === "slim" || defaultLayout === "slim-vertical";
+  const isUnavailable = typeof entity?.state === "string" ? isUnavailableState(entity.state) : false;
+  const on = entity ? entity.state !== "off" && !isUnavailable : active || false;
   const iconElement = useIcon(icon, {
     color: iconColor || undefined,
   });
   // use the input description if provided, else use the friendly name if available, else entity name, else null
   const description = useMemo(() => {
-    return _description === null
-      ? null
-      : _description ||
-          entity?.attributes.friendly_name ||
-          entity?.entity_id ||
-          null;
+    return _description === null ? null : _description || entity?.attributes.friendly_name || entity?.entity_id || null;
   }, [_description, entity]);
   // use the input title if provided, else use the domain if available, else null
-  const title = useMemo(
-    () => _title || (domain !== null ? startCase(lowerCase(domain)) : null),
-    [_title, domain],
-  );
+  const title = useMemo(() => _title || (domain !== null ? startCase(lowerCase(domain)) : null), [_title, domain]);
 
   function renderState() {
     if (hideState) return null;
@@ -264,92 +231,56 @@ function _ButtonCard<E extends EntityName>({
       title={title ?? undefined}
       disabled={disabled || isUnavailable}
       onClick={onClick}
-      className={`${className ?? ""} ${
-        defaultLayout ?? "default"
-      } button-card`}
-      {...rest}>
-        <Contents>
-          <LayoutBetween
-            className={`layout-between ${
-              defaultLayout === "slim-vertical" ? "vertical" : ""
-            }`}
+      className={`${className ?? ""} ${defaultLayout ?? "default"} button-card`}
+      {...rest}
+    >
+      <Contents>
+        <LayoutBetween className={`layout-between ${defaultLayout === "slim-vertical" ? "vertical" : ""}`}>
+          <Fab
+            brightness={(on && entity?.custom.brightness) || "brightness(100%)"}
+            className={`fab-card-inner icon`}
+            backgroundColor={
+              on ? (domain === "light" ? entity?.custom?.rgbaColor ?? "var(--ha-A400)" : "var(--ha-A400)") : "var(--ha-S400)"
+            }
+            textColor={
+              entity ? (on ? entity.custom.rgbColor : "var(--ha-S500-contrast)") : on ? "var(--ha-A400)" : "var(--ha-S500-contrast)"
+            }
           >
-            <Fab
-              brightness={
-                (on && entity?.custom.brightness) || "brightness(100%)"
-              }
-              className={`fab-card-inner icon`}
-              backgroundColor={
-                on
-                  ? domain === "light"
-                    ? entity?.custom?.rgbaColor ?? "var(--ha-A400)"
-                    : "var(--ha-A400)"
-                  : "var(--ha-S400)"
-              }
-              textColor={
-                entity
-                  ? on
-                    ? entity.custom.rgbColor
-                    : "var(--ha-S500-contrast)"
-                  : on
-                  ? "var(--ha-A400)"
-                  : "var(--ha-S500-contrast)"
-              }
-            >
-              {iconElement || entityIcon || domainIcon}
-            </Fab>
-            {isDefaultLayout && (
-              <Toggle active={on} className="toggle">
-                {!isUnavailable && (
-                  <ToggleState active={on} className="toggle-state" />
-                )}
-              </Toggle>
-            )}
-            {isSlimLayout && (
-              <Column
-                fullWidth
-                alignItems={
-                  defaultLayout === "slim-vertical" ? "center" : "flex-start"
-                }
-              >
-                <Description className="description">{description}</Description>
-                {!hideDetails && (
-                  <Title className={`title ${defaultLayout ?? ""}`}>
-                    {title} {renderState()}
-                    {entity && !hideLastUpdated
-                      ? ` - ${entity.custom.relativeTime}`
-                      : ""}
-                  </Title>
-                )}
-              </Column>
-            )}
-          </LayoutBetween>
+            {iconElement || entityIcon || domainIcon}
+          </Fab>
           {isDefaultLayout && (
-            <Footer className="footer">
-              <Title className="title">
-                {!hideDetails && title && (
-                  <Title className="title">
-                    {title}
-                    {isUnavailable && entity && !hideState
-                      ? ` - ${entity.state}`
-                      : ""}
-                  </Title>
-                )}
-                {description && (
-                  <Description className="description">
-                    {description}
-                  </Description>
-                )}
-                {!hideDetails && entity && !hideLastUpdated && (
-                  <Title className="title">
-                    Updated: {entity.custom.relativeTime}
-                  </Title>
-                )}
-              </Title>
-            </Footer>
+            <Toggle active={on} className="toggle">
+              {!isUnavailable && <ToggleState active={on} className="toggle-state" />}
+            </Toggle>
           )}
-          {children && <div className="children">{children}</div>}
-        </Contents>
+          {isSlimLayout && (
+            <Column fullWidth alignItems={defaultLayout === "slim-vertical" ? "center" : "flex-start"}>
+              <Description className="description">{description}</Description>
+              {!hideDetails && (
+                <Title className={`title ${defaultLayout ?? ""}`}>
+                  {title} {renderState()}
+                  {entity && !hideLastUpdated ? ` - ${entity.custom.relativeTime}` : ""}
+                </Title>
+              )}
+            </Column>
+          )}
+        </LayoutBetween>
+        {isDefaultLayout && (
+          <Footer className="footer">
+            <Title className="title">
+              {!hideDetails && title && (
+                <Title className="title">
+                  {title}
+                  {isUnavailable && entity && !hideState ? ` - ${entity.state}` : ""}
+                </Title>
+              )}
+              {description && <Description className="description">{description}</Description>}
+              {!hideDetails && entity && !hideLastUpdated && <Title className="title">Updated: {entity.custom.relativeTime}</Title>}
+            </Title>
+          </Footer>
+        )}
+        {children && <div className="children">{children}</div>}
+      </Contents>
     </StyledButtonCard>
   );
 }
@@ -365,7 +296,7 @@ export function ButtonCard<E extends EntityName>(props: ButtonCardProps<E>) {
     md: 3,
     lg: 2,
     xlg: 2,
-  }
+  };
   return (
     <ErrorBoundary {...fallback({ prefix: "ButtonCard" })}>
       <_ButtonCard {...defaultColumns} {...props} />

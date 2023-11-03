@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
-import { Children, useEffect, useCallback, useState, useId, useMemo } from "react";
+import { useEffect, useCallback, useState, useId, useMemo } from "react";
 import { useHass, type EntityName } from "@hakit/core";
 import { Row, FabCard, fallback, mq, PreloadImage, CardBase } from "@components";
 import type { PictureCardProps, CardBaseProps, AvailableQueries } from "@components";
@@ -9,16 +9,27 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useKeyPress } from "react-use";
 import { ErrorBoundary } from "react-error-boundary";
 
-type OmitProperties = 'as' | 'active' |
-'title' |
-'entity' |
-'service' |
-'serviceData' |
-'longPressCallback' |
-'onClick' |
-'modalProps';
+type OmitProperties =
+  | "as"
+  | "active"
+  | "title"
+  | "entity"
+  | "modalProps"
+  | "ref"
+  | "entity"
+  | "serviceData"
+  | "service"
+  | "disableRipples"
+  | "disableScale"
+  | "disableActiveState"
+  | "rippleProps"
+  | "service"
+  | "serviceData"
+  | "longPressCallback"
+  | "onClick"
+  | "modalProps";
 
-type Extendable = PictureCardProps & Omit<CardBaseProps<'div', EntityName>, OmitProperties>
+type Extendable = PictureCardProps & Omit<CardBaseProps<"div", EntityName>, OmitProperties>;
 export interface AreaCardProps extends Extendable {
   /** the hash of the area, eg "office", "living-room", this will set the hash in the url bar and activate the area */
   hash: string;
@@ -33,7 +44,8 @@ export interface AreaCardProps extends Extendable {
 const StyledAreaCard = styled(CardBase)<Partial<PictureCardProps>>`
   aspect-ratio: 16 / 9;
   background-color: transparent;
-  &:hover, &:active {
+  &:hover,
+  &:active {
     background-color: transparent !important;
   }
   height: var(--stretch,);
@@ -189,11 +201,7 @@ function _AreaCard({
                 },
               }}
             >
-              <Row
-                gap="0.5rem"
-                justifyContent="space-between"
-                className={"row"}
-              >
+              <Row gap="0.5rem" justifyContent="space-between" className={"row"}>
                 <Row gap="0.5rem" className={"row"}>
                   {icon && <Icon className={"icon"} icon={icon} />}
                   {title}
@@ -293,7 +301,7 @@ export function AreaCard(props: AreaCardProps) {
     md: 4,
     lg: 4,
     xlg: 3,
-  }
+  };
   return (
     <ErrorBoundary {...fallback({ prefix: "AreaCard" })}>
       <_AreaCard {...defaultColumns} {...props} />

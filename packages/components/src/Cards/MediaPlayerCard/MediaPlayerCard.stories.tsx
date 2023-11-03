@@ -1,10 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-  ThemeProvider,
-  MediaPlayerCard,
-  MediaPlayerCardProps,
-  Column,
-} from "@components";
+import { ThemeProvider, MediaPlayerCard, MediaPlayerCardProps, Column } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<MediaPlayerCardProps>) {
@@ -18,30 +13,15 @@ function Template(args?: Partial<MediaPlayerCardProps>) {
         </Column>
         <Column gap="1rem" fullWidth>
           <p>Volume controls as buttons, no thumbnail</p>
-          <MediaPlayerCard
-            entity="media_player.fake_speaker"
-            volumeLayout={"buttons"}
-            hideThumbnail={true}
-            {...args}
-          />
+          <MediaPlayerCard entity="media_player.fake_speaker" volumeLayout={"buttons"} hideThumbnail={true} {...args} />
         </Column>
         <Column gap="1rem" fullWidth>
           <p>Slim Card - default layout</p>
-          <MediaPlayerCard
-            layout="slim"
-            entity="media_player.fake_speaker"
-            {...args}
-          />
+          <MediaPlayerCard layout="slim" entity="media_player.fake_speaker" {...args} />
         </Column>
         <Column gap="1rem" fullWidth>
           <p>Slim Card - volume buttons, no thumbnail</p>
-          <MediaPlayerCard
-            layout="slim"
-            volumeLayout={"buttons"}
-            hideThumbnail={true}
-            entity="media_player.fake_speaker"
-            {...args}
-          />
+          <MediaPlayerCard layout="slim" volumeLayout={"buttons"} hideThumbnail={true} entity="media_player.fake_speaker" {...args} />
         </Column>
       </Column>
     </HassConnect>

@@ -55,8 +55,7 @@ const Button = styled.button<{
   }
 `;
 
-export interface ButtonGroupButtonProps<E extends EntityName>
-  extends Omit<TooltipProps, "title" | "children"> {
+export interface ButtonGroupButtonProps<E extends EntityName> extends Omit<TooltipProps, "title" | "children"> {
   /** the entity name to render */
   entity?: E;
   /** The service name, eg "toggle, turnOn ..." */
@@ -86,16 +85,9 @@ function _ButtonGroupButton<E extends EntityName>({
   const _entity = useEntity(entity ?? "unknown", {
     returnNullIfNotFound: true,
   });
-  const _icon = useIcon(
-    icon ?? _entity?.attributes?.icon ?? "mdi:help-circle-outline",
-  );
+  const _icon = useIcon(icon ?? _entity?.attributes?.icon ?? "mdi:help-circle-outline");
   const titleValue = useMemo(() => {
-    return (
-      title ??
-      _entity?.attributes?.friendly_name ??
-      _entity?.entity_id ??
-      "unknown"
-    );
+    return title ?? _entity?.attributes?.friendly_name ?? _entity?.entity_id ?? "unknown";
   }, [_entity, title]);
   const _active = useMemo(() => {
     return active ?? _entity?.state === ON;
@@ -120,9 +112,7 @@ function _ButtonGroupButton<E extends EntityName>({
 }
 
 /** This component is designed to work with the ButtonGroup as a child component */
-export function ButtonGroupButton<E extends EntityName>(
-  props: ButtonGroupButtonProps<E>,
-) {
+export function ButtonGroupButton<E extends EntityName>(props: ButtonGroupButtonProps<E>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ButtonGroupButton" })}>
       <_ButtonGroupButton {...props} />

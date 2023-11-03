@@ -1,21 +1,11 @@
 import { useCallback, useRef, useState } from "react";
 import styled from "@emotion/styled";
-import type {
-  EntityName,
-} from "@hakit/core";
-import {
-  useEntity,
-  useIconByDomain,
-  useIcon,
-  useIconByEntity,
-  computeDomain,
-  isUnavailableState,
-} from "@hakit/core";
+import type { EntityName } from "@hakit/core";
+import { useEntity, useIconByDomain, useIcon, useIconByEntity, computeDomain, isUnavailableState } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 import { fallback, CardBase, type AvailableQueries, type CardBaseProps } from "@components";
 
-const StyledTriggerCard = styled(CardBase)`
-`;
+const StyledTriggerCard = styled(CardBase)``;
 
 const ToggleMessage = styled.span<ToggleProps>`
   font-size: 0.6rem;
@@ -27,8 +17,7 @@ const ToggleMessage = styled.span<ToggleProps>`
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: justify-content, color;
   justify-content: ${(props) => (props.active ? `flex-start` : `flex-end`)};
-  color: ${(props) =>
-    !props.active ? "var(--ha-300)" : "var(--ha-300-contrast)"};
+  color: ${(props) => (!props.active ? "var(--ha-300)" : "var(--ha-300-contrast)")};
   ${(props) => props.hideArrow && `padding-right: 0.8rem;`}
 `;
 
@@ -46,10 +35,7 @@ const ToggleState = styled.div<ToggleProps>`
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: left, transform;
   left: ${(props) => (props.active ? "100%" : "0px")};
-  transform: ${(props) =>
-    props.active
-      ? "translate3d(calc(-100% - 5px), 0, 0)"
-      : "translate3d(calc(0% + 5px), 0, 0)"};
+  transform: ${(props) => (props.active ? "translate3d(calc(-100% - 5px), 0, 0)" : "translate3d(calc(0% + 5px), 0, 0)")};
   svg {
     color: ${(props) => (props.active ? "var(--ha-A400)" : "var(--ha-200)")};
     font-size: 40px;
@@ -65,8 +51,7 @@ const Gap = styled.div`
 `;
 const Toggle = styled.div<ToggleProps>`
   position: relative;
-  background-color: ${(props) =>
-    props.active ? "var(--ha-300)" : "var(--ha-S200)"};
+  background-color: ${(props) => (props.active ? "var(--ha-300)" : "var(--ha-S200)")};
   border-radius: 3rem;
   width: 10rem;
   height: 2.5rem;
@@ -95,7 +80,7 @@ const LayoutBetween = styled.div`
 const Title = styled.div`
   color: var(--ha-S500-contrast);
   font-size: 0.7rem;
-  text-align:left;
+  text-align: left;
 `;
 const Description = styled.div<{
   disabled?: boolean;
@@ -103,7 +88,7 @@ const Description = styled.div<{
   color: var(--ha-S500-contrast);
   ${(props) => props.disabled && `color: var(--ha-S50-contrast);`}
   font-size: 0.9rem;
-  text-align:left;
+  text-align: left;
   span {
     display: block;
     width: 100%;
@@ -113,7 +98,9 @@ const Description = styled.div<{
     font-size: 0.7rem;
   }
 `;
-export interface TriggerCardProps<E extends EntityName> extends Omit<CardBaseProps<'button', E>, 'as' | 'entity'> {
+
+type OmitProperties = "as" | "ref" | "entity";
+export interface TriggerCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
   /** The name of your entity */
   entity: E;
   /** an optional description to add to the card */
@@ -165,14 +152,17 @@ function _TriggerCard<E extends EntityName>({
   });
   const isUnavailable = isUnavailableState(entity.state);
   const disabled = _disabled || isUnavailable;
-  const useApiHandler = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    setActive(true);
-    if (typeof onClick === "function" && !isUnavailable) onClick(entity as never, event);
-    if (timeRef.current) clearTimeout(timeRef.current);
-    timeRef.current = setTimeout(() => {
-      setActive(false);
-    }, activeStateDuration);
-  }, [entity, onClick, activeStateDuration, isUnavailable]);
+  const useApiHandler = useCallback(
+    (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+      setActive(true);
+      if (typeof onClick === "function" && !isUnavailable) onClick(entity as never, event);
+      if (timeRef.current) clearTimeout(timeRef.current);
+      timeRef.current = setTimeout(() => {
+        setActive(false);
+      }, activeStateDuration);
+    },
+    [entity, onClick, activeStateDuration, isUnavailable],
+  );
 
   return (
     <StyledTriggerCard
@@ -207,15 +197,8 @@ function _TriggerCard<E extends EntityName>({
                 <ToggleState active={active} className={`toggle-state`}>
                   {sliderIcon ?? powerIcon}
                 </ToggleState>
-                <ToggleMessage
-                  hideArrow={hideArrow}
-                  active={active}
-                  className={`toggle-message`}
-                >
-                  {active
-                    ? sliderTextActive ?? "Success..."
-                    : sliderTextInactive ?? `Run ${domain}`}{" "}
-                  {!active && !hideArrow && arrowIcon}
+                <ToggleMessage hideArrow={hideArrow} active={active} className={`toggle-message`}>
+                  {active ? sliderTextActive ?? "Success..." : sliderTextInactive ?? `Run ${domain}`} {!active && !hideArrow && arrowIcon}
                 </ToggleMessage>
               </>
             )}
@@ -234,7 +217,7 @@ export function TriggerCard<E extends EntityName>(props: TriggerCardProps<E>) {
     md: 4,
     lg: 4,
     xlg: 3,
-  }
+  };
   return (
     <ErrorBoundary {...fallback({ prefix: "TriggerCard" })}>
       <_TriggerCard {...defaultColumns} {...props} />

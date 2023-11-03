@@ -1,7 +1,4 @@
-export const convertWindSpeedToMS = (
-  windSpeed: number,
-  unit: string,
-): number => {
+export const convertWindSpeedToMS = (windSpeed: number, unit: string): number => {
   switch (unit) {
     case "ft/s":
       return windSpeed * 0.3048;
@@ -18,10 +15,7 @@ export const convertWindSpeedToMS = (
   }
 };
 
-export const convertTemperatureToCelsius = (
-  temperature: number,
-  unit: string,
-): number => {
+export const convertTemperatureToCelsius = (temperature: number, unit: string): number => {
   switch (unit) {
     case "°C":
       return temperature;
@@ -32,10 +26,7 @@ export const convertTemperatureToCelsius = (
   }
 };
 
-export const convertTemperatureFromCelsius = (
-  temperature: number,
-  unit: string,
-): number => {
+export const convertTemperatureFromCelsius = (temperature: number, unit: string): number => {
   switch (unit) {
     case "°C":
       return temperature;
@@ -71,16 +62,7 @@ export function heatIndex(temperature: number, unit: string, humidity: number) {
   const Te2 = T ** 2;
   const Re2 = R ** 2;
 
-  const HI =
-    c1 +
-    c2 * T +
-    c3 * R +
-    c4 * T * R +
-    c5 * Te2 +
-    c6 * Re2 +
-    c7 * Te2 * R +
-    c8 * T * Re2 +
-    c9 * Te2 * Re2;
+  const HI = c1 + c2 * T + c3 * R + c4 * T * R + c5 * Te2 + c6 * Re2 + c7 * Te2 * R + c8 * T * Re2 + c9 * Te2 * Re2;
 
   return convertTemperatureFromCelsius(HI, unit);
 }
@@ -91,15 +73,8 @@ export function heatIndex(temperature: number, unit: string, humidity: number) {
  * @param {number} windSpeed Windspeed in M/S (meter per second)
  * @returns {number} Wind Chill Index in original unit
  */
-export function windChillIndex(
-  temperature: number,
-  unit: string,
-  windSpeed: number,
-  windSpeedUnit: string,
-) {
-  const v = meterPerSecondToKilometerPerHour(
-    convertWindSpeedToMS(windSpeed, windSpeedUnit),
-  );
+export function windChillIndex(temperature: number, unit: string, windSpeed: number, windSpeedUnit: string) {
+  const v = meterPerSecondToKilometerPerHour(convertWindSpeedToMS(windSpeed, windSpeedUnit));
   const Ta = convertTemperatureToCelsius(temperature, unit);
   const v_exp = v ** 0.16;
   const Twc = 13.12 + 0.6215 * Ta - 11.37 * v_exp + 0.3965 * Ta * v_exp;
@@ -132,25 +107,14 @@ export function getAdditionalWeatherInformation(
   heatIndex: number | null;
   windChill: number;
 } | null {
-  if (!temperature || !unit || !windSpeedInMs || !windSpeedUnit || !humidity)
-    return null;
+  if (!temperature || !unit || !windSpeedInMs || !windSpeedUnit || !humidity) return null;
   const temperatureInCelsius = convertTemperatureToCelsius(temperature, unit);
   const heatIndexValue = heatIndex(temperature, unit, humidity);
-  const windChillValue = windChillIndex(
-    temperature,
-    unit,
-    windSpeedInMs,
-    windSpeedUnit,
-  );
+  const windChillValue = windChillIndex(temperature, unit, windSpeedInMs, windSpeedUnit);
   // For hot weather, use Heat Index
   // For cold weather, use Wind Chill
   // For moderate weather, apparent temperature is close to the actual temperature
-  const feelsLike =
-    temperatureInCelsius >= 27
-      ? heatIndexValue
-      : temperatureInCelsius <= 10
-      ? windChillValue
-      : temperature;
+  const feelsLike = temperatureInCelsius >= 27 ? heatIndexValue : temperatureInCelsius <= 10 ? windChillValue : temperature;
   return {
     feelsLike,
     heatIndex: heatIndexValue,

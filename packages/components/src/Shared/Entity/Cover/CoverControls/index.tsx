@@ -1,20 +1,7 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
 import styled from "@emotion/styled";
-import {
-  ControlSlider,
-  Column,
-  Row,
-  FabCard,
-  useDevice,
-  fallback,
-  ButtonGroup,
-  ButtonGroupButton,
-} from "@components";
-import {
-  useEntity,
-  supportsFeatureFromAttributes,
-  isUnavailableState,
-} from "@hakit/core";
+import { ControlSlider, Column, Row, FabCard, useDevice, fallback, ButtonGroup, ButtonGroupButton } from "@components";
+import { useEntity, supportsFeatureFromAttributes, isUnavailableState } from "@hakit/core";
 import type { EntityName, CoverEntity, FilterByDomain } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -52,21 +39,13 @@ const Label = styled.span`
 function computeTitleDisplay(entity: CoverEntity, position?: number) {
   const isUnavailable = isUnavailableState(entity.state);
   const statePosition =
-    !isUnavailable && entity.state !== "closed"
-      ? entity.attributes.current_position ??
-        entity.attributes.current_tilt_position
-      : undefined;
+    !isUnavailable && entity.state !== "closed" ? entity.attributes.current_position ?? entity.attributes.current_tilt_position : undefined;
 
   const currentPosition = position ?? statePosition;
 
-  const suffix =
-    currentPosition && currentPosition !== 100
-      ? currentPosition ?? entity.attributes.current_position ?? ""
-      : "";
+  const suffix = currentPosition && currentPosition !== 100 ? currentPosition ?? entity.attributes.current_position ?? "" : "";
   if (typeof position === "number") {
-    return `${
-      position === 0 ? "closed" : position === 100 ? "open" : entity.state
-    }${suffix ? ` - ${suffix}%` : ""}`;
+    return `${position === 0 ? "closed" : position === 100 ? "open" : entity.state}${suffix ? ` - ${suffix}%` : ""}`;
   }
   return `${entity.state}${suffix ? ` - ${suffix}%` : ""}`;
 }
@@ -102,19 +81,12 @@ function _CoverControls({
   const supportsPosition = supports(CoverEntityFeature.SET_POSITION);
   const supportsTiltPosition = supports(CoverEntityFeature.SET_TILT_POSITION);
 
-  const supportsOpenClose =
-    supports(CoverEntityFeature.OPEN) ||
-    supports(CoverEntityFeature.CLOSE) ||
-    supports(CoverEntityFeature.STOP);
+  const supportsOpenClose = supports(CoverEntityFeature.OPEN) || supports(CoverEntityFeature.CLOSE) || supports(CoverEntityFeature.STOP);
 
   const supportsTilt =
-    supports(CoverEntityFeature.OPEN_TILT) ||
-    supports(CoverEntityFeature.CLOSE_TILT) ||
-    supports(CoverEntityFeature.STOP_TILT);
+    supports(CoverEntityFeature.OPEN_TILT) || supports(CoverEntityFeature.CLOSE_TILT) || supports(CoverEntityFeature.STOP_TILT);
 
-  const [_mode, setMode] = useState<Mode>(
-    mode ?? supportsPosition ? "position" : "button",
-  );
+  const [_mode, setMode] = useState<Mode>(mode ?? supportsPosition ? "position" : "button");
 
   const device = useDevice();
   const titleValue = useMemo(() => {
@@ -153,71 +125,56 @@ function _CoverControls({
                 flexDirection: orientation === "vertical" ? "row" : "column",
               }}
             >
-              {supportsPosition &&
-                typeof entity.attributes.current_position !== "undefined" && (
-                  <Column>
-                    <ControlSlider
-                      sliderColor={isUnavailable ? undefined : `var(--ha-A400)`}
-                      min={0}
-                      max={100}
-                      mode={reverse ? "end" : "start"}
-                      vertical={orientation === "vertical"}
-                      thickness={device.xxs ? 70 : 100}
-                      borderRadius={24}
-                      value={entity.attributes.current_position}
-                      disabled={isUnavailable}
-                      onChange={(value) => {
-                        if (onStateChange)
-                          onStateChange(
-                            computeTitleDisplay(entity, Math.round(value)),
-                          );
-                      }}
-                      onChangeApplied={(value) => {
-                        entity.service.setCoverPosition({
-                          position: value,
-                        });
-                        if (onStateChange)
-                          onStateChange(
-                            computeTitleDisplay(entity, Math.round(value)),
-                          );
-                      }}
-                    />
-                    <Label>POSITION</Label>
-                  </Column>
-                )}
-              {supportsTiltPosition &&
-                typeof entity.attributes.current_tilt_position !==
-                  "undefined" && (
-                  <Column>
-                    <ControlSlider
-                      sliderColor={isUnavailable ? undefined : `var(--ha-A400)`}
-                      min={0}
-                      max={100}
-                      mode={reverse ? "end" : "start"}
-                      vertical={orientation === "vertical"}
-                      thickness={device.xxs ? 70 : 100}
-                      borderRadius={24}
-                      value={entity.attributes.current_tilt_position}
-                      disabled={isUnavailable}
-                      onChange={(value) => {
-                        if (onStateChange)
-                          onStateChange(
-                            computeTitleDisplay(entity, Math.round(value)),
-                          );
-                      }}
-                      onChangeApplied={(value) => {
-                        entity.service.setCoverTiltPosition({
-                          tilt_position: value,
-                        });
-                        if (onStateChange)
-                          onStateChange(
-                            computeTitleDisplay(entity, Math.round(value)),
-                          );
-                      }}
-                    />
-                    <Label>TILT</Label>
-                  </Column>
-                )}
+              {supportsPosition && typeof entity.attributes.current_position !== "undefined" && (
+                <Column>
+                  <ControlSlider
+                    sliderColor={isUnavailable ? undefined : `var(--ha-A400)`}
+                    min={0}
+                    max={100}
+                    mode={reverse ? "end" : "start"}
+                    vertical={orientation === "vertical"}
+                    thickness={device.xxs ? 70 : 100}
+                    borderRadius={24}
+                    value={entity.attributes.current_position}
+                    disabled={isUnavailable}
+                    onChange={(value) => {
+                      if (onStateChange) onStateChange(computeTitleDisplay(entity, Math.round(value)));
+                    }}
+                    onChangeApplied={(value) => {
+                      entity.service.setCoverPosition({
+                        position: value,
+                      });
+                      if (onStateChange) onStateChange(computeTitleDisplay(entity, Math.round(value)));
+                    }}
+                  />
+                  <Label>POSITION</Label>
+                </Column>
+              )}
+              {supportsTiltPosition && typeof entity.attributes.current_tilt_position !== "undefined" && (
+                <Column>
+                  <ControlSlider
+                    sliderColor={isUnavailable ? undefined : `var(--ha-A400)`}
+                    min={0}
+                    max={100}
+                    mode={reverse ? "end" : "start"}
+                    vertical={orientation === "vertical"}
+                    thickness={device.xxs ? 70 : 100}
+                    borderRadius={24}
+                    value={entity.attributes.current_tilt_position}
+                    disabled={isUnavailable}
+                    onChange={(value) => {
+                      if (onStateChange) onStateChange(computeTitleDisplay(entity, Math.round(value)));
+                    }}
+                    onChangeApplied={(value) => {
+                      entity.service.setCoverTiltPosition({
+                        tilt_position: value,
+                      });
+                      if (onStateChange) onStateChange(computeTitleDisplay(entity, Math.round(value)));
+                    }}
+                  />
+                  <Label>TILT</Label>
+                </Column>
+              )}
             </Row>
           </>
         )}
@@ -231,28 +188,40 @@ function _CoverControls({
             >
               {supportsOpenClose && (
                 <Column>
-                  <ButtonGroup
-                    thickness={device.xxs ? 70 : 100}
-                    reverse={reverse}
-                    orientation={orientation}
-                  >
-                    <ButtonGroupButton title="Open Cover" entity={_entity} service="openCover" icon={reverse ? "mdi:arrow-down" : "mdi:arrow-up"} />
+                  <ButtonGroup thickness={device.xxs ? 70 : 100} reverse={reverse} orientation={orientation}>
+                    <ButtonGroupButton
+                      title="Open Cover"
+                      entity={_entity}
+                      service="openCover"
+                      icon={reverse ? "mdi:arrow-down" : "mdi:arrow-up"}
+                    />
                     <ButtonGroupButton title="Stop Cover" entity={_entity} service="stopCover" icon={"mdi:stop-circle-outline"} />
-                    <ButtonGroupButton title="Close Cover" entity={_entity} service="closeCover" icon={!reverse ? "mdi:arrow-down" : "mdi:arrow-up"} />
+                    <ButtonGroupButton
+                      title="Close Cover"
+                      entity={_entity}
+                      service="closeCover"
+                      icon={!reverse ? "mdi:arrow-down" : "mdi:arrow-up"}
+                    />
                   </ButtonGroup>
                   <Label>CONTROLS</Label>
                 </Column>
               )}
               {supportsTilt && (
                 <Column>
-                  <ButtonGroup
-                    thickness={device.xxs ? 70 : 100}
-                    reverse={reverse}
-                    orientation={orientation}
-                  >
-                    <ButtonGroupButton title="Open cover tilt" entity={_entity} service="openCoverTilt" icon={reverse ? "mdi:arrow-collapse" : "mdi:arrow-expand"} />
+                  <ButtonGroup thickness={device.xxs ? 70 : 100} reverse={reverse} orientation={orientation}>
+                    <ButtonGroupButton
+                      title="Open cover tilt"
+                      entity={_entity}
+                      service="openCoverTilt"
+                      icon={reverse ? "mdi:arrow-collapse" : "mdi:arrow-expand"}
+                    />
                     <ButtonGroupButton title="Stop Cover tilt" entity={_entity} service="stopCoverTilt" icon={"mdi:stop-circle-outline"} />
-                    <ButtonGroupButton title="Close Cover tilt" entity={_entity} service="closeCoverTilt" icon={!reverse ? "mdi:arrow-collapse" : "mdi:arrow-expand"} />
+                    <ButtonGroupButton
+                      title="Close Cover tilt"
+                      entity={_entity}
+                      service="closeCoverTilt"
+                      icon={!reverse ? "mdi:arrow-collapse" : "mdi:arrow-expand"}
+                    />
                   </ButtonGroup>
                   <Label>TILT CONTROLS</Label>
                 </Column>

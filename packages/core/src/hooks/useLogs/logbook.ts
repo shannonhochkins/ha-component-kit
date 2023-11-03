@@ -1,17 +1,5 @@
-import {
-  HassEntity,
-  Connection,
-  type MessageBase,
-} from "home-assistant-js-websocket";
-import {
-  computeDomain,
-  ON,
-  OFF,
-  UNAVAILABLE,
-  DOMAINS_WITH_DYNAMIC_PICTURE,
-  UNKNOWN,
-  type EntityName,
-} from "@core";
+import { HassEntity, Connection, type MessageBase } from "home-assistant-js-websocket";
+import { computeDomain, ON, OFF, UNAVAILABLE, DOMAINS_WITH_DYNAMIC_PICTURE, UNKNOWN, type EntityName } from "@core";
 export const CONTINUOUS_DOMAINS = ["counter", "proximity", "sensor", "zone"];
 
 export interface LogbookStreamMessage {
@@ -44,10 +32,7 @@ export interface LogbookEntry {
   context_source?: string; // The trigger source
   context_message?: string;
 }
-export const createHistoricState = (
-  entity: HassEntity,
-  state?: string,
-): HassEntity => <HassEntity>(<unknown>{
+export const createHistoricState = (entity: HassEntity, state?: string): HassEntity => <HassEntity>(<unknown>{
     entity_id: entity.entity_id,
     state: state,
     attributes: {
@@ -58,14 +43,10 @@ export const createHistoricState = (
       has_time: entity?.attributes.has_time,
       // We do not want to use dynamic entity pictures (e.g., from media player) for the log book rendering,
       // as they would present a false state in the log (played media right now vs actual historic data).
-      entity_picture_local: DOMAINS_WITH_DYNAMIC_PICTURE.has(
-        computeDomain(entity.entity_id as EntityName),
-      )
+      entity_picture_local: DOMAINS_WITH_DYNAMIC_PICTURE.has(computeDomain(entity.entity_id as EntityName))
         ? undefined
         : entity?.attributes.entity_picture_local,
-      entity_picture: DOMAINS_WITH_DYNAMIC_PICTURE.has(
-        computeDomain(entity.entity_id as EntityName),
-      )
+      entity_picture: DOMAINS_WITH_DYNAMIC_PICTURE.has(computeDomain(entity.entity_id as EntityName))
         ? undefined
         : entity?.attributes.entity_picture,
     },
@@ -80,11 +61,7 @@ export const subscribeLogbook = (
   deviceIds?: string[],
 ): Promise<() => Promise<void>> => {
   // If all specified filters are empty lists, we can return an empty list.
-  if (
-    (entityIds || deviceIds) &&
-    (!entityIds || entityIds.length === 0) &&
-    (!deviceIds || deviceIds.length === 0)
-  ) {
+  if ((entityIds || deviceIds) && (!entityIds || entityIds.length === 0) && (!deviceIds || deviceIds.length === 0)) {
     return Promise.reject("No entities or devices");
   }
   const params: MessageBase = {
@@ -98,10 +75,7 @@ export const subscribeLogbook = (
   if (deviceIds?.length) {
     params.device_ids = deviceIds;
   }
-  return connection.subscribeMessage<LogbookStreamMessage>(
-    (message) => callbackFunction(message),
-    params,
-  );
+  return connection.subscribeMessage<LogbookStreamMessage>((message) => callbackFunction(message), params);
 };
 
 const locale = {
@@ -157,11 +131,7 @@ const locale = {
   not_loaded: "[%key:ui::dialogs::helper_settings::platform_not_loaded%]",
 } as const;
 
-export const localize = (
-  str: keyof typeof locale,
-  search?: string,
-  replace?: string,
-) => {
+export const localize = (str: keyof typeof locale, search?: string, replace?: string) => {
   if (search && replace) {
     return locale[str].replace(`{${search}}`, replace);
   }
@@ -191,11 +161,7 @@ export const localizeTriggerSource = (source: string) => {
   return source;
 };
 
-export const localizeStateMessage = (
-  state: string,
-  stateObj: HassEntity,
-  domain: string,
-): string => {
+export const localizeStateMessage = (state: string, stateObj: HassEntity, domain: string): string => {
   switch (domain) {
     case "device_tracker":
     case "person":
@@ -294,18 +260,10 @@ export const localizeStateMessage = (
         case "sound":
         case "vibration":
           if (isOn) {
-            return localize(
-              `detected_device_class`,
-              "device_class",
-              device_class,
-            );
+            return localize(`detected_device_class`, "device_class", device_class);
           }
           if (isOff) {
-            return localize(
-              `cleared_device_class`,
-              "device_class",
-              device_class,
-            );
+            return localize(`cleared_device_class`, "device_class", device_class);
           }
           break;
 
@@ -371,9 +329,5 @@ export const localizeStateMessage = (
     return localize(`became_unavailable`);
   }
 
-  return localize(
-    `changed_to_state`,
-    "state",
-    stateObj ? stateObj.state : state,
-  );
+  return localize(`changed_to_state`, "state", stateObj ? stateObj.state : state);
 };

@@ -20,5 +20,5 @@ export const DEFAULT_THEME_OPTIONS = {
     sm: 1200,
     md: 1536,
     lg: 1700,
-  }
+  },
 } as const;

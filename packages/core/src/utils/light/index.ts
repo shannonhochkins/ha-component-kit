@@ -16,31 +16,19 @@ const modesSupportingBrightness: LightColorMode[] = [
   LIGHT_COLOR_MODES.WHITE,
 ];
 
-export const lightSupportsColorMode = (
-  entity: HassEntityWithService<"light">,
-  mode: LightColorMode,
-) => entity.attributes.supported_color_modes?.includes(mode) || false;
+export const lightSupportsColorMode = (entity: HassEntityWithService<"light">, mode: LightColorMode) =>
+  entity.attributes.supported_color_modes?.includes(mode) || false;
 
 export const lightIsInColorMode = (entity: HassEntityWithService<"light">) =>
-  (entity.attributes.color_mode &&
-    modesSupportingColor.includes(entity.attributes.color_mode)) ||
-  false;
+  (entity.attributes.color_mode && modesSupportingColor.includes(entity.attributes.color_mode)) || false;
 
 export const lightSupportsColor = (entity: HassEntityWithService<"light">) =>
-  entity.attributes.supported_color_modes?.some((mode) =>
-    modesSupportingColor.includes(mode),
-  ) || false;
+  entity.attributes.supported_color_modes?.some((mode) => modesSupportingColor.includes(mode)) || false;
 
-export const lightSupportsBrightness = (
-  entity: HassEntityWithService<"light">,
-) =>
-  entity.attributes.supported_color_modes?.some((mode) =>
-    modesSupportingBrightness.includes(mode),
-  ) || false;
+export const lightSupportsBrightness = (entity: HassEntityWithService<"light">) =>
+  entity.attributes.supported_color_modes?.some((mode) => modesSupportingBrightness.includes(mode)) || false;
 
-export const getLightCurrentModeRgbColor = (
-  entity: HassEntityWithService<"light">,
-): number[] | undefined =>
+export const getLightCurrentModeRgbColor = (entity: HassEntityWithService<"light">): number[] | undefined =>
   entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBWW
     ? entity.attributes.rgbww_color
     : entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBW

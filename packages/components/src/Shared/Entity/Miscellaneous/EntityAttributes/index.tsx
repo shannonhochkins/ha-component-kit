@@ -28,10 +28,7 @@ const Entry = styled.div`
 
 function _EntityAttributes({ entity, title, ...rest }: EntityAttributesProps) {
   const _entity = useEntity(entity);
-  const memoizedAttributes = useMemo(
-    () => [...Object.entries(_entity.attributes), ["state", _entity.state]],
-    [_entity],
-  );
+  const memoizedAttributes = useMemo(() => [...Object.entries(_entity.attributes), ["state", _entity.state]], [_entity]);
 
   return (
     <Group

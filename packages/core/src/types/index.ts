@@ -1,21 +1,10 @@
-import type {
-  HassEntity,
-  HassServiceTarget,
-} from "home-assistant-js-websocket";
+import type { HassEntity, HassServiceTarget } from "home-assistant-js-websocket";
 import type { DefaultServices } from "./supported-services";
 import type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 export type { DefinedPropertiesByDomain } from "./entitiesByDomain";
-import type {
-  TimelineState,
-  EntityHistoryState,
-} from "../hooks/useHistory/history";
+import type { TimelineState, EntityHistoryState } from "../hooks/useHistory/history";
 
-export type {
-  HistoryStreamMessage,
-  TimelineState,
-  HistoryResult,
-  EntityHistoryState,
-} from "../hooks/useHistory/history";
+export type { HistoryStreamMessage, TimelineState, HistoryResult, EntityHistoryState } from "../hooks/useHistory/history";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - ignore the next check as this is extendable from the client side.
@@ -25,9 +14,7 @@ export interface CustomSupportedServices<
   T extends ServiceFunctionTypes = "target",
 > {}
 // dodgey hack to determine if the custom supported services are empty or not, if they're empty we use the default services
-export type SupportedServices<T extends ServiceFunctionTypes = "target"> = [
-  keyof CustomSupportedServices<T>,
-] extends [never]
+export type SupportedServices<T extends ServiceFunctionTypes = "target"> = [keyof CustomSupportedServices<T>] extends [never]
   ? DefaultServices<T>
   : CustomSupportedServices<T>;
 
@@ -73,10 +60,9 @@ export type HassEntityCustom = HassEntity & {
     color: [number, number, number];
   };
 };
-export type HassEntityHelper<T extends AllDomains> =
-  CamelToSnake<T> extends keyof DefinedPropertiesByDomain
-    ? DefinedPropertiesByDomain[CamelToSnake<T>]
-    : HassEntity;
+export type HassEntityHelper<T extends AllDomains> = CamelToSnake<T> extends keyof DefinedPropertiesByDomain
+  ? DefinedPropertiesByDomain[CamelToSnake<T>]
+  : HassEntity;
 
 export type HassEntityWithService<T extends AllDomains> = HassEntityCustom &
   HassEntityHelper<SnakeToCamel<T>> & {
@@ -87,12 +73,8 @@ export type HassEntityWithService<T extends AllDomains> = HassEntityCustom &
       loading: boolean;
     };
     /** @deprecated - this will be removed in future versions, use service instead, example .api.toggle() becomes .service.toggle() */
-    api: SnakeToCamel<T> extends keyof SupportedServices<"no-target">
-      ? SupportedServices<"no-target">[SnakeToCamel<T>]
-      : never;
-    service: SnakeToCamel<T> extends keyof SupportedServices<"no-target">
-      ? SupportedServices<"no-target">[SnakeToCamel<T>]
-      : never;
+    api: SnakeToCamel<T> extends keyof SupportedServices<"no-target"> ? SupportedServices<"no-target">[SnakeToCamel<T>] : never;
+    service: SnakeToCamel<T> extends keyof SupportedServices<"no-target"> ? SupportedServices<"no-target">[SnakeToCamel<T>] : never;
   };
 
 export type ServiceFunctionWithEntity<Data = object> = (
@@ -107,28 +89,16 @@ export type ServiceFunctionWithoutEntity<Data = object> = {
   (data?: Data): void;
 };
 
-export type ServiceFunction<
-  T extends ServiceFunctionTypes = "target",
-  Data = object,
-> = {
+export type ServiceFunction<T extends ServiceFunctionTypes = "target", Data = object> = {
   /** with target, the service method expects a Target value as the first argument */
   target: ServiceFunctionWithEntity<Data>;
   /** without target, the service method does not expect a Target value as the first argument */
   "no-target": ServiceFunctionWithoutEntity<Data>;
 }[T];
-export type StaticDomains =
-  | "sun"
-  | "sensor"
-  | "stt"
-  | "binarySensor"
-  | "weather";
-export type SnakeOrCamelStaticDomains =
-  | CamelToSnake<StaticDomains>
-  | SnakeToCamel<StaticDomains>;
+export type StaticDomains = "sun" | "sensor" | "stt" | "binarySensor" | "weather";
+export type SnakeOrCamelStaticDomains = CamelToSnake<StaticDomains> | SnakeToCamel<StaticDomains>;
 /** the key names on the interface object all as camel case */
-export type CamelCaseDomains = SnakeToCamel<
-  NonSymbolNumberKeys<SupportedServices>
->;
+export type CamelCaseDomains = SnakeToCamel<NonSymbolNumberKeys<SupportedServices>>;
 /** the key names on the interface object all as snake case */
 export type SnakeCaseDomains = CamelToSnake<CamelCaseDomains>;
 /** the key names on the interface object all as snake case or camel case */
@@ -137,16 +107,11 @@ export type SnakeOrCamelDomains = SnakeCaseDomains | CamelCaseDomains;
 export type AllDomains = SnakeOrCamelStaticDomains | SnakeOrCamelDomains;
 
 /** will extract the domain name from the entity value, eg light.something will return "light" if it extends SnakeOrCamelDomains */
-export type ExtractDomain<E> = E extends `${infer D}.${string}`
-  ? D extends AllDomains
-    ? D
-    : never
-  : never;
+export type ExtractDomain<E> = E extends `${infer D}.${string}` ? (D extends AllDomains ? D : never) : never;
 /** Will convert a string to camel case */
-export type SnakeToCamel<Key extends string> =
-  Key extends `${infer FirstPart}_${infer FirstLetter}${infer LastPart}`
-    ? `${FirstPart}${Uppercase<FirstLetter>}${SnakeToCamel<LastPart>}`
-    : Key;
+export type SnakeToCamel<Key extends string> = Key extends `${infer FirstPart}_${infer FirstLetter}${infer LastPart}`
+  ? `${FirstPart}${Uppercase<FirstLetter>}${SnakeToCamel<LastPart>}`
+  : Key;
 /** Will convert a string to snake case */
 export type CamelToSnake<S extends string> = S extends `${infer T}${infer U}`
   ? `${T extends Uppercase<T> ? "_" : ""}${Lowercase<T>}${CamelToSnake<U>}`
@@ -158,21 +123,12 @@ export type DomainService<D extends SnakeOrCamelDomains> =
   | CamelToSnake<NonSymbolNumberKeys<SupportedServices[SnakeToCamel<D>]>>;
 
 /** returns the supported data to be used with the ServiceFunction */
-export type ServiceData<
-  D extends SnakeOrCamelDomains,
-  S extends DomainService<D>,
-> = S extends keyof SupportedServices[SnakeToCamel<D>]
-  ? SupportedServices[SnakeToCamel<D>][S] extends ServiceFunction<
-      "target",
-      infer Params
-    >
+export type ServiceData<D extends SnakeOrCamelDomains, S extends DomainService<D>> = S extends keyof SupportedServices[SnakeToCamel<D>]
+  ? SupportedServices[SnakeToCamel<D>][S] extends ServiceFunction<"target", infer Params>
     ? Params
     : never
   : SnakeToCamel<S> extends keyof SupportedServices[SnakeToCamel<D>]
-  ? SupportedServices[SnakeToCamel<D>][SnakeToCamel<S>] extends ServiceFunction<
-      "target",
-      infer Params
-    >
+  ? SupportedServices[SnakeToCamel<D>][SnakeToCamel<S>] extends ServiceFunction<"target", infer Params>
     ? Params
     : never
   : never;

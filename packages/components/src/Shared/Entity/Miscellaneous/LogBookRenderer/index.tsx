@@ -2,13 +2,7 @@ import { HassEntity, HassServices } from "home-assistant-js-websocket";
 import styled from "@emotion/styled";
 import { Row, fallback } from "@components";
 import { css } from "@emotion/react";
-import {
-  useRef,
-  useCallback,
-  useState,
-  useEffect,
-  ComponentPropsWithoutRef,
-} from "react";
+import { useRef, useCallback, useState, useEffect, ComponentPropsWithoutRef } from "react";
 import {
   useLogs,
   useHass,
@@ -126,10 +120,8 @@ const Wrapper = styled.div`
 
 const triggerDomains = ["script", "automation"];
 
-const hasContext = (item: LogbookEntry) =>
-  item.context_event_type || item.context_state || item.context_message;
-const stripEntityId = (message: string, entityId?: string) =>
-  entityId ? message.replace(entityId, " ") : message;
+const hasContext = (item: LogbookEntry) => item.context_event_type || item.context_state || item.context_message;
+const stripEntityId = (message: string, entityId?: string) => (entityId ? message.replace(entityId, " ") : message);
 
 export interface LogBookRendererProps extends ComponentPropsWithoutRef<"div"> {
   /** the entity id to retrieve log information */
@@ -176,11 +168,10 @@ function _LogBookRenderer({
     async (entity: string) => {
       if (!connection) return;
       try {
-        const response =
-          await connection.sendMessagePromise<EntityRegistryEntry>({
-            type: "config/entity_registry/get",
-            entity_id: entity,
-          });
+        const response = await connection.sendMessagePromise<EntityRegistryEntry>({
+          type: "config/entity_registry/get",
+          entity_id: entity,
+        });
         return response;
       } catch (e) {
         // ignore, just won't be able to link to HA
@@ -196,10 +187,7 @@ function _LogBookRenderer({
       }
       const device = await getDeviceId(entityId);
       if (device && device.device_id) {
-        window.open(
-          joinHassUrl(`config/devices/device/${device.device_id}`),
-          "_blank",
-        );
+        window.open(joinHassUrl(`config/devices/device/${device.device_id}`), "_blank");
       }
     },
     [getDeviceId, joinHassUrl],
@@ -212,19 +200,12 @@ function _LogBookRenderer({
   const _renderEntity = useCallback(
     (entityId: string | undefined, entityName: string | undefined) => {
       const hasState = entityId && entityId in entities;
-      const displayName =
-        entityName ||
-        (hasState
-          ? entities[entityId].attributes.friendly_name || entityId
-          : entityId);
+      const displayName = entityName || (hasState ? entities[entityId].attributes.friendly_name || entityId : entityId);
       if (!hasState) {
         return <span className="entity-name">{displayName}</span>;
       }
       return (
-        <button
-          className="link entity-name"
-          onClick={() => _entityClicked(entityId)}
-        >
+        <button className="link entity-name" onClick={() => _entityClicked(entityId)}>
           {displayName}
         </button>
       );
@@ -268,13 +249,8 @@ function _LogBookRenderer({
             messageEnd.shift(); // remove the entity
             return (
               <>
-                <span className="triggered-by-state">
-                  {messageParts.join(" ")}
-                </span>
-                {_renderEntity(
-                  entityId,
-                  entities[entityId].attributes.friendly_name,
-                )}
+                <span className="triggered-by-state">{messageParts.join(" ")}</span>
+                {_renderEntity(entityId, entities[entityId].attributes.friendly_name)}
                 <span className="message-suffix">{messageEnd.join(" ")}</span>
               </>
             );
@@ -289,17 +265,13 @@ function _LogBookRenderer({
       // that entity.
       //
       if (possibleEntity && possibleEntity in entities) {
-        const possibleEntityName =
-          entities[possibleEntity].attributes.friendly_name;
+        const possibleEntityName = entities[possibleEntity].attributes.friendly_name;
         if (possibleEntityName && message.endsWith(possibleEntityName)) {
           if (seenEntities.includes(possibleEntity)) {
             return null;
           }
           seenEntities.push(possibleEntity);
-          message = message.substring(
-            0,
-            message.length - possibleEntityName.length,
-          );
+          message = message.substring(0, message.length - possibleEntityName.length);
           return (
             <>
               <span className="message-entity">{message}</span>
@@ -326,28 +298,20 @@ function _LogBookRenderer({
 
   const _renderIndicator = useCallback((item: LogbookEntry) => {
     const style = {
-      backgroundColor:
-        item.state === ON ? `var(--ha-A400)` : `var(--ha-S300-contrast)`,
+      backgroundColor: item.state === ON ? `var(--ha-A400)` : `var(--ha-S300-contrast)`,
     };
     return <div className="indicator" style={style}></div>;
   }, []);
 
   const _renderUnseenContextSourceEntity = useCallback(
     (item: LogbookEntry, seenEntityIds: string[]) => {
-      if (
-        !item.context_entity_id ||
-        seenEntityIds.includes(item.context_entity_id!)
-      ) {
+      if (!item.context_entity_id || seenEntityIds.includes(item.context_entity_id!)) {
         return "";
       }
       // We don't know what caused this entity
       // to be included since its an integration
       // described event.
-      return (
-        <>
-          ({_renderEntity(item.context_entity_id, item.context_entity_id_name)})
-        </>
-      );
+      return <>({_renderEntity(item.context_entity_id, item.context_entity_id_name)})</>;
     },
     [_renderEntity],
   );
@@ -358,24 +322,15 @@ function _LogBookRenderer({
       if (item.context_state) {
         const historicStateObj =
           item.context_entity_id && item.context_entity_id in entities
-            ? createHistoricState(
-                entities[item.context_entity_id],
-                item.context_state,
-              )
+            ? createHistoricState(entities[item.context_entity_id], item.context_state)
             : undefined;
         return (
           <>
-            <span className="triggered-by">
-              {localize("triggered_by_state_of")}
-            </span>
+            <span className="triggered-by">{localize("triggered_by_state_of")}</span>
             {_renderEntity(item.context_entity_id, item.context_entity_id_name)}
             <span>
               {historicStateObj
-                ? localizeStateMessage(
-                    item.context_state,
-                    historicStateObj,
-                    computeDomain(item.context_entity_id as EntityName),
-                  )
+                ? localizeStateMessage(item.context_state, historicStateObj, computeDomain(item.context_entity_id as EntityName))
                 : item.context_state}
             </span>
           </>
@@ -385,54 +340,31 @@ function _LogBookRenderer({
       if (item.context_event_type === "call_service") {
         return (
           <>
-            <span className="triggered-by">
-              {localize("triggered_by_service")}
-            </span>
+            <span className="triggered-by">{localize("triggered_by_service")}</span>
             {item.context_domain && item.context_service ? (
               <span className="service-trigger-details">
                 {item.context_domain}:{" "}
-                {services
-                  ? services[item.context_domain]?.[item.context_service]
-                      ?.name || item.context_service
-                  : item.context_service}
+                {services ? services[item.context_domain]?.[item.context_service]?.name || item.context_service : item.context_service}
               </span>
             ) : null}
           </>
         );
       }
-      if (
-        !item.context_message ||
-        seenEntityIds.includes(item.context_entity_id!)
-      ) {
+      if (!item.context_message || seenEntityIds.includes(item.context_entity_id!)) {
         return null;
       }
       // Automation or script
-      if (
-        item.context_event_type === "automation_triggered" ||
-        item.context_event_type === "script_started"
-      ) {
+      if (item.context_event_type === "automation_triggered" || item.context_event_type === "script_started") {
         // context_source is available in 2022.6 and later
-        const triggerMsg = item.context_source
-          ? item.context_source
-          : item.context_message.replace("triggered by ", "");
+        const triggerMsg = item.context_source ? item.context_source : item.context_message.replace("triggered by ", "");
         const contextTriggerSource = localizeTriggerSource(triggerMsg);
         return (
           <>
             <span className="triggered-by">
-              {localize(
-                item.context_event_type === "automation_triggered"
-                  ? "triggered_by_automation"
-                  : "triggered_by_script",
-              )}
+              {localize(item.context_event_type === "automation_triggered" ? "triggered_by_automation" : "triggered_by_script")}
             </span>
             {_renderEntity(item.context_entity_id, item.context_entity_id_name)}
-            {item.context_message
-              ? _formatMessageWithPossibleEntity(
-                  contextTriggerSource,
-                  seenEntityIds,
-                  undefined,
-                )
-              : null}
+            {item.context_message ? _formatMessageWithPossibleEntity(contextTriggerSource, seenEntityIds, undefined) : null}
           </>
         );
       }
@@ -442,38 +374,21 @@ function _LogBookRenderer({
         <>
           <span className="triggered-by">{localize("triggered_by")}</span>
           <span className="trigger-name">{item.context_name}</span>
-          {_formatMessageWithPossibleEntity(
-            item.context_message,
-            seenEntityIds,
-            item.context_entity_id,
-          )}
+          {_formatMessageWithPossibleEntity(item.context_message, seenEntityIds, item.context_entity_id)}
           {_renderUnseenContextSourceEntity(item, seenEntityIds)}
         </>
       );
     },
-    [
-      _formatMessageWithPossibleEntity,
-      _renderEntity,
-      _renderUnseenContextSourceEntity,
-      entities,
-      services,
-    ],
+    [_formatMessageWithPossibleEntity, _renderEntity, _renderUnseenContextSourceEntity, entities, services],
   );
 
   const _renderMessage = useCallback(
-    (
-      item: LogbookEntry,
-      seenEntityIds: string[],
-      domain?: string,
-      historicStateObj?: HassEntity,
-    ) => {
+    (item: LogbookEntry, seenEntityIds: string[], domain?: string, historicStateObj?: HassEntity) => {
       if (item.entity_id) {
         if (item.state) {
           return (
             <span className="message-state">
-              {historicStateObj
-                ? localizeStateMessage(item.state, historicStateObj, domain!)
-                : item.state}
+              {historicStateObj ? localizeStateMessage(item.state, historicStateObj, domain!) : item.state}
             </span>
           );
         }
@@ -492,9 +407,7 @@ function _LogBookRenderer({
       }
       return message
         ? _formatMessageWithPossibleEntity(
-            itemHasContext
-              ? stripEntityId(message, item.context_entity_id)
-              : message,
+            itemHasContext ? stripEntityId(message, item.context_entity_id) : message,
             seenEntityIds,
             undefined,
           )
@@ -509,12 +422,8 @@ function _LogBookRenderer({
       }
       const previous = logs[index - 1] as LogbookEntry | undefined;
       const seenEntityIds: string[] = [];
-      const currentStateObj = item.entity_id
-        ? entities[item.entity_id]
-        : undefined;
-      const historicStateObj = currentStateObj
-        ? createHistoricState(currentStateObj, item.state!)
-        : undefined;
+      const currentStateObj = item.entity_id ? entities[item.entity_id] : undefined;
+      const historicStateObj = currentStateObj ? createHistoricState(currentStateObj, item.state!) : undefined;
       const domain = item.entity_id
         ? computeDomain(item.entity_id as EntityName)
         : // Domain is there if there is no entity ID.
@@ -525,13 +434,8 @@ function _LogBookRenderer({
       return (
         <div key={index} className="entry-container">
           {index === 0 ||
-          (item?.when &&
-            previous?.when &&
-            new Date(item.when * 1000).toDateString() !==
-              new Date(previous.when * 1000).toDateString()) ? (
-            <h4 className="date">
-              {formatDateMem(new Date(item.when * 1000))}
-            </h4>
+          (item?.when && previous?.when && new Date(item.when * 1000).toDateString() !== new Date(previous.when * 1000).toDateString()) ? (
+            <h4 className="date">{formatDateMem(new Date(item.when * 1000))}</h4>
           ) : null}
 
           <div className={`entry ${!item.entity_id ? "no-entity" : ""}`}>
@@ -539,19 +443,11 @@ function _LogBookRenderer({
               {!hideIndicator ? _renderIndicator(item) : ""}
               <div className="message-relative_time">
                 <div className="message">
-                  {_renderMessage(
-                    item,
-                    seenEntityIds,
-                    domain,
-                    historicStateObj,
-                  )}
+                  {_renderMessage(item, seenEntityIds, domain, historicStateObj)}
                   {_renderContextMessage(item, seenEntityIds)}
                 </div>
                 <div className="secondary">
-                  <span>
-                    {formatTimeWithSecondsMem(new Date(item.when * 1000))}
-                  </span>
-                  -<span className="relative-time">{relativeTime}</span>
+                  <span>{formatTimeWithSecondsMem(new Date(item.when * 1000))}</span>-<span className="relative-time">{relativeTime}</span>
                 </div>
               </div>
             </div>
@@ -559,16 +455,7 @@ function _LogBookRenderer({
         </div>
       );
     },
-    [
-      _renderContextMessage,
-      _renderIndicator,
-      _renderMessage,
-      entities,
-      formatDateMem,
-      formatTimeWithSecondsMem,
-      logs,
-      hideIndicator,
-    ],
+    [_renderContextMessage, _renderIndicator, _renderMessage, entities, formatDateMem, formatTimeWithSecondsMem, logs, hideIndicator],
   );
 
   return (

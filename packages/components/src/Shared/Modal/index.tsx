@@ -1,11 +1,6 @@
 import { useEffect, Fragment, ReactNode } from "react";
 import { css } from "@emotion/react";
-import {
-  AnimatePresence,
-  motion,
-  MotionProps,
-  HTMLMotionProps,
-} from "framer-motion";
+import { AnimatePresence, motion, MotionProps, HTMLMotionProps } from "framer-motion";
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { useKeyPress } from "react-use";
@@ -170,29 +165,26 @@ function _Modal({
             {...rest}
           >
             <ModalHeader className={`modal-header`}>
-              <Column alignItems="flex-start" className={`modal-column`} style={{
-                flexShrink: 1,
-                maxWidth: '70%'
-              }}>
+              <Column
+                alignItems="flex-start"
+                className={`modal-column`}
+                style={{
+                  flexShrink: 1,
+                  maxWidth: "70%",
+                }}
+              >
                 {title && <Title className={`modal-title`}>{title}</Title>}
-                {description && (
-                  <Description className={`modal-description`}>
-                    {description}
-                  </Description>
-                )}
+                {description && <Description className={`modal-description`}>{description}</Description>}
               </Column>
-              <Row gap="0.5rem" wrap="nowrap" style={{
-                flexShrink: 0,
-              }}>
+              <Row
+                gap="0.5rem"
+                wrap="nowrap"
+                style={{
+                  flexShrink: 0,
+                }}
+              >
                 {headerActions && headerActions()}
-                <FabCard
-                  className={`modal-close-button`}
-                  tooltipPlacement="left"
-                  title="Close"
-                  layout
-                  icon="mdi:close"
-                  onClick={onClose}
-                />
+                <FabCard className={`modal-close-button`} tooltipPlacement="left" title="Close" layout icon="mdi:close" onClick={onClose} />
               </Row>
             </ModalHeader>
             <ModalOverflow className={`modal-overflow`}>

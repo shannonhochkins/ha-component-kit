@@ -17,8 +17,7 @@ import { fallback, mq } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
 const RENDER_SIZE = 400;
-const canvasSize =
-  RENDER_SIZE * (typeof window === "undefined" ? 1 : window.devicePixelRatio);
+const canvasSize = RENDER_SIZE * (typeof window === "undefined" ? 1 : window.devicePixelRatio);
 
 type HueSaturation = [number, number];
 type Rgb = [number, number, number];
@@ -29,8 +28,7 @@ export interface ColorPickerOutputColors {
   hs: HueSaturation;
 }
 
-export interface ColorTempPickerProps
-  extends Omit<React.ComponentProps<"div">, "onChange"> {
+export interface ColorTempPickerProps extends Omit<React.ComponentProps<"div">, "onChange"> {
   /** if the picker should be disabled @default false */
   disabled?: boolean;
   /** the light entity to use with the ColorTempPicker */
@@ -139,11 +137,7 @@ function polar2xy(r: number, phi: number) {
   return [x, y];
 }
 
-function drawColorWheel(
-  ctx: CanvasRenderingContext2D,
-  minTemp: number,
-  maxTemp: number,
-) {
+function drawColorWheel(ctx: CanvasRenderingContext2D, minTemp: number, maxTemp: number) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   const radius = ctx.canvas.width / 2;
 
@@ -155,10 +149,7 @@ function drawColorWheel(
 
     const fraction = (y / (radius * SAFE_ZONE_FACTOR) + 1) / 2;
 
-    const temperature = Math.max(
-      Math.min(min + fraction * (max - min), max),
-      min,
-    );
+    const temperature = Math.max(Math.min(min + fraction * (max - min), max), min);
 
     const color = rgb2hex(temperature2rgb(temperature));
 
@@ -188,10 +179,7 @@ function _ColorTempPicker({
   const min = entity.attributes.min_color_temp_kelvin || 2000;
   const max = entity.attributes.max_color_temp_kelvin || 10000;
   const isOn = entity.state === ON;
-  const supportsColorTemp = lightSupportsColorMode(
-    entity,
-    LIGHT_COLOR_MODES.COLOR_TEMP,
-  );
+  const supportsColorTemp = lightSupportsColorMode(entity, LIGHT_COLOR_MODES.COLOR_TEMP);
   const getColoursFromTemperature = useCallback(
     (temperature: number) => {
       const rgb = temperature2rgb(temperature ?? Math.round((max + min) / 2));
@@ -214,9 +202,7 @@ function _ColorTempPicker({
       }
       if (circleRef.current) {
         circleRef.current.style.fill = hex;
-        circleRef.current.style.visibility = _cursorPosition.current
-          ? ""
-          : "hidden";
+        circleRef.current.style.visibility = _cursorPosition.current ? "" : "hidden";
       }
     },
     [getColoursFromTemperature],
@@ -240,10 +226,7 @@ function _ColorTempPicker({
   const _getValueFromCoord = useCallback(
     ([, y]: number[]): number => {
       const fraction = (y / SAFE_ZONE_FACTOR + 1) / 2;
-      const temperature = Math.max(
-        Math.min(min + fraction * (max - min), max),
-        min,
-      );
+      const temperature = Math.max(Math.min(min + fraction * (max - min), max), min);
       return Math.round(temperature);
     },
     [min, max],
@@ -253,14 +236,8 @@ function _ColorTempPicker({
     (updatedValue?: [number, number]) => {
       if (!parentRef.current || !updatedValue) return;
       _cursorPosition.current = updatedValue;
-      parentRef.current.style.setProperty(
-        "--value-x",
-        disabled ? "0" : `${updatedValue[0]}`,
-      );
-      parentRef.current.style.setProperty(
-        "--value-y",
-        disabled ? "0" : `${updatedValue[1]}`,
-      );
+      parentRef.current.style.setProperty("--value-x", disabled ? "0" : `${updatedValue[0]}`);
+      parentRef.current.style.setProperty("--value-y", disabled ? "0" : `${updatedValue[1]}`);
       _localValue.current = _getValueFromCoord(_cursorPosition.current);
       updateColours(_localValue.current);
       return () => {
@@ -287,9 +264,7 @@ function _ColorTempPicker({
     [value, min, max],
   );
 
-  const _localValue = useRef<number>(
-    _getValueFromCoord(_getCoordsFromValue(value)),
-  );
+  const _localValue = useRef<number>(_getValueFromCoord(_getCoordsFromValue(value)));
 
   useEffect(() => {
     updateColours(_localValue.current);
@@ -301,24 +276,21 @@ function _ColorTempPicker({
     setValue(_cursorPosition.current);
   }, [setValue, value, _getCoordsFromValue]);
 
-  const _getPositionFromEvent = useCallback(
-    (xy: [number, number], target: HTMLElement): [number, number] => {
-      const [x, y] = xy;
-      const boundingRect = target.getBoundingClientRect();
-      const offsetX = boundingRect.left;
-      const offsetY = boundingRect.top;
-      const maxX = target.clientWidth;
-      const maxY = target.clientHeight;
+  const _getPositionFromEvent = useCallback((xy: [number, number], target: HTMLElement): [number, number] => {
+    const [x, y] = xy;
+    const boundingRect = target.getBoundingClientRect();
+    const offsetX = boundingRect.left;
+    const offsetY = boundingRect.top;
+    const maxX = target.clientWidth;
+    const maxY = target.clientHeight;
 
-      const _x = (2 * (x - offsetX)) / maxX - 1;
-      const _y = (2 * (y - offsetY)) / maxY - 1;
+    const _x = (2 * (x - offsetX)) / maxX - 1;
+    const _y = (2 * (y - offsetY)) / maxY - 1;
 
-      const [r, phi] = xy2polar(_x, _y);
-      const [__x, __y] = polar2xy(Math.min(1, r), phi);
-      return [__x, __y];
-    },
-    [],
-  );
+    const [r, phi] = xy2polar(_x, _y);
+    const [__x, __y] = polar2xy(Math.min(1, r), phi);
+    return [__x, __y];
+  }, []);
 
   const triggerOnChange = useCallback(
     (updatedValue: number) => {
@@ -344,28 +316,9 @@ function _ColorTempPicker({
 
   function renderSVGFilter() {
     return (
-      <filter
-        id="marker-shadow"
-        x="-50%"
-        y="-50%"
-        width="200%"
-        height="200%"
-        filterUnits="objectBoundingBox"
-      >
-        <feDropShadow
-          dx="0"
-          dy="1"
-          stdDeviation="2"
-          floodOpacity="0.3"
-          floodColor="rgba(0, 0, 0, 1)"
-        />
-        <feDropShadow
-          dx="0"
-          dy="1"
-          stdDeviation="3"
-          floodOpacity="0.15"
-          floodColor="rgba(0, 0, 0, 1)"
-        />
+      <filter id="marker-shadow" x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox">
+        <feDropShadow dx="0" dy="1" stdDeviation="2" floodOpacity="0.3" floodColor="rgba(0, 0, 0, 1)" />
+        <feDropShadow dx="0" dy="1" stdDeviation="3" floodOpacity="0.15" floodColor="rgba(0, 0, 0, 1)" />
       </filter>
     );
   }
@@ -394,9 +347,7 @@ function _ColorTempPicker({
       onClick: (state) => {
         const x = state.event.clientX;
         const y = state.event.clientY;
-        setValue(
-          _getPositionFromEvent([x, y], state.event.target as HTMLElement),
-        );
+        setValue(_getPositionFromEvent([x, y], state.event.target as HTMLElement));
         triggerOnChange(_localValue.current);
       },
     },
@@ -419,19 +370,13 @@ function _ColorTempPicker({
     >
       <div className={`container ${disabled ? "disabled" : ""}`}>
         <canvas ref={canvasRef} width={canvasSize} height={canvasSize}></canvas>
-        <svg
-          id="interaction"
-          viewBox={`0 0 ${RENDER_SIZE} ${RENDER_SIZE}`}
-          overflow="visible"
-          aria-hidden="true"
-        >
+        <svg id="interaction" viewBox={`0 0 ${RENDER_SIZE} ${RENDER_SIZE}`} overflow="visible" aria-hidden="true">
           <defs>{renderSVGFilter()}</defs>
           <g
             ref={gRef}
             className="cursor"
             style={{
-              visibility:
-                typeof value === "undefined" || !isOn ? "hidden" : "visible",
+              visibility: typeof value === "undefined" || !isOn ? "hidden" : "visible",
             }}
           >
             <circle ref={circleRef} cx="0" cy="0" r="16"></circle>

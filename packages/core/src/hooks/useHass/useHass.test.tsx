@@ -1,9 +1,4 @@
-import {
-  TestWrapper,
-  onReady,
-  mocked,
-  connection,
-} from "@mocks/mockConnection";
+import { TestWrapper, onReady, mocked, connection } from "@mocks/mockConnection";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { useHass } from "@core";
 

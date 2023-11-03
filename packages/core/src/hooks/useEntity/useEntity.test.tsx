@@ -1,9 +1,4 @@
-import {
-  TestWrapper,
-  onReady,
-  mocked,
-  connection,
-} from "@mocks/mockConnection";
+import { TestWrapper, onReady, mocked, connection } from "@mocks/mockConnection";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { useEntity } from "@core";
 import { omit } from "lodash";
@@ -43,9 +38,7 @@ describe("useEntity", () => {
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     act(() => {
       // omitting the api object here as the serializer doesn't like proxy objects
-      expect(
-        omit(result.current, "api", "last_changed", "last_updated"),
-      ).toMatchSnapshot();
+      expect(omit(result.current, "api", "last_changed", "last_updated")).toMatchSnapshot();
     });
   });
 
@@ -54,9 +47,7 @@ describe("useEntity", () => {
       await renderHook(
         async () => {
           await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
-          expect(useEntity("light.does_not_exist")).toThrowError(
-            "Entity light.does_not_exist not found",
-          );
+          expect(useEntity("light.does_not_exist")).toThrowError("Entity light.does_not_exist not found");
         },
         {
           wrapper: TestWrapper,

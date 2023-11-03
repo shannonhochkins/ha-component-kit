@@ -1,13 +1,5 @@
 import styled from "@emotion/styled";
-import { css } from "@emotion/react";
-import type {
-  CalendarOptions,
-  CalendarApi,
-  EventClickArg,
-  MoreLinkArg,
-  EventSourceFuncArg,
-  EventInput,
-} from "@fullcalendar/core";
+import type { CalendarOptions, CalendarApi, EventClickArg, MoreLinkArg, EventSourceFuncArg, EventInput } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
@@ -28,9 +20,8 @@ import {
   ButtonBarButton,
   CardBase,
   type CardBaseProps,
-  type AvailableQueries
+  type AvailableQueries,
 } from "@components";
-import type { MotionProps } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
 import { useRef, useEffect, useState, useCallback } from "react";
 
@@ -289,7 +280,6 @@ const StyledAlert = styled(Alert)`
   }
 `;
 
-
 export interface CalendarEvent {
   title: string;
   start: string;
@@ -316,8 +306,23 @@ export interface CalendarEventData {
 export interface CalendarEventWithEntity extends CalendarEvent {
   entity: HassEntity;
 }
-
-export interface CalendarCardProps extends Omit<CardBaseProps<'div', EntityName>, 'modalProps' | 'onClick' | 'children' | 'active' | 'as' | 'title' | 'disabled' | 'entity' | 'service' | 'serviceData'> {
+type OmitProperties =
+  | "modalProps"
+  | "onClick"
+  | "children"
+  | "active"
+  | "as"
+  | "title"
+  | "disabled"
+  | "entity"
+  | "service"
+  | "serviceData"
+  | "ref"
+  | "longPressCallback"
+  | "disableRipples"
+  | "disableScale"
+  | "disableActiveState";
+export interface CalendarCardProps extends Omit<CardBaseProps<"div", EntityName>, OmitProperties> {
   /** The names of your calendar entities */
   entities: FilterByDomain<EntityName, "calendar">[];
   /** if need be, you can provide a timezone to display time in a specific timezone */
@@ -365,19 +370,12 @@ function formatDate(dateString: string) {
 
   const date = new Date(dateString);
 
-  const formattedDate = new Intl.DateTimeFormat("en-US", optionsDate).format(
-    date,
-  );
-  const formattedStartTime = new Intl.DateTimeFormat(
-    "en-US",
-    optionsTime,
-  ).format(date);
+  const formattedDate = new Intl.DateTimeFormat("en-US", optionsDate).format(date);
+  const formattedStartTime = new Intl.DateTimeFormat("en-US", optionsTime).format(date);
 
   // Assume event is 15 minutes long for this example
   const eventEndTime = new Date(date.getTime() + 15 * 60000);
-  const formattedEndTime = new Intl.DateTimeFormat("en-US", optionsTime).format(
-    eventEndTime,
-  );
+  const formattedEndTime = new Intl.DateTimeFormat("en-US", optionsTime).format(eventEndTime);
 
   return `${formattedDate} ${formattedStartTime} - ${formattedEndTime}`;
 }
@@ -401,14 +399,7 @@ const defaultFullCalendarConfig: CalendarOptions = {
   },
 };
 
-function _CalendarCard({
-  entities,
-  className,
-  timeZone,
-  view,
-  includeHeader = true,
-  ...rest
-}: CalendarCardProps): JSX.Element {
+function _CalendarCard({ entities, className, timeZone, view, includeHeader = true, ...rest }: CalendarCardProps): JSX.Element {
   const { useStore } = useHass();
   const config = useStore((store) => store.config);
   const calRef = useRef<FullCalendar>(null);
@@ -422,25 +413,15 @@ function _CalendarCard({
     refreshRate: 500,
   });
   const { callApi, getAllEntities } = useHass();
-  const [currentEvent, setCurrentEvent] =
-    useState<CalendarEventWithEntity | null>(null);
+  const [currentEvent, setCurrentEvent] = useState<CalendarEventWithEntity | null>(null);
   const allEntities = getAllEntities();
-  const [activeView, setActiveView] = useState<CalendarCardProps["view"]>(
-    view ?? "dayGridMonth",
-  );
+  const [activeView, setActiveView] = useState<CalendarCardProps["view"]>(view ?? "dayGridMonth");
   const calEntities = entities.map((entity) => allEntities[entity]);
-  const calendars = calEntities.filter(
-    (entity) => !isUnavailableState(entity?.state),
-  );
+  const calendars = calEntities.filter((entity) => !isUnavailableState(entity?.state));
   const fetchEvents = useCallback(
-    async (
-      info: EventSourceFuncArg,
-      successCallback: (events: EventInput[]) => void,
-    ): Promise<void> => {
+    async (info: EventSourceFuncArg, successCallback: (events: EventInput[]) => void): Promise<void> => {
       setError(null);
-      const params = encodeURI(
-        `?start=${info.start.toISOString()}&end=${info.end.toISOString()}`,
-      );
+      const params = encodeURI(`?start=${info.start.toISOString()}&end=${info.end.toISOString()}`);
       const calEvents: CalendarEvent[] = [];
       const errors: string[] = [];
       const apiCalls = entities.map(async (entity) =>
@@ -570,9 +551,7 @@ function _CalendarCard({
 
   const _handleEventClick = useCallback(
     (info: EventClickArg): void => {
-      const entityStateObj = calendars.find(
-        (entity) => entity.entity_id === info.event.extendedProps.calendar,
-      );
+      const entityStateObj = calendars.find((entity) => entity.entity_id === info.event.extendedProps.calendar);
       setCurrentEvent({
         ...info.event.extendedProps,
         entity: entityStateObj ?? null,
@@ -600,8 +579,7 @@ function _CalendarCard({
     // initially request the events
     if (!view) {
       const defaultView = "dayGridMonth";
-      const eventDisplay =
-        defaultView === "dayGridMonth" ? "list-item" : "auto";
+      const eventDisplay = defaultView === "dayGridMonth" ? "list-item" : "auto";
       changeView((api) => {
         api.setOption("eventDisplay", eventDisplay);
         api.changeView(defaultView as string);
@@ -628,32 +606,69 @@ function _CalendarCard({
             <Column>
               <h3 className="title">{title}</h3>
             </Column>
-            <ButtonBar
-              className="button-group-nav"
-            >
-              <ButtonBarButton title="Previous" size={35} disabled={loading} onClick={() => {
-                _handlePrev()
-              }} icon="mdi:navigate-before" />
-              <ButtonBarButton title="Next" size={35} disabled={loading} onClick={() => {
-                _handleNext()
-              }} icon="mdi:navigate-next" />
+            <ButtonBar className="button-group-nav">
+              <ButtonBarButton
+                title="Previous"
+                size={35}
+                disabled={loading}
+                onClick={() => {
+                  _handlePrev();
+                }}
+                icon="mdi:navigate-before"
+              />
+              <ButtonBarButton
+                title="Next"
+                size={35}
+                disabled={loading}
+                onClick={() => {
+                  _handleNext();
+                }}
+                icon="mdi:navigate-next"
+              />
             </ButtonBar>
           </Row>
           <Row justifyContent="flex-end">
-            <ButtonBar
-              className="button-group-views">
-              <ButtonBarButton title="Today" size={35} disabled={loading} onClick={() => {
-                _handleToday();
-              }} noIcon>TODAY</ButtonBarButton>
-              <ButtonBarButton className="monthly-toggle-view" title="Monthly View" active={activeView === "dayGridMonth"} size={35} disabled={loading} onClick={() => {
-                _handleView("dayGridMonth");
-              }} icon="mdi:view-module" />
-              <ButtonBarButton title="7 day View" size={35} disabled={loading} onClick={() => {
-                _handleView("listWeek");
-              }} icon="mdi:view-week" />
-              <ButtonBarButton title="Daily View" size={35} disabled={loading} onClick={() => {
-                _handleView("dayGridDay");
-              }} icon="mdi:view-day" />
+            <ButtonBar className="button-group-views">
+              <ButtonBarButton
+                title="Today"
+                size={35}
+                disabled={loading}
+                onClick={() => {
+                  _handleToday();
+                }}
+                noIcon
+              >
+                TODAY
+              </ButtonBarButton>
+              <ButtonBarButton
+                className="monthly-toggle-view"
+                title="Monthly View"
+                active={activeView === "dayGridMonth"}
+                size={35}
+                disabled={loading}
+                onClick={() => {
+                  _handleView("dayGridMonth");
+                }}
+                icon="mdi:view-module"
+              />
+              <ButtonBarButton
+                title="7 day View"
+                size={35}
+                disabled={loading}
+                onClick={() => {
+                  _handleView("listWeek");
+                }}
+                icon="mdi:view-week"
+              />
+              <ButtonBarButton
+                title="Daily View"
+                size={35}
+                disabled={loading}
+                onClick={() => {
+                  _handleView("dayGridDay");
+                }}
+                icon="mdi:view-day"
+              />
             </ButtonBar>
           </Row>
         </Header>
@@ -674,9 +689,7 @@ function _CalendarCard({
           {...defaultFullCalendarConfig}
         />
       </div>
-      {loading && (
-        <StyledAlert className={"loading"} description="Loading..." />
-      )}
+      {loading && <StyledAlert className={"loading"} description="Loading..." />}
       {currentEvent && (
         <Modal
           title={currentEvent.eventData.summary}
@@ -710,10 +723,10 @@ function _CalendarCard({
             {currentEvent.eventData.description && (
               <EventBody
                 dangerouslySetInnerHTML={{
-                  __html: Autolinker.link(
-                    currentEvent.eventData.description.replace(/\n/g, "<br/>"),
-                    { newWindow: true, stripPrefix: false },
-                  ),
+                  __html: Autolinker.link(currentEvent.eventData.description.replace(/\n/g, "<br/>"), {
+                    newWindow: true,
+                    stripPrefix: false,
+                  }),
                 }}
               />
             )}
@@ -742,7 +755,7 @@ export function CalendarCard(props: CalendarCardProps) {
     md: 6,
     lg: 4,
     xlg: 3,
-  }
+  };
   return (
     <ErrorBoundary {...fallback({ prefix: "CalendarCard" })}>
       <_CalendarCard {...defaultColumns} {...props} />

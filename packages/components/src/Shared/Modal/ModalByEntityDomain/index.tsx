@@ -66,16 +66,13 @@ interface ModalPropsByDomain {
   cover: ModalCoverControlsProps;
 }
 
-export type ModalPropsHelper<D extends AllDomains> =
-  D extends keyof ModalPropsByDomain
-    ? ModalPropsByDomain[D]
-    : {
-        entity: EntityName;
-      };
+export type ModalPropsHelper<D extends AllDomains> = D extends keyof ModalPropsByDomain
+  ? ModalPropsByDomain[D]
+  : {
+      entity: EntityName;
+    };
 
-export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<
-  ExtractDomain<E>
-> & {
+export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<ExtractDomain<E>> & {
   hideState?: boolean;
   hideUpdated?: boolean;
   hideAttributes?: boolean;
@@ -98,12 +95,10 @@ export function ModalByEntityDomain<E extends EntityName>({
     if (!connection) return;
     try {
       if (device && device.entity_id === entity) return;
-      const response = await connection.sendMessagePromise<EntityRegistryEntry>(
-        {
-          type: "config/entity_registry/get",
-          entity_id: entity,
-        },
-      );
+      const response = await connection.sendMessagePromise<EntityRegistryEntry>({
+        type: "config/entity_registry/get",
+        entity_id: entity,
+      });
       setDevice(response);
     } catch (e) {
       // ignore, just won't show the link to HA
@@ -118,23 +113,12 @@ export function ModalByEntityDomain<E extends EntityName>({
   const openDevice = useCallback(() => {
     // if we have a device value, open it up in a new tab and join the url with joinHassUrl
     if (device && device.device_id) {
-      window.open(
-        joinHassUrl(`config/devices/device/${device.device_id}`),
-        "_blank",
-      );
+      window.open(joinHassUrl(`config/devices/device/${device.device_id}`), "_blank");
     }
   }, [device, joinHassUrl]);
 
   const [modalProps, childProps] = useMemo(() => {
-    const {
-      open,
-      id,
-      title,
-      description,
-      onClose,
-      backdropProps,
-      ...childProps
-    } = rest;
+    const { open, id, title, description, onClose, backdropProps, ...childProps } = rest;
     return [
       {
         open,
@@ -156,45 +140,21 @@ export function ModalByEntityDomain<E extends EntityName>({
   const children = useMemo(() => {
     switch (domain) {
       case "light":
-        return (
-          <ModalLightControls
-            entity={entity as FilterByDomain<EntityName, "light">}
-            onStateChange={onStateChange}
-            {...childProps}
-          />
-        );
+        return <ModalLightControls entity={entity as FilterByDomain<EntityName, "light">} onStateChange={onStateChange} {...childProps} />;
       case "climate":
         return (
-          <ModalClimateControls
-            entity={entity as FilterByDomain<EntityName, "climate">}
-            onStateChange={onStateChange}
-            {...childProps}
-          />
+          <ModalClimateControls entity={entity as FilterByDomain<EntityName, "climate">} onStateChange={onStateChange} {...childProps} />
         );
       case "switch":
         return (
-          <ModalSwitchControls
-            entity={entity as FilterByDomain<EntityName, "switch">}
-            onStateChange={onStateChange}
-            {...childProps}
-          />
+          <ModalSwitchControls entity={entity as FilterByDomain<EntityName, "switch">} onStateChange={onStateChange} {...childProps} />
         );
       case "camera":
         return (
-          <ModalCameraControls
-            entity={entity as FilterByDomain<EntityName, "camera">}
-            onStateChange={onStateChange}
-            {...childProps}
-          />
+          <ModalCameraControls entity={entity as FilterByDomain<EntityName, "camera">} onStateChange={onStateChange} {...childProps} />
         );
       case "cover":
-        return (
-          <ModalCoverControls
-            entity={entity as FilterByDomain<EntityName, "cover">}
-            onStateChange={onStateChange}
-            {...childProps}
-          />
-        );
+        return <ModalCoverControls entity={entity as FilterByDomain<EntityName, "cover">} onStateChange={onStateChange} {...childProps} />;
       default:
         return null;
     }
@@ -230,13 +190,7 @@ export function ModalByEntityDomain<E extends EntityName>({
               />
             )}
             {device && device.device_id && (
-              <FabCard
-                title="Open Device"
-                tooltipPlacement="left"
-                icon="mdi:cog"
-                size={30}
-                onClick={openDevice}
-              />
+              <FabCard title="Open Device" tooltipPlacement="left" icon="mdi:cog" size={30} onClick={openDevice} />
             )}
             <Separator />
           </>
@@ -255,11 +209,7 @@ export function ModalByEntityDomain<E extends EntityName>({
                 {titleValue}
               </State>
             )}
-            {!hideUpdated && (
-              <Updated className="last-updated">
-                {_entity.custom.relativeTime}
-              </Updated>
-            )}
+            {!hideUpdated && <Updated className="last-updated">{_entity.custom.relativeTime}</Updated>}
           </Column>
           {children}
           {!hideAttributes && <EntityAttributes entity={entity} />}

@@ -1,12 +1,5 @@
 import { useEffect, useRef, useCallback, useMemo, useState } from "react";
-import {
-  useService,
-  useHass,
-  isUnavailableState,
-  useEntity,
-  OFF,
-  supportsFeatureFromAttributes,
-} from "@hakit/core";
+import { useService, useHass, isUnavailableState, useEntity, OFF, supportsFeatureFromAttributes } from "@hakit/core";
 import { snakeCase, clamp } from "lodash";
 import { useGesture } from "@use-gesture/react";
 import type { HassEntity } from "home-assistant-js-websocket";
@@ -15,15 +8,16 @@ import { FabCard, fallback, Row, Column, RangeSlider, CardBase, mq } from "@comp
 import type { CardBaseProps, RowProps, AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
-import { css } from "@emotion/react";
 import { Marquee } from "./Marquee";
 import type { MarqueeProps } from "./Marquee";
 import { useThrottledCallback } from "use-debounce";
 
-const MediaPlayerWrapper = styled(CardBase)<CardBaseProps<'div', FilterByDomain<EntityName, "media_player">> & {
-  backgroundImage?: string;
-  layoutName?: Layout;
-}>`
+const MediaPlayerWrapper = styled(CardBase)<
+  CardBaseProps<"div", FilterByDomain<EntityName, "media_player">> & {
+    backgroundImage?: string;
+    layoutName?: Layout;
+  }
+>`
   padding: 0;
   background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
@@ -86,9 +80,7 @@ const Thumbnail = styled.div<{
   border-radius: 0.5rem;
   background-size: cover;
   background-repeat: no-repeat;
-  ${(props) =>
-    props.backgroundImage &&
-    `background-image: url('${props.backgroundImage}');`}
+  ${(props) => props.backgroundImage && `background-image: url('${props.backgroundImage}');`}
 `;
 
 const Clock = styled.div<{
@@ -231,25 +223,13 @@ interface PlaybackControlsProps {
   size?: number;
   feature?: boolean;
 }
-function PlaybackControls({
-  entity: _entity,
-  size = 20,
-  feature,
-  disabled,
-  allEntityIds,
-}: PlaybackControlsProps) {
+function PlaybackControls({ entity: _entity, size = 20, feature, disabled, allEntityIds }: PlaybackControlsProps) {
   const entity = useEntity(_entity);
   const mp = useService("mediaPlayer");
   const playing = entity.state === "playing";
   const isOff = entity.state === OFF;
-  const supportsPreviousTrack = supportsFeatureFromAttributes(
-    entity.attributes,
-    16,
-  );
-  const supportsNextTrack = supportsFeatureFromAttributes(
-    entity.attributes,
-    32,
-  );
+  const supportsPreviousTrack = supportsFeatureFromAttributes(entity.attributes, 16);
+  const supportsNextTrack = supportsFeatureFromAttributes(entity.attributes, 32);
   const supportsPlay = supportsFeatureFromAttributes(entity.attributes, 16384);
   return (
     <>
@@ -293,17 +273,10 @@ interface AlternateControlsProps extends RowProps {
   allEntityIds: string[];
 }
 
-function AlternateControls({
-  entity: _entity,
-  disabled,
-  allEntityIds,
-}: AlternateControlsProps) {
+function AlternateControls({ entity: _entity, disabled, allEntityIds }: AlternateControlsProps) {
   const entity = useEntity(_entity);
   const mp = useService("mediaPlayer");
-  const supportsGrouping = supportsFeatureFromAttributes(
-    entity.attributes,
-    524288,
-  );
+  const supportsGrouping = supportsFeatureFromAttributes(entity.attributes, 524288);
   const groups = entity.attributes.group_members ?? [];
   const isOff = entity.state === OFF;
   const isUnavailable = isUnavailableState(entity.state);
@@ -335,9 +308,7 @@ function AlternateControls({
           active={groups.length > 0}
           disabled={disabled}
           size={DEFAULT_FAB_SIZE}
-          icon={
-            groups.length === 0 ? "mdi:speaker-off" : "mdi:speaker-multiple"
-          }
+          icon={groups.length === 0 ? "mdi:speaker-off" : "mdi:speaker-multiple"}
           onClick={() => joinGroups(groups.length === 0)}
         />
       )}
@@ -370,24 +341,14 @@ interface VolumeProps {
   layout: Layout;
 }
 
-function VolumeControls({
-  entity: _entity,
-  volumeLayout,
-  hideMute,
-  disabled,
-  allEntityIds,
-  layout,
-}: VolumeProps) {
+function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabled, allEntityIds, layout }: VolumeProps) {
   const entity = useEntity(_entity);
   const { volume_level, is_volume_muted } = entity.attributes;
   const [volume, _setVolume] = useState(volume_level);
   const mp = useService("mediaPlayer");
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const supportsVolumeSet = supportsFeatureFromAttributes(entity.attributes, 4);
-  const supportsVolumeMute = supportsFeatureFromAttributes(
-    entity.attributes,
-    8,
-  );
+  const supportsVolumeMute = supportsFeatureFromAttributes(entity.attributes, 8);
   const setVolume = useCallback(
     (volume: number) => {
       _setVolume(volume);
@@ -457,7 +418,20 @@ function VolumeControls({
     </>
   );
 }
-export interface MediaPlayerCardProps extends Omit<CardBaseProps<'div', FilterByDomain<EntityName, "media_player">>, 'title' | 'as' | 'active' | 'layout' | 'entity'> {
+type OmitProperties =
+  | "title"
+  | "as"
+  | "active"
+  | "layout"
+  | "ref"
+  | "entity"
+  | "disabled"
+  | "active"
+  | "disableActiveState"
+  | "disableScale"
+  | "disableRipples"
+  | "rippleProps";
+export interface MediaPlayerCardProps extends Omit<CardBaseProps<"div", FilterByDomain<EntityName, "media_player">>, OmitProperties> {
   /** the entity_id of the media_player to control */
   entity: FilterByDomain<EntityName, "media_player">;
   /** an optional override for the title of the entity */
@@ -514,31 +488,16 @@ function _MediaPlayerCard({
   const clockRef = useRef<HTMLDivElement>(null);
   const groupedEntities = groupMembers
     .map((entity) => entities[entity] ?? null)
-    .filter(
-      (entity): entity is HassEntity =>
-        entity !== null && !isUnavailableState(entity.state),
-    );
-  const allEntityIds = useMemo(
-    () => [_entity, ...groupedEntities.map((x) => x.entity_id)],
-    [_entity, groupedEntities],
-  );
+    .filter((entity): entity is HassEntity => entity !== null && !isUnavailableState(entity.state));
+  const allEntityIds = useMemo(() => [_entity, ...groupedEntities.map((x) => x.entity_id)], [_entity, groupedEntities]);
   const { state } = entity;
-  const {
-    friendly_name,
-    media_title,
-    app_name,
-    media_duration,
-    media_position,
-    media_position_updated_at,
-  } = entity.attributes;
+  const { friendly_name, media_title, app_name, media_duration, media_position, media_position_updated_at } = entity.attributes;
   const deviceName = _entityTitle ?? friendly_name ?? entity.entity_id;
   const title = media_title;
   const appName = app_name;
   const artworkUrl = useMemo(() => {
-    const url = entity.attributes.entity_picture
-    ? entity.attributes.entity_picture
-    : null;
-    if (url && url.startsWith('/')) {
+    const url = entity.attributes.entity_picture ? entity.attributes.entity_picture : null;
+    if (url && url.startsWith("/")) {
       return joinHassUrl(url);
     }
     return url;
@@ -554,14 +513,7 @@ function _MediaPlayerCard({
 
   const updateClock = useCallback(
     (x: number) => {
-      if (
-        !progressRef.current ||
-        !clockRef.current ||
-        seekDisabled ||
-        !playerRef.current ||
-        !media_duration
-      )
-        return;
+      if (!progressRef.current || !clockRef.current || seekDisabled || !playerRef.current || !media_duration) return;
       // Get the bounding client rectangle
       const rect = progressRef.current.getBoundingClientRect();
       // Calculate the click position relative to the element
@@ -571,23 +523,14 @@ function _MediaPlayerCard({
       // Calculate the current time in seconds
       const currentTimeInSeconds: number = (media_duration * percentage) / 100;
       // Convert the current time to minutes and remaining seconds
-      const minutes: number = Math.max(
-        0,
-        Math.floor(currentTimeInSeconds / 60),
-      );
-      const seconds: number = Math.max(
-        0,
-        Math.floor(currentTimeInSeconds % 60),
-      );
+      const minutes: number = Math.max(0, Math.floor(currentTimeInSeconds / 60));
+      const seconds: number = Math.max(0, Math.floor(currentTimeInSeconds % 60));
       // Convert minutes and seconds to string and ensure they have at least two digits
       const minutesStr: string = String(minutes).padStart(2, "0");
       const secondsStr: string = String(seconds).padStart(2, "0");
       // Update the clock
       clockRef.current.style.left = `${clamp(percentage, 5, 95)}%`;
-      playerRef.current.style.setProperty(
-        `--progress-${snakeCase(_entity)}-clock`,
-        `'${minutesStr}:${secondsStr}'`,
-      );
+      playerRef.current.style.setProperty(`--progress-${snakeCase(_entity)}-clock`, `'${minutesStr}:${secondsStr}'`);
     },
     [_entity, media_duration, seekDisabled],
   );
@@ -597,27 +540,18 @@ function _MediaPlayerCard({
       if (!media_duration || !media_position) return 0;
       const progress = (media_position / media_duration) * 100;
       if (playerRef.current) {
-        playerRef.current.style.setProperty(
-          `--progress-${snakeCase(_entity)}-width`,
-          `${clamp(progress, 0, 100)}%`,
-        );
+        playerRef.current.style.setProperty(`--progress-${snakeCase(_entity)}-width`, `${clamp(progress, 0, 100)}%`);
       }
     },
     [_entity],
   );
 
   useEffect(() => {
-    if (
-      playing &&
-      interval.current === null &&
-      media_position_updated_at !== undefined &&
-      media_position !== undefined
-    ) {
+    if (playing && interval.current === null && media_position_updated_at !== undefined && media_position !== undefined) {
       interval.current = setInterval(() => {
         const now = new Date();
         const lastUpdated = new Date(media_position_updated_at);
-        const timeDifferenceInSeconds =
-          (now.getTime() - lastUpdated.getTime()) / 1000.0;
+        const timeDifferenceInSeconds = (now.getTime() - lastUpdated.getTime()) / 1000.0;
 
         const newMediaPosition = media_position + timeDifferenceInSeconds;
         calculatePercentageViewed(media_duration, newMediaPosition);
@@ -632,13 +566,7 @@ function _MediaPlayerCard({
         interval.current = null;
       }
     };
-  }, [
-    playing,
-    media_position,
-    media_position_updated_at,
-    media_duration,
-    calculatePercentageViewed,
-  ]);
+  }, [playing, media_position, media_position_updated_at, media_duration, calculatePercentageViewed]);
 
   const seekTrack = useCallback(
     (x: number): void => {
@@ -675,15 +603,10 @@ function _MediaPlayerCard({
     },
   });
 
-  const supportsGrouping = supportsFeatureFromAttributes(
-    entity.attributes,
-    524288,
-  );
+  const supportsGrouping = supportsFeatureFromAttributes(entity.attributes, 524288);
 
   if (groupMembers.length > 0 && !supportsGrouping) {
-    throw new Error(
-      `"${_entity}" does not support grouping, but you have provided groupMembers.`,
-    );
+    throw new Error(`"${_entity}" does not support grouping, but you have provided groupMembers.`);
   }
 
   const volumeProps = {
@@ -715,19 +638,10 @@ function _MediaPlayerCard({
         className={`media-player-card ${className ?? ""}`}
         elRef={playerRef}
         layoutName={layout}
-        backgroundImage={
-          showArtworkBackground === true && artworkUrl !== null
-            ? artworkUrl
-            : undefined
-        }
+        backgroundImage={showArtworkBackground === true && artworkUrl !== null ? artworkUrl : undefined}
         {...rest}
       >
-        <Column
-          fullHeight
-          fullWidth
-          className="column content"
-          justifyContent="space-between"
-        >
+        <Column fullHeight fullWidth className="column content" justifyContent="space-between">
           <Empty className="empty" />
           {layout === "card" && (
             <Row gap="1rem" fullWidth className="row">
@@ -740,56 +654,32 @@ function _MediaPlayerCard({
             fullWidth
             gap="0.5rem"
             style={{
-              paddingBottom: isOff
-                ? layout === "slim"
-                  ? "1rem"
-                  : "0.5rem"
-                : "1rem",
+              paddingBottom: isOff ? (layout === "slim" ? "1rem" : "0.5rem") : "1rem",
             }}
           >
             <Row className="row" gap="0.5rem" wrap="nowrap" fullWidth>
               {hideThumbnail === false && artworkUrl !== null && (
-                <Thumbnail
-                  className="thumbnail"
-                  backgroundImage={artworkUrl}
-                  size={thumbnailSize}
-                />
+                <Thumbnail className="thumbnail" backgroundImage={artworkUrl} size={thumbnailSize} />
               )}
               <Column
                 className="column"
                 gap="0.5rem"
                 alignItems="flex-start"
                 style={{
-                  width:
-                    hideThumbnail === false && artworkUrl !== null
-                      ? `calc(100% - (${thumbnailSize} + 0.5rem))`
-                      : "100%",
+                  width: hideThumbnail === false && artworkUrl !== null ? `calc(100% - (${thumbnailSize} + 0.5rem))` : "100%",
                 }}
               >
                 <Row className="row" justifyContent="space-between" fullWidth>
                   {deviceName && !hideEntityName && (
                     <Title className="title device-name">
                       {hideEntityName ? "" : deviceName}
-                      {buffering ? (hideEntityName ? '' : ' - ') + "buffering" : ""}
+                      {buffering ? (hideEntityName ? "" : " - ") + "buffering" : ""}
                     </Title>
                   )}
-                  {(isOff || layout === "slim") && (
-                    <AlternateControls
-                      allEntityIds={allEntityIds}
-                      entity={_entity}
-                      disabled={disabled}
-                    />
-                  )}
+                  {(isOff || layout === "slim") && <AlternateControls allEntityIds={allEntityIds} entity={_entity} disabled={disabled} />}
                 </Row>
                 {title && !isOff && (
-                  <StyledMarquee
-                    speed={30}
-                    pauseOnHover
-                    play={playing}
-                    autoFill
-                    {...marqueeProps}
-                    className="title marquee"
-                  >
+                  <StyledMarquee speed={30} pauseOnHover play={playing} autoFill {...marqueeProps} className="title marquee">
                     {title}
                     {appName && !hideAppName ? ` - ${appName}` : ""}
                   </StyledMarquee>
@@ -798,28 +688,10 @@ function _MediaPlayerCard({
             </Row>
 
             {!isUnavailable ? (
-              <Row
-                className="row"
-                gap="0rem"
-                justifyContent="space-between"
-                wrap="nowrap"
-                fullWidth
-              >
+              <Row className="row" gap="0rem" justifyContent="space-between" wrap="nowrap" fullWidth>
                 {!isOff && <VolumeControls {...volumeProps} />}
-                {layout === "slim" && (
-                  <PlaybackControls
-                    {...playbackControlsProps}
-                    feature={false}
-                    size={DEFAULT_FAB_SIZE}
-                  />
-                )}
-                {!isOff && layout === "card" && (
-                  <AlternateControls
-                    allEntityIds={allEntityIds}
-                    entity={_entity}
-                    disabled={disabled}
-                  />
-                )}
+                {layout === "slim" && <PlaybackControls {...playbackControlsProps} feature={false} size={DEFAULT_FAB_SIZE} />}
+                {!isOff && layout === "card" && <AlternateControls allEntityIds={allEntityIds} entity={_entity} disabled={disabled} />}
               </Row>
             ) : null}
           </Base>
@@ -848,7 +720,7 @@ export function MediaPlayerCard(props: MediaPlayerCardProps) {
     md: 4,
     lg: 4,
     xlg: 3,
-  }
+  };
   return (
     <ErrorBoundary {...fallback({ prefix: "MediaPlayerCard" })}>
       <_MediaPlayerCard {...defaultColumns} {...props} />

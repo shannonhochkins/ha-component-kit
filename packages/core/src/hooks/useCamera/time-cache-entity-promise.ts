@@ -19,11 +19,7 @@ const cache: ResultCache<unknown> = {}; // Replace 'unknown' with your data type
 export const timeCacheEntityPromiseFunc = async <T>(
   cacheKey: string,
   cacheTime: number,
-  func: (
-    connection: Connection,
-    entityId: string,
-    ...args: unknown[]
-  ) => Promise<T>,
+  func: (connection: Connection, entityId: string, ...args: unknown[]) => Promise<T>,
   connection: Connection,
   entityId: string,
   ...args: unknown[]

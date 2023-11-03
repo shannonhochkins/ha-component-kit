@@ -3,11 +3,7 @@ import { useHass, useSubscribeEntity } from "@core";
 import type { EntityName } from "@core";
 import { HassEntities, HassConfig } from "home-assistant-js-websocket";
 import { subscribeHistory, computeHistory } from "./history";
-import type {
-  TimelineState,
-  EntityHistoryState,
-  HistoryStates,
-} from "./history";
+import type { TimelineState, EntityHistoryState, HistoryStates } from "./history";
 import { coordinatesMinimalResponseCompressedState } from "./coordinates";
 
 export interface HistoryOptions {
@@ -66,13 +62,7 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
       hoursToShow: options?.hoursToShow,
       limits: options?.limits,
     };
-  }, [
-    options?.disable,
-    options?.significantChangesOnly,
-    options?.minimalResponse,
-    options?.hoursToShow,
-    options?.limits,
-  ]);
+  }, [options?.disable, options?.significantChangesOnly, options?.minimalResponse, options?.hoursToShow, options?.limits]);
 
   useEffect(() => {
     if (!connection || memoizedOptions?.disable) return;
@@ -113,23 +103,14 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
       const entities = {
         [entityId]: entity,
       } satisfies HassEntities;
-      const computedHistory = computeHistory(
-        config as HassConfig,
-        entities,
-        historyStates,
-      );
-      const matchedHistory = computedHistory.timeline.filter(
-        ({ entity_id }) => entity_id === entityId,
-      );
+      const computedHistory = computeHistory(config as HassConfig, entities, historyStates);
+      const matchedHistory = computedHistory.timeline.filter(({ entity_id }) => entity_id === entityId);
       const coordinates =
         coordinatesMinimalResponseCompressedState(
           historyStates[entityId],
           memoizedOptions?.hoursToShow ?? 24,
           500, // viewbox of the svgGraph
-          typeof memoizedOptions?.significantChangesOnly === "undefined" ||
-            memoizedOptions?.significantChangesOnly === true
-            ? 1
-            : 2,
+          typeof memoizedOptions?.significantChangesOnly === "undefined" || memoizedOptions?.significantChangesOnly === true ? 1 : 2,
           memoizedOptions?.limits,
         ) ?? [];
 

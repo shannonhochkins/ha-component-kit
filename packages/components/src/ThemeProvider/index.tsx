@@ -9,19 +9,11 @@ import { convertToCssVars } from "./helpers";
 import { useDevice, fallback, FabCard, Modal, type BreakPoints } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { motion } from "framer-motion";
-import {
-  LIGHT,
-  DARK,
-  ACCENT,
-  DEFAULT_START_LIGHT,
-  DEFAULT_START_DARK,
-  DIFF,
-  DEFAULT_THEME_OPTIONS,
-} from "./constants";
-import { useHass } from '@hakit/core';
+import { LIGHT, DARK, ACCENT, DEFAULT_START_LIGHT, DEFAULT_START_DARK, DIFF, DEFAULT_THEME_OPTIONS } from "./constants";
+import { useHass } from "@hakit/core";
 import { ThemeControls } from "./ThemeControls";
 import type { ThemeControlsProps } from "./ThemeControls";
-import { generateColumnBreakpoints } from './breakpoints';
+import { generateColumnBreakpoints } from "./breakpoints";
 
 type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
@@ -54,8 +46,8 @@ export interface ThemeProviderProps<T extends object> {
    * sm: 1200,
    * md: 1536,
    * lg: 1700,
-   * 
-  */
+   *
+   */
   breakpoints?: BreakPoints;
 }
 
@@ -67,12 +59,7 @@ const ThemeControlsBox = styled(motion.div)`
 `;
 
 // Function to generate light and dark variants
-const generateVariantVars = (
-  variants: string[],
-  type: "Light" | "Dark",
-  tint: number,
-  darkMode: boolean,
-): string => {
+const generateVariantVars = (variants: string[], type: "Light" | "Dark", tint: number, darkMode: boolean): string => {
   return variants
     .map((variant, i) => {
       const isLight = type === "Light";
@@ -88,9 +75,7 @@ const generateVariantVars = (
 
       const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
       const indexOffset = !isLight ? LIGHT.length + 1 : 0;
-      const offsetBackground = darkMode
-        ? baseLightness + DIFF * (i + indexOffset)
-        : baseLightness - DIFF * (i + indexOffset);
+      const offsetBackground = darkMode ? baseLightness + DIFF * (i + indexOffset) : baseLightness - DIFF * (i + indexOffset);
 
       return `
         --ha-${variant}-h: var(--ha-h);
@@ -106,18 +91,12 @@ const generateVariantVars = (
 };
 
 // Function to generate accent variants
-const generateAccentVars = (
-  variants: string[],
-  tint: number,
-  darkMode: boolean,
-): string => {
+const generateAccentVars = (variants: string[], tint: number, darkMode: boolean): string => {
   return variants
     .map((variant, i) => {
       const indexOffset = LIGHT.length + 1 + DARK.length;
       const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
-      const offsetBackground = darkMode
-        ? baseLightness + DIFF * (indexOffset + i)
-        : baseLightness - DIFF * (indexOffset + i);
+      const offsetBackground = darkMode ? baseLightness + DIFF * (indexOffset + i) : baseLightness - DIFF * (indexOffset + i);
 
       return `
         --ha-${variant}-h: calc(var(--ha-h) * var(--mtc-h-${variant}));
@@ -137,9 +116,7 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
   const darkVars = generateVariantVars(DARK, "Dark", tint, darkMode);
   const accentVars = generateAccentVars(ACCENT, tint, darkMode);
   const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
-  const offsetBackground = darkMode
-    ? baseLightness + DIFF * 5
-    : baseLightness - DIFF * 5;
+  const offsetBackground = darkMode ? baseLightness + DIFF * 5 : baseLightness - DIFF * 5;
 
   return `
     ${lightVars}
@@ -169,10 +146,10 @@ function _ThemeProvider<T extends object>({
   globalStyles,
 }: ThemeProviderProps<T>): JSX.Element {
   const { useStore } = useHass();
-  const setBreakpoints = useStore(store => store.setBreakpoints);
-  const _breakpoints = useStore(store => store.breakpoints);
+  const setBreakpoints = useStore((store) => store.setBreakpoints);
+  const _breakpoints = useStore((store) => store.breakpoints);
   const device = useDevice();
-  console.log('_breakpoints', _breakpoints, device);
+  console.log("_breakpoints", _breakpoints, device);
 
   const getTheme = useCallback(() => {
     return {
@@ -185,8 +162,7 @@ function _ThemeProvider<T extends object>({
     } satisfies Omit<ThemeControlsProps, "onChange">;
   }, [c, darkMode, h, l, s, t]);
   const defaults = getTheme();
-  const [_theme, setTheme] =
-    useState<Omit<ThemeControlsProps, "onChange">>(defaults);
+  const [_theme, setTheme] = useState<Omit<ThemeControlsProps, "onChange">>(defaults);
   const [open, setOpen] = useState(false);
   const colorScheme = _theme.darkMode ? "dark" : "light";
 
@@ -203,7 +179,7 @@ function _ThemeProvider<T extends object>({
         document.body.classList.remove(className);
       }
     });
-  }, [device])
+  }, [device]);
 
   useEffect(() => {
     const newTheme = getTheme();
@@ -218,7 +194,7 @@ function _ThemeProvider<T extends object>({
             --is-dark-theme: ${_theme.darkMode ? "1" : "0"};
             color-scheme: ${colorScheme};
             --ha-ripple-size: 50;
-            --ha-ripple-duration: 0.5s;            
+            --ha-ripple-duration: 0.5s;
             --ha-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --ha-transition-duration: 0.25s;
             --ha-area-card-expanded-offset: 0;
@@ -233,12 +209,7 @@ function _ThemeProvider<T extends object>({
             --ha-l: ${_theme.lightness};
             --ha-contrast-threshold: ${_theme.contrastThreshold}%;
             --ha-so: calc(var(--ha-s) * 1%);
-            --ha: hsla(
-              var(--ha-h),
-              calc(var(--ha-s) * 1%),
-              calc(var(--ha-l) * 1%),
-              100%
-            );
+            --ha: hsla(var(--ha-h), calc(var(--ha-s) * 1%), calc(var(--ha-l) * 1%), 100%);
             --mtc-h-A100: 1;
             --mtc-h-A200: 1;
             --mtc-h-A400: 1;
@@ -273,10 +244,7 @@ function _ThemeProvider<T extends object>({
             --mtc-light-s: 0;
             --mtc-light-l: 100;
 
-            ${generateAllVars(
-              _theme.tint ?? DEFAULT_THEME_OPTIONS.tint,
-              _theme.darkMode ?? DEFAULT_THEME_OPTIONS.darkMode,
-            )}
+            ${generateAllVars(_theme.tint ?? DEFAULT_THEME_OPTIONS.tint, _theme.darkMode ?? DEFAULT_THEME_OPTIONS.darkMode)}
           }
 
           * {
@@ -323,7 +291,6 @@ function _ThemeProvider<T extends object>({
             color: var(--ha-S100-contrast);
             overflow-x: hidden;
             overflow-y: var(--ha-hide-body-overflow-y);
-            user-select: none;
           }
           ${generateColumnBreakpoints(_breakpoints)}
           ${globalStyles ?? ""}
@@ -378,4 +345,4 @@ export const ThemeProvider = memo(function ThemeProvider<T extends object>(props
       <_ThemeProvider {...props} />
     </ErrorBoundary>
   );
-})
+});

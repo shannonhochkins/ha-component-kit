@@ -1,11 +1,4 @@
-import React, {
-  CSSProperties,
-  memo,
-  useCallback,
-  useState,
-  useRef,
-  useEffect,
-} from "react";
+import React, { CSSProperties, memo, useCallback, useState, useRef, useEffect } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { motion } from "framer-motion";
@@ -94,12 +87,8 @@ const _Ripples = memo(
 
         const rect = currentTarget.getBoundingClientRect();
 
-        const left =
-          pageX -
-          (rect.left + (typeof window === "undefined" ? 1 : window.scrollX));
-        const top =
-          pageY -
-          (rect.top + (typeof window === "undefined" ? 1 : window.scrollY));
+        const left = pageX - (rect.left + (typeof window === "undefined" ? 1 : window.scrollX));
+        const top = pageY - (rect.top + (typeof window === "undefined" ? 1 : window.scrollY));
         const size = Math.max(rect.width, rect.height);
 
         setRippleStyle((state) => ({

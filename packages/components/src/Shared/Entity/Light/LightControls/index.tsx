@@ -1,14 +1,6 @@
 import { useMemo, useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import {
-  ControlSlider,
-  Column,
-  FabCard,
-  ColorTempPicker,
-  ColorPicker,
-  useDevice,
-  fallback,
-} from "@components";
+import { ControlSlider, Column, FabCard, ColorTempPicker, ColorPicker, useDevice, fallback } from "@components";
 import { AnimatePresence } from "framer-motion";
 import {
   useEntity,
@@ -96,12 +88,7 @@ const FabCardTemp = styled(FabCard)`
     border-radius: 50%;
     border: 0px;
     pointer-events: none;
-    background: linear-gradient(
-      0deg,
-      rgb(166, 209, 255) 0%,
-      rgb(255, 255, 255) 50%,
-      rgb(255, 160, 0) 100%
-    );
+    background: linear-gradient(0deg, rgb(166, 209, 255) 0%, rgb(255, 255, 255) 50%, rgb(255, 160, 0) 100%);
     transition: var(--ha-transition-duration) var(--ha-easing);
     transition-property: inset, border;
   }
@@ -126,10 +113,7 @@ export interface LightControlsProps {
   onStateChange?: (state: string) => void;
 }
 
-function _LightControls({
-  entity: _entity,
-  onStateChange,
-}: LightControlsProps) {
+function _LightControls({ entity: _entity, onStateChange }: LightControlsProps) {
   const [control, setControl] = useState<MainControl>("brightness");
   const entity = useEntity(_entity);
   const brightnessValue = useLightBrightness(entity);
@@ -151,10 +135,7 @@ function _LightControls({
     }
   }, [titleValue, onStateChange]);
 
-  const supportsColorTemp = lightSupportsColorMode(
-    entity,
-    LIGHT_COLOR_MODES.COLOR_TEMP,
-  );
+  const supportsColorTemp = lightSupportsColorMode(entity, LIGHT_COLOR_MODES.COLOR_TEMP);
   const supportsColor = lightSupportsColor(entity);
   const supportsBrightness = lightSupportsBrightness(entity);
 
@@ -193,7 +174,7 @@ function _LightControls({
                 sliderColor={entity.custom.color}
                 min={1}
                 max={100}
-                thickness={device.mobile ? 70 : 100}
+                thickness={device.xxs ? 70 : 100}
                 borderRadius={24}
                 value={brightnessValue}
                 disabled={isUnavailable || entity.state === OFF}
@@ -219,30 +200,12 @@ function _LightControls({
             entity.service.toggle();
           }}
         />
-        {supportsColorTemp ||
-          supportsColor ||
-          (supportsBrightness && <Separator />)}
+        {supportsColorTemp || supportsColor || (supportsBrightness && <Separator />)}
         <AnimatePresence>
-          {supportsBrightness && (
-            <FabCard
-              key={`${_entity}-brightness`}
-              icon="mdi:brightness-6"
-              onClick={() => setControl("brightness")}
-            />
-          )}
-          {supportsColor && (
-            <FabCardColor
-              key={`${_entity}-color`}
-              active={control === "color"}
-              onClick={() => setControl("color")}
-            />
-          )}
+          {supportsBrightness && <FabCard key={`${_entity}-brightness`} icon="mdi:brightness-6" onClick={() => setControl("brightness")} />}
+          {supportsColor && <FabCardColor key={`${_entity}-color`} active={control === "color"} onClick={() => setControl("color")} />}
           {supportsColorTemp && (
-            <FabCardTemp
-              key={`${_entity}-color-temp`}
-              active={control === "color_temp"}
-              onClick={() => setControl("color_temp")}
-            />
+            <FabCardTemp key={`${_entity}-color-temp`} active={control === "color_temp"} onClick={() => setControl("color_temp")} />
           )}
         </AnimatePresence>
       </ButtonBar>

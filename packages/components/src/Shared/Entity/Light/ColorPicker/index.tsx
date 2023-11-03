@@ -42,23 +42,12 @@ function deg2rad(deg: number) {
   return (deg / 360) * 2 * Math.PI;
 }
 
-function adjustRgb(
-  rgb: [number, number, number],
-  wv?: number,
-  cw?: number,
-  ww?: number,
-  minKelvin?: number,
-  maxKelvin?: number,
-) {
+function adjustRgb(rgb: [number, number, number], wv?: number, cw?: number, ww?: number, minKelvin?: number, maxKelvin?: number) {
   if (wv != null) {
     return rgbw2rgb([...rgb, wv] as [number, number, number, number]);
   }
   if (cw != null && ww !== null) {
-    return rgbww2rgb(
-      [...rgb, cw, ww] as [number, number, number, number, number],
-      minKelvin,
-      maxKelvin,
-    );
+    return rgbww2rgb([...rgb, cw, ww] as [number, number, number, number, number], minKelvin, maxKelvin);
   }
   return rgb;
 }
@@ -89,26 +78,8 @@ function drawColorWheel(
     ctx.closePath();
 
     const gradient = ctx.createRadialGradient(cX, cY, 0, cX, cY, radius);
-    const start = rgb2hex(
-      adjustRgb(
-        hsv2rgb([angle, 0, colorBrightness]),
-        wv,
-        cw,
-        ww,
-        minKelvin,
-        maxKelvin,
-      ),
-    );
-    const end = rgb2hex(
-      adjustRgb(
-        hsv2rgb([angle, 1, colorBrightness]),
-        wv,
-        cw,
-        ww,
-        minKelvin,
-        maxKelvin,
-      ),
-    );
+    const start = rgb2hex(adjustRgb(hsv2rgb([angle, 0, colorBrightness]), wv, cw, ww, minKelvin, maxKelvin));
+    const end = rgb2hex(adjustRgb(hsv2rgb([angle, 1, colorBrightness]), wv, cw, ww, minKelvin, maxKelvin));
     gradient.addColorStop(0, start);
     gradient.addColorStop(1, end);
     ctx.fillStyle = gradient;
@@ -199,8 +170,7 @@ export interface ColorPickerOutputColors {
   hs?: HueSaturation;
 }
 
-export interface ColorPickerProps
-  extends Omit<React.ComponentPropsWithoutRef<"div">, "onChange"> {
+export interface ColorPickerProps extends Omit<React.ComponentPropsWithoutRef<"div">, "onChange"> {
   disabled?: boolean;
   /** the name of the light entity to control */
   entity: FilterByDomain<EntityName, "light">;
@@ -209,14 +179,7 @@ export interface ColorPickerProps
   /** will provide the color output as it's changing but not actually finished updating, the value may also trigger initially once the color calculations have been applied */
   onChange?: (colors: ColorPickerOutputColors) => void;
 }
-function _ColorPicker({
-  disabled = false,
-  entity: _entity,
-  onChange,
-  onChangeApplied,
-  className,
-  cssStyles,
-}: ColorPickerProps) {
+function _ColorPicker({ disabled = false, entity: _entity, onChange, onChangeApplied, className, cssStyles }: ColorPickerProps) {
   const entity = useEntity(_entity);
   const lightColors = useLightColor(entity);
   const parentRef = useRef<HTMLDivElement>(null);
@@ -227,8 +190,7 @@ function _ColorPicker({
   const _pressed = useRef<string>();
   const _cursorPosition = useRef<[number, number]>();
   const _localValue = useRef<[number, number]>();
-  const canvasSize =
-    RENDER_SIZE * (typeof window === "undefined" ? 1 : window.devicePixelRatio);
+  const canvasSize = RENDER_SIZE * (typeof window === "undefined" ? 1 : window.devicePixelRatio);
   const minKelvin = entity.attributes.min_color_temp_kelvin;
   const maxKelvin = entity.attributes.max_color_temp_kelvin;
   const isOn = entity.state === ON;
@@ -236,67 +198,43 @@ function _ColorPicker({
   const _generateColorWheel = useCallback(() => {
     if (!canvasRef.current) return;
     const ctx = canvasRef.current.getContext("2d")!;
-    drawColorWheel(
-      ctx,
-      lightColors.colorBrightness,
-      lightColors.white,
-      lightColors.coolWhite,
-      lightColors.warmWhite,
-      minKelvin,
-      maxKelvin,
-    );
-  }, [
-    lightColors.colorBrightness,
-    lightColors.white,
-    lightColors.coolWhite,
-    lightColors.warmWhite,
-    minKelvin,
-    maxKelvin,
-  ]);
+    drawColorWheel(ctx, lightColors.colorBrightness, lightColors.white, lightColors.coolWhite, lightColors.warmWhite, minKelvin, maxKelvin);
+  }, [lightColors.colorBrightness, lightColors.white, lightColors.coolWhite, lightColors.warmWhite, minKelvin, maxKelvin]);
 
   useEffect(() => {
     if (!supportsColor) return;
     _generateColorWheel();
   }, [_generateColorWheel, supportsColor]);
 
-  const _getCoordsFromValue = useCallback(
-    (value: [number, number]): [number, number] => {
-      const phi = deg2rad(value[0]);
-      const r = Math.min(value[1], 1);
-      const [x, y] = polar2xy(r, phi);
-      return [x, y];
-    },
-    [],
-  );
+  const _getCoordsFromValue = useCallback((value: [number, number]): [number, number] => {
+    const phi = deg2rad(value[0]);
+    const r = Math.min(value[1], 1);
+    const [x, y] = polar2xy(r, phi);
+    return [x, y];
+  }, []);
 
-  const _getValueFromCoord = useCallback(
-    (x: number, y: number): [number, number] => {
-      const [r, phi] = xy2polar(x, y);
-      const deg = Math.round(rad2deg(phi)) % 360;
-      const hue = (deg + 360) % 360;
-      const saturation = Math.round(Math.min(r, 1) * 100) / 100;
-      return [hue, saturation];
-    },
-    [],
-  );
+  const _getValueFromCoord = useCallback((x: number, y: number): [number, number] => {
+    const [r, phi] = xy2polar(x, y);
+    const deg = Math.round(rad2deg(phi)) % 360;
+    const hue = (deg + 360) % 360;
+    const saturation = Math.round(Math.min(r, 1) * 100) / 100;
+    return [hue, saturation];
+  }, []);
 
-  const _getPositionFromEvent = useCallback(
-    (xy: [number, number], target: HTMLElement): [number, number] => {
-      const [x, y] = xy;
-      const boundingRect = target.getBoundingClientRect();
-      const offsetX = boundingRect.left;
-      const offsetY = boundingRect.top;
-      const maxX = target.clientWidth;
-      const maxY = target.clientHeight;
+  const _getPositionFromEvent = useCallback((xy: [number, number], target: HTMLElement): [number, number] => {
+    const [x, y] = xy;
+    const boundingRect = target.getBoundingClientRect();
+    const offsetX = boundingRect.left;
+    const offsetY = boundingRect.top;
+    const maxX = target.clientWidth;
+    const maxY = target.clientHeight;
 
-      const _x = (2 * (x - offsetX)) / maxX - 1;
-      const _y = (2 * (y - offsetY)) / maxY - 1;
-      const [r, phi] = xy2polar(_x, _y);
-      const [__x, __y] = polar2xy(Math.min(1, r), phi);
-      return [__x, __y];
-    },
-    [],
-  );
+    const _x = (2 * (x - offsetX)) / maxX - 1;
+    const _y = (2 * (y - offsetY)) / maxY - 1;
+    const [r, phi] = xy2polar(_x, _y);
+    const [__x, __y] = polar2xy(Math.min(1, r), phi);
+    return [__x, __y];
+  }, []);
 
   const _resetPosition = useCallback(() => {
     if (lightColors.hs === undefined) {
@@ -326,11 +264,7 @@ function _ColorPicker({
     const rgb =
       _localValue.current !== undefined
         ? adjustRgb(
-            hsv2rgb([
-              _localValue.current[0],
-              _localValue.current[1],
-              lightColors.colorBrightness ?? 255,
-            ]),
+            hsv2rgb([_localValue.current[0], _localValue.current[1], lightColors.colorBrightness ?? 255]),
             lightColors.white,
             lightColors.coolWhite,
             lightColors.warmWhite,
@@ -339,32 +273,19 @@ function _ColorPicker({
     hex.current = rgb2hex(rgb);
     if (circleRef.current) {
       circleRef.current.style.fill = hex.current;
-      circleRef.current.style.visibility = _cursorPosition.current
-        ? ""
-        : "hidden";
+      circleRef.current.style.visibility = _cursorPosition.current ? "" : "hidden";
     }
     if (gRef.current) {
       gRef.current.style.fill = hex.current;
     }
-  }, [
-    lightColors.colorBrightness,
-    lightColors.white,
-    lightColors.coolWhite,
-    lightColors.warmWhite,
-  ]);
+  }, [lightColors.colorBrightness, lightColors.white, lightColors.coolWhite, lightColors.warmWhite]);
 
   const setValue = useCallback(
     (updatedValue?: [number, number]) => {
       if (!parentRef.current || !updatedValue) return;
       _cursorPosition.current = updatedValue;
-      parentRef.current.style.setProperty(
-        "--value-x",
-        disabled ? "0" : `${updatedValue[0]}`,
-      );
-      parentRef.current.style.setProperty(
-        "--value-y",
-        disabled ? "0" : `${updatedValue[1]}`,
-      );
+      parentRef.current.style.setProperty("--value-x", disabled ? "0" : `${updatedValue[0]}`);
+      parentRef.current.style.setProperty("--value-y", disabled ? "0" : `${updatedValue[1]}`);
       _localValue.current = _getValueFromCoord(..._cursorPosition.current);
       updateColours();
       if (typeof onChange === "function")
@@ -410,56 +331,38 @@ function _ColorPicker({
   const _setRgbWColor = useCallback(
     (rgbColor: [number, number, number]) => {
       if (lightSupportsColorMode(entity, LIGHT_COLOR_MODES.RGBWW)) {
-        const rgbwwColor: [number, number, number, number, number] = entity
-          .attributes.rgbww_color
+        const rgbwwColor: [number, number, number, number, number] = entity.attributes.rgbww_color
           ? [...entity.attributes.rgbww_color]
           : [0, 0, 0, 0, 0];
-        const rgbww_color = rgbColor.concat(rgbwwColor.slice(3)) as [
-          number,
-          number,
-          number,
-          number,
-          number,
-        ];
+        const rgbww_color = rgbColor.concat(rgbwwColor.slice(3)) as [number, number, number, number, number];
         _applyColor({ rgbww_color });
       } else if (lightSupportsColorMode(entity, LIGHT_COLOR_MODES.RGBW)) {
-        const rgbwColor: [number, number, number, number] = entity.attributes
-          .rgbw_color
-          ? [...entity.attributes.rgbw_color]
-          : [0, 0, 0, 0];
-        const rgbw_color = rgbColor.concat(rgbwColor.slice(3)) as [
-          number,
-          number,
-          number,
-          number,
-        ];
+        const rgbwColor: [number, number, number, number] = entity.attributes.rgbw_color ? [...entity.attributes.rgbw_color] : [0, 0, 0, 0];
+        const rgbw_color = rgbColor.concat(rgbwColor.slice(3)) as [number, number, number, number];
         _applyColor({ rgbw_color });
       }
     },
     [entity, _applyColor],
   );
 
-  const _adjustColorBrightness = useCallback(
-    (rgbColor: [number, number, number], value?: number, invert = false) => {
-      const isBlack = rgbColor.every((c) => c === 0);
-      if (isBlack) {
-        rgbColor[0] = 255;
-        rgbColor[1] = 255;
-        rgbColor[2] = 255;
+  const _adjustColorBrightness = useCallback((rgbColor: [number, number, number], value?: number, invert = false) => {
+    const isBlack = rgbColor.every((c) => c === 0);
+    if (isBlack) {
+      rgbColor[0] = 255;
+      rgbColor[1] = 255;
+      rgbColor[2] = 255;
+    }
+    if (value !== undefined && value !== 255) {
+      let ratio = value / 255;
+      if (invert) {
+        ratio = 1 / ratio;
       }
-      if (value !== undefined && value !== 255) {
-        let ratio = value / 255;
-        if (invert) {
-          ratio = 1 / ratio;
-        }
-        rgbColor[0] = Math.min(255, Math.round(rgbColor[0] * ratio));
-        rgbColor[1] = Math.min(255, Math.round(rgbColor[1] * ratio));
-        rgbColor[2] = Math.min(255, Math.round(rgbColor[2] * ratio));
-      }
-      return rgbColor;
-    },
-    [],
-  );
+      rgbColor[0] = Math.min(255, Math.round(rgbColor[0] * ratio));
+      rgbColor[1] = Math.min(255, Math.round(rgbColor[1] * ratio));
+      rgbColor[2] = Math.min(255, Math.round(rgbColor[2] * ratio));
+    }
+    return rgbColor;
+  }, []);
 
   const _updateColor = useCallback(
     (value?: [number, number]) => {
@@ -467,33 +370,16 @@ function _ColorPicker({
       const hs_color = [value![0], value![1] * 100] as [number, number];
       const rgb_color = hs2rgb(value!);
 
-      if (
-        lightSupportsColorMode(entity, LIGHT_COLOR_MODES.RGBWW) ||
-        lightSupportsColorMode(entity, LIGHT_COLOR_MODES.RGBW)
-      ) {
+      if (lightSupportsColorMode(entity, LIGHT_COLOR_MODES.RGBWW) || lightSupportsColorMode(entity, LIGHT_COLOR_MODES.RGBW)) {
         _setRgbWColor(
-          lightColors.colorBrightness
-            ? _adjustColorBrightness(
-                rgb_color,
-                (lightColors.colorBrightness * 255) / 100,
-              )
-            : rgb_color,
+          lightColors.colorBrightness ? _adjustColorBrightness(rgb_color, (lightColors.colorBrightness * 255) / 100) : rgb_color,
         );
       } else if (lightSupportsColorMode(entity, LIGHT_COLOR_MODES.RGB)) {
         if (lightColors.brightnessAdjusted) {
           const brightnessAdjust = (lightColors.brightnessAdjusted / 255) * 100;
-          const brightnessPercentage = Math.round(
-            ((entity.attributes.brightness || 0) * brightnessAdjust) / 255,
-          );
-          const ajustedRgbColor = _adjustColorBrightness(
-            rgb_color,
-            lightColors.brightnessAdjusted,
-            true,
-          );
-          _applyColor(
-            { rgb_color: ajustedRgbColor },
-            { brightness_pct: brightnessPercentage },
-          );
+          const brightnessPercentage = Math.round(((entity.attributes.brightness || 0) * brightnessAdjust) / 255);
+          const ajustedRgbColor = _adjustColorBrightness(rgb_color, lightColors.brightnessAdjusted, true);
+          _applyColor({ rgb_color: ajustedRgbColor }, { brightness_pct: brightnessPercentage });
         } else {
           _applyColor({ rgb_color });
         }
@@ -501,24 +387,14 @@ function _ColorPicker({
         _applyColor({ hs_color });
       }
     },
-    [
-      entity,
-      _setRgbWColor,
-      lightColors.colorBrightness,
-      lightColors.brightnessAdjusted,
-      _adjustColorBrightness,
-      _applyColor,
-    ],
+    [entity, _setRgbWColor, lightColors.colorBrightness, lightColors.brightnessAdjusted, _adjustColorBrightness, _applyColor],
   );
 
   const bind = useGesture(
     {
       onDrag: (state) => {
         if (disabled) return;
-        _cursorPosition.current = _getPositionFromEvent(
-          state.values,
-          state.target as HTMLElement,
-        );
+        _cursorPosition.current = _getPositionFromEvent(state.values, state.target as HTMLElement);
         setValue(_cursorPosition.current);
       },
       onDragStart: (state) => {
@@ -529,10 +405,7 @@ function _ColorPicker({
       onDragEnd: (state) => {
         if (disabled) return;
         setPressed(false, state.type);
-        _cursorPosition.current = _getPositionFromEvent(
-          state.values,
-          state.target as HTMLElement,
-        );
+        _cursorPosition.current = _getPositionFromEvent(state.values, state.target as HTMLElement);
         setValue(_cursorPosition.current);
         if (typeof onChangeApplied === "function")
           onChangeApplied({
@@ -547,10 +420,7 @@ function _ColorPicker({
         setPressed(false, undefined);
         const x = state.event.clientX;
         const y = state.event.clientY;
-        _cursorPosition.current = _getPositionFromEvent(
-          [x, y],
-          state.event.target as HTMLElement,
-        );
+        _cursorPosition.current = _getPositionFromEvent([x, y], state.event.target as HTMLElement);
         setValue(_cursorPosition.current);
         if (typeof onChangeApplied === "function")
           onChangeApplied({
@@ -579,34 +449,11 @@ function _ColorPicker({
     >
       <div className={`container ${disabled ? "disabled" : ""}`}>
         <canvas ref={canvasRef} width={canvasSize} height={canvasSize}></canvas>
-        <svg
-          id="interaction"
-          viewBox={`0 0 ${RENDER_SIZE} ${RENDER_SIZE}`}
-          overflow="visible"
-        >
+        <svg id="interaction" viewBox={`0 0 ${RENDER_SIZE} ${RENDER_SIZE}`} overflow="visible">
           <defs>
-            <filter
-              id="marker-shadow"
-              x="-50%"
-              y="-50%"
-              width="200%"
-              height="200%"
-              filterUnits="objectBoundingBox"
-            >
-              <feDropShadow
-                dx="0"
-                dy="1"
-                stdDeviation="2"
-                floodOpacity="0.3"
-                floodColor="rgba(0, 0, 0, 1)"
-              />
-              <feDropShadow
-                dx="0"
-                dy="1"
-                stdDeviation="3"
-                floodOpacity="0.15"
-                floodColor="rgba(0, 0, 0, 1)"
-              />
+            <filter id="marker-shadow" x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox">
+              <feDropShadow dx="0" dy="1" stdDeviation="2" floodOpacity="0.3" floodColor="rgba(0, 0, 0, 1)" />
+              <feDropShadow dx="0" dy="1" stdDeviation="3" floodOpacity="0.15" floodColor="rgba(0, 0, 0, 1)" />
             </filter>
           </defs>
           <g

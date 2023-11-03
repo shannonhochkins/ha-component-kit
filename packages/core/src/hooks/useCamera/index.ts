@@ -1,22 +1,8 @@
-import {
-  useEntity,
-  isUnavailableState,
-  useHass,
-  supportsFeatureFromAttributes,
-} from "@core";
+import { useEntity, isUnavailableState, useHass, supportsFeatureFromAttributes } from "@core";
 import type { HassEntityWithService, FilterByDomain, EntityName } from "@core";
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
-import {
-  fetchThumbnailUrlWithCache,
-  fetchStreamUrl,
-  computeMJPEGStreamUrl,
-} from "./camera";
-import {
-  ASPECT_RATIO_DEFAULT,
-  MAX_IMAGE_WIDTH,
-  CAMERA_SUPPORT_STREAM,
-  STREAM_TYPE_WEB_RTC,
-} from "./constants";
+import { fetchThumbnailUrlWithCache, fetchStreamUrl, computeMJPEGStreamUrl } from "./camera";
+import { ASPECT_RATIO_DEFAULT, MAX_IMAGE_WIDTH, CAMERA_SUPPORT_STREAM, STREAM_TYPE_WEB_RTC } from "./constants";
 
 export interface UseCameraOptions {
   /** the requested width of the poster image @default 640 */
@@ -48,10 +34,7 @@ export interface CameraEntityExtended extends HassEntityWithService<"camera"> {
   };
 }
 /** The useCamera hook is designed to return all the custom complex logic in an easy to retrieve structure, it supports streams, motion jpeg, posters and the camera entity */
-export function useCamera(
-  entity: FilterByDomain<EntityName, "camera">,
-  options?: UseCameraOptions,
-): CameraEntityExtended {
+export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?: UseCameraOptions): CameraEntityExtended {
   const camera = useEntity(entity);
   const { useStore, joinHassUrl } = useHass();
   const connection = useStore((state) => state.connection);
@@ -61,16 +44,9 @@ export function useCamera(
   const [streamUrl, setStreamUrl] = useState<string | undefined>(undefined);
   const [streamError, setStreamError] = useState<Error | undefined>(undefined);
   const [posterError, setPosterError] = useState<Error | undefined>(undefined);
-  const [streamLoading, setStreamLoading] = useState<boolean>(
-    options?.stream === false ? false : true,
-  );
-  const [posterLoading, setPosterLoading] = useState<boolean>(
-    options?.poster === false ? false : true,
-  );
-  const mjpeg = useMemo(
-    () => joinHassUrl(computeMJPEGStreamUrl(camera)),
-    [camera, joinHassUrl],
-  );
+  const [streamLoading, setStreamLoading] = useState<boolean>(options?.stream === false ? false : true);
+  const [posterLoading, setPosterLoading] = useState<boolean>(options?.poster === false ? false : true);
+  const mjpeg = useMemo(() => joinHassUrl(computeMJPEGStreamUrl(camera)), [camera, joinHassUrl]);
 
   const _getPosterUrl = useCallback(async (): Promise<void> => {
     if (options?.poster === false) return;
@@ -82,18 +58,9 @@ export function useCamera(
     requestedPosterUrl.current = true;
     setPosterLoading(true);
     try {
-      const width = Math.ceil(
-        (options?.imageWidth ?? MAX_IMAGE_WIDTH) * devicePixelRatio,
-      );
-      const height = Math.ceil(
-        width * (options?.aspectRatio ?? ASPECT_RATIO_DEFAULT),
-      );
-      const cameraImageSrc = await fetchThumbnailUrlWithCache(
-        connection,
-        camera.entity_id,
-        width,
-        height,
-      );
+      const width = Math.ceil((options?.imageWidth ?? MAX_IMAGE_WIDTH) * devicePixelRatio);
+      const height = Math.ceil(width * (options?.aspectRatio ?? ASPECT_RATIO_DEFAULT));
+      const cameraImageSrc = await fetchThumbnailUrlWithCache(connection, camera.entity_id, width, height);
       setPosterUrl(joinHassUrl(cameraImageSrc));
       setPosterLoading(false);
     } catch (err) {
@@ -103,15 +70,7 @@ export function useCamera(
         setPosterError(err);
       }
     }
-  }, [
-    camera.entity_id,
-    joinHassUrl,
-    camera.state,
-    connection,
-    options?.poster,
-    options?.aspectRatio,
-    options?.imageWidth,
-  ]);
+  }, [camera.entity_id, joinHassUrl, camera.state, connection, options?.poster, options?.aspectRatio, options?.imageWidth]);
 
   const _getStreamUrl = useCallback(async (): Promise<void> => {
     if (options?.stream === false) return;
@@ -134,22 +93,14 @@ export function useCamera(
         setStreamError(err);
       }
     }
-  }, [
-    camera.entity_id,
-    joinHassUrl,
-    camera.state,
-    connection,
-    options?.stream,
-  ]);
+  }, [camera.entity_id, joinHassUrl, camera.state, connection, options?.stream]);
 
   const _shouldRenderMJPEG = useCallback(() => {
     if (streamError) {
       // Fallback when unable to fetch stream url
       return true;
     }
-    if (
-      !supportsFeatureFromAttributes(camera.attributes, CAMERA_SUPPORT_STREAM)
-    ) {
+    if (!supportsFeatureFromAttributes(camera.attributes, CAMERA_SUPPORT_STREAM)) {
       // Steaming is not supported by the camera so fallback to MJPEG stream
       return true;
     }

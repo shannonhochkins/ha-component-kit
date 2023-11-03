@@ -25,18 +25,14 @@ function WithSensors(args?: Partial<WeatherCardProps>) {
   }
   return (
     <div>
-      <h2>
-        WeatherCard with additional sensor information and different intervals
-      </h2>
+      <h2>WeatherCard with additional sensor information and different intervals</h2>
       <Template
         entity="weather.openweathermap"
         details={[
           {
             entity: "sensor.openweathermap_uv_index",
             render(entity: HassEntityWithService<"sensor">) {
-              return (
-                <span>UVI - {convertUvIndexToText(Number(entity.state))}</span>
-              );
+              return <span>UVI - {convertUvIndexToText(Number(entity.state))}</span>;
             },
           },
           {

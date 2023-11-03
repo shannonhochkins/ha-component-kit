@@ -1,11 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-  Title,
-  Description,
-  Primary,
-  ArgTypes,
-  Source,
-} from "@storybook/blocks";
+import { Title, Description, Primary, ArgTypes, Source } from "@storybook/blocks";
 import { ThemeProvider, AreaCard, Row, ButtonCard } from "@components";
 import type { AreaCardProps } from "@components";
 import { useHash } from "@hakit/core";
@@ -39,18 +33,8 @@ function MultiAreaExample() {
           }}
         >
           <Row gap="1rem" fullWidth>
-            <ButtonCard
-              entity="light.fake_light_1"
-              service="toggle"
-              title="Office Light"
-              description={"An office Light"}
-            />
-            <ButtonCard
-              entity="media_player.fake_tv"
-              service="toggle"
-              title="Office TV"
-              description={"An office TV"}
-            />
+            <ButtonCard entity="light.fake_light_1" service="toggle" title="Office Light" description={"An office Light"} />
+            <ButtonCard entity="media_player.fake_tv" service="toggle" title="Office TV" description={"An office TV"} />
           </Row>
         </AreaCard>
         <AreaCard
@@ -62,18 +46,8 @@ function MultiAreaExample() {
           }}
         >
           <Row gap="1rem" fullWidth>
-            <ButtonCard
-              entity="light.fake_light_2"
-              service="toggle"
-              title="Living Room Light"
-              description={"An living-room Light"}
-            />
-            <ButtonCard
-              entity="light.fake_light_3"
-              service="toggle"
-              title="Striplights"
-              description={"Striplights bottom shelf"}
-            />
+            <ButtonCard entity="light.fake_light_2" service="toggle" title="Living Room Light" description={"An living-room Light"} />
+            <ButtonCard entity="light.fake_light_3" service="toggle" title="Striplights" description={"Striplights bottom shelf"} />
           </Row>
         </AreaCard>
       </Row>
@@ -100,12 +74,7 @@ function UseHashExample() {
   const [, setHash] = useHash();
   return (
     <Row fullHeight fullWidth>
-      <AreaCard
-        image={office}
-        title="Office"
-        icon="mdi:office-chair"
-        hash="office"
-      >
+      <AreaCard image={office} title="Office" icon="mdi:office-chair" hash="office">
         The office is active!
       </AreaCard>
       <ButtonCard
@@ -128,14 +97,11 @@ export default {
         <>
           <Title />
           <Description />
-          <p>
-            When the area is clicked, the URL hash will be set, so you can
-            refresh the page and the area will become active again.
-          </p>
+          <p>When the area is clicked, the URL hash will be set, so you can refresh the page and the area will become active again.</p>
           <Primary />
           <p>
-            You can set the hash programmatically from anywhere and the area
-            will activate! There's a helper hook designed to help with this!
+            You can set the hash programmatically from anywhere and the area will activate! There's a helper hook designed to help with
+            this!
           </p>
           <Source
             dark

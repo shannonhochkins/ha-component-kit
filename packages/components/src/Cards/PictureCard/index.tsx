@@ -1,17 +1,24 @@
 import styled from "@emotion/styled";
 import { Icon } from "@iconify/react";
-import {
-  Row,
-  fallback,
-  PreloadImage,
-  CardBase,
-  type CardBaseProps,
-  type PreloadImageProps,
-  type AvailableQueries
-} from "@components";
+import { Row, fallback, PreloadImage, CardBase, type CardBaseProps, type PreloadImageProps, type AvailableQueries } from "@components";
 import { motion } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
-export interface PictureCardProps extends Omit<CardBaseProps<"button">, 'active' | 'as' | 'title'> {
+
+type OmitProperties =
+  | "title"
+  | "as"
+  | "active"
+  | "ref"
+  | "entity"
+  | "disabled"
+  | "service"
+  | "serviceData"
+  | "onClick"
+  | "active"
+  | "longPressCallback"
+  | "modalProps";
+
+export interface PictureCardProps extends Omit<CardBaseProps<"button">, OmitProperties> {
   /** an image to provide to the card */
   image: string;
   /** a title of the card */
@@ -20,6 +27,8 @@ export interface PictureCardProps extends Omit<CardBaseProps<"button">, 'active'
   icon?: string;
   /** an object containing the props to pass to the preloader */
   preloadProps?: PreloadImageProps;
+  /** called when the card is pressed */
+  onClick?: () => void;
 }
 
 const StyledPictureCard = styled(CardBase)`
@@ -42,19 +51,12 @@ const PictureCardFooter = styled(motion.h4)`
   font-size: 1.2rem;
 `;
 
-function _PictureCard({
-  title,
-  image,
-  icon,
-  className,
-  preloadProps,
-  children,
-  ...rest
-}: PictureCardProps): JSX.Element {
+function _PictureCard({ title, image, icon, className, preloadProps, children, ...rest }: PictureCardProps): JSX.Element {
   return (
     <StyledPictureCard
       disableActiveState
-      disableScale={typeof rest.onClick === 'undefined'}
+      disableScale={rest.disableScale ?? typeof rest.onClick === "undefined"}
+      disableRipples={rest.disableRipples ?? typeof rest.onClick === "undefined"}
       className={`picture-card ${className ?? ""}`}
       {...rest}
     >
@@ -95,7 +97,7 @@ export function PictureCard(props: PictureCardProps) {
     md: 4,
     lg: 4,
     xlg: 3,
-  }
+  };
   return (
     <ErrorBoundary {...fallback({ prefix: "PictureCard" })}>
       <_PictureCard {...defaultColumns} {...props} />

@@ -252,7 +252,7 @@ function Connector() {
 }
 
 export default {
-  title: "INTRODUCTION/Overview",
+  title: "INTRODUCTION/Demo",
   parameters: {
     standalone: true,
     addons: {

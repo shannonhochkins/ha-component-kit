@@ -53,7 +53,22 @@ const Description = styled.span`
 const Header = styled.div``;
 const Title = styled.h3``;
 
-export interface GroupProps extends Omit<CardBaseProps, "title" | 'as' | 'layout' | 'entity' | 'serviceData' | 'service' | 'longPressCallback' | 'modalProps'> {
+type OmitProperties =
+  | "title"
+  | "as"
+  | "layout"
+  | "entity"
+  | "serviceData"
+  | "service"
+  | "longPressCallback"
+  | "modalProps"
+  | "onClick"
+  | "disableScale"
+  | "onlyFunctionality"
+  | "rippleProps"
+  | "disableActiveState"
+  | "disableRipples";
+export interface GroupProps extends Omit<CardBaseProps, OmitProperties> {
   /** the title of the group */
   title: React.ReactNode;
   /** the optional description of the group */
@@ -68,6 +83,8 @@ export interface GroupProps extends Omit<CardBaseProps, "title" | 'as' | 'layout
   gap?: React.CSSProperties["gap"];
   /** should the group be collapsed by default @default false */
   collapsed?: boolean;
+  /** fired when the group header section is clicked */
+  onClick?: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
 }
 function _Group({
   title,
@@ -79,6 +96,7 @@ function _Group({
   layout = "row",
   collapsed = false,
   className,
+  onClick,
   ...rest
 }: GroupProps): JSX.Element {
   const [_collapsed, setCollapsed] = useState(collapsed);
@@ -97,7 +115,13 @@ function _Group({
       collapsed={_collapsed}
       {...rest}
     >
-      <Header onClick={() => setCollapsed(!_collapsed)} className="header-title">
+      <Header
+        onClick={(event) => {
+          setCollapsed(!_collapsed);
+          if (onClick) onClick(event);
+        }}
+        className="header-title"
+      >
         <Title className="title">{title}</Title>
         {description && <Description>{description}</Description>}
       </Header>
@@ -143,7 +167,7 @@ export function Group(props: GroupProps) {
     md: 12,
     lg: 12,
     xlg: 12,
-  }
+  };
   return (
     <ErrorBoundary {...fallback({ prefix: "Group" })}>
       <_Group {...defaultColumns} {...props} />

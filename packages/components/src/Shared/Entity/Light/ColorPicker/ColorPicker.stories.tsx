@@ -6,28 +6,20 @@ import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<ColorPickerProps>) {
   const valueRef = useRef<HTMLDivElement>(null);
-  const updateText = useCallback(
-    ({ hex, hs, rgb }: ColorPickerOutputColors) => {
-      if (valueRef.current && hex) {
-        valueRef.current.innerText = `HEX: ${hex} | HS: [${(hs || [])
-          .map(Math.round)
-          .join(", ")}] | RBB: [${(rgb || []).map(Math.round).join(", ")}]`;
-        valueRef.current.style.color = hex;
-      }
-    },
-    [],
-  );
+  const updateText = useCallback(({ hex, hs, rgb }: ColorPickerOutputColors) => {
+    if (valueRef.current && hex) {
+      valueRef.current.innerText = `HEX: ${hex} | HS: [${(hs || []).map(Math.round).join(", ")}] | RBB: [${(rgb || [])
+        .map(Math.round)
+        .join(", ")}]`;
+      valueRef.current.style.color = hex;
+    }
+  }, []);
 
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
       <Column gap={"1rem"} fullWidth>
-        <ColorPicker
-          entity="light.fake_light_1"
-          {...args}
-          onChangeApplied={updateText}
-          onChange={updateText}
-        />
+        <ColorPicker entity="light.fake_light_1" {...args} onChangeApplied={updateText} onChange={updateText} />
         <span ref={valueRef}></span>
         <ButtonCard entity={"light.fake_light_1"} service="toggle" />
       </Column>

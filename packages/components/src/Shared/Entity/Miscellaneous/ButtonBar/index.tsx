@@ -13,9 +13,7 @@ export interface ButtonBarProps extends Extendable {
   /** standard flex css properties for flex-wrap property, @default wrap */
   wrap?: React.CSSProperties["justifyContent"];
   /** the children for the ButtonBar, it accepts ButtonBarButton components */
-  children: 
-  | ReactElement<typeof ButtonBarButton>
-  | ReactElement<typeof ButtonBarButton>[];
+  children: ReactElement<typeof ButtonBarButton> | ReactElement<typeof ButtonBarButton>[];
 }
 
 const ButtonBarParent = styled.div<Partial<ButtonBarProps>>`
@@ -53,18 +51,7 @@ const ButtonBarInner = styled.div<Partial<ButtonBarProps>>`
   }
 `;
 
-
-function _ButtonBar({  
-  alignItems,
-  justifyContent,
-  wrap,
-  style,
-  id,
-  className,
-  cssStyles,
-  children,
-  ...rest
-}: ButtonBarProps) {
+function _ButtonBar({ alignItems, justifyContent, wrap, style, id, className, cssStyles, children, ...rest }: ButtonBarProps) {
   const childrenWithKeys = Children.map(children, (child, index) => {
     if (isValidElement(child)) {
       return cloneElement(child, {
@@ -78,7 +65,6 @@ function _ButtonBar({
       id={id ?? ""}
       css={css`
         ${cssStyles ?? ""}
-       
       `}
       className={`button-group ${className ?? ""}`}
       style={{

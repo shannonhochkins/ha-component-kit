@@ -51,9 +51,7 @@ const Switch = styled.div`
     width: 50%;
     height: 100%;
     background: lightgrey;
-    border-radius: calc(
-      var(--ha-control-switch-border-radius) - var(--ha-control-switch-padding)
-    );
+    border-radius: calc(var(--ha-control-switch-border-radius) - var(--ha-control-switch-padding));
     transition:
       transform 180ms ease-in-out,
       background-color 180ms ease-in-out;
@@ -108,8 +106,7 @@ const Switch = styled.div`
 const Background = styled.div``;
 const Button = styled.div``;
 
-export interface ControlToggleProps
-  extends Omit<React.ComponentPropsWithoutRef<"div">, "checked" | "onChange"> {
+export interface ControlToggleProps extends Omit<React.ComponentPropsWithoutRef<"div">, "checked" | "onChange"> {
   /** should the switch be disabled */
   disabled?: boolean;
   /** should the switch be vertical or horizontal @default true */
@@ -149,9 +146,7 @@ const _ControlToggle = ({
   const [checked, setChecked] = useState(propChecked);
   const switchRef = useRef<HTMLDivElement>(null);
   const onIcon = useIcon(typeof _onIcon === "string" ? _onIcon : "mdi:power");
-  const offIcon = useIcon(
-    typeof _offIcon === "string" ? _offIcon : "mdi:power-off",
-  );
+  const offIcon = useIcon(typeof _offIcon === "string" ? _offIcon : "mdi:power-off");
 
   const _toggle = useCallback(() => {
     if (disabled) return;
@@ -178,18 +173,12 @@ const _ControlToggle = ({
 
   useEffect(() => {
     if (!switchRef.current) return;
-    switchRef.current.style.setProperty(
-      "--ha-control-switch-thickness",
-      `${thickness}px`,
-    );
+    switchRef.current.style.setProperty("--ha-control-switch-thickness", `${thickness}px`);
     switchRef.current.setAttribute("vertical", vertical ? "true" : "false");
     switchRef.current.setAttribute("reversed", reversed ? "true" : "false");
     switchRef.current.setAttribute("disabled", disabled ? "true" : "false");
     switchRef.current.setAttribute("checked", checked ? "true" : "false");
-    switchRef.current.style.setProperty(
-      "--ha-control-switch-on-color",
-      color ?? "var(--ha-A400)",
-    );
+    switchRef.current.style.setProperty("--ha-control-switch-on-color", color ?? "var(--ha-A400)");
   }, [checked, vertical, disabled, reversed, thickness, color]);
 
   return (

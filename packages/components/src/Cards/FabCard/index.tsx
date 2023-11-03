@@ -1,29 +1,22 @@
-import { CSSProperties, useMemo } from "react";
+import { useMemo } from "react";
 import styled from "@emotion/styled";
-import {
-  useEntity,
-  useIconByDomain,
-  useIcon,
-  useIconByEntity,
-  isUnavailableState,
-} from "@hakit/core";
+import { useEntity, useIconByDomain, useIcon, useIconByEntity, isUnavailableState } from "@hakit/core";
 import { computeDomain } from "@utils/computeDomain";
-import type {
-  EntityName,
-} from "@hakit/core";
+import type { EntityName } from "@hakit/core";
 import { CardBase, fallback, Tooltip } from "@components";
 import type { TooltipProps, CardBaseProps } from "@components";
 import { startCase, lowerCase } from "lodash";
 import { ErrorBoundary } from "react-error-boundary";
 
-const StyledFabCard = styled(CardBase)<CardBaseProps<'button', EntityName> & {
-  hasChildren?: boolean;
-  size: number;
-}>`
+const StyledFabCard = styled(CardBase)<
+  CardBaseProps<"button", EntityName> & {
+    hasChildren?: boolean;
+    size: number;
+  }
+>`
   flex-shrink: 0;
   border-radius: ${(props) => props.borderRadius};
-  color: ${(props) =>
-    props.active ? `var(--ha-A400)` : `var(--ha-S500-contrast)`};
+  color: ${(props) => (props.active ? `var(--ha-A400)` : `var(--ha-S500-contrast)`)};
   ${(props) =>
     props.size &&
     `
@@ -62,7 +55,9 @@ const Contents = styled.div<{
   `}
 `;
 
-export interface FabCardProps<E extends EntityName> extends Omit<CardBaseProps<'button', E>, 'title'> {
+type OmitProperties = "as" | "title" | "ref";
+
+export interface FabCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
   /** The size of the Fab, this applies to the width and height @default 48 */
   size?: number;
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
@@ -104,11 +99,8 @@ function _FabCard<E extends EntityName>({
     color: iconColor ?? undefined,
   });
   const hasChildren = typeof children !== "undefined";
-  const _borderRadius = hasChildren ? borderRadius ?? '10px' : borderRadius ?? "50%";
-  const isUnavailable =
-    typeof entity?.state === "string"
-      ? isUnavailableState(entity.state)
-      : false;
+  const _borderRadius = hasChildren ? borderRadius ?? "10px" : borderRadius ?? "50%";
+  const isUnavailable = typeof entity?.state === "string" ? isUnavailableState(entity.state) : false;
   const entityIcon = useIconByEntity(_entity || "unknown", {
     fontSize: `${size / 1.7}px`,
     color: iconColor ?? undefined,
@@ -117,24 +109,14 @@ function _FabCard<E extends EntityName>({
     fontSize: `${size / 1.7}px`,
     color: iconColor ?? undefined,
   });
-  const active =
-    typeof _active === "boolean"
-      ? _active
-      : entity === null
-      ? false
-      : entity.state !== "off" && !isUnavailable;
+  const active = typeof _active === "boolean" ? _active : entity === null ? false : entity.state !== "off" && !isUnavailable;
 
-  const title = useMemo(
-    () => _title ?? (domain === null ? null : startCase(lowerCase(domain))),
-    [_title, domain],
-  );
+  const title = useMemo(() => _title ?? (domain === null ? null : startCase(lowerCase(domain))), [_title, domain]);
   return (
     <>
       <Tooltip
         placement={tooltipPlacement}
-        title={`${_title ?? entity?.attributes?.friendly_name ?? title ?? ""}${
-          entity?.state ? ` - ${entity.state}` : ""
-        }`}
+        title={`${_title ?? entity?.attributes?.friendly_name ?? title ?? ""}${entity?.state ? ` - ${entity.state}` : ""}`}
       >
         <StyledFabCard
           as="button"
@@ -144,7 +126,7 @@ function _FabCard<E extends EntityName>({
           // @ts-expect-error - don't know the entity name, so we can't know the service data
           serviceData={serviceData}
           entity={_entity}
-          className={`fab-card ${className ?? ''}`}
+          className={`fab-card ${className ?? ""}`}
           disabled={disabled || isUnavailable}
           active={active}
           size={size}
@@ -163,9 +145,9 @@ function _FabCard<E extends EntityName>({
   );
 }
 /** The Fab (Floating Action Button) Card is a simple button with an icon to trigger something on press
- * 
+ *
  * NOTE: This component does NOT have any media queries by default, it will just be the width set by the size prop or the default size.
-*/
+ */
 export function FabCard<E extends EntityName>(props: FabCardProps<E>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "FabCard" })}>

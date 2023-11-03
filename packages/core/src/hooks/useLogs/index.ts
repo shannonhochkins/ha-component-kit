@@ -1,9 +1,5 @@
 import { useCallback, useState, useMemo, useEffect, useRef } from "react";
-import {
-  subscribeLogbook,
-  type LogbookStreamMessage,
-  type LogbookEntry,
-} from "./logbook";
+import { subscribeLogbook, type LogbookStreamMessage, type LogbookEntry } from "./logbook";
 import { type EntityName, useHass } from "@core";
 import type { Connection } from "home-assistant-js-websocket";
 import { useDebouncedCallback } from "use-debounce";
@@ -29,8 +25,7 @@ type Time = TimeRange | RecentTime;
 
 const DEFAULT_HOURS_TO_SHOW = 24;
 
-const findStartOfRecentTime = (now: Date, recentTime: number) =>
-  new Date(now.getTime() - recentTime * 1000).getTime() / 1000;
+const findStartOfRecentTime = (now: Date, recentTime: number) => new Date(now.getTime() - recentTime * 1000).getTime() / 1000;
 
 export function useLogs(entityId: EntityName, options?: UseLogOptions) {
   const { useStore } = useHass();
@@ -82,19 +77,14 @@ export function useLogs(entityId: EntityName, options?: UseLogOptions) {
       !_entriesRef.current
         ? []
         : purgeBeforePythonTime
-        ? _entriesRef.current.filter(
-            (entry) => entry.when > purgeBeforePythonTime!,
-          )
+        ? _entriesRef.current.filter((entry) => entry.when > purgeBeforePythonTime!)
         : _entriesRef.current,
     [],
   );
 
   const _processStreamMessage = useCallback(
     (streamMessage: LogbookStreamMessage) => {
-      const purgeBeforePythonTime =
-        time && "recent" in time
-          ? findStartOfRecentTime(new Date(), time.recent)
-          : undefined;
+      const purgeBeforePythonTime = time && "recent" in time ? findStartOfRecentTime(new Date(), time.recent) : undefined;
       // Put newest ones on top. Reverse works in-place so
       // make a copy first.
       const newEntries = [...streamMessage.events].reverse();
@@ -131,9 +121,7 @@ export function useLogs(entityId: EntityName, options?: UseLogOptions) {
         // append the new records to the end of the old records
         setEntries(_entriesRef.current);
       } else {
-        _entriesRef.current = nonExpiredRecords
-          .concat(newEntries)
-          .sort((a: LogbookEntry, b: LogbookEntry) => b.when - a.when);
+        _entriesRef.current = nonExpiredRecords.concat(newEntries).sort((a: LogbookEntry, b: LogbookEntry) => b.when - a.when);
         // The new records are in the middle of the old records
         // so we need to re-sort them
         setEntries(_entriesRef.current);
@@ -180,23 +168,17 @@ export function useLogs(entityId: EntityName, options?: UseLogOptions) {
     [connection, _processStreamMessage],
   );
 
-  const debounceSubscribeLogbookPeriod = useDebouncedCallback(
-    async (entityId: EntityName, logBookPeriod: LogbookTimePeriod) => {
-      if (_unsubscribe.current) {
-        const unsubscribe = await _unsubscribe.current;
-        if (unsubscribe) {
-          await unsubscribe();
-        }
-        _unsubscribe.current = undefined;
+  const debounceSubscribeLogbookPeriod = useDebouncedCallback(async (entityId: EntityName, logBookPeriod: LogbookTimePeriod) => {
+    if (_unsubscribe.current) {
+      const unsubscribe = await _unsubscribe.current;
+      if (unsubscribe) {
+        await unsubscribe();
       }
-      _subscribed.current = true;
-      _unsubscribe.current = await subscribeLogbookPeriod(
-        entityId,
-        logBookPeriod,
-      );
-    },
-    100,
-  );
+      _unsubscribe.current = undefined;
+    }
+    _subscribed.current = true;
+    _unsubscribe.current = await subscribeLogbookPeriod(entityId, logBookPeriod);
+  }, 100);
 
   useEffect(() => {
     const logBookPeriod = _calculateLogbookPeriod();
@@ -209,12 +191,7 @@ export function useLogs(entityId: EntityName, options?: UseLogOptions) {
         _unsubscribe.current();
       }
     };
-  }, [
-    _calculateLogbookPeriod,
-    debounceSubscribeLogbookPeriod,
-    subscribeLogbookPeriod,
-    entityId,
-  ]);
+  }, [_calculateLogbookPeriod, debounceSubscribeLogbookPeriod, subscribeLogbookPeriod, entityId]);
 
   if (error) {
     throw new Error(error);

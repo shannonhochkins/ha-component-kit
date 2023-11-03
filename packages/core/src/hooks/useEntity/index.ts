@@ -1,11 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { isEmpty, omit } from "lodash";
-import type {
-  HassEntityWithService,
-  HassEntityCustom,
-  ExtractDomain,
-  EntityName,
-} from "@typings";
+import type { HassEntityWithService, HassEntityCustom, ExtractDomain, EntityName } from "@typings";
 import type { HassEntity } from "home-assistant-js-websocket";
 import { useService, useHistory, useSubscribeEntity } from "@core";
 import { useDebouncedCallback } from "use-debounce";
@@ -33,17 +28,14 @@ const DEFAULT_OPTIONS: UseEntityOptions = {
   },
 };
 
-type UseEntityReturnType<
-  E,
-  O extends UseEntityOptions,
-> = O["returnNullIfNotFound"] extends true
+type UseEntityReturnType<E, O extends UseEntityOptions> = O["returnNullIfNotFound"] extends true
   ? HassEntityWithService<ExtractDomain<E>> | null
   : HassEntityWithService<ExtractDomain<E>>;
 
-export function useEntity<
-  E extends EntityName,
-  O extends UseEntityOptions = UseEntityOptions,
->(entity: E, options: O = DEFAULT_OPTIONS as O): UseEntityReturnType<E, O> {
+export function useEntity<E extends EntityName, O extends UseEntityOptions = UseEntityOptions>(
+  entity: E,
+  options: O = DEFAULT_OPTIONS as O,
+): UseEntityReturnType<E, O> {
   const { throttle, returnNullIfNotFound, historyOptions } = {
     ...DEFAULT_OPTIONS,
     ...options,
@@ -59,20 +51,11 @@ export function useEntity<
   const history = useHistory(entity, historyOptions);
   const formatEntity = useCallback((entity: HassEntity): HassEntityCustom => {
     const now = new Date();
-    const then = new Date(
-      entity.attributes.last_triggered ?? entity.last_updated,
-    );
+    const then = new Date(entity.attributes.last_triggered ?? entity.last_updated);
     const relativeTime = timeAgo.format(then);
     const timeDiff = Math.abs(now.getTime() - then.getTime());
     const active = relativeTime === "just now";
-    const {
-      hexColor,
-      rgbColor,
-      brightness,
-      brightnessValue,
-      rgbaColor,
-      color,
-    } = getCssColorValue(entity);
+    const { hexColor, rgbColor, brightness, brightnessValue, rgbaColor, color } = getCssColorValue(entity);
     return {
       ...entity,
       custom: {
@@ -91,9 +74,7 @@ export function useEntity<
   const debounceUpdate = useDebouncedCallback((entity: HassEntity) => {
     setEntity(formatEntity(entity));
   }, throttle);
-  const [$entity, setEntity] = useState<HassEntityCustom | null>(
-    matchedEntity !== null ? formatEntity(matchedEntity) : null,
-  );
+  const [$entity, setEntity] = useState<HassEntityCustom | null>(matchedEntity !== null ? formatEntity(matchedEntity) : null);
 
   useEffect(() => {
     setEntity((entity) => (entity === null ? null : formatEntity(entity)));

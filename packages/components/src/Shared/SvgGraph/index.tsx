@@ -2,12 +2,7 @@ import { useState, useEffect, useRef, ComponentPropsWithoutRef } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 // Get the value at the end of a path in a nested object
-const midPoint = (
-  _Ax: number,
-  _Ay: number,
-  _Bx: number,
-  _By: number,
-): number[] => {
+const midPoint = (_Ax: number, _Ay: number, _Bx: number, _By: number): number[] => {
   const _Zx = (_Ax - _Bx) / 2 + _Bx;
   const _Zy = (_Ay - _By) / 2 + _By;
   return [_Zx, _Zy];
@@ -52,13 +47,7 @@ export interface SvgGraphProps extends ComponentPropsWithoutRef<"svg"> {
   strokeWidth?: number;
 }
 
-export function SvgGraph({
-  coordinates,
-  strokeWidth = 5,
-  cssStyles,
-  className,
-  ...rest
-}: SvgGraphProps) {
+export function SvgGraph({ coordinates, strokeWidth = 5, cssStyles, className, ...rest }: SvgGraphProps) {
   const [path, setPath] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -87,34 +76,13 @@ export function SvgGraph({
         {!!path && coordinates ? (
           <>
             <mask id={`${id}-fill`}>
-              <path
-                className="fill"
-                fill="white"
-                d={`${path} L 500, 100 L 0, 100 z`}
-              />
+              <path className="fill" fill="white" d={`${path} L 500, 100 L 0, 100 z`} />
             </mask>
-            <rect
-              height="100%"
-              width="100%"
-              fill="var(--ha-A400)"
-              mask={`url(#${id}-fill)`}
-            />
+            <rect height="100%" width="100%" fill="var(--ha-A400)" mask={`url(#${id}-fill)`} />
             <mask id={`${id}-line`}>
-              <path
-                fill="none"
-                stroke="var(--ha-A100)"
-                strokeWidth={strokeWidth}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d={path}
-              />
+              <path fill="none" stroke="var(--ha-A100)" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" d={path} />
             </mask>
-            <rect
-              height="100%"
-              width="100%"
-              fill="var(--ha-A400)"
-              mask={`url(#${id}-line)`}
-            />
+            <rect height="100%" width="100%" fill="var(--ha-A400)" mask={`url(#${id}-line)`} />
           </>
         ) : (
           <></>

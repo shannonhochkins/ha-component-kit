@@ -1,9 +1,9 @@
-import { motion, type MotionProps, type HTMLMotionProps, type ForwardRefComponent } from 'framer-motion';
-import styled from '@emotion/styled';
-import { css } from '@emotion/react';
-import { useLongPress, type LongPressReactEvents } from 'use-long-press';
+import { motion, type MotionProps, type HTMLMotionProps, type ForwardRefComponent } from "framer-motion";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
+import { useLongPress, type LongPressReactEvents } from "use-long-press";
 import { lowerCase, startCase } from "lodash";
-import { useMemo, useId, useState, useCallback, type ReactNode, type ElementType, CSSProperties } from 'react';
+import { useMemo, useId, useState, useCallback, type ReactNode, type ElementType, CSSProperties } from "react";
 import {
   type EntityName,
   type DomainService,
@@ -12,10 +12,18 @@ import {
   type HassEntityWithService,
   computeDomain,
   isUnavailableState,
-  useEntity
-} from '@hakit/core';
+  useEntity,
+} from "@hakit/core";
 import { CSSInterpolation } from "@emotion/serialize";
-import { ModalByEntityDomain, Ripples, fallback, mq, type RipplesProps, type AvailableQueries, type ModalPropsHelper, type BreakPoint, type GridSpan } from '@components';
+import {
+  ModalByEntityDomain,
+  Ripples,
+  fallback,
+  type RipplesProps,
+  type AvailableQueries,
+  type ModalPropsHelper,
+  type BreakPoint,
+} from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
 const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
@@ -47,23 +55,27 @@ const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
     will-change: width, height;
     color: var(--ha-S200-contrast);
     flex-shrink: 1;
+    user-select: none;
     svg {
       color: var(--ha-S200-contrast);
       transition: color var(--ha-transition-duration) var(--ha-easing);
     }
-    &:not(:disabled):hover, &:not(.disabled):hover {
-      
+    &:not(:disabled):hover,
+    &:not(.disabled):hover {
       background-color: var(--ha-S300);
       color: var(--ha-500-contrast);
       svg {
         color: var(--ha-S300-contrast);
       }
     }
-    &:disabled, &.disabled {
+    &:disabled,
+    &.disabled {
       cursor: not-allowed;
       opacity: 0.8;
     }
-    ${props => !props.disableActiveState && `
+    ${(props) =>
+      !props.disableActiveState &&
+      `
       &.active, &:active {
         background-color: var(--ha-A400);
         color: var(--ha-900-contrast);
@@ -77,7 +89,7 @@ const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
       }
     `}
   `;
-}
+};
 
 const StyledRipples = styled(Ripples)`
   flex-shrink: 1;
@@ -90,77 +102,75 @@ const Trigger = styled(motion.div)`
   height: 100%;
 `;
 
-type Extendable<T extends ElementType> = Omit<React.ComponentPropsWithRef<T> & MotionProps, 'onClick' | 'disabled' | 'title' | 'children' | 'active'>;
+type Extendable<T extends ElementType> = Omit<
+  React.ComponentPropsWithRef<T> & MotionProps,
+  "onClick" | "disabled" | "title" | "children" | "active"
+>;
 
-export type CardBaseProps<T extends ElementType = 'div', E extends EntityName = EntityName> = Extendable<T> & AvailableQueries & {
-  /** convert the component type to something else @default "div" */
-  as?: T;
-  /** children to render alongside the card */
-  children?: ReactNode;
-  /** should the card be disabled, this will disable any click events, service calls and scale effects */
-  disabled?: boolean;
-  /** Optional active param, By default this is updated via home assistant  @default undefined */
-  active?: boolean;
-  /** By default, the title is retrieved from the domain name, or you can specify a manual title @default undefined */
-  title?: ReactNode;
-  /** The name of your entity */
-  entity?: E;
-  /** The service name, eg "toggle, turnOn ..." */
-  service?: DomainService<ExtractDomain<E>>;
-  /** The data to pass to the service */
-  serviceData?: ServiceData<ExtractDomain<E>, DomainService<ExtractDomain<E>>>;
-  /** callback to fire after a long press event */
-  longPressCallback?: E extends undefined
-  ? (entity: null, event: LongPressReactEvents) => void
-  : (
-      entity: HassEntityWithService<ExtractDomain<E>>,
-      event: LongPressReactEvents,
-    ) => void;
-  /** The onClick handler is called when the card is pressed, the first argument will be entity object with api methods if entity is provided  */
-  /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
-  onClick?: E extends undefined
-    ? (entity: null, event: React.MouseEvent<HTMLElement>) => void
-    : (
-        entity: HassEntityWithService<ExtractDomain<E>>,
-        event: React.MouseEvent<HTMLElement>,
-      ) => void;
-  /** props to pass to the modal */
-  modalProps?: Partial<ModalPropsHelper<ExtractDomain<E>>>;
-  /** include ripples or not */
-  disableRipples?: boolean;
-  /** disable the scale effect on the card when clicked */
-  disableScale?: boolean;
-  /** disable the styles of the card when in the active state */
-  disableActiveState?: boolean;
-  /** This also controls the animated modal border-radius, update the border radius of the card @default "1rem" */
-  borderRadius?: CSSProperties['borderRadius'];
-  /** completely disable the automated column sizes, this will default to whatever width is provided by the user or the card @default false */
-  disableColumns?: boolean;
-  /** props to pass to the ripple component if enabled */
-  rippleProps?: Omit<RipplesProps, 'children'>;
-  /**
-   *
-   * A css string to update the card, this is similar to how you'd write scss.
-   *
-   * ```jsx
-   * export const MyComponent = (otherProps) => {
-   *   return <SomeCard cssStyles={`
-   *     color: var(--ha-900-contrast);
-   *    .some-selector {
-   *        &:hover {
-   *            background-color: var(--ha-A400);
-   *        }
-   *    }
-   * `} {...otherProps} />
-   * }
-   * ```
-   */
-  cssStyles?: CSSInterpolation;
-  /** a reference to the top level element, we can't use the "ref" prop because of the use of generics, so "elRef" it is */
-  elRef?: React.Ref<HTMLElement>;
-  /** remove all base styles of the card and just use the inbuilt functionality */
-  onlyFunctionality?: boolean;
-};
+export type CardBaseProps<T extends ElementType = "div", E extends EntityName = EntityName> = Extendable<T> &
+  AvailableQueries & {
+    /** convert the component type to something else @default "div" */
+    as?: T;
+    /** children to render alongside the card */
+    children?: ReactNode;
+    /** should the card be disabled, this will disable any click events, service calls and scale effects */
+    disabled?: boolean;
+    /** Optional active param, By default this is updated via home assistant  @default undefined */
+    active?: boolean;
+    /** By default, the title is retrieved from the domain name, or you can specify a manual title @default undefined */
+    title?: ReactNode;
+    /** The name of your entity */
+    entity?: E;
+    /** The service name, eg "toggle, turnOn ..." */
+    service?: DomainService<ExtractDomain<E>>;
+    /** The data to pass to the service */
+    serviceData?: ServiceData<ExtractDomain<E>, DomainService<ExtractDomain<E>>>;
+    /** callback to fire after a long press event */
+    longPressCallback?: E extends undefined
+      ? (entity: null, event: LongPressReactEvents) => void
+      : (entity: HassEntityWithService<ExtractDomain<E>>, event: LongPressReactEvents) => void;
+    /** The onClick handler is called when the card is pressed, the first argument will be entity object with api methods if entity is provided  */
+    /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
+    onClick?: E extends undefined
+      ? (entity: null, event: React.MouseEvent<HTMLElement>) => void
+      : (entity: HassEntityWithService<ExtractDomain<E>>, event: React.MouseEvent<HTMLElement>) => void;
+    /** props to pass to the modal */
+    modalProps?: Partial<ModalPropsHelper<ExtractDomain<E>>>;
+    /** include ripples or not */
+    disableRipples?: boolean;
+    /** disable the scale effect on the card when clicked */
+    disableScale?: boolean;
+    /** disable the styles of the card when in the active state */
+    disableActiveState?: boolean;
+    /** This also controls the animated modal border-radius, update the border radius of the card @default "1rem" */
+    borderRadius?: CSSProperties["borderRadius"];
+    /** completely disable the automated column sizes, this will default to whatever width is provided by the user or the card @default false */
+    disableColumns?: boolean;
+    /** props to pass to the ripple component if enabled */
+    rippleProps?: Omit<RipplesProps, "children">;
+    /**
+     *
+     * A css string to update the card, this is similar to how you'd write scss.
+     *
+     * ```jsx
+     * export const MyComponent = (otherProps) => {
+     *   return <SomeCard cssStyles={`
+     *     color: var(--ha-900-contrast);
+     *    .some-selector {
+     *        &:hover {
+     *            background-color: var(--ha-A400);
+     *        }
+     *    }
+     * `} {...otherProps} />
+     * }
+     * ```
+     */
+    cssStyles?: CSSInterpolation;
+    /** a reference to the top level element, we can't use the "ref" prop because of the use of generics, so "elRef" it is */
+    elRef?: React.Ref<HTMLElement>;
+    /** remove all base styles of the card and just use the inbuilt functionality */
+    onlyFunctionality?: boolean;
+  };
 
 const DEFAULT_SIZES: Required<AvailableQueries> = {
   xxs: 12,
@@ -168,11 +178,11 @@ const DEFAULT_SIZES: Required<AvailableQueries> = {
   sm: 12,
   md: 12,
   lg: 12,
-  xlg: 12
+  xlg: 12,
 };
 
 const _CardBase = function _CardBase<T extends ElementType, E extends EntityName>({
-  as = 'div' as T,
+  as = "div" as T,
   entity: _entity,
   title: _title,
   active,
@@ -191,7 +201,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
   className,
   cssStyles,
   style,
-  borderRadius = '1rem',
+  borderRadius = "1rem",
   rippleProps,
   disableColumns,
   whileTap,
@@ -202,12 +212,10 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
   const _id = useId();
   const [openModal, setOpenModal] = useState(false);
   const domain = _entity ? computeDomain(_entity) : null;
-  const entity = useEntity(_entity ?? 'unknown', {
-    returnNullIfNotFound: true
+  const entity = useEntity(_entity ?? "unknown", {
+    returnNullIfNotFound: true,
   });
-  const isUnavailable = useMemo(() => typeof entity?.state === "string"
-  ? isUnavailableState(entity.state)
-  : false, [entity?.state]);
+  const isUnavailable = useMemo(() => (typeof entity?.state === "string" ? isUnavailableState(entity.state) : false), [entity?.state]);
   const _borderRadius = borderRadius;
   const StyledElement = useMemo(() => getMotionElement(as, onlyFunctionality), [as, onlyFunctionality]);
   const bind = useLongPress(
@@ -220,7 +228,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
           longPressCallback(null as never, e);
         }
       }
-      if (typeof _entity === 'string' && !openModal) {
+      if (typeof _entity === "string" && !openModal) {
         setOpenModal(true);
       }
     },
@@ -230,7 +238,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
       cancelOutsideElement: true,
       filterEvents(e) {
         return !("button" in e && e.button === 2);
-      }
+      },
     },
   );
   const onClickHandler = useCallback(
@@ -264,38 +272,47 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
     return {
       ...acc,
       [key]: inputValue ?? value,
-    }
+    };
   }, DEFAULT_SIZES);
-  const columnClassNames = Object.entries(mergedGrids).map(([key, value]) => `${key}-${value}`).join(' ');
+  const columnClassNames = Object.entries(mergedGrids)
+    .map(([key, value]) => `${key}-${value}`)
+    .join(" ");
 
-  return <>
-    <StyledElement
-      ref={elRef}
-      id={id ?? ""}
-      className={`card-base ${className ?? ""} ${disableColumns ? '' : columnClassNames} ${active ? "active " : ""} ${isUnavailable ? "unavailable" : ""} ${disabled ? "disabled" : ""} `}
-      css={css`
-        ${cssStyles ?? ""}
-      `}
-      style={{
-        ...(style ?? {}),
-        borderRadius: _borderRadius
-      }}
-      whileTap={whileTap ?? { scale: disableScale || disabled || isUnavailable ? 1 : 0.9 }}
-      {...bind()}
-      onClick={onClickHandler}
-      layoutId={layoutId ?? _id} 
-      disableActiveState={disableActiveState}
-      {...rest}
+  return (
+    <>
+      <StyledElement
+        ref={elRef}
+        id={id ?? ""}
+        className={`card-base ${className ?? ""} ${disableColumns ? "" : columnClassNames} ${active ? "active " : ""} ${
+          isUnavailable ? "unavailable" : ""
+        } ${disabled ? "disabled" : ""} `}
+        css={css`
+          ${cssStyles ?? ""}
+        `}
+        style={{
+          ...(style ?? {}),
+          borderRadius: _borderRadius,
+        }}
+        whileTap={whileTap ?? { scale: disableScale || disabled || isUnavailable ? 1 : 0.9 }}
+        {...bind()}
+        onClick={onClickHandler}
+        layoutId={layoutId ?? _id}
+        disableActiveState={disableActiveState}
+        {...rest}
       >
-      {disableRipples ? <Trigger className="contents" onClick={onClickHandler}>{children}</Trigger> : <StyledRipples
-        {...rippleProps}
-        borderRadius={_borderRadius}
-        disabled={disabled || isUnavailable}
-        >
-        <Trigger className="contents" onClick={onClickHandler}>{children}</Trigger>
-      </StyledRipples>}
-    </StyledElement>
-    {typeof _entity === "string" && (
+        {disableRipples ? (
+          <Trigger className="contents" onClick={onClickHandler}>
+            {children}
+          </Trigger>
+        ) : (
+          <StyledRipples {...rippleProps} borderRadius={_borderRadius} disabled={disabled || isUnavailable}>
+            <Trigger className="contents" onClick={onClickHandler}>
+              {children}
+            </Trigger>
+          </StyledRipples>
+        )}
+      </StyledElement>
+      {typeof _entity === "string" && (
         <ModalByEntityDomain
           entity={_entity as EntityName}
           title={title ?? "Unknown title"}
@@ -307,10 +324,9 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
           {...modalProps}
         />
       )}
-  </>
-}
-
-
+    </>
+  );
+};
 
 /**
  * This is the base care component that every other card component should extend, it comes with everything we need to be able to replicate functionality

@@ -1,17 +1,7 @@
 import { ReactNode } from "react";
 import styled from "@emotion/styled";
-import type {
-  EntityName,
-  HistoryOptions,
-} from "@hakit/core";
-import {
-  useEntity,
-  useIconByDomain,
-  useIcon,
-  useIconByEntity,
-  computeDomain,
-  isUnavailableState,
-} from "@hakit/core";
+import type { EntityName, HistoryOptions } from "@hakit/core";
+import { useEntity, useIconByDomain, useIcon, useIconByEntity, computeDomain, isUnavailableState } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 import { fallback, SvgGraph, Alert, AvailableQueries, CardBase, type CardBaseProps } from "@components";
 
@@ -23,11 +13,11 @@ const StyledSensorCard = styled(CardBase)`
 `;
 
 const Contents = styled.div`
-display: flex;
-flex-direction: column;
-justify-content: space-between;
-width: 100%;
-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
 `;
 
 const Inner = styled.div`
@@ -72,13 +62,15 @@ const Description = styled.div<{
     font-size: 0.7rem;
   }
 `;
-export interface SensorCardProps<E extends EntityName> extends Omit<CardBaseProps<'button', E>, 'title' | 'entity' | 'active' | 'as'> {
+
+type OmitProperties = "title" | "as" | "active" | "ref" | "entity";
+export interface SensorCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
+  /** the entity to display */
+  entity: E;
   /** An optional override for the title */
   title?: ReactNode;
   /** an optional description to add to the card */
   description?: ReactNode;
-  /** The name of your entity */
-  entity: E;
   /** optional override to replace the icon that appears in the card */
   icon?: string;
   /** override the unit displayed alongside the state */
@@ -132,42 +124,39 @@ function _SensorCard<E extends EntityName>({
       {...rest}
     >
       <Contents>
-      <Inner className={"inner"}>
-        <LayoutBetween className={"layout-between"}>
-          <Description disabled={disabled} className={"description"}>
-            {title || entity.attributes.friendly_name || _entity}
-            {entity.state && (
-              <State className={"state"}>
-                {entity.state}
-                {unit ?? entity.attributes.unit_of_measurement ?? ""}
-              </State>
+        <Inner className={"inner"}>
+          <LayoutBetween className={"layout-between"}>
+            <Description disabled={disabled} className={"description"}>
+              {title || entity.attributes.friendly_name || _entity}
+              {entity.state && (
+                <State className={"state"}>
+                  {entity.state}
+                  {unit ?? entity.attributes.unit_of_measurement ?? ""}
+                </State>
+              )}
+              {description && <span className={"text"}>{description}</span>}
+            </Description>
+            {icon ?? entityIcon ?? domainIcon}
+          </LayoutBetween>
+          <Gap className={"gap"} />
+          <LayoutBetween className={"layout-between"}>
+            <Title className={"title"}>
+              {entity.custom.relativeTime}
+              {disabled ? ` - ${entity.state}` : ""}
+            </Title>
+          </LayoutBetween>
+        </Inner>
+        {!hideGraph && (
+          <div className={"history"}>
+            {entity.history.loading ? (
+              <Alert className={"loading"} description="Loading..." />
+            ) : entity.history.coordinates.length > 0 ? (
+              <SvgGraph coordinates={entity.history.coordinates} />
+            ) : (
+              <Alert className={"no-state-history"} description="No state history found." />
             )}
-            {description && <span className={"text"}>{description}</span>}
-          </Description>
-          {icon ?? entityIcon ?? domainIcon}
-        </LayoutBetween>
-        <Gap className={"gap"} />
-        <LayoutBetween className={"layout-between"}>
-          <Title className={"title"}>
-            {entity.custom.relativeTime}
-            {disabled ? ` - ${entity.state}` : ""}
-          </Title>
-        </LayoutBetween>
-      </Inner>
-      {!hideGraph && (
-        <div className={"history"}>
-          {entity.history.loading ? (
-            <Alert className={"loading"} description="Loading..." />
-          ) : entity.history.coordinates.length > 0 ? (
-            <SvgGraph coordinates={entity.history.coordinates} />
-          ) : (
-            <Alert
-              className={"no-state-history"}
-              description="No state history found."
-            />
-          )}
-        </div>
-      )}  
+          </div>
+        )}
       </Contents>
     </StyledSensorCard>
   );
@@ -181,7 +170,7 @@ export function SensorCard<E extends EntityName>(props: SensorCardProps<E>) {
     md: 4,
     lg: 4,
     xlg: 3,
-  }
+  };
   return (
     <ErrorBoundary {...fallback({ prefix: "SensorCard" })}>
       <_SensorCard {...defaultColumns} {...props} />

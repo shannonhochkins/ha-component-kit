@@ -1,31 +1,18 @@
 import styled from "@emotion/styled";
-import { css } from "@emotion/react";
-import React, {
-  useMemo,
-  useEffect,
-  useCallback,
-  useRef,
-  useState,
-  CSSProperties,
-  Key,
-} from "react";
+import React, { useMemo, useEffect, useCallback, useRef, useState, CSSProperties, Key } from "react";
 import { useEntity } from "@hakit/core";
 import { Icon } from "@iconify/react";
-import { fallback, Row, Column, mq, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
-import { motion } from "framer-motion";
-import type { MotionProps } from "framer-motion";
+import { fallback, Row, Column, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { ReactComponent as GarbageBin } from "./garbage-bin.svg";
 
 const ASPECT_RATIO = 77.41 / 123.36;
 
-const Card = styled(CardBase)`
-  
-`;
+const Card = styled(CardBase)``;
 const Contents = styled.div`
   padding: 1rem;
   width: 100%;
-  height: 100%;    
+  height: 100%;
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
@@ -45,16 +32,14 @@ const Bin = styled.div<{
       transition: opacity var(--ha-transition-duration) var(--ha-easing);
       opacity: 0;
     }
-    ${(props) =>
-      typeof props.textColor === "string" && `color: ${props.textColor};`}
+    ${(props) => typeof props.textColor === "string" && `color: ${props.textColor};`}
   }
   .bin-icon {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate3d(-65%, -60%, 0);
-    ${(props) =>
-      typeof props.iconColor === "string" && `color: ${props.iconColor};`}
+    ${(props) => typeof props.iconColor === "string" && `color: ${props.iconColor};`}
   }
 `;
 
@@ -146,14 +131,7 @@ interface BinProperties extends SvgProperties {
 }
 
 type WeekConfig = Array<BinProperties | CSSProperties["color"]> | null;
-type Day =
-  | "Sunday"
-  | "Monday"
-  | "Tuesday"
-  | "Wednesday"
-  | "Thursday"
-  | "Friday"
-  | "Saturday";
+type Day = "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday";
 
 interface Schedule {
   /** optional title to appear in each schedule */
@@ -167,8 +145,24 @@ interface Schedule {
   /** hide the next collection time @default false */
   hideNextCollection?: boolean;
 }
-
-export interface GarbageCollectionCardProps extends Omit<CardBaseProps, "title" | 'entity' | 'children' | 'disabled' | 'active' | 'service' | 'serviceData' | 'modalProps' | 'longPressCallback'> {
+type OmitProperties =
+  | "onClick"
+  | "as"
+  | "title"
+  | "ref"
+  | "entity"
+  | "children"
+  | "disabled"
+  | "active"
+  | "service"
+  | "serviceData"
+  | "modalProps"
+  | "longPressCallback"
+  | "disableActiveState"
+  | "disableScale"
+  | "disableRipples"
+  | "rippleProps";
+export interface GarbageCollectionCardProps extends Omit<CardBaseProps, OmitProperties> {
   /** The title of the card @default 'Garbage Collection' */
   title?: React.ReactNode;
   /** The description of the card @default undefined */
@@ -177,6 +171,8 @@ export interface GarbageCollectionCardProps extends Omit<CardBaseProps, "title" 
   schedules: Schedule[];
   /** the styles to apply globally to the garbage bin svg, this can be overwritten per week */
   svg?: SvgProperties;
+  /** fired when the card is clicked */
+  onClick?: () => void;
 }
 
 function _GarbageCollectionCard({
@@ -206,52 +202,21 @@ function _GarbageCollectionCard({
     return date.getDay();
   }, [dateSensor]);
   const currentWeek = Math.floor(new Date().getDate() / 7);
-  const dayNames = useMemo(
-    () => [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ],
-    [],
-  );
+  const dayNames = useMemo(() => ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], []);
 
   const renderBin = useCallback(
     (bin: CSSProperties["color"] | BinProperties | undefined, key: Key) => {
-      if (typeof bin === "object" && typeof bin.render === "function")
-        return bin.render(bin, key);
-      const size =
-        typeof bin === "string"
-          ? defaultSVGProperties.size
-          : bin?.size ?? defaultSVGProperties.size;
-      const color =
-        typeof bin === "string"
-          ? bin
-          : bin?.color ?? defaultSVGProperties.color;
-      const textColor =
-        typeof bin === "string"
-          ? defaultSVGProperties.textColor
-          : bin?.textColor ?? defaultSVGProperties.textColor;
-      const iconColor =
-        typeof bin === "string"
-          ? defaultSVGProperties.iconColor
-          : bin?.iconColor ?? defaultSVGProperties.iconColor;
+      if (typeof bin === "object" && typeof bin.render === "function") return bin.render(bin, key);
+      const size = typeof bin === "string" ? defaultSVGProperties.size : bin?.size ?? defaultSVGProperties.size;
+      const color = typeof bin === "string" ? bin : bin?.color ?? defaultSVGProperties.color;
+      const textColor = typeof bin === "string" ? defaultSVGProperties.textColor : bin?.textColor ?? defaultSVGProperties.textColor;
+      const iconColor = typeof bin === "string" ? defaultSVGProperties.iconColor : bin?.iconColor ?? defaultSVGProperties.iconColor;
       const icon = typeof bin === "string" ? undefined : bin?.icon;
       return (
-        <Bin
-          className="bin-group"
-          key={key}
-          textColor={textColor}
-          iconColor={iconColor}
-        >
-          {typeof bin !== "string" &&
-            typeof bin !== "undefined" &&
-            typeof bin.name === "string" && (
-              <VerticalText height={size} text={bin.name} />
-            )}
+        <Bin className="bin-group" key={key} textColor={textColor} iconColor={iconColor}>
+          {typeof bin !== "string" && typeof bin !== "undefined" && typeof bin.name === "string" && (
+            <VerticalText height={size} text={bin.name} />
+          )}
           {typeof icon === "string" && (
             <Icon
               className="icon bin-icon"
@@ -278,25 +243,20 @@ function _GarbageCollectionCard({
     return days === 0 ? "Today" : days === 1 ? "Tomorrow" : `in ${days} days`;
   }, []);
 
-  const findNextNonNullWeek = useCallback(
-    (weeks: WeekConfig[], startWeek: number): number => {
-      for (let i = 0; i < weeks.length; i++) {
-        const index = (startWeek + i) % weeks.length;
-        if (weeks[index] !== null) {
-          return index;
-        }
+  const findNextNonNullWeek = useCallback((weeks: WeekConfig[], startWeek: number): number => {
+    for (let i = 0; i < weeks.length; i++) {
+      const index = (startWeek + i) % weeks.length;
+      if (weeks[index] !== null) {
+        return index;
       }
-      return -1; // return an invalid index if no non-null weeks are found
-    },
-    [],
-  );
+    }
+    return -1; // return an invalid index if no non-null weeks are found
+  }, []);
 
   const collections = useMemo(
     () =>
       schedules.flatMap((schedule) => {
-        const scheduleDay = dayNames
-          .map((x) => x.toLowerCase())
-          .indexOf(schedule.day.toLowerCase());
+        const scheduleDay = dayNames.map((x) => x.toLowerCase()).indexOf(schedule.day.toLowerCase());
         const daysUntilCollection = (scheduleDay - today + 7) % 7;
 
         const futureDate = new Date();
@@ -358,35 +318,20 @@ function _GarbageCollectionCard({
           },
         ];
       }),
-    [
-      currentWeek,
-      dayNames,
-      schedules,
-      today,
-      findNextNonNullWeek,
-      formatTimeDisplay,
-    ],
+    [currentWeek, dayNames, schedules, today, findNextNonNullWeek, formatTimeDisplay],
   );
   return (
-    <Card
-      disableActiveState
-      disableRipples
-      disableScale
-      className={`garbage-collection-card ${className ?? ""}`}
-      {...rest}
-    >
+    <Card disableActiveState disableRipples disableScale className={`garbage-collection-card ${className ?? ""}`} {...rest}>
       <Contents>
         <Title className="title">{title}</Title>
-        {typeof description !== "undefined" && (
-          <Description className="description">{description}</Description>
-        )}
+        {typeof description !== "undefined" && <Description className="description">{description}</Description>}
         <Row
           className="row"
           fullWidth
           wrap="nowrap"
           justifyContent="space-between"
           style={{
-            marginTop: '0.5rem'
+            marginTop: "0.5rem",
           }}
         >
           {collections
@@ -394,18 +339,11 @@ function _GarbageCollectionCard({
             .map((collection, index) => {
               return (
                 <BinBox className="bin-box" key={index}>
-                  {typeof collection.schedule.title !== "undefined" && (
-                    <div className="collection-title">
-                      {collection.schedule.title}
-                    </div>
-                  )}
+                  {typeof collection.schedule.title !== "undefined" && <div className="collection-title">{collection.schedule.title}</div>}
                   <Row className="row" wrap="nowrap" gap="1rem">
-                    {collection.bins &&
-                      collection.bins.map((bin, index) => renderBin(bin, index))}
+                    {collection.bins && collection.bins.map((bin, index) => renderBin(bin, index))}
                   </Row>
-                  <div className="collection-time">
-                    {collection.timeUntilCollection}
-                  </div>
+                  <div className="collection-time">{collection.timeUntilCollection}</div>
                 </BinBox>
               );
             })}
@@ -437,7 +375,7 @@ export function GarbageCollectionCard(props: GarbageCollectionCardProps) {
     md: 4,
     lg: 4,
     xlg: 3,
-  }
+  };
   return (
     <ErrorBoundary {...fallback({ prefix: "GarbageCollectionCard" })}>
       <_GarbageCollectionCard {...defaultColumns} {...props} />

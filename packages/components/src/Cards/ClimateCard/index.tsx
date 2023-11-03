@@ -2,26 +2,14 @@ import { useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import type { HassEntityWithService, HvacMode } from "@hakit/core";
 import type { ClimateControlsProps, AvailableQueries, CardBaseProps } from "@components";
-import {
-  useEntity,
-  useIconByDomain,
-  useIconByEntity,
-  OFF,
-  isUnavailableState,
-  useHass,
-} from "@hakit/core";
+import { useEntity, useIconByDomain, useIconByEntity, OFF, isUnavailableState, useHass } from "@hakit/core";
 import { fallback, Row, CardBase, ButtonBar, Column, ButtonBarButton } from "@components";
 import { capitalize } from "lodash";
-import {
-  icons,
-  activeColors,
-} from "../../Shared/Entity/Climate/ClimateControls/shared";
+import { icons, activeColors } from "../../Shared/Entity/Climate/ClimateControls/shared";
 import { ErrorBoundary } from "react-error-boundary";
 import type { HassConfig } from "home-assistant-js-websocket";
 
-const StyledClimateCard = styled(CardBase)`
-  
-`;
+const StyledClimateCard = styled(CardBase)``;
 
 const Gap = styled.div`
   height: 20px;
@@ -34,11 +22,11 @@ const Title = styled.div`
   gap: 0.5rem;
   flex-wrap: wrap;
   > * {
-    position:relative;
+    position: relative;
     display: flex;
-    flex-shrink:0;
+    flex-shrink: 0;
     &:after {
-      content: ',';
+      content: ",";
       position: absolute;
       bottom: 0;
       right: -3px;
@@ -72,7 +60,9 @@ const Temperature = styled.span`
   }
 `;
 
-type Extendable = Omit<ClimateControlsProps, "onClick"> & Omit<CardBaseProps<'div', ClimateControlsProps['entity']>, 'active' | 'onClick' | 'entity' | 'as' | 'children'>
+type OmitProperties = "onClick" | "children" | "active" | "as" | "ref" | "disableActiveState";
+
+type Extendable = Omit<ClimateControlsProps, "onClick"> & Omit<CardBaseProps<"div", ClimateControlsProps["entity"]>, OmitProperties>;
 export interface ClimateCardProps extends Extendable {
   /** the onClick handler is called when the card is pressed  */
   onClick?: (entity: HassEntityWithService<"climate">) => void;
@@ -124,12 +114,12 @@ function _ClimateCard({
     getConfig().then(setConfig);
   }, [getConfig]);
 
-  const havacModesToUse =
-    (hvacModes ?? []).length === 0 ? hvac_modes : hvacModes ?? [];
+  const havacModesToUse = (hvacModes ?? []).length === 0 ? hvac_modes : hvacModes ?? [];
 
   return (
     <>
       <StyledClimateCard
+        disableActiveState
         className={`climate-card ${className ?? ""}`}
         disabled={disabled || isUnavailable}
         entity={_entity}
@@ -145,15 +135,19 @@ function _ClimateCard({
           hideFanMode,
         }}
         onClick={() => {
-          if (isUnavailable || disabled || typeof onClick !== "function")
-            return;
+          if (isUnavailable || disabled || typeof onClick !== "function") return;
           onClick(entity);
         }}
         {...rest}
       >
-        <Column alignItems="flex-start" fullWidth fullHeight style={{
-          padding: '1rem'
-        }}>
+        <Column
+          alignItems="flex-start"
+          fullWidth
+          fullHeight
+          style={{
+            padding: "1rem",
+          }}
+        >
           <Row justifyContent="space-between" fullWidth>
             <Description>
               <Icon
@@ -178,22 +172,27 @@ function _ClimateCard({
               }}
             >
               <span className="fan-speed">Speed: {entity.attributes.fan_mode || "Unknown"}</span>
-              <span className="temperature"><Temperature>
+              <span className="temperature">
+                <Temperature>
                   <div>Temperature: {temperature}</div>
                   <span>{unit_of_measurement ?? config?.unit_system.temperature}</span>
                 </Temperature>
               </span>
-              <span className="current-temperature"><Temperature>
+              <span className="current-temperature">
+                <Temperature>
                   <div>Current Temperature: {current_temperature}</div>
                   <span>{unit_of_measurement ?? config?.unit_system.temperature}</span>
                 </Temperature>
               </span>
             </Title>
           </Row>
-          <Row justifyContent="flex-start" style={{
-            paddingLeft: "2rem",
-            paddingTop: '0.5rem'
-          }}>
+          <Row
+            justifyContent="flex-start"
+            style={{
+              paddingLeft: "2rem",
+              paddingTop: "0.5rem",
+            }}
+          >
             <Title>{entity.custom.relativeTime}</Title>
           </Row>
           <Gap />
@@ -206,7 +205,7 @@ function _ClimateCard({
                   preventPropagation: true,
                 }}
                 title={"Decrease Temperature"}
-                icon={'mdi:minus'}
+                icon={"mdi:minus"}
                 onClick={() => {
                   entity.service.setTemperature({
                     temperature: temperature - 1,
@@ -240,7 +239,7 @@ function _ClimateCard({
                   preventPropagation: true,
                 }}
                 title={"Increase Temperature"}
-                icon={'mdi:plus'}
+                icon={"mdi:plus"}
                 onClick={() => {
                   entity.service.setTemperature({
                     temperature: temperature + 1,
@@ -249,30 +248,28 @@ function _ClimateCard({
               />
             </ButtonBar>
             <ButtonBar>
-            {havacModesToUse
-              .concat()
-              .filter((x) => !!x)
-              .map((mode) => (
-                <ButtonBarButton
-                  size={35}
-                  disabled={disabled || isUnavailable}
-                  iconColor={
-                    currentMode === mode ? activeColors[mode] : undefined
-                  }
-                  rippleProps={{
-                    preventPropagation: true,
-                  }}
-                  key={mode}
-                  title={capitalize(mode.replace(/_/g, " "))}
-                  active={currentMode === mode}
-                  icon={icons[mode]}
-                  onClick={() => {
-                    entity.service.setHvacMode({
-                      hvac_mode: mode,
-                    });
-                  }}
-                />
-              ))}
+              {havacModesToUse
+                .concat()
+                .filter((x) => !!x)
+                .map((mode) => (
+                  <ButtonBarButton
+                    size={35}
+                    disabled={disabled || isUnavailable}
+                    iconColor={currentMode === mode ? activeColors[mode] : undefined}
+                    rippleProps={{
+                      preventPropagation: true,
+                    }}
+                    key={mode}
+                    title={capitalize(mode.replace(/_/g, " "))}
+                    active={currentMode === mode}
+                    icon={icons[mode]}
+                    onClick={() => {
+                      entity.service.setHvacMode({
+                        hvac_mode: mode,
+                      });
+                    }}
+                  />
+                ))}
             </ButtonBar>
           </Row>
         </Column>
@@ -281,9 +278,9 @@ function _ClimateCard({
   );
 }
 /** The ClimateCard is a card to easily interact with climate entities, whilst it's not documented below, the types are correct and you can also pass through anything related to ModalClimateControlsProps
- * 
+ *
  * I will be updating this card as it's not as wildly supported as other cards where it checks for device support, so if you have any issues please let me know.
-*/
+ */
 export function ClimateCard(props: ClimateCardProps) {
   const defaultColumns: AvailableQueries = {
     xxs: 12,
@@ -292,7 +289,7 @@ export function ClimateCard(props: ClimateCardProps) {
     md: 4,
     lg: 4,
     xlg: 3,
-  }
+  };
   return (
     <ErrorBoundary {...fallback({ prefix: "ClimateCard" })}>
       <_ClimateCard {...defaultColumns} {...props} />

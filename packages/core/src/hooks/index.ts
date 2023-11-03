@@ -20,21 +20,8 @@ export { useLogs, type UseLogOptions } from "./useLogs";
 export * from "./useLogs/logbook";
 export { useAreas, type Area } from "./useAreas";
 // other subscription based models used by useAreas
-export {
-  subscribeAreaRegistry,
-  type AreaRegistryEntry,
-} from "./useAreas/subscribe/areas";
-export {
-  subscribeEntityRegistry,
-  type EntityRegistryEntry,
-} from "./useAreas/subscribe/entities";
-export {
-  subscribeDeviceRegistry,
-  type DeviceRegistryEntry,
-} from "./useAreas/subscribe/devices";
-export {
-  useCamera,
-  type CameraEntityExtended,
-  type UseCameraOptions,
-} from "./useCamera";
+export { subscribeAreaRegistry, type AreaRegistryEntry } from "./useAreas/subscribe/areas";
+export { subscribeEntityRegistry, type EntityRegistryEntry } from "./useAreas/subscribe/entities";
+export { subscribeDeviceRegistry, type DeviceRegistryEntry } from "./useAreas/subscribe/devices";
+export { useCamera, type CameraEntityExtended, type UseCameraOptions } from "./useCamera";
 export * from "./useCamera/constants";

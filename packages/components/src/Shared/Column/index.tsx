@@ -31,7 +31,7 @@ const _Column = styled(m.div)<ColumnProps>`
     typeof props.gap === "string" &&
     `
     gap: ${props.gap};
-    --gap: ${props.gap ?? '0px'};
+    --gap: ${props.gap ?? "0px"};
   `}
   ${(props) => props.fullHeight && `height: 100%;`}
   ${(props) => props.fullWidth && `width: 100%;`}
@@ -45,13 +45,9 @@ export function Column(props: ColumnProps) {
       cssStyles={css`
         ${props.cssStyles ?? ""}
       `}
-      className={`${props.className ?? ""} ${
-        props.fullHeight ? "full-height" : ""
-      } ${props.fullWidth ? "full-width" : ""} ${
+      className={`${props.className ?? ""} ${props.fullHeight ? "full-height" : ""} ${props.fullWidth ? "full-width" : ""} ${
         props.justifyContent ? props.justifyContent : "center"
-      } ${props.alignItems ? props.alignItems : "center"} ${
-        props.wrap ? props.wrap : "wrap"
-      }`}
+      } ${props.alignItems ? props.alignItems : "center"} ${props.wrap ? props.wrap : "wrap"}`}
     />
   );
 }

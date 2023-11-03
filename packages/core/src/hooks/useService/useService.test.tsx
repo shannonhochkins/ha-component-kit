@@ -1,9 +1,4 @@
-import {
-  TestWrapper,
-  onReady,
-  mocked,
-  connection,
-} from "@mocks/mockConnection";
+import { TestWrapper, onReady, mocked, connection } from "@mocks/mockConnection";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { useService } from "@core";
 
@@ -12,12 +7,9 @@ describe("useService", () => {
     onReady.mockClear();
   });
   it("should return service object with passed entity id and call the service", async () => {
-    const { result } = renderHook(
-      () => useService("light", { entity_id: "light.kitchen" }),
-      {
-        wrapper: TestWrapper,
-      },
-    );
+    const { result } = renderHook(() => useService("light", { entity_id: "light.kitchen" }), {
+      wrapper: TestWrapper,
+    });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     act(() => {
       result.current.turnOn({

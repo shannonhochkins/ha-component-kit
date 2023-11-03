@@ -1,13 +1,7 @@
 import styled from "@emotion/styled";
-import { css } from "@emotion/react";
 import { useState, useEffect, useMemo, ReactNode } from "react";
 import { useEntity, useHass, isUnavailableState } from "@hakit/core";
-import type {
-  FilterByDomain,
-  EntityName,
-  HassEntityWithService,
-  ExtractDomain,
-} from "@hakit/core";
+import type { FilterByDomain, EntityName, HassEntityWithService, ExtractDomain } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { capitalize } from "lodash";
 import { Row, Column, fallback, Tooltip, CardBase, mq, useDevice, type CardBaseProps, type AvailableQueries } from "@components";
@@ -152,41 +146,22 @@ interface DetailsProps extends Omit<RowProps, "title"> {
   entity: EntityName;
   title?: ReactNode;
   suffix?: ReactNode;
-  render?: (
-    value: HassEntityWithService<ExtractDomain<EntityName>>,
-  ) => ReactNode;
+  render?: (value: HassEntityWithService<ExtractDomain<EntityName>>) => ReactNode;
 }
 
-function Details({
-  icon,
-  entity,
-  title,
-  suffix,
-  render,
-  ...rest
-}: DetailsProps) {
+function Details({ icon, entity, title, suffix, render, ...rest }: DetailsProps) {
   const _entity = useEntity(entity);
   const _title = title ?? _entity.attributes.friendly_name ?? "";
   return (
-    <DetailsRow
-      className="details"
-      gap="0rem"
-      justifyContent="flex-start"
-      {...rest}
-    >
+    <DetailsRow className="details" gap="0rem" justifyContent="flex-start" {...rest}>
       <Tooltip title={_title ?? "unknown title"}>
         <Row className="row" fullWidth gap="0.5rem" justifyContent="flex-start">
-          <Icon
-            className="icon"
-            icon={icon ?? _entity.attributes.icon ?? "mdi:info"}
-          />
+          <Icon className="icon" icon={icon ?? _entity.attributes.icon ?? "mdi:info"} />
           <State className="state">
             {typeof render === "function"
               ? render(_entity)
               : `${_title ? `${_title} - ` : ""}${_entity.state ?? ""}${
-                  !suffix && _entity.attributes.unit_of_measurement
-                    ? `${_entity.attributes.unit_of_measurement}`
-                    : suffix ?? ""
+                  !suffix && _entity.attributes.unit_of_measurement ? `${_entity.attributes.unit_of_measurement}` : suffix ?? ""
                 }`}
           </State>
         </Row>
@@ -194,7 +169,9 @@ function Details({
     </DetailsRow>
   );
 }
-export interface WeatherCardProps extends Omit<CardBaseProps<'div', FilterByDomain<EntityName, "weather">>, 'entity' | 'as'> {
+
+type OmitProperties = "as" | "ref" | "entity";
+export interface WeatherCardProps extends Omit<CardBaseProps<"div", FilterByDomain<EntityName, "weather">>, OmitProperties> {
   /** The name of your entity */
   entity: FilterByDomain<EntityName, "weather">;
   /** override the icon displayed before the title */
@@ -249,23 +226,9 @@ function _WeatherCard({
   });
 
   const weatherDetails = useMemo(() => {
-    const {
-      humidity,
-      temperature,
-      wind_speed,
-      wind_speed_unit,
-      temperature_unit,
-    } = weather.attributes;
-    const additional = getAdditionalWeatherInformation(
-      temperature,
-      temperature_unit,
-      wind_speed,
-      wind_speed_unit,
-      humidity,
-    );
-    const apparentTemperature = weather.attributes[
-      apparentTemperatureAttribute
-    ] as number | null | undefined;
+    const { humidity, temperature, wind_speed, wind_speed_unit, temperature_unit } = weather.attributes;
+    const additional = getAdditionalWeatherInformation(temperature, temperature_unit, wind_speed, wind_speed_unit, humidity);
+    const apparentTemperature = weather.attributes[apparentTemperatureAttribute] as number | null | undefined;
     return {
       apparent_temperature: apparentTemperature ?? null,
       ...weather.attributes,
@@ -273,8 +236,7 @@ function _WeatherCard({
     };
   }, [weather.attributes, apparentTemperatureAttribute]);
 
-  const feelsLikeBase =
-    weatherDetails.apparent_temperature ?? weatherDetails.feelsLike;
+  const feelsLikeBase = weatherDetails.apparent_temperature ?? weatherDetails.feelsLike;
   const feelsLike = feelsLikeBase === temperature ? null : feelsLikeBase;
   return (
     <Card
@@ -292,18 +254,13 @@ function _WeatherCard({
           <StyledIcon icon={icon} className="icon" />
           <Column className="column">
             <Title className="title">
-              <LocationIcon
-                className="location-icon icon"
-                icon={_icon || "mdi:location"}
-              />
+              <LocationIcon className="location-icon icon" icon={_icon || "mdi:location"} />
               {title || friendly_name}
             </Title>
             <SubTitle className="sub-title">
               {temperature}
               {temperatureSuffix || unit}, {capitalize(weather.state)}
-              {feelsLike
-                ? `, Feels like: ${feelsLike}${temperatureSuffix || unit}`
-                : ""}
+              {feelsLike ? `, Feels like: ${feelsLike}${temperatureSuffix || unit}` : ""}
             </SubTitle>
           </Column>
         </Row>
@@ -322,35 +279,27 @@ function _WeatherCard({
             justifyContent: "space-between",
           }}
         >
-          {(weather.attributes.forecast ?? [])
-            .slice(0, device.xxs ? 7 : 10)
-            .map((forecast, index) => {
-              const dateFormatted = convertDateTime(
-                forecast.datetime,
-                timeZone,
-              );
-              const [day, , hour] = dateFormatted.split(",");
-              return (
-                <Forecast key={index} className="forecast">
-                  <Day className="day">{day}</Day>
-                  {includeTime && <Time className="time">{hour}</Time>}
-                  <ForecastIcon
-                    className="icon forecast-icon"
-                    icon={weatherIconName(forecast.condition as string)}
-                  />
-                  <Temperature className="temperature">
-                    {forecast.temperature}
+          {(weather.attributes.forecast ?? []).slice(0, device.xxs ? 7 : 10).map((forecast, index) => {
+            const dateFormatted = convertDateTime(forecast.datetime, timeZone);
+            const [day, , hour] = dateFormatted.split(",");
+            return (
+              <Forecast key={index} className="forecast">
+                <Day className="day">{day}</Day>
+                {includeTime && <Time className="time">{hour}</Time>}
+                <ForecastIcon className="icon forecast-icon" icon={weatherIconName(forecast.condition as string)} />
+                <Temperature className="temperature">
+                  {forecast.temperature}
+                  {temperatureSuffix || unit}
+                </Temperature>
+                {forecast.templow && (
+                  <TemperatureLow className="temperature-low">
+                    {forecast.templow}
                     {temperatureSuffix || unit}
-                  </Temperature>
-                  {forecast.templow && (
-                    <TemperatureLow className="temperature-low">
-                      {forecast.templow}
-                      {temperatureSuffix || unit}
-                    </TemperatureLow>
-                  )}
-                </Forecast>
-              );
-            })}
+                  </TemperatureLow>
+                )}
+              </Forecast>
+            );
+          })}
         </Row>
       )}
       {isUnavailable && weather.state}
@@ -366,7 +315,7 @@ export function WeatherCard(props: WeatherCardProps) {
     md: 4,
     lg: 4,
     xlg: 3,
-  }
+  };
   return (
     <ErrorBoundary {...fallback({ prefix: "WeatherCard" })}>
       <_WeatherCard {...defaultColumns} {...props} />

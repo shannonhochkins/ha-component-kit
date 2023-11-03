@@ -6,11 +6,7 @@ export function convertToCssVars(obj: object, prefix = "") {
       const name = `${prefix ? `${prefix}-` : ""}${kebabCase(key)}`;
       return `
       ${acc}
-      ${
-        isObject(value)
-          ? convertToCssVars(value, name)
-          : `--${NAMESPACE}-${name}: ${isNumber(value) ? `${value}` : value};`
-      }
+      ${isObject(value) ? convertToCssVars(value, name) : `--${NAMESPACE}-${name}: ${isNumber(value) ? `${value}` : value};`}
     `;
     }, "")
     .replace(/^\s*[\r\n]/gm, "");

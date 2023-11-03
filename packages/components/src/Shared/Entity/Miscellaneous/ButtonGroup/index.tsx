@@ -50,18 +50,10 @@ export interface ButtonGroupProps extends RowProps {
   /** the thickness of the buttons @default 100 */
   thickness?: number;
   /** This will only accept ButtonGroupButton as a child component */
-  children:
-    | ReactElement<typeof ButtonGroupButton>
-    | ReactElement<typeof ButtonGroupButton>[];
+  children: ReactElement<typeof ButtonGroupButton> | ReactElement<typeof ButtonGroupButton>[];
 }
 
-function _ButtonGroup({
-  orientation = "vertical",
-  reverse = false,
-  thickness = 100,
-  children,
-  ...rest
-}: ButtonGroupProps) {
+function _ButtonGroup({ orientation = "vertical", reverse = false, thickness = 100, children, ...rest }: ButtonGroupProps) {
   const childrenWithKeys = Children.map(children, (child, index) => {
     if (isValidElement(child)) {
       return cloneElement(child, {
@@ -78,12 +70,7 @@ function _ButtonGroup({
         flexDirection: orientation === "vertical" ? "row" : "column",
       }}
     >
-      <ButtonGroupParent
-        thickness={thickness}
-        className={`${reverse ? "reverse" : ""} ${
-          orientation === "vertical" ? "vertical" : ""
-        }`}
-      >
+      <ButtonGroupParent thickness={thickness} className={`${reverse ? "reverse" : ""} ${orientation === "vertical" ? "vertical" : ""}`}>
         {childrenWithKeys}
       </ButtonGroupParent>
     </Row>

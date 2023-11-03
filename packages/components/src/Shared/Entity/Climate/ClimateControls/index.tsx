@@ -12,12 +12,10 @@ import { colors, activeColors, icons } from "./shared";
 import { ErrorBoundary } from "react-error-boundary";
 import { capitalize } from "lodash";
 
-type Extendable = Omit<
-  MotionProps & React.ComponentPropsWithoutRef<"div">,
-  "title"
->;
+type Extendable = Omit<MotionProps & React.ComponentPropsWithoutRef<"div">, "title">;
 
 export interface ClimateControlsProps extends Extendable {
+  /** the name of your climate entity */
   entity: FilterByDomain<EntityName, "climate">;
   /** provide a list of hvacModes you want to support/display in the UI, will use all by default */
   hvacModes?: HvacMode[];
@@ -123,11 +121,8 @@ function _ClimateControls({
     max_temp = 40,
     temperature = 20,
   } = entity.attributes || {};
-  const [internalFanMode, setInternalFanMode] = useState<string | undefined>(
-    fan_mode,
-  );
-  const [internalTemperature, setInternalTemperature] =
-    useState<number>(temperature);
+  const [internalFanMode, setInternalFanMode] = useState<string | undefined>(fan_mode);
+  const [internalTemperature, setInternalTemperature] = useState<number>(temperature);
   useEffect(() => {
     if (!entityStateChanged) return;
     if (isOff) {
@@ -187,12 +182,8 @@ function _ClimateControls({
               active={!isOff}
               icon="mdi:fan"
               onClick={() => {
-                const currentIndex = fan_modes.findIndex(
-                  (mode) => mode === internalFanMode,
-                );
-                const fanMode = fan_modes[currentIndex + 1]
-                  ? fan_modes[currentIndex + 1]
-                  : fan_modes[0];
+                const currentIndex = fan_modes.findIndex((mode) => mode === internalFanMode);
+                const fanMode = fan_modes[currentIndex + 1] ? fan_modes[currentIndex + 1] : fan_modes[0];
                 setInternalFanMode(fanMode);
                 entity.service.setFanMode({
                   fan_mode: fanMode,
@@ -216,9 +207,7 @@ function _ClimateControls({
           <FabCard
             className="mode"
             size={40}
-            iconColor={
-              currentMode === mode ? activeColors[mode] : `var(--ha-300)`
-            }
+            iconColor={currentMode === mode ? activeColors[mode] : `var(--ha-300)`}
             key={mode}
             title={capitalize(mode.replace(/_/g, " "))}
             active={currentMode === mode}

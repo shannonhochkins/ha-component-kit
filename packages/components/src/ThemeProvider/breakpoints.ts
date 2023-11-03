@@ -1,9 +1,8 @@
-
-const columns = [1 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,11 ,12] as const;
+const columns = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
 // a type to only allow numbers 1 through 12
-export type GridSpan = typeof columns[number];
+export type GridSpan = (typeof columns)[number];
 
-export interface AvailableQueries { 
+export interface AvailableQueries {
   /** For example, xs={12} sm={6} sizes a component to occupy half of the viewport width (6 columns) (50% width) when viewport width is activated `SM` breakpoint or more pixels. For smaller viewports, the component fills all 12 available columns (100% width). */
   xxs?: GridSpan;
   /** For example, xs={12} sm={6} sizes a component to occupy half of the viewport width (6 columns) (50% width) when viewport width is activated `SM` breakpoint or more pixels. For smaller viewports, the component fills all 12 available columns (100% width). */
@@ -19,17 +18,10 @@ export interface AvailableQueries {
 }
 
 export type BreakPoint = keyof AvailableQueries;
-export type BreakPoints = Record<Exclude<BreakPoint, 'xlg'>, number>;
-
+export type BreakPoints = Record<Exclude<BreakPoint, "xlg">, number>;
 
 export const getBreakpoints = (breakpoints: BreakPoints): Record<BreakPoint, string> => {
-  const {
-    xxs,
-    xs,
-    sm,
-    md,
-    lg,
-  } = breakpoints;
+  const { xxs, xs, sm, md, lg } = breakpoints;
   return {
     xxs: `(max-width: ${xxs}px)`,
     xs: `(min-width: ${xxs + 1}px) and (max-width: ${xs}px)`,
@@ -37,9 +29,8 @@ export const getBreakpoints = (breakpoints: BreakPoints): Record<BreakPoint, str
     md: `(min-width: ${sm + 1}px) and (max-width: ${md}px)`,
     lg: `(min-width: ${md + 1}px) and (max-width: ${lg}px)`,
     xlg: `(min-width: ${lg + 1}px)`,
-  }
+  };
 };
-
 
 export const mq = (names: BreakPoint[], cssValues: string) => {
   return names
@@ -53,12 +44,11 @@ export const mq = (names: BreakPoint[], cssValues: string) => {
     .join("\n");
 };
 
-
 const getColumnSizeCSS = (column: GridSpan): string => {
   // Calculate the base width for each column.
   return `calc(
     (100% - 11 * var(--gap, 0px)) * ${column} / 12 + (${column} - 1) * var(--gap, 0px)
-  )`
+  )`;
 };
 
 export const generateColumnBreakpoints = (breakpoints: BreakPoints) => {
@@ -73,6 +63,6 @@ export const generateColumnBreakpoints = (breakpoints: BreakPoints) => {
         }
       `;
     });
-    return acc + breakpointColumns.join('\n');
-  }, '');
-}
+    return acc + breakpointColumns.join("\n");
+  }, "");
+};

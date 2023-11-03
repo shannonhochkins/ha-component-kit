@@ -5,7 +5,9 @@ export interface ModalCoverControlsProps extends CoverControlsProps {
 }
 
 export function ModalCoverControls(props: ModalCoverControlsProps) {
-  return <Row fullWidth>
-    <CoverControls {...props} />
-  </Row>;
+  return (
+    <Row fullWidth>
+      <CoverControls {...props} />
+    </Row>
+  );
 }

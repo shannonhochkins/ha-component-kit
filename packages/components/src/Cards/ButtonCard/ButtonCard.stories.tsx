@@ -27,9 +27,7 @@ function Template(args?: Partial<ButtonCardProps<"switch.fake_switch">>) {
   );
 }
 
-function TemplateOnclick(
-  args?: Partial<ButtonCardProps<"climate.air_conditioner">>,
-) {
+function TemplateOnclick(args?: Partial<ButtonCardProps<"climate.air_conditioner">>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
@@ -54,20 +52,16 @@ function ExampleDocs() {
     <div>
       <h2>ButtonCard</h2>
       <p>
-        This component is designed to make it very easy to use and control a
-        device, the code below is all you need to control your device.
+        This component is designed to make it very easy to use and control a device, the code below is all you need to control your device.
       </p>
       <p>
-        This will automatically extract the friendly name, icon, last updated,
-        state, light color and group of the entity to render the ButtonCard
-        below, if there's no icon linked in home assistant it will use a
-        predefined default by domain.
+        This will automatically extract the friendly name, icon, last updated, state, light color and group of the entity to render the
+        ButtonCard below, if there's no icon linked in home assistant it will use a predefined default by domain.
       </p>
       <h3>Custom onClick</h3>
       <p>
-        If you don't want to call a specific service or want to do multiple
-        things with the entity, you can omit the service prop and perform your
-        logic manually
+        If you don't want to call a specific service or want to do multiple things with the entity, you can omit the service prop and
+        perform your logic manually
       </p>
       <TemplateOnclick />
       <h3>Source Code</h3>
@@ -92,10 +86,7 @@ function ExampleDocs() {
       />
       <Template />
       <h3>Source Code</h3>
-      <p>
-        This example shows how you can use the Group component to create a group
-        of cards.
-      </p>
+      <p>This example shows how you can use the Group component to create a group of cards.</p>
       <Source dark code={jsxToString(Template())} />
     </div>
   );
@@ -107,18 +98,8 @@ function Render(args?: Args) {
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" fullWidth>
         <ButtonCard {...args} />
-        <ButtonCard
-          {...args}
-          entity="light.fake_light_1"
-          service="toggle"
-          defaultLayout="slim"
-        />
-        <ButtonCard
-          {...args}
-          entity="cover.cover_position_only"
-          service="toggle"
-          defaultLayout="slim-vertical"
-        />
+        <ButtonCard {...args} entity="light.fake_light_1" service="toggle" defaultLayout="slim" />
+        <ButtonCard {...args} entity="cover.cover_position_only" service="toggle" defaultLayout="slim-vertical" />
         <ButtonCard service="toggle" entity="light.fake_light_1" />
       </Column>
     </HassConnect>

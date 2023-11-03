@@ -1,6 +1,14 @@
 import styled from "@emotion/styled";
 import type { EntityName } from "@hakit/core";
-import { Column, fallback, CardBase, EntitiesCardRow, type EntitiesCardRowProps, type AvailableQueries, type CardBaseProps } from "@components";
+import {
+  Column,
+  fallback,
+  CardBase,
+  EntitiesCardRow,
+  type EntitiesCardRowProps,
+  type AvailableQueries,
+  type CardBaseProps,
+} from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { Children, isValidElement, cloneElement, type ReactElement } from "react";
 const StyledEntitiesCard = styled(CardBase)`
@@ -8,47 +16,48 @@ const StyledEntitiesCard = styled(CardBase)`
     color: currentColor;
   }
   &:not(.disabled) {
-    &:hover, &:active {
+    &:hover,
+    &:active {
       svg {
         color: currentColor;
-      } 
+      }
     }
   }
 `;
 
-
-
-export interface EntitiesCardProps extends Omit<CardBaseProps<'div', EntityName>, "as" | "active" | "children" | "entity" | "title" | "onClick" | 'modalProps' | 'serviceData' | 'service' | 'disableRipples'> {
+type OmitProperties =
+  | "as"
+  | "active"
+  | "disabled"
+  | "children"
+  | "entity"
+  | "title"
+  | "onClick"
+  | "modalProps"
+  | "serviceData"
+  | "service"
+  | "disableRipples"
+  | "ref"
+  | "disableActiveState"
+  | "disableScale";
+export interface EntitiesCardProps extends Omit<CardBaseProps<"div", EntityName>, OmitProperties> {
   /** the children for the ButtonBar, it accepts ButtonBarButton components */
-  children: 
-  | ReactElement<typeof EntitiesCardRow>
-  | ReactElement<typeof EntitiesCardRow>[];
+  children: ReactElement<typeof EntitiesCardRow> | ReactElement<typeof EntitiesCardRow>[];
   /** include the last updated time, will apply to every row unless specified on an individual EntityItem @default false */
   includeLastUpdated?: boolean;
 }
-function _EntitiesCard({
-  includeLastUpdated = false,
-  className,
-  children,
-  ...rest
-}: EntitiesCardProps): JSX.Element {
+function _EntitiesCard({ includeLastUpdated = false, className, children, ...rest }: EntitiesCardProps): JSX.Element {
   const childrenWithKeys = Children.map(children, (child, index) => {
     if (isValidElement<EntitiesCardRowProps<EntityName>>(child)) {
       return cloneElement(child, {
         key: child.key || index,
-        includeLastUpdated: includeLastUpdated
+        includeLastUpdated: includeLastUpdated,
       });
     }
     return child;
   });
   return (
-    <StyledEntitiesCard
-      disableRipples
-      disableScale
-      disableActiveState
-      className={`entities-card ${className ?? ""}`}
-      {...rest}
-    >
+    <StyledEntitiesCard disableRipples disableScale disableActiveState className={`entities-card ${className ?? ""}`} {...rest}>
       <Column fullWidth fullHeight className={`column`}>
         {childrenWithKeys}
       </Column>
@@ -64,7 +73,7 @@ export function EntitiesCard(props: EntitiesCardProps) {
     md: 4,
     lg: 4,
     xlg: 3,
-  }
+  };
   return (
     <ErrorBoundary {...fallback({ prefix: "EntitiesCard" })}>
       <_EntitiesCard {...defaultColumns} {...props} />

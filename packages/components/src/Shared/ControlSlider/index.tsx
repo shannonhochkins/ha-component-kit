@@ -5,8 +5,7 @@ import { useGesture } from "@use-gesture/react";
 import { fallback, mq } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
-export interface ControlSliderProps
-  extends Omit<React.ComponentPropsWithoutRef<"div">, "onChange"> {
+export interface ControlSliderProps extends Omit<React.ComponentPropsWithoutRef<"div">, "onChange"> {
   /** the orientation of the slider @default true */
   vertical?: boolean;
   /** hide the handle on the slider @default false */
@@ -35,17 +34,7 @@ export interface ControlSliderProps
   onChangeApplied?: (value: number) => void;
 }
 
-const Slider = styled.div<
-  Pick<
-    ControlSliderProps,
-    | "disabled"
-    | "sliderColor"
-    | "vertical"
-    | "showHandle"
-    | "thickness"
-    | "borderRadius"
-  >
->`
+const Slider = styled.div<Pick<ControlSliderProps, "disabled" | "sliderColor" | "vertical" | "showHandle" | "thickness" | "borderRadius">>`
   ${(props) => {
     const defaultColor = [70, 70, 70];
     let color = `rgb(${defaultColor.join(", ")})`;
@@ -64,9 +53,7 @@ const Slider = styled.div<
       --ha-slider-control-handle-size: 4px;
       --ha-slider-control-handle-margin: calc(var(--ha-slider-control-thickness) / 8);
       --ha-slider-control-slider-size: ${
-        props.showHandle
-          ? "calc(100% - 2 * var(--ha-slider-control-handle-margin) - var(--ha-slider-control-handle-size))"
-          : "100%"
+        props.showHandle ? "calc(100% - 2 * var(--ha-slider-control-handle-margin) - var(--ha-slider-control-handle-size))" : "100%"
       };
       
       border-radius: var(--ha-slider-control-border-radius);
@@ -302,8 +289,7 @@ function _ControlSlider({
   const triggerOnChange = useCallback(
     (updatedValue: number) => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      if (updatedValue === value || typeof onChangeApplied !== "function")
-        return;
+      if (updatedValue === value || typeof onChangeApplied !== "function") return;
       timerRef.current = setTimeout(() => {
         onChangeApplied(updatedValue);
       }, 100);
@@ -331,13 +317,7 @@ function _ControlSlider({
       inlineValue.current = updatedValue;
       trackBarRef.current.style.setProperty(
         "--value",
-        disabled
-          ? mode === "start"
-            ? `${min}`
-            : mode === "end"
-            ? `${max}`
-            : "0"
-          : `${valueToPercentage(updatedValue)}`,
+        disabled ? (mode === "start" ? `${min}` : mode === "end" ? `${max}` : "0") : `${valueToPercentage(updatedValue)}`,
       );
     },
     [valueToPercentage, disabled, min, max, mode],
@@ -369,10 +349,7 @@ function _ControlSlider({
     {
       onDrag: (state) => {
         if (disabled) return;
-        const percentage = _getPercentageFromEvent(
-          state.values,
-          state.target as HTMLElement,
-        );
+        const percentage = _getPercentageFromEvent(state.values, state.target as HTMLElement);
         setPressed(state.dragging === true);
         setValue(percentageToValue(percentage));
         if (typeof onChange === "function") onChange(inlineValue.current);
@@ -385,10 +362,7 @@ function _ControlSlider({
       onDragEnd: (state) => {
         if (disabled) return;
         setPressed(false);
-        const percentage = _getPercentageFromEvent(
-          state.values,
-          state.target as HTMLElement,
-        );
+        const percentage = _getPercentageFromEvent(state.values, state.target as HTMLElement);
         setValue(steppedValue(percentageToValue(percentage)));
         triggerOnChange(inlineValue.current);
       },
@@ -396,10 +370,7 @@ function _ControlSlider({
         if (disabled) return;
         const x = state.event.clientX;
         const y = state.event.clientY;
-        const percentage = _getPercentageFromEvent(
-          [x, y],
-          state.event.target as HTMLElement,
-        );
+        const percentage = _getPercentageFromEvent([x, y], state.event.target as HTMLElement);
         setValue(steppedValue(percentageToValue(percentage)));
         triggerOnChange(inlineValue.current);
       },
@@ -414,9 +385,7 @@ function _ControlSlider({
   return (
     <Slider
       ref={parentRef}
-      className={`${className ?? ""} slider-host ${
-        disabled ? "disabled" : ""
-      } ${vertical ? "vertical" : "horizontal"}`}
+      className={`${className ?? ""} slider-host ${disabled ? "disabled" : ""} ${vertical ? "vertical" : "horizontal"}`}
       css={css`
         ${cssStyles ?? ""}
       `}
@@ -436,10 +405,7 @@ function _ControlSlider({
             <div className="slider-track-cursor" ref={trackBarRef}></div>
           ) : null
         ) : (
-          <SliderTrackBar
-            className={`slider-track-bar ${mode}`}
-            ref={trackBarRef}
-          />
+          <SliderTrackBar className={`slider-track-bar ${mode}`} ref={trackBarRef} />
         )}
       </SliderHolder>
     </Slider>

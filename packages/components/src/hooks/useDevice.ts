@@ -4,7 +4,7 @@ import { useHass } from "@hakit/core";
 
 export function useDevice(): { [key in BreakPoint]: boolean } {
   const { useStore } = useHass();
-  const breakpoints = useStore(store => store.breakpoints);
+  const breakpoints = useStore((store) => store.breakpoints);
   const _queeries = useMemo(() => getBreakpoints(breakpoints), [breakpoints]);
   const initialMatches: { [key in BreakPoint]: boolean } = {
     xxs: false,
@@ -18,10 +18,7 @@ export function useDevice(): { [key in BreakPoint]: boolean } {
   const [matches, setMatches] = useState(initialMatches);
 
   useEffect(() => {
-    const handleChange = (
-      type: BreakPoint,
-      mediaQueryList: MediaQueryList,
-    ) => {
+    const handleChange = (type: BreakPoint, mediaQueryList: MediaQueryList) => {
       setMatches((prev) => ({ ...prev, [type]: mediaQueryList.matches }));
     };
 
@@ -38,33 +35,20 @@ export function useDevice(): { [key in BreakPoint]: boolean } {
 
     // Initialize
     Object.keys(mediaQueryLists).forEach((type) => {
-      handleChange(
-        type as BreakPoint,
-        mediaQueryLists[type as BreakPoint],
-      );
+      handleChange(type as BreakPoint, mediaQueryLists[type as BreakPoint]);
     });
 
     // Add listeners
     Object.keys(mediaQueryLists).forEach((type) => {
       const mediaQueryList = mediaQueryLists[type as BreakPoint];
-      mediaQueryList.addEventListener("change", (event) =>
-        handleChange(
-          type as BreakPoint,
-          event.currentTarget as MediaQueryList,
-        ),
-      );
+      mediaQueryList.addEventListener("change", (event) => handleChange(type as BreakPoint, event.currentTarget as MediaQueryList));
     });
 
     // Cleanup listeners
     return () => {
       Object.keys(mediaQueryLists).forEach((type) => {
         const mediaQueryList = mediaQueryLists[type as BreakPoint];
-        mediaQueryList.removeEventListener("change", (event) =>
-          handleChange(
-            type as BreakPoint,
-            event.currentTarget as MediaQueryList,
-          ),
-        );
+        mediaQueryList.removeEventListener("change", (event) => handleChange(type as BreakPoint, event.currentTarget as MediaQueryList));
       });
     };
   }, [_queeries]);
