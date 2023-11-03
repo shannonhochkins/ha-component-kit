@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
 import styled from "@emotion/styled";
-import { ControlSlider, Column, Row, FabCard, useDevice, fallback, ButtonGroup, ButtonGroupButton } from "@components";
+import { ControlSlider, Column, Row, FabCard, useBreakpoint, fallback, ButtonGroup, ButtonGroupButton } from "@components";
 import { useEntity, supportsFeatureFromAttributes, isUnavailableState } from "@hakit/core";
 import type { EntityName, CoverEntity, FilterByDomain } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
@@ -88,7 +88,7 @@ function _CoverControls({
 
   const [_mode, setMode] = useState<Mode>(mode ?? supportsPosition ? "position" : "button");
 
-  const device = useDevice();
+  const device = useBreakpoint();
   const titleValue = useMemo(() => {
     return computeTitleDisplay(entity);
   }, [entity]);

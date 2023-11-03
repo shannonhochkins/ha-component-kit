@@ -7,12 +7,6 @@
     width: 100%;
   }
 }
-body {
-  background-color: var(--ha-S100);
-  font-family: var(--ha-font-family);
-  font-size: var(--ha-font-size);
-  color: var(--ha-S100-contrast);
-}
 mark {
   background-color: #dedede;
   color: #414141;

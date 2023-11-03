@@ -7,7 +7,7 @@ import {
   Column,
   ButtonCard,
   Group,
-  useDevice,
+  useBreakpoint,
 } from '@components';
 import { css, Global } from "@emotion/react";
 // @ts-expect-error - Don't have types for jsx-to-string
@@ -57,7 +57,7 @@ function ButtonsDifferentSizes() {
 
 
 function Template() {
-  const device = useDevice();
+  const device = useBreakpoint();
   return <Row fullWidth wrap="nowrap" fullHeight alignItems="stretch">
     <Column fullWidth gap="1rem" wrap="nowrap" alignItems="flex-start" justifyContent="flex-start" style={{
       padding: device.xxs || device.xs ? '1rem' : '2rem',

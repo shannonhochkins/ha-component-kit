@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import { ControlSlider, Column, FabCard, ColorTempPicker, ColorPicker, useDevice, fallback } from "@components";
+import { ControlSlider, Column, FabCard, ColorTempPicker, ColorPicker, useBreakpoint, fallback } from "@components";
 import { AnimatePresence } from "framer-motion";
 import {
   useEntity,
@@ -117,7 +117,7 @@ function _LightControls({ entity: _entity, onStateChange }: LightControlsProps) 
   const [control, setControl] = useState<MainControl>("brightness");
   const entity = useEntity(_entity);
   const brightnessValue = useLightBrightness(entity);
-  const device = useDevice();
+  const device = useBreakpoint();
   const isUnavailable = isUnavailableState(entity.state);
   const titleValue = useMemo(() => {
     if (entity.state === OFF) {

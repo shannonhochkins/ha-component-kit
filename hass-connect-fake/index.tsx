@@ -161,7 +161,6 @@ class MockConnection extends Connection {
           when: unixStartTime + Math.random() * (unixEndTime - unixStartTime),
         }))
       };
-      console.log('newEvents', newEvents);
       callback(newEvents as Result);
     } else {
       callback(mockHistory as Result);

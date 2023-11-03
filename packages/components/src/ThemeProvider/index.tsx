@@ -6,7 +6,7 @@ import { merge } from "lodash";
 import { theme as defaultTheme } from "./theme";
 import type { ThemeParams } from "./theme";
 import { convertToCssVars } from "./helpers";
-import { useDevice, fallback, FabCard, Modal, type BreakPoints } from "@components";
+import { useBreakpoint, fallback, FabCard, Modal, type BreakPoints } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { motion } from "framer-motion";
 import { LIGHT, DARK, ACCENT, DEFAULT_START_LIGHT, DEFAULT_START_DARK, DIFF, DEFAULT_THEME_OPTIONS } from "./constants";
@@ -132,7 +132,7 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
   `;
 };
 
-function _ThemeProvider<T extends object>({
+const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
   theme,
   darkMode = DEFAULT_THEME_OPTIONS.darkMode,
   tint: t = DEFAULT_THEME_OPTIONS.tint,
@@ -148,8 +148,7 @@ function _ThemeProvider<T extends object>({
   const { useStore } = useHass();
   const setBreakpoints = useStore((store) => store.setBreakpoints);
   const _breakpoints = useStore((store) => store.breakpoints);
-  const device = useDevice();
-  console.log("_breakpoints", _breakpoints, device);
+  const device = useBreakpoint();
 
   const getTheme = useCallback(() => {
     return {
@@ -333,16 +332,16 @@ function _ThemeProvider<T extends object>({
       )}
     </>
   );
-}
+});
 /**
  * A simple way of creating global styles and providing re-usable css variables to re-use across your application
  *
  * There's very little css shipped with this ThemeProvider, the main purpose of this provider is to create the css variables used for all components across @hakit/components, however it does ship with some base css to the body, html and scrollbars.
  * */
-export const ThemeProvider = memo(function ThemeProvider<T extends object>(props: ThemeProviderProps<T>) {
+export function ThemeProvider<T extends object>(props: ThemeProviderProps<T>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ThemeProvider" })}>
       <_ThemeProvider {...props} />
     </ErrorBoundary>
   );
-});
+}

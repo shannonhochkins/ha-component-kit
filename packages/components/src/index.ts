@@ -2,7 +2,7 @@ import "./.d.ts";
 /// <reference path=".d.ts" />
 export { mq, getBreakpoints, type AvailableQueries, type GridSpan, type BreakPoint, type BreakPoints } from "./ThemeProvider/breakpoints";
 // media query helpers
-export { useDevice } from "./hooks/useDevice";
+export { useBreakpoint } from "./hooks/useBreakpoint";
 // the base card component
 export { CardBase, type CardBaseProps } from "./Cards/CardBase";
 // tooltip

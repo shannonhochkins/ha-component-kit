@@ -17,7 +17,7 @@ import {
   EntitiesCard,
   TriggerCard,
   GarbageCollectionCard,
-  useDevice,
+  useBreakpoint,
   SensorCard,
   CameraCard,
   ButtonBar,
@@ -32,7 +32,7 @@ import diningRoom from './dining-room.jpg';
 
 
 function Template() {
-  const device = useDevice();
+  const device = useBreakpoint();
   return <Row fullWidth wrap="nowrap" fullHeight alignItems="stretch">
     <SidebarCard startOpen={false} />
     <Column fullWidth gap="1rem" wrap="nowrap" justifyContent="flex-start" style={{

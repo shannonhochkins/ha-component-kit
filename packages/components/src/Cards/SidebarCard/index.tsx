@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { Icon } from "@iconify/react";
 import { useHass, useHash } from "@hakit/core";
-import { TimeCard, WeatherCard, Row, Column, fallback, mq, useDevice } from "@components";
+import { TimeCard, WeatherCard, Row, Column, fallback, mq, useBreakpoint } from "@components";
 import { motion, AnimatePresence, MotionProps } from "framer-motion";
 import type { WeatherCardProps, TimeCardProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -275,7 +275,7 @@ function _SidebarCard({
   const { useStore } = useHass();
   const routes = useStore((state) => state.routes);
   const [hash, setHash] = useHash();
-  const devices = useDevice();
+  const devices = useBreakpoint();
   const concatenatedMenuItems = useMemo<MenuItem[]>(() => {
     const mappedRoutes = routes.map((route) => ({
       ...route,

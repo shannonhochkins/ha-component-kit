@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { getBreakpoints, type BreakPoint } from "@components";
 import { useHass } from "@hakit/core";
 
-export function useDevice(): { [key in BreakPoint]: boolean } {
+export function useBreakpoint(): { [key in BreakPoint]: boolean } {
   const { useStore } = useHass();
   const breakpoints = useStore((store) => store.breakpoints);
   const _queeries = useMemo(() => getBreakpoints(breakpoints), [breakpoints]);

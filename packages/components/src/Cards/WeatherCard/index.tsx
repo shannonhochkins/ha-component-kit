@@ -4,7 +4,7 @@ import { useEntity, useHass, isUnavailableState } from "@hakit/core";
 import type { FilterByDomain, EntityName, HassEntityWithService, ExtractDomain } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { capitalize } from "lodash";
-import { Row, Column, fallback, Tooltip, CardBase, mq, useDevice, type CardBaseProps, type AvailableQueries } from "@components";
+import { Row, Column, fallback, Tooltip, CardBase, mq, useBreakpoint, type CardBaseProps, type AvailableQueries } from "@components";
 import type { RowProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { getAdditionalWeatherInformation } from "./helpers";
@@ -206,7 +206,7 @@ function _WeatherCard({
   ...rest
 }: WeatherCardProps): JSX.Element {
   const { getConfig } = useHass();
-  const device = useDevice();
+  const device = useBreakpoint();
   const [timeZone, setTimeZone] = useState<string>("UTC");
   const weather = useEntity(entity);
   const isUnavailable = isUnavailableState(weather.state);
