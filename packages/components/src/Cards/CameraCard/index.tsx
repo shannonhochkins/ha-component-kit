@@ -214,6 +214,9 @@ function _CameraCard({
             active: _view === "live",
             title: "Live View",
             tooltipPlacement: "top",
+            rippleProps: {
+              preventPropagation: true,
+            },
           }}
         />,
       );
@@ -232,6 +235,9 @@ function _CameraCard({
             active: _view === "motion",
             title: "Motion View",
             tooltipPlacement: "top",
+            rippleProps: {
+              preventPropagation: true,
+            },
           }}
         />,
         <ButtonBarButton
@@ -246,6 +252,9 @@ function _CameraCard({
             active: _view === "poster",
             title: "Poster View",
             tooltipPlacement: "top",
+            rippleProps: {
+              preventPropagation: true,
+            },
           }}
         />,
       ] satisfies ButtonBarProps["children"]),
@@ -288,7 +297,11 @@ function _CameraCard({
                     if (isValidElement<ButtonBarButtonProps<EntityName>>(child)) {
                       return cloneElement(child, {
                         key: child.key || index,
-                        size: DEFAULT_ICON_BUTTON_SIZE,
+                        size: child.props.size ?? DEFAULT_ICON_BUTTON_SIZE,
+                        rippleProps: {
+                          preventPropagation: true,
+                          ...(child?.props?.rippleProps ?? {}),
+                        },
                       });
                     }
                     return child;

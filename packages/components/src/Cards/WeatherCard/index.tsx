@@ -1,13 +1,24 @@
 import styled from "@emotion/styled";
-import { useState, useEffect, useMemo, ReactNode } from "react";
-import { useEntity, useHass, isUnavailableState } from "@hakit/core";
-import type { FilterByDomain, EntityName, HassEntityWithService, ExtractDomain } from "@hakit/core";
+import { useState, useEffect, useMemo, ReactNode, ReactElement, Children, isValidElement, cloneElement } from "react";
+import { useWeather, useHass, isUnavailableState, getSupportedForecastTypes } from "@hakit/core";
+import type { FilterByDomain, ModernForecastType, EntityName } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { capitalize } from "lodash";
-import { Row, Column, fallback, Tooltip, CardBase, mq, useBreakpoint, type CardBaseProps, type AvailableQueries } from "@components";
-import type { RowProps } from "@components";
+import {
+  Row,
+  Column,
+  fallback,
+  WeatherCardDetail,
+  ButtonBar,
+  ButtonBarButton,
+  CardBase,
+  type CardBaseProps,
+  type AvailableQueries,
+} from "@components";
 import { ErrorBoundary } from "react-error-boundary";
+import { useResizeDetector } from "react-resize-detector";
 import { getAdditionalWeatherInformation } from "./helpers";
+import { motion } from "framer-motion";
 
 function weatherIconName(name: string) {
   switch (name) {
@@ -47,13 +58,14 @@ function weatherIconName(name: string) {
   }
 }
 
-const Card = styled(CardBase)`
-  .contents {
-    padding: 1rem;
-    gap: 1rem;
-    flex-direction: column;
-    display: flex;
-  }
+const Card = styled(CardBase)``;
+
+const Contents = styled.div`
+  padding: 1rem;
+  gap: 1rem;
+  flex-direction: column;
+  display: flex;
+  width: 100%;
 `;
 
 const Title = styled.h4`
@@ -95,7 +107,7 @@ function convertDateTime(datetime: string, timezone: string) {
   return new Intl.DateTimeFormat("en-US", options).format(new Date(datetime));
 }
 
-const Forecast = styled.div`
+const Forecast = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -123,53 +135,6 @@ const TemperatureLow = styled.div`
   font-size: 0.75rem;
 `;
 
-const DetailsRow = styled(Row)`
-  width: calc(50% - 1rem);
-  ${mq(
-    ["xxs"],
-    `
-    width: 100%;
-  `,
-  )}
-`;
-
-const State = styled.div`
-  color: var(--ha-S500-contrast);
-  font-size: 0.8rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-interface DetailsProps extends Omit<RowProps, "title"> {
-  icon?: string;
-  entity: EntityName;
-  title?: ReactNode;
-  suffix?: ReactNode;
-  render?: (value: HassEntityWithService<ExtractDomain<EntityName>>) => ReactNode;
-}
-
-function Details({ icon, entity, title, suffix, render, ...rest }: DetailsProps) {
-  const _entity = useEntity(entity);
-  const _title = title ?? _entity.attributes.friendly_name ?? "";
-  return (
-    <DetailsRow className="details" gap="0rem" justifyContent="flex-start" {...rest}>
-      <Tooltip title={_title ?? "unknown title"}>
-        <Row className="row" fullWidth gap="0.5rem" justifyContent="flex-start">
-          <Icon className="icon" icon={icon ?? _entity.attributes.icon ?? "mdi:info"} />
-          <State className="state">
-            {typeof render === "function"
-              ? render(_entity)
-              : `${_title ? `${_title} - ` : ""}${_entity.state ?? ""}${
-                  !suffix && _entity.attributes.unit_of_measurement ? `${_entity.attributes.unit_of_measurement}` : suffix ?? ""
-                }`}
-          </State>
-        </Row>
-      </Tooltip>
-    </DetailsRow>
-  );
-}
-
 type OmitProperties = "as" | "ref" | "entity";
 export interface WeatherCardProps extends Omit<CardBaseProps<"div", FilterByDomain<EntityName, "weather">>, OmitProperties> {
   /** The name of your entity */
@@ -183,12 +148,16 @@ export interface WeatherCardProps extends Omit<CardBaseProps<"div", FilterByDoma
   /** include the current forecast row, @default true */
   includeCurrent?: boolean;
   /** any related entities/sensors you want to include in the details section @default [] */
-  details?: DetailsProps[];
+  details?: ReactElement<typeof WeatherCardDetail>[];
   /** include time value under day name @default true */
   includeTime?: boolean;
   /** property on the weather entity attributes that returns the "feels like" temperature or "apparent temperature" @default "apparent_temperature" */
   apparentTemperatureAttribute?: string;
+  /** the forecast type to display @default "daily" */
+  forecastType?: ModernForecastType;
 }
+
+const FORECAST_ITEM_PROJECTED_WIDTH = 40;
 
 function _WeatherCard({
   entity,
@@ -203,12 +172,20 @@ function _WeatherCard({
   className,
   service,
   serviceData,
+  forecastType = "daily",
   ...rest
 }: WeatherCardProps): JSX.Element {
   const { getConfig } = useHass();
-  const device = useBreakpoint();
+  const { width, ref: widthRef } = useResizeDetector({
+    refreshMode: "debounce",
+    refreshRate: 500,
+  });
+  const itemsToRender = Math.floor((width ?? 0) / FORECAST_ITEM_PROJECTED_WIDTH);
   const [timeZone, setTimeZone] = useState<string>("UTC");
-  const weather = useEntity(entity);
+  const [type, setType] = useState<ModernForecastType>(forecastType);
+  const weather = useWeather(entity, {
+    type,
+  });
   const isUnavailable = isUnavailableState(weather.state);
   const icon = weatherIconName(weather.state);
   const {
@@ -223,7 +200,13 @@ function _WeatherCard({
       }
     }
     getTimeZone();
-  });
+  }, [getConfig]);
+
+  const supportedForecasts = useMemo(() => getSupportedForecastTypes(weather), [weather]);
+
+  useEffect(() => {
+    setType(forecastType);
+  }, [forecastType]);
 
   const weatherDetails = useMemo(() => {
     const { humidity, temperature, wind_speed, wind_speed_unit, temperature_unit } = weather.attributes;
@@ -238,6 +221,7 @@ function _WeatherCard({
 
   const feelsLikeBase = weatherDetails.apparent_temperature ?? weatherDetails.feelsLike;
   const feelsLike = feelsLikeBase === temperature ? null : feelsLikeBase;
+  console.log("details", details);
   return (
     <Card
       title={title}
@@ -249,64 +233,99 @@ function _WeatherCard({
       className={`${className ?? ""} weather-card`}
       {...rest}
     >
-      {includeCurrent && !isUnavailable && (
-        <Row className="row">
-          <StyledIcon icon={icon} className="icon" />
-          <Column className="column">
-            <Title className="title">
-              <LocationIcon className="location-icon icon" icon={_icon || "mdi:location"} />
-              {title || friendly_name}
-            </Title>
-            <SubTitle className="sub-title">
-              {temperature}
-              {temperatureSuffix || unit}, {capitalize(weather.state)}
-              {feelsLike ? `, Feels like: ${feelsLike}${temperatureSuffix || unit}` : ""}
-            </SubTitle>
-          </Column>
-        </Row>
-      )}
-      {(details ?? []).length > 0 && (
-        <Row gap="0.5rem" className="row">
-          {(details ?? []).map((props, index) => (
-            <Details key={index} {...props} />
-          ))}
-        </Row>
-      )}
-      {includeForecast && !isUnavailable && (
-        <Row
-          className="row"
-          style={{
-            justifyContent: "space-between",
-          }}
-        >
-          {(weather.attributes.forecast ?? []).slice(0, device.xxs ? 7 : 10).map((forecast, index) => {
-            const dateFormatted = convertDateTime(forecast.datetime, timeZone);
-            const [day, , hour] = dateFormatted.split(",");
-            return (
-              <Forecast key={index} className="forecast">
-                <Day className="day">{day}</Day>
-                {includeTime && <Time className="time">{hour}</Time>}
-                <ForecastIcon className="icon forecast-icon" icon={weatherIconName(forecast.condition as string)} />
-                <Temperature className="temperature">
-                  {forecast.temperature}
-                  {temperatureSuffix || unit}
-                </Temperature>
-                {forecast.templow && (
-                  <TemperatureLow className="temperature-low">
-                    {forecast.templow}
+      <Contents ref={widthRef}>
+        {includeCurrent && !isUnavailable && (
+          <Row className="row" justifyContent="space-between" fullWidth>
+            <Row wrap="nowrap">
+              <StyledIcon icon={icon} className="icon" />
+              <Column className="column">
+                <Title className="title">
+                  <LocationIcon className="location-icon icon" icon={_icon || "mdi:location"} />
+                  {title || friendly_name}
+                </Title>
+                <SubTitle className="sub-title">
+                  {temperature}
+                  {temperatureSuffix || unit}, {capitalize(weather.state)}
+                  {feelsLike ? `, Feels like: ${feelsLike}${temperatureSuffix || unit}` : ""}
+                </SubTitle>
+              </Column>
+            </Row>
+            {includeForecast && (
+              <ButtonBar>
+                {supportedForecasts.map((forecastType, index) => {
+                  const icon =
+                    forecastType === "daily" ? "mdi:view-day" : forecastType === "twice_daily" ? "mdi:hours-12" : "mdi:hourglass";
+                  return (
+                    <ButtonBarButton
+                      key={index}
+                      onClick={() => {
+                        setType(forecastType);
+                      }}
+                      icon={icon}
+                      noIcon={false}
+                      title={forecastType}
+                      active={type === forecastType}
+                      rippleProps={{
+                        preventPropagation: true,
+                      }}
+                    />
+                  );
+                })}
+              </ButtonBar>
+            )}
+          </Row>
+        )}
+        {details && details.length > 0 && (
+          <Row gap="0.5rem" className="row">
+            {Children.map(details, (child, index) => {
+              if (isValidElement(child)) {
+                return cloneElement(child, {
+                  key: child.key || index,
+                });
+              }
+              return child;
+            })}
+          </Row>
+        )}
+        {includeForecast && !isUnavailable && (
+          <Row
+            className="row"
+            style={{
+              justifyContent: "space-between",
+            }}
+          >
+            {(weather.forecast?.forecast ?? []).slice(0, itemsToRender).map((forecast, index) => {
+              const dateFormatted = convertDateTime(forecast.datetime, timeZone);
+              const [day, , hour] = dateFormatted.split(",");
+              return (
+                <Forecast key={index} className="forecast" layoutId={forecast.datetime}>
+                  <Day className="day">{day}</Day>
+                  {includeTime && <Time className="time">{hour}</Time>}
+                  <ForecastIcon className="icon forecast-icon" icon={weatherIconName(forecast.condition as string)} />
+                  <Temperature className="temperature">
+                    {forecast.temperature}
                     {temperatureSuffix || unit}
-                  </TemperatureLow>
-                )}
-              </Forecast>
-            );
-          })}
-        </Row>
-      )}
-      {isUnavailable && weather.state}
+                  </Temperature>
+                  {forecast.templow && (
+                    <TemperatureLow className="temperature-low">
+                      {forecast.templow}
+                      {temperatureSuffix || unit}
+                    </TemperatureLow>
+                  )}
+                </Forecast>
+              );
+            })}
+          </Row>
+        )}
+        {isUnavailable && weather.state}
+      </Contents>
     </Card>
   );
 }
-/** This will pull information from the weather entity provided to display the forecast provided by home assistant, this card will display exactly what the weather card in lovelace displays. */
+/** This will pull information from the weather entity provided to display the forecast provided by home assistant, this card will display exactly what the weather card in lovelace displays.
+ *
+ * It will render more information depending on the size of the card, the smaller the card, the less "hourly / daily" forecast items will be displayed.
+ */
 export function WeatherCard(props: WeatherCardProps) {
   const defaultColumns: AvailableQueries = {
     xxs: 12,

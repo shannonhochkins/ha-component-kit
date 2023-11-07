@@ -297,7 +297,7 @@ const extractMatches = async (tsFilePaths: string[]): Promise<string> => {
         console.log('Found Match:', interfaceDeclaration.getName());
         const relatedTypes = findRelatedTypes(interfaceDeclaration);
         const code = generateTypeScriptCode(interfaceDeclaration, relatedTypes);
-        output += code;
+        output += code.replace(/export interface/g, 'interface').replace(/interface /g, 'export interface ');
       }
     });
     const types = sourceFile.getTypeAliases();
@@ -308,7 +308,11 @@ const extractMatches = async (tsFilePaths: string[]): Promise<string> => {
         constants.push(exploreTypeAlias(typeAliasDeclaration));
         const relatedTypes = findRelatedTypes(typeAliasDeclaration);
         const code = generateTypeScriptCode(typeAliasDeclaration, relatedTypes);
-        output += code;
+        const replaced = code.replace(/export type/g, 'type').replace(/type /g, 'export type ');
+        const dec = code.match(/export type (\w+)/);
+        if (dec && dec[0] && !output.includes(dec[0])) {
+          output += replaced;
+        }
       }
     });
   });

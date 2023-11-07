@@ -54,7 +54,7 @@ function Template() {
           justifyContent="flex-start"
           alignItems="stretch">
           <ButtonCard id="default" entity="light.fake_light_1" service="toggle" md={6} lg={4} xlg={3} />
-          <ButtonCard id="default" entity="light.fake_light_2" service="toggle" icon="mdi:power"  md={6} lg={4} xlg={3} />
+          <ButtonCard id="default" entity="cover.cover_with_tilt" service="toggle" md={6} lg={4} xlg={3} />
           <ButtonCard id="default" entity="light.fake_light_3" service="toggle"  md={6} lg={4} xlg={3}/>
           <ButtonCard id="default" entity="switch.fake_switch" service="toggle"  md={6} lg={4} xlg={3}/>
           <ButtonCard id="default" entity="vacuum.robot_vacuum" service="toggle"  md={6} lg={4} xlg={3} />
@@ -68,10 +68,10 @@ function Template() {
           justifyContent="flex-start"
           alignItems="stretch">
           <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_1" service="toggle" md={6} lg={4} xlg={4} />
-          <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_2" service="toggle" icon="mdi:power" md={6} lg={4} xlg={4} />
-          <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_3" service="toggle" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" defaultLayout="slim" entity="weather.entity" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" defaultLayout="slim" entity="climate.air_conditioner" md={6} lg={4} xlg={4} />
           <ButtonCard id="slim" defaultLayout="slim" entity="switch.fake_switch" service="toggle" md={6} lg={4} xlg={4} />
-          <ButtonCard id="slim" defaultLayout="slim" entity="vacuum.robot_vacuum" service="toggle" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" defaultLayout="slim" entity="cover.cover_with_tilt" service="toggle" md={6} lg={4} xlg={4} />
         </Group>
       </Row>
       <Group title="ButtonCard"  description={<span>With defaultLayout="slim-vertical" we can change the layout of the ButtonCard</span>} justifyContent="flex-start" alignItems="stretch">

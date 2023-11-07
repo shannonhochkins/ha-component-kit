@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
-import { useEffect, useCallback, useState, useId, useMemo } from "react";
+import { useEffect, useMemo, useState, useId } from "react";
 import { useHass, type EntityName } from "@hakit/core";
 import { Row, FabCard, fallback, mq, PreloadImage, CardBase } from "@components";
 import type { PictureCardProps, CardBaseProps, AvailableQueries } from "@components";
@@ -51,7 +51,7 @@ const StyledAreaCard = styled(CardBase)<Partial<PictureCardProps>>`
   height: var(--stretch,);
 `;
 
-const PictureCardFooter = styled(motion.div)`
+const PictureCardFooter = styled.div`
   all: unset;
   padding: 1rem;
   color: var(--ha-500-contrast);
@@ -94,8 +94,7 @@ const FullScreen = styled(motion.div)`
   )}
 `;
 
-const ChildContainer = styled(motion.div)`
-  opacity: 0;
+const ChildContainer = styled.div`
   margin-top: 5rem;
   display: flex;
   justify-content: flex-start;
@@ -118,49 +117,46 @@ function _AreaCard({
   ...rest
 }: AreaCardProps) {
   const _id = useId();
-  const { addRoute } = useHass();
+  const { addRoute, getRoute } = useHass();
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
-  const [forceRender, setForceRender] = useState(false);
-  const [animateChildren, setAnimateChildren] = useState(false);
-  const actualHash = window.location.hash;
-  const active = useMemo(() => actualHash.replace("#", "") === hash.replace("#", ""), [hash, actualHash]);
-  // starts the trigger to close the full screen card
-  const resetAnimation = useCallback(() => {
-    setForceRender(false);
-  }, []);
+  const [open, setOpen] = useState(false);
+  const route = useMemo(() => getRoute(hash), [hash, getRoute]);
+
   useEffect(() => {
-    if (actualHash && active && !forceRender) {
-      setForceRender(true);
-    } else if (!active && (forceRender || animateChildren)) {
-      setAnimateChildren(false);
-      setForceRender(false);
+    // if the route is active, and active isn't set, set it
+    if (route?.active && !open) {
+      setOpen(true);
+      // if the route isn't active, and we're open, close it
+    } else if (!route?.active && open) {
+      setOpen(false);
     }
-  }, [actualHash, forceRender, active, animateChildren]);
-  // add the current route by hash, even though this is called multiple times
-  // it will only add it the first time
+  }, [route, open]);
+
   useEffect(() => {
+    // add the current route by hash, even though this is called multiple times
+    // it will only add it the first time
     addRoute({
       hash,
       icon: icon || "mdi:info",
       name: title,
-      active: actualHash.replace("#", "") === hash.replace("#", ""),
     });
-  }, [addRoute, actualHash, hash, icon, title]);
+  }, [addRoute, hash, icon, title]);
 
   // when the escape key is pressed and we're active, close the card
   useEffect(() => {
-    if (isPressed && active === true) {
-      window.location.hash = "";
-      resetAnimation();
+    if (isPressed && open) {
+      // setting the hash change here, will also bubble up to the provider
+      // which will update the routes, which will update the state automatically.
+      location.hash = "";
     }
-  }, [isPressed, active, resetAnimation]);
+  }, [isPressed, open]);
 
   return (
     <>
-      <AnimatePresence key={`${_id}-area-card-parent`}>
-        {forceRender === true && (
+      <AnimatePresence key={`${_id}-area-card-parent`} mode="wait" initial={false}>
+        {open === true && (
           <FullScreen
-            key={`layout-${_id}`}
+            key={`fullscreen-layout-${_id}`}
             layoutId={`layout-${_id}`}
             id={`${_id}-expanded`}
             className={"full-screen"}
@@ -180,11 +176,6 @@ function _AreaCard({
                 delay: 0,
               },
             }}
-            onAnimationComplete={() => {
-              if (!animateChildren) {
-                setAnimateChildren(true);
-              }
-            }}
           >
             <Global
               styles={css`
@@ -193,14 +184,7 @@ function _AreaCard({
                 }
               `}
             />
-            <NavBar
-              className={"nav-bar"}
-              animate={{
-                transition: {
-                  duration: animationDuration,
-                },
-              }}
-            >
+            <NavBar className={"nav-bar"}>
               <Row gap="0.5rem" justifyContent="space-between" className={"row"}>
                 <Row gap="0.5rem" className={"row"}>
                   {icon && <Icon className={"icon"} icon={icon} />}
@@ -211,45 +195,23 @@ function _AreaCard({
                   tooltipPlacement="left"
                   icon="mdi:close"
                   onClick={() => {
-                    window.location.hash = "";
-                    resetAnimation();
+                    location.hash = "";
                   }}
                 />
               </Row>
             </NavBar>
-            <AnimatePresence
-              key={`layout-children-${_id}`}
-              onExitComplete={() => {
-                resetAnimation();
-              }}
-            >
-              {animateChildren && (
-                <ChildContainer
-                  className={"child-container"}
-                  initial={{ opacity: 0 }}
-                  exit={{
-                    opacity: 0,
-                  }}
-                  animate={{
-                    transition: {
-                      duration: animationDuration,
-                    },
-                    opacity: 1,
-                  }}
-                >
-                  {children}
-                </ChildContainer>
-              )}
-            </AnimatePresence>
+            <ChildContainer className={"child-container"}>{children}</ChildContainer>
           </FullScreen>
         )}
       </AnimatePresence>
       <StyledAreaCard
+        disableActiveState
+        disableRipples
         id={`${_id}-area-card`}
         layoutId={`layout-${_id}`}
         className={`area-card ${className ?? ""}`}
         onClick={() => {
-          window.location.hash = hash;
+          location.hash = hash;
           if (onClick) {
             onClick();
           }
@@ -266,14 +228,7 @@ function _AreaCard({
           }}
           lazy
         >
-          <PictureCardFooter
-            className={"footer"}
-            animate={{
-              transition: {
-                duration: animationDuration,
-              },
-            }}
-          >
+          <PictureCardFooter className={"footer"}>
             <Row gap={"0.5rem"} className={"row"}>
               {icon && (
                 <Icon

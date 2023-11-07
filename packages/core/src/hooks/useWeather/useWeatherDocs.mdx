@@ -1,0 +1,32 @@
+import { Meta, Source } from '@storybook/blocks';
+
+<Meta title="HOOKS/useWeather" />
+
+# useWeather()
+###### `useWeather(entityId: EntityName, options: UseWeatherOptions)`
+This hook is designed to extend the current entity with the current weather information from the entitiy if available.
+This will add a "forecast" property to the entity which will contain the current weather information including the type of (daily, twice_daily or hourly)
+
+<b>NOTE:</b> This hook is already connected to the weather card!
+
+This will automatically subscribe/unsubscribe for you so there's no need to manage anything.
+
+
+### Example Usage
+
+<Source dark code={`
+import { HassConnect, useWeather } from '@hakit/core';
+function Dashboard() {
+  const weatherEntity = useWeather('weather.weather_entity');
+  // can now access all properties relating to the weather for this entity.
+  return <div>
+    {JSON.stringify(weatherEntity.forecast, null, 2)}
+  </div>
+}
+function App() {
+  return <HassConnect hassUrl="http://localhost:1234">
+    <Dashboard />
+  </HassConnect>
+}
+`} />
+
