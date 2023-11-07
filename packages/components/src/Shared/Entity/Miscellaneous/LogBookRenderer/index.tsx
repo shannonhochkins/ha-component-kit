@@ -24,6 +24,7 @@ const Wrapper = styled.div`
   --divider-color: rgba(225, 225, 225, 0.12);
   display: block;
   height: 100%;
+  width: 100%;
 
   .entry-container {
     width: 100%;

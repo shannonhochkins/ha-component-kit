@@ -29,7 +29,6 @@ exports[`<PictureCard /> renders PictureCard 1`] = `
   -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color,box-shadow,background-image;
-  will-change: width,height;
   background-image: url(FAKE);
   -webkit-background-size: cover;
   background-size: cover;

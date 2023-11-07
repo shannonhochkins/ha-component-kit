@@ -19,14 +19,15 @@ function Render(args?: Args) {
 const exampleSetup = `
 import { Modal } from '@hakit/components';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useId } from 'react';
 function CustomButton() {
+  const _id = useId();
   const [open, setOpen] = useState(false);
   return (
     <>
       <-- The trigger element can be any motion element, in this case we use a FabCard which is a motion.button element -->
-      <FabCard layoutId="custom-modal" onClick={() => setOpen(true)} icon="mdi:cog" />
-      <Modal id="custom-modal" open={open} title="Settings" onClose={() => {
+      <FabCard layoutId={_id} onClick={() => setOpen(true)} icon="mdi:cog" />
+      <Modal id={_id} open={open} title="Settings" onClose={() => {
         setOpen(false);
       }}>
         Add your settings here!
@@ -62,15 +63,17 @@ function RenderCustom() {
 const exampleRenderByDomain = `
   import { ModalByEntityDomain, FabCard } from '@hakit/components';
   import { motion } from 'framer-motion';
+  import { useId } from 'react';
   function CustomButton() {
     const [open, setOpen] = useState(false);
+    const _id = useId();
     return (
       <>
         <-- The trigger element can be any motion element, 
         in this case we use a FabCard which is a motion.button element -->
-        <FabCard layoutId="custom-modal" onClick={() => setOpen(true)} icon="mdi:cog" />
+        <FabCard layoutId={_id} onClick={() => setOpen(true)} icon="mdi:cog" />
         <ModalByEntityDomain
-          id="custom-modal"
+          id={_id}
           entity="light.fake_light_1"
           open={open}
           title="Settings"

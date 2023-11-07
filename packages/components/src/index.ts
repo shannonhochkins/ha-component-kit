@@ -29,6 +29,9 @@ export { SensorCard, type SensorCardProps } from "./Cards/SensorCard";
 export { Group, type GroupProps } from "./Group";
 // WeatherCard
 export { WeatherCard, type WeatherCardProps } from "./Cards/WeatherCard";
+// WeatherCardDetail
+export { WeatherCardDetail, type WeatherCardDetailProps } from "./Cards/WeatherCard/WeatherCardDetail";
+// GarbageCollectionCard
 export { GarbageCollectionCard, type GarbageCollectionCardProps } from "./Cards/GarbageCollectionCard";
 // TimeCard
 export { TimeCard, type TimeCardProps } from "./Cards/TimeCard";
@@ -87,6 +90,7 @@ export { ModalClimateControls, type ModalClimateControlsProps } from "./Shared/M
 export { ModalSwitchControls, type ModalSwitchControlsProps } from "./Shared/Modal/ModalByEntityDomain/Switch";
 export { ModalCameraControls, type ModalCameraControlsProps } from "./Shared/Modal/ModalByEntityDomain/Camera";
 export { ModalCoverControls, type ModalCoverControlsProps } from "./Shared/Modal/ModalByEntityDomain/Cover";
+export { ModalWeatherControls, type ModalWeatherControlsProps } from "./Shared/Modal/ModalByEntityDomain/Weather";
 export { ModalByEntityDomain, type ModalByEntityDomainProps, type ModalPropsHelper } from "./Shared/Modal/ModalByEntityDomain";
 // ControlSlider
 export { ControlSlider, type ControlSliderProps } from "./Shared/ControlSlider";
