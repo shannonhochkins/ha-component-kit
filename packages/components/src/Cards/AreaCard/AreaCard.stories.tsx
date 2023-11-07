@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Title, Description, Primary, ArgTypes, Source } from "@storybook/blocks";
 import { ThemeProvider, AreaCard, Row, ButtonCard } from "@components";
 import type { AreaCardProps } from "@components";
-import { useHash } from "@hakit/core";
+import { useHass } from "@hakit/core";
 // @ts-expect-error - Don't have types for jsx-to-string
 import jsxToString from "jsx-to-string";
 import { HassConnect } from "@hass-connect-fake";
@@ -71,7 +71,8 @@ function TemplateFull() {
 }
 
 function UseHashExample() {
-  const [, setHash] = useHash();
+  const { useStore } = useHass();
+  const setHash = useStore((store) => store.setHash);
   return (
     <Row fullHeight fullWidth>
       <AreaCard image={office} title="Office" icon="mdi:office-chair" hash="office">

@@ -18,9 +18,11 @@ import {
   ModalSwitchControls,
   ModalCameraControls,
   ModalCoverControls,
+  ModalWeatherControls,
   FabCard,
   LogBookRenderer,
   Column,
+  type ModalWeatherControlsProps,
   type ModalClimateControlsProps,
   type ModalLightControlsProps,
   type ModalSwitchControlsProps,
@@ -61,6 +63,7 @@ const Updated = styled.div`
 interface ModalPropsByDomain {
   light: ModalLightControlsProps;
   climate: ModalClimateControlsProps;
+  weather: ModalWeatherControlsProps;
   switch: ModalSwitchControlsProps;
   camera: ModalCameraControlsProps;
   cover: ModalCoverControlsProps;
@@ -155,6 +158,8 @@ export function ModalByEntityDomain<E extends EntityName>({
         );
       case "cover":
         return <ModalCoverControls entity={entity as FilterByDomain<EntityName, "cover">} onStateChange={onStateChange} {...childProps} />;
+      case "weather":
+        return <ModalWeatherControls entity={entity as FilterByDomain<EntityName, "weather">} {...childProps} />;
       default:
         return null;
     }

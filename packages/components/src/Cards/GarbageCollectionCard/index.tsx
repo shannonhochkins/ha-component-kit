@@ -13,9 +13,10 @@ const Contents = styled.div`
   padding: 1rem;
   width: 100%;
   height: 100%;
+  display: flex;
   flex-direction: column;
   align-items: stretch;
-  justify-content: flex-start;
+  justify-content: space-between;
 `;
 
 const Bin = styled.div<{
@@ -323,8 +324,10 @@ function _GarbageCollectionCard({
   return (
     <Card disableActiveState disableRipples disableScale className={`garbage-collection-card ${className ?? ""}`} {...rest}>
       <Contents>
-        <Title className="title">{title}</Title>
-        {typeof description !== "undefined" && <Description className="description">{description}</Description>}
+        <Column alignItems="flex-start" fullWidth>
+          <Title className="title">{title}</Title>
+          {typeof description !== "undefined" && <Description className="description">{description}</Description>}
+        </Column>
         <Row
           className="row"
           fullWidth

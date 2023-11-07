@@ -26,12 +26,12 @@ import {
   ERR_INVALID_AUTH,
   ERR_INVALID_HTTPS_TO_HTTP,
 } from "home-assistant-js-websocket";
-import { isArray, snakeCase, isEqual, isEmpty } from "lodash";
+import { isArray, snakeCase, isEmpty } from "lodash";
 import { ServiceData, SnakeOrCamelDomains, DomainService, Target } from "@typings";
-import { useHash } from "@core";
 import { saveTokens, loadTokens } from "./token-storage";
 import { diff } from "deep-object-diff";
 import { create } from "zustand";
+import { useDebouncedCallback } from "use-debounce";
 
 export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
@@ -64,6 +64,10 @@ export interface Store {
   /** The last time the context object was updated */
   lastUpdated: Date;
   setLastUpdated: (lastUpdated: Date) => void;
+  /** the current hash in the url */
+  hash: string;
+  /** set the current hash */
+  setHash: (hash: string) => void;
   /** returns available routes */
   routes: Route[];
   setRoutes: (routes: Route[]) => void;
@@ -89,6 +93,8 @@ const useStore = create<Store>((set) => ({
   entities: {},
   setHassUrl: (hassUrl) => set({ hassUrl }),
   hassUrl: null,
+  hash: "",
+  setHash: (hash) => set({ hash }),
   setEntities: (newEntities) =>
     set((state) => {
       const entitiesDiffChanged = diff(ignoreForDiffCheck(state.entities), ignoreForDiffCheck(newEntities)) as HassEntities;
@@ -170,7 +176,7 @@ export interface HassContextProps {
   /** function to call a service through web sockets */
   callService: <T extends SnakeOrCamelDomains, M extends DomainService<T>>(args: CallServiceArgs<T, M>) => void;
   /** add a new route to the provider */
-  addRoute(route: Route): void;
+  addRoute(route: Omit<Route, "active">): void;
   /** retrieve a route by name */
   getRoute(hash: string): Route | null;
   /** will retrieve all HassEntities from the context */
@@ -308,14 +314,15 @@ const ignoreForDiffCheck = (
 
 export function HassProvider({ children, hassUrl, allowNonSecure = false }: HassProviderProps) {
   const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
-  const authenticating = useRef(false);
+  const authenticated = useRef(false);
   const fetchedConfig = useRef(false);
-  const updatingRoutes = useRef(false);
-  const [_hash] = useHash();
+  const setHash = useStore((store) => store.setHash);
+  const _hash = useStore((store) => store.hash);
   const routes = useStore((store) => store.routes);
   const setRoutes = useStore((store) => store.setRoutes);
   const connection = useStore((store) => store.connection);
   const setConnection = useStore((store) => store.setConnection);
+  const _connectionRef = useRef<Connection | null>(null);
   const entities = useStore((store) => store.entities);
   const setEntities = useStore((store) => store.setEntities);
   const error = useStore((store) => store.error);
@@ -332,6 +339,7 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
   const reset = useCallback(() => {
     // when the hassUrl changes, reset some properties and re-authenticate
     setAuth(null);
+    _connectionRef.current = null;
     setConnection(null);
     setEntities({});
     setConfig(null);
@@ -339,7 +347,7 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
     setCannotConnect(false);
     setReady(false);
     setRoutes([]);
-    authenticating.current = false;
+    authenticated.current = false;
     if (entityUnsubscribe.current) {
       entityUnsubscribe.current();
       entityUnsubscribe.current = null;
@@ -368,12 +376,12 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
 
       if (value === "") {
         setError("Please enter a Home Assistant URL.");
-        authenticating.current = false;
+        authenticated.current = false;
         return;
       }
       if (value.indexOf("://") === -1) {
         setError("Please enter your full URL, including the protocol part (https://).");
-        authenticating.current = false;
+        authenticated.current = false;
         return;
       }
 
@@ -382,13 +390,13 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
         url = new URL(value);
       } catch (err: unknown) {
         setError("Invalid URL");
-        authenticating.current = false;
+        authenticated.current = false;
         return;
       }
 
       if (url.protocol === "http:" && url.hostname !== "localhost" && allowNonSecure === false) {
         setError(translateErr(ERR_INVALID_HTTPS_TO_HTTP));
-        authenticating.current = false;
+        authenticated.current = false;
         return;
       }
       connectionResponse = await tryConnection("user-request", value);
@@ -402,9 +410,10 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
       setAuth(connectionResponse.auth);
       // store the connection to pass to the provider
       setConnection(connectionResponse.connection);
+      _connectionRef.current = connectionResponse.connection;
       return;
     }
-    authenticating.current = false;
+    authenticated.current = false;
   }, [hassUrl, allowNonSecure, setError, setAuth, setConnection, setCannotConnect]);
 
   useEffect(() => {
@@ -465,24 +474,58 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
     }
   }
 
-  if (config === null && !fetchedConfig.current && connection !== null) {
-    fetchedConfig.current = true;
-    getConfig()
-      .then((config) => {
-        setConfig(config);
-      })
-      .catch((e) => {
-        fetchedConfig.current = false;
-        setError(`Error retrieving configuration from Home Assistant: ${e?.message ?? e}`);
-      });
-  }
+  useEffect(() => {
+    if (config === null && !fetchedConfig.current && connection !== null) {
+      fetchedConfig.current = true;
+      getConfig()
+        .then((config) => {
+          setConfig(config);
+        })
+        .catch((e) => {
+          fetchedConfig.current = false;
+          setError(`Error retrieving configuration from Home Assistant: ${e?.message ?? e}`);
+        });
+    }
+  }, [config, connection, getConfig, setConfig, setError]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (location.hash === "") return;
+    if (location.hash.replace("#", "") === _hash) return;
+    setHash(location.hash);
+  }, [setHash, _hash]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    function onHashChange() {
+      setRoutes(
+        routes.map((route) => {
+          if (route.hash === location.hash.replace("#", "")) {
+            return {
+              ...route,
+              active: true,
+            };
+          }
+          return {
+            ...route,
+            active: false,
+          };
+        }),
+      );
+      setHash(location.hash);
+    }
+    window.addEventListener("hashchange", onHashChange);
+    return () => {
+      window.removeEventListener("hashchange", onHashChange);
+    };
+  }, [routes, setHash, setRoutes]);
 
   const addRoute = useCallback(
     (route: Omit<Route, "active">) => {
       const exists = routes.find((_route) => _route.hash === route.hash) !== undefined;
       if (!exists) {
         // if the current has value is the same as the hash, we're active
-        const hashWithoutPound = _hash.replace("#", "");
+        const hashWithoutPound = window.location.hash.replace("#", "");
         const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
         setRoutes([
           ...routes,
@@ -493,7 +536,7 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
         ]);
       }
     },
-    [_hash, routes, setRoutes],
+    [routes, setRoutes],
   );
 
   const getRoute = useCallback(
@@ -503,28 +546,6 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
     },
     [routes],
   );
-
-  useEffect(() => {
-    if (updatingRoutes.current) return;
-    const newRoutes = routes.map((route) => {
-      // if the current has value is the same as the hash, we're active
-      const hashWithoutPound = _hash.replace("#", "");
-      const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
-      return {
-        ...route,
-        active,
-      };
-    });
-    if (!isEqual(newRoutes, routes)) {
-      updatingRoutes.current = true;
-      setRoutes(newRoutes);
-      // as react can take longer to update vs the hash change, we wait 100ms before
-      // allowing another update the the routes
-      setTimeout(() => {
-        updatingRoutes.current = false;
-      }, 100);
-    }
-  }, [_hash, routes, setRoutes]);
 
   const getAllEntities = useCallback(() => entities, [entities]);
 
@@ -563,15 +584,17 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
     [connection, ready],
   );
 
-  if (connection && entityUnsubscribe.current === null) {
-    entityUnsubscribe.current = subscribeEntities(connection, ($entities) => {
-      setEntities($entities);
-    });
-  }
+  useEffect(() => {
+    if (connection && entityUnsubscribe.current === null) {
+      entityUnsubscribe.current = subscribeEntities(connection, ($entities) => {
+        setEntities($entities);
+      });
+    }
+  }, [connection, setEntities]);
 
   useEffect(() => {
     return () => {
-      authenticating.current = false;
+      authenticated.current = false;
       if (entityUnsubscribe.current) {
         entityUnsubscribe.current();
         entityUnsubscribe.current = null;
@@ -579,11 +602,26 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
     };
   }, []);
 
-  // authenticate with ha
-  if (!authenticating.current) {
-    authenticating.current = true;
-    handleConnect();
-  }
+  const debounceConnect = useDebouncedCallback(async () => {
+    if (_connectionRef.current && !connection) {
+      setConnection(_connectionRef.current);
+      authenticated.current = true;
+      return;
+    }
+    if (!_connectionRef.current && connection) {
+      _connectionRef.current = connection;
+      authenticated.current = true;
+      return;
+    }
+    if (authenticated.current) return;
+    authenticated.current = true;
+    await handleConnect();
+  }, 100);
+
+  useEffect(() => {
+    // authenticate with ha
+    debounceConnect();
+  }, [debounceConnect]);
 
   if (cannotConnect) {
     return (

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { Icon } from "@iconify/react";
-import { useHass, useHash } from "@hakit/core";
+import { useHass } from "@hakit/core";
 import { TimeCard, WeatherCard, Row, Column, fallback, mq, useBreakpoint } from "@components";
 import { motion, AnimatePresence, MotionProps } from "framer-motion";
 import type { WeatherCardProps, TimeCardProps } from "@components";
@@ -274,7 +274,7 @@ function _SidebarCard({
   const [open, setOpen] = useState(startOpen);
   const { useStore } = useHass();
   const routes = useStore((state) => state.routes);
-  const [hash, setHash] = useHash();
+  const hash = useStore((state) => state.hash);
   const devices = useBreakpoint();
   const concatenatedMenuItems = useMemo<MenuItem[]>(() => {
     const mappedRoutes = routes.map((route) => ({
@@ -282,10 +282,10 @@ function _SidebarCard({
       title: route.name,
       onClick() {
         if (!route.active) {
-          setHash("");
+          location.hash = "";
           setTimeout(
             () => {
-              setHash(route.hash);
+              location.hash = route.hash;
             },
             hash === "" ? 0 : 450,
           );
@@ -293,7 +293,7 @@ function _SidebarCard({
       },
     }));
     return autoIncludeRoutes ? [...menuItems, ...mappedRoutes] : menuItems;
-  }, [routes, autoIncludeRoutes, menuItems, setHash, hash]);
+  }, [routes, autoIncludeRoutes, menuItems, hash]);
   return (
     <>
       <Global
