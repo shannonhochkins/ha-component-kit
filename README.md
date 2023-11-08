@@ -29,7 +29,7 @@ Or, if you want to install [@hakit/core](https://www.npmjs.com/package/@hakit/co
 
 There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
 
-### Addon
+### Home Assistant Addon
 There's a [Home Assistant Addon](ADDON.md) available which will serve your dashboard to a new sidebar link in home assistant making it easier to access your custom dashboard.
 
 ### WIP - Next Release
