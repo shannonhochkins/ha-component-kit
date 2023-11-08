@@ -3,13 +3,13 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import fs from 'fs';
-import './options.json' assert { type: "json" };
+import { readFile } from 'fs/promises';
 
 /***************************************************************************************************************************
  * Load Environment Values
 ***************************************************************************************************************************/
 const PORT = process.env.PORT || 2022;
-const OPTIONS = process.env.OPTIONS || "./options.json";
+const OPTIONS = process.env.OPTIONS || "./server/options.json";
 
 const OUTPUT_DIR = process.env.NODE_ENV === 'production' ? '/config' : `${process.cwd()}/config`;
 
@@ -43,9 +43,8 @@ const findHtmlFiles = (dir: string, fileList: string[] = []): string[] => {
 // Function to load configuration with assertions
 async function loadConfig() {
   try {
-    console.log('OPTIONS', OPTIONS);
-    const config = await import(OPTIONS, { assert: { type: 'json' } });
-    console.log('matched config', config);
+    const data = await readFile(OPTIONS, 'utf8');
+    const config = JSON.parse(data);
     if (config && config.default) return config.default;
     return config;
   } catch (error) {
