@@ -79,7 +79,7 @@ async function loadConfig() {
           res.status(404).send('No HTML files found, have you uploaded your custom dashboard to your config directory?');
         } else {
           // Format the valid paths as a bullet list, removing the OUTPUT_DIR from each path
-          const validOptions = htmlFiles.filter(file => file.includes('node_modules')).map(file =>
+          const validOptions = htmlFiles.filter(file => !file.includes('node_modules')).map(file =>
             `- "${file.replace(`${OUTPUT_DIR}/`, '')}"` // Replace OUTPUT_DIR with an empty string
           ).join('\n');
 
