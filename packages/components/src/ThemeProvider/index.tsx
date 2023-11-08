@@ -192,8 +192,6 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
             ${convertToCssVars(merge(defaultTheme, theme))}
             --is-dark-theme: ${_theme.darkMode ? "1" : "0"};
             color-scheme: ${colorScheme};
-            --ha-ripple-size: 50;
-            --ha-ripple-duration: 0.5s;
             --ha-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --ha-transition-duration: 0.25s;
             --ha-area-card-expanded-offset: 0;

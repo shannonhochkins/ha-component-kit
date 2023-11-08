@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bashio
+
+set +u
+export OPTIONS="/data/options.json"
+
+bashio::log.info "Changing directory to /usr/app"
+cd /usr/app || exit 1  # Exit if directory change fails
+
+bashio::log.info "Starting server"
+exec npm start
