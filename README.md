@@ -9,6 +9,11 @@ If you like anything here, be sure to 🌟 [the repo!](https://github.com/shanno
 
 ![DEMO](https://github.com/shannonhochkins/ha-component-kit/blob/master/stories/hakit-demo.gif?raw=true)
 
+[![@hakit/core Downloads](https://img.shields.io/npm/dt/%40hakit%2Fcore.svg?style=flat&colorA=000000&colorB=000000&label=%40hakit%2Fcore%20downloads)](https://www.npmjs.com/package/@hakit/core)
+[![@hakit/components Downloads](https://img.shields.io/npm/dt/%40hakit%2Fcomponents.svg?style=flat&colorA=000000&colorB=000000&label=%40hakit%2Fcomponents%20downloads)](https://www.npmjs.com/package/@hakit/components)
+
+
+
 ## Help me out?
 
 As you can probably tell, 100s of hours have gone into this! I'd really appreciate a small donation as it will help me validate that my time is well spent and will guarantee future additional changes :) [Buy me a coffee!](https://www.buymeacoffee.com/jinglezzz)
