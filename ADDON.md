@@ -20,6 +20,8 @@ NOTE: This does expect that you've uploaded your custom dashboard output code to
 
 You should now see the "HAKIT Dashboard" option in the sidebar menu which should load your custom dashboard!
 
+**NOTE**: You may have to change the `html_file_path` in the configuration tab of the addon.
+
 
 #### Local Development
 Set your directory to the hakit folder, After `npm install`, Simply run `npm run dev` and it will spin up a server and client under port 2022.
