@@ -2,6 +2,9 @@ export const UNAVAILABLE = "unavailable";
 export const UNKNOWN = "unknown";
 export const ON = "on";
 export const OFF = "off";
+/** Temperature units. */
+export const UNIT_C = "°C";
+export const UNIT_F = "°F";
 /** Domains that have a dynamic entity image / picture. */
 export const DOMAINS_WITH_DYNAMIC_PICTURE = new Set(["camera", "image", "media_player"]);
 

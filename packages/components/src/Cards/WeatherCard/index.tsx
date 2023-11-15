@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useState, useEffect, useMemo, ReactNode, ReactElement, Children, isValidElement, cloneElement } from "react";
-import { useWeather, useHass, isUnavailableState, getSupportedForecastTypes } from "@hakit/core";
+import { useWeather, useHass, isUnavailableState, getSupportedForecastTypes, getIconByEntity } from "@hakit/core";
 import type { FilterByDomain, ModernForecastType, EntityName } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { capitalize } from "lodash";
@@ -20,44 +20,6 @@ import { useResizeDetector } from "react-resize-detector";
 import { getAdditionalWeatherInformation } from "./helpers";
 import { motion } from "framer-motion";
 
-function weatherIconName(name: string) {
-  switch (name) {
-    case "clear-night":
-      return "mdi:weather-night";
-    case "cloudy":
-      return "mdi:weather-cloudy";
-      break;
-    case "fog":
-      return "mdi:weather-fog";
-      break;
-    case "hail":
-      return "mdi:weather-hail";
-    case "lightning":
-      return "mdi:weather-lightning";
-    case "lightning-rainy":
-      return "mdi:weather-lightning-rainy";
-    case "partlycloudy":
-      return "mdi:weather-partly-cloudy";
-    case "pouring":
-      return "mdi:weather-pouring";
-    case "rainy":
-      return "mdi:weather-rainy";
-    case "snowy":
-      return "mdi:weather-snowy";
-    case "snowy-rainy":
-      return "mdi:weather-snowy-rainy";
-    case "sunny":
-      return "mdi:weather-sunny";
-    case "windy":
-      return "mdi:weather-windy";
-    case "windy-variant":
-      return "mdi:weather-windy-variant";
-    case "exceptional":
-    default:
-      return "mdi:alert-circle-outline";
-  }
-}
-
 const Card = styled(CardBase)``;
 
 const Contents = styled.div`
@@ -66,6 +28,7 @@ const Contents = styled.div`
   flex-direction: column;
   display: flex;
   width: 100%;
+  height: 100%;
 `;
 
 const Title = styled.h4`
@@ -111,8 +74,9 @@ const Forecast = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 0.5rem;
+  height: 100%;
 `;
 const ForecastIcon = styled(Icon)`
   font-size: 1.5rem;
@@ -187,7 +151,8 @@ function _WeatherCard({
     type,
   });
   const isUnavailable = isUnavailableState(weather.state);
-  const icon = weatherIconName(weather.state);
+  const icon = getIconByEntity("weather", weather) as string;
+
   const {
     attributes: { friendly_name, temperature, temperature_unit },
   } = weather;
@@ -221,7 +186,6 @@ function _WeatherCard({
 
   const feelsLikeBase = weatherDetails.apparent_temperature ?? weatherDetails.feelsLike;
   const feelsLike = feelsLikeBase === temperature ? null : feelsLikeBase;
-  console.log("details", details);
   return (
     <Card
       title={title}
@@ -290,6 +254,7 @@ function _WeatherCard({
         {includeForecast && !isUnavailable && (
           <Row
             className="row"
+            fullHeight
             style={{
               justifyContent: "space-between",
             }}
@@ -301,7 +266,15 @@ function _WeatherCard({
                 <Forecast key={index} className="forecast" layoutId={forecast.datetime}>
                   <Day className="day">{day}</Day>
                   {includeTime && <Time className="time">{hour}</Time>}
-                  <ForecastIcon className="icon forecast-icon" icon={weatherIconName(forecast.condition as string)} />
+                  <ForecastIcon
+                    className="icon forecast-icon"
+                    icon={
+                      getIconByEntity("weather", {
+                        ...weather,
+                        state: forecast.condition as string,
+                      }) as string
+                    }
+                  />
                   <Temperature className="temperature">
                     {forecast.temperature}
                     {temperatureSuffix || unit}

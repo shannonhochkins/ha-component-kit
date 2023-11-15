@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { isEmpty, omit } from "lodash";
 import type { HassEntityWithService, HassEntityCustom, ExtractDomain, EntityName } from "@typings";
 import type { HassEntity } from "home-assistant-js-websocket";
-import { useService, useHistory, useSubscribeEntity } from "@core";
+import { useService, useHistory, useSubscribeEntity, getIconByEntity } from "@core";
 import { useDebouncedCallback } from "use-debounce";
 import { getCssColorValue } from "@utils/colors";
 import { computeDomain } from "@utils/computeDomain";
@@ -49,6 +49,7 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
   const domain = computeDomain(entity) as ExtractDomain<E>;
   const service = useService(domain, entity);
   const history = useHistory(entity, historyOptions);
+
   const formatEntity = useCallback((entity: HassEntity): HassEntityCustom => {
     const now = new Date();
     const then = new Date(entity.attributes.last_triggered ?? entity.last_updated);
@@ -56,6 +57,9 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
     const timeDiff = Math.abs(now.getTime() - then.getTime());
     const active = relativeTime === "just now";
     const { hexColor, rgbColor, brightness, brightnessValue, rgbaColor, color } = getCssColorValue(entity);
+    if (!entity.attributes.icon) {
+      entity.attributes.icon = getIconByEntity(computeDomain(entity.entity_id as EntityName), entity);
+    }
     return {
       ...entity,
       custom: {
@@ -102,7 +106,6 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
       ...$entity,
       history,
       service,
-      api: service,
     } as unknown as UseEntityReturnType<E, O>;
   }, [$entity, history, service]);
 }

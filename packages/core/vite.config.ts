@@ -42,7 +42,6 @@ export default defineConfig(configEnv => {
             'home-assistant-js-websocket': 'home-assistant-js-websocket',
             'javascript-time-ago': 'javascript-time-ago',
             'javascript-time-ago/locale/en.json': 'javascript-time-ago/locale/en.json',
-            "react-router-dom": "react-router-dom",
             'react-thermostat': 'react-thermostat',
             '@emotion/styled': '@emotion/styled',
             '@emotion/react': '@emotion/react',

@@ -40,7 +40,7 @@ const EntityRowInner = styled(motion.div)`
   padding: 1rem;
   transition: background-color var(--ha-transition-duration) var(--ha-easing);
   &:hover {
-    background-color: var(--ha-S400);
+    background-color: var(--ha-S500);
   }
 `;
 

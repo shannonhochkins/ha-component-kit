@@ -5,12 +5,7 @@ import { useEntity, useIconByDomain, useIcon, useIconByEntity, computeDomain, is
 import { ErrorBoundary } from "react-error-boundary";
 import { fallback, SvgGraph, Alert, AvailableQueries, CardBase, type CardBaseProps } from "@components";
 
-const StyledSensorCard = styled(CardBase)`
-  cursor: default;
-  &.has-on-click {
-    cursor: pointer;
-  }
-`;
+const StyledSensorCard = styled(CardBase)``;
 
 const Contents = styled.div`
   display: flex;
@@ -107,7 +102,6 @@ function _SensorCard<E extends EntityName>({
   const icon = useIcon(_icon ?? null);
   const isUnavailable = isUnavailableState(entity.state);
   const disabled = _disabled || isUnavailable;
-  const hasOnClick = typeof rest.onClick === "function";
   return (
     <StyledSensorCard
       as="button"
@@ -118,9 +112,8 @@ function _SensorCard<E extends EntityName>({
       // @ts-expect-error - don't know the entity name, so we can't know the service data
       serviceData={serviceData}
       entity={_entity}
-      className={`sensor-card ${className ?? ""} ${hasOnClick ? "has-on-click" : ""}`}
+      className={`sensor-card ${className ?? ""}`}
       disabled={disabled}
-      whileTap={{ scale: disabled || !hasOnClick ? 1 : 0.9 }}
       {...rest}
     >
       <Contents>
