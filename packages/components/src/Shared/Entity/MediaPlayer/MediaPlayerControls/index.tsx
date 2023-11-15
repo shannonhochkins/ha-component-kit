@@ -13,6 +13,9 @@ import { capitalize, groupBy } from "lodash";
 import { useCallback, useMemo, useState } from "react";
 
 const StyledMediaPlayerCard = styled(CardBase)`
+  transform: none;
+  will-change: width, height;
+  
   svg {
     color: currentColor;
   }
