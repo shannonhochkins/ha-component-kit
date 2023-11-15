@@ -1,0 +1,26 @@
+{
+  "name": "Hakit",
+  "version": "1.0.2",
+  "slug": "hakit",
+  "init": false,
+  "ingress": true,
+  "stage": "stable",
+  "ingress_port": 2022,
+  "description": "An addon to render custom dashboards for home assistant using @hakit/core & @hakit/components",
+  "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
+  "boot": "auto",
+  "map": ["config:ro"],
+  "options": {
+    "html_file_path": "www/ha-dashboard/index.html",
+    "spa_mode": true
+  },
+  "schema": {
+    "html_file_path": "str",
+    "spa_mode": "bool"
+  },
+  "startup": "services",
+  "hassio_api": true,
+  "panel_admin": true,
+  "panel_icon": "mdi:tablet-dashboard",
+  "panel_title": "HAKIT Dashboard"
+}

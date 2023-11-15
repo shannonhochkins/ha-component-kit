@@ -30,3 +30,6 @@ supported-types.d.ts
 .ha-repo-cache
 ha-dashboard
 packages/core/.env
+
+hakit/config
+hakit/server/options.json
