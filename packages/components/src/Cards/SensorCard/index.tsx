@@ -5,9 +5,7 @@ import { useEntity, useIconByDomain, useIcon, useIconByEntity, computeDomain, is
 import { ErrorBoundary } from "react-error-boundary";
 import { fallback, SvgGraph, Alert, AvailableQueries, CardBase, type CardBaseProps } from "@components";
 
-const StyledSensorCard = styled(CardBase)`
-  
-`;
+const StyledSensorCard = styled(CardBase)``;
 
 const Contents = styled.div`
   display: flex;

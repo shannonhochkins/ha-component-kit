@@ -151,7 +151,7 @@ function _WeatherCard({
     type,
   });
   const isUnavailable = isUnavailableState(weather.state);
-  const icon = getIconByEntity('weather', weather) as string
+  const icon = getIconByEntity("weather", weather) as string;
 
   const {
     attributes: { friendly_name, temperature, temperature_unit },
@@ -266,10 +266,15 @@ function _WeatherCard({
                 <Forecast key={index} className="forecast" layoutId={forecast.datetime}>
                   <Day className="day">{day}</Day>
                   {includeTime && <Time className="time">{hour}</Time>}
-                  <ForecastIcon className="icon forecast-icon" icon={getIconByEntity('weather', {
-                    ...weather,
-                    state: forecast.condition as string
-                  }) as string} />
+                  <ForecastIcon
+                    className="icon forecast-icon"
+                    icon={
+                      getIconByEntity("weather", {
+                        ...weather,
+                        state: forecast.condition as string,
+                      }) as string
+                    }
+                  />
                   <Temperature className="temperature">
                     {forecast.temperature}
                     {temperatureSuffix || unit}
