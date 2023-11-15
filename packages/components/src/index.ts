@@ -29,6 +29,8 @@ export { SensorCard, type SensorCardProps } from "./Cards/SensorCard";
 export { Group, type GroupProps } from "./Group";
 // WeatherCard
 export { WeatherCard, type WeatherCardProps } from "./Cards/WeatherCard";
+// WeatherCardHelpers
+export { getAdditionalWeatherInformation } from "./Cards/WeatherCard/helpers";
 // WeatherCardDetail
 export { WeatherCardDetail, type WeatherCardDetailProps } from "./Cards/WeatherCard/WeatherCardDetail";
 // GarbageCollectionCard

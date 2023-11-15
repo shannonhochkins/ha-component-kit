@@ -1,3 +1,15 @@
+# 3.0.3
+## @hakit/components
+- NEW - Icons! Massive changes here, the icons are now much more dynamic, previously it only showed a default domain, or an icon that was picked for the entity inside home assistant, Now, a picked icon in home assistant will take priority,  `state` & `attribute` values will determine what icon to show depending on the state of the entity, and if none of these are available, it will fall back to the domain icon.
+- BUGFIX - the previous release caused hover effects to disappear on most cards - this has been fixed
+
+
+## @hakit/core
+- BREAKING - Removed deprecated `api` property under an entity, these are now available under `service` proxy object.
+- BUGFIX - useLowDevices - blacklist wasn't working correctly, can now provide partial entity names as part of the blacklist to exclude certain devices.
+- BUGFIX - history object can now contain values from entities that do not include numerical state (things like weather history where the state value is a string)
+- NEW - useEntity - if an icon is picked for an entity in home assistant, this value will be provided under `attributes.icon`, if it's not picked it will determine a   smart icon to use based on the domain, attributes and state values.
+
 # 3.0.2
 ## @hakit/components
 - BREAKING - WeatherCard - details prop has been converted to accept a WeatherCardDetail component rather than an array of objects, this allows better typescript intellisense for services if you want to add your own custom details / actions.

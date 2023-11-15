@@ -62,10 +62,10 @@ const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
     }
     &:not(:disabled):hover,
     &:not(.disabled):hover {
-      background-color: var(--ha-S300);
+      background-color: var(--ha-S400);
       color: var(--ha-500-contrast);
       svg {
-        color: var(--ha-S300-contrast);
+        color: var(--ha-S400-contrast);
       }
     }
     &:disabled,

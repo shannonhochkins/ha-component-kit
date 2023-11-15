@@ -8,12 +8,13 @@ import { useService as useServiceActual } from "./useService";
  */
 export const useApi = useServiceActual;
 export { useService, createService } from "./useService";
-export { useIconByDomain, useIcon, useIconByEntity } from "./useIcon";
+export { useIconByDomain, useIcon, useIconByEntity, getIconByEntity } from "./useIcon";
 export { useLightBrightness } from "./useLightBrightness";
 export { useLightTemperature } from "./useLightTemperature";
 export { useLightColor } from "./useLightColor";
 export { useLowDevices, type LowDevicesOptions } from "./useLowDevices";
 export { useHistory, type HistoryOptions } from "./useHistory";
+export { coordinates, type NumericEntityHistoryState, type coordinatesMinimalResponseCompressedState } from "./useHistory/coordinates";
 export { useSubscribeEntity } from "./useSubscribeEntity";
 export { useLogs, type UseLogOptions } from "./useLogs";
 export { useWeather, type UseWeatherOptions } from "./useWeather";

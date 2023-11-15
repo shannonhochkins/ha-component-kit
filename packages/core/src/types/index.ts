@@ -72,8 +72,6 @@ export type HassEntityWithService<T extends AllDomains> = HassEntityCustom &
       coordinates: number[][];
       loading: boolean;
     };
-    /** @deprecated - this will be removed in future versions, use service instead, example .api.toggle() becomes .service.toggle() */
-    api: SnakeToCamel<T> extends keyof SupportedServices<"no-target"> ? SupportedServices<"no-target">[SnakeToCamel<T>] : never;
     service: SnakeToCamel<T> extends keyof SupportedServices<"no-target"> ? SupportedServices<"no-target">[SnakeToCamel<T>] : never;
   };
 
