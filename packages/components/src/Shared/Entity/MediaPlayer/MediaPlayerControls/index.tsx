@@ -8,14 +8,14 @@ import styled from "@emotion/styled";
 import { CardBase } from "../../../../Cards/CardBase";
 import { Row } from "../../../Row";
 import { VolumeControls } from "../../../../Cards/MediaPlayerCard/VolumeControls.tsx";
-import { DEFAULT_FAB_SIZE, StyledFab } from "../../../../Cards/MediaPlayerCard";
+import { StyledFab } from "../../../../Cards/MediaPlayerCard";
 import { capitalize, groupBy } from "lodash";
 import { useCallback, useMemo, useState } from "react";
 
 const StyledMediaPlayerCard = styled(CardBase)`
   transform: none;
   will-change: width, height;
-  
+
   svg {
     color: currentColor;
   }
@@ -161,7 +161,7 @@ export const MediaPlayerControls = ({ mediaPlayerEntities, className, ...modalPr
                         iconColor={`var(--ha-S200-contrast)`}
                         active={isPlaying}
                         disabled={false}
-                        size={DEFAULT_FAB_SIZE}
+                        size={30}
                         icon={getIcon(groupedMediaPlayers.length, entity)}
                         onClick={() => handleMediaPlayerActionClick(entity.entity_id as FilterByDomain<EntityName, "media_player">)}
                       />

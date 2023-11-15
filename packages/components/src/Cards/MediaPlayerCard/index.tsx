@@ -17,6 +17,7 @@ import { Clock } from "./Clock.tsx";
 import { PlaybackControls } from "./PlaybackControls.tsx";
 import { ProgressBar } from "./ProgressBar.tsx";
 import { AlternateControls } from "./AlternateControls.tsx";
+import { DEFAULT_FAB_SIZE, Layout, VolumeLayout } from "./shared.ts";
 
 const MediaPlayerWrapper = styled(CardBase)<
   CardBaseProps<"div", FilterByDomain<EntityName, "media_player">> & {
@@ -110,11 +111,6 @@ const StyledMarquee = styled(Marquee)`
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.87);
 `;
-
-export type VolumeLayout = "slider" | "buttons";
-export type Layout = "card" | "slim";
-
-export const DEFAULT_FAB_SIZE = 30;
 
 type OmitProperties =
   | "title"

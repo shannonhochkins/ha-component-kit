@@ -1,7 +1,8 @@
 import { Row, RowProps } from "@components";
 import { EntityName, FilterByDomain, isUnavailableState, OFF, supportsFeatureFromAttributes, useEntity, useService } from "@hakit/core";
-import { DEFAULT_FAB_SIZE, StyledFab } from "./index.tsx";
+import { StyledFab } from "./index.tsx";
 import styled from "@emotion/styled";
+import { DEFAULT_FAB_SIZE } from "./shared.ts";
 
 const SmallText = styled.span`
   font-size: 0.8rem;

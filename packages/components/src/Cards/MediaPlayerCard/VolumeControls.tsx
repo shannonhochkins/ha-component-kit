@@ -2,7 +2,8 @@ import { EntityName, FilterByDomain, supportsFeatureFromAttributes, useEntity, u
 import { useCallback, useRef, useState } from "react";
 import { mq, RangeSlider } from "@components";
 import styled from "@emotion/styled";
-import { DEFAULT_FAB_SIZE, Layout, StyledFab, VolumeLayout } from "./index.tsx";
+import { StyledFab } from "./index";
+import { DEFAULT_FAB_SIZE, Layout, VolumeLayout } from "./shared.ts";
 
 const VolumeSlider = styled.label<{
   layout: Layout;
@@ -56,7 +57,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
         });
       }, 500);
     },
-    [mp, allEntityIds, _setVolume],
+    [mp, allEntityIds, _setVolume, _entity],
   );
 
   return (
