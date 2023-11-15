@@ -1140,14 +1140,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       T,
       {
         // HVAC operation mode.
-        hvac_mode?:
-          | "off"
-          | "auto"
-          | "cool"
-          | "dry"
-          | "fan_only"
-          | "heat_cool"
-          | "heat";
+        hvac_mode?: "off" | "auto" | "cool" | "dry" | "fan_only" | "heat_cool" | "heat";
       }
     >;
     // Sets preset mode.
@@ -1177,14 +1170,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // Low target temperature.
         target_temp_low?: number;
         // HVAC operation mode.
-        hvac_mode?:
-          | "off"
-          | "auto"
-          | "cool"
-          | "dry"
-          | "fan_only"
-          | "heat_cool"
-          | "heat";
+        hvac_mode?: "off" | "auto" | "cool" | "dry" | "fan_only" | "heat_cool" | "heat";
       }
     >;
     // Sets target humidity.
