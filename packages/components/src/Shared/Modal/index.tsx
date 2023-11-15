@@ -1,4 +1,4 @@
-import { useEffect, Fragment, ReactNode } from "react";
+import { useEffect, memo, Fragment, ReactNode } from "react";
 import { css } from "@emotion/react";
 import { AnimatePresence, motion, MotionProps, HTMLMotionProps } from "framer-motion";
 import { createPortal } from "react-dom";
@@ -40,6 +40,7 @@ const ModalInner = styled.div`
   flex-direction: column;
 `;
 const ModalOverflow = styled.div`
+  overflow-x:hidden;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -105,6 +106,8 @@ export interface ModalProps extends Omit<Extendable, "title"> {
   backdropProps?: HTMLMotionProps<"div">;
   /** react elements to render next to the close button */
   headerActions?: () => ReactNode;
+  /** the animation duration modal animation @default 0.25 */
+  animationDuration?: number;
 }
 function _Modal({
   open,
@@ -118,6 +121,7 @@ function _Modal({
   className,
   cssStyles,
   headerActions,
+  animationDuration = 0.25,
   ...rest
 }: ModalProps) {
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
@@ -127,7 +131,7 @@ function _Modal({
     }
   }, [isPressed, onClose, open]);
   return createPortal(
-    <AnimatePresence>
+    <AnimatePresence initial={false} mode="wait">
       {open && (
         <Fragment key={`${id}-fragment`}>
           <ModalBackdrop
@@ -138,7 +142,7 @@ function _Modal({
               opacity: 0,
             }}
             transition={{
-              duration: 0.2,
+              duration: animationDuration,
             }}
             animate={{
               opacity: 1,
@@ -150,6 +154,7 @@ function _Modal({
             {...backdropProps}
           />
           <ModalContainer
+            {...rest}
             style={{
               borderRadius: "1rem",
               ...style,
@@ -157,12 +162,16 @@ function _Modal({
             css={css`
               ${cssStyles ?? ""}
             `}
-            layout
+            transition={{
+              duration: animationDuration,
+              type: "spring",
+              damping: 7.5,
+              mass: 0.55,
+              stiffness: 100,
+            }}
             layoutId={id}
-            id={id}
             key={`${id}-container`}
             className={`modal-container ${className ?? ""}`}
-            {...rest}
           >
             <ModalHeader className={`modal-header`}>
               <Column
@@ -184,11 +193,21 @@ function _Modal({
                 }}
               >
                 {headerActions && headerActions()}
-                <FabCard className={`modal-close-button`} tooltipPlacement="left" title="Close" layout icon="mdi:close" onClick={onClose} />
+                <FabCard
+                  onClick={() => {
+                    onClose();
+                  }}
+                  className={`modal-close-button`}
+                  tooltipPlacement="left"
+                  title="Close"
+                  icon="mdi:close"
+                  disableRipples
+                  disableScale
+                />
               </Row>
             </ModalHeader>
             <ModalOverflow className={`modal-overflow`}>
-              <ModalInner className={`modal-inner`}>{children}</ModalInner>
+              <ModalInner className={"modal-inner"}>{children}</ModalInner>
             </ModalOverflow>
           </ModalContainer>
         </Fragment>
@@ -198,10 +217,10 @@ function _Modal({
   );
 }
 /** The modal component was built to easily generate a popup dialog from any element by passing through an "open" value, if you pass an id value, and the same id value is used on another motion element from framer-motion the Modal will animate from this element, see the examples below. */
-export function Modal(props: ModalProps) {
+export const Modal = memo(function Modal(props: ModalProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "Modal" })}>
       <_Modal {...props} />
     </ErrorBoundary>
   );
-}
+});

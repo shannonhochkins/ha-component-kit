@@ -42,7 +42,8 @@ export interface AlarmControlPanelEntity extends HassEntityBase {
   attributes: AlarmControlPanelEntityAttributes;
 }
 
-interface AlarmControlPanelEntityAttributes extends HassEntityAttributeBase {
+export interface AlarmControlPanelEntityAttributes
+  extends HassEntityAttributeBase {
   code_format?: "text" | "number";
   changed_by?: string | null;
   code_arm_required?: boolean;
@@ -57,7 +58,7 @@ export interface CameraEntity extends HassEntityBase {
   attributes: CameraEntityAttributes;
 }
 
-interface CameraEntityAttributes extends HassEntityAttributeBase {
+export interface CameraEntityAttributes extends HassEntityAttributeBase {
   model_name: string;
   access_token: string;
   brand: string;
@@ -95,7 +96,7 @@ export interface CoverEntity extends HassEntityBase {
   attributes: CoverEntityAttributes;
 }
 
-interface CoverEntityAttributes extends HassEntityAttributeBase {
+export interface CoverEntityAttributes extends HassEntityAttributeBase {
   current_position?: number;
   current_tilt_position?: number;
 }
@@ -103,7 +104,7 @@ export interface FanEntity extends HassEntityBase {
   attributes: FanEntityAttributes;
 }
 
-interface FanEntityAttributes extends HassEntityAttributeBase {
+export interface FanEntityAttributes extends HassEntityAttributeBase {
   direction?: string;
   oscillating?: boolean;
   percentage?: number;
@@ -115,7 +116,7 @@ export interface GroupEntity extends HassEntityBase {
   attributes: GroupEntityAttributes;
 }
 
-interface GroupEntityAttributes extends HassEntityAttributeBase {
+export interface GroupEntityAttributes extends HassEntityAttributeBase {
   entity_id: string[];
   order: number;
   auto?: boolean;
@@ -137,21 +138,21 @@ export interface ImageEntity extends HassEntityBase {
   attributes: ImageEntityAttributes;
 }
 
-interface ImageEntityAttributes extends HassEntityAttributeBase {
+export interface ImageEntityAttributes extends HassEntityAttributeBase {
   access_token: string;
 }
 export interface InputSelectEntity extends HassEntityBase {
   attributes: InputSelectEntityAttributes;
 }
 
-interface InputSelectEntityAttributes extends HassEntityAttributeBase {
+export interface InputSelectEntityAttributes extends HassEntityAttributeBase {
   options: string[];
 }
 export interface LawnMowerEntity extends HassEntityBase {
   attributes: LawnMowerEntityAttributes;
 }
 
-interface LawnMowerEntityAttributes extends HassEntityAttributeBase {
+export interface LawnMowerEntityAttributes extends HassEntityAttributeBase {
   [key: string]: any;
 }
 export type LightColor =
@@ -188,7 +189,7 @@ export interface LightEntity extends HassEntityBase {
   attributes: LightEntityAttributes;
 }
 
-interface LightEntityAttributes extends HassEntityAttributeBase {
+export interface LightEntityAttributes extends HassEntityAttributeBase {
   min_color_temp_kelvin?: number;
   max_color_temp_kelvin?: number;
   min_mireds?: number;
@@ -210,7 +211,7 @@ export interface LockEntity extends HassEntityBase {
   attributes: LockEntityAttributes;
 }
 
-interface LockEntityAttributes extends HassEntityAttributeBase {
+export interface LockEntityAttributes extends HassEntityAttributeBase {
   code_format?: string;
   changed_by?: string | null;
 }
@@ -228,7 +229,7 @@ export interface MediaPlayerEntity extends HassEntityBase {
     | "buffering";
 }
 
-interface MediaPlayerEntityAttributes extends HassEntityAttributeBase {
+export interface MediaPlayerEntityAttributes extends HassEntityAttributeBase {
   media_content_id?: string;
   media_content_type?: string;
   media_artist?: string;
@@ -275,14 +276,14 @@ export interface SelectEntity extends HassEntityBase {
   attributes: SelectEntityAttributes;
 }
 
-interface SelectEntityAttributes extends HassEntityAttributeBase {
+export interface SelectEntityAttributes extends HassEntityAttributeBase {
   options: string[];
 }
 export interface TextEntity extends HassEntityBase {
   attributes: TextEntityAttributes;
 }
 
-interface TextEntityAttributes extends HassEntityAttributeBase {
+export interface TextEntityAttributes extends HassEntityAttributeBase {
   min?: number;
   max?: number;
   pattern?: string;
@@ -299,7 +300,7 @@ export interface UpdateEntity extends HassEntityBase {
   attributes: UpdateEntityAttributes;
 }
 
-interface UpdateEntityAttributes extends HassEntityAttributeBase {
+export interface UpdateEntityAttributes extends HassEntityAttributeBase {
   auto_update: boolean | null;
   installed_version: string | null;
   in_progress: boolean | number;
@@ -313,7 +314,7 @@ export interface VacuumEntity extends HassEntityBase {
   attributes: VacuumEntityAttributes;
 }
 
-interface VacuumEntityAttributes extends HassEntityAttributeBase {
+export interface VacuumEntityAttributes extends HassEntityAttributeBase {
   battery_level?: number;
   fan_speed?: any;
   [key: string]: any;
@@ -334,7 +335,7 @@ export interface WeatherEntity extends HassEntityBase {
   attributes: WeatherEntityAttributes;
 }
 
-interface WeatherEntityAttributes extends HassEntityAttributeBase {
+export interface WeatherEntityAttributes extends HassEntityAttributeBase {
   attribution?: string;
   humidity?: number;
   forecast?: ForecastAttribute[];
@@ -351,7 +352,7 @@ interface WeatherEntityAttributes extends HassEntityAttributeBase {
   wind_speed_unit: string;
 }
 
-interface ForecastAttribute {
+export interface ForecastAttribute {
   temperature: number;
   datetime: string;
   templow?: number;

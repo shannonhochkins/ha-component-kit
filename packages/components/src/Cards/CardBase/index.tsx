@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { useLongPress, type LongPressReactEvents } from "use-long-press";
 import { lowerCase, startCase } from "lodash";
-import { useMemo, useId, useState, useCallback, type ReactNode, type ElementType, CSSProperties } from "react";
+import { memo, useMemo, useId, useState, useCallback, type ReactNode, type ElementType, CSSProperties } from "react";
 import {
   type EntityName,
   type DomainService,
@@ -50,9 +50,9 @@ const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
     cursor: pointer;
     background-color: var(--ha-S300);
     box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+    transform: scale(1) translate3d(0, 0, 0);
     transition: var(--ha-transition-duration) var(--ha-easing);
     transition-property: background-color, background-image;
-    will-change: width, height;
     color: var(--ha-S200-contrast);
     flex-shrink: 1;
     user-select: none;
@@ -267,16 +267,20 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
     [_title, entity, domain],
   );
 
-  const mergedGrids = Object.entries(DEFAULT_SIZES).reduce<Required<AvailableQueries>>((acc, [key, value]) => {
-    const inputValue = rest[key as BreakPoint];
-    return {
-      ...acc,
-      [key]: inputValue ?? value,
-    };
-  }, DEFAULT_SIZES);
-  const columnClassNames = Object.entries(mergedGrids)
-    .map(([key, value]) => `${key}-${value}`)
-    .join(" ");
+  const columnClassNames = useMemo(() => {
+    const mergedGrids = Object.entries(DEFAULT_SIZES).reduce<Required<AvailableQueries>>((acc, [key, value]) => {
+      const inputValue = rest[key as BreakPoint];
+      return {
+        ...acc,
+        [key]: inputValue ?? value,
+      };
+    }, DEFAULT_SIZES);
+    return Object.entries(mergedGrids)
+      .map(([key, value]) => `${key}-${value}`)
+      .join(" ");
+    // this is okay, we only want this effect to re-run when the breakpoints change not the entire prop object
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rest.xxs, rest.xs, rest.sm, rest.md, rest.lg, rest.xlg]);
 
   return (
     <>
@@ -294,7 +298,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
           borderRadius: _borderRadius,
         }}
         whileTap={whileTap ?? { scale: disableScale || disabled || isUnavailable ? 1 : 0.9 }}
-        {...bind()}
+        {...(typeof _entity === "string" ? bind() : {})}
         onClick={onClickHandler}
         layoutId={layoutId ?? _id}
         disableActiveState={disableActiveState}
@@ -332,10 +336,10 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
  * This is the base care component that every other card component should extend, it comes with everything we need to be able to replicate functionality
  * like the modal popup, ripples and more.
  * */
-export const CardBase = function CardBase<T extends ElementType, E extends EntityName>(props: CardBaseProps<T, E>) {
+export const CardBase = memo(function CardBase<T extends ElementType, E extends EntityName>(props: CardBaseProps<T, E>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "CardBase" })}>
       <_CardBase {...props} />
     </ErrorBoundary>
   );
-};
+});

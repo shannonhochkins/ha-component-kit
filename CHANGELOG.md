@@ -1,3 +1,22 @@
+# 3.0.2
+## @hakit/components
+- BREAKING - WeatherCard - details prop has been converted to accept a WeatherCardDetail component rather than an array of objects, this allows better typescript intellisense for services if you want to add your own custom details / actions.
+- NEW - WeatherCard now subscribes to websocket updates with the weather rather than the attribute updates as this has been marked as deprecated in future versions.
+- BUGFIX - Animations in the last version were a little broken due to the scale of changes, i simply missed this, i believe these should be fixed now
+- NEW - long press on weather card will open the popup with a larger version of the card showing additional information
+- NEW - Popup when long pressing a card now has a springy animation
+
+## @hakit/core
+- BREAKING - useHash - hook as been removed, and now moved to the store, both the hash and setHash value are available from useHass()
+  ```
+    const { useStore } = useHass();
+    const setHash = useStore(store => store.setHash);
+    const hash = useStore(store => store.hash);
+  ```
+- NEW - useWeather - a hook to return the weather entity which is subscribed to weather updates, this will add an additional property called "forecast" to the entity.
+- BUGFIX - Previously, certain scenarios would allow multiple web socket connections instead of re-using the same connection, this has been fixed and should improve performance.
+- BUGFIX - routes weren't being activated properly which prompted the removal of the useHash hook, now the activation of the hash as well as the routes are in sync and working as expected.
+
 # 3.0.0
 ## Storybook
 - BUGFIX - bug was preventing some props from being displayed in the props table, this has been fixed

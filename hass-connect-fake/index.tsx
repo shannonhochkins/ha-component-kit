@@ -21,7 +21,7 @@ import type {
   Store,
 } from "@hakit/core";
 import { isArray } from "lodash";
-import { HassContext, useHash } from '@hakit/core';
+import { HassContext } from '@hakit/core';
 import { entities as ENTITIES } from './mocks/mockEntities';
 import fakeApi from './mocks/fake-call-service';
 import { create } from "zustand";
@@ -30,6 +30,7 @@ import mockHistory from './mock-history';
 import { mockCallApi } from './mocks/fake-call-api';
 import reolinkSnapshot from './assets/reolink-snapshot.jpg';
 import { logs } from './mocks/mockLogs';
+import {dailyForecast, hourlyForecast} from './mocks/mockWeather';
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
@@ -140,11 +141,13 @@ class MockConnection extends Connection {
   }
   
   async subscribeMessage<Result>(callback: (result: Result) => void, params?: {
-    type: string,
-    entity_ids?: string[],
-    start_time?: string,
-    end_time?: string,
+    type: string;
+    entity_ids?: string[];
+    start_time?: string;
+    forecast_type?: string;
+    end_time?: string;
   }): Promise<() => Promise<void>> {
+    
     if (params && params.type === 'logbook/event_stream' && params.start_time && params.end_time) {
       const isoStartTime = new Date(params.start_time);
       const isoEndTime = new Date(params.end_time);
@@ -162,6 +165,13 @@ class MockConnection extends Connection {
         }))
       };
       callback(newEvents as Result);
+    } else if (params && params.type === 'weather/subscribe_forecast') {
+      if (params.forecast_type === 'daily') {
+        callback(dailyForecast as Result);
+      }
+      if (params.forecast_type === 'hourly') {
+        callback(hourlyForecast as Result);
+      }
     } else {
       callback(mockHistory as Result);
     }
@@ -184,6 +194,8 @@ class MockConnection extends Connection {
 const useStore = create<Store>((set) => ({
   routes: [],
   setRoutes: (routes) => set(() => ({ routes })),
+  hash: '',
+  setHash: (hash) => set({ hash }),
   entities: ENTITIES,
   setEntities: (newEntities) => set(state => {
     const entitiesCopy = { ...state.entities };
@@ -241,11 +253,13 @@ const useStore = create<Store>((set) => ({
 function HassProvider({
   children,
 }: HassProviderProps) {
-  const [_hash] = useHash();
+  
   const routes = useStore(store => store.routes);
   const setRoutes = useStore(store => store.setRoutes);
   const entities = useStore(store => store.entities);
   const setEntities = useStore(store => store.setEntities);
+  const setHash = useStore(store => store.setHash);
+  const _hash = useStore(store => store.hash);
   const ready = useStore(store => store.ready);
   const clock = useRef<NodeJS.Timeout | null>(null);
   const getStates = async () => null;
@@ -365,9 +379,8 @@ function HassProvider({
       const exists = routes.find((_route) => _route.hash === route.hash) !== undefined;
       if (!exists) {
         // if the current has value is the same as the hash, we're active
-        const hashWithoutPound = _hash.replace("#", "");
-        const active =
-          hashWithoutPound !== "" && hashWithoutPound === route.hash;
+        const hashWithoutPound = window.location.hash.replace("#", "");
+        const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
         setRoutes([
           ...routes,
           {
@@ -377,8 +390,38 @@ function HassProvider({
         ]);
       }
     },
-    [_hash, routes, setRoutes],
+    [routes, setRoutes],
   );
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (location.hash === '') return;
+    if (location.hash.replace('#', '') === _hash) return;
+    setHash(location.hash)
+  }, [setHash, _hash]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    function onHashChange() {
+      setRoutes(routes.map(route => {
+        if (route.hash === location.hash.replace('#', '')) {
+          return {
+            ...route,
+            active: true,
+          }
+        }
+        return {
+          ...route,
+          active: false,
+        }
+      }));
+      setHash(location.hash);
+    }
+    window.addEventListener("hashchange", onHashChange);
+    return () => {
+      window.removeEventListener("hashchange", onHashChange);
+    };
+  }, [routes, setHash, setRoutes]);
 
   const joinHassUrl = useCallback((path: string) => path, []);
 

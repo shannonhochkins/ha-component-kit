@@ -1,13 +1,10 @@
 import React, { CSSProperties, memo, useCallback, useState, useRef, useEffect } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { motion } from "framer-motion";
-import type { MotionProps } from "framer-motion";
 import { fallback } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
-type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
-export interface RipplesProps extends Extendable {
+export interface RipplesProps extends React.ComponentPropsWithoutRef<"div"> {
   /** the animation duration of the ripple @default 600 */
   duration?: number;
   /** the color of the ripple, @default rgba(0, 0, 0, .3) */
@@ -128,9 +125,8 @@ const _Ripples = memo(
           ...(style ?? {}),
         }}
       >
-        <motion.div
+        <div
           className="ripple-inner"
-          layout
           onPointerDownCapture={(e) => {
             if (preventPropagation) {
               e.stopPropagation();
@@ -150,7 +146,7 @@ const _Ripples = memo(
               ...rippleStyle,
             }}
           />
-        </motion.div>
+        </div>
       </ParentRipple>
     );
   },
