@@ -119,6 +119,7 @@ const LayoutBetween = styled.div`
   justify-content: space-between;
   flex-direction: row;
   gap: 10px;
+  width: 100%;
   &.vertical {
     flex-direction: column;
     height: 100%;
@@ -131,6 +132,7 @@ const Footer = styled.div`
   justify-content: flex-start;
   flex-direction: row;
   margin-top: 20px;
+  width: 100%;
 `;
 
 const Title = styled.div`
@@ -138,6 +140,7 @@ const Title = styled.div`
   font-size: 0.7rem;
   margin: 2px 0;
   text-align: left;
+  width: 100%;
   &.slim-vertical {
     text-align: center;
   }
