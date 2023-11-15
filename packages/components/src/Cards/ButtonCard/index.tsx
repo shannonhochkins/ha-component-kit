@@ -15,7 +15,6 @@ const StyledButtonCard = styled(CardBase)`
       height: 3rem;
     }
   }
-
   .children {
     width: 100%;
   }
@@ -26,14 +25,24 @@ const StyledButtonCard = styled(CardBase)`
       height: 3rem;
     }
   }
+  &:not(.disabled),
+  &:not(:disabled) {
+    &:hover {
+      .fab-card-inner {
+        background-color: var(--ha-S500);
+        color: var(--ha-S500-contrast);
+      }
+    }
+  }
 `;
 
 const Contents = styled.div`
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: stretch;
+  height: 100%;
 `;
 
 interface ToggleProps {
@@ -112,6 +121,7 @@ const LayoutBetween = styled.div`
   gap: 10px;
   &.vertical {
     flex-direction: column;
+    height: 100%;
   }
 `;
 

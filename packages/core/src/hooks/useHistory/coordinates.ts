@@ -55,6 +55,17 @@ export const coordinates = (
   history.forEach((item) => {
     item.state = Number(item.state);
   });
+  if (history.every((item) => Number.isNaN(item.state))) {
+    history = history.map((item, index) => {
+      if (Number.isNaN(item.state)) {
+        return {
+          ...item,
+          state: index,
+        };
+      }
+      return item;
+    });
+  }
   history = history.filter((item) => !Number.isNaN(item.state));
 
   const min = limits?.min !== undefined ? limits.min : Math.min(...history.map((item) => item.state));
@@ -96,8 +107,9 @@ export const coordinates = (
   return calcPoints(history, hours, width, detail, min, max);
 };
 
-interface NumericEntityHistoryState {
+export interface NumericEntityHistoryState {
   state: number;
+  _state: string;
   last_changed: number;
 }
 
@@ -112,6 +124,7 @@ export const coordinatesMinimalResponseCompressedState = (
     return undefined;
   }
   const numericHistory: NumericEntityHistoryState[] = history.map((item) => ({
+    _state: item.s,
     state: Number(item.s),
     // With minimal response and compressed state, we don't have last_changed,
     // so we use last_updated since its always the same as last_changed since

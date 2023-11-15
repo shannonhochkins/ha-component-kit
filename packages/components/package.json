@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "private": false,
   "keywords": [
     "react",
@@ -68,7 +68,7 @@
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
     "@fullcalendar/react": "^6.1.9",
-    "@hakit/core": "^3.0.2",
+    "@hakit/core": "^3.0.3",
     "@use-gesture/react": ">=10.x",
     "autolinker": ">=4.x",
     "framer-motion": ">=10.x",
@@ -79,10 +79,10 @@
     "react-dom": ">=16.x",
     "react-error-boundary": "^4.x",
     "react-resize-detector": "^9.1.0",
-    "react-router-dom": ">=6.x",
     "react-thermostat": "^2.x.x",
     "react-use": ">=17.x",
-    "use-long-press": ">=3.2.0"
+    "use-long-press": ">=3.2.0",
+    "use-debounce": ">=9.x"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.x",
