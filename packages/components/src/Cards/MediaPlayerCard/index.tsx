@@ -4,20 +4,21 @@ import { snakeCase, clamp } from "lodash";
 import { useGesture } from "@use-gesture/react";
 import type { HassEntity } from "home-assistant-js-websocket";
 import type { EntityName, FilterByDomain } from "@hakit/core";
-import { FabCard, fallback, Row, Column, CardBase, ModalMediaPlayerControls } from "@components";
+import { FabCard, fallback, Row, Column, CardBase } from "@components";
 import type { CardBaseProps, AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
 import { Marquee } from "./Marquee";
 import type { MarqueeProps } from "./Marquee";
 import { useThrottledCallback } from "use-debounce";
-import { VolumeControls } from "./VolumeControls.tsx";
-import { Thumbnail } from "./Thumbnail.tsx";
-import { Clock } from "./Clock.tsx";
-import { PlaybackControls } from "./PlaybackControls.tsx";
-import { ProgressBar } from "./ProgressBar.tsx";
-import { AlternateControls } from "./AlternateControls.tsx";
-import { DEFAULT_FAB_SIZE, Layout, VolumeLayout } from "./shared.ts";
+import { VolumeControls } from "./VolumeControls";
+import { Thumbnail } from "./Thumbnail";
+import { Clock } from "./Clock";
+import { PlaybackControls } from "./PlaybackControls";
+import { ProgressBar } from "./ProgressBar";
+import { AlternateControls } from "./AlternateControls";
+import { DEFAULT_FAB_SIZE } from "./constants";
+import { Layout, VolumeLayout } from "./shared.ts";
 
 const MediaPlayerWrapper = styled(CardBase)<
   CardBaseProps<"div", FilterByDomain<EntityName, "media_player">> & {
@@ -89,6 +90,8 @@ const Base = styled(Column)`
 const Empty = styled.span``;
 
 export const StyledFab = styled(FabCard)`
+  background-color: var(--ha-S600);
+
   &:not(.active) {
     color: black;
   }
@@ -173,21 +176,21 @@ function _MediaPlayerCard({
   className,
   ...rest
 }: MediaPlayerCardProps) {
-  const hass = useHass();
   const entity = useEntity(_entity);
   const mp = useService("mediaPlayer");
-  const { joinHassUrl } = useHass();
+  const { joinHassUrl, getAllEntities } = useHass();
   const interval = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
   const clockRef = useRef<HTMLDivElement>(null);
-  const entitiesById = hass.getAllEntities();
+  const entitiesById = getAllEntities();
   const groupedEntities = groupMembers
     .map((entity) => entitiesById[entity] ?? null)
     .filter((entity): entity is HassEntity => entity !== null && !isUnavailableState(entity.state));
   const allEntityIds = useMemo(() => [_entity, ...groupedEntities.map((x) => x.entity_id)], [_entity, groupedEntities]);
   const { state } = entity;
-  const { media_artist, media_title, app_name, media_duration, media_position, media_position_updated_at } = entity.attributes;
+  const { media_artist, media_title, media_playlist, app_name, media_duration, media_position, media_position_updated_at } =
+    entity.attributes;
   const deviceNames = (entity?.attributes?.group_members || []).reduce((friendlyNames, entityId) => {
     const entity = entitiesById[entityId];
     if (!entity) {
@@ -196,7 +199,7 @@ function _MediaPlayerCard({
 
     return [...friendlyNames, entity.attributes?.friendly_name || entity.entity_id];
   }, [] as string[]);
-  const title = `${media_artist ? media_artist + " - " : ""}${media_title}`;
+  const title = `${media_artist ? media_artist + " - " : ""}${media_title ?? media_playlist ?? ""}`;
   const appName = app_name;
   const artworkUrl = useMemo(() => {
     const url = entity.attributes.entity_picture ? entity.attributes.entity_picture : null;
@@ -311,17 +314,20 @@ function _MediaPlayerCard({
   if (groupMembers.length > 0 && !supportsGrouping) {
     throw new Error(`"${_entity}" does not support grouping, but you have provided groupMembers.`);
   }
-
   return (
     <>
       <MediaPlayerWrapper
         disabled={disabled}
+        modalProps={{
+          open: isGroupingModalOpen,
+          groupedEntities,
+          onClose: () => setIsGroupingModalOpen(false),
+        }}
         entity={_entity}
         // @ts-expect-error - don't know the entity name, so we can't know the service type
         service={service}
         // @ts-expect-error - don't know the entity name, so we can't know the service data
         serviceData={serviceData}
-        disableScale
         disableActiveState
         disableRipples
         className={`media-player-card ${className ?? ""}`}
@@ -429,12 +435,6 @@ function _MediaPlayerCard({
         </ProgressBar>
         <Clock entity={snakeCase(_entity)} className="clock" ref={clockRef} />
       </MediaPlayerWrapper>
-      <ModalMediaPlayerControls
-        mediaPlayerEntities={groupedEntities}
-        open={isGroupingModalOpen}
-        id={groupingLayoutId}
-        onClose={() => setIsGroupingModalOpen(false)}
-      />
     </>
   );
 }

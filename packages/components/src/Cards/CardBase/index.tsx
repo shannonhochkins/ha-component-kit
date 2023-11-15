@@ -21,7 +21,7 @@ import {
   fallback,
   type RipplesProps,
   type AvailableQueries,
-  type ModalPropsHelper,
+  type ModalByEntityDomainProps,
   type BreakPoint,
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -135,7 +135,7 @@ export type CardBaseProps<T extends ElementType = "div", E extends EntityName = 
       ? (entity: null, event: React.MouseEvent<HTMLElement>) => void
       : (entity: HassEntityWithService<ExtractDomain<E>>, event: React.MouseEvent<HTMLElement>) => void;
     /** props to pass to the modal */
-    modalProps?: Partial<ModalPropsHelper<ExtractDomain<E>>>;
+    modalProps?: Partial<ModalByEntityDomainProps<E>>;
     /** include ripples or not */
     disableRipples?: boolean;
     /** disable the scale effect on the card when clicked */
@@ -318,14 +318,17 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
       </StyledElement>
       {typeof _entity === "string" && (
         <ModalByEntityDomain
+          {...modalProps}
           entity={_entity as EntityName}
-          title={title ?? "Unknown title"}
+          title={modalProps?.title ?? title ?? "Unknown title"}
           onClose={() => {
             setOpenModal(false);
+            if (modalProps?.onClose) {
+              modalProps.onClose();
+            }
           }}
-          open={openModal}
+          open={modalProps?.open || openModal}
           id={_id}
-          {...modalProps}
         />
       )}
     </>
