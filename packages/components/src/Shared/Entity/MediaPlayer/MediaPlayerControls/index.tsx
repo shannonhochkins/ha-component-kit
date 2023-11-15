@@ -1,33 +1,30 @@
-import { EntityName, FilterByDomain, HassEntityWithService, useService } from "@hakit/core";
-import { HassEntity } from "home-assistant-js-websocket";
-import { Modal, ModalProps } from "../../../Modal";
-import { Column } from "../../../Column";
+import { EntityName, FilterByDomain, useService } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
-import { fallback } from "../../../ErrorBoundary";
 import styled from "@emotion/styled";
-import { CardBase } from "../../../../Cards/CardBase";
-import { Row } from "../../../Row";
-import { VolumeControls } from "../../../../Cards/MediaPlayerCard/VolumeControls.tsx";
-import { DEFAULT_FAB_SIZE, StyledFab } from "../../../../Cards/MediaPlayerCard";
+import type { HassEntity } from "home-assistant-js-websocket";
+import { CardBase, Row, Column, VolumeControls, fallback, ColumnProps } from "@components";
+import { StyledFab } from "../../../../Cards/MediaPlayerCard";
+import { DEFAULT_FAB_SIZE } from '../../../../Cards/MediaPlayerCard/constants';
 import { capitalize, groupBy } from "lodash";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 
 const StyledMediaPlayerCard = styled(CardBase)`
   transform: none;
   will-change: width, height;
-  
   svg {
     color: currentColor;
   }
   &:not(.disabled) {
     &:hover,
     &:active {
+      background-color: var(--ha-S300);
       svg {
         color: currentColor;
       }
     }
   }
   padding: 1rem;
+  cursor: default;
 `;
 const Title = styled.div`
   font-size: 0.8rem;
@@ -52,16 +49,16 @@ const GroupLine = styled.div`
   z-index: 1;
 `;
 
-export interface MediaPlayerControlsProps extends Omit<ModalProps, "children"> {
-  mediaPlayerEntities: HassEntity[];
+export interface MediaPlayerControlsProps extends ColumnProps {
+  groupedEntities: HassEntity[];
   onStateChange?: (state: string) => void;
-  className?: string;
 }
 
-export const MediaPlayerControls = ({ mediaPlayerEntities, className, ...modalProps }: MediaPlayerControlsProps) => {
+export const MediaPlayerControls = ({ groupedEntities, onStateChange, ...rest }: MediaPlayerControlsProps) => {
+  
   const mediaPlayersOrderedByGroup = useMemo(
-    () => groupBy(mediaPlayerEntities, (entity) => entity.attributes?.group_members),
-    [mediaPlayerEntities],
+    () => groupBy(groupedEntities, (entity) => entity.attributes?.group_members),
+    [groupedEntities],
   );
   const mediaPlayerService = useService("media_player");
   const [lastPlayedMedia, setLastPlayedMedia] = useState<{ media_content_id: string; media_content_type: string }>({
@@ -71,8 +68,12 @@ export const MediaPlayerControls = ({ mediaPlayerEntities, className, ...modalPr
 
   const handleMediaPlayerActionClick = useCallback(
     (entityId: FilterByDomain<EntityName, "media_player">) => {
-      const entity = mediaPlayerEntities.find((entity) => entity.entity_id === entityId) as HassEntityWithService<"media_player">;
-      const playingSpeakers = mediaPlayerEntities.filter((entity) => entity.state === "playing");
+      const entity = groupedEntities.find((entity) => entity.entity_id === entityId);
+      if (!entity) {
+        // TODO - handle the case where it's not found?
+        return;
+      }
+      const playingSpeakers = groupedEntities.filter((entity) => entity.state === "playing");
 
       // no speakers are playing -> play media
       if (playingSpeakers.length === 0) {
@@ -99,7 +100,7 @@ export const MediaPlayerControls = ({ mediaPlayerEntities, className, ...modalPr
         return mediaPlayerService.join({ entity_id: playingSpeakers[0].entity_id }, { group_members: [entityId] });
       }
     },
-    [mediaPlayerEntities, mediaPlayerService, lastPlayedMedia],
+    [groupedEntities, mediaPlayerService, lastPlayedMedia],
   );
 
   const getIcon = useCallback(
@@ -139,7 +140,7 @@ export const MediaPlayerControls = ({ mediaPlayerEntities, className, ...modalPr
                 disableRipples
                 disableScale
                 disableActiveState
-                className={`entities-card ${className ?? ""}`}
+                className={`entities-card entities-card-media-controls`}
                 style={{ overflow: "visible" }}
               >
                 <StyledColumn gap={"0.5rem"} justifyContent={"space-between"}>
@@ -157,6 +158,9 @@ export const MediaPlayerControls = ({ mediaPlayerEntities, className, ...modalPr
                     />
                     <div style={{ position: "relative" }}>
                       <StyledFab
+                        rippleProps={{
+                          preventPropagation: true
+                        }}
                         className="speaker-group"
                         iconColor={`var(--ha-S200-contrast)`}
                         active={isPlaying}
@@ -174,16 +178,18 @@ export const MediaPlayerControls = ({ mediaPlayerEntities, className, ...modalPr
           );
         });
       }),
-    [mediaPlayersOrderedByGroup, handleMediaPlayerActionClick, className, getIcon],
+    [mediaPlayersOrderedByGroup, handleMediaPlayerActionClick, getIcon],
   );
 
-  return (
-    <Modal {...modalProps}>
-      <Column fullHeight fullWidth>
-        <Column fullWidth fullHeight className={`column`}>
-          {groupedMediaPlayerComponents}
-        </Column>
-      </Column>
-    </Modal>
-  );
+  useEffect(() => {
+    if (groupedEntities[0] && onStateChange) {
+      onStateChange(groupedEntities[0].state);
+    }
+  }, [groupedEntities, onStateChange]);
+
+  return <Column fullHeight fullWidth {...rest}>
+    <Column fullWidth fullHeight className={`column`} gap="0.5rem">
+      {groupedMediaPlayerComponents}
+    </Column>
+  </Column>
 };

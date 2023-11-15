@@ -75,6 +75,23 @@ export const entities: HassEntities = {
       friendly_name: "Coffee Machine",
     }
   }),
+  ...createMediaPlayer('media_player.groups', {
+    state: "playing",
+    attributes: {
+      volume_level: 0.54,
+      is_volume_muted: false,
+      media_content_type: "music",
+      media_duration: 219,
+      media_position: 1.819,
+      media_position_updated_at: "2023-09-11T05:34:34.858634+00:00",
+      media_title: "My Way",
+      media_artist: "Calvin Harris",
+      app_name: "YouTube Music",
+      entity_picture: "https://lh3.googleusercontent.com/sLxiYvk82ZBXIYW-g_qh4BDjkApX4gdRvGxeinQIC0HBwte4AKOzS3u2mDPaYjPBw6dD_Of-r0x10egf=w544-h544-l90-rj",
+      friendly_name: "Bedroom Speaker",
+      supported_features: 4127295,
+    }
+  }),
   ...createMediaPlayer('media_player.fake_tv'),
   ...createMediaPlayer('media_player.fake_speaker', {
     state: "playing",

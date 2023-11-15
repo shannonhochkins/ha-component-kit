@@ -19,6 +19,7 @@ import {
   ModalCameraControls,
   ModalCoverControls,
   ModalWeatherControls,
+  ModalMediaPlayerControls,
   FabCard,
   LogBookRenderer,
   Column,
@@ -28,6 +29,7 @@ import {
   type ModalSwitchControlsProps,
   type ModalCameraControlsProps,
   type ModalCoverControlsProps,
+  type ModalMediaPlayerControlsProps,
 } from "@components";
 import styled from "@emotion/styled";
 
@@ -67,6 +69,7 @@ interface ModalPropsByDomain {
   switch: ModalSwitchControlsProps;
   camera: ModalCameraControlsProps;
   cover: ModalCoverControlsProps;
+  media_player: ModalMediaPlayerControlsProps;
 }
 
 export type ModalPropsHelper<D extends AllDomains> = D extends keyof ModalPropsByDomain
@@ -79,7 +82,7 @@ export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<Ex
   hideState?: boolean;
   hideUpdated?: boolean;
   hideAttributes?: boolean;
-};
+} & Omit<ModalProps, "children">;
 
 export function ModalByEntityDomain<E extends EntityName>({
   entity,
@@ -87,7 +90,7 @@ export function ModalByEntityDomain<E extends EntityName>({
   hideUpdated,
   hideAttributes,
   ...rest
-}: ModalByEntityDomainProps<E> & Omit<ModalProps, "children">) {
+}: ModalByEntityDomainProps<E>) {
   const { joinHassUrl, useStore } = useHass();
   const connection = useStore((state) => state.connection);
   const [device, setDevice] = useState<EntityRegistryEntry | null>(null);
@@ -160,6 +163,10 @@ export function ModalByEntityDomain<E extends EntityName>({
         return <ModalCoverControls entity={entity as FilterByDomain<EntityName, "cover">} onStateChange={onStateChange} {...childProps} />;
       case "weather":
         return <ModalWeatherControls entity={entity as FilterByDomain<EntityName, "weather">} {...childProps} />;
+      case 'media_player': {
+        // @ts-expect-error - TODO - fix later, types for child props aren't correctly being inferred
+        return <ModalMediaPlayerControls entity={entity as FilterByDomain<EntityName, "media_player">} onStateChange={onStateChange} {...childProps} />;
+      }
       default:
         return null;
     }

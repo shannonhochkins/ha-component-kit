@@ -1,6 +1,7 @@
 import { Row, RowProps } from "@components";
 import { EntityName, FilterByDomain, isUnavailableState, OFF, supportsFeatureFromAttributes, useEntity, useService } from "@hakit/core";
-import { DEFAULT_FAB_SIZE, StyledFab } from "./index.tsx";
+import { StyledFab } from "./";
+import { DEFAULT_FAB_SIZE } from './constants';
 import styled from "@emotion/styled";
 
 const SmallText = styled.span`
@@ -35,6 +36,9 @@ export function AlternateControls({ entity: _entity, disabled, allEntityIds, onS
           iconColor={`var(--ha-S200-contrast)`}
           active={groups.length > 0}
           disabled={disabled}
+          rippleProps={{
+            preventPropagation: true,
+          }}
           size={DEFAULT_FAB_SIZE}
           icon={groups.length === 0 ? "mdi:speaker-off" : "mdi:speaker-multiple"}
           onClick={() => {
@@ -50,6 +54,9 @@ export function AlternateControls({ entity: _entity, disabled, allEntityIds, onS
         disabled={disabled || !supportsTurnOn || !supportsTurnOff}
         size={DEFAULT_FAB_SIZE}
         icon="mdi:power"
+        rippleProps={{
+          preventPropagation: true
+        }}
         onClick={() => {
           if (isOff) {
             mp.turnOn(allEntityIds);

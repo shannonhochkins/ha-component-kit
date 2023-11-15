@@ -2,8 +2,8 @@ import { EntityName, FilterByDomain, supportsFeatureFromAttributes, useEntity, u
 import { useCallback, useRef, useState } from "react";
 import { mq, RangeSlider } from "@components";
 import styled from "@emotion/styled";
-import { DEFAULT_FAB_SIZE, Layout, StyledFab, VolumeLayout } from "./index.tsx";
-
+import { Layout, StyledFab, VolumeLayout } from "./";
+import { DEFAULT_FAB_SIZE } from './constants';
 const VolumeSlider = styled.label<{
   layout: Layout;
 }>`
@@ -27,7 +27,7 @@ const VolumeSlider = styled.label<{
   )}
 `;
 
-interface VolumeProps {
+export interface VolumeControlsProps {
   entity: FilterByDomain<EntityName, "media_player">;
   volumeLayout: VolumeLayout;
   hideMute: boolean;
@@ -36,7 +36,7 @@ interface VolumeProps {
   layout: Layout;
 }
 
-export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabled, allEntityIds, layout }: VolumeProps) {
+export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabled, allEntityIds, layout }: VolumeControlsProps) {
   const entity = useEntity(_entity);
   const { volume_level, is_volume_muted } = entity.attributes;
   const [volume, _setVolume] = useState(volume_level);
@@ -56,7 +56,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
         });
       }, 500);
     },
-    [mp, allEntityIds, _setVolume],
+    [mp, allEntityIds, _setVolume, _entity],
   );
 
   return (
@@ -67,6 +67,9 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
           className={`volume-mute ${is_volume_muted ? "muted" : "not-muted"}`}
           disabled={disabled}
           size={DEFAULT_FAB_SIZE}
+          rippleProps={{
+            preventPropagation: true
+          }}
           icon={is_volume_muted ? "mdi:volume-off" : "mdi:volume-high"}
           onClick={() => {
             mp.volumeMute(allEntityIds ?? _entity, {
@@ -78,6 +81,9 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
       {volumeLayout === "buttons" && supportsVolumeSet && (
         <>
           <StyledFab
+            rippleProps={{
+              preventPropagation: true
+            }}
             iconColor={`var(--ha-S200-contrast)`}
             className="volume-down"
             disabled={disabled}
@@ -86,6 +92,9 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
             onClick={() => mp.volumeDown(allEntityIds ?? _entity)}
           />
           <StyledFab
+            rippleProps={{
+              preventPropagation: true
+            }}
             iconColor={`var(--ha-S200-contrast)`}
             className="volume-up"
             disabled={disabled}

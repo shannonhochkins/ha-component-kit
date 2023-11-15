@@ -1,7 +1,7 @@
 import { EntityName, FilterByDomain, OFF, supportsFeatureFromAttributes, useEntity, useService } from "@hakit/core";
-import { StyledFab } from "./index.tsx";
+import { StyledFab } from "./";
 
-interface PlaybackControlsProps {
+export interface PlaybackControlsProps {
   entity: FilterByDomain<EntityName, "media_player">;
   disabled: boolean;
   allEntityIds: string[];
@@ -24,6 +24,9 @@ export function PlaybackControls({ entity: _entity, size = 20, feature, disabled
         size={size}
         iconColor={`var(--ha-S200-contrast)`}
         icon="mdi:skip-previous"
+        rippleProps={{
+          preventPropagation: true
+        }}
         onClick={() => mp.mediaPreviousTrack(allEntityIds)}
       />
       <StyledFab
@@ -31,6 +34,9 @@ export function PlaybackControls({ entity: _entity, size = 20, feature, disabled
         iconColor={`var(--ha-S200-contrast)`}
         disabled={disabled || isOff || !supportsPlay}
         size={size * (feature ? 2 : 1)}
+        rippleProps={{
+          preventPropagation: true
+        }}
         icon={playing ? "mdi:pause" : "mdi:play"}
         onClick={() => {
           if (playing) {
@@ -41,6 +47,9 @@ export function PlaybackControls({ entity: _entity, size = 20, feature, disabled
         }}
       />
       <StyledFab
+        rippleProps={{
+          preventPropagation: true
+        }}
         className="skip-next"
         iconColor={`var(--ha-S200-contrast)`}
         disabled={disabled || isOff || !supportsNextTrack}

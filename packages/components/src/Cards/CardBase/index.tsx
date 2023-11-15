@@ -21,7 +21,7 @@ import {
   fallback,
   type RipplesProps,
   type AvailableQueries,
-  type ModalPropsHelper,
+  type ModalByEntityDomainProps,
   type BreakPoint,
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -135,7 +135,7 @@ export type CardBaseProps<T extends ElementType = "div", E extends EntityName = 
       ? (entity: null, event: React.MouseEvent<HTMLElement>) => void
       : (entity: HassEntityWithService<ExtractDomain<E>>, event: React.MouseEvent<HTMLElement>) => void;
     /** props to pass to the modal */
-    modalProps?: Partial<ModalPropsHelper<ExtractDomain<E>>>;
+    modalProps?: Partial<ModalByEntityDomainProps<E>>;
     /** include ripples or not */
     disableRipples?: boolean;
     /** disable the scale effect on the card when clicked */
@@ -220,6 +220,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
   const StyledElement = useMemo(() => getMotionElement(as, onlyFunctionality), [as, onlyFunctionality]);
   const bind = useLongPress(
     (e) => {
+      console.log('openModal', openModal, _entity)
       if (typeof longPressCallback === "function") {
         if (entity !== null) {
           // we don't know the types at this level, but they will be correct at the parent level
@@ -282,6 +283,8 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rest.xxs, rest.xs, rest.sm, rest.md, rest.lg, rest.xlg]);
 
+  console.log('openModal', openModal);
+
   return (
     <>
       <StyledElement
@@ -318,14 +321,17 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
       </StyledElement>
       {typeof _entity === "string" && (
         <ModalByEntityDomain
+          {...modalProps}
           entity={_entity as EntityName}
-          title={title ?? "Unknown title"}
+          title={modalProps?.title ?? title ?? "Unknown title"}
           onClose={() => {
             setOpenModal(false);
+            if (modalProps?.onClose) {
+              modalProps.onClose();
+            }
           }}
-          open={openModal}
+          open={modalProps?.open || openModal}
           id={_id}
-          {...modalProps}
         />
       )}
     </>
