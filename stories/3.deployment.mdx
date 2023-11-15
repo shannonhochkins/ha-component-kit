@@ -28,7 +28,7 @@ Homeassistant is bundled with a webserver, which we can utilize to host our new 
 
 ```bash
 VITE_HA_URL=http://homeassistant.local:8123 # your home assistant hostname or IP address
-VITE_FOLDER_NAME=dashboard # the folder name you want to copy the files to, this should also match the base name in the vite.config.ts `base: '/local/dashboard/'`
+VITE_FOLDER_NAME=ha-dashboard # the folder name you want to copy the files to, this should also match the base name in the vite.config.ts `base: '/local/ha-dashboard/'`
 VITE_SSH_USERNAME=root # the default username is root, if you changed this, change this value
 VITE_SSH_PASSWORD=yourpassword # the password you set in the addon
 VITE_SSH_HOSTNAME=yourhostname # your home assistant hostname or IP address, if you get EHOSTUNREACH when connecting, try your IP address `ping homeassistant.local` to get your IP address
@@ -37,6 +37,10 @@ VITE_SSH_HOSTNAME=yourhostname # your home assistant hostname or IP address, if 
 The `VITE_HA_TOKEN` instructions can be found [here](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-typescriptsync--docs) under the pre-requisites section.
 
 That's it! You should be able to run `npm run build && npm run deploy` and your dashboard should be available at a link printed in the terminal!
+
+## Home Assistant Addon
+
+If you want to use the HAKIT addon for home assistant so you can access your custom dashboard from your home assistant sidebar, you can install and follow the [setup steps here](https://github.com/shannonhochkins/ha-component-kit/blob/master/ADDON.md)
 
 ## Manual Deployment Script
 Once you've built your new dashboard and you're happy with it locally, we can setup a script to copy the files over to home assistant automatically!
@@ -131,7 +135,7 @@ deploy();
 4. In your project, create a file called `.env` and add the following code, this setup assumes you're using VITE, adjust accordingly if you're not:
 
 ```bash
-VITE_FOLDER_NAME=dashboard
+VITE_FOLDER_NAME=ha-dashboard
 VITE_HA_URL=http://homeassistant.local:8123 # your home assistant hostname or IP address
 VITE_SSH_USERNAME=root
 VITE_SSH_PASSWORD=yourpassword # the password you set in the addon

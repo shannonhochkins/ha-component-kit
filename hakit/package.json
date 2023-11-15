@@ -1,0 +1,35 @@
+{
+  "name": "hakit",
+  "type": "module",
+  "description": "An addon for home assistant to render custom dashboards built with @hakit/core or @hakit/components",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node --esm -r tsconfig-paths/register server/index.ts",
+    "build": "tsc",
+    "start": "node server/dist/index.js"
+  },
+  "author": "Shannon Hochkins <mail@shannonhochkins.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shannonhochkins/ha-component-kit.git"
+  },
+  "engines": {
+    "npm": ">=9.0.0",
+    "node": ">=18.0.0"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shannonhochkins/ha-component-kit/issues"
+  },
+  "homepage": "https://github.com/shannonhochkins/ha-component-kit#readme",
+  "dependencies": {
+    "@types/cors": "^2.8.16",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.9.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.2.2"
+  }
+}
