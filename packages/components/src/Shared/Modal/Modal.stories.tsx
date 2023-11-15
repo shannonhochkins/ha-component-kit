@@ -18,7 +18,6 @@ function Render(args?: Args) {
 
 const exampleSetup = `
 import { Modal } from '@hakit/components';
-import { motion } from 'framer-motion';
 import { useState, useId } from 'react';
 function CustomButton() {
   const _id = useId();

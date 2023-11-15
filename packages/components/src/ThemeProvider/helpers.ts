@@ -1,7 +1,6 @@
 import { isObject, isNumber, kebabCase } from "lodash";
 import { NAMESPACE } from "./constants";
 
-
 export function convertToCssVars(obj: object, prefix = "") {
   return Object.entries(obj)
     .reduce((acc, [key, value]): string => {
@@ -13,4 +12,3 @@ export function convertToCssVars(obj: object, prefix = "") {
     }, "")
     .replace(/^\s*[\r\n]/gm, "");
 }
-

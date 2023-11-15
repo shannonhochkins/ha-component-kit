@@ -42,6 +42,7 @@ const StyledSidebarCard = styled(motion.div)`
   flex-direction: column;
   align-items: center;
   overflow: hidden;
+  height: 100%;
   justify-content: flex-start;
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: left;

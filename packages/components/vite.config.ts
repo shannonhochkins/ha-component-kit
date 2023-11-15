@@ -44,7 +44,6 @@ export default defineConfig(configEnv => {
             'lodash': 'lodash',
             'react-is': 'react-is',
             '@iconify/react': '@iconify/react',
-            'react-router-dom': "react-router-dom",
             'framer-motion': 'framer-motion',
             'react-use': 'react-use',
             '@emotion/styled': '@emotion/styled',
