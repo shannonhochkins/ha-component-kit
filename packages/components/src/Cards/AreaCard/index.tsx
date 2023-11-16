@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { useEffect, useMemo, useState, useId } from "react";
+import { createPortal } from "react-dom";
 import { useHass, type EntityName } from "@hakit/core";
 import { Row, FabCard, fallback, mq, PreloadImage, CardBase } from "@components";
 import type { PictureCardProps, CardBaseProps, AvailableQueries } from "@components";
@@ -39,6 +40,8 @@ export interface AreaCardProps extends Extendable {
   animationDuration?: number;
   /** called when the card is pressed */
   onClick?: () => void;
+  /** disable the click events on the card, useful if you want to disable the area card for certain situations like drag or panning */
+  disable?: boolean;
 }
 
 const StyledAreaCard = styled(CardBase)<Partial<PictureCardProps>>`
@@ -114,9 +117,12 @@ function _AreaCard({
   className,
   preloadProps,
   onClick,
+  disable,
+  id,
   ...rest
 }: AreaCardProps) {
   const _id = useId();
+  const idRef = id ?? _id;
   const { addRoute, getRoute } = useHass();
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   const [open, setOpen] = useState(false);
@@ -153,12 +159,12 @@ function _AreaCard({
 
   return (
     <>
-      <AnimatePresence key={`${_id}-area-card-parent`} mode="wait" initial={false}>
+      {open && createPortal(<AnimatePresence key={`${idRef}-area-card-parent`} mode="wait" initial={false}>
         {open === true && (
           <FullScreen
-            key={`fullscreen-layout-${_id}`}
-            layoutId={`layout-${_id}`}
-            id={`${_id}-expanded`}
+            key={`fullscreen-layout-${idRef}`}
+            layoutId={idRef}
+            id={`${idRef}-expanded`}
             className={"full-screen"}
             initial={{ opacity: 0 }}
             transition={{
@@ -203,17 +209,20 @@ function _AreaCard({
             <ChildContainer className={"child-container"}>{children}</ChildContainer>
           </FullScreen>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body, idRef)}
       <StyledAreaCard
         disableActiveState
         disableRipples
-        id={`${_id}-area-card`}
-        layoutId={`layout-${_id}`}
+        id={`${idRef}-area-card`}
+        layoutId={idRef}
         className={`area-card ${className ?? ""}`}
         onClick={() => {
-          location.hash = hash;
-          if (onClick) {
-            onClick();
+          if (!disable) {
+            location.hash = hash;
+            if (onClick) {
+              onClick();
+            }
           }
         }}
         {...rest}

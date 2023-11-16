@@ -4,7 +4,7 @@ import type { EntityName, ExtractDomain, HassEntityWithService } from "@hakit/co
 import { Icon } from "@iconify/react";
 import { Row, fallback, ModalByEntityDomain, type ModalPropsHelper } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import React, { useId, useMemo } from "react";
+import React, { ReactNode, useId, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useLongPress } from "use-long-press";
 
@@ -50,7 +50,7 @@ export interface EntitiesCardRowProps<E extends EntityName> {
   /** the icon name to use @default entity_icon */
   icon?: string;
   /** the name of the entity @default friendly_name */
-  name?: string;
+  name?: ReactNode;
   /** the function to call when the row is clicked @default undefined */
   onClick?: (entity: HassEntityWithService<ExtractDomain<E>>) => void;
   /** the function to render the state @default undefined */
