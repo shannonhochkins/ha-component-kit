@@ -4,8 +4,9 @@ import styled from "@emotion/styled";
 import type { HassEntity } from "home-assistant-js-websocket";
 import { MediaPlayerCard, CardBase, Row, Column, Group, VolumeControls, fallback, ColumnProps } from "@components";
 import { StyledFab } from "../../../../Cards/MediaPlayerCard";
-import { capitalize, groupBy } from "lodash";
+import { capitalize, flatten, groupBy } from "lodash";
 import { useCallback, useMemo, useState, useEffect } from "react";
+import { spring } from "framer-motion";
 
 const StyledMediaPlayerCard = styled(CardBase)`
   transform: none;
@@ -25,6 +26,7 @@ const StyledMediaPlayerCard = styled(CardBase)`
   padding: 1rem;
   cursor: default;
 `;
+
 const Title = styled.div`
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 1);
@@ -57,8 +59,9 @@ export interface MediaPlayerControlsProps extends ColumnProps {
 export const MediaPlayerControls = ({ groupedEntities, onStateChange, entity, ...rest }: MediaPlayerControlsProps) => {
   const primaryEntity = useEntity(entity);
   const supportsGrouping = supportsFeatureFromAttributes(primaryEntity.attributes, 524288);
+  // To get proper ordering of speakers, we need to flatten the groupedEntities array while keeping the order of the groups
   const mediaPlayersOrderedByGroup = useMemo(
-    () => groupBy(groupedEntities, (entity) => entity.attributes?.group_members),
+    () => flatten(Object.values(groupBy(groupedEntities, (entity) => entity.attributes?.group_members))),
     [groupedEntities],
   );
   const mediaPlayerService = useService("media_player");
@@ -106,9 +109,7 @@ export const MediaPlayerControls = ({ groupedEntities, onStateChange, entity, ..
 
   const getIcon = useCallback(
     (groupLength: number, entity: HassEntity): string => {
-      const hasSomePlayingSpeakers = Object.values(mediaPlayersOrderedByGroup)?.some((groupedMediaPlayers) =>
-        groupedMediaPlayers.some((entity) => entity.state === "playing"),
-      );
+      const hasSomePlayingSpeakers = mediaPlayersOrderedByGroup?.some((mediaPlayer) => mediaPlayer.state === "playing");
 
       if (groupLength === 1 && entity.state === "playing") {
         return "mdi:pause";
@@ -125,89 +126,6 @@ export const MediaPlayerControls = ({ groupedEntities, onStateChange, entity, ..
       return "mdi:speaker-off";
     },
     [mediaPlayersOrderedByGroup],
-  );
-
-  const groupedMediaPlayerComponents = useMemo(
-    () =>
-      Object.values(mediaPlayersOrderedByGroup)?.map((groupedMediaPlayers) => {
-        return groupedMediaPlayers.map((entity, index) => {
-          const isPlaying = entity.state === "playing";
-          const isLastOfGroup = groupedMediaPlayers.length - 1 === index;
-          const friendlyName = `${entity.attributes?.friendly_name ?? entity.entity_id}`;
-          const isOff = entity.state === OFF;
-          const isUnavailable = isUnavailableState(entity.state);
-          const supportsTurnOn = supportsFeatureFromAttributes(entity.attributes, 128);
-          const supportsTurnOff = supportsFeatureFromAttributes(entity.attributes, 256);
-
-          return (
-            <ErrorBoundary key={entity.entity_id} {...fallback({ prefix: "EntityRow" })}>
-              <StyledMediaPlayerCard
-                disableRipples
-                disableScale
-                disableActiveState
-                className={`entities-card entities-card-media-controls`}
-                style={{ overflow: "visible" }}
-              >
-                <StyledColumn gap={"0.5rem"} justifyContent={"space-between"}>
-                  <Title className="title device-name">
-                    {friendlyName}
-                    <State> - {capitalize(entity.state)}</State>
-                  </Title>
-                  <Row gap={"0.5rem"} justifyContent={"end"}>
-                    {!supportsGrouping && (
-                      <StyledFab
-                        className="media-player-power"
-                        iconColor={`var(--ha-S200-contrast)`}
-                        active={!isOff && !isUnavailable}
-                        disabled={!supportsTurnOn || !supportsTurnOff}
-                        size={30}
-                        icon="mdi:power"
-                        rippleProps={{
-                          preventPropagation: true,
-                        }}
-                        onClick={() => {
-                          if (isOff) {
-                            mediaPlayerService.turnOn(entity.entity_id);
-                          } else {
-                            mediaPlayerService.turnOff(entity.entity_id);
-                          }
-                        }}
-                      />
-                    )}
-                    {!isOff && (
-                      <VolumeControls
-                        entity={entity.entity_id as FilterByDomain<EntityName, "media_player">}
-                        volumeLayout={"slider"}
-                        hideMute={false}
-                        disabled={false}
-                        layout={"slim"}
-                      />
-                    )}
-                    {supportsGrouping && !isOff && (
-                      <div style={{ position: "relative" }}>
-                        <StyledFab
-                          rippleProps={{
-                            preventPropagation: true,
-                          }}
-                          className="speaker-group"
-                          iconColor={`var(--ha-S200-contrast)`}
-                          active={isPlaying}
-                          disabled={false}
-                          size={30}
-                          icon={getIcon(groupedMediaPlayers.length, entity)}
-                          onClick={() => handleMediaPlayerActionClick(entity.entity_id as FilterByDomain<EntityName, "media_player">)}
-                        />
-                        {!isLastOfGroup && <GroupLine />}
-                      </div>
-                    )}
-                  </Row>
-                </StyledColumn>
-              </StyledMediaPlayerCard>
-            </ErrorBoundary>
-          );
-        });
-      }),
-    [mediaPlayersOrderedByGroup, mediaPlayerService, supportsGrouping, handleMediaPlayerActionClick, getIcon],
   );
 
   useEffect(() => {
@@ -231,7 +149,85 @@ export const MediaPlayerControls = ({ groupedEntities, onStateChange, entity, ..
         }
       `}
         >
-          {groupedMediaPlayerComponents}
+          {mediaPlayersOrderedByGroup.map((entity) => {
+            const isPlaying = entity.state === "playing";
+            const isLastOfGroup = entity.attributes.group_members.slice(-1)[0] === entity.entity_id;
+            const friendlyName = `${entity.attributes?.friendly_name ?? entity.entity_id}`;
+            const isOff = entity.state === OFF;
+            const isUnavailable = isUnavailableState(entity.state);
+            const supportsTurnOn = supportsFeatureFromAttributes(entity.attributes, 128);
+            const supportsTurnOff = supportsFeatureFromAttributes(entity.attributes, 256);
+
+            return (
+              <StyledMediaPlayerCard
+                key={entity.entity_id}
+                layout
+                transition={spring}
+                disableRipples
+                disableScale
+                disableActiveState
+                className={`entities-card entities-card-media-controls`}
+                style={{ overflow: "visible" }}
+              >
+                <ErrorBoundary {...fallback({ prefix: "EntityRow" })}>
+                  <StyledColumn gap={"0.5rem"} justifyContent={"space-between"}>
+                    <Title className="title device-name">
+                      {friendlyName}
+                      <State> - {capitalize(entity.state)}</State>
+                    </Title>
+                    <Row gap={"0.5rem"} justifyContent={"end"}>
+                      {!supportsGrouping && (
+                        <StyledFab
+                          className="media-player-power"
+                          iconColor={`var(--ha-S200-contrast)`}
+                          active={!isOff && !isUnavailable}
+                          disabled={!supportsTurnOn || !supportsTurnOff}
+                          size={30}
+                          icon="mdi:power"
+                          rippleProps={{
+                            preventPropagation: true,
+                          }}
+                          onClick={() => {
+                            if (isOff) {
+                              mediaPlayerService.turnOn(entity.entity_id);
+                            } else {
+                              mediaPlayerService.turnOff(entity.entity_id);
+                            }
+                          }}
+                        />
+                      )}
+                      {!isOff && (
+                        <VolumeControls
+                          entity={entity.entity_id as FilterByDomain<EntityName, "media_player">}
+                          volumeLayout={"slider"}
+                          hideMute={false}
+                          disabled={false}
+                          layout={"slim"}
+                        />
+                      )}
+                      {supportsGrouping && !isOff && (
+                        <div style={{ position: "relative" }}>
+                          <StyledFab
+                            rippleProps={{
+                              preventPropagation: true,
+                            }}
+                            className="speaker-group"
+                            iconColor={`var(--ha-S200-contrast)`}
+                            active={isPlaying}
+                            disabled={false}
+                            size={30}
+                            icon={getIcon(mediaPlayersOrderedByGroup.length, entity)}
+                            onClick={() => handleMediaPlayerActionClick(entity.entity_id as FilterByDomain<EntityName, "media_player">)}
+                          />
+                          {!isLastOfGroup && <GroupLine />}
+                        </div>
+                      )}
+                    </Row>
+                  </StyledColumn>
+                </ErrorBoundary>
+              </StyledMediaPlayerCard>
+            );
+          })}
         </Group>
       </Column>
     </Column>
