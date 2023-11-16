@@ -25,7 +25,7 @@ export function PlaybackControls({ entity: _entity, size = 20, feature, disabled
         iconColor={`var(--ha-S200-contrast)`}
         icon="mdi:skip-previous"
         rippleProps={{
-          preventPropagation: true
+          preventPropagation: true,
         }}
         onClick={() => mp.mediaPreviousTrack(allEntityIds)}
       />
@@ -35,7 +35,7 @@ export function PlaybackControls({ entity: _entity, size = 20, feature, disabled
         disabled={disabled || isOff || !supportsPlay}
         size={size * (feature ? 2 : 1)}
         rippleProps={{
-          preventPropagation: true
+          preventPropagation: true,
         }}
         icon={playing ? "mdi:pause" : "mdi:play"}
         onClick={() => {
@@ -48,7 +48,7 @@ export function PlaybackControls({ entity: _entity, size = 20, feature, disabled
       />
       <StyledFab
         rippleProps={{
-          preventPropagation: true
+          preventPropagation: true,
         }}
         className="skip-next"
         iconColor={`var(--ha-S200-contrast)`}

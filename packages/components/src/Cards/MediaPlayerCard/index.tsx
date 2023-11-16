@@ -17,8 +17,7 @@ import { Clock } from "./Clock";
 import { PlaybackControls } from "./PlaybackControls";
 import { ProgressBar } from "./ProgressBar";
 import { AlternateControls } from "./AlternateControls";
-import { DEFAULT_FAB_SIZE } from "./constants";
-import { Layout, VolumeLayout } from "./shared.ts";
+import { Layout, VolumeLayout, DEFAULT_FAB_SIZE } from "./constants";
 
 const MediaPlayerWrapper = styled(CardBase)<
   CardBaseProps<"div", FilterByDomain<EntityName, "media_player">> & {
@@ -191,12 +190,12 @@ function _MediaPlayerCard({
   const { state } = entity;
   const { media_artist, media_title, media_playlist, app_name, media_duration, media_position, media_position_updated_at } =
     entity.attributes;
-  const deviceNames = (entity?.attributes?.group_members || []).reduce((friendlyNames, entityId) => {
+  // use the group members for device names if available, else use the entity name
+  const deviceNames = (entity?.attributes?.group_members || [entity.entity_id]).reduce((friendlyNames, entityId) => {
     const entity = entitiesById[entityId];
     if (!entity) {
       return friendlyNames;
     }
-
     return [...friendlyNames, entity.attributes?.friendly_name || entity.entity_id];
   }, [] as string[]);
   const title = `${media_artist ? media_artist + " - " : ""}${media_title ?? media_playlist ?? ""}`;
@@ -311,7 +310,7 @@ function _MediaPlayerCard({
 
   const supportsGrouping = supportsFeatureFromAttributes(entity.attributes, 524288);
 
-  if (groupMembers.length > 0 && !supportsGrouping) {
+  if (groupMembers.length > 0 && !supportsGrouping && !entity.attributes.group_members) {
     throw new Error(`"${_entity}" does not support grouping, but you have provided groupMembers.`);
   }
   return (
@@ -364,7 +363,7 @@ function _MediaPlayerCard({
                   width: hideThumbnail === false && artworkUrl !== null ? `calc(100% - (${thumbnailSize} + 0.5rem))` : "100%",
                 }}
               >
-                <Row className="row" justifyContent="space-between" fullWidth>
+                <Row className="row" justifyContent={deviceNames.length > 0 && !hideEntityName ? "space-between" : "flex-end"} fullWidth>
                   {deviceNames.length > 0 && !hideEntityName && (
                     <Title className="title device-name">
                       {hideEntityName ? "" : deviceNames.join(", ")}
@@ -391,7 +390,7 @@ function _MediaPlayerCard({
             </Row>
 
             {!isUnavailable ? (
-              <Row className="row" gap="0rem" justifyContent="space-between" wrap="nowrap" fullWidth>
+              <Row className="row" gap="1rem" justifyContent="space-between" wrap="nowrap" fullWidth>
                 {!isOff && (
                   <VolumeControls
                     entity={_entity}
@@ -403,13 +402,15 @@ function _MediaPlayerCard({
                   />
                 )}
                 {layout === "slim" && (
-                  <PlaybackControls
-                    entity={_entity}
-                    disabled={disabled}
-                    allEntityIds={allEntityIds}
-                    feature={false}
-                    size={DEFAULT_FAB_SIZE}
-                  />
+                  <Row gap="0.5rem" wrap="nowrap">
+                    <PlaybackControls
+                      entity={_entity}
+                      disabled={disabled}
+                      allEntityIds={allEntityIds}
+                      feature={false}
+                      size={DEFAULT_FAB_SIZE}
+                    />
+                  </Row>
                 )}
                 {!isOff && layout === "card" && (
                   <AlternateControls
@@ -429,6 +430,9 @@ function _MediaPlayerCard({
           disabled={seekDisabled}
           entity={snakeCase(_entity)}
           ref={progressRef}
+          onPointerDownCapture={(e) => {
+            e.stopPropagation();
+          }}
           {...bindProgress()}
         >
           <span></span>
@@ -440,10 +444,9 @@ function _MediaPlayerCard({
 }
 
 /** A MediaPlayerCard to control media similar to the mini-media-player from Hacs.
- * This is a very complicated component and I will require feedback if it does not work for you.
- * Different features are enabled / shown based on the media_player provided.
- * It supports group players if the media_players provided support grouping.
- * However, I myself do not have devices that do support it, so I would love some feedback to determine if it works or not!
+ * - groups - if the player supports grouping, the popup for the media player will show group controls for related entities
+ * - group_members - if the group_members attribute is present on the primary entity, but the entity doesn't support grouping, you will only see volume controls in the popup for related entities
+ * - if you provide the groupMembers prop, but the entity doesn't support grouping at all, an error will be thrown
  * It supports skip, previous, volume, mute, power, seeking, play, pause, grouping, artwork */
 export function MediaPlayerCard(props: MediaPlayerCardProps) {
   const defaultColumns: AvailableQueries = {

@@ -4,6 +4,6 @@ export interface ModalMediaPlayerControlsProps extends MediaPlayerControlsProps 
   entity: FilterByDomain<EntityName, "media_player">;
 }
 
-export function ModalMediaPlayerControls(props: MediaPlayerControlsProps) {
+export function ModalMediaPlayerControls(props: ModalMediaPlayerControlsProps) {
   return <MediaPlayerControls {...props} />;
 }

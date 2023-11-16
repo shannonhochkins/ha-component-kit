@@ -1,8 +1,8 @@
-import { EntityName, FilterByDomain, useService } from "@hakit/core";
+import { EntityName, FilterByDomain, useEntity, useService, isUnavailableState, OFF, supportsFeatureFromAttributes } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
 import type { HassEntity } from "home-assistant-js-websocket";
-import { CardBase, Row, Column, VolumeControls, fallback, ColumnProps } from "@components";
+import { MediaPlayerCard, CardBase, Row, Column, Group, VolumeControls, fallback, ColumnProps } from "@components";
 import { StyledFab } from "../../../../Cards/MediaPlayerCard";
 import { capitalize, groupBy } from "lodash";
 import { useCallback, useMemo, useState, useEffect } from "react";
@@ -16,6 +16,7 @@ const StyledMediaPlayerCard = styled(CardBase)`
   &:not(.disabled) {
     &:hover,
     &:active {
+      background-color: var(--ha-S300);
       svg {
         color: currentColor;
       }
@@ -48,12 +49,14 @@ const GroupLine = styled.div`
 `;
 
 export interface MediaPlayerControlsProps extends ColumnProps {
+  entity: FilterByDomain<EntityName, "media_player">;
   groupedEntities: HassEntity[];
   onStateChange?: (state: string) => void;
 }
 
-export const MediaPlayerControls = ({ groupedEntities, onStateChange, ...rest }: MediaPlayerControlsProps) => {
-  
+export const MediaPlayerControls = ({ groupedEntities, onStateChange, entity, ...rest }: MediaPlayerControlsProps) => {
+  const primaryEntity = useEntity(entity);
+  const supportsGrouping = supportsFeatureFromAttributes(primaryEntity.attributes, 524288);
   const mediaPlayersOrderedByGroup = useMemo(
     () => groupBy(groupedEntities, (entity) => entity.attributes?.group_members),
     [groupedEntities],
@@ -131,6 +134,10 @@ export const MediaPlayerControls = ({ groupedEntities, onStateChange, ...rest }:
           const isPlaying = entity.state === "playing";
           const isLastOfGroup = groupedMediaPlayers.length - 1 === index;
           const friendlyName = `${entity.attributes?.friendly_name ?? entity.entity_id}`;
+          const isOff = entity.state === OFF;
+          const isUnavailable = isUnavailableState(entity.state);
+          const supportsTurnOn = supportsFeatureFromAttributes(entity.attributes, 128);
+          const supportsTurnOff = supportsFeatureFromAttributes(entity.attributes, 256);
 
           return (
             <ErrorBoundary key={entity.entity_id} {...fallback({ prefix: "EntityRow" })}>
@@ -147,28 +154,52 @@ export const MediaPlayerControls = ({ groupedEntities, onStateChange, ...rest }:
                     <State> - {capitalize(entity.state)}</State>
                   </Title>
                   <Row gap={"0.5rem"} justifyContent={"end"}>
-                    <VolumeControls
-                      entity={entity.entity_id as FilterByDomain<EntityName, "media_player">}
-                      volumeLayout={"slider"}
-                      hideMute={false}
-                      disabled={false}
-                      layout={"slim"}
-                    />
-                    <div style={{ position: "relative" }}>
+                    {!supportsGrouping && (
                       <StyledFab
-                        rippleProps={{
-                          preventPropagation: true
-                        }}
-                        className="speaker-group"
+                        className="media-player-power"
                         iconColor={`var(--ha-S200-contrast)`}
-                        active={isPlaying}
-                        disabled={false}
+                        active={!isOff && !isUnavailable}
+                        disabled={!supportsTurnOn || !supportsTurnOff}
                         size={30}
-                        icon={getIcon(groupedMediaPlayers.length, entity)}
-                        onClick={() => handleMediaPlayerActionClick(entity.entity_id as FilterByDomain<EntityName, "media_player">)}
+                        icon="mdi:power"
+                        rippleProps={{
+                          preventPropagation: true,
+                        }}
+                        onClick={() => {
+                          if (isOff) {
+                            mediaPlayerService.turnOn(entity.entity_id);
+                          } else {
+                            mediaPlayerService.turnOff(entity.entity_id);
+                          }
+                        }}
                       />
-                      {!isLastOfGroup && <GroupLine />}
-                    </div>
+                    )}
+                    {!isOff && (
+                      <VolumeControls
+                        entity={entity.entity_id as FilterByDomain<EntityName, "media_player">}
+                        volumeLayout={"slider"}
+                        hideMute={false}
+                        disabled={false}
+                        layout={"slim"}
+                      />
+                    )}
+                    {supportsGrouping && !isOff && (
+                      <div style={{ position: "relative" }}>
+                        <StyledFab
+                          rippleProps={{
+                            preventPropagation: true,
+                          }}
+                          className="speaker-group"
+                          iconColor={`var(--ha-S200-contrast)`}
+                          active={isPlaying}
+                          disabled={false}
+                          size={30}
+                          icon={getIcon(groupedMediaPlayers.length, entity)}
+                          onClick={() => handleMediaPlayerActionClick(entity.entity_id as FilterByDomain<EntityName, "media_player">)}
+                        />
+                        {!isLastOfGroup && <GroupLine />}
+                      </div>
+                    )}
                   </Row>
                 </StyledColumn>
               </StyledMediaPlayerCard>
@@ -176,18 +207,33 @@ export const MediaPlayerControls = ({ groupedEntities, onStateChange, ...rest }:
           );
         });
       }),
-    [mediaPlayersOrderedByGroup, handleMediaPlayerActionClick, getIcon],
+    [mediaPlayersOrderedByGroup, mediaPlayerService, supportsGrouping, handleMediaPlayerActionClick, getIcon],
   );
 
   useEffect(() => {
-    if (groupedEntities[0] && onStateChange) {
-      onStateChange(groupedEntities[0].state);
+    if (primaryEntity && onStateChange) {
+      onStateChange(primaryEntity.state);
     }
-  }, [groupedEntities, onStateChange]);
+  }, [primaryEntity, onStateChange]);
 
-  return <Column fullHeight fullWidth {...rest}>
-    <Column fullWidth fullHeight className={`column`} gap="0.5rem">
-      {groupedMediaPlayerComponents}
+  return (
+    <Column fullHeight fullWidth {...rest}>
+      <Column fullWidth fullHeight className={`column`} gap="1rem">
+        {primaryEntity && (
+          <MediaPlayerCard layout="slim" disableColumns entity={primaryEntity.entity_id as FilterByDomain<EntityName, "media_player">} />
+        )}
+        <Group
+          title="Related Players"
+          disableColumns
+          cssStyles={`
+        &.group {
+          background-color: rgba(0,0,0,0.1);
+        }
+      `}
+        >
+          {groupedMediaPlayerComponents}
+        </Group>
+      </Column>
     </Column>
-  </Column>
+  );
 };

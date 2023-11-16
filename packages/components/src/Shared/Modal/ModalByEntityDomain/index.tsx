@@ -163,9 +163,17 @@ export function ModalByEntityDomain<E extends EntityName>({
         return <ModalCoverControls entity={entity as FilterByDomain<EntityName, "cover">} onStateChange={onStateChange} {...childProps} />;
       case "weather":
         return <ModalWeatherControls entity={entity as FilterByDomain<EntityName, "weather">} {...childProps} />;
-      case 'media_player': {
-        // @ts-expect-error - TODO - fix later, types for child props aren't correctly being inferred
-        return <ModalMediaPlayerControls entity={entity as FilterByDomain<EntityName, "media_player">} onStateChange={onStateChange} {...childProps} />;
+      case "media_player": {
+        return (
+          // @ts-expect-error - child prop types aren't correct, it does have groupEntities but ts doesn't think it does.
+          <ModalMediaPlayerControls
+            onStateChange={onStateChange}
+            {...{
+              ...childProps,
+              entity,
+            }}
+          />
+        );
       }
       default:
         return null;

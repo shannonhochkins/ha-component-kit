@@ -1,7 +1,7 @@
 import { Row, RowProps } from "@components";
 import { EntityName, FilterByDomain, isUnavailableState, OFF, supportsFeatureFromAttributes, useEntity, useService } from "@hakit/core";
 import { StyledFab } from "./";
-import { DEFAULT_FAB_SIZE } from './constants';
+import { DEFAULT_FAB_SIZE } from "./constants";
 import styled from "@emotion/styled";
 
 const SmallText = styled.span`
@@ -20,7 +20,6 @@ interface AlternateControlsProps extends RowProps {
 export function AlternateControls({ entity: _entity, disabled, allEntityIds, onSpeakerGroupClick, layoutId }: AlternateControlsProps) {
   const entity = useEntity(_entity);
   const mp = useService("mediaPlayer");
-  const supportsGrouping = supportsFeatureFromAttributes(entity.attributes, 524288);
   const groups = entity.attributes.group_members ?? [];
   const isOff = entity.state === OFF;
   const isUnavailable = isUnavailableState(entity.state);
@@ -29,7 +28,7 @@ export function AlternateControls({ entity: _entity, disabled, allEntityIds, onS
 
   return (
     <Row gap="0.5rem" wrap="nowrap" className="row">
-      {supportsGrouping && (
+      {(allEntityIds.length > 1 || groups.length > 0) && (
         <StyledFab
           layoutId={layoutId}
           className="speaker-group"
@@ -55,7 +54,7 @@ export function AlternateControls({ entity: _entity, disabled, allEntityIds, onS
         size={DEFAULT_FAB_SIZE}
         icon="mdi:power"
         rippleProps={{
-          preventPropagation: true
+          preventPropagation: true,
         }}
         onClick={() => {
           if (isOff) {

@@ -161,7 +161,7 @@ export interface RangeSliderProps extends Omit<React.ComponentPropsWithoutRef<"i
   /** The handle size in px for the input @default 15 */
   handleSize?: number;
   /** The label for the input @default undefined */
-  onChange?: (value: number) => void;
+  onChange?: (value: number, event: React.ChangeEvent<HTMLInputElement>) => void;
   /** The label for the input @default undefined */
   label?: ReactNode;
   /** The description for the input @default undefined */
@@ -218,9 +218,9 @@ function _RangeSlider({
     }
   }, [value, _min, _max, _step, formatTooltipValue, hideTooltip]);
 
-  const debouncedOnChange = useDebouncedCallback((value: number) => {
+  const debouncedOnChange = useDebouncedCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     if (typeof onChange === "function") {
-      onChange(value);
+      onChange(event.target.valueAsNumber, event);
     }
     setActive(false);
   }, 300);
@@ -250,7 +250,7 @@ function _RangeSlider({
             if (!active) setActive(true);
           }}
           onChange={(event) => {
-            debouncedOnChange(event.target.valueAsNumber);
+            debouncedOnChange(event);
           }}
         />
         {!hideTooltip && (

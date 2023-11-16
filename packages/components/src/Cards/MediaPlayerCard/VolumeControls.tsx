@@ -1,15 +1,14 @@
 import { EntityName, FilterByDomain, supportsFeatureFromAttributes, useEntity, useService } from "@hakit/core";
 import { useCallback, useRef, useState } from "react";
-import { mq, RangeSlider } from "@components";
+import { mq, Row, RangeSlider } from "@components";
 import styled from "@emotion/styled";
 import { StyledFab } from "./index";
-import { Layout, VolumeLayout } from "./shared.ts";
-import { DEFAULT_FAB_SIZE } from './constants';
+import { Layout, VolumeLayout, DEFAULT_FAB_SIZE } from "./constants";
 const VolumeSlider = styled.label<{
   layout: Layout;
 }>`
   display: inline-block;
-  width: auto;
+  width: 100%;
   color: rgba(0, 0, 0, 0.87);
   font-size: 1rem;
   line-height: 1.5;
@@ -26,6 +25,10 @@ const VolumeSlider = styled.label<{
     width: 60%;
   `,
   )}
+`;
+
+const StyledRangeSlider = styled(RangeSlider)`
+  width: 100%;
 `;
 
 export interface VolumeControlsProps {
@@ -61,7 +64,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
   );
 
   return (
-    <>
+    <Row gap="0.5rem" wrap="nowrap">
       {!hideMute && supportsVolumeMute && (
         <StyledFab
           iconColor={`var(--ha-S200-contrast)`}
@@ -69,7 +72,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
           disabled={disabled}
           size={DEFAULT_FAB_SIZE}
           rippleProps={{
-            preventPropagation: true
+            preventPropagation: true,
           }}
           icon={is_volume_muted ? "mdi:volume-off" : "mdi:volume-high"}
           onClick={() => {
@@ -83,7 +86,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
         <>
           <StyledFab
             rippleProps={{
-              preventPropagation: true
+              preventPropagation: true,
             }}
             iconColor={`var(--ha-S200-contrast)`}
             className="volume-down"
@@ -94,7 +97,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
           />
           <StyledFab
             rippleProps={{
-              preventPropagation: true
+              preventPropagation: true,
             }}
             iconColor={`var(--ha-S200-contrast)`}
             className="volume-up"
@@ -106,8 +109,14 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
         </>
       )}
       {volumeLayout === "slider" && supportsVolumeSet && (
-        <VolumeSlider className="volume-slider" layout={layout}>
-          <RangeSlider
+        <VolumeSlider
+          className="volume-slider"
+          layout={layout}
+          onPointerDownCapture={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <StyledRangeSlider
             type="range"
             min={0}
             max={1}
@@ -116,10 +125,13 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
             value={is_volume_muted ? 0 : volume}
             formatTooltipValue={(value) => `${Math.round(value * 100)}%`}
             tooltipSize={2.2}
-            onChange={(value) => setVolume(value)}
+            onChange={(value, event) => {
+              event.preventDefault();
+              setVolume(value);
+            }}
           />
         </VolumeSlider>
       )}
-    </>
+    </Row>
   );
 }
