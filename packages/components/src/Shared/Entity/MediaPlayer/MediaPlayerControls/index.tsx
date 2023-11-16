@@ -53,10 +53,11 @@ const GroupLine = styled.div`
 export interface MediaPlayerControlsProps extends ColumnProps {
   entity: FilterByDomain<EntityName, "media_player">;
   groupedEntities: HassEntity[];
+  allEntityIds: string[];
   onStateChange?: (state: string) => void;
 }
 
-export const MediaPlayerControls = ({ groupedEntities, onStateChange, entity, ...rest }: MediaPlayerControlsProps) => {
+export const MediaPlayerControls = ({ groupedEntities, allEntityIds, onStateChange, entity, ...rest }: MediaPlayerControlsProps) => {
   const primaryEntity = useEntity(entity);
   const supportsGrouping = supportsFeatureFromAttributes(primaryEntity.attributes, 524288);
   // To get proper ordering of speakers, we need to flatten the groupedEntities array while keeping the order of the groups
@@ -138,7 +139,7 @@ export const MediaPlayerControls = ({ groupedEntities, onStateChange, entity, ..
     <Column fullHeight fullWidth {...rest}>
       <Column fullWidth fullHeight className={`column`} gap="1rem">
         {primaryEntity && (
-          <MediaPlayerCard layout="slim" disableColumns entity={primaryEntity.entity_id as FilterByDomain<EntityName, "media_player">} />
+          <MediaPlayerCard layout="slim" groupMembers={allEntityIds as FilterByDomain<EntityName, "media_player">[]} disableColumns entity={primaryEntity.entity_id as FilterByDomain<EntityName, "media_player">} />
         )}
         <Group
           title="Related Players"

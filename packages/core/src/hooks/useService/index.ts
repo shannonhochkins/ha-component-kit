@@ -19,8 +19,12 @@ export function createService<T extends SnakeOrCamelDomains>(
         if (service === "toJSON") return;
         return function (...args: [Target?, ServiceData<T, S>?]) {
           // if rootTarget is available, use it. otherwise, use the first argument as target
-          const target = rootTarget ?? (args[0] as Target);
+          let target = rootTarget ?? (args[0] as Target);
           const serviceData = rootTarget ? (args[0] as ServiceData<T, S>) : args[1];
+          if (Array.isArray(target)) {
+            // ensure the target values are a unique array of entity ids
+            target = [...new Set(target)];
+          }
 
           console.log(`Calling ${domain}.${service} with`, {
             target,

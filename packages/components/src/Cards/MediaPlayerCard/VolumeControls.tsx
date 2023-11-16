@@ -1,5 +1,5 @@
 import { EntityName, FilterByDomain, supportsFeatureFromAttributes, useEntity, useService } from "@hakit/core";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useEffect, useState } from "react";
 import { mq, Row, RangeSlider } from "@components";
 import styled from "@emotion/styled";
 import { StyledFab } from "./index";
@@ -62,6 +62,10 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
     },
     [mp, allEntityIds, _setVolume, _entity],
   );
+
+  useEffect(() => {
+    _setVolume(volume_level);
+  }, [volume_level]);
 
   return (
     <Row gap="0.5rem" wrap="nowrap">

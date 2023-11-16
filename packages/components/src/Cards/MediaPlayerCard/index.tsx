@@ -320,6 +320,7 @@ function _MediaPlayerCard({
         modalProps={{
           open: isGroupingModalOpen,
           groupedEntities,
+          allEntityIds,
           onClose: () => setIsGroupingModalOpen(false),
         }}
         entity={_entity}
