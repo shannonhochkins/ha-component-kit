@@ -152,6 +152,8 @@ export interface MediaPlayerCardProps extends Omit<CardBaseProps<"div", FilterBy
   disabled?: boolean;
   /** hide the thumbnail element @default false */
   hideThumbnail?: boolean;
+  /** hide the grouping button @default false */
+  hideGrouping?: boolean;
   /** the size of the thumbnail to show @default 3rem */
   thumbnailSize?: string;
   /** show the artwork as the background of the card @default true */
@@ -168,6 +170,7 @@ function _MediaPlayerCard({
   hideMute = false,
   hideAppName = false,
   hideEntityName = false,
+  hideGrouping = false,
   disabled: _disabled = false,
   service,
   serviceData,
@@ -378,6 +381,7 @@ function _MediaPlayerCard({
                       disabled={disabled}
                       onSpeakerGroupClick={() => setIsGroupingModalOpen(true)}
                       layoutId={groupingLayoutId}
+                      hideGrouping={hideGrouping}
                     />
                   )}
                 </Row>
@@ -420,6 +424,7 @@ function _MediaPlayerCard({
                     disabled={disabled}
                     onSpeakerGroupClick={() => setIsGroupingModalOpen(true)}
                     layoutId={groupingLayoutId}
+                    hideGrouping={hideGrouping}
                   />
                 )}
               </Row>

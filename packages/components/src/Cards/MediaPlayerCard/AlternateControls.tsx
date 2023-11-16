@@ -15,9 +15,17 @@ interface AlternateControlsProps extends RowProps {
   allEntityIds: string[];
   onSpeakerGroupClick: () => void;
   layoutId: string;
+  hideGrouping?: boolean;
 }
 
-export function AlternateControls({ entity: _entity, disabled, allEntityIds, onSpeakerGroupClick, layoutId }: AlternateControlsProps) {
+export function AlternateControls({
+  entity: _entity,
+  disabled,
+  allEntityIds,
+  onSpeakerGroupClick,
+  layoutId,
+  hideGrouping = false,
+}: AlternateControlsProps) {
   const entity = useEntity(_entity);
   const mp = useService("mediaPlayer");
   const groups = entity.attributes.group_members ?? [];
@@ -28,7 +36,7 @@ export function AlternateControls({ entity: _entity, disabled, allEntityIds, onS
 
   return (
     <Row gap="0.5rem" wrap="nowrap" className="row">
-      {(allEntityIds.length > 1 || groups.length > 0) && (
+      {!hideGrouping && (allEntityIds.length > 1 || groups.length > 0) && (
         <StyledFab
           layoutId={layoutId}
           className="speaker-group"

@@ -109,10 +109,10 @@ export const MediaPlayerControls = ({ groupedEntities, allEntityIds, onStateChan
   );
 
   const getIcon = useCallback(
-    (groupLength: number, entity: HassEntity): string => {
+    (entity: HassEntity): string => {
       const hasSomePlayingSpeakers = mediaPlayersOrderedByGroup?.some((mediaPlayer) => mediaPlayer.state === "playing");
 
-      if (groupLength === 1 && entity.state === "playing") {
+      if (entity.attributes.group_members.length === 1 && entity.state === "playing") {
         return "mdi:pause";
       }
 
@@ -120,7 +120,7 @@ export const MediaPlayerControls = ({ groupedEntities, allEntityIds, onStateChan
         return "mdi:speaker-multiple";
       }
 
-      if (groupLength === 1 && entity.state !== "playing") {
+      if (entity.attributes.group_members.length === 1 && entity.state !== "playing") {
         return "mdi:play";
       }
 
@@ -139,7 +139,13 @@ export const MediaPlayerControls = ({ groupedEntities, allEntityIds, onStateChan
     <Column fullHeight fullWidth {...rest}>
       <Column fullWidth fullHeight className={`column`} gap="1rem">
         {primaryEntity && (
-          <MediaPlayerCard layout="slim" groupMembers={allEntityIds as FilterByDomain<EntityName, "media_player">[]} disableColumns entity={primaryEntity.entity_id as FilterByDomain<EntityName, "media_player">} />
+          <MediaPlayerCard
+            layout="slim"
+            groupMembers={allEntityIds as FilterByDomain<EntityName, "media_player">[]}
+            disableColumns
+            entity={primaryEntity.entity_id as FilterByDomain<EntityName, "media_player">}
+            hideGrouping={true}
+          />
         )}
         <Group
           title="Related Players"
@@ -217,7 +223,7 @@ export const MediaPlayerControls = ({ groupedEntities, allEntityIds, onStateChan
                             active={isPlaying}
                             disabled={false}
                             size={30}
-                            icon={getIcon(mediaPlayersOrderedByGroup.length, entity)}
+                            icon={getIcon(entity)}
                             onClick={() => handleMediaPlayerActionClick(entity.entity_id as FilterByDomain<EntityName, "media_player">)}
                           />
                           {!isLastOfGroup && <GroupLine />}
