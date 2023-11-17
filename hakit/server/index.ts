@@ -61,7 +61,7 @@ async function loadConfig() {
 
   // Additional Middleware for logging
   app.use((req, _res, next) => {
-    console.log(`Incoming request: ${req.method} ${req.url} from ${req.hostname}`);
+    console.info(`Incoming request: ${req.method} ${req.url} from ${req.hostname}`);
     next();
   });
   // listen for api endpoints with /api as base
@@ -102,11 +102,11 @@ async function loadConfig() {
     });
   }
   server.listen(PORT, () => {
-    console.log(`Dashboard Ready! Port: ${PORT}, options: ${JSON.stringify(OPTIONS, null, 2)})}`);
+    console.info(`Dashboard Ready! Port: ${PORT}, options: ${JSON.stringify(OPTIONS, null, 2)})}`);
   });
   process.on('SIGTERM', () => {
     server.close(() => {
-      console.log('Server terminated');
+      console.info('Server terminated');
     });
   });
 })();

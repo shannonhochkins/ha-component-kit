@@ -74,9 +74,9 @@ async function main() {
     });
   } catch (e) {
     if (e instanceof Error) {
-      console.log(e.message);
+      console.info(e.message);
     } else {
-      console.log('Error: ', e);
+      console.info('Error: ', e);
     }
     process.exit(1);
   }

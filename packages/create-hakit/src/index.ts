@@ -87,7 +87,7 @@ const createProject = async () => {
       )
     } catch (cancelled: any) {
       abort = true;
-      console.log(cancelled.message);
+      console.info(cancelled.message);
       return;
     }
 
@@ -142,11 +142,11 @@ const createProject = async () => {
       .replace('{FOLDER_NAME}', cdProjectName)
       .replace('VITE_HA_URL=', `VITE_HA_URL=${(haUrl ?? '').replace(/\/$/, '')}`));
 
-    console.log(blue(`\nEnsure you update ${cdProjectName}/.env with your VITE_HA_URL and VITE_HA_TOKEN`));
-    console.log(green(`\nOnce you've updated the .env file, run "npm run sync" to generate your types!`));
-    console.log(yellow(`\nAdd in the optional SSH values to ensure that "npm run deploy" will work correctly.`));
-    console.log(yellow(`\nTo retrieve the SSH information, follow the instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-deploying--docs`));
-    console.log();
+    console.info(blue(`\nEnsure you update ${cdProjectName}/.env with your VITE_HA_URL and VITE_HA_TOKEN`));
+    console.info(green(`\nOnce you've updated the .env file, run "npm run sync" to generate your types!`));
+    console.info(yellow(`\nAdd in the optional SSH values to ensure that "npm run deploy" will work correctly.`));
+    console.info(yellow(`\nTo retrieve the SSH information, follow the instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-deploying--docs`));
+    console.info();
     process.exit(status ?? 0)
 
   } catch (error) {

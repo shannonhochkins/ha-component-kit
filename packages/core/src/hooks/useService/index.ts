@@ -2,6 +2,7 @@ import { useMemo, useCallback } from "react";
 import { useHass } from "@core";
 import type { SupportedServices, DomainService, SnakeOrCamelDomains, ServiceData, SnakeToCamel, Target } from "@typings";
 import type { HassContextProps } from "@core";
+import { uniq } from "lodash";
 
 export function createService<T extends SnakeOrCamelDomains>(
   domain: T,
@@ -19,10 +20,14 @@ export function createService<T extends SnakeOrCamelDomains>(
         if (service === "toJSON") return;
         return function (...args: [Target?, ServiceData<T, S>?]) {
           // if rootTarget is available, use it. otherwise, use the first argument as target
-          const target = rootTarget ?? (args[0] as Target);
+          let target = rootTarget ?? (args[0] as Target);
           const serviceData = rootTarget ? (args[0] as ServiceData<T, S>) : args[1];
+          if (Array.isArray(target)) {
+            // ensure the target values are a unique array of ids
+            target = [...uniq(target)];
+          }
 
-          console.log(`Calling ${domain}.${service} with`, {
+          console.info(`Calling ${domain}.${service} with`, {
             target,
             serviceData,
           });

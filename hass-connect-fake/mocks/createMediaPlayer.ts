@@ -6,6 +6,7 @@ const now = new Date();
 export const defaults = {
   attributes: {
     friendly_name: "Living room TV",
+    supported_features: 4127295
   },
   state: "off",
   entity_id: "media_player.fake_tv",
