@@ -26,12 +26,13 @@ export const useLowDevices = ({ blacklist = [], whitelist = [], min = 0, max = 2
       Object.values(entities).filter((entity) => {
         const hasBatteryProperties = entity.attributes.unit_of_measurement === "%" && entity.attributes.device_class === "battery";
         const meetsThresholds = Number(entity.state) <= max && Number(entity.state) >= min;
-        const isBlacklisted = blacklist.every((blackItem) => !entity.entity_id.includes(blackItem));
+        const isBlacklisted = blacklist.some((blackItem) => entity.entity_id.includes(blackItem));
         const isWhitelisted = whitelist.length === 0 || whitelist.some((whiteItem) => entity.entity_id.includes(whiteItem));
-        return hasBatteryProperties && meetsThresholds && !isBlacklisted && isWhitelisted;
+        return hasBatteryProperties && meetsThresholds && isWhitelisted && !isBlacklisted;
       }),
     [blacklist, entities, max, min, whitelist],
   );
+  console.log('batteryEntities', batteryEntities);
 
   useEffect(() => {
     if (haveEntitiesChanged && !isEqual(batteryEntities, lowEntities)) {
