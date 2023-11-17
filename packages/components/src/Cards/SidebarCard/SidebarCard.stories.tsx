@@ -219,7 +219,7 @@ export const SidebarExample: SidebarStory = {
         icon: "mdi:fan",
         active: false,
         onClick() {
-          console.log("do something on click!");
+          console.info("do something on click!");
         },
       },
     ],

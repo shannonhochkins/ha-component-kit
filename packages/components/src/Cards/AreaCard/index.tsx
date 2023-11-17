@@ -159,58 +159,62 @@ function _AreaCard({
 
   return (
     <>
-      {open && createPortal(<AnimatePresence key={`${idRef}-area-card-parent`} mode="wait" initial={false}>
-        {open === true && (
-          <FullScreen
-            key={`fullscreen-layout-${idRef}`}
-            layoutId={idRef}
-            id={`${idRef}-expanded`}
-            className={"full-screen"}
-            initial={{ opacity: 0 }}
-            transition={{
-              duration: animationDuration,
-            }}
-            exit={{
-              opacity: 0,
-              transition: {
-                delay: animationDuration,
-              },
-            }}
-            animate={{
-              opacity: 1,
-              transition: {
-                delay: 0,
-              },
-            }}
-          >
-            <Global
-              styles={css`
-                :root {
-                  --ha-hide-body-overflow-y: hidden;
-                }
-              `}
-            />
-            <NavBar className={"nav-bar"}>
-              <Row gap="0.5rem" justifyContent="space-between" className={"row"}>
-                <Row gap="0.5rem" className={"row"}>
-                  {icon && <Icon className={"icon"} icon={icon} />}
-                  {title}
-                </Row>
-                <FabCard
-                  title="Close"
-                  tooltipPlacement="left"
-                  icon="mdi:close"
-                  onClick={() => {
-                    location.hash = "";
-                  }}
+      {open &&
+        createPortal(
+          <AnimatePresence key={`${idRef}-area-card-parent`} mode="wait" initial={false}>
+            {open === true && (
+              <FullScreen
+                key={`fullscreen-layout-${idRef}`}
+                layoutId={idRef}
+                id={`${idRef}-expanded`}
+                className={"full-screen"}
+                initial={{ opacity: 0 }}
+                transition={{
+                  duration: animationDuration,
+                }}
+                exit={{
+                  opacity: 0,
+                  transition: {
+                    delay: animationDuration,
+                  },
+                }}
+                animate={{
+                  opacity: 1,
+                  transition: {
+                    delay: 0,
+                  },
+                }}
+              >
+                <Global
+                  styles={css`
+                    :root {
+                      --ha-hide-body-overflow-y: hidden;
+                    }
+                  `}
                 />
-              </Row>
-            </NavBar>
-            <ChildContainer className={"child-container"}>{children}</ChildContainer>
-          </FullScreen>
+                <NavBar className={"nav-bar"}>
+                  <Row gap="0.5rem" justifyContent="space-between" className={"row"}>
+                    <Row gap="0.5rem" className={"row"}>
+                      {icon && <Icon className={"icon"} icon={icon} />}
+                      {title}
+                    </Row>
+                    <FabCard
+                      title="Close"
+                      tooltipPlacement="left"
+                      icon="mdi:close"
+                      onClick={() => {
+                        location.hash = "";
+                      }}
+                    />
+                  </Row>
+                </NavBar>
+                <ChildContainer className={"child-container"}>{children}</ChildContainer>
+              </FullScreen>
+            )}
+          </AnimatePresence>,
+          document.body,
+          idRef,
         )}
-      </AnimatePresence>,
-      document.body, idRef)}
       <StyledAreaCard
         disableActiveState
         disableRipples

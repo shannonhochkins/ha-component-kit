@@ -74,9 +74,7 @@ export function useAreas(): Area[] {
         for (const device of matchedDevices) {
           if (entity.device_id === device.id) {
             // first check if matchedEntities contains the entity already
-            const exists = matchedEntities.find(
-              (e) => e.entity_id === entity.entity_id
-            );
+            const exists = matchedEntities.find((e) => e.entity_id === entity.entity_id);
             if (!exists) {
               if (_entities[entity.entity_id]) {
                 matchedEntities.push(_entities[entity.entity_id]);

@@ -43,7 +43,7 @@ async function deploy() {
     if (!exists) {
       throw new Error('Missing ./dist directory, have you run `npm run build`?');
     }
-    console.log(`Deploying to ${USERNAME}:${PASSWORD}@${HOST_OR_IP_ADDRESS}:${PORT}:${REMOTE_PATH}`)
+    console.info(`Deploying to ${USERNAME}:${PASSWORD}@${HOST_OR_IP_ADDRESS}:${PORT}:${REMOTE_PATH}`)
     const client = await Client({
       host: HOST_OR_IP_ADDRESS,
       port: PORT,
@@ -59,13 +59,13 @@ async function deploy() {
     // upload the folder to your home assistant server
     await client.uploadDir(LOCAL_DIRECTORY, REMOTE_PATH);
     client.close() // remember to close connection after you finish
-    console.log('\nSuccessfully deployed!');
+    console.info('\nSuccessfully deployed!');
     const url = join(HA_URL, '/local', REMOTE_FOLDER_NAME, '/index.html');
-    console.log(`\n\nVISIT the following URL to preview your dashboard:\n`);
-    console.log(url);
-    console.log('\n\n');
+    console.info(`\n\nVISIT the following URL to preview your dashboard:\n`);
+    console.info(url);
+    console.info('\n\n');
   } catch (e: unknown) {
-    console.log('Error:', e)
+    console.error('Error:', e)
   }
 }
 

@@ -32,7 +32,6 @@ export const useLowDevices = ({ blacklist = [], whitelist = [], min = 0, max = 2
       }),
     [blacklist, entities, max, min, whitelist],
   );
-  console.log('batteryEntities', batteryEntities);
 
   useEffect(() => {
     if (haveEntitiesChanged && !isEqual(batteryEntities, lowEntities)) {
