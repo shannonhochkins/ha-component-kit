@@ -36,14 +36,14 @@ function TemplateWithGroups(args?: Partial<MediaPlayerCardProps>) {
         <p>Group button is available to configure related players</p>
         <MediaPlayerCard
           entity="media_player.groups"
-          groupMembers={["media_player.fake_speaker", "media_player.fake_tv", "media_player.fake_speaker_2"]}
+          groupMembers={["media_player.fake_speaker", "media_player.fake_speaker_2"]}
           {...args}
         />
         <p>Same functionality as above, slim layout</p>
         <MediaPlayerCard
           layout="slim"
           entity="media_player.groups"
-          groupMembers={["media_player.fake_speaker", "media_player.fake_tv", "media_player.fake_speaker_2"]}
+          groupMembers={["media_player.fake_speaker", "media_player.fake_speaker_2"]}
           {...args}
         />
       </Column>

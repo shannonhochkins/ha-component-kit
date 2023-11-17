@@ -1,3 +1,15 @@
+
+# 3.0.4
+## @hakit/components
+- NEW - Thanks to @yann510 for introducing new functionality for media players to show additional controls for speaker groups on the card - there's now a popup that will launch allowing you to join/unjoin speakers from a group and control individual volume of speakers. Storybook demonstrates this feature popup however the functionality will not work in the demo.
+- NEW - AreaCard - previously the full screen popup was rendered alongside the card it self, this is now using portals and will ensure it's always rendered full screen as the popup is now rendered alongside the body, you can now optionally disable the card if need be as well.
+- BUFIX - modalProps on cards - now accepts the correct types, now you can trigger or disable the modal by passing through the props.
+
+## @hakit/core
+- NEW - useAreas - some of this code was copied directly from home assistant, however i noticed it wasn't retrieving all entities that I had included in the area, there's a bug in their source code which i've fixed and now this hook will return all entities that are included in an area.
+- BUGFIX - useLowDevices - found another bug with the blacklist logic but it seems to be resolved now
+- BUGFIX - callService - when calling any service, if sending multiple targets and one of them was a duplicate it was previously failing, will now correctly process the request.
+
 # 3.0.3
 ## @hakit/components
 - NEW - Icons! Massive changes here, the icons are now much more dynamic, previously it only showed a default domain, or an icon that was picked for the entity inside home assistant, Now, a picked icon in home assistant will take priority,  `state` & `attribute` values will determine what icon to show depending on the state of the entity, and if none of these are available, it will fall back to the domain icon.
@@ -10,8 +22,8 @@
 - BUGFIX - useLowDevices - blacklist wasn't working correctly, can now provide partial entity names as part of the blacklist to exclude certain devices.
 - BUGFIX - history object can now contain values from entities that do not include numerical state (things like weather history where the state value is a string)
 - NEW - useEntity - if an icon is picked for an entity in home assistant, this value will be provided under `attributes.icon`, if it's not picked it will determine a   smart icon to use based on the domain, attributes and state values.
-- NEW - useAreas - some of this code was copied directly from home assistant, however i noticed it wasn't retrieving all entities that I had included in the area, there's a bug in their source code which i've fixed and now this hook will return all entities that are included in an area.
- - BUGFIX - useLowDevices - found another bug with the blacklist logic but it seems to be resolved now
+
+
 
 # 3.0.2
 ## @hakit/components
@@ -605,7 +617,7 @@
 - cleaning up typing exports, upgraded package to correctly resolve pathnames from alias's
 # v.1.0.11
 ##### released - 07/07/2023
-- removing useTimeDifference hook, this is now handled by the useEntity hook and available on all entities under the "custom" object, eg `const entity = useEntity('some_entity'); console.info(entity.custom.relativeTime)`
+- removing useTimeDifference hook, this is now handled by the useEntity hook and available on all entities under the "custom" object, eg `const entity = useEntity('some_entity'); console.log(entity.custom.relativeTime)`
 
 # v.1.0.10
 ##### released - 07/07/2023

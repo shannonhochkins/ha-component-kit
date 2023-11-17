@@ -2,8 +2,7 @@ import { useEffect, useRef, useCallback, useMemo, useState, useId } from "react"
 import { useService, useHass, isUnavailableState, useEntity, OFF, supportsFeatureFromAttributes } from "@hakit/core";
 import { snakeCase, clamp } from "lodash";
 import { useGesture } from "@use-gesture/react";
-import type { HassEntity } from "home-assistant-js-websocket";
-import type { EntityName, FilterByDomain } from "@hakit/core";
+import type { EntityName, FilterByDomain, MediaPlayerEntity } from "@hakit/core";
 import { FabCard, fallback, Row, Column, CardBase } from "@components";
 import type { CardBaseProps, AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -188,7 +187,7 @@ function _MediaPlayerCard({
   const entitiesById = getAllEntities();
   const groupedEntities = groupMembers
     .map((entity) => entitiesById[entity] ?? null)
-    .filter((entity): entity is HassEntity => entity !== null && !isUnavailableState(entity.state));
+    .filter((entity): entity is MediaPlayerEntity => entity !== null && !isUnavailableState(entity.state));
   const allEntityIds = useMemo(() => [_entity, ...groupedEntities.map((x) => x.entity_id)], [_entity, groupedEntities]);
   const { state } = entity;
   const { media_artist, media_title, media_playlist, app_name, media_duration, media_position, media_position_updated_at } =
