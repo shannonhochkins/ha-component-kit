@@ -62,6 +62,8 @@ export { LightControls, type LightControlsProps } from "./Shared/Entity/Light/Li
 export { CoverControls, type CoverControlsProps } from "./Shared/Entity/Cover/CoverControls";
 // SwitchControls
 export { SwitchControls, type SwitchControlsProps } from "./Shared/Entity/Switch/SwitchControls";
+// MediaPlayerControls
+export { MediaPlayerControls, type MediaPlayerControlsProps } from "./Shared/Entity/MediaPlayer/MediaPlayerControls";
 // ClimateCard
 export { ClimateCard, type ClimateCardProps } from "./Cards/ClimateCard";
 // EntitiesCard
@@ -70,6 +72,9 @@ export { EntitiesCard, type EntitiesCardProps } from "./Cards/EntitiesCard";
 export { EntitiesCardRow, type EntitiesCardRowProps } from "./Cards/EntitiesCard/EntitiesCardRow";
 // MediaPlayerCard
 export { MediaPlayerCard, type MediaPlayerCardProps } from "./Cards/MediaPlayerCard";
+// MediaPlayerShared
+export { VolumeControls, type VolumeControlsProps } from "./Cards/MediaPlayerCard/VolumeControls";
+export { PlaybackControls, type PlaybackControlsProps } from "./Cards/MediaPlayerCard/PlaybackControls";
 // CalendarCard
 export { CalendarCard, type CalendarCardProps } from "./Cards/CalendarCard";
 // ButtonBar
@@ -93,6 +98,7 @@ export { ModalSwitchControls, type ModalSwitchControlsProps } from "./Shared/Mod
 export { ModalCameraControls, type ModalCameraControlsProps } from "./Shared/Modal/ModalByEntityDomain/Camera";
 export { ModalCoverControls, type ModalCoverControlsProps } from "./Shared/Modal/ModalByEntityDomain/Cover";
 export { ModalWeatherControls, type ModalWeatherControlsProps } from "./Shared/Modal/ModalByEntityDomain/Weather";
+export { ModalMediaPlayerControls, type ModalMediaPlayerControlsProps } from "./Shared/Modal/ModalByEntityDomain/MediaPlayer";
 export { ModalByEntityDomain, type ModalByEntityDomainProps, type ModalPropsHelper } from "./Shared/Modal/ModalByEntityDomain";
 // ControlSlider
 export { ControlSlider, type ControlSliderProps } from "./Shared/ControlSlider";

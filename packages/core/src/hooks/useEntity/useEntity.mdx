@@ -62,7 +62,7 @@ function Office() {
       hoursToShow: 96 // defaults to 24
     }
   });
-  console.log('light history', lightStrip.history);
+  console.info('light history', lightStrip.history);
   // can now access all properties relating to the light
   return lightStrip?.state ?? 'unknown';
 }

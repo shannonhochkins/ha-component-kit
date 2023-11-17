@@ -68,6 +68,12 @@ const Title = styled.h4`
   white-space: nowrap;
   text-overflow: ellipsis;
   max-width: 100%;
+  > span {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ha-S500-contrast);
+    display: flex;
+  }
 `;
 
 const Description = styled.h4`

@@ -1,3 +1,16 @@
+
+# 3.0.4
+## @hakit/components
+- NEW - Thanks to @yann510 for introducing new functionality for media players to show additional controls for speaker groups on the card - there's now a popup that will launch allowing you to join/unjoin speakers from a group and control individual volume of speakers. Storybook demonstrates this feature popup however the functionality will not work in the demo.
+- NEW - AreaCard - previously the full screen popup was rendered alongside the card it self, this is now using portals and will ensure it's always rendered full screen as the popup is now rendered alongside the body, you can now optionally disable the card if need be as well.
+- BUFIX - modalProps on cards - now accepts the correct types, now you can trigger or disable the modal by passing through the props.
+
+## @hakit/core
+- NEW - useAreas - some of this code was copied directly from home assistant, however i noticed it wasn't retrieving all entities that I had included in the area, there's a bug in their source code which i've fixed and now this hook will return all entities that are included in an area.
+- BUGFIX - useLowDevices - found another bug with the blacklist logic but it seems to be resolved now
+- BUGFIX - callService - when calling any service, if sending multiple targets and one of them was a duplicate it was previously failing, will now correctly process the request.
+
+
 # 3.0.3
 ## @hakit/components
 - NEW - Icons! Massive changes here, the icons are now much more dynamic, previously it only showed a default domain, or an icon that was picked for the entity inside home assistant, Now, a picked icon in home assistant will take priority,  `state` & `attribute` values will determine what icon to show depending on the state of the entity, and if none of these are available, it will fall back to the domain icon.

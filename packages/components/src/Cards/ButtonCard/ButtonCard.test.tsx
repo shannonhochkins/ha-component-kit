@@ -67,7 +67,7 @@ describe("<ButtonCard />", () => {
         description="somethingelse"
         icon="mdi:cross"
         onClick={() => {
-          console.log("entity");
+          console.info("entity");
         }}
         data-testid="button-card"
       />,

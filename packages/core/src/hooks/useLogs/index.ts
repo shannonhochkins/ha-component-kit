@@ -146,7 +146,6 @@ export function useLogs(entityId: EntityName, options?: UseLogOptions) {
           // "recent" means start time is a sliding window
           // so we need to calculate an expireTime to
           // purge old events
-          console.log("subscribed stream", _subscribed.current);
           if (!_subscribed.current) {
             // Message came in before we had a chance to unload
             return;

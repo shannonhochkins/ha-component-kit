@@ -17,7 +17,7 @@ function createSocket(
   // Convert from http:// -> ws://, https:// -> wss://
   const url = auth.wsUrl;
 
-  console.log(
+  console.info(
     "[Auth phase] Initializing WebSocket connection to Home Assistant",
     url,
   );
@@ -27,7 +27,7 @@ function createSocket(
     promResolve: (socket: any) => void,
     promReject: (err: number) => void,
   ) {
-    console.log(
+    console.info(
       `[Auth Phase] Connecting to Home Assistant... Tries left: ${triesLeft}`,
       url,
     );
@@ -70,7 +70,7 @@ function createSocket(
 
     const closeOrError = (errorText?: string) => {
       if (errorText) {
-        console.log(
+        console.info(
           `WebSocket Connection to Home Assistant closed with an error: ${errorText}`,
         );
       }
@@ -117,7 +117,7 @@ function createSocket(
     }) => {
       const message = JSON.parse(event.data);
 
-      console.log(
+      console.info(
         `[Auth phase] Received a message of type ${message.type}`,
         message,
       );
@@ -140,7 +140,7 @@ function createSocket(
         default:
           // We already send this message when socket opens
           if (message.type !== MSG_TYPE_AUTH_REQUIRED) {
-            console.log("[Auth phase] Unhandled message", message);
+            console.info("[Auth phase] Unhandled message", message);
           }
       }
     };
@@ -175,7 +175,7 @@ export async function connect(url: string, token: string): Promise<{
       states,
     }
   } catch (err) {
-    console.log('err', err);
+    console.error('err', err);
     throw new Error('Failed to connect to Home Assistant');
   }
 }

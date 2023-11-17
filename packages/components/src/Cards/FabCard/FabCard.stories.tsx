@@ -15,7 +15,7 @@ function Template(args?: Partial<FabCardProps<"light.fake_light_1" | "light.unav
         />
         <FabCard
           onClick={() => {
-            console.log("entity");
+            console.info("entity");
           }}
         />
       </Row>

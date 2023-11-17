@@ -28,6 +28,29 @@ function Template(args?: Partial<MediaPlayerCardProps>) {
   );
 }
 
+function TemplateWithGroups(args?: Partial<MediaPlayerCardProps>) {
+  return (
+    <HassConnect hassUrl={"http://homeassistant.local:8123"}>
+      <ThemeProvider includeThemeControls />
+      <Column gap="1rem" fullWidth>
+        <p>Group button is available to configure related players</p>
+        <MediaPlayerCard
+          entity="media_player.groups"
+          groupMembers={["media_player.fake_speaker", "media_player.fake_speaker_2"]}
+          {...args}
+        />
+        <p>Same functionality as above, slim layout</p>
+        <MediaPlayerCard
+          layout="slim"
+          entity="media_player.groups"
+          groupMembers={["media_player.fake_speaker", "media_player.fake_speaker_2"]}
+          {...args}
+        />
+      </Column>
+    </HassConnect>
+  );
+}
+
 export default {
   title: "COMPONENTS/Cards/MediaPlayerCard",
   component: MediaPlayerCard,
@@ -42,5 +65,10 @@ export default {
 export type MediaPlayerCardStory = StoryObj<typeof MediaPlayerCard>;
 export const MediaPlayerCardExample: MediaPlayerCardStory = {
   render: Template,
+  args: {},
+};
+
+export const MediaPlayerCardGroupsExample: MediaPlayerCardStory = {
+  render: TemplateWithGroups,
   args: {},
 };
