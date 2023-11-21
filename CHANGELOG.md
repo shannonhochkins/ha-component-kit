@@ -1,3 +1,15 @@
+# 1.1.1
+## create-hakit
+- Adjustments to deploy script
+- Adjustments to base template
+
+# 3.0.5
+## @hakit/components
+- BUGFIX - Fixing bug for MediaPlayerCard where groups aren't available it was not rendering the cards
+
+## @hakit/core
+- CHANGE - useAreas now has a new returned value called `deviceEntities` which are related children for a matched device. You can merge entities and deviceEntities if you want to display them all.
+
 
 # 3.0.4
 ## @hakit/components

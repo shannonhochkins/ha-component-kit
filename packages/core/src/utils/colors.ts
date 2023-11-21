@@ -27,6 +27,10 @@ function toRGB(entity: HassEntity): [number, number, number] | null {
 
 export function getCssColorValue(entity: HassEntity | null) {
   const color = entity ? toRGB(entity) : null;
+  // TODO - potentially return null here instead, and let @hakit/components determine
+  // the css variables if the value is null
+  // If a user is using @hakit/core, and not the ThemeProvider - these variables will do & mean nothing.
+  // FIX SHANNON, FIX!
   const hexColor = color ? rgb2hex(color) : "var(--ha-A400)";
   const rgbColor = color ? `rgba(${color.join(", ")})` : "var(--ha-S500-contrast)";
   const rgbaColor = color ? `rgba(${[...color, 0.35].join(", ")})` : "var(--ha-A200)";
