@@ -1,6 +1,6 @@
 {
   "name": "create-hakit",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "author": "Shannon Hochkins <mail@shannonhochkins.com>",
   "license": "ISC",
@@ -42,6 +42,7 @@
   "devDependencies": {
     "@types/minimist": "^1.2.2",
     "@types/prompts": "^2.4.4",
+    "chalk": "^5.3.0",
     "cross-spawn": "^7.0.3",
     "kolorist": "^1.8.0",
     "minimist": "^1.2.8",

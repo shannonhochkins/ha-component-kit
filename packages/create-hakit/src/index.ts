@@ -230,6 +230,7 @@ function updatePackageJson({
   const prettierVersion = getLatestNpmVersion('prettier');
   const dotenvVersion = getLatestNpmVersion('dotenv');
   const nodeScpVersion = getLatestNpmVersion('node-scp');
+  const chalk = getLatestNpmVersion('chalk');
   const nodeTypesVersion = getLatestNpmVersion('@types/node');
   const packageFile = path.resolve(targetDir, 'package.json');
   const pkg = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
@@ -244,6 +245,7 @@ function updatePackageJson({
     "dotenv": `^${dotenvVersion}`,
     "@types/node": `^${nodeTypesVersion}`,
     "node-scp": `^${nodeScpVersion}`,
+    "chalk": `^${chalk}`,
   };
   pkg.scripts = {
     ...pkg.scripts,

@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Title, Description, Primary, ArgTypes, Source } from "@storybook/blocks";
 import { ThemeProvider, AreaCard, Row, ButtonCard } from "@components";
 import type { AreaCardProps } from "@components";
-import { useHass } from "@hakit/core";
 // @ts-expect-error - Don't have types for jsx-to-string
 import jsxToString from "jsx-to-string";
 import { HassConnect } from "@hass-connect-fake";
@@ -70,7 +69,7 @@ function TemplateFull() {
   );
 }
 
-function UseHashExample() {
+const hashExample = `function UseHashExample() {
   const { useStore } = useHass();
   const setHash = useStore((store) => store.setHash);
   return (
@@ -86,7 +85,7 @@ function UseHashExample() {
       />
     </Row>
   );
-}
+}`;
 
 export default {
   title: "COMPONENTS/Cards/AreaCard",
@@ -104,12 +103,7 @@ export default {
             You can set the hash programmatically from anywhere and the area will activate! There's a helper hook designed to help with
             this!
           </p>
-          <Source
-            dark
-            code={jsxToString(UseHashExample(), {
-              useFunctionCode: true,
-            })}
-          />
+          <Source dark code={hashExample} />
           <h2>Component Props</h2>
           <ArgTypes />
         </>

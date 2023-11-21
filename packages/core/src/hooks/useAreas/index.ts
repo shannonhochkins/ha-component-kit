@@ -21,6 +21,8 @@ export interface Area {
   services: DeviceRegistryEntry[];
   /** the entities linked to the area */
   entities: HassEntity[];
+  /** entities related to the matched devices */
+  deviceEntities: HassEntity[];
 }
 
 export function useAreas(): Area[] {
@@ -52,9 +54,10 @@ export function useAreas(): Area[] {
 
   return useMemo(() => {
     return areas.map((area) => {
-      const matchedEntities = [];
-      const matchedDevices = [];
-      const matchedServices = [];
+      const matchedEntities: HassEntity[] = [];
+      const matchedDevices: DeviceRegistryEntry[] = [];
+      const matchedServices: DeviceRegistryEntry[] = [];
+      const deviceEntities: HassEntity[] = [];
 
       for (const device of devices) {
         if (device.area_id === area.area_id) {
@@ -73,11 +76,11 @@ export function useAreas(): Area[] {
         // link the matchedDevices to an entity
         for (const device of matchedDevices) {
           if (entity.device_id === device.id) {
-            // first check if matchedEntities contains the entity already
-            const exists = matchedEntities.find((e) => e.entity_id === entity.entity_id);
+            // first check if deviceEntities contains the entity already
+            const exists = deviceEntities.find((e) => e.entity_id === entity.entity_id);
             if (!exists) {
               if (_entities[entity.entity_id]) {
-                matchedEntities.push(_entities[entity.entity_id]);
+                deviceEntities.push(_entities[entity.entity_id]);
               }
             }
           }
@@ -89,6 +92,7 @@ export function useAreas(): Area[] {
         devices: matchedDevices,
         services: matchedServices,
         entities: matchedEntities,
+        deviceEntities,
       };
     });
   }, [areas, devices, joinHassUrl, entities, _entities]);
