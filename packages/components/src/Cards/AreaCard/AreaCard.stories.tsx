@@ -103,10 +103,7 @@ export default {
             You can set the hash programmatically from anywhere and the area will activate! There's a helper hook designed to help with
             this!
           </p>
-          <Source
-            dark
-            code={hashExample}
-          />
+          <Source dark code={hashExample} />
           <h2>Component Props</h2>
           <ArgTypes />
         </>
