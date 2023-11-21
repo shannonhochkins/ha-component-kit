@@ -1,3 +1,8 @@
+
+# 1.1.2
+## create-hakit
+- BUGFIX - deploy script wasn't working correctly, this has been fixed
+
 # 1.1.1
 ## create-hakit
 - Adjustments to deploy script
