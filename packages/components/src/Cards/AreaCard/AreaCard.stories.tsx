@@ -70,7 +70,7 @@ function TemplateFull() {
   );
 }
 
-function UseHashExample() {
+const hashExample = `function UseHashExample() {
   const { useStore } = useHass();
   const setHash = useStore((store) => store.setHash);
   return (
@@ -86,7 +86,7 @@ function UseHashExample() {
       />
     </Row>
   );
-}
+}`;
 
 export default {
   title: "COMPONENTS/Cards/AreaCard",
@@ -106,9 +106,7 @@ export default {
           </p>
           <Source
             dark
-            code={jsxToString(UseHashExample(), {
-              useFunctionCode: true,
-            })}
+            code={hashExample}
           />
           <h2>Component Props</h2>
           <ArgTypes />

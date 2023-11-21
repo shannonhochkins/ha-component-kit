@@ -65,7 +65,13 @@ export interface MediaPlayerControlsProps extends ColumnProps {
   onStateChange?: (state: string) => void;
 }
 
-export const MediaPlayerControls = ({ groupedEntities, allEntityIds, onStateChange, entity, ...rest }: MediaPlayerControlsProps) => {
+export const MediaPlayerControls = ({
+  groupedEntities = [],
+  allEntityIds = [],
+  onStateChange,
+  entity,
+  ...rest
+}: MediaPlayerControlsProps) => {
   const primaryEntity = useEntity(entity);
   const supportsGrouping = supportsFeatureFromAttributes(primaryEntity.attributes, 524288);
   // To get proper ordering of speakers, we need to flatten the groupedEntities array while keeping the order of the groups
