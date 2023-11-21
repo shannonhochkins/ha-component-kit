@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "start": "storybook dev -p 6006",
-    "dev": "npm run storybook && npm run dev --workspaces --if-present",
+    "dev": "npm run start",
     "test": "npm run test --workspaces --if-present",
     "test:components": "npm run test --workspace=@hakit/components",
     "test:core": "npm run test --workspace=@hakit/core",
