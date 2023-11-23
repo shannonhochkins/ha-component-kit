@@ -1,6 +1,6 @@
 // important that these are imported first or the mock won't work.
 import { TestWrapper, onReady, mocked, connection } from "@hass-connect-fake/mocks/mockConnection";
-import { FabCard } from "@components";
+import { FabCard } from "./";
 import { computeDomain } from "@utils/computeDomain";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 import { snakeCase } from "lodash";

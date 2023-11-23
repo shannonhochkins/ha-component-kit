@@ -91,7 +91,7 @@ const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
   `;
 };
 
-const StyledRipples = styled(Ripples)`
+const StyledRipples = styled((props: RipplesProps) => <Ripples {...props} />)`
   flex-shrink: 1;
   width: 100%;
   height: 100%;
