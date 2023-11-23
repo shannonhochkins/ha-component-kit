@@ -71,25 +71,24 @@ export function useAreas(): Area[] {
       // ! entities only have an area_id if they are manually assigned to an area and
       // ! not inherited from the parent device (or because they don't have a parent device)
       for (const entity of entities) {
-        const entityIsInArea = entity.area_id === area.area_id;
-        if (entityIsInArea) {
-          matchedEntities.push(_entities[entity.entity_id]);
-        }
-
         const _entity = _entities[entity.entity_id];
         if (!_entity) continue;
-        if (!entity.device_id) continue;
 
+        const entityIsInArea = entity.area_id === area.area_id;
+        if (entityIsInArea) {
+          matchedEntities.push(_entity);
+        }
+
+        if (!entity.device_id) continue;
         const device = devices.find((d) => d.id === entity.device_id);
         if (!device) continue;
+        deviceEntities.push(_entity);
 
         const deviceIsInArea = device.area_id === area.area_id;
         const entityInheritsArea = !entity.area_id;
         if (entityInheritsArea && deviceIsInArea) {
           matchedEntities.push(_entity);
         }
-
-        deviceEntities.push(_entity);
       }
       return {
         ...area,
