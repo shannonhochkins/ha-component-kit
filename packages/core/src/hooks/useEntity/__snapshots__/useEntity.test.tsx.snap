@@ -57,11 +57,16 @@ exports[`useEntity should retrieve the entity object 1`] = `
       83.89500000000001,
     ],
     "hexColor": "#ff6e54",
-    "relativeTime": "1 year ago",
     "rgbColor": "rgba(255, 109.56074999999998, 83.89500000000001)",
     "rgbaColor": "rgba(255, 109.56074999999998, 83.89500000000001, 0.35)",
   },
   "entity_id": "light.fake_light_1",
+  "history": {
+    "coordinates": [],
+    "entityHistory": [],
+    "loading": false,
+    "timeline": [],
+  },
   "state": "on",
 }
 `;

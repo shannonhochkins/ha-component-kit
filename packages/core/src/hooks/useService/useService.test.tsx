@@ -7,10 +7,14 @@ describe("useService", () => {
     onReady.mockClear();
   });
   it("should return service object with passed entity id and call the service", async () => {
-    const { result } = renderHook(() => useService("light", { entity_id: "light.kitchen" }), {
+    // because of strict mode, we need to call this twice...
+    renderHook(() => useService("light", { entity_id: "light.kitchen" }), {
       wrapper: TestWrapper,
     });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
+    const { result } = renderHook(() => useService("light", { entity_id: "light.kitchen" }), {
+      wrapper: TestWrapper,
+    });
     act(() => {
       result.current.turnOn({
         color_name: "red",
