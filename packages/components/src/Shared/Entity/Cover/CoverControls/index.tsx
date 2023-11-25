@@ -5,7 +5,7 @@ import { useEntity, supportsFeatureFromAttributes, isUnavailableState } from "@h
 import type { EntityName, CoverEntity, FilterByDomain } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 
-export const enum CoverEntityFeature {
+const enum CoverEntityFeature {
   OPEN = 1,
   CLOSE = 2,
   SET_POSITION = 4,

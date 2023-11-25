@@ -43,20 +43,24 @@ describe("useEntity", () => {
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     act(() => {
       // omitting the service object here as the serializer doesn't like proxy objects
-      const timeBasedOmit = omit(result.current.custom, ['timeDiff', 'relativeTime']);
+      const timeBasedOmit = omit(result.current.custom, ["timeDiff", "relativeTime"]);
       expect({
-        ...omit(result.current, "service", "last_changed", "last_updated", 'custom'),
-        custom: timeBasedOmit
+        ...omit(result.current, "service", "last_changed", "last_updated", "custom"),
+        custom: timeBasedOmit,
       }).toMatchSnapshot();
     });
   });
 
   it("should return null instead of throwing an error if returnNullIfNotFound is true", async () => {
-    const { result } = renderHook(() => useEntity("light.does_not_exist", {
-      returnNullIfNotFound: true
-    }), {
-      wrapper: TestWrapper,
-    });
+    const { result } = renderHook(
+      () =>
+        useEntity("light.does_not_exist", {
+          returnNullIfNotFound: true,
+        }),
+      {
+        wrapper: TestWrapper,
+      },
+    );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     await act(async () => {
       expect(result.current).toEqual(null);
@@ -65,11 +69,15 @@ describe("useEntity", () => {
 
   it("should throw an error when provided with a entity name that does not exist", async () => {
     // purposely call once with null so we can authenticate properly
-    renderHook(() => useEntity("light.does_not_exist", {
-      returnNullIfNotFound: true
-    }), {
-      wrapper: TestWrapper,
-    });
+    renderHook(
+      () =>
+        useEntity("light.does_not_exist", {
+          returnNullIfNotFound: true,
+        }),
+      {
+        wrapper: TestWrapper,
+      },
+    );
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     try {
       renderHook(() => useEntity("light.does_not_exist"), {
@@ -78,7 +86,7 @@ describe("useEntity", () => {
       // force failure if it passes for some reason...
       expect(true).toBe(false);
     } catch (e) {
-      expect((e as Error).message).toEqual('Entity light.does_not_exist not found');
+      expect((e as Error).message).toEqual("Entity light.does_not_exist not found");
     }
   });
 });

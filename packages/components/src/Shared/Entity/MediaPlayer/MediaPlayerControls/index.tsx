@@ -11,7 +11,7 @@ import {
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
 import { MediaPlayerCard, CardBase, Row, Column, Group, VolumeControls, fallback, ColumnProps } from "@components";
-import { StyledFab } from "../../../../Cards/MediaPlayerCard";
+import { Fab } from "../../../../Cards/MediaPlayerCard/Fab";
 import { capitalize, flatten, groupBy } from "lodash";
 import { useCallback, useMemo, useState, useEffect } from "react";
 import { spring } from "framer-motion";
@@ -199,7 +199,7 @@ export const MediaPlayerControls = ({
                       </Title>
                       <Row gap={"0.5rem"} justifyContent={"end"}>
                         {!supportsGrouping && (
-                          <StyledFab
+                          <Fab
                             className="media-player-power"
                             iconColor={`var(--ha-S200-contrast)`}
                             active={!isOff && !isUnavailable}
@@ -229,7 +229,7 @@ export const MediaPlayerControls = ({
                         )}
                         {supportsGrouping && !isOff && (
                           <div style={{ position: "relative" }}>
-                            <StyledFab
+                            <Fab
                               rippleProps={{
                                 preventPropagation: true,
                               }}

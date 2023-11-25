@@ -81,7 +81,7 @@ const MotionDiv = styled(motion.div)`
 `;
 
 /** This component will show the Home Assistant login form you're used to seeing normally when logging into HA, once logged in you shouldn't see this again unless you clear device storage, once authenticated it will render the child components of HassConnect and provide access to the api. */
-export const HassConnect = ({ children, hassUrl, loading = <Loader />, onReady, options = {} }: HassConnectProps): React.ReactNode => {
+export const HassConnect = ({ children, hassUrl, loading = <Loader />, onReady, options = {} }: HassConnectProps) => {
   const onReadyCalled = useRef(false);
 
   if (!hassUrl) {

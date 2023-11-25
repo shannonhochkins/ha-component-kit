@@ -38,7 +38,7 @@ There's an awesome subfeature of this package that will generate types specific 
 
 Then simply wrap your root component (usally App.tsx) with the [HassConnect](/docs/components-hassconnect--docs) component, don't forget to include the "ThemeProvider" to get the default theme.
 
-```tsx
+<Source dark code={`
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { HassConnect } from '@hakit/core';
@@ -55,7 +55,7 @@ function App() {
 const root = createRoot(document.getElementById('root'));
 
 root.render(<App />);
-```
+`} />
 
 When you run/build your server you should see a familiar home assistant login form, login with your normal credentials and you should see your components within the HassConnect component render, this means
 we've authenticated successfully.
@@ -70,16 +70,16 @@ To get this up and running in it's simplest form, replace "dashboard" with your 
 
 Once the above is complete, the terminal will show you steps on how to run it / use it.
 
-```bash
+<Source dark code={`
   cd dashboard && npm i @hakit/core @hakit/components
-```
+`} />
 
 Open src/App.tsx and replace this with the following:
 
 **TIP:** Make sure you replace the HASS_URL with the url to your home assistant instance.
 
 
-```ts
+<Source dark code={`
 // App.tsx
 import React from 'react';
 import { HassConnect } from '@hakit/core';
@@ -96,7 +96,6 @@ function App() {
 }
 
 export default App;
-
-```
+`} />
 
 Now once you run your application, you should be prompted to login with Home Assistant, and then redirected to your custom dashboard!

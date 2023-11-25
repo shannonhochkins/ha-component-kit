@@ -6,15 +6,11 @@ import type { TimelineState, EntityHistoryState } from "../hooks/useHistory/hist
 
 export type { HistoryStreamMessage, TimelineState, HistoryResult, EntityHistoryState } from "../hooks/useHistory/history";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore - ignore the next check as this is extendable from the client side.
-// eslint-disable-next-line
-export interface CustomSupportedServices<
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  T extends ServiceFunctionTypes = "target",
-> {}
+export interface CustomSupportedServices<T extends ServiceFunctionTypes = "target"> {
+  unknown: T;
+}
 // dodgey hack to determine if the custom supported services are empty or not, if they're empty we use the default services
-export type SupportedServices<T extends ServiceFunctionTypes = "target"> = [keyof CustomSupportedServices<T>] extends [never]
+export type SupportedServices<T extends ServiceFunctionTypes = "target"> = [keyof CustomSupportedServices<T>] extends ["unknown"]
   ? DefaultServices<T>
   : CustomSupportedServices<T>;
 
@@ -25,16 +21,12 @@ export type FilterByDomain<
 > = T extends `${Prefix}${infer _Rest}` ? T : never;
 
 export type DefaultEntityName = `${AllDomains}.${string}`;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore - ignore the next check as this is extendable from the client side.
-// eslint-disable-next-line
 export interface CustomEntityNameContainer {}
 
 export type EntityName =
   | ([keyof CustomEntityNameContainer] extends [never]
       ? DefaultEntityName
-      : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore - ignore the next check as this is extendable from the client side.
+      : // @ts-expect-error - this is created client side to extend the types
         CustomEntityNameContainer["names"])
   | "unknown";
 

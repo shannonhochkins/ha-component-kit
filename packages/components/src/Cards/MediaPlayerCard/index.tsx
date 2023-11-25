@@ -3,7 +3,7 @@ import { useService, useHass, isUnavailableState, useEntity, OFF, supportsFeatur
 import { snakeCase, clamp } from "lodash";
 import { useGesture } from "@use-gesture/react";
 import type { EntityName, FilterByDomain, MediaPlayerEntity } from "@hakit/core";
-import { FabCard, fallback, Row, Column, CardBase } from "@components";
+import { fallback, Row, Column, CardBase } from "@components";
 import type { CardBaseProps, AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
@@ -86,27 +86,6 @@ const Base = styled(Column)`
   background-color: rgba(0, 0, 0, 0.5);
 `;
 const Empty = styled.span``;
-
-export const StyledFab = styled(FabCard)`
-  background-color: var(--ha-S600);
-
-  &:not(.active) {
-    color: black;
-  }
-  opacity: 0.8;
-  transition: opacity var(--ha-transition-duration) var(--ha-easing);
-  &:disabled {
-    opacity: 0.38;
-  }
-  &:not(:disabled) {
-    &:hover,
-    &:active {
-      opacity: 1;
-      color: black;
-    }
-  }
-  z-index: 2;
-`;
 
 const StyledMarquee = styled(Marquee)`
   font-size: 0.8rem;
