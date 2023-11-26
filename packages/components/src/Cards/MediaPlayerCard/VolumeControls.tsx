@@ -2,7 +2,7 @@ import { EntityName, FilterByDomain, supportsFeatureFromAttributes, useEntity, u
 import { useCallback, useRef, useEffect, useState } from "react";
 import { mq, Row, RangeSlider } from "@components";
 import styled from "@emotion/styled";
-import { StyledFab } from "./index";
+import { Fab } from "./Fab";
 import { Layout, VolumeLayout, DEFAULT_FAB_SIZE } from "./constants";
 const VolumeSlider = styled.label<{
   layout: Layout;
@@ -70,7 +70,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
   return (
     <Row gap="0.5rem" wrap="nowrap">
       {!hideMute && supportsVolumeMute && (
-        <StyledFab
+        <Fab
           iconColor={`var(--ha-S200-contrast)`}
           className={`volume-mute ${is_volume_muted ? "muted" : "not-muted"}`}
           disabled={disabled}
@@ -88,7 +88,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
       )}
       {volumeLayout === "buttons" && supportsVolumeSet && (
         <>
-          <StyledFab
+          <Fab
             rippleProps={{
               preventPropagation: true,
             }}
@@ -99,7 +99,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
             icon="mdi:volume-minus"
             onClick={() => mp.volumeDown(allEntityIds ?? _entity)}
           />
-          <StyledFab
+          <Fab
             rippleProps={{
               preventPropagation: true,
             }}

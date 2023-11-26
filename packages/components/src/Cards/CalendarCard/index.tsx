@@ -25,12 +25,6 @@ import {
 import { ErrorBoundary } from "react-error-boundary";
 import { useRef, useEffect, useState, useCallback } from "react";
 
-export const enum CalendarEntityFeature {
-  CREATE_EVENT = 1,
-  DELETE_EVENT = 2,
-  UPDATE_EVENT = 4,
-}
-
 const StyledCalendarCard = styled(CardBase)`
   .contents .calendar > * {
     flex-grow: 1;

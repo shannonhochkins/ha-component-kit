@@ -64,7 +64,7 @@ async function deploy() {
         } catch (e) {
           // directory may not exist, ignore
         }
-        console.log(chalk.blue('Uploading', `"${LOCAL_DIRECTORY}"`, 'to', `"${remote}"`));
+        console.info(chalk.blue('Uploading', `"${LOCAL_DIRECTORY}"`, 'to', `"${remote}"`))
         // upload the folder to your home assistant server
         await client.uploadDir(LOCAL_DIRECTORY, remote);
         client.close(); // remember to close connection after you finish

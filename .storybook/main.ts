@@ -13,13 +13,12 @@ export default ({
     "../packages/**/*.stories.@(js|jsx|ts|tsx)"
   ],
   addons: [
-    getAbsolutePath("@storybook/addon-themes"),
-    getAbsolutePath("@storybook/addon-links"),
-    getAbsolutePath("@storybook/addon-essentials"),
-    getAbsolutePath("@storybook/addon-interactions"),
-    getAbsolutePath("@storybook/addon-controls"),
-    getAbsolutePath("@storybook/addon-docs"),
-    getAbsolutePath("@storybook/addon-mdx-gfm")
+    "@storybook/addon-themes",
+    "@storybook/addon-links",
+    "@storybook/addon-essentials",
+    "@storybook/addon-interactions",
+    "@storybook/addon-controls",
+    "@storybook/addon-docs",
   ],
   core: {},
   staticDirs: ['../static'],

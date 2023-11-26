@@ -8,7 +8,15 @@ import type { TooltipProps, CardBaseProps } from "@components";
 import { startCase, lowerCase } from "lodash";
 import { ErrorBoundary } from "react-error-boundary";
 
-const StyledFabCard = styled(CardBase)<
+const StyledFabCard = styled(<E extends EntityName>({ service, serviceData, ...props }: CardBaseProps<"button", E>) => (
+  <CardBase
+    // @ts-expect-error - don't know entity name
+    service={service}
+    // @ts-expect-error - don't know entity name
+    serviceData={serviceData}
+    {...props}
+  />
+))<
   CardBaseProps<"button", EntityName> & {
     hasChildren?: boolean;
     size: number;
