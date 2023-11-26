@@ -7,10 +7,12 @@ import type { TimelineState, EntityHistoryState } from "../hooks/useHistory/hist
 export type { HistoryStreamMessage, TimelineState, HistoryResult, EntityHistoryState } from "../hooks/useHistory/history";
 
 export interface CustomSupportedServices<T extends ServiceFunctionTypes = "target"> {
-  unknown: T;
+  // populated by the sync script and will be overwritten by the user
+  UNDETERMINED: T;
 }
+
 // dodgey hack to determine if the custom supported services are empty or not, if they're empty we use the default services
-export type SupportedServices<T extends ServiceFunctionTypes = "target"> = [keyof CustomSupportedServices<T>] extends ["unknown"]
+export type SupportedServices<T extends ServiceFunctionTypes = "target"> = [keyof CustomSupportedServices<T>] extends ["UNDETERMINED"]
   ? DefaultServices<T>
   : CustomSupportedServices<T>;
 

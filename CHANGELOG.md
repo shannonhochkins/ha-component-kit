@@ -1,3 +1,13 @@
+# 3.1.1
+Upgrading all packages, leaving CJS stack trace in place so we can monitor updates of packages that haven't been upgraded to ESM only yet, type fixes
+## @hakit/components
+- No code changes aside from base package upgrades
+
+## @hakit/core
+- BUGFIX - BIG Thanks to @koriwi - the useArea hook will now match related devices/entities where entities are indirectly related to an area (device is in the area but a sub entity is not)
+- BUGFIX - HassConnect was previously returning React.ReactNode as the return type, but i've removed this and left it to type inference as there's a bug with typescript < 5.1 where it doesn't properly work with React.
+- BUGFIX - Test framework working again for @core only, still need to work on client side.
+
 # 1.1.1
 ## create-hakit
 - Adjustments to deploy script
