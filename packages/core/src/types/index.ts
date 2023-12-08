@@ -87,7 +87,7 @@ export type ServiceFunction<T extends ServiceFunctionTypes = "target", Data = ob
   /** without target, the service method does not expect a Target value as the first argument */
   "no-target": ServiceFunctionWithoutEntity<Data>;
 }[T];
-export type StaticDomains = "sun" | "sensor" | "stt" | "binarySensor" | "weather";
+export type StaticDomains = "sun" | "sensor" | "stt" | "binarySensor" | "weather" | "alert" | "plant";
 export type SnakeOrCamelStaticDomains = CamelToSnake<StaticDomains> | SnakeToCamel<StaticDomains>;
 /** the key names on the interface object all as camel case */
 export type CamelCaseDomains = SnakeToCamel<NonSymbolNumberKeys<SupportedServices>>;

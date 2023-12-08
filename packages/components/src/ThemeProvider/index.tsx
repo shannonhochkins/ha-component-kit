@@ -10,7 +10,7 @@ import { useBreakpoint, fallback, FabCard, Modal, type BreakPoints } from "@comp
 import { ErrorBoundary } from "react-error-boundary";
 import { motion } from "framer-motion";
 import { LIGHT, DARK, ACCENT, DEFAULT_START_LIGHT, DEFAULT_START_DARK, DIFF, DEFAULT_THEME_OPTIONS } from "./constants";
-import { useHass } from "@hakit/core";
+import { useHass, type SupportedComponentOverrides } from "@hakit/core";
 import { ThemeControls } from "./ThemeControls";
 import type { ThemeControlsProps } from "./ThemeControls";
 import { generateColumnBreakpoints } from "./breakpoints";
@@ -49,6 +49,8 @@ export interface ThemeProviderProps<T extends object> {
    *
    */
   breakpoints?: BreakPoints;
+  /** styles to provide for a specific component type to override every instance */
+  globalComponentStyles?: Partial<Record<SupportedComponentOverrides, CSSInterpolation>>;
 }
 
 const ThemeControlsBox = styled(motion.div)`
@@ -144,11 +146,19 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
   includeThemeControls = false,
   themeControlStyles,
   globalStyles,
+  globalComponentStyles,
 }: ThemeProviderProps<T>): JSX.Element {
   const { useStore } = useHass();
   const setBreakpoints = useStore((store) => store.setBreakpoints);
+  const setGlobalComponentStyles = useStore((store) => store.setGlobalComponentStyles);
   const _breakpoints = useStore((store) => store.breakpoints);
   const device = useBreakpoint();
+
+  useEffect(() => {
+    if (globalComponentStyles) {
+      setGlobalComponentStyles(globalComponentStyles);
+    }
+  }, [setGlobalComponentStyles, globalComponentStyles]);
 
   const getTheme = useCallback(() => {
     return {

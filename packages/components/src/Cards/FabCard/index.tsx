@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import styled from "@emotion/styled";
-import { useEntity, useIconByDomain, useIcon, useIconByEntity, isUnavailableState } from "@hakit/core";
+import { useEntity, useIconByDomain, useHass, useIcon, useIconByEntity, isUnavailableState } from "@hakit/core";
 import { computeDomain } from "@utils/computeDomain";
 import type { EntityName } from "@hakit/core";
 import { CardBase, fallback, Tooltip } from "@components";
@@ -95,8 +95,11 @@ function _FabCard<E extends EntityName>({
   className,
   service,
   serviceData,
+  cssStyles,
   ...rest
 }: FabCardProps<E>): JSX.Element {
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
   });
@@ -141,6 +144,10 @@ function _FabCard<E extends EntityName>({
           borderRadius={_borderRadius}
           hasChildren={hasChildren}
           disableColumns={true}
+          cssStyles={`
+            ${globalComponentStyle?.fabCard ?? ""}
+            ${cssStyles ?? ""}
+          `}
           {...rest}
         >
           <Contents size={size} hasChildren={hasChildren}>

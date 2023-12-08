@@ -74,15 +74,17 @@ function _ClimateCard({
   onClick,
   hvacModes,
   hideCurrentTemperature,
-  hideFanMode,
+  hideHvacModes,
   disabled,
   className,
   modalProps,
   service,
   serviceData,
+  cssStyles,
   ...rest
 }: ClimateCardProps): JSX.Element {
-  const { getConfig } = useHass();
+  const { getConfig, useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const entity = useEntity(_entity);
   const entityIcon = useIconByEntity(_entity);
   const domainIcon = useIconByDomain("climate");
@@ -132,12 +134,16 @@ function _ClimateCard({
           ...modalProps,
           hvacModes: havacModesToUse,
           hideCurrentTemperature,
-          hideFanMode,
+          hideHvacModes,
         }}
         onClick={() => {
           if (isUnavailable || disabled || typeof onClick !== "function") return;
           onClick(entity);
         }}
+        cssStyles={`
+          ${globalComponentStyle.climateCard ?? ""}
+          ${cssStyles ?? ""}
+        `}
         {...rest}
       >
         <Column

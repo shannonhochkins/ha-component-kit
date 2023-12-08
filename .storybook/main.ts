@@ -45,7 +45,7 @@ export default ({
         if (prop.name === 'cssStyles' || prop.name === 'style') {
           return true;
         }
-        const res = /react-thermostat/.test(prop.parent?.fileName) || !/node_modules/.test(prop.parent?.fileName);
+        const res = !/node_modules/.test(prop.parent?.fileName);
         return prop.parent ? res : true;
       },
       shouldExtractLiteralValuesFromEnum: true,

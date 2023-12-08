@@ -1,12 +1,15 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, ClimateCard } from "@components";
+import { ThemeProvider, ClimateCard, Row } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
-      <ClimateCard entity={"climate.air_conditioner"} {...args} />
+      <Row gap="2rem">
+        <ClimateCard entity={"climate.air_conditioner"} {...args} />
+        <ClimateCard hvacModes={["cool", "heat"]} entity={"climate.air_conditioner"} {...args} />
+      </Row>
     </HassConnect>
   );
 }

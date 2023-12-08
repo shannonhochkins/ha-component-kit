@@ -1,9 +1,10 @@
-import { useEffect, memo, Fragment, ReactNode } from "react";
+import { useEffect, useState, memo, Fragment, useRef, ReactNode } from "react";
 import { css } from "@emotion/react";
 import { AnimatePresence, motion, MotionProps, HTMLMotionProps } from "framer-motion";
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { useKeyPress } from "react-use";
+import { useHass } from "@hakit/core";
 import { FabCard, fallback, Column, mq, Row } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -33,7 +34,7 @@ const ModalContainer = styled(motion.div)`
   `,
   )}
 `;
-const ModalInner = styled.div`
+const ModalInner = styled(motion.div)`
   display: flex;
   padding: 0rem 1rem 2rem;
   align-items: flex-start;
@@ -112,7 +113,7 @@ export interface ModalProps extends Omit<Extendable, "title"> {
   backdropProps?: HTMLMotionProps<"div">;
   /** react elements to render next to the close button */
   headerActions?: () => ReactNode;
-  /** the animation duration modal animation @default 0.25 */
+  /** the animation duration modal animation in seconds @default 0.25 */
   animationDuration?: number;
 }
 function _Modal({
@@ -127,17 +128,57 @@ function _Modal({
   className,
   cssStyles,
   headerActions,
-  animationDuration = 0.25,
+  animationDuration = 1,
   ...rest
 }: ModalProps) {
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [ready, setReady] = useState(false);
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   useEffect(() => {
     if (isPressed && onClose && open) {
       onClose();
     }
   }, [isPressed, onClose, open]);
+  const transition = {
+    duration: animationDuration,
+    ease: [0.42, 0, 0.58, 1],
+  };
+
+  useEffect(() => {
+    if (!open) {
+      setReady(false);
+      return;
+    }
+    if (timerRef.current) return;
+    timerRef.current = setTimeout(
+      () => {
+        setReady(true);
+        timerRef.current = null;
+      },
+      (animationDuration * 1000) / 1.8,
+    );
+  }, [animationDuration, open]);
+
+  const variants = {
+    hidden: { y: "-10%", opacity: 0, transition, scale: 0.9 },
+    show: {
+      scale: 1,
+      y: 0,
+      x: 0,
+      opacity: 1,
+      transition,
+    },
+  };
   return createPortal(
-    <AnimatePresence initial={false} mode="wait">
+    <AnimatePresence
+      initial={false}
+      mode="wait"
+      onExitComplete={() => {
+        setReady(false);
+      }}
+    >
       {open && (
         <Fragment key={`${id}-fragment`}>
           <ModalBackdrop
@@ -166,6 +207,7 @@ function _Modal({
               ...style,
             }}
             css={css`
+              ${globalComponentStyle.modal ?? ""}
               ${cssStyles ?? ""}
             `}
             transition={{
@@ -213,7 +255,11 @@ function _Modal({
               </Row>
             </ModalHeader>
             <ModalOverflow className={`modal-overflow`}>
-              <ModalInner className={"modal-inner"}>{children}</ModalInner>
+              <ModalInner initial="hidden" animate={ready ? "show" : "hidden"} exit="hidden" variants={variants} className={"modal-inner"}>
+                <AnimatePresence initial={false} mode="wait">
+                  {ready && children}
+                </AnimatePresence>
+              </ModalInner>
             </ModalOverflow>
           </ModalContainer>
         </Fragment>

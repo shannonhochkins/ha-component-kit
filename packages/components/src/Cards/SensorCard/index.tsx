@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import styled from "@emotion/styled";
 import type { EntityName, HistoryOptions } from "@hakit/core";
-import { useEntity, useIconByDomain, useIcon, useIconByEntity, computeDomain, isUnavailableState } from "@hakit/core";
+import { useEntity, useIconByDomain, useIcon, useHass, useIconByEntity, computeDomain, isUnavailableState } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 import { fallback, SvgGraph, Alert, AvailableQueries, CardBase, type CardBaseProps } from "@components";
 
@@ -88,8 +88,11 @@ function _SensorCard<E extends EntityName>({
   hideGraph,
   service,
   serviceData,
+  cssStyles,
   ...rest
 }: SensorCardProps<E>): JSX.Element {
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const domain = computeDomain(_entity);
   const entity = useEntity(_entity, {
     historyOptions: {
@@ -114,6 +117,10 @@ function _SensorCard<E extends EntityName>({
       entity={_entity}
       className={`sensor-card ${className ?? ""}`}
       disabled={disabled}
+      cssStyles={`
+        ${globalComponentStyle?.sensorCard ?? ""}
+        ${cssStyles ?? ""}
+      `}
       {...rest}
     >
       <Contents>

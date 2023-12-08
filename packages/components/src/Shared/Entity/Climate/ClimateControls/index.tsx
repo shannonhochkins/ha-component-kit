@@ -1,16 +1,45 @@
-import { useState, useEffect } from "react";
-import styled from "@emotion/styled";
-import { keyframes, css } from "@emotion/react";
-import { Thermostat } from "react-thermostat";
-import { Column, FabCard, Row, fallback, mq } from "@components";
+import { Menu, FabCard, ButtonBar, ButtonBarButton, fallback } from "@components";
 import type { EntityName, FilterByDomain } from "@hakit/core";
-import { useEntity, OFF, useHass, HvacMode } from "@hakit/core";
-import type { HassConfig } from "home-assistant-js-websocket";
-import { useDebounce } from "react-use";
-import type { MotionProps } from "framer-motion";
-import { colors, activeColors, icons } from "./shared";
+import { useEntity, HvacMode, toReadableString, OFF } from "@hakit/core";
+import { useState, useEffect, useCallback } from "react";
+import { supportsFeatureFromAttributes, UNAVAILABLE } from "@hakit/core";
+import { motion, type MotionProps } from "framer-motion";
+import styled from "@emotion/styled";
 import { ErrorBoundary } from "react-error-boundary";
-import { capitalize } from "lodash";
+import { css } from "@emotion/react";
+import {
+  ClimateEntityFeature,
+  ClimateBuiltInPresetMode,
+  compareClimateHvacModes,
+  ClimateBuiltInSwingMode,
+  computeFanModeIcon,
+  computeHvacModeIcon,
+  computePresetModeIcon,
+  computeSwingModeIcon,
+  ClimateBuiltInFanMode,
+} from "./data";
+import { ClimateControlSlider } from "./ClimateControlSlider";
+import { ClimateHumiditySlider } from "./ClimateHumiditySlider";
+
+type MainControl = "temperature" | "humidity";
+
+const Wrapper = styled(motion.div)`
+  color: var(--ha-500-contrast);
+  width: 100%;
+  .controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .controls-scroll {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 24px;
+    padding: 0 24px;
+  }
+`;
 
 type Extendable = Omit<MotionProps & React.ComponentPropsWithoutRef<"div">, "title">;
 
@@ -19,110 +48,50 @@ export interface ClimateControlsProps extends Extendable {
   entity: FilterByDomain<EntityName, "climate">;
   /** provide a list of hvacModes you want to support/display in the UI, will use all by default */
   hvacModes?: HvacMode[];
-  /** hide the current temperature */
+  /** hide the current temperature @default false */
   hideCurrentTemperature?: boolean;
-  /** hide the fan mode fab */
-  hideFanMode?: boolean;
+  /** hide the hvac modes button @default false */
+  hideHvacModes?: boolean;
+  /** hide the swing modes button @default false */
+  hideSwingModes?: boolean;
+  /** hide the fan modes button @default false */
+  hideFanModes?: boolean;
+  /** hide the preset modes button @default false */
+  hidePresetModes?: boolean;
   /** changed whenever the state changes */
   entityStateChanged?: (state: string) => void;
+  /** the control mode */
+  mainControl?: MainControl;
 }
-
-const ThermostatSize = styled.div`
-  aspect-ratio: 1/1.7;
-  height: 100%;
-  max-height: 45vh;
-  min-height: 300px;
-  margin-bottom: 2rem;
-  position: relative;
-  ${mq(
-    ["xxs"],
-    `
-    max-height: 40vh;
-  `,
-  )}
-`;
-
-const FanModeColumn = styled(Column)`
-  position: absolute;
-  top: 0%;
-  left: 0%;
-  font-size: 0.8rem;
-`;
-
-const spin = keyframes`
-  from {
-    transform:rotate(0deg);
-  }
-  to {
-    transform:rotate(360deg);
-  }
-`;
-
-const CurrentTemperature = styled.div`
-  position: absolute;
-  top: 0;
-  right: 1rem;
-  font-size: 1.8rem;
-  span {
-    position: absolute;
-    top: 0.2rem;
-    right: -1rem;
-    font-size: 0.8rem;
-  }
-`;
-
-const Current = styled.div`
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  position: absolute;
-  bottom: -0.6rem;
-`;
-
-const FanMode = styled(FabCard)<{
-  speed?: string;
-}>`
-  animation-name: ${spin};
-  animation-duration: ${(props) => {
-    const speed = (props.speed || "").toLowerCase();
-    const low = speed.includes("low");
-    const medium = speed.includes("mid") || speed.includes("medium");
-    const high = speed.includes("high");
-    if (low) return "4s";
-    if (medium) return "1.8s";
-    if (high) return "0.7s";
-    return "0s";
-  }};
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-`;
 
 function _ClimateControls({
   entity: _entity,
   hvacModes,
   hideCurrentTemperature,
-  hideFanMode,
+  hideHvacModes,
+  hideSwingModes,
+  hideFanModes,
+  hidePresetModes,
   entityStateChanged,
   cssStyles,
   className,
+  mainControl = "temperature",
   ...rest
 }: ClimateControlsProps) {
+  const [_mainControl, setMainControl] = useState<MainControl>(mainControl);
   const entity = useEntity(_entity);
-  const { getConfig } = useHass();
-  const [config, setConfig] = useState<HassConfig | null>(null);
   const isOff = entity.state === OFF;
-  const currentMode = entity.state in icons ? entity.state : "unknown-mode";
-  const {
-    current_temperature,
-    fan_mode,
-    fan_modes = [],
-    hvac_action,
-    hvac_modes,
-    min_temp = 6,
-    max_temp = 40,
-    temperature = 20,
-  } = entity.attributes || {};
-  const [internalFanMode, setInternalFanMode] = useState<string | undefined>(fan_mode);
-  const [internalTemperature, setInternalTemperature] = useState<number>(temperature);
+  const { hvac_action, preset_mode, fan_mode } = entity.attributes;
+  const fan_modes = entity.attributes.fan_modes as ClimateBuiltInFanMode[] | undefined;
+  const preset_modes = entity.attributes.preset_modes as ClimateBuiltInPresetMode[] | undefined;
+  const swing_modes = entity.attributes.swing_modes as ClimateBuiltInSwingMode[] | undefined;
+  const modes = hvacModes ?? entity.attributes.hvac_modes;
+
+  const supportTargetHumidity = supportsFeatureFromAttributes(entity.attributes, ClimateEntityFeature.TARGET_HUMIDITY);
+  const supportFanMode = supportsFeatureFromAttributes(entity.attributes, ClimateEntityFeature.FAN_MODE);
+  const supportPresetMode = supportsFeatureFromAttributes(entity.attributes, ClimateEntityFeature.PRESET_MODE);
+  const supportSwingMode = supportsFeatureFromAttributes(entity.attributes, ClimateEntityFeature.SWING_MODE);
+
   useEffect(() => {
     if (!entityStateChanged) return;
     if (isOff) {
@@ -132,97 +101,173 @@ function _ClimateControls({
   }, [hvac_action, entityStateChanged, isOff]);
 
   useEffect(() => {
-    getConfig().then(setConfig);
-  }, [getConfig]);
+    setMainControl(mainControl);
+  }, [mainControl]);
 
-  useDebounce(
-    () => {
-      entity.service.setTemperature({
-        temperature: internalTemperature,
+  const _handleFanModeChanged = useCallback(
+    (value: ClimateBuiltInFanMode) => {
+      entity.service.setFanMode({
+        fan_mode: value,
       });
     },
-    200,
-    [internalTemperature],
+    [entity.service],
+  );
+
+  const _handleOperationModeChanged = useCallback(
+    (value: HvacMode) => {
+      entity.service.setHvacMode({
+        hvac_mode: value,
+      });
+    },
+    [entity.service],
+  );
+
+  const _handleSwingmodeChanged = useCallback(
+    (value: ClimateBuiltInSwingMode) => {
+      entity.service.setSwingMode({
+        swing_mode: value,
+      });
+    },
+    [entity.service],
+  );
+
+  const _handlePresetmodeChanged = useCallback(
+    (value: ClimateBuiltInPresetMode) => {
+      if (value) {
+        entity.service.setPresetMode({
+          preset_mode: value,
+        });
+      }
+    },
+    [entity.service],
   );
 
   return (
-    <Column
-      className={`${className ?? ""} climate-controls`}
+    <Wrapper
+      {...rest}
       css={css`
         ${cssStyles ?? ""}
       `}
-      fullHeight
-      fullWidth
-      wrap="nowrap"
-      {...rest}
     >
-      <ThermostatSize>
-        <Thermostat
-          className="thermostat"
-          valueSuffix={config?.unit_system.temperature}
-          track={{
-            colors: colors[entity.state as HvacMode],
-          }}
-          disabled={isOff}
-          min={min_temp}
-          max={max_temp}
-          value={internalTemperature}
-          onChange={(temp) => {
-            setInternalTemperature(Number(temp.toFixed(0)));
-          }}
-        />
-        {!hideFanMode && !isOff && (
-          <FanModeColumn gap="0.5rem" className="column">
-            <FanMode
-              className="fan-mode"
-              size={40}
-              disabled={isOff}
-              title="Fan Mode"
-              speed={isOff ? undefined : internalFanMode}
-              active={!isOff}
-              icon="mdi:fan"
-              onClick={() => {
-                const currentIndex = fan_modes.findIndex((mode) => mode === internalFanMode);
-                const fanMode = fan_modes[currentIndex + 1] ? fan_modes[currentIndex + 1] : fan_modes[0];
-                setInternalFanMode(fanMode);
-                entity.service.setFanMode({
-                  fan_mode: fanMode,
-                });
-              }}
+      <div className="controls">
+        {_mainControl === "temperature" ? <ClimateControlSlider entity={_entity} showCurrent={!hideCurrentTemperature} /> : null}
+        {_mainControl === "humidity" ? <ClimateHumiditySlider entity={_entity} showCurrent={!hideCurrentTemperature} /> : null}
+        {supportTargetHumidity ? (
+          <ButtonBar
+            cssStyles={`
+              margin-bottom: 12px;
+            `}
+          >
+            <ButtonBarButton
+              active={_mainControl === "temperature"}
+              disabled={entity!.state === UNAVAILABLE}
+              title="Temperature"
+              icon="mdi:thermometer"
+              onClick={() => setMainControl("temperature")}
             />
-            {internalFanMode}
-          </FanModeColumn>
-        )}
-        {!hideCurrentTemperature && (
-          <CurrentTemperature className="current-temperature">
-            {current_temperature}
-            <span>{config?.unit_system.temperature}</span>
-            <Current className="text">CURRENT</Current>
-          </CurrentTemperature>
-        )}
-      </ThermostatSize>
-
-      <Row gap="0.5rem" wrap="nowrap" className="row">
-        {(hvacModes || hvac_modes || []).concat().map((mode) => (
-          <FabCard
-            className="mode"
-            size={40}
-            iconColor={currentMode === mode ? activeColors[mode] : `var(--ha-300)`}
-            key={mode}
-            title={capitalize(mode.replace(/_/g, " "))}
-            active={currentMode === mode}
-            icon={icons[mode]}
-            onClick={() => {
-              entity.service.setHvacMode({
-                hvac_mode: mode,
-              });
-            }}
-          />
-        ))}
-      </Row>
-    </Column>
+            <ButtonBarButton
+              active={_mainControl === "humidity"}
+              disabled={entity!.state === UNAVAILABLE}
+              title="Humidity"
+              onClick={() => setMainControl("humidity")}
+              icon="mdi:water-percent"
+            />
+          </ButtonBar>
+        ) : null}
+        <div className={`controls-scroll ${className}`}>
+          {modes && !hideHvacModes && (
+            <Menu
+              placement="top"
+              items={modes
+                .concat()
+                .sort(compareClimateHvacModes)
+                .map((mode) => {
+                  return {
+                    active: entity.state === mode,
+                    icon: computeHvacModeIcon(mode),
+                    label: toReadableString(mode),
+                    onClick: () => {
+                      _handleOperationModeChanged(mode);
+                    },
+                  };
+                })}
+            >
+              <FabCard
+                icon={computeHvacModeIcon(entity.state as HvacMode)}
+                disabled={entity.state === UNAVAILABLE}
+                title={toReadableString(entity.state)}
+              />
+            </Menu>
+          )}
+          {supportPresetMode && !hidePresetModes && preset_modes && (
+            <Menu
+              placement="top"
+              items={preset_modes.map((mode) => {
+                return {
+                  active: preset_mode === mode,
+                  icon: computePresetModeIcon(mode),
+                  label: toReadableString(mode),
+                  onClick: () => {
+                    _handlePresetmodeChanged(mode);
+                  },
+                };
+              })}
+            >
+              <FabCard
+                icon={computePresetModeIcon(preset_mode as ClimateBuiltInPresetMode)}
+                disabled={entity.state === UNAVAILABLE}
+                title={toReadableString(entity.attributes.preset_mode)}
+              />
+            </Menu>
+          )}
+          {supportFanMode && !hideFanModes && fan_modes && (
+            <Menu
+              placement="top"
+              items={fan_modes.map((mode) => {
+                return {
+                  active: entity.attributes.fan_mode === mode,
+                  icon: computeFanModeIcon(mode),
+                  label: toReadableString(mode),
+                  onClick: () => {
+                    _handleFanModeChanged(mode);
+                  },
+                };
+              })}
+            >
+              <FabCard
+                icon={computeFanModeIcon(fan_mode as ClimateBuiltInFanMode)}
+                disabled={entity.state === UNAVAILABLE}
+                title={toReadableString(entity.attributes.fan_mode)}
+              />
+            </Menu>
+          )}
+          {supportSwingMode && !hideSwingModes && swing_modes && (
+            <Menu
+              placement="top"
+              items={swing_modes.map((mode) => {
+                return {
+                  active: entity.attributes.swing_mode === mode,
+                  icon: computeSwingModeIcon(mode),
+                  label: toReadableString(mode),
+                  onClick: () => {
+                    _handleSwingmodeChanged(mode);
+                  },
+                };
+              })}
+            >
+              <FabCard
+                icon={computeSwingModeIcon(entity.attributes.swing_mode as ClimateBuiltInSwingMode)}
+                disabled={entity.state === UNAVAILABLE}
+                title={toReadableString(entity.attributes.swing_mode)}
+              />
+            </Menu>
+          )}
+        </div>
+      </div>
+    </Wrapper>
   );
 }
+
 /** This layout is shared for the popup for a buttonCard and fabCard when long pressing on a card with a climate entity, and also the climateCard, this will fill the width/height of the parent component */
 export function ClimateControls(props: ClimateControlsProps) {
   return (

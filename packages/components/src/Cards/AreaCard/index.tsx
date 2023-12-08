@@ -119,11 +119,13 @@ function _AreaCard({
   onClick,
   disable,
   id,
+  cssStyles,
   ...rest
 }: AreaCardProps) {
   const _id = useId();
   const idRef = id ?? _id;
-  const { addRoute, getRoute } = useHass();
+  const { useStore, addRoute, getRoute } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   const [open, setOpen] = useState(false);
   const route = useMemo(() => getRoute(hash), [hash, getRoute]);
@@ -229,6 +231,10 @@ function _AreaCard({
             }
           }
         }}
+        cssStyles={`
+          ${globalComponentStyle.areaCard ?? ""}
+          ${cssStyles ?? ""}
+        `}
         {...rest}
       >
         <PreloadImage

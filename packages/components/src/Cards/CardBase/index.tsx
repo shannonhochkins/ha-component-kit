@@ -13,6 +13,7 @@ import {
   computeDomain,
   isUnavailableState,
   useEntity,
+  useHass,
 } from "@hakit/core";
 import { CSSInterpolation } from "@emotion/serialize";
 import {
@@ -210,6 +211,8 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
   ...rest
 }: CardBaseProps<T, E>) {
   const _id = useId();
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const [openModal, setOpenModal] = useState(false);
   const domain = _entity ? computeDomain(_entity) : null;
   const entity = useEntity(_entity ?? "unknown", {
@@ -291,6 +294,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
           isUnavailable ? "unavailable" : ""
         } ${disabled ? "disabled" : ""} `}
         css={css`
+          ${globalComponentStyle.cardBase ?? ""}
           ${cssStyles ?? ""}
         `}
         style={{
@@ -298,7 +302,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
           borderRadius: _borderRadius,
         }}
         whileTap={whileTap ?? { scale: disableScale || disabled || isUnavailable ? 1 : 0.9 }}
-        {...(typeof _entity === "string" ? bind() : {})}
+        {...bind()}
         onClick={onClickHandler}
         layoutId={layoutId ?? _id}
         disableActiveState={disableActiveState}
