@@ -1,4 +1,4 @@
-# 3.1.2
+# 3.1.1
 ## @hakit/components
 - NEW - ClimateCard - completely rebuilt to match home assistant controls, as the original climate control was far too primitive, it supports everything the current climate card supports in home assistant. (Goodbye react-thermostat, sorry old shannon but it's just not good enough)
 - NEW - ThemeProvider now accepts global styles for most cards, this is useful if you want to update the style globally for every instance of the same component, ie, change all modal backgrounds to red for example.
@@ -11,7 +11,7 @@ the children into the view.
 - BUGFIX - useAreas - was previously returning a deviceEntities property - this has now been removed as it was showing literally every available device on the instance.
 - UPGRADE - home assistant web socket - upgraded to match new types 
 
-# 3.1.1
+# 3.1.0
 Upgrading all packages, leaving CJS stack trace in place so we can monitor updates of packages that haven't been upgraded to ESM only yet, type fixes
 ## @hakit/components
 - No code changes aside from base package upgrades

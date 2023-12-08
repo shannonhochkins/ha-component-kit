@@ -83,22 +83,29 @@ function Render(args: Story["args"]) {
       <ThemeProvider {...customTheme} theme={args?.theme} />
       <h2>Global styles</h2>
       <p>
-        We can also update styles globall for most components, meaning themeing becomes quite easy to manage, a simple way of defining global styles and have them apply to your whole application is by utilizing the globalStyles prop
+        We can also update styles globall for most components, meaning themeing becomes quite easy to manage, a simple way of defining
+        global styles and have them apply to your whole application is by utilizing the globalStyles prop
       </p>
-        <Source dark code={`<ThemeProvider globalStyles={\`
+      <Source
+        dark
+        code={`<ThemeProvider globalStyles={\`
   body {
     background: red !important;
   }
-\`} />`} language="tsx" />
+\`} />`}
+        language="tsx"
+      />
       <h2>Global Component styles</h2>
-      <p>
-        A simple way of updating styles for all modals for example, globally
-      </p>
-        <Source dark code={`<ThemeProvider globalComponentStyles={{
+      <p>A simple way of updating styles for all modals for example, globally</p>
+      <Source
+        dark
+        code={`<ThemeProvider globalComponentStyles={{
   modal: \`
     background: red !important;
   \`
-}} />`} language="tsx" />
+}} />`}
+        language="tsx"
+      />
       <h2>Other Properties</h2>
       <p>
         You do not need to provide the following theme object, this is the default, if you want to extend/change anything you can just pass
