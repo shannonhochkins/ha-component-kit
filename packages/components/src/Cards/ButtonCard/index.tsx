@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import styled from "@emotion/styled";
 import { lowerCase, startCase } from "lodash";
 import type { EntityName } from "@hakit/core";
-import { useEntity, useIconByDomain, useIcon, useIconByEntity, isUnavailableState, ON } from "@hakit/core";
+import { useEntity, useHass, useIconByDomain, useIcon, useIconByEntity, isUnavailableState, ON } from "@hakit/core";
 import { fallback, Column, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { computeDomain } from "@utils/computeDomain";
 import { ErrorBoundary } from "react-error-boundary";
@@ -189,8 +189,11 @@ function _ButtonCard<E extends EntityName>({
   hideLastUpdated,
   children,
   hideDetails,
+  cssStyles,
   ...rest
 }: ButtonCardProps<E>): JSX.Element {
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const domain = _entity ? computeDomain(_entity) : null;
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
@@ -245,6 +248,10 @@ function _ButtonCard<E extends EntityName>({
       disabled={disabled || isUnavailable}
       onClick={onClick}
       className={`${className ?? ""} ${defaultLayout ?? "default"} button-card`}
+      cssStyles={`
+        ${globalComponentStyle.buttonCard ?? ""}
+        ${cssStyles ?? ""}
+      `}
       {...rest}
     >
       <Contents>

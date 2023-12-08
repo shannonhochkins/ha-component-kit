@@ -1,5 +1,5 @@
 import type { EntityName, FilterByDomain, CameraEntityExtended } from "@hakit/core";
-import { useCamera, isUnavailableState, STREAM_TYPE_WEB_RTC, STREAM_TYPE_HLS } from "@hakit/core";
+import { useCamera, useHass, isUnavailableState, STREAM_TYPE_WEB_RTC, STREAM_TYPE_HLS } from "@hakit/core";
 import styled from "@emotion/styled";
 import { useEffect, useCallback, useRef, useState, useMemo, Children, isValidElement, cloneElement } from "react";
 import {
@@ -127,8 +127,11 @@ function _CameraCard({
   onClick,
   service,
   serviceData,
+  cssStyles,
   ...rest
 }: CameraCardProps) {
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const cameraUpdater = useRef<number | undefined>(undefined);
   const loadingIconRef = useRef<SVGSVGElement | null>(null);
   const stateValueRef = useRef<HTMLDivElement | null>(null);
@@ -277,6 +280,10 @@ function _CameraCard({
         onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
           if (onClick) onClick(camera, event);
         }}
+        cssStyles={`
+          ${globalComponentStyle.cameraCard ?? ""}
+          ${cssStyles ?? ""}
+        `}
         {...rest}
       >
         <Header justifyContent="space-between" gap="0.5rem">

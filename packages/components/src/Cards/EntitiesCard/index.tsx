@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import type { EntityName } from "@hakit/core";
+import { useHass, type EntityName } from "@hakit/core";
 import {
   Column,
   fallback,
@@ -46,7 +46,9 @@ export interface EntitiesCardProps extends Omit<CardBaseProps<"div", EntityName>
   /** include the last updated time, will apply to every row unless specified on an individual EntityItem @default false */
   includeLastUpdated?: boolean;
 }
-function _EntitiesCard({ includeLastUpdated = false, className, children, ...rest }: EntitiesCardProps): JSX.Element {
+function _EntitiesCard({ includeLastUpdated = false, className, children, cssStyles, ...rest }: EntitiesCardProps): JSX.Element {
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const childrenWithKeys = Children.map(children, (child, index) => {
     if (isValidElement<EntitiesCardRowProps<EntityName>>(child)) {
       return cloneElement(child, {
@@ -57,7 +59,17 @@ function _EntitiesCard({ includeLastUpdated = false, className, children, ...res
     return child;
   });
   return (
-    <StyledEntitiesCard disableRipples disableScale disableActiveState className={`entities-card ${className ?? ""}`} {...rest}>
+    <StyledEntitiesCard
+      cssStyles={`
+      ${globalComponentStyle?.entitiesCard ?? ""}
+      ${cssStyles ?? ""}
+    `}
+      disableRipples
+      disableScale
+      disableActiveState
+      className={`entities-card ${className ?? ""}`}
+      {...rest}
+    >
       <Column fullWidth fullHeight className={`column`}>
         {childrenWithKeys}
       </Column>

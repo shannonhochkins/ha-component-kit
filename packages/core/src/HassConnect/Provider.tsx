@@ -11,6 +11,7 @@ import type {
   Auth,
   UnsubscribeFunc,
 } from "home-assistant-js-websocket";
+import { type CSSInterpolation } from "@emotion/serialize";
 // methods
 import {
   getAuth,
@@ -46,6 +47,25 @@ export interface Route {
   icon: string;
   active: boolean;
 }
+
+export type SupportedComponentOverrides =
+  | "buttonCard"
+  | "modal"
+  | "areaCard"
+  | "calendarCard"
+  | "climateCard"
+  | "cameraCard"
+  | "entitiesCard"
+  | "fabCard"
+  | "cardBase"
+  | "garbageCollectionCard"
+  | "mediaPlayerCard"
+  | "pictureCard"
+  | "sensorCard"
+  | "timeCard"
+  | "triggerCard"
+  | "weatherCard"
+  | "menu";
 export interface Store {
   entities: HassEntities;
   setEntities: (entities: HassEntities) => void;
@@ -85,6 +105,9 @@ export interface Store {
   breakpoints: Record<"xxs" | "xs" | "sm" | "md" | "lg" | "xlg", number>;
   /** setter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
   setBreakpoints: (breakpoints: Record<"xxs" | "xs" | "sm" | "md" | "lg", number>) => void;
+  /** a way to provide or overwrite default styles for any particular component */
+  setGlobalComponentStyles: (styles: Partial<Record<SupportedComponentOverrides, CSSInterpolation>>) => void;
+  globalComponentStyles: Partial<Record<SupportedComponentOverrides, CSSInterpolation>>;
 }
 
 const useStore = create<Store>((set) => ({
@@ -159,6 +182,8 @@ const useStore = create<Store>((set) => ({
         xlg: breakpoints.lg + 1,
       },
     }),
+  globalComponentStyles: {},
+  setGlobalComponentStyles: (styles) => set(() => ({ globalComponentStyles: styles })),
 }));
 
 export interface HassContextProps {

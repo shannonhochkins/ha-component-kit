@@ -67,6 +67,7 @@ const fakeConfig: HassConfig = {
   "version": "2023.8.2",
   "config_source": "storage",
   "safe_mode": false,
+  "recovery_mode": false,
   "state": "RUNNING",
   "external_url": null,
   "internal_url": null,
@@ -248,6 +249,8 @@ const useStore = create<Store>((set) => ({
     ...breakpoints,
     xlg: breakpoints.lg + 1,
   } }),
+  globalComponentStyles: {},
+  setGlobalComponentStyles: (globalComponentStyles) => set({ globalComponentStyles }),
 }))
 
 function HassProvider({
