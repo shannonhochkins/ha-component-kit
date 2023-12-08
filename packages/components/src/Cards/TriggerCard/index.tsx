@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import type { EntityName } from "@hakit/core";
-import { useEntity, useIconByDomain, useIcon, useIconByEntity, computeDomain, isUnavailableState } from "@hakit/core";
+import { useEntity, useHass, useIconByDomain, useIcon, useIconByEntity, computeDomain, isUnavailableState } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 import { fallback, CardBase, type AvailableQueries, type CardBaseProps } from "@components";
 
@@ -134,8 +134,11 @@ function _TriggerCard<E extends EntityName>({
   className,
   service,
   serviceData,
+  cssStyles,
   ...rest
 }: TriggerCardProps<E>): JSX.Element {
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const domain = computeDomain(_entity);
   const entity = useEntity(_entity);
   const entityIcon = useIconByEntity(_entity);
@@ -175,6 +178,10 @@ function _TriggerCard<E extends EntityName>({
       // @ts-expect-error - don't know the entity name, so we can't know the service data
       serviceData={serviceData}
       onClick={useApiHandler}
+      cssStyles={`
+        ${globalComponentStyle?.triggerCard ?? ""}
+        ${cssStyles ?? ""}
+      `}
       {...rest}
     >
       <Contents>

@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useMemo } from "react";
-import { type HassEntityWithService, useEntity } from "@hakit/core";
+import { type HassEntityWithService, useHass, useEntity } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { Row, Column, fallback, Alert, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -142,8 +142,11 @@ function _TimeCard({
   children,
   disabled,
   onClick,
+  cssStyles,
   ...rest
 }: TimeCardProps): JSX.Element {
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const timeSensor = useEntity("sensor.time", {
     returnNullIfNotFound: true,
   });
@@ -163,6 +166,10 @@ function _TimeCard({
   }
   return (
     <Card
+      cssStyles={`
+        ${globalComponentStyle?.timeCard ?? ""}
+        ${cssStyles ?? ""}
+      `}
       className={`${className ?? ""} time-card`}
       whileTap={{ scale: disabled || !hasOnClick ? 1 : 0.9 }}
       disableActiveState={rest.disableActiveState ?? !hasOnClick}

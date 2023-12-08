@@ -393,8 +393,9 @@ const defaultFullCalendarConfig: CalendarOptions = {
   },
 };
 
-function _CalendarCard({ entities, className, timeZone, view, includeHeader = true, ...rest }: CalendarCardProps): JSX.Element {
+function _CalendarCard({ entities, className, timeZone, view, includeHeader = true, cssStyles, ...rest }: CalendarCardProps): JSX.Element {
   const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const config = useStore((store) => store.config);
   const calRef = useRef<FullCalendar>(null);
   const initialRequest = useRef(false);
@@ -592,6 +593,10 @@ function _CalendarCard({ entities, className, timeZone, view, includeHeader = tr
       disableActiveState
       disableRipples
       className={`calendar-card ${className ?? ""} ${narrow ? "narrow" : ""}`}
+      cssStyles={`
+        ${globalComponentStyle.calendarCard ?? ""}
+        ${cssStyles ?? ""}
+      `}
       {...rest}
     >
       {includeHeader && (

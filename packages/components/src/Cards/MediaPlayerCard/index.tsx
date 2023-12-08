@@ -154,11 +154,13 @@ function _MediaPlayerCard({
   serviceData,
   marqueeProps,
   className,
+  cssStyles,
   ...rest
 }: MediaPlayerCardProps) {
   const entity = useEntity(_entity);
   const mp = useService("mediaPlayer");
-  const { joinHassUrl, getAllEntities } = useHass();
+  const { useStore, joinHassUrl, getAllEntities } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const interval = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
@@ -315,6 +317,10 @@ function _MediaPlayerCard({
         elRef={playerRef}
         layoutName={layout}
         backgroundImage={showArtworkBackground === true && artworkUrl !== null ? artworkUrl : undefined}
+        cssStyles={`
+          ${globalComponentStyle?.mediaPlayerCard ?? ""}
+          ${cssStyles ?? ""}
+        `}
         {...rest}
       >
         <Column fullHeight fullWidth className="column content" justifyContent="space-between">

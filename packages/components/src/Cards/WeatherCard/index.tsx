@@ -137,9 +137,11 @@ function _WeatherCard({
   service,
   serviceData,
   forecastType = "daily",
+  cssStyles,
   ...rest
 }: WeatherCardProps): JSX.Element {
-  const { getConfig } = useHass();
+  const { useStore, getConfig } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const { width, ref: widthRef } = useResizeDetector({
     refreshMode: "debounce",
     refreshRate: 500,
@@ -195,6 +197,10 @@ function _WeatherCard({
       // @ts-expect-error - don't know the entity name, so we can't know the service data
       serviceData={serviceData}
       className={`${className ?? ""} weather-card`}
+      cssStyles={`
+        ${globalComponentStyle?.weatherCard ?? ""}
+        ${cssStyles ?? ""}
+      `}
       {...rest}
     >
       <Contents ref={widthRef}>

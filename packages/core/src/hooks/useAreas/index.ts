@@ -21,8 +21,6 @@ export interface Area {
   services: DeviceRegistryEntry[];
   /** the entities linked to the area */
   entities: HassEntity[];
-  /** entities related to the matched devices */
-  deviceEntities: HassEntity[];
 }
 
 export function useAreas(): Area[] {
@@ -57,7 +55,6 @@ export function useAreas(): Area[] {
       const matchedEntities: HassEntity[] = [];
       const matchedDevices: DeviceRegistryEntry[] = [];
       const matchedServices: DeviceRegistryEntry[] = [];
-      const deviceEntities: HassEntity[] = [];
 
       for (const device of devices) {
         if (device.area_id === area.area_id) {
@@ -82,7 +79,6 @@ export function useAreas(): Area[] {
         if (!entity.device_id) continue;
         const device = devices.find((d) => d.id === entity.device_id);
         if (!device) continue;
-        deviceEntities.push(_entity);
 
         const deviceIsInArea = device.area_id === area.area_id;
         const entityInheritsArea = !entity.area_id;
@@ -96,7 +92,6 @@ export function useAreas(): Area[] {
         devices: matchedDevices,
         services: matchedServices,
         entities: matchedEntities,
-        deviceEntities,
       };
     });
   }, [areas, devices, joinHassUrl, entities, _entities]);

@@ -37,7 +37,6 @@ export default defineConfig(configEnv => {
         output: {
           globals: {
             react: 'React',
-            'react-thermostat': 'react-thermostat',
             'react-dom': 'ReactDOM',
             'react/jsx-runtime': 'react/jsx-runtime',
             '@hakit/core': '@hakit/core',

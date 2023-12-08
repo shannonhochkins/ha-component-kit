@@ -56,6 +56,8 @@ export { FabCard, type FabCardProps } from "./Cards/FabCard";
 export { SidebarCard, type SidebarCardProps } from "./Cards/SidebarCard";
 // ClimateControls
 export { ClimateControls, type ClimateControlsProps } from "./Shared/Entity/Climate/ClimateControls";
+export { ClimateControlSlider, type ClimateControlSliderProps } from "./Shared/Entity/Climate/ClimateControls/ClimateControlSlider";
+export { ClimateHumiditySlider, type ClimateHumiditySliderProps } from "./Shared/Entity/Climate/ClimateControls/ClimateHumiditySlider";
 // LightControls
 export { LightControls, type LightControlsProps } from "./Shared/Entity/Light/LightControls";
 // CoverControls
@@ -104,6 +106,10 @@ export { ModalByEntityDomain, type ModalByEntityDomainProps, type ModalPropsHelp
 export { ControlSlider, type ControlSliderProps } from "./Shared/ControlSlider";
 // ControlToggle
 export { ControlToggle, type ControlToggleProps } from "./Shared/ControlToggle";
+// ControlSliderCircular
+export { ControlSliderCircular, type ControlCircularSliderMode, type ControlSliderCircularProps } from "./Shared/ControlSliderCircular";
+// Menu
+export { Menu, type MenuProps } from "./Shared/Menu";
 // ColorTempPicker
 export { ColorTempPicker, type ColorTempPickerProps } from "./Shared/Entity/Light/ColorTempPicker";
 // ColorPicker

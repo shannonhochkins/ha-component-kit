@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import React, { useMemo, useEffect, useCallback, useRef, useState, CSSProperties, Key } from "react";
-import { useEntity } from "@hakit/core";
+import { useEntity, useHass } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { fallback, Row, Column, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -182,8 +182,11 @@ function _GarbageCollectionCard({
   title = "Garbage Collection",
   description,
   className,
+  cssStyles,
   ...rest
 }: GarbageCollectionCardProps): JSX.Element {
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const dateSensor = useEntity("sensor.date", {
     returnNullIfNotFound: true,
   });
@@ -322,7 +325,17 @@ function _GarbageCollectionCard({
     [currentWeek, dayNames, schedules, today, findNextNonNullWeek, formatTimeDisplay],
   );
   return (
-    <Card disableActiveState disableRipples disableScale className={`garbage-collection-card ${className ?? ""}`} {...rest}>
+    <Card
+      cssStyles={`
+      ${globalComponentStyle?.garbageCollectionCard ?? ""}
+      ${cssStyles ?? ""}
+    `}
+      disableActiveState
+      disableRipples
+      disableScale
+      className={`garbage-collection-card ${className ?? ""}`}
+      {...rest}
+    >
       <Contents>
         <Column alignItems="flex-start" fullWidth>
           <Title className="title">{title}</Title>
