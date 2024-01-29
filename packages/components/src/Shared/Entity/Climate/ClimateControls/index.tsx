@@ -145,6 +145,7 @@ function _ClimateControls({
   return (
     <Wrapper
       {...rest}
+      className={`climate-card-controls ${className}`}
       css={css`
         ${cssStyles ?? ""}
       `}
@@ -174,7 +175,7 @@ function _ClimateControls({
             />
           </ButtonBar>
         ) : null}
-        <div className={`controls-scroll ${className}`}>
+        <div className={`controls-scroll`}>
           {modes && !hideHvacModes && (
             <Menu
               placement="top"

@@ -1,5 +1,19 @@
 Proprietary License
 
-All rights reserved. This software and its accompanying documentation are protected by intellectual property laws and international treaties. Unauthorized use, reproduction, distribution, or modification of this software, in whole or in part, without the explicit permission of the author, is strictly prohibited.
+All rights reserved. This software and its accompanying documentation ("Software") are the intellectual property of Shannon Hochkins and are protected under intellectual property laws and international treaties.
 
-For licensing inquiries and permissions, please contact the author at mail@shannonhochkins.com.
+1. Usage Restrictions: Any use, reproduction, distribution, or modification of this Software, in whole or in part, for any purpose, including commercial purposes, is strictly prohibited without the explicit prior written permission of the author, Shannon Hochkins, except as may be allowed by any applicable laws.
+
+2. Commercial Use: Specifically, commercial use, including but not limited to resale, redistribution for commercial gain, or incorporation of this Software into a commercial product or service, is expressly prohibited without obtaining a separate commercial license from the author.
+
+3. No Sub-Licensing: This license does not permit sub-licensing, resale, or redistribution of any kind.
+
+4. Disclaimer of Warranties: This Software is provided "as is" and "as available", without any warranties of any kind, either express or implied, including but not limited to warranties of merchantability or fitness for a particular purpose. The entire risk as to the quality and performance of the Software is with you.
+
+5. Limitation of Liability: In no event shall the author be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the Software or the use or other dealings in the Software.
+
+6. Termination: This License and the rights granted hereunder will terminate automatically upon any breach by you of the terms of this License.
+
+7. Governing Law: This License shall be governed by the laws of Australia, without regard to its conflict of law principles.
+
+8. Contact Information: For licensing inquiries, permissions, or further information, please contact the author at mail@shannonhochkins.com.
