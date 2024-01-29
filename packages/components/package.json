@@ -34,7 +34,7 @@
     }
   },
   "author": "Shannon Hochkins <mail@shannonhochkins.com>",
-  "license": "ISC",
+  "license": "SEE LICENSE IN LICENSE.md",
   "files": [
     "dist",
     "README.md",
@@ -54,9 +54,9 @@
   "scripts": {
     "dev": "vite",
     "type-check": "tsc --noEmit",
-    "prebuild": "rm -rf ./dist && npm run lint && npm run prettier",
+    "prebuild": "rm -rf ./dist && npm run lint",
     "build": "NODE_ENV=production vite build",
-    "postbuild": "npm run type-check",
+    "postbuild": "npm run prettier",
     "watch:build": "NODE_ENV=production vite build --watch",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",

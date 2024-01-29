@@ -58,6 +58,7 @@ export { SidebarCard, type SidebarCardProps } from "./Cards/SidebarCard";
 export { ClimateControls, type ClimateControlsProps } from "./Shared/Entity/Climate/ClimateControls";
 export { ClimateControlSlider, type ClimateControlSliderProps } from "./Shared/Entity/Climate/ClimateControls/ClimateControlSlider";
 export { ClimateHumiditySlider, type ClimateHumiditySliderProps } from "./Shared/Entity/Climate/ClimateControls/ClimateHumiditySlider";
+export * from "./Shared/Entity/Climate/ClimateControls/data";
 // LightControls
 export { LightControls, type LightControlsProps } from "./Shared/Entity/Light/LightControls";
 // CoverControls
