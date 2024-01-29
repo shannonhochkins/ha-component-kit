@@ -34,12 +34,19 @@ git push origin master
 git push --tags
 ```
 
+### Creating a new release in GIT (after all the above is done)
+
+https://github.com/shannonhochkins/ha-component-kit/releases - go here, click on "Draft new release" - pick related tag, add release notes, publish release.
+
+### Changeset explained
+
 ```bash
 npx changeset
 ```
 This command will pickup all packages within the workspace and prompt which ones need to be deployed, it will then create a changeset file containing data about the versions and packages that will be updated.
 
 Press enter when it asks for a bump that you are not wanting to use (eg major, press enter to use minor).
+
 
 ### Versioning
 Once the changesets command has been run, you can run the following command to translate the changeset changes to the packages:
