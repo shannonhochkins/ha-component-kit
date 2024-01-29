@@ -1,6 +1,6 @@
 import { HvacMode, HvacAction } from "@hakit/core";
 
-export const HVAC_MODES = ["auto", "heat_cool", "heat", "cool", "dry", "fan_only", "off"] as const;
+const HVAC_MODES = ["auto", "heat_cool", "heat", "cool", "dry", "fan_only", "off"] as const;
 
 /** Temperature units. */
 export const UNIT_C = "°C";

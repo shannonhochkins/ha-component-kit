@@ -255,6 +255,8 @@ export interface SidebarCardProps extends Extendable {
   menuItems?: MenuItem[];
   /** the children to render in the sidebar */
   children?: React.ReactNode;
+  /** a method to apply a sort function to the sidebar menu items before they render */
+  sortSidebarMenuItems?: (a: MenuItem, b: MenuItem) => number;
 }
 function _SidebarCard({
   weatherCardProps,
@@ -270,6 +272,7 @@ function _SidebarCard({
   includeTimeCard = true,
   className,
   cssStyles,
+  sortSidebarMenuItems,
   ...rest
 }: SidebarCardProps) {
   const [open, setOpen] = useState(startOpen);
@@ -278,7 +281,7 @@ function _SidebarCard({
   const hash = useStore((state) => state.hash);
   const devices = useBreakpoint();
   const concatenatedMenuItems = useMemo<MenuItem[]>(() => {
-    const mappedRoutes = routes.map((route) => ({
+    const mappedRoutes = routes.map<MenuItem>((route) => ({
       ...route,
       title: route.name,
       onClick() {
@@ -293,8 +296,12 @@ function _SidebarCard({
         }
       },
     }));
-    return autoIncludeRoutes ? [...menuItems, ...mappedRoutes] : menuItems;
-  }, [routes, autoIncludeRoutes, menuItems, hash]);
+    const items = autoIncludeRoutes ? [...menuItems, ...mappedRoutes] : menuItems;
+    if (typeof sortSidebarMenuItems === "function") {
+      items.sort(sortSidebarMenuItems);
+    }
+    return items;
+  }, [routes, sortSidebarMenuItems, autoIncludeRoutes, menuItems, hash]);
   return (
     <>
       <Global

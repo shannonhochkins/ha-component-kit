@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "private": false,
   "type": "module",
   "keywords": [
@@ -42,7 +42,7 @@
     }
   },
   "author": "Shannon Hochkins <mail@shannonhochkins.com>",
-  "license": "ISC",
+  "license": "SEE LICENSE IN LICENSE.md",
   "files": [
     "dist",
     "package.json",
@@ -62,12 +62,13 @@
   "scripts": {
     "dev": "vite",
     "type-check": "tsc --noEmit",
-    "prebuild": "rm -rf ./dist && npm run lint && npm run prettier",
-    "build": "npm run sync-local-types && npm run build:sync-script-cli && npm run build:sync-ha-types && npm run build:core && npm run type-check",
+    "prebuild": "rm -rf ./dist && npm run lint",
+    "postbuild": "npm run prettier",
+    "build": "npm run sync-local-types && npm run build:sync-script-cli && npm run build:sync-ha-types && npm run build:core",
     "build:core": "NODE_ENV=production vite build",
     "build:sync-script": "NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build",
     "build:sync-script-cli": "tsup",
-    "build:sync-ha-types": "ts-node --esm ./scripts/sync-ha-types/index.ts",
+    "build:sync-ha-types": "npx tsx ./scripts/sync-ha-types/index.ts",
     "watch:build": "NODE_ENV=production vite build --watch",
     "watch:build:sync-script": "NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build --watch",
     "dev:test:sync-script": "npm run build:sync-script && ts-node ./scripts/sync-user-types/test.ts",
