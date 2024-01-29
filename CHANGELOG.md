@@ -1,3 +1,15 @@
+
+# 3.1.2
+## @hakit/components
+- Licence.md file updated
+- ClimateCard - small changes to classes
+- SidebarCard - sortSidebarMenuItems - now accepts a function to sort the menu items before they render
+- Automatic typed introduced ValveEntity
+
+## @hakit/core
+- updating base ha types
+- some properties of auto generated types are now strictly typed and will no longer generate from the schema which has these properties defined as the incorrect type (xy_color, media_content_id, white, kelvin, color_temp) - there will most likely be more of these corrections in the future
+
 # 3.1.1
 ## @hakit/components
 - NEW - ClimateCard - completely rebuilt to match home assistant controls, as the original climate control was far too primitive, it supports everything the current climate card supports in home assistant. (Goodbye react-thermostat, sorry old shannon but it's just not good enough)
