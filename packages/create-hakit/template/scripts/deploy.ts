@@ -52,10 +52,12 @@ async function deploy() {
     });
     // seems somewhere along the lines, home assistant decided to rename the config directory to homeassistant...
     const directories = ['config', 'homeassistant'];
+    let matched = false;
     for (const dir of directories) {
       const remote = `/${dir}${REMOTE_PATH}`;
-      const exists = await client.exists(remote);
+      const exists = await client.exists(`/${dir}`);
       if (exists) {
+        matched = true;
         // empty the directory initially so we remove anything that doesn't need to be there
         try {
           await client.rmdir(remote);
@@ -65,15 +67,24 @@ async function deploy() {
         console.info(chalk.blue('Uploading', `"${LOCAL_DIRECTORY}"`, 'to', `"${remote}"`))
         // upload the folder to your home assistant server
         await client.uploadDir(LOCAL_DIRECTORY, remote);
-        client.close() // remember to close connection after you finish
+        client.close(); // remember to close connection after you finish
         console.info(chalk.green('\nSuccessfully deployed!'));
         const url = join(HA_URL, '/local', REMOTE_FOLDER_NAME, '/index.html');
         console.info(chalk.blue(`\n\nVISIT the following URL to preview your dashboard:\n`));
         console.info(chalk.bgCyan(chalk.underline(url)));
-        console.info(chalk.yellow('\n\nAlternatively, follow the steps in the ha-component-kit repository to install the addon for Home Assistant so you can load your dashboard from the sidebar!\n\n'));
+        console.info(
+          chalk.yellow(
+            '\n\nAlternatively, follow the steps in the ha-component-kit repository to install the addon for Home Assistant so you can load your dashboard from the sidebar!\n\n'
+          )
+        );
         console.info('\n\n');
         break;
       }
+    }
+    if (!matched) {
+      throw new Error(
+        'Could not find a config/homeassistant directory in the root of your home assistant installation.'
+      );
     }
   } catch (e: unknown) {
     if (e instanceof Error) {

@@ -33,6 +33,11 @@ Upgrading all packages, leaving CJS stack trace in place so we can monitor updat
 - BUGFIX - HassConnect was previously returning React.ReactNode as the return type, but i've removed this and left it to type inference as there's a bug with typescript < 5.1 where it doesn't properly work with React.
 - BUGFIX - Test framework working again for @core only, still need to work on client side.
 
+
+# 1.1.2
+## create-hakit
+- BUGFIX - deploy script wasn't working correctly, this has been fixed
+
 # 1.1.1
 ## create-hakit
 - Adjustments to deploy script
