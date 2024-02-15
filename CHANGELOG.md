@@ -1,4 +1,12 @@
 
+# 3.1.3
+## @hakit/components
+- No changes here - aligning semantic versions
+
+## @hakit/core
+- BUGFIX - entities that have a custom icon defined in HA will now show and take priority over icons derived from the state of the entity
+- BUGFIX - previously, once the icon was set for an entity, it would never update, this has been fixed and will now update when the entity state changes thanks to @Brewno88 for reporting this one
+
 # 3.1.2
 ## @hakit/components
 - Licence.md file updated
