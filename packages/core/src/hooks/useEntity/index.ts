@@ -46,22 +46,26 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
   };
   const getEntity = useSubscribeEntity(entity);
   const matchedEntity = getEntity(returnNullIfNotFound);
+  const hasIcon = (entity: HassEntity) => typeof entity.attributes.icon === 'string';
   const domain = computeDomain(entity) as ExtractDomain<E>;
   const service = useService(domain, entity);
   const history = useHistory(entity, historyOptions);
 
-  const formatEntity = useCallback((entity: HassEntity): HassEntityCustom => {
+  const formatEntity = useCallback((entity: HassEntity, entityHasIcon?: boolean): HassEntityCustom => {
     const now = new Date();
     const then = new Date(entity.attributes.last_triggered ?? entity.last_updated);
     const relativeTime = timeAgo.format(then);
     const timeDiff = Math.abs(now.getTime() - then.getTime());
     const active = relativeTime === "just now";
     const { hexColor, rgbColor, brightness, brightnessValue, rgbaColor, color } = getCssColorValue(entity);
-    if (!entity.attributes.icon) {
-      entity.attributes.icon = getIconByEntity(computeDomain(entity.entity_id as EntityName), entity);
-    }
+    const currentIcon = getIconByEntity(computeDomain(entity.entity_id as EntityName), entity);
     return {
       ...entity,
+      attributes: {
+        ...entity.attributes,
+        // use the icon provided by HA if it exists, otherwise use the custom icon derived by state
+        icon: entityHasIcon ? entity.attributes.icon : currentIcon,
+      },
       custom: {
         color,
         relativeTime,
@@ -76,9 +80,9 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
     };
   }, []);
   const debounceUpdate = useDebouncedCallback((entity: HassEntity) => {
-    setEntity(formatEntity(entity));
+    setEntity(formatEntity(entity, hasIcon(entity)));
   }, throttle);
-  const [$entity, setEntity] = useState<HassEntityCustom | null>(matchedEntity !== null ? formatEntity(matchedEntity) : null);
+  const [$entity, setEntity] = useState<HassEntityCustom | null>(matchedEntity !== null ? formatEntity(matchedEntity, hasIcon(matchedEntity)) : null);
 
   useEffect(() => {
     setEntity((entity) => (entity === null ? null : formatEntity(entity)));
@@ -87,9 +91,13 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
   useEffect(() => {
     const foundEntity = getEntity(true);
     if (foundEntity && $entity) {
+      // have to omit attributes.icon here as the original icon may not contain any icon,
+      // however there's custom functionality to determine icon based on state which needs to be omitted from
+      // this check to avoid recursive updates
+      // trade of to this change is that when someone edits an
       const diffed = diff(
-        omit(foundEntity, "custom", "last_changed", "last_updated", "context"),
-        omit($entity, "custom", "last_changed", "last_updated", "context"),
+        omit(foundEntity, "custom", "last_changed", "last_updated", "context", "attributes.icon"),
+        omit($entity, "custom", "last_changed", "last_updated", "context", "attributes.icon"),
       );
       if (!isEmpty(diffed)) {
         debounceUpdate(foundEntity);
