@@ -88,13 +88,13 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
       // however there's custom functionality to determine icon based on state which needs to be omitted from
       // this check to avoid recursive updates
       const diffed = diff(
-        omit(foundEntity, "custom", "last_changed", "last_updated", "context", 'attributes.icon'),
-        omit($entity, "custom", "last_changed", "last_updated", "context", 'attributes.icon'),
+        omit(foundEntity, "custom", "last_changed", "last_updated", "context", "attributes.icon"),
+        omit($entity, "custom", "last_changed", "last_updated", "context", "attributes.icon"),
       );
       const clonedEntity = cloneDeep(foundEntity);
       // Check for icon differences
-      const haHasCustomIcon = typeof clonedEntity.attributes.icon === 'string';
-      const derivedIcon = typeof $entity.attributes.icon === 'string';
+      const haHasCustomIcon = typeof clonedEntity.attributes.icon === "string";
+      const derivedIcon = typeof $entity.attributes.icon === "string";
       // Logic for handling icon comparison and updates
       let shouldUpdate = !isEmpty(diffed);
       if (haHasCustomIcon && derivedIcon && clonedEntity.attributes.icon !== $entity.attributes.icon) {
