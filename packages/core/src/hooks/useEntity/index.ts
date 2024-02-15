@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { isEmpty, omit } from "lodash";
+import { cloneDeep, isEmpty, omit } from "lodash";
 import type { HassEntityWithService, HassEntityCustom, ExtractDomain, EntityName } from "@typings";
 import type { HassEntity } from "home-assistant-js-websocket";
 import { useService, useHistory, useSubscribeEntity, getIconByEntity } from "@core";
@@ -46,26 +46,19 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
   };
   const getEntity = useSubscribeEntity(entity);
   const matchedEntity = getEntity(returnNullIfNotFound);
-  const hasIcon = (entity: HassEntity) => typeof entity.attributes.icon === 'string';
   const domain = computeDomain(entity) as ExtractDomain<E>;
   const service = useService(domain, entity);
   const history = useHistory(entity, historyOptions);
 
-  const formatEntity = useCallback((entity: HassEntity, entityHasIcon?: boolean): HassEntityCustom => {
+  const formatEntity = useCallback((entity: HassEntity): HassEntityCustom => {
     const now = new Date();
     const then = new Date(entity.attributes.last_triggered ?? entity.last_updated);
     const relativeTime = timeAgo.format(then);
     const timeDiff = Math.abs(now.getTime() - then.getTime());
     const active = relativeTime === "just now";
     const { hexColor, rgbColor, brightness, brightnessValue, rgbaColor, color } = getCssColorValue(entity);
-    const currentIcon = getIconByEntity(computeDomain(entity.entity_id as EntityName), entity);
     return {
       ...entity,
-      attributes: {
-        ...entity.attributes,
-        // use the icon provided by HA if it exists, otherwise use the custom icon derived by state
-        icon: entityHasIcon ? entity.attributes.icon : currentIcon,
-      },
       custom: {
         color,
         relativeTime,
@@ -80,9 +73,9 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
     };
   }, []);
   const debounceUpdate = useDebouncedCallback((entity: HassEntity) => {
-    setEntity(formatEntity(entity, hasIcon(entity)));
+    setEntity(formatEntity(entity));
   }, throttle);
-  const [$entity, setEntity] = useState<HassEntityCustom | null>(matchedEntity !== null ? formatEntity(matchedEntity, hasIcon(matchedEntity)) : null);
+  const [$entity, setEntity] = useState<HassEntityCustom | null>(matchedEntity !== null ? formatEntity(matchedEntity) : null);
 
   useEffect(() => {
     setEntity((entity) => (entity === null ? null : formatEntity(entity)));
@@ -94,13 +87,30 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
       // have to omit attributes.icon here as the original icon may not contain any icon,
       // however there's custom functionality to determine icon based on state which needs to be omitted from
       // this check to avoid recursive updates
-      // trade of to this change is that when someone edits an
       const diffed = diff(
-        omit(foundEntity, "custom", "last_changed", "last_updated", "context", "attributes.icon"),
-        omit($entity, "custom", "last_changed", "last_updated", "context", "attributes.icon"),
+        omit(foundEntity, "custom", "last_changed", "last_updated", "context", 'attributes.icon'),
+        omit($entity, "custom", "last_changed", "last_updated", "context", 'attributes.icon'),
       );
-      if (!isEmpty(diffed)) {
-        debounceUpdate(foundEntity);
+      const clonedEntity = cloneDeep(foundEntity);
+      // Check for icon differences
+      const haHasCustomIcon = typeof clonedEntity.attributes.icon === 'string';
+      const derivedIcon = typeof $entity.attributes.icon === 'string';
+      // Logic for handling icon comparison and updates
+      let shouldUpdate = !isEmpty(diffed);
+      if (haHasCustomIcon && derivedIcon && clonedEntity.attributes.icon !== $entity.attributes.icon) {
+        // Condition 1: Both icons are strings and differ
+        shouldUpdate = true;
+      } else if (!haHasCustomIcon) {
+        // Condition 2: clonedEntity's icon is not a string, compute and compare
+        const currentIcon = getIconByEntity(computeDomain(clonedEntity.entity_id as EntityName), clonedEntity);
+        if (currentIcon !== $entity.attributes.icon) {
+          // Replace clonedEntity's icon with the computed icon and mark for update
+          clonedEntity.attributes.icon = currentIcon;
+          shouldUpdate = true;
+        }
+      }
+      if (shouldUpdate) {
+        debounceUpdate(clonedEntity);
       }
     }
   }, [$entity, debounceUpdate, getEntity]);
