@@ -1,6 +1,6 @@
 import "./.d.ts";
 /// <reference path=".d.ts" />
-export { mq, getBreakpoints, type AvailableQueries, type GridSpan, type BreakPoint, type BreakPoints } from "./ThemeProvider/breakpoints";
+export { getBreakpoints, mq, type AvailableQueries, type BreakPoint, type BreakPoints, type GridSpan } from "./ThemeProvider/breakpoints";
 // media query helpers
 export { useBreakpoint } from "./hooks/useBreakpoint";
 // the base card component
@@ -39,7 +39,9 @@ export { GarbageCollectionCard, type GarbageCollectionCardProps } from "./Cards/
 export { TimeCard, type TimeCardProps } from "./Cards/TimeCard";
 // AreaCard
 export { AreaCard, type AreaCardProps } from "./Cards/AreaCard";
+// ts-ignore
 import { AreaCard as ActualAreaCard, type AreaCardProps as ActualAreaCardProps } from "./Cards/AreaCard";
+
 /**
  * @deprecated RoomCard has been renamed to AreaCard. Please use {@link AreaCard} instead.
  */
@@ -52,6 +54,8 @@ export type RoomCardProps = ActualAreaCardProps;
 export { PictureCard, type PictureCardProps } from "./Cards/PictureCard";
 // FabCard
 export { FabCard, type FabCardProps } from "./Cards/FabCard";
+// PersonCard
+export { FamilyCard, type FamilyCardProps } from "./Cards/FamilyCard/index.tsx";
 // SidebarCard
 export { SidebarCard, type SidebarCardProps } from "./Cards/SidebarCard";
 // ClimateControls
@@ -76,8 +80,8 @@ export { EntitiesCardRow, type EntitiesCardRowProps } from "./Cards/EntitiesCard
 // MediaPlayerCard
 export { MediaPlayerCard, type MediaPlayerCardProps } from "./Cards/MediaPlayerCard";
 // MediaPlayerShared
-export { VolumeControls, type VolumeControlsProps } from "./Cards/MediaPlayerCard/VolumeControls";
 export { PlaybackControls, type PlaybackControlsProps } from "./Cards/MediaPlayerCard/PlaybackControls";
+export { VolumeControls, type VolumeControlsProps } from "./Cards/MediaPlayerCard/VolumeControls";
 // CalendarCard
 export { CalendarCard, type CalendarCardProps } from "./Cards/CalendarCard";
 // ButtonBar
@@ -90,19 +94,19 @@ export { ButtonGroup, type ButtonGroupProps } from "./Shared/Entity/Miscellaneou
 export { ButtonGroupButton, type ButtonGroupButtonProps } from "./Shared/Entity/Miscellaneous/ButtonGroup/ButtonGroupButton.tsx";
 // CameraCard
 export { CameraCard, type CameraCardProps } from "./Cards/CameraCard";
-export { CameraStream, type CameraStreamProps } from "./Cards/CameraCard/stream";
 export type { VideoState } from "./Cards/CameraCard/players";
+export { CameraStream, type CameraStreamProps } from "./Cards/CameraCard/stream";
 // Modal
-export { Modal, type ModalProps } from "./Shared/Modal";
 export { LogBookRenderer, type LogBookRendererProps } from "./Shared/Entity/Miscellaneous/LogBookRenderer";
-export { ModalLightControls, type ModalLightControlsProps } from "./Shared/Modal/ModalByEntityDomain/Light";
-export { ModalClimateControls, type ModalClimateControlsProps } from "./Shared/Modal/ModalByEntityDomain/Climate";
-export { ModalSwitchControls, type ModalSwitchControlsProps } from "./Shared/Modal/ModalByEntityDomain/Switch";
-export { ModalCameraControls, type ModalCameraControlsProps } from "./Shared/Modal/ModalByEntityDomain/Camera";
-export { ModalCoverControls, type ModalCoverControlsProps } from "./Shared/Modal/ModalByEntityDomain/Cover";
-export { ModalWeatherControls, type ModalWeatherControlsProps } from "./Shared/Modal/ModalByEntityDomain/Weather";
-export { ModalMediaPlayerControls, type ModalMediaPlayerControlsProps } from "./Shared/Modal/ModalByEntityDomain/MediaPlayer";
+export { Modal, type ModalProps } from "./Shared/Modal";
 export { ModalByEntityDomain, type ModalByEntityDomainProps, type ModalPropsHelper } from "./Shared/Modal/ModalByEntityDomain";
+export { ModalCameraControls, type ModalCameraControlsProps } from "./Shared/Modal/ModalByEntityDomain/Camera";
+export { ModalClimateControls, type ModalClimateControlsProps } from "./Shared/Modal/ModalByEntityDomain/Climate";
+export { ModalCoverControls, type ModalCoverControlsProps } from "./Shared/Modal/ModalByEntityDomain/Cover";
+export { ModalLightControls, type ModalLightControlsProps } from "./Shared/Modal/ModalByEntityDomain/Light";
+export { ModalMediaPlayerControls, type ModalMediaPlayerControlsProps } from "./Shared/Modal/ModalByEntityDomain/MediaPlayer";
+export { ModalSwitchControls, type ModalSwitchControlsProps } from "./Shared/Modal/ModalByEntityDomain/Switch";
+export { ModalWeatherControls, type ModalWeatherControlsProps } from "./Shared/Modal/ModalByEntityDomain/Weather";
 // ControlSlider
 export { ControlSlider, type ControlSliderProps } from "./Shared/ControlSlider";
 // ControlToggle
@@ -114,7 +118,7 @@ export { Menu, type MenuProps } from "./Shared/Menu";
 // ColorTempPicker
 export { ColorTempPicker, type ColorTempPickerProps } from "./Shared/Entity/Light/ColorTempPicker";
 // ColorPicker
-export { ColorPicker, type ColorPickerProps, type ColorPickerOutputColors } from "./Shared/Entity/Light/ColorPicker";
+export { ColorPicker, type ColorPickerOutputColors, type ColorPickerProps } from "./Shared/Entity/Light/ColorPicker";
 // EntityAttributes
 export { EntityAttributes, type EntityAttributesProps } from "./Shared/Entity/Miscellaneous/EntityAttributes";
 // ImagePreloader
@@ -124,5 +128,5 @@ export { Alert, type AlertProps } from "./Shared/Alert";
 
 // ThemeProvider
 export { ThemeProvider, type ThemeProviderProps } from "./ThemeProvider";
-export { theme } from "./ThemeProvider/theme";
 export * from "./ThemeProvider/constants";
+export { theme } from "./ThemeProvider/theme";
