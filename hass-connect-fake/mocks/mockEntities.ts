@@ -740,5 +740,8 @@ export const entities: HassEntities = {
   ...createVacuum("vacuum.robot_vacuum"),
   ...createAutomation("automation.dim_lights"),
   ...createPerson("person.john_doe", { attributes: { entity_picture: "/hass-connect-fake/assets/john_doe_ai_generated.png" } }),
-  ...createPerson("person.jane_doe", { state: "not_home", attributes: { friendly_name: "Jane" } }),
+  ...createPerson("person.jane_doe", {
+    state: "not_home",
+    attributes: { friendly_name: "Jane", latitude: 48.857543231604986, longitude: 2.274926660937714 },
+  }),
 } as const;

@@ -9,8 +9,8 @@ const defaults = {
   attributes: {
     editable: true,
     id: "",
-    latitude: 58.8553466796875,
-    longitude: 17.237117368008736,
+    latitude: 43.72279692728114,
+    longitude: 10.388657661382009,
     gps_accuracy: 35,
     source: "device_tracker.john_doe_iphone",
     user_id: "",

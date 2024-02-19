@@ -1,33 +1,14 @@
 import type { AvailableQueries, CardBaseProps } from "@components";
-import { CardBase, Column, EntitiesCard, EntitiesCardRow, Modal, Row, fallback } from "@components";
+import { CardBase, Column, Modal, Row, fallback } from "@components";
 import styled from "@emotion/styled";
 import { useEntity, useIcon, type EntityName } from "@hakit/core";
 import { motion } from "framer-motion";
-import { useId, useState } from "react";
+import { Suspense, lazy, useId, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { UserAvatar } from "./UserAvatar";
 
 const Card = styled(CardBase)`
   cursor: default;
-`;
-
-const StyledCircularImage = styled.img`
-  border-radius: 100%;
-  width: 4.5rem;
-  height: 4.5rem;
-  align-items: center;
-  justify-content: center;
-`;
-
-const StyledCircularIcon = styled.div`
-  border-radius: 100%;
-  padding: 6px;
-  width: 4.5rem;
-  height: 4.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--ha-SA100);
-  color: var(--ha-SA100-contrast);
 `;
 
 const Contents = styled.div`
@@ -58,6 +39,17 @@ const PersonContainer = styled(motion.div)`
     font-size: 0.8rem;
     color: var(--ha-S500-contrast);
   }
+  .user-avatar {
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    &--icon {
+      background: var(--ha-S900);
+    }
+  }
 `;
 
 const NameAndState = styled.div`
@@ -81,7 +73,7 @@ const Title = styled.div`
   color: var(--ha-S50-contrast);
 `;
 
-type PersonEntity = Extract<EntityName, `person.${string}`>;
+export type PersonEntity = Extract<EntityName, `person.${string}`>;
 type PersonStateMap = Record<string, string>;
 
 type OmitProperties =
@@ -119,14 +111,14 @@ type PersonProps = {
   personStateMap: PersonStateMap;
 };
 
+// Lazy load the MapComponent to avoid problems in SSR environments
+const MapComponent = lazy(() => import("./MapComponent"));
+
 const Person = ({ personEntity, personStateMap }: PersonProps) => {
   const _id = useId();
   const [open, setOpen] = useState(false);
   const person = useEntity(personEntity);
-  const icon = useIcon(person.attributes.icon ?? "mdi:account", {
-    width: "2.5rem",
-    height: "2.5rem",
-  });
+  const userIcon = useIcon(person.attributes.icon ?? "mdi:account", { width: "2.5rem", height: "2.5rem" });
   const stateText = personStateMap[person.state] || person.state;
   return (
     <>
@@ -137,10 +129,11 @@ const Person = ({ personEntity, personStateMap }: PersonProps) => {
         }}
       >
         {person.attributes.entity_picture ? (
-          <StyledCircularImage src={`${import.meta.env.VITE_HA_URL ?? ""}${person.attributes.entity_picture}`} />
+          <UserAvatar userImage={`${import.meta.env.VITE_HA_URL ?? ""}${person.attributes.entity_picture}`} />
         ) : (
-          <StyledCircularIcon>{icon}</StyledCircularIcon>
+          <div className="user-avatar user-avatar--icon">{userIcon}</div>
         )}
+
         <NameAndState>
           {person.attributes.friendly_name}
           <span>{stateText}</span>
@@ -154,9 +147,17 @@ const Person = ({ personEntity, personStateMap }: PersonProps) => {
           setOpen(false);
         }}
       >
-        <EntitiesCard>
-          <EntitiesCardRow entity={personEntity} />
-        </EntitiesCard>
+        <Suspense fallback={<div>Loading map...</div>}>
+          <MapComponent
+            latitude={person.attributes.latitude}
+            longitude={person.attributes.longitude}
+            mapHeight={open ? 300 : 0}
+            userIcon={person.attributes.icon ?? "mdi:account"}
+            {...(person.attributes.entity_picture && {
+              userImage: `${import.meta.env.VITE_HA_URL ?? ""}${person.attributes.entity_picture}`,
+            })}
+          />
+        </Suspense>
       </Modal>
     </>
   );
