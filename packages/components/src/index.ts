@@ -55,7 +55,9 @@ export { PictureCard, type PictureCardProps } from "./Cards/PictureCard";
 // FabCard
 export { FabCard, type FabCardProps } from "./Cards/FabCard";
 // PersonCard
-export { FamilyCard, type FamilyCardProps } from "./Cards/FamilyCard/index.tsx";
+export { FamilyCard, type FamilyCardProps } from "./Cards/FamilyCard";
+// UserAvatar
+export { UserAvatar, type UserAvatarProps } from "./Cards/FamilyCard";
 // SidebarCard
 export { SidebarCard, type SidebarCardProps } from "./Cards/SidebarCard";
 // ClimateControls
@@ -71,6 +73,8 @@ export { CoverControls, type CoverControlsProps } from "./Shared/Entity/Cover/Co
 export { SwitchControls, type SwitchControlsProps } from "./Shared/Entity/Switch/SwitchControls";
 // MediaPlayerControls
 export { MediaPlayerControls, type MediaPlayerControlsProps } from "./Shared/Entity/MediaPlayer/MediaPlayerControls";
+// PersonControls
+export { PersonControls, type PersonControlsProps } from "./Shared/Entity/Person/PersonControls";
 // ClimateCard
 export { ClimateCard, type ClimateCardProps } from "./Cards/ClimateCard";
 // EntitiesCard
@@ -105,6 +109,7 @@ export { ModalClimateControls, type ModalClimateControlsProps } from "./Shared/M
 export { ModalCoverControls, type ModalCoverControlsProps } from "./Shared/Modal/ModalByEntityDomain/Cover";
 export { ModalLightControls, type ModalLightControlsProps } from "./Shared/Modal/ModalByEntityDomain/Light";
 export { ModalMediaPlayerControls, type ModalMediaPlayerControlsProps } from "./Shared/Modal/ModalByEntityDomain/MediaPlayer";
+export { ModalPersonControls, type ModalPersonControlsProps } from "./Shared/Modal/ModalByEntityDomain/Person";
 export { ModalSwitchControls, type ModalSwitchControlsProps } from "./Shared/Modal/ModalByEntityDomain/Switch";
 export { ModalWeatherControls, type ModalWeatherControlsProps } from "./Shared/Modal/ModalByEntityDomain/Weather";
 // ControlSlider
