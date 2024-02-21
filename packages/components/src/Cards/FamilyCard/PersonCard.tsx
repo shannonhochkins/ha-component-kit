@@ -122,7 +122,7 @@ export const UserAvatar = ({
   }, [person.attributes.entity_picture, joinHassUrl]);
 
   const userIcon = useIcon(person.attributes.icon ?? "mdi:account", iconSize);
-  const renderedStateIcon = useIcon(stateIcon ?? "", { width: "16px", height: "16px", color: "var(--ha-700)" });
+  const renderedStateIcon = useIcon(stateIcon ?? "", { width: "16px", height: "16px", color: "var(--ha-S900)" });
 
   return userImage ? (
     <UserAvatarDiv width={avatarSize.width} height={avatarSize.height} withBorder={withBorder}>
