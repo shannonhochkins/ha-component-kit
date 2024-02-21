@@ -32,6 +32,7 @@ import {
   type FilterByDomain,
 } from "@hakit/core";
 import { computeDomain } from "@utils/computeDomain";
+import { lowerCase, startCase } from "lodash";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ModalProps } from "..";
 
@@ -85,6 +86,7 @@ export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<Ex
   hideState?: boolean;
   hideUpdated?: boolean;
   hideAttributes?: boolean;
+  stateTitle?: string;
 } & Omit<ModalProps, "children">;
 
 export function ModalByEntityDomain<E extends EntityName>({
@@ -127,7 +129,7 @@ export function ModalByEntityDomain<E extends EntityName>({
   }, [device, joinHassUrl]);
 
   const [modalProps, childProps] = useMemo(() => {
-    const { open, id, title, description, onClose, backdropProps, ...childProps } = rest;
+    const { open, id, title, description, onClose, backdropProps, stateTitle, ...childProps } = rest;
     return [
       {
         open,
@@ -136,6 +138,7 @@ export function ModalByEntityDomain<E extends EntityName>({
         description,
         onClose,
         backdropProps,
+        stateTitle,
       },
       childProps,
     ];
@@ -197,8 +200,8 @@ export function ModalByEntityDomain<E extends EntityName>({
 
   const stateRef = useRef<HTMLDivElement>(null);
   const titleValue = useMemo(() => {
-    return `${_entity.state}${_entity.attributes.unit_of_measurement ?? ""}`;
-  }, [_entity]);
+    return modalProps.stateTitle ?? `${_entity.state}${_entity.attributes.unit_of_measurement ?? ""}`;
+  }, [_entity, modalProps.stateTitle]);
 
   return (
     <Modal
@@ -241,7 +244,7 @@ export function ModalByEntityDomain<E extends EntityName>({
           <Column fullWidth>
             {!hideState && (
               <State className="state" ref={stateRef}>
-                {titleValue}
+                {startCase(lowerCase(titleValue))}
               </State>
             )}
             {!hideUpdated && <Updated className="last-updated">{_entity.custom.relativeTime}</Updated>}

@@ -1,4 +1,4 @@
-import { Column, FamilyCard, ThemeProvider } from "@components";
+import { Column, FamilyCard, PersonCard, ThemeProvider } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import type { Args, Meta, StoryObj } from "@storybook/react";
 
@@ -7,7 +7,10 @@ function Render(args?: Args) {
     <HassConnect hassUrl="https://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" fullWidth>
-        <FamilyCard title="State of the Family" personEntities={["person.john_doe", "person.jane_doe"]} {...args} />
+        <FamilyCard title="State of the Family" {...args}>
+          <PersonCard entity="person.john_doe" />
+          <PersonCard entity="person.jane_doe" />
+        </FamilyCard>
       </Column>
     </HassConnect>
   );

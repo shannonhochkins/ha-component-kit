@@ -54,10 +54,10 @@ export type RoomCardProps = ActualAreaCardProps;
 export { PictureCard, type PictureCardProps } from "./Cards/PictureCard";
 // FabCard
 export { FabCard, type FabCardProps } from "./Cards/FabCard";
-// PersonCard
+// FamilyCard
 export { FamilyCard, type FamilyCardProps } from "./Cards/FamilyCard";
-// UserAvatar
-export { UserAvatar, type UserAvatarProps } from "./Cards/FamilyCard";
+// PersonCard
+export { PersonCard, UserAvatar, type PersonCardProps, type UserAvatarProps } from "./Cards/FamilyCard/PersonCard";
 // SidebarCard
 export { SidebarCard, type SidebarCardProps } from "./Cards/SidebarCard";
 // ClimateControls
