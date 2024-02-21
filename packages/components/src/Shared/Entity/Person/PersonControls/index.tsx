@@ -91,8 +91,7 @@ function _PersonControls({ entity: _entity, mapHeight }: PersonControlsProps) {
 }
 
 /**
- * A simple control switch similar to home assistant switches, used in the popup for switch entities, you can reverse the order, change orientation, all you need to set is your desired width/height depending on the orientation
- * NOTE: This supports all available props from ControlToggle, so you can change the icons, colors, size and more.
+ * The PersonControls component renders a map with a user avatar marker of the persons location.
  * */
 export function PersonControls(props: PersonControlsProps) {
   return (
