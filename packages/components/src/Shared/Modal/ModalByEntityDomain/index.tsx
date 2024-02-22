@@ -200,7 +200,7 @@ export function ModalByEntityDomain<E extends EntityName>({
 
   const stateRef = useRef<HTMLDivElement>(null);
   const titleValue = useMemo(() => {
-    return modalProps.stateTitle ?? `${_entity.state}${_entity.attributes.unit_of_measurement ?? ""}`;
+    return modalProps.stateTitle ?? startCase(lowerCase(`${_entity.state}${_entity.attributes.unit_of_measurement ?? ""}`));
   }, [_entity, modalProps.stateTitle]);
 
   return (
@@ -244,7 +244,7 @@ export function ModalByEntityDomain<E extends EntityName>({
           <Column fullWidth>
             {!hideState && (
               <State className="state" ref={stateRef}>
-                {startCase(lowerCase(titleValue))}
+                {titleValue}
               </State>
             )}
             {!hideUpdated && <Updated className="last-updated">{_entity.custom.relativeTime}</Updated>}
