@@ -24,6 +24,8 @@ import {
   ButtonBarButton,
   EntitiesCardRow,
   ButtonGroup,
+  FamilyCard,
+  PersonCard,
   ButtonGroupButton,
 } from '@components';
 import office from './office.jpg';
@@ -57,7 +59,7 @@ function Template() {
           <ButtonCard id="default" entity="cover.cover_with_tilt" service="toggle" md={6} lg={4} xlg={3} />
           <ButtonCard id="default" entity="light.fake_light_3" service="toggle"  md={6} lg={4} xlg={3}/>
           <ButtonCard id="default" entity="switch.fake_switch" service="toggle"  md={6} lg={4} xlg={3}/>
-          <ButtonCard id="default" entity="vacuum.robot_vacuum" service="toggle"  md={6} lg={4} xlg={3} />
+          <ButtonCard id="default" entity="vacuum.robot_vacuum" service="start"  md={6} lg={4} xlg={3} />
         </Group>
         <Group
           md={6}
@@ -79,15 +81,15 @@ function Template() {
         <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_2" service="toggle" icon="mdi:power" />
         <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_3" service="toggle" />
         <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="switch.fake_switch" service="toggle" />
-        <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="vacuum.robot_vacuum" service="toggle" />
+        <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="vacuum.robot_vacuum" service="start" />
       </Group>
       <Group title="FabCard & ButtonBar & ButtonGroup" justifyContent="flex-start" alignItems="stretch" description="FabCard is a great way to show simple entities you just want to perform a simple action and don't care about the name / data, there's a bunch of different ways to render and control entities" gap="1rem">
         <FabCard entity="light.fake_light_1" service="toggle" />
         <FabCard entity="light.fake_light_2" service="toggle" icon="mdi:power" />
         <FabCard entity="light.fake_light_3" service="toggle" />
         <FabCard entity="switch.fake_switch" service="toggle" />
-        <FabCard entity="vacuum.robot_vacuum" service="toggle" />
-        <FabCard entity="vacuum.robot_vacuum" service="toggle">
+        <FabCard entity="vacuum.robot_vacuum" service="start" />
+        <FabCard entity="vacuum.robot_vacuum" service="start">
           <span>Custom Content</span>
         </FabCard>
         <ButtonBar>
@@ -183,7 +185,7 @@ function Template() {
                 <ButtonCard entity="light.fake_light_2" service="toggle" />
                 <ButtonCard entity="light.fake_light_3" service="toggle" />
                 <ButtonCard entity="switch.fake_switch" service="toggle" />
-                <ButtonCard entity="vacuum.robot_vacuum" service="toggle" />
+                <ButtonCard entity="vacuum.robot_vacuum" service="start" />
               </Group>
               <Group title="Random Stuff">
                 <EntitiesCard includeLastUpdated>
@@ -203,7 +205,7 @@ function Template() {
                 <FabCard entity="light.fake_light_2" service="toggle" icon="mdi:power" />
                 <FabCard entity="light.fake_light_3" service="toggle" />
                 <FabCard entity="switch.fake_switch" service="toggle" />
-                <FabCard entity="vacuum.robot_vacuum" service="toggle" />
+                <FabCard entity="vacuum.robot_vacuum" service="start" />
               </Group>
             </Column>
           </AreaCard>
@@ -218,12 +220,12 @@ function Template() {
               </Row>
               <Row gap="1rem" fullWidth>
                 <FabCard entity="switch.fake_switch" service="toggle" />
-                <FabCard entity="vacuum.robot_vacuum" service="toggle" />
+                <FabCard entity="vacuum.robot_vacuum" service="start" />
               </Row>
               <Group title="Living Entities">
                 <ButtonCard entity="light.fake_light_2" service="toggle" />
                 <ButtonCard entity="light.fake_light_3" service="toggle" />
-                <ButtonCard entity="vacuum.robot_vacuum" service="toggle" />
+                <ButtonCard entity="vacuum.robot_vacuum" service="start" />
               </Group>
             </Column>
           </AreaCard>
@@ -238,6 +240,10 @@ function Template() {
               </Group>
             </Column>
           </AreaCard>
+          <FamilyCard title="State of two people">
+            <PersonCard entity="person.john_doe" />
+            <PersonCard entity="person.jane_doe" />
+          </FamilyCard>
         </Row>
       </Group>
     </Column>

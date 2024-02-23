@@ -1,37 +1,40 @@
-import { computeDomain } from "@utils/computeDomain";
-import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import {
-  useHass,
-  useEntity,
-  type EntityRegistryEntry,
-  type AllDomains,
-  type EntityName,
-  type FilterByDomain,
-  type ExtractDomain,
-} from "@hakit/core";
-import type { ModalProps } from "..";
-import {
-  Modal,
+  Column,
   EntityAttributes,
-  ModalLightControls,
-  ModalClimateControls,
-  ModalSwitchControls,
-  ModalCameraControls,
-  ModalCoverControls,
-  ModalWeatherControls,
-  ModalMediaPlayerControls,
   FabCard,
   LogBookRenderer,
-  Column,
-  type ModalWeatherControlsProps,
-  type ModalClimateControlsProps,
-  type ModalLightControlsProps,
-  type ModalSwitchControlsProps,
+  Modal,
+  ModalCameraControls,
+  ModalClimateControls,
+  ModalCoverControls,
+  ModalLightControls,
+  ModalMediaPlayerControls,
+  ModalPersonControls,
+  ModalSwitchControls,
+  ModalWeatherControls,
   type ModalCameraControlsProps,
+  type ModalClimateControlsProps,
   type ModalCoverControlsProps,
+  type ModalLightControlsProps,
   type ModalMediaPlayerControlsProps,
+  type ModalPersonControlsProps,
+  type ModalSwitchControlsProps,
+  type ModalWeatherControlsProps,
 } from "@components";
 import styled from "@emotion/styled";
+import {
+  useEntity,
+  useHass,
+  type AllDomains,
+  type EntityName,
+  type EntityRegistryEntry,
+  type ExtractDomain,
+  type FilterByDomain,
+} from "@hakit/core";
+import { computeDomain } from "@utils/computeDomain";
+import { lowerCase, startCase } from "lodash";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { ModalProps } from "..";
 
 const Separator = styled.div`
   height: 30px;
@@ -70,6 +73,7 @@ interface ModalPropsByDomain {
   camera: ModalCameraControlsProps;
   cover: ModalCoverControlsProps;
   media_player: ModalMediaPlayerControlsProps;
+  person: ModalPersonControlsProps;
 }
 
 export type ModalPropsHelper<D extends AllDomains> = D extends keyof ModalPropsByDomain
@@ -82,6 +86,7 @@ export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<Ex
   hideState?: boolean;
   hideUpdated?: boolean;
   hideAttributes?: boolean;
+  stateTitle?: string;
 } & Omit<ModalProps, "children">;
 
 export function ModalByEntityDomain<E extends EntityName>({
@@ -124,7 +129,7 @@ export function ModalByEntityDomain<E extends EntityName>({
   }, [device, joinHassUrl]);
 
   const [modalProps, childProps] = useMemo(() => {
-    const { open, id, title, description, onClose, backdropProps, ...childProps } = rest;
+    const { open, id, title, description, onClose, backdropProps, stateTitle, ...childProps } = rest;
     return [
       {
         open,
@@ -133,6 +138,7 @@ export function ModalByEntityDomain<E extends EntityName>({
         description,
         onClose,
         backdropProps,
+        stateTitle,
       },
       childProps,
     ];
@@ -165,6 +171,16 @@ export function ModalByEntityDomain<E extends EntityName>({
         return <ModalCoverControls entity={entity as FilterByDomain<EntityName, "cover">} onStateChange={onStateChange} {...childProps} />;
       case "weather":
         return <ModalWeatherControls entity={entity as FilterByDomain<EntityName, "weather">} {...childProps} />;
+      case "person":
+        return (
+          <Suspense fallback={<div>Loading map...</div>}>
+            <ModalPersonControls
+              entity={entity as FilterByDomain<EntityName, "person">}
+              mapHeight={modalProps.open ? 300 : 0}
+              {...childProps}
+            />
+          </Suspense>
+        );
       case "media_player": {
         return (
           // @ts-expect-error - child prop types are correct, it does have groupEntities but ts doesn't think it does, will fix later, parent intellisense is correct
@@ -180,12 +196,12 @@ export function ModalByEntityDomain<E extends EntityName>({
       default:
         return null;
     }
-  }, [entity, childProps, onStateChange, domain]);
+  }, [entity, childProps, onStateChange, domain, modalProps.open]);
 
   const stateRef = useRef<HTMLDivElement>(null);
   const titleValue = useMemo(() => {
-    return `${_entity.state}${_entity.attributes.unit_of_measurement ?? ""}`;
-  }, [_entity]);
+    return modalProps.stateTitle ?? startCase(lowerCase(`${_entity.state}${_entity.attributes.unit_of_measurement ?? ""}`));
+  }, [_entity, modalProps.stateTitle]);
 
   return (
     <Modal
