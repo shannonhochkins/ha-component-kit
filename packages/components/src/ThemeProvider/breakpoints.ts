@@ -44,7 +44,7 @@ export const mq = (names: BreakPoint[], cssValues: string) => {
     .join("\n");
 };
 
-const getColumnSizeCSS = (column: GridSpan): string => {
+export const getColumnSizeCSS = (column: GridSpan): string => {
   // Calculate the base width for each column.
   return `calc(
     (100% - 11 * var(--gap, 0px)) * ${column} / 12 + (${column} - 1) * var(--gap, 0px)

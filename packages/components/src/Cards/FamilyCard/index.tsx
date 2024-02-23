@@ -1,4 +1,15 @@
-import { AvailableQueries, CardBase, CardBaseProps, Column, PersonCard, PersonCardProps, Row, fallback } from "@components";
+import {
+  AvailableQueries,
+  CardBase,
+  getColumnSizeCSS,
+  mq,
+  CardBaseProps,
+  Column,
+  PersonCard,
+  PersonCardProps,
+  Row,
+  fallback,
+} from "@components";
 import styled from "@emotion/styled";
 import { EntityName, FilterByDomain, useHass } from "@hakit/core";
 import { Children, ReactElement, cloneElement, isValidElement } from "react";
@@ -16,6 +27,37 @@ const FamilyCardContent = styled.div`
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
+  .person-card {
+    &.entity-count-2-plus {
+      width: ${getColumnSizeCSS(6)};
+      ${mq(
+        ["xxs", "xs"],
+        `
+        width: ${getColumnSizeCSS(12)};
+      `,
+      )}
+      ${mq(
+        ["md", "lg", "xlg"],
+        `
+        width: ${getColumnSizeCSS(4)};
+      `,
+      )}
+    }
+
+    &.entity-count-1 {
+      width: ${getColumnSizeCSS(12)};
+    }
+
+    &.entity-count-2 {
+      width: ${getColumnSizeCSS(6)};
+      ${mq(
+        ["xxs", "xs"],
+        `
+        width: ${getColumnSizeCSS(12)};
+      `,
+      )}
+    }
+  }
 `;
 
 const Title = styled.div`
@@ -34,6 +76,13 @@ type OmitProperties =
   | "modalProps"
   | "serviceData"
   | "service"
+  | "disableRipples"
+  | "disableScale"
+  | "disableActiveState"
+  | "rippleProps"
+  | "borderRadius"
+  | "disableActiveState"
+  | "onlyFunctionality"
   | "ref";
 
 export interface FamilyCardProps extends Omit<CardBaseProps<"div", FilterByDomain<EntityName, "person">>, OmitProperties> {
@@ -43,22 +92,27 @@ export interface FamilyCardProps extends Omit<CardBaseProps<"div", FilterByDomai
   title?: string;
 }
 
-function _FamilyCard({ title, cssStyles, children, ...rest }: FamilyCardProps): JSX.Element {
+function _FamilyCard({ title, cssStyles, children, className, ...rest }: FamilyCardProps): JSX.Element {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const len = Children.count(children);
+  const count = len > 2 ? "2-plus" : len === 1 ? "1" : "2";
   const childrenWithKeys = Children.map(children, (child, index) => {
     if (isValidElement<PersonCardProps>(child)) {
       return cloneElement(child, {
         key: child.key || index,
+        className: `entity-count-${count}`,
       });
     }
     return child;
   });
+
   return (
     <FamilyBaseCard
       disableRipples
       disableScale
       disableActiveState
+      className={`family-card ${className}`}
       cssStyles={`
       ${globalComponentStyle?.familyCard ?? ""}
       ${cssStyles ?? ""}

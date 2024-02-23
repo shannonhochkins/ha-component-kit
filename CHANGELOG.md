@@ -1,4 +1,14 @@
 
+# 3.1.4
+## @hakit/components
+- NEW - FamilyCard - a card that allows multiple person entities to render in a single card, this will also allow the user to long press and show the location of the person. Huge thanks to @jensea for introducing this feature!
+- The same "location / map" functionality is also available when long pressing a row in the EntitiesCard if the entity entered is a "person" entity.
+- BUGFIX - types for GarbageCollectionCard subtypes were previously not exported, now exported under GarbageCollectionCardTypes
+- BUGFIX - automatic titles in modal have been fixed to convert to title case as well as allowing an override in the "modalProps" attribute for all cards.
+
+## @hakit/core
+- updating provider to allow global style overrides for new cards (FamilyCard, PersonCard)
+
 # 3.1.3
 ## @hakit/components
 - No changes here - aligning semantic versions
