@@ -7,9 +7,17 @@ function Render(args?: Args) {
     <HassConnect hassUrl="https://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" fullWidth>
-        <FamilyCard title="State of the Family" {...args}>
+        <FamilyCard title="State of a single person" {...args}>
+          <PersonCard entity="person.john_doe" />
+        </FamilyCard>
+        <FamilyCard title="State of two people" {...args}>
           <PersonCard entity="person.john_doe" />
           <PersonCard entity="person.jane_doe" />
+        </FamilyCard>
+        <FamilyCard title="State of 3 or more" {...args}>
+          <PersonCard entity="person.john_doe" />
+          <PersonCard entity="person.jane_doe" />
+          <PersonCard entity="person.john_doe" />
         </FamilyCard>
       </Column>
     </HassConnect>

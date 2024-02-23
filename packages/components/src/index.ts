@@ -1,6 +1,15 @@
 import "./.d.ts";
 /// <reference path=".d.ts" />
-export { getBreakpoints, mq, type AvailableQueries, type BreakPoint, type BreakPoints, type GridSpan } from "./ThemeProvider/breakpoints";
+export {
+  getBreakpoints,
+  mq,
+  getColumnSizeCSS,
+  generateColumnBreakpoints,
+  type AvailableQueries,
+  type BreakPoint,
+  type BreakPoints,
+  type GridSpan,
+} from "./ThemeProvider/breakpoints";
 // media query helpers
 export { useBreakpoint } from "./hooks/useBreakpoint";
 // the base card component
@@ -34,7 +43,7 @@ export { getAdditionalWeatherInformation } from "./Cards/WeatherCard/helpers";
 // WeatherCardDetail
 export { WeatherCardDetail, type WeatherCardDetailProps } from "./Cards/WeatherCard/WeatherCardDetail";
 // GarbageCollectionCard
-export { GarbageCollectionCard, type GarbageCollectionCardProps } from "./Cards/GarbageCollectionCard";
+export { GarbageCollectionCard, type GarbageCollectionCardProps, type GarbageCollectionCardTypes } from "./Cards/GarbageCollectionCard";
 // TimeCard
 export { TimeCard, type TimeCardProps } from "./Cards/TimeCard";
 // AreaCard

@@ -1,4 +1,4 @@
-import { AvailableQueries, CardBase, CardBaseProps, fallback } from "@components";
+import { CardBase, CardBaseProps, fallback } from "@components";
 import styled from "@emotion/styled";
 import { EntityName, FilterByDomain, useEntity, useHass, useIcon } from "@hakit/core";
 import { useMemo } from "react";
@@ -142,6 +142,7 @@ function _PersonCard({
   personStateMap = { home: { text: "Home", icon: "mdi:home" }, not_home: { text: "Away", icon: "mdi:walk" } },
   cssStyles,
   modalProps,
+  className,
   ...rest
 }: PersonCardProps): JSX.Element {
   const { useStore } = useHass();
@@ -153,6 +154,7 @@ function _PersonCard({
   return (
     <PersonBaseCard
       entity={entity}
+      className={`person-card ${className}`}
       cssStyles={`
       ${globalComponentStyle?.personCard ?? ""}
       ${cssStyles ?? ""}
@@ -176,17 +178,9 @@ function _PersonCard({
 
 /** The PersonCard component is an easy way to represent the state of a person. Can be added as children to the FamilyCard component to quickly give an overview of the whole family. */
 export function PersonCard(props: PersonCardProps) {
-  const defaultColumns: AvailableQueries = {
-    xxs: 6,
-    xs: 6,
-    sm: 4,
-    md: 4,
-    lg: 4,
-    xlg: 4,
-  };
   return (
     <ErrorBoundary {...fallback({ prefix: "PersonCard" })}>
-      <_PersonCard {...defaultColumns} {...props} />
+      <_PersonCard disableColumns {...props} />
     </ErrorBoundary>
   );
 }

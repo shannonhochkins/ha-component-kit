@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import styled from "@emotion/styled";
 import React, { useMemo, useEffect, useCallback, useRef, useState, CSSProperties, Key } from "react";
 import { useEntity, useHass } from "@hakit/core";
@@ -113,39 +114,46 @@ function VerticalText({ height, text }: VerticalTextProps) {
   );
 }
 
-interface SvgProperties {
-  color: CSSProperties["color"];
-  /** If the name is provided, this color will apply to the text of the bin @default rgba(0,0,0,0.6) */
-  textColor?: CSSProperties["color"];
-  /** the color of the icon if provided to any of the bins @default rgba(0,0,0,0.6) */
-  iconColor?: CSSProperties["color"];
-  /** the size of the rendered default svg @default 45 */
-  size?: number;
-}
-interface BinProperties extends SvgProperties {
-  /** the name of the bin @default "''" */
-  name?: string;
-  /** the icon name from iconify to display over the bin, if provided as well as name, the display may look odd */
-  icon?: string;
-  /** if provided, the default garbage bin will not be rendered and you can render your own */
-  render?: (bin: BinProperties, key: Key) => React.ReactElement;
+export module GarbageCollectionCardTypes {
+  export type Day = "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday";
+  export type Week = Array<BinProperties | CSSProperties["color"]> | null;
+  export interface SvgProperties {
+    color: CSSProperties["color"];
+    /** If the name is provided, this color will apply to the text of the bin @default rgba(0,0,0,0.6) */
+    textColor?: CSSProperties["color"];
+    /** the color of the icon if provided to any of the bins @default rgba(0,0,0,0.6) */
+    iconColor?: CSSProperties["color"];
+    /** the size of the rendered default svg @default 45 */
+    size?: number;
+  }
+  export interface BinProperties extends SvgProperties {
+    /** the name of the bin @default "''" */
+    name?: string;
+    /** the icon name from iconify to display over the bin, if provided as well as name, the display may look odd */
+    icon?: string;
+    /** if provided, the default garbage bin will not be rendered and you can render your own */
+    render?: (bin: BinProperties, key: Key) => React.ReactElement;
+  }
+
+  export interface Schedule {
+    /** optional title to appear in each schedule */
+    title?: React.ReactNode;
+    /** on what day does your garbage get collected */
+    day: GarbageCollectionCardTypes.Day;
+    /** as there's (usually) 4 weeks in a month, provide a config for each week, if you only have your garbage collected once a month, on a tuesday, specify null for the weeks that aren't relevant */
+    weeks: [
+      GarbageCollectionCardTypes.Week,
+      GarbageCollectionCardTypes.Week,
+      GarbageCollectionCardTypes.Week,
+      GarbageCollectionCardTypes.Week,
+    ];
+    /** how often is your garbage collected */
+    frequency: "weekly" | "fortnightly" | "monthly";
+    /** hide the next collection time @default false */
+    hideNextCollection?: boolean;
+  }
 }
 
-type WeekConfig = Array<BinProperties | CSSProperties["color"]> | null;
-type Day = "Sunday" | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday";
-
-interface Schedule {
-  /** optional title to appear in each schedule */
-  title?: React.ReactNode;
-  /** on what day does your garbage get collected */
-  day: Day;
-  /** as there's (usually) 4 weeks in a month, provide a config for each week, if you only have your garbage collected once a month, on a tuesday, specify null for the weeks that aren't relevant */
-  weeks: [WeekConfig, WeekConfig, WeekConfig, WeekConfig];
-  /** how often is your garbage collected */
-  frequency: "weekly" | "fortnightly" | "monthly";
-  /** hide the next collection time @default false */
-  hideNextCollection?: boolean;
-}
 type OmitProperties =
   | "onClick"
   | "as"
@@ -169,9 +177,9 @@ export interface GarbageCollectionCardProps extends Omit<CardBaseProps, OmitProp
   /** The description of the card @default undefined */
   description?: React.ReactNode;
   /** the schedule(s) for your garbage collection */
-  schedules: Schedule[];
+  schedules: GarbageCollectionCardTypes.Schedule[];
   /** the styles to apply globally to the garbage bin svg, this can be overwritten per week */
-  svg?: SvgProperties;
+  svg?: GarbageCollectionCardTypes.SvgProperties;
   /** fired when the card is clicked */
   onClick?: () => void;
 }
@@ -190,7 +198,7 @@ function _GarbageCollectionCard({
   const dateSensor = useEntity("sensor.date", {
     returnNullIfNotFound: true,
   });
-  const defaultSVGProperties = useMemo<Required<SvgProperties>>(
+  const defaultSVGProperties = useMemo<Required<GarbageCollectionCardTypes.SvgProperties>>(
     () => ({
       size: 45,
       color: "#484848",
@@ -209,7 +217,7 @@ function _GarbageCollectionCard({
   const dayNames = useMemo(() => ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], []);
 
   const renderBin = useCallback(
-    (bin: CSSProperties["color"] | BinProperties | undefined, key: Key) => {
+    (bin: CSSProperties["color"] | GarbageCollectionCardTypes.BinProperties | undefined, key: Key) => {
       if (typeof bin === "object" && typeof bin.render === "function") return bin.render(bin, key);
       const size = typeof bin === "string" ? defaultSVGProperties.size : bin?.size ?? defaultSVGProperties.size;
       const color = typeof bin === "string" ? bin : bin?.color ?? defaultSVGProperties.color;
@@ -247,7 +255,7 @@ function _GarbageCollectionCard({
     return days === 0 ? "Today" : days === 1 ? "Tomorrow" : `in ${days} days`;
   }, []);
 
-  const findNextNonNullWeek = useCallback((weeks: WeekConfig[], startWeek: number): number => {
+  const findNextNonNullWeek = useCallback((weeks: GarbageCollectionCardTypes.Week[], startWeek: number): number => {
     for (let i = 0; i < weeks.length; i++) {
       const index = (startWeek + i) % weeks.length;
       if (weeks[index] !== null) {

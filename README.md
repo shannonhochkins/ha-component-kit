@@ -39,11 +39,9 @@ There's extensive [documentation](https://shannonhochkins.github.io/ha-component
 ### Home Assistant Addon
 There's a [Home Assistant Addon](ADDON.md) available which will serve your dashboard to a new sidebar link in home assistant making it easier to access your custom dashboard.
 
-### WIP - Next Release
-
-- Theming - allow individual components to display different theme control, either by a hue shift or global change
 
 ### Supported Cards
+- [NEW FamilyCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-familycard--docs)
 - [AreaCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-areacard--docs)
 - [ButtonCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-buttoncard--docs)
 - [ClimateCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-climatecard--docs)

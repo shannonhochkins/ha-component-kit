@@ -65,7 +65,9 @@ export type SupportedComponentOverrides =
   | "timeCard"
   | "triggerCard"
   | "weatherCard"
-  | "menu";
+  | "menu"
+  | "personCard"
+  | "familyCard";
 export interface Store {
   entities: HassEntities;
   setEntities: (entities: HassEntities) => void;
