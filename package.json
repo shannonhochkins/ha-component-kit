@@ -32,7 +32,6 @@
     "build:create": "npm run build --workspace=create-hakit",
     "build:components": "npm run build --workspace=@hakit/components",
     "build:storybook": "BUILD_STORYBOOK=true storybook build",
-
     "watch:build:components": "npm run watch:build --workspace=@hakit/components",
     "watch:build:core": "npm run watch:build --workspace=@hakit/core",
     "watch:build:sync-script": "npm run watch:build:sync-script --workspace=@hakit/core",
