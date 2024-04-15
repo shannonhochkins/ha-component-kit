@@ -1,10 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import EsLint from 'vite-plugin-linter';
+import { EsLinter, linterPlugin, } from 'vite-plugin-linter';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 import path from 'path';
-const { EsLinter, linterPlugin } = EsLint;
 import dts from 'vite-plugin-dts';
 import svgr from "vite-plugin-svgr";
 // https://vitejs.dev/config/

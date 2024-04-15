@@ -144,7 +144,7 @@ function _TimeCard({
   onClick,
   cssStyles,
   ...rest
-}: TimeCardProps): JSX.Element {
+}: TimeCardProps): React.ReactNode {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const timeSensor = useEntity("sensor.time", {

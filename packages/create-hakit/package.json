@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "clean": "rimraf ./test-project",
-    "dev": "ts-node --esm ./src/index.ts",
+    "dev": "npx tsx ./src/index.ts",
     "build": "unbuild",
     "typecheck": "tsc --noEmit",
     "prebuild": "npm run typecheck",
@@ -23,7 +23,7 @@
     "release": "npm publish --access public"
   },
   "engines": {
-    "node": ">=16.0.0",
+    "node": ">=18.0.0",
     "npm": ">=7.0.0"
   },
   "repository": {
@@ -49,6 +49,7 @@
     "node-scp": "^0.0.23",
     "prompts": "^2.4.2",
     "rimraf": "^5.0.1",
+    "tsimp": "^2.0.11",
     "unbuild": "^2.0.0"
   }
 }

@@ -1,5 +1,12 @@
 ## Local Development
-Simply, run `npm run dev` and it will start a local server for you to develop on, it will also watch for changes and reload the page for you.
+Simply, run `nvm use && npm i && npm run dev` and it will start a local server for you to develop on, it will also watch for changes and reload the page for you. 
+
+## Dependencies
+
+```json
+Node.js 18.0.0
+npm 7.0.0
+```
 
 ## Building
 Run `npm run build` and it will build the files for you, you can then upload them to your home assistant instance using the deploy script mentioned below.
@@ -22,4 +29,6 @@ Once you have both the above environment variables set, you can run `npm run syn
 
 ## Further documentation
 For further documentation, please visit the [documentation website](https://shannonhochkins.github.io/ha-component-kit/) for more information.
+
+
 

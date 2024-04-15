@@ -147,7 +147,7 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
   themeControlStyles,
   globalStyles,
   globalComponentStyles,
-}: ThemeProviderProps<T>): JSX.Element {
+}: ThemeProviderProps<T>): React.ReactNode {
   const { useStore } = useHass();
   const setBreakpoints = useStore((store) => store.setBreakpoints);
   const setGlobalComponentStyles = useStore((store) => store.setGlobalComponentStyles);

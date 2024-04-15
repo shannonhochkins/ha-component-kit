@@ -136,7 +136,7 @@ function _TriggerCard<E extends EntityName>({
   serviceData,
   cssStyles,
   ...rest
-}: TriggerCardProps<E>): JSX.Element {
+}: TriggerCardProps<E>): React.ReactNode {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const domain = computeDomain(_entity);

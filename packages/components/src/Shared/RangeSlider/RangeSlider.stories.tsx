@@ -3,7 +3,7 @@ import { ThemeProvider, RangeSlider } from "@components";
 import type { RangeSliderProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
-function Template(props: RangeSliderProps): JSX.Element {
+function Template(props: RangeSliderProps) {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />

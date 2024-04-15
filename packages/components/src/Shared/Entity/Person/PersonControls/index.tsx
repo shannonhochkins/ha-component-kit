@@ -22,7 +22,7 @@ const StyledMapContainer = styled(MapContainer)`
   }
 `;
 
-type ReactProps = { children: JSX.Element };
+type ReactProps = { children: React.ReactNode };
 
 type ContainerProps = {
   tagName: string;

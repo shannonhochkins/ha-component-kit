@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import styled from "@emotion/styled";
 import React, { useMemo, useEffect, useCallback, useRef, useState, CSSProperties, Key } from "react";
 import { useEntity, useHass } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { fallback, Row, Column, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import { ReactComponent as GarbageBin } from "./garbage-bin.svg";
+import styled from "@emotion/styled";
+import GarbageBin from "./garbage-bin.svg?react";
 
 const ASPECT_RATIO = 77.41 / 123.36;
 
@@ -192,7 +192,7 @@ function _GarbageCollectionCard({
   className,
   cssStyles,
   ...rest
-}: GarbageCollectionCardProps): JSX.Element {
+}: GarbageCollectionCardProps): React.ReactNode {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const dateSensor = useEntity("sensor.date", {

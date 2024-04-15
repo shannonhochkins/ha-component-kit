@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { useEntity, useIconByDomain, useIconByEntity, computeDomain, isUnavailableState, ON } from "@hakit/core";
 import type { EntityName, ExtractDomain, HassEntityWithService } from "@hakit/core";
 import { Icon } from "@iconify/react";
@@ -7,7 +6,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import React, { ReactNode, useId, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useLongPress } from "use-long-press";
-
+import styled from "@emotion/styled";
 const IconWrapper = styled(Row)`
   width: 100%;
   max-width: 2rem;
@@ -80,7 +79,7 @@ function _EntitiesCardRow<E extends EntityName>({
   const title = useMemo(() => _name ?? entity.attributes.friendly_name ?? entity.attributes.entity_id, [_name, entity]);
   const on = entity?.state === ON;
   const iconColor = on ? entity.custom.hexColor : "var(--ha-S500-contrast)";
-
+  // TODO  refactor this to use the card base component like the Personcard
   const bind = useLongPress(
     () => {
       if (typeof _entity === "string" && !openModal) {

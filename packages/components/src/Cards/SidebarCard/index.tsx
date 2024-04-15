@@ -230,7 +230,7 @@ export interface MenuItem {
   /** the description, this will appear below the title */
   description?: string;
   /** the icon name or JSX element, eg <Icon icon="mdi:cross" /> */
-  icon: JSX.Element | string;
+  icon: React.ReactNode | string;
   /** the hash name of the menu item, this is optional */
   hash?: string;
   /** if the item is active or not */

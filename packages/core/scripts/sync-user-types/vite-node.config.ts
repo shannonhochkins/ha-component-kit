@@ -1,8 +1,7 @@
 import { defineConfig } from 'vite';
-import EsLint from 'vite-plugin-linter';
+import { EsLinter, linterPlugin, } from 'vite-plugin-linter';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
-const { EsLinter, linterPlugin } = EsLint;
 import { node } from '@liuli-util/vite-plugin-node';
 import dts from 'vite-plugin-dts'
 // https://vitejs.dev/config/

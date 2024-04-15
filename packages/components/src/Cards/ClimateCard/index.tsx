@@ -82,7 +82,7 @@ function _ClimateCard({
   serviceData,
   cssStyles,
   ...rest
-}: ClimateCardProps): JSX.Element {
+}: ClimateCardProps): React.ReactNode {
   const { getConfig, useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const entity = useEntity(_entity);

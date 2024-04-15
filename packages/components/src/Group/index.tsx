@@ -98,7 +98,7 @@ function _Group({
   className,
   onClick,
   ...rest
-}: GroupProps): JSX.Element {
+}: GroupProps): React.ReactNode {
   const [_collapsed, setCollapsed] = useState(collapsed);
   const cssProps = {
     gap,
