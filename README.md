@@ -6,10 +6,10 @@
 </table>
 <p align="left">
   <a aria-label="@HAKIT/CORE" href="https://www.npmjs.com/package/@hakit/core">
-    <img alt="" src="https://img.shields.io/npm/v/@hakit/core.svg?style=for-the-badge&labelColor=000000">
+    <img alt="" src="https://img.shields.io/npm/v/@hakit/core.svg?style=for-the-badge&labelColor=000000&label=@hakit/CORE">
   </a>
   <a aria-label="@HAKIT/COMPONENTS" href="https://www.npmjs.com/package/@hakit/components">
-    <img alt="" src="https://img.shields.io/npm/v/@hakit/components.svg?style=for-the-badge&labelColor=000000">
+    <img alt="" src="https://img.shields.io/npm/v/@hakit/components.svg?style=for-the-badge&labelColor=000000&label=@HAKIT/COMPONENTS">
   </a>
   <a aria-label="Join the community on Discord" href="https://discord.gg/agQr9JKk">
     <img alt="" src="https://img.shields.io/badge/Join%20the%20Discord-blueviolet.svg?style=for-the-badge&logo=Discord&labelColor=000000&logoWidth=20">
