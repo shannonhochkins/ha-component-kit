@@ -1,6 +1,6 @@
 <table>
   <tr>
-    <td><img src="https://cdn.discordapp.com/icons/1231534799248691252/4b6124f952f099f855b5186d8a68f33e.webp?size=100" alt="LOGO"></td>
+    <td width="127"><img src="https://cdn.discordapp.com/icons/1231534799248691252/4b6124f952f099f855b5186d8a68f33e.webp?size=100" alt="LOGO" ></td>
     <td><h1>HA COMPONENT KIT</h1></td>
   </tr>
 </table>
