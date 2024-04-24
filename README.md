@@ -1,9 +1,27 @@
-# Overview
+<table>
+  <tr>
+    <td><img src="https://cdn.discordapp.com/icons/1231534799248691252/4b6124f952f099f855b5186d8a68f33e.webp?size=100" alt="LOGO"></td>
+    <td><h1>HA COMPONENT KIT</h1></td>
+  </tr>
+</table>
+<p align="left">
+  <a aria-label="@HAKIT/CORE" href="https://www.npmjs.com/package/@hakit/core">
+    <img alt="" src="https://img.shields.io/npm/v/@hakit/core.svg?style=for-the-badge&labelColor=000000">
+  </a>
+  <a aria-label="@HAKIT/COMPONENTS" href="https://www.npmjs.com/package/@hakit/components">
+    <img alt="" src="https://img.shields.io/npm/v/@hakit/components.svg?style=for-the-badge&labelColor=000000">
+  </a>
+  <a aria-label="Join the community on Discord" href="https://discord.gg/agQr9JKk">
+    <img alt="" src="https://img.shields.io/badge/Join%20the%20Discord-blueviolet.svg?style=for-the-badge&logo=Discord&labelColor=000000&logoWidth=20">
+  </a>
+</p>
 
-This repository contains functionality to easily generate custom dashboards with react for Home Assistant using the official web socket connection that the standard lovelace dashboards use.
+Unlock the ultimate customization for your Home Assistant dashboards with this package, leveraging React for seamless, personalized interfaces.
 
-Try it out now! [Demo](https://shannonhochkins.github.io/ha-component-kit/iframe.html?args=&id=introduction-demo--default&viewMode=story#)
 
+## Demo
+
+Visit the [Demo](https://shannonhochkins.github.io/ha-component-kit/iframe.html?args=&id=introduction-demo--default&viewMode=story#) to try it out!
 
 If you like anything here, be sure to 🌟 [the repo!](https://github.com/shannonhochkins/ha-component-kit)
 
@@ -12,7 +30,9 @@ If you like anything here, be sure to 🌟 [the repo!](https://github.com/shanno
 [![@hakit/core Downloads](https://img.shields.io/npm/dt/%40hakit%2Fcore.svg?style=flat&colorA=000000&colorB=000000&label=%40hakit%2Fcore%20downloads)](https://www.npmjs.com/package/@hakit/core)
 [![@hakit/components Downloads](https://img.shields.io/npm/dt/%40hakit%2Fcomponents.svg?style=flat&colorA=000000&colorB=000000&label=%40hakit%2Fcomponents%20downloads)](https://www.npmjs.com/package/@hakit/components)
 
+### Documentation
 
+There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
 
 ## Help me out?
 
@@ -32,16 +52,12 @@ Or, if you want to install [@hakit/core](https://www.npmjs.com/package/@hakit/co
   npm install @hakit/core @hakit/components
 ```
 
-### Documentation
-
-There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
-
-### Home Assistant Addon
+### Home Assistant Addon (WIP)
 There's a [Home Assistant Addon](ADDON.md) available which will serve your dashboard to a new sidebar link in home assistant making it easier to access your custom dashboard.
 
 
 ### Supported Cards
-- [NEW FamilyCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-familycard--docs)
+- [FamilyCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-familycard--docs)
 - [AreaCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-areacard--docs)
 - [ButtonCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-buttoncard--docs)
 - [ClimateCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-climatecard--docs)
@@ -64,7 +80,7 @@ There's a [Home Assistant Addon](ADDON.md) available which will serve your dashb
 ### What's next?
 
 There's a Roadmap.md file with a few things i'm working on!
-Have your say! Vote for what you'd like to see next in [upcoming features!](https://github.com/shannonhochkins/ha-component-kit/discussions/28)
+Have your say! Join the [discord](https://discord.gg/agQr9JKk) and let me know what you'd like to see next!
 
 ### Contributors!
 
