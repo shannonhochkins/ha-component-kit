@@ -14,17 +14,19 @@ export default {
       } : {};
       if (window.parent) {
         const parentDocument = window.parent.document;
+        const logo = parentDocument.querySelector('.sidebar-header div img') as HTMLElement;
+        if (logo) {
+          logo.style.maxWidth = '100%';
+        }
         const panel = parentDocument.getElementById('storybook-panel-root');
         if (args.parameters?.addons?.showPanel === false && panel !== null && panel.parentElement !== null) {
           panel.parentElement.style.display = 'none';
-          if (panel.parentElement.parentElement?.previousElementSibling) {
-            // @ts-ignore - it's correct.
-            panel.parentElement.parentElement.previousElementSibling.style.width = '100%';
-            // @ts-ignore - it's correct.
-            panel.parentElement.parentElement.previousElementSibling.style.height = '100%';
-          }
         } else if (panel !== null && panel.parentElement !== null) {
           panel.parentElement.style.display = 'flex';
+        }
+        const previewer = parentDocument.querySelector('#root div div:has(main)') as HTMLElement;
+        if (previewer !== null) {
+          previewer.style.height = '100dvh';
         }
       }
       if (args.parameters.standalone) {
@@ -45,7 +47,6 @@ export default {
   ],
 
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
     layout: 'centered',
     controls: {
       matchers: {

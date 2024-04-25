@@ -39,7 +39,7 @@ function RenderCamera() {
           </p>
           <Source
             dark
-            language="yaml"
+            language="yml"
             code={`
 camera:
   - platform: proxy

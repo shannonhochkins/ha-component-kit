@@ -1,11 +1,14 @@
+## Prerequisites
+Node version manager - [NVM](https://github.com/nvm-sh/nvm) to easily install and manage node versions
+
 ## Local Development
 Simply, run `nvm use && npm i && npm run dev` and it will start a local server for you to develop on, it will also watch for changes and reload the page for you. 
 
 ## Dependencies
 
 ```json
-Node.js 18.0.0
-npm 7.0.0
+Node.js >=18.0.0
+npm >=7.0.0
 ```
 
 ## Building
@@ -17,7 +20,7 @@ Run `npm run build` and it will build the files for you, you can then upload the
 3. The `VITE_FOLDER_NAME` is the folder that will be created on your home assistant instance, this is where the files will be uploaded to.
 
 ## Folder name & Vite
-The `VITE_FOLDER_NAME` is the folder that will be created on your home assistant instance, this is where the files will be uploaded to. If you change the environment variable, you'll also need to align the vite.config.ts value named `base` to the same value so that when it's served, it's served from the correct path.
+The `VITE_FOLDER_NAME` is the folder that will be created on your home assistant instance, this is where the files will be uploaded to. If you change the `VITE_FOLDER_NAME` variable, it will also update the `vite.config.ts` value named `base` to the same value so that when deployed using the deployment script the pathname's are correct.
 
 ## Typescript Sync
 

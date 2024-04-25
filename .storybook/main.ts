@@ -30,9 +30,6 @@ export default ({
   docs: {
     autodocs: 'tag'
   },
-  features: {
-    storyStoreV7: true
-  },
   typescript: {
     check: true,
     reactDocgen: 'react-docgen-typescript',

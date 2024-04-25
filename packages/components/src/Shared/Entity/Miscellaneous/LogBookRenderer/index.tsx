@@ -187,7 +187,7 @@ function _LogBookRenderer({
         return;
       }
       const device = await getDeviceId(entityId);
-      if (device && device.device_id) {
+      if (device && device.device_id && typeof window !== "undefined") {
         window.open(joinHassUrl(`config/devices/device/${device.device_id}`), "_blank");
       }
     },
@@ -195,6 +195,7 @@ function _LogBookRenderer({
   );
 
   const showMoreLogs = useCallback(() => {
+    if (typeof window === "undefined") return;
     window.open(joinHassUrl(`/logbook?entity_id=${entity}`), "_blank");
   }, [entity, joinHassUrl]);
 

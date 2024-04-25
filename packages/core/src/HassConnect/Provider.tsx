@@ -29,7 +29,7 @@ import {
 } from "home-assistant-js-websocket";
 import { isArray, snakeCase, isEmpty } from "lodash";
 import { ServiceData, SnakeOrCamelDomains, DomainService, Target } from "@typings";
-import { saveTokens, loadTokens } from "./token-storage";
+import { saveTokens, loadTokens, clearTokens } from "./token-storage";
 import { diff } from "deep-object-diff";
 import { create } from "zustand";
 import { useDebouncedCallback } from "use-debounce";
@@ -233,18 +233,27 @@ export interface HassProviderProps {
   children: (ready: boolean) => React.ReactNode;
   /** the home assistant url */
   hassUrl: string;
-  /** should you want to use a locally hosted home assistant instance, enable this flag @default false */
-  allowNonSecure?: boolean;
 }
 
-function translateErr(err: number | string | Error | unknown) {
-  return err === ERR_CANNOT_CONNECT
-    ? "Unable to connect"
-    : err === ERR_HASS_HOST_REQUIRED
-    ? "Please enter a Home Assistant URL."
-    : err === ERR_INVALID_HTTPS_TO_HTTP
-    ? `Cannot connect to Home Assistant instances over "http://".`
-    : `Unknown error (${err}).`;
+function translateErr(err: number | string | Error | unknown): string {
+  const message =
+    err === ERR_CANNOT_CONNECT
+      ? "Unable to connect"
+      : err === ERR_HASS_HOST_REQUIRED
+      ? "Please enter a Home Assistant URL."
+      : err === ERR_INVALID_HTTPS_TO_HTTP
+      ? `Cannot connect to Home Assistant instances over "http://".`
+      : null;
+  if (message !== null) return message;
+  return (
+    (
+      err as {
+        error: string;
+      }
+    )?.error ||
+    (err as Error)?.message ||
+    `Unknown Error (${err})`
+  );
 }
 type ConnectionResponse =
   | {
@@ -261,23 +270,34 @@ type ConnectionResponse =
       cannotConnect: true;
     };
 
-const tryConnection = async (init: "auth-callback" | "user-request" | "saved-tokens", hassUrl?: string): Promise<ConnectionResponse> => {
+const tryConnection = async (init: "auth-callback" | "user-request" | "saved-tokens", hassUrl: string): Promise<ConnectionResponse> => {
   const options: AuthOptions = {
     saveTokens,
-    loadTokens: () => Promise.resolve(loadTokens()),
+    loadTokens: () => Promise.resolve(loadTokens(hassUrl)),
   };
 
-  if (hassUrl) {
+  if (hassUrl && init === "user-request") {
     options.hassUrl = hassUrl;
   }
   let auth: Auth;
 
   try {
     auth = await getAuth(options);
-    if (auth.expired) {
-      await auth.refreshAccessToken();
-    }
+    // if (auth.expired) {
+    //   await auth.refreshAccessToken();
+    // }
   } catch (err: unknown) {
+    if (
+      (
+        err as {
+          error: string;
+        }
+      )?.error === "invalid_grant"
+    ) {
+      // the refresh token is incorrect and most likely from another browser / instance
+      clearTokens();
+      return tryConnection(init, hassUrl);
+    }
     if (init === "saved-tokens" && err === ERR_CANNOT_CONNECT) {
       return {
         type: "failed",
@@ -292,7 +312,7 @@ const tryConnection = async (init: "auth-callback" | "user-request" | "saved-tok
     // Clear url if we have a auth callback in url.
     if (location && location.search.includes("auth_callback=1")) {
       history.replaceState(null, "", location.pathname);
-      location.reload();
+      // location.reload();
     }
   }
   let connection: Connection;
@@ -339,7 +359,7 @@ const ignoreForDiffCheck = (
   };
 };
 
-export function HassProvider({ children, hassUrl, allowNonSecure = false }: HassProviderProps) {
+export function HassProvider({ children, hassUrl }: HassProviderProps) {
   const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
   const authenticated = useRef(false);
   const fetchedConfig = useRef(false);
@@ -395,9 +415,9 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
     let connectionResponse: ConnectionResponse;
     // this will trigger on first mount
     if (location && location.search.indexOf("auth_callback=1") !== -1) {
-      connectionResponse = await tryConnection("auth-callback");
-    } else if (loadTokens()) {
-      connectionResponse = await tryConnection("saved-tokens");
+      connectionResponse = await tryConnection("auth-callback", hassUrl);
+    } else if (loadTokens(hassUrl)) {
+      connectionResponse = await tryConnection("saved-tokens", hassUrl);
     } else {
       const value = hassUrl || "";
 
@@ -412,20 +432,14 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
         return;
       }
 
-      let url: URL;
       try {
-        url = new URL(value);
+        new URL(value);
       } catch (err: unknown) {
         setError("Invalid URL");
         authenticated.current = false;
         return;
       }
 
-      if (url.protocol === "http:" && url.hostname !== "localhost" && allowNonSecure === false) {
-        setError(translateErr(ERR_INVALID_HTTPS_TO_HTTP));
-        authenticated.current = false;
-        return;
-      }
       connectionResponse = await tryConnection("user-request", value);
     }
     if (connectionResponse.type === "error") {
@@ -441,7 +455,7 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
       return;
     }
     authenticated.current = false;
-  }, [hassUrl, allowNonSecure, setError, setAuth, setConnection, setCannotConnect]);
+  }, [hassUrl, setError, setAuth, setConnection, setCannotConnect]);
 
   useEffect(() => {
     setHassUrl(hassUrl);
@@ -516,14 +530,12 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
   }, [config, connection, getConfig, setConfig, setError]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
     if (location.hash === "") return;
     if (location.hash.replace("#", "") === _hash) return;
     setHash(location.hash);
   }, [setHash, _hash]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
     function onHashChange() {
       setRoutes(
         routes.map((route) => {
@@ -550,7 +562,7 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
   const addRoute = useCallback(
     (route: Omit<Route, "active">) => {
       const exists = routes.find((_route) => _route.hash === route.hash) !== undefined;
-      if (!exists) {
+      if (!exists && typeof window !== "undefined") {
         // if the current has value is the same as the hash, we're active
         const hashWithoutPound = window.location.hash.replace("#", "");
         const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
@@ -653,7 +665,7 @@ export function HassProvider({ children, hassUrl, allowNonSecure = false }: Hass
   if (cannotConnect) {
     return (
       <p>
-        Unable to connect to ${loadTokens()!.hassUrl}, refresh the page and try again, or <a onClick={logout}>Logout</a>.
+        Unable to connect to ${loadTokens(hassUrl)!.hassUrl}, refresh the page and try again, or <a onClick={logout}>Logout</a>.
       </p>
     );
   }

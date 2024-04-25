@@ -7,6 +7,9 @@
     width: 100%;
   }
 }
+.sidebar-header div img {
+  max-width: 100%;
+}
 mark {
   background-color: #dedede;
   color: #414141;

@@ -122,6 +122,7 @@ export function ModalByEntityDomain<E extends EntityName>({
   }, [getDeviceId, rest.open]);
 
   const openDevice = useCallback(() => {
+    if (typeof window === "undefined") return;
     // if we have a device value, open it up in a new tab and join the url with joinHassUrl
     if (device && device.device_id) {
       window.open(joinHassUrl(`config/devices/device/${device.device_id}`), "_blank");

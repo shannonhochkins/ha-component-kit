@@ -147,7 +147,7 @@ export function HlsPlayer({
     // if (HaHLSPlayer.streamCount <= 2) {
     //   return true;
     // }
-    if (!("performance" in window) || performance.getEntriesByType("resource").length === 0) {
+    if ((typeof window !== "undefined" && !("performance" in window)) || performance.getEntriesByType("resource").length === 0) {
       return false;
     }
     const perfEntry = performance.getEntriesByType("resource")[0] as PerformanceResourceTiming;

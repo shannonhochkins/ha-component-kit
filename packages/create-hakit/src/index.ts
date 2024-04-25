@@ -10,6 +10,7 @@ import {
   blue,
   yellow,
   green,
+  cyan,
   reset,
 } from 'kolorist';
 
@@ -74,14 +75,14 @@ const createProject = async () => {
           {
             type: argTargetDir ? null : 'text',
             name: 'haUrl',
+            initial: 'http://homeassistant.local:8123',
             message: reset('HA Url:'),
-            initial: '',
           },
         ],
         {
           onCancel: () => {
             abort = true;
-            throw new Error(red('✖') + ' Operation cdancelled')
+            throw new Error(red('✖') + ' Operation cancelled')
           },
         },
       )
@@ -130,7 +131,6 @@ const createProject = async () => {
       targetDir,
       root,
       templateDir,
-      cdProjectName,
     })
     updateReadme(targetDir, root, templateDir);
 
@@ -142,10 +142,14 @@ const createProject = async () => {
       .replace('{FOLDER_NAME}', cdProjectName)
       .replace('VITE_HA_URL=', `VITE_HA_URL=${(haUrl ?? '').replace(/\/$/, '')}`));
 
-    console.info(blue(`\nEnsure you update ${cdProjectName}/.env with your VITE_HA_URL and VITE_HA_TOKEN`));
-    console.info(green(`\nOnce you've updated the .env file, run "npm run sync" to generate your types!`));
-    console.info(yellow(`\nAdd in the optional SSH values to ensure that "npm run deploy" will work correctly.`));
-    console.info(yellow(`\nTo retrieve the SSH information, follow the instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-deploying--docs`));
+    if (haUrl.startsWith('https')) {
+      console.info(blue(`\nNEXT STEPS: SYNC: Ensure you update ${cdProjectName}/.env with your VITE_HA_TOKEN`));
+      console.info(green(`\nNEXT STEPS: SYNC: Once you've updated the .env file, run "npm run sync" to generate your types!`));
+    } else {
+      console.info(yellow(`\nWARN: You're using an insecure connection and the \`npm run sync\` functionality will not work unless used with https protocol. Update the ./sync-types "url" value to use a secure connection to use the typescript sync feature.`));
+    }
+    console.info(cyan(`\nNEXT STEPS: DEPLOY: Add in the optional SSH values to ensure that "npm run deploy" will work correctly.`));
+    console.info(cyan(`\nNEXT STEPS: DEPLOY: To retrieve the SSH information, follow the instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-deploying--docs`));
     console.info();
     process.exit(status ?? 0)
 
@@ -251,28 +255,63 @@ function updatePackageJson({
     ...pkg.scripts,
     "prettier": "prettier --write .",
     "sync": "npx tsx ./sync-types.ts",
-    "prebuild": "npm run prettier && npm run sync",
+    "prebuild": "npm run prettier",
     "deploy": "npx tsx scripts/deploy.ts"
   }
   write('package.json', root, templateDir, JSON.stringify(pkg, null, 2));
+}
+
+function injectEnvironmentVariableToViteFile(content: string) {
+  const insertion = `
+import dotenv from 'dotenv';
+dotenv.config();
+
+const VITE_FOLDER_NAME = process.env.VITE_FOLDER_NAME;
+
+// Check if the environment variable is set
+if (typeof VITE_FOLDER_NAME === 'undefined' || VITE_FOLDER_NAME === '') {
+  console.error('VITE_FOLDER_NAME environment variable is not set, update your .env file with a value naming your dashboard, eg "VITE_FOLDER_NAME=ha-dashboard"');
+  process.exit(1);
+}
+`;
+  const targetWithSemicolon = "import react from '@vitejs/plugin-react';";
+  const targetWithoutSemicolon = "import react from '@vitejs/plugin-react'";
+
+  let position = content.indexOf(targetWithSemicolon);
+  if (position === -1) {
+      position = content.indexOf(targetWithoutSemicolon);
+      if (position === -1) {
+          throw new Error('Target import not found in the file content.');
+      }
+  }
+
+  // Determine the actual end of the found line (consider if semicolon was found or not)
+  const endOfLine = content.indexOf('\n', position) + 1;
+
+  // If the line doesn't end with a semicolon, adjust accordingly
+  if (position === content.indexOf(targetWithoutSemicolon)) {
+      position += targetWithoutSemicolon.length;
+  } else {
+      position += targetWithSemicolon.length;
+  }
+  return content.substring(0, endOfLine) + insertion + content.substring(endOfLine);;
 }
 
 function updateViteFile({
   targetDir,
   root,
   templateDir,
-  cdProjectName
 }: {
   targetDir: string;
   root: string;
   templateDir: string;
-  cdProjectName: string;
 }) {
   const viteFile = path.resolve(targetDir, 'vite.config.ts');
-  const fileContent = fs.readFileSync(viteFile, 'utf-8');
-  const updatedContent = fileContent.replace(
+  const fileContent = injectEnvironmentVariableToViteFile(fs.readFileSync(viteFile, 'utf-8'));
+  const updatedContent = fileContent
+  .replace(
     /(defineConfig\(\{)/,
-    `$1\n  base: \'/local/${cdProjectName}/\',`
+    `$1\n  base: \`/local/\${VITE_FOLDER_NAME}/\`,`
   );
   write('vite.config.ts', root, templateDir, updatedContent);
 }

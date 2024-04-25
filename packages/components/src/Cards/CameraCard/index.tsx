@@ -132,7 +132,7 @@ function _CameraCard({
 }: CameraCardProps) {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
-  const cameraUpdater = useRef<number | undefined>(undefined);
+  const cameraUpdater = useRef<NodeJS.Timeout | undefined>(undefined);
   const loadingIconRef = useRef<SVGSVGElement | null>(null);
   const stateValueRef = useRef<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState(true);
@@ -157,7 +157,7 @@ function _CameraCard({
 
   const _startUpdateCameraInterval = useCallback((): void => {
     _stopUpdateCameraInterval();
-    cameraUpdater.current = window.setInterval(() => poster.refresh(), posterUpdateInterval);
+    cameraUpdater.current = setInterval(() => poster.refresh(), posterUpdateInterval);
   }, [poster, posterUpdateInterval]);
 
   useEffect(() => {
