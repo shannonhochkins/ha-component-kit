@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Title, Description, Primary, ArgTypes, Source } from "@storybook/blocks";
 import { ThemeProvider, AreaCard, Row, ButtonCard } from "@components";
+import { ThemeProvider as ETheme } from '@emotion/react'
 import type { AreaCardProps } from "@components";
-// @ts-expect-error - Don't have types for jsx-to-string
-import jsxToString from "jsx-to-string";
+import jsxToString from 'react-element-to-jsx-string';
 import { HassConnect } from "@hass-connect-fake";
 import office from "./office.jpg";
 import livingRoom from "./living-room.jpg";
@@ -56,16 +56,20 @@ function MultiAreaExample() {
 
 function TemplateFull() {
   return (
-    <>
+    <ETheme theme={{
+      typography: {
+        
+      }
+    }}>
       <MultiAreaExample />
       <h2>Full source example of the above</h2>
       <Source
         dark
         code={jsxToString(MultiAreaExample(), {
-          useFunctionCode: true,
+          showFunctions: true,
         })}
       />
-    </>
+    </ETheme>
   );
 }
 

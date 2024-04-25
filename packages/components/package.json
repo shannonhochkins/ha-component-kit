@@ -65,8 +65,9 @@
     "test": "NODE_ENV=test jest --rootDir=src"
   },
   "peerDependencies": {
-    "@emotion/react": ">=11.x",
-    "@emotion/styled": ">=11.x",
+    "@emotion/is-prop-valid": ">=1.x.x",
+    "@emotion/react": ">=10.x",
+    "@emotion/styled": ">=10.x",
     "@fullcalendar/react": ">=6.x.x",
     "@hakit/core": "^3.1.4",
     "@use-gesture/react": ">=10.x",
@@ -83,12 +84,10 @@
     "react-resize-detector": ">=9.x.x",
     "react-use": ">=17.x",
     "use-debounce": ">=9.x",
-    "use-long-press": ">=3.x.x",
-    "@emotion/is-prop-valid": ">=1.x.x"
+    "use-long-press": ">=3.x.x"
   },
   "devDependencies": {
-    "@emotion/babel-plugin": "^11.x",
-    "@types/leaflet": "^1.9.8",
+    "@types/leaflet": "^1.9.12",
     "vite-plugin-svgr": "^4.2.0"
   }
 }

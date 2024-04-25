@@ -1,10 +1,29 @@
 import type { Preview } from "@storybook/react";
 import { Title, Description, Primary, ArgTypes } from "@storybook/blocks";
 import React from "react";
+import { withThemeFromJSXProvider } from '@storybook/addon-themes';
+import { ThemeProvider } from '@storybook/theming';
 import './global.css';
+
+const THEME = {
+  typography: {
+    fonts: {
+      base: 'Arial, sans-serif',
+      mono: 'Courier, monospace'
+    }
+  }
+};
 
 export default {
   decorators: [
+    withThemeFromJSXProvider({
+      themes: {
+        dark: THEME,
+        light: THEME,
+      },
+      defaultTheme: 'dark',
+      Provider: ThemeProvider,
+    }),
     (Story, args) => {
       const centered = args.parameters.centered ? {
         width: '100%',
