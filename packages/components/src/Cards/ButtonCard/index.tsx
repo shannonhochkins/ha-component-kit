@@ -191,7 +191,7 @@ function _ButtonCard<E extends EntityName>({
   hideDetails,
   cssStyles,
   ...rest
-}: ButtonCardProps<E>): JSX.Element {
+}: ButtonCardProps<E>): React.ReactNode {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const domain = _entity ? computeDomain(_entity) : null;

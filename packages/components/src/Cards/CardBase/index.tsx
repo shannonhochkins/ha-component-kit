@@ -1,5 +1,4 @@
 import { motion, type MotionProps, type HTMLMotionProps, type ForwardRefComponent } from "framer-motion";
-import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { useLongPress, type LongPressReactEvents } from "use-long-press";
 import { lowerCase, startCase } from "lodash";
@@ -26,6 +25,9 @@ import {
   type BreakPoint,
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
+import isValidProp from "@emotion/is-prop-valid";
+
+import styled from "@emotion/styled";
 
 const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
   // dodgey hack to get typescript to play nicely here
@@ -37,7 +39,9 @@ const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
   if (onlyFunctionality) {
     return styled(MotionElement)``;
   }
-  return styled(MotionElement)<{
+  return styled(MotionElement, {
+    shouldForwardProp: (prop) => isValidProp(prop),
+  })<{
     disableActiveState: boolean;
   }>`
     outline: none;

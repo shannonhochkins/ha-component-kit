@@ -11,5 +11,8 @@
     "sourceMap": false,
     "noUnusedLocals": true,
     "esModuleInterop": true
-  }
+  },
+  "exclude": [
+    "node_modules"
+  ],
 }

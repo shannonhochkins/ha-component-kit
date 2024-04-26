@@ -50,8 +50,8 @@ function _EntityAttributes({ entity, title, ...rest }: EntityAttributesProps) {
             {Array.isArray(value)
               ? value.join(", ")
               : typeof value === "object" || typeof value === "boolean"
-              ? JSON.stringify(value)
-              : value}
+                ? JSON.stringify(value)
+                : value}
           </Value>
         </Entry>
       ))}

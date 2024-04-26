@@ -144,7 +144,7 @@ function _PersonCard({
   modalProps,
   className,
   ...rest
-}: PersonCardProps): JSX.Element {
+}: PersonCardProps): React.ReactNode {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
 

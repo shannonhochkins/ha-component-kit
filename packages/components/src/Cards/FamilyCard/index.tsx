@@ -9,12 +9,13 @@ import {
   PersonCardProps,
   Row,
   fallback,
+  BreakPoint,
 } from "@components";
-import styled from "@emotion/styled";
 import { EntityName, FilterByDomain, useHass } from "@hakit/core";
 import { Children, ReactElement, cloneElement, isValidElement } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
+import styled from "@emotion/styled";
 const FamilyBaseCard = styled(CardBase)`
   cursor: default;
 `;
@@ -92,16 +93,21 @@ export interface FamilyCardProps extends Omit<CardBaseProps<"div", FilterByDomai
   title?: string;
 }
 
-function _FamilyCard({ title, cssStyles, children, className, ...rest }: FamilyCardProps): JSX.Element {
+function _FamilyCard({ title, cssStyles, children, className, ...rest }: FamilyCardProps): React.ReactNode {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const len = Children.count(children);
   const count = len > 2 ? "2-plus" : len === 1 ? "1" : "2";
   const childrenWithKeys = Children.map(children, (child, index) => {
     if (isValidElement<PersonCardProps>(child)) {
+      // if they've defined columns, we don't want to override it
+      const columns: BreakPoint[] = ["xxs", "xs", "sm", "md", "lg", "xlg"];
+      const hasColumnDefinition = columns.some((key) => typeof child.props[key] === "number");
+      const disableColumns = hasColumnDefinition ? false : child.props.disableColumns ?? true;
       return cloneElement(child, {
         key: child.key || index,
-        className: `entity-count-${count}`,
+        className: disableColumns ? `entity-count-${count}` : "",
+        disableColumns,
       });
     }
     return child;
@@ -142,7 +148,9 @@ function _FamilyCard({ title, cssStyles, children, className, ...rest }: FamilyC
   );
 }
 
-/** The FamilyCard component is an easy way to represent the state of the persons of your family within a simple layout, add each person to a PersonCard and place them as children within this card and you're good to go! */
+/** The FamilyCard component is an easy way to represent the state of the persons of your family within a simple layout, add each person to a PersonCard and place them as children within this card and you're good to go!
+ * By default the layout is automatically adjusted to fit the amount of people you have, but you can override this by setting an BreakPoint prop on the PersonCard component.
+ */
 export function FamilyCard(props: FamilyCardProps) {
   const defaultColumns: AvailableQueries = {
     xxs: 12,

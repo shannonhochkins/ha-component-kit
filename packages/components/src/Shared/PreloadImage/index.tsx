@@ -123,7 +123,7 @@ export const PreloadImage = ({
   }, [setPreloader]);
 
   useEffect(() => {
-    if (lazy && "IntersectionObserver" in window) {
+    if (typeof window !== "undefined" && lazy && "IntersectionObserver" in window) {
       setObserver();
     } else {
       setPreloader();

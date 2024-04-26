@@ -77,8 +77,8 @@ export function useLogs(entityId: EntityName, options?: UseLogOptions) {
       !_entriesRef.current
         ? []
         : purgeBeforePythonTime
-        ? _entriesRef.current.filter((entry) => entry.when > purgeBeforePythonTime!)
-        : _entriesRef.current,
+          ? _entriesRef.current.filter((entry) => entry.when > purgeBeforePythonTime!)
+          : _entriesRef.current,
     [],
   );
 

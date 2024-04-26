@@ -26,8 +26,8 @@ export const useLightColor = (entity: HassEntityWithService<"light">) => {
       entity.state !== ON
         ? undefined
         : entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBW && entity.attributes.rgbw_color
-        ? Math.round((entity.attributes.rgbw_color[3] * 100) / 255)
-        : undefined;
+          ? Math.round((entity.attributes.rgbw_color[3] * 100) / 255)
+          : undefined;
     return value != null ? (value * 255) / 100 : undefined;
   }, [entity]);
   const coolWhite = useMemo(() => {
@@ -35,8 +35,8 @@ export const useLightColor = (entity: HassEntityWithService<"light">) => {
       entity.state !== ON
         ? undefined
         : entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBWW && entity.attributes.rgbww_color
-        ? Math.round((entity.attributes.rgbww_color[3] * 100) / 255)
-        : undefined;
+          ? Math.round((entity.attributes.rgbww_color[3] * 100) / 255)
+          : undefined;
     return value != null ? (value * 255) / 100 : undefined;
   }, [entity]);
   const warmWhite = useMemo(() => {
@@ -44,8 +44,8 @@ export const useLightColor = (entity: HassEntityWithService<"light">) => {
       entity.state !== ON
         ? undefined
         : entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBWW && entity.attributes.rgbww_color
-        ? Math.round((entity.attributes.rgbww_color[4] * 100) / 255)
-        : undefined;
+          ? Math.round((entity.attributes.rgbww_color[4] * 100) / 255)
+          : undefined;
     return value != null ? (value * 255) / 100 : undefined;
   }, [entity]);
   const currentRgbColor = getLightCurrentModeRgbColor(entity);

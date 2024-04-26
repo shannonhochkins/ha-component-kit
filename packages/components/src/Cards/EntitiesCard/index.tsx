@@ -46,7 +46,7 @@ export interface EntitiesCardProps extends Omit<CardBaseProps<"div", EntityName>
   /** include the last updated time, will apply to every row unless specified on an individual EntityItem @default false */
   includeLastUpdated?: boolean;
 }
-function _EntitiesCard({ includeLastUpdated = false, className, children, cssStyles, ...rest }: EntitiesCardProps): JSX.Element {
+function _EntitiesCard({ includeLastUpdated = false, className, children, cssStyles, ...rest }: EntitiesCardProps): React.ReactNode {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const childrenWithKeys = Children.map(children, (child, index) => {

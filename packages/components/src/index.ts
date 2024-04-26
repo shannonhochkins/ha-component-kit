@@ -100,11 +100,11 @@ export { CalendarCard, type CalendarCardProps } from "./Cards/CalendarCard";
 // ButtonBar
 export { ButtonBar, type ButtonBarProps } from "./Shared/Entity/Miscellaneous/ButtonBar";
 // ButtonBarButton
-export { ButtonBarButton, type ButtonBarButtonProps } from "./Shared/Entity/Miscellaneous/ButtonBar/ButtonBarButton.tsx";
+export { ButtonBarButton, type ButtonBarButtonProps } from "./Shared/Entity/Miscellaneous/ButtonBar/ButtonBarButton";
 // ButtonGroup
 export { ButtonGroup, type ButtonGroupProps } from "./Shared/Entity/Miscellaneous/ButtonGroup";
 // ButtonGroupButton
-export { ButtonGroupButton, type ButtonGroupButtonProps } from "./Shared/Entity/Miscellaneous/ButtonGroup/ButtonGroupButton.tsx";
+export { ButtonGroupButton, type ButtonGroupButtonProps } from "./Shared/Entity/Miscellaneous/ButtonGroup/ButtonGroupButton";
 // CameraCard
 export { CameraCard, type CameraCardProps } from "./Cards/CameraCard";
 export type { VideoState } from "./Cards/CameraCard/players";

@@ -1,10 +1,29 @@
 import type { Preview } from "@storybook/react";
 import { Title, Description, Primary, ArgTypes } from "@storybook/blocks";
 import React from "react";
+import { withThemeFromJSXProvider } from '@storybook/addon-themes';
+import { ThemeProvider } from '@storybook/theming';
 import './global.css';
+
+const THEME = {
+  typography: {
+    fonts: {
+      base: 'Arial, sans-serif',
+      mono: 'Courier, monospace'
+    }
+  }
+};
 
 export default {
   decorators: [
+    withThemeFromJSXProvider({
+      themes: {
+        dark: THEME,
+        light: THEME,
+      },
+      defaultTheme: 'dark',
+      Provider: ThemeProvider,
+    }),
     (Story, args) => {
       const centered = args.parameters.centered ? {
         width: '100%',
@@ -14,17 +33,19 @@ export default {
       } : {};
       if (window.parent) {
         const parentDocument = window.parent.document;
+        const logo = parentDocument.querySelector('.sidebar-header div img') as HTMLElement;
+        if (logo) {
+          logo.style.maxWidth = '100%';
+        }
         const panel = parentDocument.getElementById('storybook-panel-root');
         if (args.parameters?.addons?.showPanel === false && panel !== null && panel.parentElement !== null) {
           panel.parentElement.style.display = 'none';
-          if (panel.parentElement.parentElement?.previousElementSibling) {
-            // @ts-ignore - it's correct.
-            panel.parentElement.parentElement.previousElementSibling.style.width = '100%';
-            // @ts-ignore - it's correct.
-            panel.parentElement.parentElement.previousElementSibling.style.height = '100%';
-          }
         } else if (panel !== null && panel.parentElement !== null) {
           panel.parentElement.style.display = 'flex';
+        }
+        const previewer = parentDocument.querySelector('#root div div:has(main)') as HTMLElement;
+        if (previewer !== null) {
+          previewer.style.height = '100dvh';
         }
       }
       if (args.parameters.standalone) {
@@ -45,7 +66,6 @@ export default {
   ],
 
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
     layout: 'centered',
     controls: {
       matchers: {

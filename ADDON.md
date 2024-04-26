@@ -1,4 +1,4 @@
-# HAKIT Dashboard Addon
+# HAKIT Dashboard Addon (WIP)
 
 This addon simply serves your custom dashboard to a new sidebar link in home assistant making it easier to access your custom dashboard.
 

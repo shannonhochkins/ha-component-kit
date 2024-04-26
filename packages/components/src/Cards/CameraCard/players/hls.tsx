@@ -144,10 +144,7 @@ export function HlsPlayer({
     // The stream count may be incremented multiple times before this function is called to check
     // the count e.g. when loading a page with many streams on it. The race can work in our favor
     // so we now have a better idea on if we'll use too many browser connections later.
-    // if (HaHLSPlayer.streamCount <= 2) {
-    //   return true;
-    // }
-    if (!("performance" in window) || performance.getEntriesByType("resource").length === 0) {
+    if ((typeof window !== "undefined" && !("performance" in window)) || performance.getEntriesByType("resource").length === 0) {
       return false;
     }
     const perfEntry = performance.getEntriesByType("resource")[0] as PerformanceResourceTiming;

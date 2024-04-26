@@ -83,9 +83,17 @@ const _Ripples = memo(
         const { pageX, pageY, currentTarget } = event;
 
         const rect = currentTarget.getBoundingClientRect();
+        let xMultiplier = 1;
+        if (typeof window !== "undefined") {
+          xMultiplier = window.scrollX;
+        }
+        let yMultiplier = 1;
+        if (typeof window !== "undefined") {
+          yMultiplier = window.scrollY;
+        }
 
-        const left = pageX - (rect.left + (typeof window === "undefined" ? 1 : window.scrollX));
-        const top = pageY - (rect.top + (typeof window === "undefined" ? 1 : window.scrollY));
+        const left = pageX - (rect.left + xMultiplier);
+        const top = pageY - (rect.top + yMultiplier);
         const size = Math.max(rect.width, rect.height);
 
         setRippleStyle((state) => ({

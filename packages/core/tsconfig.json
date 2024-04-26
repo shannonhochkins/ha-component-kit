@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig",
   "compilerOptions": {
-    "skipLibCheck": true
+    "skipLibCheck": true,
   },
   "ts-node": {
     "esm": true,
@@ -15,5 +15,8 @@
   },
   "rootDir": "./src",
   "include": ["src", ".d.ts", "bin", "mocks", "../../.d.ts"],
+  "exclude": [
+    "node_modules"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

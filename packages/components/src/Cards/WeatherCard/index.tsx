@@ -139,7 +139,7 @@ function _WeatherCard({
   forecastType = "daily",
   cssStyles,
   ...rest
-}: WeatherCardProps): JSX.Element {
+}: WeatherCardProps): React.ReactNode {
   const { useStore, getConfig } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const { width, ref: widthRef } = useResizeDetector({

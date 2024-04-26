@@ -112,7 +112,7 @@ function RenderDevices() {
         type: { summary: "array" },
         defaultValue: { summary: "[]" },
       },
-      control: "array",
+      control: "object",
       description: `If there's entities returning in the results, that you want to exclude, you can provide a partial entity_id match to exclude it`,
     },
     whitelist: {
@@ -120,7 +120,7 @@ function RenderDevices() {
         type: { summary: "array" },
         defaultValue: { summary: "[]" },
       },
-      control: "array",
+      control: "object",
       description: `If there's entities returning in the results, but you only want certain entities, provide a partial entity_id match to include them`,
     },
   },

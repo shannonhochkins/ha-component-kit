@@ -97,7 +97,7 @@ function _FabCard<E extends EntityName>({
   serviceData,
   cssStyles,
   ...rest
-}: FabCardProps<E>): JSX.Element {
+}: FabCardProps<E>): React.ReactNode {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const entity = useEntity(_entity || "unknown", {
