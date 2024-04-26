@@ -400,7 +400,7 @@ export function HassProvider({ children, hassUrl }: HassProviderProps) {
   const logout = useCallback(async () => {
     try {
       reset();
-      saveTokens(null);
+      clearTokens();
       if (location) location.reload();
     } catch (err: unknown) {
       setError("Unable to log out!");

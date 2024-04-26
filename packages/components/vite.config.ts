@@ -82,7 +82,7 @@ export default defineConfig(configEnv => {
           entryFileNames: '[format]/[name].js',
         }
       },
-      sourcemap: false,
+      sourcemap: true,
       minify: true,
     },
     plugins: [
