@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, memo } from "react";
 import { css, Global } from "@emotion/react";
 import { CSSInterpolation } from "@emotion/serialize";
 import styled from "@emotion/styled";
-import { merge } from "lodash";
+import { isEqual, merge } from "lodash";
 import { theme as defaultTheme } from "./theme";
 import type { ThemeParams } from "./theme";
 import { convertToCssVars } from "./helpers";
@@ -14,10 +14,22 @@ import { useHass, type SupportedComponentOverrides } from "@hakit/core";
 import { ThemeControls } from "./ThemeControls";
 import type { ThemeControlsProps } from "./ThemeControls";
 import { generateColumnBreakpoints } from "./breakpoints";
+import createCache, { type Options } from "@emotion/cache";
+import { CacheProvider } from "@emotion/react";
+import weakMemoize from "@emotion/weak-memoize";
 
 type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
 };
+
+// https://github.com/emotion-js/emotion/issues/760#issuecomment-404353706
+const memoizedCreateCacheWithContainer = weakMemoize((options: Options) => {
+  return createCache(options);
+});
+
+function EmotionProvider({ children, options }: { children: React.ReactNode; options: Options }) {
+  return <CacheProvider value={memoizedCreateCacheWithContainer(options)}>{children}</CacheProvider>;
+}
 
 export interface ThemeProviderProps<T extends object> {
   /** the tint factor to apply to the shade colors */
@@ -40,6 +52,8 @@ export interface ThemeProviderProps<T extends object> {
   theme?: DeepPartial<ThemeParams> & T;
   /** any global style overrides */
   globalStyles?: CSSInterpolation;
+  /** options to pass to the emotion cache provider */
+  emotionCache?: Options;
   /** default breakpoint media query overrides @default {
    * xxs: 600,
    * xs: 900,
@@ -51,6 +65,8 @@ export interface ThemeProviderProps<T extends object> {
   breakpoints?: BreakPoints;
   /** styles to provide for a specific component type to override every instance */
   globalComponentStyles?: Partial<Record<SupportedComponentOverrides, CSSInterpolation>>;
+  /** children to render within the ThemeProvider */
+  children?: React.ReactNode;
 }
 
 const ThemeControlsBox = styled(motion.div)`
@@ -147,7 +163,9 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
   themeControlStyles,
   globalStyles,
   globalComponentStyles,
-}: ThemeProviderProps<T>): JSX.Element {
+  emotionCache,
+  children,
+}: ThemeProviderProps<T>): React.ReactNode {
   const { useStore } = useHass();
   const setBreakpoints = useStore((store) => store.setBreakpoints);
   const setGlobalComponentStyles = useStore((store) => store.setGlobalComponentStyles);
@@ -192,10 +210,18 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
 
   useEffect(() => {
     const newTheme = getTheme();
+    if (isEqual(newTheme, _theme)) return;
     setTheme(newTheme);
-  }, [c, darkMode, getTheme, h, l, s, t]);
+  }, [_theme, c, darkMode, getTheme, h, l, s, t]);
   return (
-    <>
+    <EmotionProvider
+      options={
+        emotionCache ?? {
+          key: "hakit",
+          container: document.head,
+        }
+      }
+    >
       <Global
         styles={css`
           :root {
@@ -338,7 +364,8 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
           />
         </Modal>
       )}
-    </>
+      {children && children}
+    </EmotionProvider>
   );
 });
 /**

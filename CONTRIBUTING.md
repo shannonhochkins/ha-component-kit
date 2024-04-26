@@ -5,7 +5,7 @@ If you want to contribute, fix bugs, integrate new features you can work with @h
 ```shell
 git clone https://github.com/shannonhochkins/ha-component-kit.git
 cd ha-component-kit
-npm install
+npm install && npm run build
 ```
 
 #### Local Storybook

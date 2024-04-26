@@ -6,8 +6,7 @@ import { HassConnect } from "@hass-connect-fake";
 import { merge } from "lodash";
 import { convertToCssVars } from "./helpers";
 import type { ThemeProviderProps } from "@components";
-// @ts-expect-error - Don't have types for jsx-to-string
-import jsxToString from "jsx-to-string";
+import jsxToString from "react-element-to-jsx-string";
 import { ThemeControls, ThemeControlsProps } from "./ThemeControls";
 import { DEFAULT_THEME_OPTIONS } from "./constants";
 

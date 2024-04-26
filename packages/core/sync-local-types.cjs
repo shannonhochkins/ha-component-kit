@@ -13,6 +13,6 @@ require('dotenv').config();
     custom: false,
     // filter out domains that may not be relevant to users
     domainBlacklist: ['localtuya', 'nodered', 'wakeOnLan', 'ring', 'mqtt', 'ffmpeg', 'tplink', 'samsungtvSmart', 'deconz', "fullyKiosk", "googleAssistantSdk"],
-    serviceBlacklist: ['mobileAppS7Tablet', 'mobileAppNatashasIphone', 'mobileAppSmT220', 'mobileAppShannonsPhone', 'gamingLightColorChanger', 'randomLightColour', 'saySomething'],
+    serviceBlacklist: ['mobileAppGalaxyWatch6ClassicYjfx', 'mobileAppIphone', 'mobileAppS7Tablet', 'mobileAppNatashasIphone', 'mobileAppSmT220', 'mobileAppShannonsPhone', 'gamingLightColorChanger', 'randomLightColour', 'saySomething'],
   })
 })();

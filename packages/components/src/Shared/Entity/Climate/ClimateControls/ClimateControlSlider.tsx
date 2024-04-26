@@ -320,16 +320,6 @@ export function ClimateControlSlider({ entity: _entity, showCurrent = false }: C
       const heatCoolModes: HvacMode[] = (hvac_modes as HvacMode[]).filter((m) => ["heat", "cool", "heat_cool"].includes(m));
       const sliderMode = SLIDER_MODES[heatCoolModes.length === 1 && ["off", "auto"].includes(mode) ? heatCoolModes[1] : mode];
 
-      console.log({
-        active,
-        sliderMode,
-        value: _targetTemperature.value,
-        min: _min,
-        max: _max,
-        step: _step,
-        current: entity.attributes.current_temperature,
-      });
-
       return (
         <div className={`container`}>
           <ControlSliderCircular

@@ -32,5 +32,5 @@ export const getLightCurrentModeRgbColor = (entity: HassEntityWithService<"light
   entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBWW
     ? entity.attributes.rgbww_color
     : entity.attributes.color_mode === LIGHT_COLOR_MODES.RGBW
-    ? entity.attributes.rgbw_color
-    : entity.attributes.rgb_color;
+      ? entity.attributes.rgbw_color
+      : entity.attributes.rgb_color;

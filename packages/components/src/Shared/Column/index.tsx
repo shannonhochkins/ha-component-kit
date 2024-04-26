@@ -2,6 +2,7 @@ import { m } from "framer-motion";
 import { css } from "@emotion/react";
 import type { MotionProps } from "framer-motion";
 import styled from "@emotion/styled";
+import isValidProp from "@emotion/is-prop-valid";
 
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 export interface ColumnProps extends Extendable {
@@ -18,7 +19,9 @@ export interface ColumnProps extends Extendable {
   /** should the column stretch to the width of the parent */
   fullWidth?: boolean;
 }
-const _Column = styled(m.div)<ColumnProps>`
+const _Column = styled(m.div, {
+  shouldForwardProp: (prop) => isValidProp(prop),
+})<ColumnProps>`
   display: flex;
   flex-direction: column;
   flex-wrap: ${({ wrap }) => wrap || "wrap"};

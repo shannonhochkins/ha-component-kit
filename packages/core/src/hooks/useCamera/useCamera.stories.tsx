@@ -39,7 +39,7 @@ function RenderCamera() {
           </p>
           <Source
             dark
-            language="yaml"
+            language="yml"
             code={`
 camera:
   - platform: proxy
@@ -59,7 +59,7 @@ camera:
   },
   argTypes: {
     entity: {
-      control: "string",
+      control: "text",
       description: "The name of your camera entity",
     },
     ["options.imageWidth"]: {

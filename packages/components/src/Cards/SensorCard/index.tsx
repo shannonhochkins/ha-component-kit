@@ -90,7 +90,7 @@ function _SensorCard<E extends EntityName>({
   serviceData,
   cssStyles,
   ...rest
-}: SensorCardProps<E>): JSX.Element {
+}: SensorCardProps<E>): React.ReactNode {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const domain = computeDomain(_entity);

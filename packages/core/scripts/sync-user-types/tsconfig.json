@@ -14,5 +14,5 @@
   },
   "lib": ["ES2020"],
   "include": ["cli.ts", "index.ts", "connection.ts", "entity-generator.ts"],
-  "exclude": []
+  "exclude": ["node_modules"]
 }

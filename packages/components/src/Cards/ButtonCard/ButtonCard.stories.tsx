@@ -4,8 +4,7 @@ import { ThemeProvider, Group, Column, ButtonCard } from "@components";
 import type { ButtonCardProps } from "@components";
 
 import { HassConnect } from "@hass-connect-fake";
-// @ts-expect-error - Don't have types for jsx-to-string
-import jsxToString from "jsx-to-string";
+import jsxToString from "react-element-to-jsx-string";
 
 function Template(args?: Partial<ButtonCardProps<"switch.fake_switch">>) {
   return (

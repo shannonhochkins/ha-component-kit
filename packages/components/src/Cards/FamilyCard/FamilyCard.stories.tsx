@@ -19,6 +19,11 @@ function Render(args?: Args) {
           <PersonCard entity="person.jane_doe" />
           <PersonCard entity="person.john_doe" />
         </FamilyCard>
+        <FamilyCard title="Overridable size" {...args}>
+          <PersonCard entity="person.john_doe" md={12} />
+          <PersonCard entity="person.jane_doe" md={12} />
+          <PersonCard entity="person.john_doe" md={12} />
+        </FamilyCard>
       </Column>
     </HassConnect>
   );

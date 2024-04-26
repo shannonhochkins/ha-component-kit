@@ -10,8 +10,7 @@ import {
   useBreakpoint,
 } from '@components';
 import { css, Global } from "@emotion/react";
-// @ts-expect-error - Don't have types for jsx-to-string
-import jsxToString from "jsx-to-string";
+import jsxToString from "react-element-to-jsx-string";
 
 function ResponsiveGroupsExample() {
   return <Row fullWidth  justifyContent="flex-start" alignItems="stretch" gap="1rem">
@@ -73,7 +72,7 @@ function Template() {
       <Source
         dark
         code={jsxToString(ResponsiveGroupsExample(), {
-          useFunctionCode: true,
+          showFunctions: true,
         })}
       />
       <p>This means you can resize anything, to any expected 12 column layout, where some buttons, you want wider than others, try resizing the browser to see the effect and see the cards swapping sizes!</p>
@@ -82,7 +81,7 @@ function Template() {
       <Source
         dark
         code={jsxToString(ButtonsDifferentSizes(), {
-          useFunctionCode: true,
+          showFunctions: true,
         })}
       />
     </Column>

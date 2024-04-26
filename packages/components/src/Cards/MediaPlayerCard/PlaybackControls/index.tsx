@@ -1,5 +1,5 @@
 import { EntityName, FilterByDomain, OFF, supportsFeatureFromAttributes, useEntity, useService } from "@hakit/core";
-import { Fab } from "./Fab";
+import { Fab } from "../Fab";
 
 export interface PlaybackControlsProps {
   entity: FilterByDomain<EntityName, "media_player">;

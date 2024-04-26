@@ -2,8 +2,8 @@ import { EntityName, FilterByDomain, supportsFeatureFromAttributes, useEntity, u
 import { useCallback, useRef, useEffect, useState } from "react";
 import { mq, Row, RangeSlider } from "@components";
 import styled from "@emotion/styled";
-import { Fab } from "./Fab";
-import { Layout, VolumeLayout, DEFAULT_FAB_SIZE } from "./constants";
+import { Fab } from "../Fab";
+import { Layout, VolumeLayout, DEFAULT_FAB_SIZE } from "../constants";
 const VolumeSlider = styled.label<{
   layout: Layout;
 }>`

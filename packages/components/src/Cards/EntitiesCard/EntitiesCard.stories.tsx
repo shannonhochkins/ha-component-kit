@@ -10,6 +10,7 @@ function Render(args?: Args) {
         <EntitiesCard includeLastUpdated {...args}>
           <EntitiesCardRow entity="sensor.time" />
           <EntitiesCardRow entity="sensor.date" />
+          <EntitiesCardRow entity="person.john_doe" />
           <EntitiesCardRow entity="light.unavailable" />
           <EntitiesCardRow
             entity="switch.fake_switch"
