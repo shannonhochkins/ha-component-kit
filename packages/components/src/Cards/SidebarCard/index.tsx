@@ -310,8 +310,8 @@ function _SidebarCard({
             --ha-area-card-expanded-offset: ${devices.xxs || devices.xs
               ? "0rem"
               : open
-              ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
-              : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
+                ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
+                : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
             --ha-sidebar-max-width: ${open
               ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
               : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};

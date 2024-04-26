@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import { EsLinter, linterPlugin, } from 'vite-plugin-linter';
+import { EsLinter, linterPlugin } from 'vite-plugin-linter';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
 import { node } from '@liuli-util/vite-plugin-node';

@@ -79,7 +79,6 @@ function _EntitiesCardRow<E extends EntityName>({
   const title = useMemo(() => _name ?? entity.attributes.friendly_name ?? entity.attributes.entity_id, [_name, entity]);
   const on = entity?.state === ON;
   const iconColor = on ? entity.custom.hexColor : "var(--ha-S500-contrast)";
-  // TODO  refactor this to use the card base component like the Personcard
   const bind = useLongPress(
     () => {
       if (typeof _entity === "string" && !openModal) {

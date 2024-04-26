@@ -59,7 +59,7 @@ camera:
   },
   argTypes: {
     entity: {
-      control: "string",
+      control: "text",
       description: "The name of your camera entity",
     },
     ["options.imageWidth"]: {

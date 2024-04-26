@@ -240,10 +240,10 @@ function translateErr(err: number | string | Error | unknown): string {
     err === ERR_CANNOT_CONNECT
       ? "Unable to connect"
       : err === ERR_HASS_HOST_REQUIRED
-      ? "Please enter a Home Assistant URL."
-      : err === ERR_INVALID_HTTPS_TO_HTTP
-      ? `Cannot connect to Home Assistant instances over "http://".`
-      : null;
+        ? "Please enter a Home Assistant URL."
+        : err === ERR_INVALID_HTTPS_TO_HTTP
+          ? `Cannot connect to Home Assistant instances over "http://".`
+          : null;
   if (message !== null) return message;
   return (
     (
@@ -283,9 +283,6 @@ const tryConnection = async (init: "auth-callback" | "user-request" | "saved-tok
 
   try {
     auth = await getAuth(options);
-    // if (auth.expired) {
-    //   await auth.refreshAccessToken();
-    // }
   } catch (err: unknown) {
     if (
       (
@@ -312,7 +309,6 @@ const tryConnection = async (init: "auth-callback" | "user-request" | "saved-tok
     // Clear url if we have a auth callback in url.
     if (location && location.search.includes("auth_callback=1")) {
       history.replaceState(null, "", location.pathname);
-      // location.reload();
     }
   }
   let connection: Connection;

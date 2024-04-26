@@ -1,14 +1,37 @@
-# 3.1.4
+# 3.1.5
 ## @hakit/components
-- PersonCard - Implemented breakpoint props instead of defaulting to columns to disabled, now they're enabled by default unless included within a FamilyCard component
+- Previously all react props passed to the component were rendering as props on output elements, this wasn't visible with vite as it strips these out compile time, webpack however does not and some other bundlers don't either, now the cards will only render valid html props passed to components.
+- few issues with nextjs where window was used in the incorrect context, this has been fixed
+- Removed lazy import for the PersonControls popup as this is ignored as the popup uses static exports that are not dynamically exported
+- ThemeProvider - now accepts children which will allow you to pass props to the emotion CacheProvider if need be, this means you can perform tasks like telling hakit to change the container where styles are created by default if you're serving your dashboard within an iframe.
 
-## create-hakit v1.1.2
-- added a lot more redundancy checks to node version
+## @hakit/core
+- HassConnect - complete refactor to the authentication service, adding error logs and better error handling, simplified the token storage to remove the local cache which doesn't make sense why i included it to begin with! Should hopefully resolve issues raised: [issue 123](https://github.com/shannonhochkins/ha-component-kit/issues/123)
+- HassConnect now wrapped with memo from react - issues raised after testing with applications that render when HassConnect is NOT the root component, now should only re-render when props passed to HassConnect change.
+- Fixed some typescript problems with components returning JSX.Element instead of React.ReactNode
+- After the refactor of HassConnect the page no longer flickers with a secondary reload after authentication.
+- HassConnect will now allow you to change the hassUrl and ask you to re-login after it's changed, tokens are now stored by the hassUrl, previously if you changed your URL it would just fail to render and not ask you to login. Now when urls are different it'll ask you to login again.
+
+## create-hakit v1.1.3
+- Fixed issue where node > 18 was causing the type sync and deploy script to fail: [issue 120](https://github.com/shannonhochkins/ha-component-kit/issues/120)
+- Added .nvmrc with the generated template to help indicate desired node version
+- Added default haUrl value
+- Better feedback / instructions in the terminal
 
 ## Storybook
 - Fixed bug on FamilyCard where image wasn't rendering
 - Added "person" entity to storybook to test new popup
 - Added new demo for FamilyCard to show custom columns
+- Documented "EntitiesCardRow" in storybook
+- Upgraded storybook from 7 -> 8
+- Added new logo to storybook
+
+## General
+- New logo! Linked to the repo and storybook
+- Updated and tested most of the packages used within the repo that aren't peer dependencies
+- Created new Discord server! [Join here](https://discord.gg/agQr9JKk)
+- Updated the readme to include the new logo as well as links to the new discord server
+- local development experience improved, previously the core was taking 38 seconds to build end to end, now it's taking 3.5 :D, this was just to an incorrect tsconfig where it was validating against the entire repository instead of just the core folder.
 
 
 # 3.1.4
@@ -58,10 +81,12 @@
 - NEW - ControlSliderCircular - a new shared component similar to the home assistant slider used for climate / humidity entities
 - NEW - Modal animation changes - contents of the modal are now rendered after the modal animation has complete, which will then trigger the modal to animate
 the children into the view.
+- Now supports tree shaking - the library setup with the bundler is much more sophisticated now and will now bundle only the components you use in your application, this should reduce the size of the bundle significantly and should allow bundlers to perform caching mechanisms on the components.
 
 ## @hakit/core
 - BUGFIX - useAreas - was previously returning a deviceEntities property - this has now been removed as it was showing literally every available device on the instance.
 - UPGRADE - home assistant web socket - upgraded to match new types 
+- Now supports tree shaking - the library setup with the bundler is much more sophisticated now and will now bundle only the components you use in your application, this should reduce the size of the bundle significantly and should allow bundlers to perform caching mechanisms on the components.
 
 # 3.1.0
 Upgrading all packages, leaving CJS stack trace in place so we can monitor updates of packages that haven't been upgraded to ESM only yet, type fixes

@@ -53,7 +53,6 @@ export const generateServiceTypes = (input: HassServices, {
       if (serviceWhitelist.length > 0 && (!serviceWhitelist.includes(camelService) || !serviceWhitelist.includes(service))) return '';
       // the data passed to the ServiceFunction<object>
       const data = Object.entries(fields).map(([field, { selector, example, description, ...rest }]) => {
-        // @ts-expect-error - this does exist, types are wrong in homeassistant
         const required = rest.required ?? false;
         // some fields come back as number[] but we know these should be something specific, these are hard coded above
         const type = field in REMAPPED_TYPES ? REMAPPED_TYPES[field] : resolveSelectorType(selector as Selector);

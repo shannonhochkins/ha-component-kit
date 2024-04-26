@@ -26,13 +26,13 @@
     "npm": ">=7.0.0"
   },
   "description": "A collection of React hooks and helpers for Home Assistant to easily communicate with the Home Assistant WebSocket API.",
-  "main": "./dist/hakit-core.cjs.cjs",
-  "module": "./dist/hakit-core.es.js",
+  "main": "./dist/djs/index.js",
+  "module": "./dist/es/index.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/hakit-core.es.js",
-      "require": "./dist/hakit-core.cjs.cjs",
+      "import": "./dist/es/index.js",
+      "require": "./dist/djs/index.js",
       "types": "./dist/types/index.d.ts"
     },
     "./sync": {
@@ -47,7 +47,7 @@
     "dist",
     "package.json",
     "README.md",
-    "LICENCE.md"
+    "LICENSE.md"
   ],
   "repository": {
     "type": "git",
@@ -61,7 +61,6 @@
   "funding": "https://github.com/shannonhochkins/ha-component-kit?sponsor=1",
   "scripts": {
     "dev": "vite",
-    "type-check": "tsc --noEmit",
     "prebuild": "rm -rf ./dist && npm run lint",
     "postbuild": "npm run prettier",
     "build": "npm run sync-local-types && npm run build:sync-script-cli && npm run build:sync-ha-types && npm run build:core",
@@ -108,7 +107,7 @@
     "zustand": ">=4.x.x"
   },
   "devDependencies": {
-    "@liuli-util/vite-plugin-node": "^0.6.0",
+    "@liuli-util/vite-plugin-node": "^0.8.1",
     "@swc/core": "^1.3.78",
     "@types/javascript-time-ago": "^2.0.3",
     "@types/ws": "^8.5.5",
@@ -116,6 +115,7 @@
     "simple-git": "^3.24.0",
     "ts-morph": "^22.0.0",
     "ts-node": "^10.9.2",
-    "tsup": "^8.0.2"
+    "tsup": "^8.0.2",
+    "glob": "^10.3.12"
   }
 }

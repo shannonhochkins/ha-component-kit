@@ -81,7 +81,7 @@ function Template() {
       <Source
         dark
         code={jsxToString(ButtonsDifferentSizes(), {
-          useFunctionCode: true,
+          showFunctions: true,
         })}
       />
     </Column>

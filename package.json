@@ -5,6 +5,10 @@
     "packages/components",
     "packages/create-hakit"
   ],
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
   "keywords": [
     "react",
     "homeassistant",
@@ -27,7 +31,8 @@
     "test:components": "npm run test --workspace=@hakit/components",
     "test:core": "npm run test --workspace=@hakit/core",
     "build": "VITE_CJS_TRACE=true npm run build:core && npm run build:components && npm run build:create",
-    "postbuild": "npm run type-check --workspaces --if-present",
+    "postbuild": "npm run type-check",
+    "type-check": "tsc --noEmit --project tsconfig-type-check.json",
     "build:core": "npm run build --workspace=@hakit/core",
     "build:create": "npm run build --workspace=create-hakit",
     "build:components": "npm run build --workspace=@hakit/components",
@@ -93,12 +98,9 @@
     "ts-node": "^10.9.2",
     "type-fest": "^4.17.0",
     "typescript": "^5.4.5",
-    "vite": "^5.2.8",
+    "vite": "^5.2.10",
     "vite-plugin-dts": "^3.8.3",
     "vite-plugin-linter": "^2.1.1",
     "vite-tsconfig-paths": "^4.3.2"
-  },
-  "dependencies": {
-    "@storybook/test": "^8.0.8"
   }
 }

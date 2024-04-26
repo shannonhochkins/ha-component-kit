@@ -54,9 +54,8 @@ export type HassEntityCustom = HassEntity & {
     color: [number, number, number];
   };
 };
-export type HassEntityHelper<T extends AllDomains> = CamelToSnake<T> extends keyof DefinedPropertiesByDomain
-  ? DefinedPropertiesByDomain[CamelToSnake<T>]
-  : HassEntity;
+export type HassEntityHelper<T extends AllDomains> =
+  CamelToSnake<T> extends keyof DefinedPropertiesByDomain ? DefinedPropertiesByDomain[CamelToSnake<T>] : HassEntity;
 
 export type HassEntityWithService<T extends AllDomains> = HassEntityCustom &
   HassEntityHelper<SnakeToCamel<T>> & {
@@ -120,10 +119,10 @@ export type ServiceData<D extends SnakeOrCamelDomains, S extends DomainService<D
     ? Params
     : never
   : SnakeToCamel<S> extends keyof SupportedServices[SnakeToCamel<D>]
-  ? SupportedServices[SnakeToCamel<D>][SnakeToCamel<S>] extends ServiceFunction<"target", infer Params>
-    ? Params
-    : never
-  : never;
+    ? SupportedServices[SnakeToCamel<D>][SnakeToCamel<S>] extends ServiceFunction<"target", infer Params>
+      ? Params
+      : never
+    : never;
 /** simple helper to exclude symbol and number from keyof */
 export type NonSymbolNumberKeys<T> = Exclude<keyof T, symbol | number>;
 /** Wrapper for HassServiceTarget to also allow string or string[] */

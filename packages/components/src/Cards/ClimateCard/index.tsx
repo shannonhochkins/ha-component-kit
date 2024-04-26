@@ -162,8 +162,8 @@ function _ClimateCard({
                     isUnavailable || disabled
                       ? activeColors["off"]
                       : currentMode === "unknown-mode"
-                      ? "var(--ha-S500-contrast)"
-                      : activeColors[currentMode as HvacMode],
+                        ? "var(--ha-S500-contrast)"
+                        : activeColors[currentMode as HvacMode],
                 }}
               >
                 {entityIcon || domainIcon}
