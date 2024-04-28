@@ -3,6 +3,7 @@ import { Source } from "@storybook/blocks";
 import { useState } from "react";
 import { ThemeProvider, ButtonCard, Modal, FabCard, Column, Row } from "@components";
 import { HassConnect } from "@hass-connect-fake";
+import jsxToString from 'react-element-to-jsx-string';
 
 function Render(args?: Args) {
   return (
@@ -36,6 +37,32 @@ function CustomButton() {
 
 }
 `;
+
+ function ExampleModalProps() {
+  return <FabCard entity="light.fake_light_2" modalProps={{
+    hideAttributes: true,
+    hideLogbook: true,
+    hideState: false,
+    hideUpdated: false,
+    title: "Entity Title Override",
+    stateTitle: "Override the state value/text shown"
+  }} />;
+}
+
+function RenderModalProps() {
+  return (
+    <HassConnect hassUrl="http://localhost:8123">
+      <ThemeProvider includeThemeControls />
+      <Column fullWidth>
+        <p>Modal component has a few props that you can use to customize the modal.</p>
+        <Source dark code={jsxToString(ExampleModalProps())} />
+        The above demo will not show the logbook by default or the attributes for the entity provbided.
+        <ExampleModalProps />
+      </Column>
+    </HassConnect>
+  );
+
+}
 
 function RenderCustom() {
   const [open, setOpen] = useState(false);
@@ -116,8 +143,13 @@ export const ModalExample: ModalStory = {
   },
 };
 
-export const CustomModalExample: ModalStory = {
+export const CustomModal: ModalStory = {
   render: RenderCustom,
+  args: {},
+};
+
+export const ModalProps: ModalStory = {
+  render: RenderModalProps,
   args: {},
 };
 
