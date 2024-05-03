@@ -14,7 +14,7 @@
     <td width="250"><a aria-label="@HAKIT/COMPONENTS" href="https://www.npmjs.com/package/@hakit/components">
     <img alt="" src="https://img.shields.io/npm/v/@hakit/components.svg?style=for-the-badge&labelColor=000000&label=@HAKIT/COMPONENTS" align="center">
   </a></td>
-    <td width="210"><a aria-label="Join the community on Discord" href="https://discord.gg/agQr9JKk">
+    <td width="210"><a aria-label="Join the community on Discord" href="https://discord.com/invite/XdsxY6qPEM">
     <img alt="" src="https://img.shields.io/badge/Join%20the%20Discord-blueviolet.svg?style=for-the-badge&logo=Discord&labelColor=000000&logoWidth=20" align="center">
   </a></td>
   </tr>
@@ -94,7 +94,7 @@ There's a [Home Assistant Addon](ADDON.md) available which will serve your dashb
 ### What's next?
 
 There's a Roadmap.md file with a few things i'm working on!
-Have your say! Join the [discord](https://discord.gg/agQr9JKk) and let me know what you'd like to see next!
+Have your say! Join the [discord](https://discord.com/invite/XdsxY6qPEM) and let me know what you'd like to see next!
 
 ### Contributors!
 
