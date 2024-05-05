@@ -4,8 +4,9 @@ import { Row, Column, fallback, CardBase, CardBaseProps, mq, type AvailableQueri
 import { motion, AnimatePresence } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
 
-const StyledGroup = styled(CardBase)<{
+const StyledGroup = styled(CardBase) <{
   collapsed: boolean;
+  collapsable: boolean;
 }>`
   background-color: var(--ha-S200);
   color: var(--ha-S200-contrast);
@@ -23,21 +24,21 @@ const StyledGroup = styled(CardBase)<{
       display: flex;
       align-items: center;
       transition: padding var(--ha-transition-duration) var(--ha-easing);
-      &:before {
-        content: "${({ collapsed }) => (collapsed ? "+" : "-")}";
+      ${({ collapsable, collapsed }) => (collapsable ? `&:before {
+        content: "${(collapsed ? "+" : "-")}";
         display: inline-block;
         color: var(--ha-A400);
         width: 1rem;
-      }
-    }
+      }` : '')
+  }
   }
   ${({ collapsed }) => `
     ${mq(
-      ["xxs", "xs"],
-      `
+    ["xxs", "xs"],
+    `
       padding: ${collapsed ? "0 1rem" : "0 1rem 1rem"};
     `,
-    )}
+  )}
   `};
 `;
 
@@ -83,6 +84,8 @@ export interface GroupProps extends Omit<CardBaseProps, OmitProperties> {
   gap?: React.CSSProperties["gap"];
   /** should the group be collapsed by default @default false */
   collapsed?: boolean;
+  /** Whether the group can be collapsed by the end-user @default true */
+  collapsable?: boolean;
   /** fired when the group header section is clicked */
   onClick?: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
 }
@@ -95,6 +98,7 @@ function _Group({
   alignItems = "center",
   layout = "row",
   collapsed = false,
+  collapsable = true,
   className,
   onClick,
   ...rest
@@ -113,11 +117,14 @@ function _Group({
       disableRipples
       className={`${className ?? ""} group`}
       collapsed={_collapsed}
+      collapsable={collapsable}
       {...rest}
     >
       <Header
         onClick={(event) => {
-          setCollapsed(!_collapsed);
+          if (collapsable) {
+            setCollapsed(!_collapsed);
+          }
           if (onClick) onClick(event);
         }}
         className="header-title"

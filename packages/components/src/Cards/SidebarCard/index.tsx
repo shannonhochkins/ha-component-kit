@@ -8,7 +8,7 @@ import { motion, AnimatePresence, MotionProps } from "framer-motion";
 import type { WeatherCardProps, TimeCardProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
-const StyledTimeCard = styled(TimeCard)<{
+const StyledTimeCard = styled(TimeCard) <{
   open: boolean;
 }>`
   padding: 0;
@@ -53,18 +53,18 @@ const StyledSidebarCard = styled(motion.div)`
     transition-property: padding;
   }
   ${mq(
-    ["xxs", "xs"],
-    `
+  ["xxs", "xs"],
+  `
     position: fixed;
     top: 0;
     bottom: 0;
     left: var(--ha-sidebar-offset);
     z-index: calc(var(--ha-device-area-card-z-index) - 1);
   `,
-  )}
+)}
 `;
 
-const Menu = styled(motion.ul)<{
+const Menu = styled(motion.ul) <{
   open: boolean;
 }>`
   padding: 0;
@@ -178,8 +178,8 @@ const HamburgerMenu = styled(Menu)`
   }
 
   ${mq(
-    ["xxs", "xs"],
-    `
+  ["xxs", "xs"],
+  `
     left: 0;
     top: 0;
     li {
@@ -188,7 +188,7 @@ const HamburgerMenu = styled(Menu)`
       }
     }
   `,
-  )}
+)}
 `;
 
 const Filler = styled.div`
@@ -208,7 +208,7 @@ const StyledWeatherCard = styled(WeatherCard)`
   }
 `;
 
-const WeatherCardCustom = styled(StyledWeatherCard)<{
+const WeatherCardCustom = styled(StyledWeatherCard) <{
   open: boolean;
 }>`
   padding-bottom: 1rem;
@@ -243,8 +243,10 @@ type Extendable = Omit<React.ComponentProps<"div">, "ref"> & MotionProps;
 export interface SidebarCardProps extends Extendable {
   /** should the time card be included by default @default true */
   includeTimeCard?: boolean;
-  /** should the sidebar start opened @default true */
+  /** should the sidebar start opened,  True by default if collapsable=false @default true */
   startOpen?: boolean;
+  /** Whether the sidebar can be collapsed by the end-user @default true */
+  collapsable?: boolean;
   /** the props for the weather card , if omitted, weather card is not rendered @default undefined */
   weatherCardProps?: WeatherCardProps;
   /** Adding menu items can also add routes by default, disabled this if need be @default true */
@@ -266,6 +268,7 @@ function _SidebarCard({
     center: true,
   },
   startOpen = true,
+  collapsable = true,
   menuItems = [],
   children,
   autoIncludeRoutes = true,
@@ -308,13 +311,13 @@ function _SidebarCard({
         styles={css`
           :root {
             --ha-area-card-expanded-offset: ${devices.xxs || devices.xs
-              ? "0rem"
-              : open
-                ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
-                : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
-            --ha-sidebar-max-width: ${open
+            ? "0rem"
+            : open
               ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
               : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
+            --ha-sidebar-max-width: ${open
+            ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
+            : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
             --ha-sidebar-offset: ${open ? `0` : `calc(var(--ha-sidebar-max-width) * -1)`};
           }
         `}
@@ -359,7 +362,7 @@ function _SidebarCard({
                   {...timeCardProps}
                 />
               )}
-              <HamburgerMenu
+              {collapsable && <HamburgerMenu
                 open={open}
                 className="hamburger-menu"
                 key="hamburger-menu-open"
@@ -383,6 +386,7 @@ function _SidebarCard({
                   </a>
                 </motion.li>
               </HamburgerMenu>
+              }
             </Row>
             <Divider className="divider" />
             <Menu open={open} className="menu">
