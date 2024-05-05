@@ -8,7 +8,7 @@ import { motion, AnimatePresence, MotionProps } from "framer-motion";
 import type { WeatherCardProps, TimeCardProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
-const StyledTimeCard = styled(TimeCard) <{
+const StyledTimeCard = styled(TimeCard)<{
   open: boolean;
 }>`
   padding: 0;
@@ -53,18 +53,18 @@ const StyledSidebarCard = styled(motion.div)`
     transition-property: padding;
   }
   ${mq(
-  ["xxs", "xs"],
-  `
+    ["xxs", "xs"],
+    `
     position: fixed;
     top: 0;
     bottom: 0;
     left: var(--ha-sidebar-offset);
     z-index: calc(var(--ha-device-area-card-z-index) - 1);
   `,
-)}
+  )}
 `;
 
-const Menu = styled(motion.ul) <{
+const Menu = styled(motion.ul)<{
   open: boolean;
 }>`
   padding: 0;
@@ -178,8 +178,8 @@ const HamburgerMenu = styled(Menu)`
   }
 
   ${mq(
-  ["xxs", "xs"],
-  `
+    ["xxs", "xs"],
+    `
     left: 0;
     top: 0;
     li {
@@ -188,7 +188,7 @@ const HamburgerMenu = styled(Menu)`
       }
     }
   `,
-)}
+  )}
 `;
 
 const Filler = styled.div`
@@ -208,7 +208,7 @@ const StyledWeatherCard = styled(WeatherCard)`
   }
 `;
 
-const WeatherCardCustom = styled(StyledWeatherCard) <{
+const WeatherCardCustom = styled(StyledWeatherCard)<{
   open: boolean;
 }>`
   padding-bottom: 1rem;
@@ -311,13 +311,13 @@ function _SidebarCard({
         styles={css`
           :root {
             --ha-area-card-expanded-offset: ${devices.xxs || devices.xs
-            ? "0rem"
-            : open
+              ? "0rem"
+              : open
+                ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
+                : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
+            --ha-sidebar-max-width: ${open
               ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
               : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
-            --ha-sidebar-max-width: ${open
-            ? `var(--ha-device-sidebar-card-width-expanded, 19rem)`
-            : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`};
             --ha-sidebar-offset: ${open ? `0` : `calc(var(--ha-sidebar-max-width) * -1)`};
           }
         `}
@@ -362,31 +362,32 @@ function _SidebarCard({
                   {...timeCardProps}
                 />
               )}
-              {collapsable && <HamburgerMenu
-                open={open}
-                className="hamburger-menu"
-                key="hamburger-menu-open"
-                animate={{
-                  width: devices.xxs || devices.xs ? "auto" : !open ? "100%" : "40%",
-                  position: devices.xxs || devices.xs ? "fixed" : "relative",
-                }}
-              >
-                <motion.li
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setOpen(!open);
+              {collapsable && (
+                <HamburgerMenu
+                  open={open}
+                  className="hamburger-menu"
+                  key="hamburger-menu-open"
+                  animate={{
+                    width: devices.xxs || devices.xs ? "auto" : !open ? "100%" : "40%",
+                    position: devices.xxs || devices.xs ? "fixed" : "relative",
                   }}
                 >
-                  <a
-                    style={{
-                      justifyContent: "center",
+                  <motion.li
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setOpen(!open);
                     }}
                   >
-                    <Icon className="icon" icon={open ? "mdi:close" : "mdi:menu"} />
-                  </a>
-                </motion.li>
-              </HamburgerMenu>
-              }
+                    <a
+                      style={{
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Icon className="icon" icon={open ? "mdi:close" : "mdi:menu"} />
+                    </a>
+                  </motion.li>
+                </HamburgerMenu>
+              )}
             </Row>
             <Divider className="divider" />
             <Menu open={open} className="menu">

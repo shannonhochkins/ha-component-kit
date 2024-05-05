@@ -99,7 +99,7 @@ function _Group({
   layout = "row",
   collapsed = false,
   collapsable = true,
-  className,
+  className, 
   onClick,
   ...rest
 }: GroupProps): React.ReactNode {
