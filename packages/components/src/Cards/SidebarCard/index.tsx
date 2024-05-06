@@ -243,10 +243,10 @@ type Extendable = Omit<React.ComponentProps<"div">, "ref"> & MotionProps;
 export interface SidebarCardProps extends Extendable {
   /** should the time card be included by default @default true */
   includeTimeCard?: boolean;
-  /** should the sidebar start opened,  True by default if collapsable=false @default true */
+  /** should the sidebar start opened,  True by default if collapsible=false @default true */
   startOpen?: boolean;
   /** Whether the sidebar can be collapsed by the end-user @default true */
-  collapsable?: boolean;
+  collapsible?: boolean;
   /** the props for the weather card , if omitted, weather card is not rendered @default undefined */
   weatherCardProps?: WeatherCardProps;
   /** Adding menu items can also add routes by default, disabled this if need be @default true */
@@ -268,7 +268,7 @@ function _SidebarCard({
     center: true,
   },
   startOpen = true,
-  collapsable = true,
+  collapsible = true,
   menuItems = [],
   children,
   autoIncludeRoutes = true,
@@ -362,7 +362,7 @@ function _SidebarCard({
                   {...timeCardProps}
                 />
               )}
-              {collapsable && (
+              {collapsible && (
                 <HamburgerMenu
                   open={open}
                   className="hamburger-menu"
