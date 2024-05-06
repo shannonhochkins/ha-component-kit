@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "private": false,
   "type": "module",
   "keywords": [
@@ -111,11 +111,12 @@
     "@swc/core": "^1.3.78",
     "@types/javascript-time-ago": "^2.0.3",
     "@types/ws": "^8.5.5",
+    "glob": "^10.3.12",
     "prettier": "^3.2.5",
+    "rollup-plugin-node-externals": "^7.1.2",
     "simple-git": "^3.24.0",
     "ts-morph": "^22.0.0",
     "ts-node": "^10.9.2",
-    "tsup": "^8.0.2",
-    "glob": "^10.3.12"
+    "tsup": "^8.0.2"
   }
 }
