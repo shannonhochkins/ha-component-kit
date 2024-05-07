@@ -123,6 +123,8 @@ export interface WeatherCardProps extends Omit<CardBaseProps<"div", FilterByDoma
   apparentTemperatureAttribute?: string;
   /** the forecast type to display @default "daily" */
   forecastType?: ModernForecastType;
+  /** The number of rows to display forecast information, @default 1 */
+  forecastRows?: number;
   /** Whether to allow the user to toggle the forcast type. @default true */
   allowForecastToggle?: boolean;
 }
@@ -145,6 +147,7 @@ function _WeatherCard({
   service,
   serviceData,
   forecastType = "daily",
+  forecastRows = 1,
   allowForecastToggle = true,
   cssStyles,
   ...rest
@@ -197,6 +200,50 @@ function _WeatherCard({
 
   const feelsLikeBase = weatherDetails.apparent_temperature ?? weatherDetails.feelsLike;
   const feelsLike = feelsLikeBase === temperature ? null : feelsLikeBase;
+  const genForecastRows = () => (
+    <>
+      {[...Array(forecastRows)].map((_, rowIdx) => (
+        <Row
+          className="row"
+          fullHeight
+          style={{
+            justifyContent: "space-between",
+          }}
+        >
+          {(weather.forecast?.forecast ?? []).slice(rowIdx * itemsToRender, (rowIdx + 1) * itemsToRender).map((forecast, index) => {
+            const dateFormatted = convertDateTime(forecast.datetime, timeZone);
+            const [day, , hour] = dateFormatted.split(",");
+            return (
+              <Forecast key={index} className="forecast" layoutId={forecast.datetime}>
+                {includeDay && <Day className="day">{day}</Day>}
+                {includeTime && <Time className="time">{hour}</Time>}
+                <ForecastIcon
+                  className="icon forecast-icon"
+                  icon={
+                    getIconByEntity("weather", {
+                      ...weather,
+                      state: forecast.condition as string,
+                    }) as string
+                  }
+                />
+                <Temperature className="temperature">
+                  {forecast.temperature}
+                  {temperatureSuffix || unit}
+                </Temperature>
+                {forecast.templow && (
+                  <TemperatureLow className="temperature-low">
+                    {forecast.templow}
+                    {temperatureSuffix || unit}
+                  </TemperatureLow>
+                )}
+              </Forecast>
+            );
+          })}
+        </Row>
+      ))}
+    </>
+  );
+
   return (
     <Card
       title={title}
@@ -268,45 +315,7 @@ function _WeatherCard({
             })}
           </Row>
         )}
-        {includeForecast && !isUnavailable && (
-          <Row
-            className="row"
-            fullHeight
-            style={{
-              justifyContent: "space-between",
-            }}
-          >
-            {(weather.forecast?.forecast ?? []).slice(0, itemsToRender).map((forecast, index) => {
-              const dateFormatted = convertDateTime(forecast.datetime, timeZone);
-              const [day, , hour] = dateFormatted.split(",");
-              return (
-                <Forecast key={index} className="forecast" layoutId={forecast.datetime}>
-                  {includeDay && <Day className="day">{day}</Day>}
-                  {includeTime && <Time className="time">{hour}</Time>}
-                  <ForecastIcon
-                    className="icon forecast-icon"
-                    icon={
-                      getIconByEntity("weather", {
-                        ...weather,
-                        state: forecast.condition as string,
-                      }) as string
-                    }
-                  />
-                  <Temperature className="temperature">
-                    {forecast.temperature}
-                    {temperatureSuffix || unit}
-                  </Temperature>
-                  {forecast.templow && (
-                    <TemperatureLow className="temperature-low">
-                      {forecast.templow}
-                      {temperatureSuffix || unit}
-                    </TemperatureLow>
-                  )}
-                </Forecast>
-              );
-            })}
-          </Row>
-        )}
+        {includeForecast && !isUnavailable && genForecastRows()}
         {isUnavailable && weather.state}
       </Contents>
     </Card>
