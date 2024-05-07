@@ -107,6 +107,8 @@ export interface WeatherCardProps extends Omit<CardBaseProps<"div", FilterByDoma
   icon?: string;
   /** override the temperature suffix that's pulled from the entity, will retrieve the temperature_unit from entity by default"  */
   temperatureSuffix?: ReactNode;
+  /** include a title showing the forecast name @default true */
+  includeTitle?: boolean;
   /** include the forecast @default true */
   includeForecast?: boolean;
   /** include the current forecast row, @default true */
@@ -132,6 +134,7 @@ function _WeatherCard({
   title,
   icon: _icon,
   temperatureSuffix,
+  includeTitle = true,
   includeForecast = true,
   includeCurrent = true,
   includeTime = true,
@@ -215,10 +218,12 @@ function _WeatherCard({
             <Row wrap="nowrap">
               <StyledIcon icon={icon} className="icon" />
               <Column className="column">
-                <Title className="title">
-                  <LocationIcon className="location-icon icon" icon={_icon || "mdi:location"} />
-                  {title || friendly_name}
-                </Title>
+                {includeTitle && (
+                  <Title className="title">
+                    <LocationIcon className="location-icon icon" icon={_icon || "mdi:location"} />
+                    {title || friendly_name}
+                  </Title>
+                )}
                 <SubTitle className="sub-title">
                   {temperature}
                   {temperatureSuffix || unit}, {capitalize(weather.state)}
