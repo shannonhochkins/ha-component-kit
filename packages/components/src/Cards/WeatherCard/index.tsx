@@ -206,6 +206,7 @@ function _WeatherCard({
         <Row
           className="row"
           fullHeight
+          key={`weather-${rowIdx}`}
           style={{
             justifyContent: "space-between",
           }}
