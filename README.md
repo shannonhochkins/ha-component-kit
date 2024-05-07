@@ -4,17 +4,34 @@
     <td><h1>HA COMPONENT KIT</h1></td>
   </tr>
 </table>
-<p align="left">
-  <a aria-label="@HAKIT/CORE" href="https://www.npmjs.com/package/@hakit/core">
-    <img alt="" src="https://img.shields.io/npm/v/@hakit/core.svg?style=for-the-badge&labelColor=000000&label=@hakit/CORE">
+<table>
+  <tr>
+    <td width="200">
+        <a aria-label="@HAKIT/CORE" href="https://www.npmjs.com/package/@hakit/core" width="250">
+    <img alt="" src="https://img.shields.io/npm/v/@hakit/core.svg?style=for-the-badge&labelColor=000000&label=@hakit/CORE" align="center">
   </a>
-  <a aria-label="@HAKIT/COMPONENTS" href="https://www.npmjs.com/package/@hakit/components">
-    <img alt="" src="https://img.shields.io/npm/v/@hakit/components.svg?style=for-the-badge&labelColor=000000&label=@HAKIT/COMPONENTS">
+    </td>
+    <td width="250"><a aria-label="@HAKIT/COMPONENTS" href="https://www.npmjs.com/package/@hakit/components">
+    <img alt="" src="https://img.shields.io/npm/v/@hakit/components.svg?style=for-the-badge&labelColor=000000&label=@HAKIT/COMPONENTS" align="center">
+  </a></td>
+    <td width="210"><a aria-label="Join the community on Discord" href="https://discord.com/invite/cGgbmppKJZ">
+    <img alt="" src="https://img.shields.io/badge/Join%20the%20Discord-blueviolet.svg?style=for-the-badge&logo=Discord&labelColor=000000&logoWidth=20" align="center">
+  </a></td>
+  </tr>
+<tr>
+    <td align="center">
+        <a aria-label="@HAKIT/CORE" href="https://www.npmjs.com/package/@hakit/core" width="250">
+    <img alt="" src="https://img.shields.io/npm/dt/%40hakit%2Fcore.svg?style=flat&colorA=000000&colorB=000000&label=Downloads" align="top">
   </a>
-  <a aria-label="Join the community on Discord" href="https://discord.gg/agQr9JKk">
-    <img alt="" src="https://img.shields.io/badge/Join%20the%20Discord-blueviolet.svg?style=for-the-badge&logo=Discord&labelColor=000000&logoWidth=20">
+    </td>
+  <td align="center">
+    <a aria-label="@HAKIT/COMPONENTS" href="https://www.npmjs.com/package/@hakit/components">
+    <img src="https://img.shields.io/npm/dt/%40hakit%2Fcomponents.svg?style=flat&colorA=000000&colorB=000000&label=Downloads" alt="" align="top">
   </a>
-</p>
+  </td>
+  <td align="center">Join our community!</td>
+  </tr>
+</table>
 
 Unlock the ultimate customization for your Home Assistant dashboards with this package, leveraging React for seamless, personalized interfaces.
 
@@ -26,9 +43,6 @@ Visit the [Demo](https://shannonhochkins.github.io/ha-component-kit/iframe.html?
 If you like anything here, be sure to 🌟 [the repo!](https://github.com/shannonhochkins/ha-component-kit)
 
 ![DEMO](https://github.com/shannonhochkins/ha-component-kit/blob/master/stories/hakit-demo.gif?raw=true)
-
-[![@hakit/core Downloads](https://img.shields.io/npm/dt/%40hakit%2Fcore.svg?style=flat&colorA=000000&colorB=000000&label=%40hakit%2Fcore%20downloads)](https://www.npmjs.com/package/@hakit/core)
-[![@hakit/components Downloads](https://img.shields.io/npm/dt/%40hakit%2Fcomponents.svg?style=flat&colorA=000000&colorB=000000&label=%40hakit%2Fcomponents%20downloads)](https://www.npmjs.com/package/@hakit/components)
 
 ### Documentation
 
@@ -80,7 +94,7 @@ There's a [Home Assistant Addon](ADDON.md) available which will serve your dashb
 ### What's next?
 
 There's a Roadmap.md file with a few things i'm working on!
-Have your say! Join the [discord](https://discord.gg/agQr9JKk) and let me know what you'd like to see next!
+Have your say! Join the [discord](https://discord.com/invite/cGgbmppKJZ) and let me know what you'd like to see next!
 
 ### Contributors!
 
