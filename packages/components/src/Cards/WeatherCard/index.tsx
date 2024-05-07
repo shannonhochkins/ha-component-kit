@@ -115,10 +115,14 @@ export interface WeatherCardProps extends Omit<CardBaseProps<"div", FilterByDoma
   details?: ReactElement<typeof WeatherCardDetail>[];
   /** include time value under day name @default true */
   includeTime?: boolean;
+  /** include day name in forecast @default true */
+  includeDay?: boolean;
   /** property on the weather entity attributes that returns the "feels like" temperature or "apparent temperature" @default "apparent_temperature" */
   apparentTemperatureAttribute?: string;
   /** the forecast type to display @default "daily" */
   forecastType?: ModernForecastType;
+  /** Whether to allow the user to toggle the forcast type. @default true */
+  allowForecastToggle?: boolean;
 }
 
 const FORECAST_ITEM_PROJECTED_WIDTH = 40;
@@ -131,12 +135,14 @@ function _WeatherCard({
   includeForecast = true,
   includeCurrent = true,
   includeTime = true,
+  includeDay = true,
   details = [],
   apparentTemperatureAttribute = "apparent_temperature",
   className,
   service,
   serviceData,
   forecastType = "daily",
+  allowForecastToggle = true,
   cssStyles,
   ...rest
 }: WeatherCardProps): React.ReactNode {
@@ -220,7 +226,7 @@ function _WeatherCard({
                 </SubTitle>
               </Column>
             </Row>
-            {includeForecast && (
+            {includeForecast && allowForecastToggle && (
               <ButtonBar>
                 {supportedForecasts.map((forecastType, index) => {
                   const icon =
@@ -270,7 +276,7 @@ function _WeatherCard({
               const [day, , hour] = dateFormatted.split(",");
               return (
                 <Forecast key={index} className="forecast" layoutId={forecast.datetime}>
-                  <Day className="day">{day}</Day>
+                  {includeDay && <Day className="day">{day}</Day>}
                   {includeTime && <Time className="time">{hour}</Time>}
                   <ForecastIcon
                     className="icon forecast-icon"
