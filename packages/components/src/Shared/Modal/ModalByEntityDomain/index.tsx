@@ -244,14 +244,16 @@ export function ModalByEntityDomain<E extends EntityName>({
         </>
       ) : (
         <>
-          {(!hideUpdated || !hideState) && <Column fullWidth>
-            {!hideState && (
-              <State className="state" ref={stateRef}>
-                {titleValue}
-              </State>
-            )}
-            {!hideUpdated && <Updated className="last-updated">{_entity.custom.relativeTime}</Updated>}
-          </Column>}
+          {(!hideUpdated || !hideState) && (
+            <Column fullWidth>
+              {!hideState && (
+                <State className="state" ref={stateRef}>
+                  {titleValue}
+                </State>
+              )}
+              {!hideUpdated && <Updated className="last-updated">{_entity.custom.relativeTime}</Updated>}
+            </Column>
+          )}
           {children}
           {!hideAttributes && <EntityAttributes entity={entity} />}
         </>

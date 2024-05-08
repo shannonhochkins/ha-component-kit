@@ -400,6 +400,7 @@ function _CalendarCard({
   view,
   includeHeader = true,
   cssStyles,
+  key,
   ...rest
 }: CalendarCardProps): React.ReactNode {
   const { useStore } = useHass();
@@ -597,6 +598,7 @@ function _CalendarCard({
 
   return (
     <StyledCalendarCard
+      key={key}
       disableScale
       disableActiveState
       disableRipples

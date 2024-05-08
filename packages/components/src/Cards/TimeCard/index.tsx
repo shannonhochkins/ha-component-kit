@@ -143,6 +143,7 @@ function _TimeCard({
   disabled,
   onClick,
   cssStyles,
+  key,
   ...rest
 }: TimeCardProps): React.ReactNode {
   const { useStore } = useHass();
@@ -166,6 +167,7 @@ function _TimeCard({
   }
   return (
     <Card
+      key={key}
       cssStyles={`
         ${globalComponentStyle?.timeCard ?? ""}
         ${cssStyles ?? ""}

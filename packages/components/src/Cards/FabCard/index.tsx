@@ -8,8 +8,9 @@ import type { TooltipProps, CardBaseProps } from "@components";
 import { startCase, lowerCase } from "lodash";
 import { ErrorBoundary } from "react-error-boundary";
 
-const StyledFabCard = styled(<E extends EntityName>({ service, serviceData, ...props }: CardBaseProps<"button", E>) => (
+const StyledFabCard = styled(<E extends EntityName>({ service, serviceData, key, ...props }: CardBaseProps<"button", E>) => (
   <CardBase
+    key={key}
     // @ts-expect-error - don't know entity name
     service={service}
     // @ts-expect-error - don't know entity name
@@ -96,6 +97,7 @@ function _FabCard<E extends EntityName>({
   service,
   serviceData,
   cssStyles,
+  key,
   ...rest
 }: FabCardProps<E>): React.ReactNode {
   const { useStore } = useHass();
@@ -126,6 +128,7 @@ function _FabCard<E extends EntityName>({
   return (
     <>
       <Tooltip
+        key={key}
         placement={tooltipPlacement}
         title={`${_title ?? entity?.attributes?.friendly_name ?? title ?? ""}${entity?.state ? ` - ${entity.state}` : ""}`}
       >

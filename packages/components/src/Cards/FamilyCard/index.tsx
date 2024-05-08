@@ -93,7 +93,7 @@ export interface FamilyCardProps extends Omit<CardBaseProps<"div", FilterByDomai
   title?: string;
 }
 
-function _FamilyCard({ title, cssStyles, children, className, ...rest }: FamilyCardProps): React.ReactNode {
+function _FamilyCard({ title, key, cssStyles, children, className, ...rest }: FamilyCardProps): React.ReactNode {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const len = Children.count(children);
@@ -115,6 +115,7 @@ function _FamilyCard({ title, cssStyles, children, className, ...rest }: FamilyC
 
   return (
     <FamilyBaseCard
+      key={key}
       disableRipples
       disableScale
       disableActiveState

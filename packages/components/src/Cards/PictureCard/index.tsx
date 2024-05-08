@@ -51,9 +51,10 @@ const PictureCardFooter = styled(motion.h4)`
   font-size: 1.2rem;
 `;
 
-function _PictureCard({ title, image, icon, className, preloadProps, children, ...rest }: PictureCardProps): React.ReactNode {
+function _PictureCard({ title, key, image, icon, className, preloadProps, children, ...rest }: PictureCardProps): React.ReactNode {
   return (
     <StyledPictureCard
+      key={key}
       disableActiveState
       disableScale={rest.disableScale ?? typeof rest.onClick === "undefined"}
       disableRipples={rest.disableRipples ?? typeof rest.onClick === "undefined"}

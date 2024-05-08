@@ -276,6 +276,7 @@ function _SidebarCard({
   className,
   cssStyles,
   sortSidebarMenuItems,
+  key,
   ...rest
 }: SidebarCardProps) {
   const [open, setOpen] = useState(startOpen);
@@ -323,6 +324,7 @@ function _SidebarCard({
         `}
       />
       <StyledSidebarCard
+        key={key ?? `ha-sidebar-closed`}
         css={css`
           ${cssStyles ?? ""}
         `}
@@ -332,7 +334,6 @@ function _SidebarCard({
           maxWidth: open ? `var(--ha-device-sidebar-card-width-expanded, 19rem)` : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`,
         }}
         initial={false}
-        key={`ha-sidebar-closed`}
         {...rest}
       >
         <Column className="column" wrap="nowrap" fullHeight fullWidth alignItems="flex-start" justifyContent="space-between">

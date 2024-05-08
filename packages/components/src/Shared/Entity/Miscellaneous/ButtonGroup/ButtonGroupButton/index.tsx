@@ -55,7 +55,7 @@ const Button = styled.button<{
   }
 `;
 
-export interface ButtonGroupButtonProps<E extends EntityName> extends Omit<TooltipProps, "title" | "children"> {
+export interface ButtonGroupButtonProps<E extends EntityName> extends Omit<TooltipProps, "title" | "children" | "onClick"> {
   /** the entity name to render */
   entity?: E;
   /** The service name, eg "toggle, turnOn ..." */
@@ -80,6 +80,7 @@ function _ButtonGroupButton<E extends EntityName>({
   active,
   service,
   serviceData,
+  key,
   ...rest
 }: ButtonGroupButtonProps<E>) {
   const _entity = useEntity(entity ?? "unknown", {
@@ -93,7 +94,7 @@ function _ButtonGroupButton<E extends EntityName>({
     return active ?? _entity?.state === ON;
   }, [_entity, active]);
   return (
-    <Tooltip placement="left" title={titleValue} {...rest}>
+    <Tooltip placement="left" title={titleValue} key={key} {...rest}>
       <Button
         className={`button-group-button ${_active ? "active" : ""}`}
         onClick={() => {

@@ -191,6 +191,7 @@ function _GarbageCollectionCard({
   description,
   className,
   cssStyles,
+  key,
   ...rest
 }: GarbageCollectionCardProps): React.ReactNode {
   const { useStore } = useHass();
@@ -334,6 +335,7 @@ function _GarbageCollectionCard({
   );
   return (
     <Card
+      key={key}
       cssStyles={`
       ${globalComponentStyle?.garbageCollectionCard ?? ""}
       ${cssStyles ?? ""}

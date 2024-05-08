@@ -128,6 +128,7 @@ function _CameraCard({
   service,
   serviceData,
   cssStyles,
+  key,
   ...rest
 }: CameraCardProps) {
   const { useStore } = useHass();
@@ -270,6 +271,7 @@ function _CameraCard({
   return (
     <>
       <Wrapper
+        key={key}
         entity={entity}
         // @ts-expect-error - don't know the entity name, so we can't know the service type
         service={service}

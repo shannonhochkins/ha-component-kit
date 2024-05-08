@@ -134,6 +134,7 @@ function _TriggerCard<E extends EntityName>({
   className,
   service,
   serviceData,
+  key,
   cssStyles,
   ...rest
 }: TriggerCardProps<E>): React.ReactNode {
@@ -169,6 +170,7 @@ function _TriggerCard<E extends EntityName>({
 
   return (
     <StyledTriggerCard
+      key={key}
       as="button"
       className={`${className ?? ""} trigger-card`}
       disabled={disabled}

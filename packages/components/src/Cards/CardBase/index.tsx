@@ -25,7 +25,7 @@ import {
   type BreakPoint,
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import isValidProp from "@emotion/is-prop-valid";
+import { isValidProp } from "../../utils/isValidProp";
 
 import styled from "@emotion/styled";
 
@@ -40,7 +40,7 @@ const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
     return styled(MotionElement)``;
   }
   return styled(MotionElement, {
-    shouldForwardProp: (prop) => isValidProp(prop),
+    shouldForwardProp: (prop) => isValidProp(prop) || prop === "layoutId",
   })<{
     disableActiveState: boolean;
   }>`
@@ -147,7 +147,7 @@ export type CardBaseProps<T extends ElementType = "div", E extends EntityName = 
     disableScale?: boolean;
     /** disable the styles of the card when in the active state */
     disableActiveState?: boolean;
-    /** This also controls the animated modal border-radius, update the border radius of the card @default "1rem" */
+    /** This also controls the animated modal border-radius, update the border radius of the card @default "16px" */
     borderRadius?: CSSProperties["borderRadius"];
     /** completely disable the automated column sizes, this will default to whatever width is provided by the user or the card @default false */
     disableColumns?: boolean;
@@ -206,12 +206,13 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
   className,
   cssStyles,
   style,
-  borderRadius = "1rem",
+  borderRadius = "16px",
   rippleProps,
   disableColumns,
   whileTap,
   layoutId,
   elRef,
+  key,
   ...rest
 }: CardBaseProps<T, E>) {
   const _id = useId();
@@ -292,6 +293,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
   return (
     <>
       <StyledElement
+        key={key}
         ref={elRef}
         id={id ?? ""}
         className={`card-base ${className ?? ""} ${disableColumns ? "" : columnClassNames} ${active ? "active " : ""} ${

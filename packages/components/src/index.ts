@@ -111,7 +111,8 @@ export type { VideoState } from "./Cards/CameraCard/players";
 export { CameraStream, type CameraStreamProps } from "./Cards/CameraCard/stream";
 // Modal
 export { LogBookRenderer, type LogBookRendererProps } from "./Shared/Entity/Miscellaneous/LogBookRenderer";
-export { Modal, type ModalProps } from "./Shared/Modal";
+export { Modal, type ModalProps, type CustomModalAnimation } from "./Shared/Modal";
+export { ModalProvider, useModalStore, type ModalOptions, type ModalProviderProps } from "./Shared/Modal/ModalProvider";
 export { ModalByEntityDomain, type ModalByEntityDomainProps, type ModalPropsHelper } from "./Shared/Modal/ModalByEntityDomain";
 export { ModalCameraControls, type ModalCameraControlsProps } from "./Shared/Modal/ModalByEntityDomain/Camera";
 export { ModalClimateControls, type ModalClimateControlsProps } from "./Shared/Modal/ModalByEntityDomain/Climate";
