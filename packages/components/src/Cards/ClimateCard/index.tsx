@@ -81,6 +81,7 @@ function _ClimateCard({
   service,
   serviceData,
   cssStyles,
+  key,
   ...rest
 }: ClimateCardProps): React.ReactNode {
   const { getConfig, useStore } = useHass();
@@ -121,6 +122,7 @@ function _ClimateCard({
   return (
     <>
       <StyledClimateCard
+        key={key}
         disableActiveState
         className={`climate-card ${className ?? ""}`}
         disabled={disabled || isUnavailable}

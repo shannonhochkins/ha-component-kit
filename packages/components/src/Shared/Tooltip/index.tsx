@@ -80,7 +80,7 @@ const TooltipSpan = styled.span<Pick<TooltipProps, "placement">>`
   }
 `;
 
-export interface TooltipProps {
+export interface TooltipProps extends Omit<React.ComponentPropsWithoutRef<"div">, "title"> {
   /** the placement of the tooltip @default 'top' */
   placement?: "top" | "right" | "bottom" | "left";
   /** the title of the tooltip */

@@ -1,8 +1,8 @@
-import { Column, FabCard, Row, fallback, mq } from "@components";
+import { Column, FabCard, Row, fallback, mq, useModalStore } from "@components";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useHass } from "@hakit/core";
-import { AnimatePresence, HTMLMotionProps, MotionProps, motion } from "framer-motion";
+import { AnimatePresence, HTMLMotionProps, MotionProps, type Variant, type Transition, motion } from "framer-motion";
 import { Fragment, ReactNode, memo, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ErrorBoundary } from "react-error-boundary";
@@ -50,7 +50,7 @@ const ModalOverflow = styled.div`
   align-items: stretch;
   width: 100%;
 `;
-const ModalHeader = styled.div`
+const ModalHeader = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -94,6 +94,27 @@ const ModalBackdrop = styled(motion.div)`
   z-index: var(--ha-modal-z-index);
   backdrop-filter: blur(2em) brightness(0.75);
 `;
+interface Animation {
+  variants?: {
+    animate?: Variant;
+    initial?: Variant;
+    exit?: Variant;
+  };
+  layoutId?: string;
+  transition?: Transition;
+}
+/** animation variant controls for the modal container */
+export type CustomModalAnimation = (
+  duration: number,
+  id: string,
+) => {
+  /** animation variant controls for main modal element */
+  modal?: Animation;
+  /** animation variant controls for the modal header element */
+  header?: Animation;
+  /** animation variant controls for the modal content element */
+  content?: Animation;
+};
 
 type Extendable = React.ComponentPropsWithoutRef<"div"> & MotionProps;
 export interface ModalProps extends Omit<Extendable, "title"> {
@@ -115,7 +136,60 @@ export interface ModalProps extends Omit<Extendable, "title"> {
   headerActions?: () => ReactNode;
   /** the animation duration modal animation in seconds @default 0.25 */
   animationDuration?: number;
+  /** controls for the modalAnimations, by default the modal will animate expanding from the originating element */
+  modalAnimation?: CustomModalAnimation;
 }
+const LAYOUT_MODAL_ANIMATION: CustomModalAnimation = (duration, id) => {
+  const transition = {
+    duration,
+    ease: [0.42, 0, 0.58, 1],
+  };
+  return {
+    modal: {
+      transition: {
+        duration,
+        type: "spring",
+        damping: 7.5,
+        mass: 0.55,
+        stiffness: 100,
+        layout: {
+          duration,
+        },
+      },
+      layoutId: id,
+    },
+    header: {
+      variants: {
+        exit: { y: "-10%", opacity: 0, transition, scale: 0.9 },
+        initial: { y: "-10%", opacity: 0, transition, scale: 0.9 },
+        animate: {
+          scale: 1,
+          y: 0,
+          x: 0,
+          opacity: 1,
+          transition: {
+            ...transition,
+            delay: duration / 2,
+          },
+        },
+      },
+    },
+    content: {
+      variants: {
+        exit: { y: "-10%", opacity: 0, transition, scale: 0.9 },
+        initial: { y: "-10%", opacity: 0, transition, scale: 0.9 },
+        animate: {
+          scale: 1,
+          y: 0,
+          x: 0,
+          opacity: 1,
+          transition,
+        },
+      },
+    },
+  };
+};
+
 function _Modal({
   open,
   id,
@@ -128,25 +202,28 @@ function _Modal({
   className,
   cssStyles,
   headerActions,
-  animationDuration = 1,
+  modalAnimation,
+  animationDuration = 0.25,
   ...rest
 }: ModalProps) {
   const { useStore } = useHass();
+  const modalStore = useModalStore();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [ready, setReady] = useState(false);
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
+  const duration = modalStore.animationDuration ?? animationDuration;
+  const customAnimation = modalStore.modalAnimation ?? modalAnimation;
+  const hasCustomAnimation = customAnimation !== undefined;
+  const animation = customAnimation ?? LAYOUT_MODAL_ANIMATION;
   useEffect(() => {
     if (isPressed && onClose && open) {
       onClose();
     }
   }, [isPressed, onClose, open]);
-  const transition = {
-    duration: animationDuration,
-    ease: [0.42, 0, 0.58, 1],
-  };
 
   useEffect(() => {
+    if (hasCustomAnimation) return;
     if (!open) {
       setReady(false);
       return;
@@ -157,20 +234,12 @@ function _Modal({
         setReady(true);
         timerRef.current = null;
       },
-      (animationDuration * 1000) / 1.8,
+      (duration * 1000) / 2,
     );
-  }, [animationDuration, open]);
+  }, [duration, hasCustomAnimation, open]);
 
-  const variants = {
-    hidden: { y: "-10%", opacity: 0, transition, scale: 0.9 },
-    show: {
-      scale: 1,
-      y: 0,
-      x: 0,
-      opacity: 1,
-      transition,
-    },
-  };
+  const { modal = {}, content = {}, header = {} } = animation(duration, id);
+
   return createPortal(
     <AnimatePresence
       initial={false}
@@ -189,7 +258,7 @@ function _Modal({
               opacity: 0,
             }}
             transition={{
-              duration: animationDuration,
+              duration,
             }}
             animate={{
               opacity: 1,
@@ -203,25 +272,21 @@ function _Modal({
           <ModalContainer
             {...rest}
             style={{
-              borderRadius: "1rem",
+              borderRadius: "16px",
               ...style,
             }}
             css={css`
               ${globalComponentStyle.modal ?? ""}
               ${cssStyles ?? ""}
             `}
-            transition={{
-              duration: animationDuration,
-              type: "spring",
-              damping: 7.5,
-              mass: 0.55,
-              stiffness: 100,
-            }}
-            layoutId={id}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            {...modal}
             key={`${id}-container`}
             className={`modal-container ${className ?? ""}`}
           >
-            <ModalHeader className={`modal-header`}>
+            <ModalHeader className={`modal-header`} initial="initial" animate="animate" exit="exit" {...header}>
               <Column
                 alignItems="flex-start"
                 className={`modal-column`}
@@ -255,9 +320,15 @@ function _Modal({
               </Row>
             </ModalHeader>
             <ModalOverflow className={`modal-overflow`}>
-              <ModalInner initial="hidden" animate={ready ? "show" : "hidden"} exit="hidden" variants={variants} className={"modal-inner"}>
+              <ModalInner
+                initial="initial"
+                animate={ready || hasCustomAnimation ? "animate" : "initial"}
+                exit="exit"
+                {...content}
+                className={"modal-inner"}
+              >
                 <AnimatePresence initial={false} mode="wait">
-                  {ready && children}
+                  {(ready || hasCustomAnimation) && children}
                 </AnimatePresence>
               </ModalInner>
             </ModalOverflow>

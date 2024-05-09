@@ -125,7 +125,7 @@ export interface WeatherCardProps extends Omit<CardBaseProps<"div", FilterByDoma
   forecastType?: ModernForecastType;
   /** The number of rows to display forecast information, @default 1 */
   forecastRows?: number;
-  /** Whether to allow the user to toggle the forcast type. @default true */
+  /** Whether to allow the user to toggle the forecast type. @default true */
   allowForecastToggle?: boolean;
 }
 
@@ -150,6 +150,7 @@ function _WeatherCard({
   forecastRows = 1,
   allowForecastToggle = true,
   cssStyles,
+  key,
   ...rest
 }: WeatherCardProps): React.ReactNode {
   const { useStore, getConfig } = useHass();
@@ -247,6 +248,7 @@ function _WeatherCard({
 
   return (
     <Card
+      key={key}
       title={title}
       entity={entity}
       // @ts-expect-error - don't know the entity name, so we can't know the service type

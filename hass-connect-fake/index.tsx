@@ -465,7 +465,7 @@ function HassProvider({
 }
 
 
-import { ReactNode, ReactElement } from "react";
+import { ReactNode } from "react";
 
 export type HassConnectProps = {
   /** Any react node to render when authenticated */
@@ -480,7 +480,7 @@ export const HassConnect = ({
   children,
   hassUrl,
   fallback = null,
-}: HassConnectProps): ReactElement => {
+}: HassConnectProps): ReactNode => {
   return (
     <HassProvider hassUrl={hassUrl}>
       {(ready) => (ready ? children : fallback)}

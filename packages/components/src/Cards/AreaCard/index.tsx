@@ -120,6 +120,7 @@ function _AreaCard({
   disable,
   id,
   cssStyles,
+  key,
   ...rest
 }: AreaCardProps) {
   const _id = useId();
@@ -218,6 +219,7 @@ function _AreaCard({
           idRef,
         )}
       <StyledAreaCard
+        key={key}
         disableActiveState
         disableRipples
         id={`${idRef}-area-card`}

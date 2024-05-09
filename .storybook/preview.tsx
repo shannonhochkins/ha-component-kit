@@ -82,7 +82,7 @@ export default {
         const aTitle = splitAndTakeFirst(a.title, '/');
         const bTitle = splitAndTakeFirst(b.title, '/');
       
-        const order = ['INTRODUCTION', 'HOOKS', 'COMPONENTS', 'ADVANCED'];
+        const order = ['INTRODUCTION', 'COMPONENTS', 'HOOKS', 'ADVANCED'];
       
         const aOrderIndex = getOrderIndex(order, aTitle);
         const bOrderIndex = getOrderIndex(order, bTitle);

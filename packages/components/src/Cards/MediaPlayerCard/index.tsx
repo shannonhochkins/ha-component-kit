@@ -155,6 +155,7 @@ function _MediaPlayerCard({
   marqueeProps,
   className,
   cssStyles,
+  key,
   ...rest
 }: MediaPlayerCardProps) {
   const entity = useEntity(_entity);
@@ -299,6 +300,7 @@ function _MediaPlayerCard({
   return (
     <>
       <MediaPlayerWrapper
+        key={key}
         disabled={disabled}
         modalProps={{
           open: isGroupingModalOpen,
