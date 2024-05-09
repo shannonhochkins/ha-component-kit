@@ -4,7 +4,7 @@ import { Row, Column, fallback, CardBase, CardBaseProps, mq, type AvailableQueri
 import { motion, AnimatePresence } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
 
-const StyledGroup = styled(CardBase) <{
+const StyledGroup = styled(CardBase)<{
   collapsed: boolean;
   collapsible: boolean;
 }>`
@@ -35,11 +35,11 @@ const StyledGroup = styled(CardBase) <{
   }
   ${({ collapsed }) => `
     ${mq(
-    ["xxs", "xs"],
-    `
+      ["xxs", "xs"],
+      `
       padding: ${collapsed ? "0 1rem" : "0 1rem 1rem"};
     `,
-  )}
+    )}
   `};
 `;
 
@@ -100,7 +100,7 @@ function _Group({
   layout = "row",
   collapsed = false,
   collapsible = true,
-  className, 
+  className,
   onClick,
   ...rest
 }: GroupProps): React.ReactNode {

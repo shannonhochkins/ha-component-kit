@@ -21,7 +21,7 @@ import type {
   Store,
 } from "@hakit/core";
 import { isArray } from "lodash";
-import { HassContext } from '@hakit/core';
+import { HassContext, updateLocalTranslations } from '@hakit/core';
 import { entities as ENTITIES } from './mocks/mockEntities';
 import fakeApi from './mocks/fake-call-service';
 import { create } from "zustand";
@@ -31,6 +31,7 @@ import { mockCallApi } from './mocks/fake-call-api';
 import reolinkSnapshot from './assets/reolink-snapshot.jpg';
 import { logs } from './mocks/mockLogs';
 import {dailyForecast, hourlyForecast} from './mocks/mockWeather';
+import { translations } from "./mocks/translations";
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
@@ -425,6 +426,10 @@ function HassProvider({
       window.removeEventListener("hashchange", onHashChange);
     };
   }, [routes, setHash, setRoutes]);
+
+  useEffect(() => {
+    updateLocalTranslations(translations);
+  }, [])
 
   const joinHassUrl = useCallback((path: string) => path, []);
 
