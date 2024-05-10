@@ -2,6 +2,7 @@ import { dirname, join } from "path";
 import type { StorybookConfig } from "@storybook/react-vite";
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from "vite-tsconfig-paths";
+import svgr from "vite-plugin-svgr";
 export default ({
   stories: [
     "../packages/**/*.mdx",
@@ -12,38 +13,50 @@ export default ({
     "../packages/**/*.stories.@(js|jsx|ts|tsx)"
   ],
   addons: [
-    getAbsolutePath("@storybook/addon-themes"),
-    getAbsolutePath("@storybook/addon-links"),
-    getAbsolutePath("@storybook/addon-essentials"),
-    getAbsolutePath("@storybook/addon-interactions"),
-    getAbsolutePath("@storybook/addon-controls"),
-    getAbsolutePath("@storybook/addon-docs"),
-    getAbsolutePath("@storybook/addon-mdx-gfm")
+    "@storybook/addon-themes",
+    "@storybook/addon-links",
+    "@storybook/addon-essentials",
+    "@storybook/addon-interactions",
+    "@storybook/addon-controls",
+    "@storybook/addon-docs",
   ],
   core: {},
   staticDirs: ['../static'],
   framework: {
     name: getAbsolutePath("@storybook/react-vite"),
-    options: {}
+    options: {
+    }
   },
   docs: {
     autodocs: 'tag'
-  },
-  features: {
-    storyStoreV7: true
   },
   typescript: {
     check: true,
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
       propFilter: (prop: any) => {
-        const res = /react-thermostat/.test(prop.parent?.fileName) || !/node_modules/.test(prop.parent?.fileName);
+        // Exclude the 'css' prop
+        if (prop.name === 'css') {
+          return false;
+        }
+        if (prop.name === 'cssStyles' || prop.name === 'style') {
+          return true;
+        }
+        const res = !/node_modules/.test(prop.parent?.fileName);
         return prop.parent ? res : true;
       },
       shouldExtractLiteralValuesFromEnum: true,
       compilerOptions: {
         allowSyntheticDefaultImports: false,
         esModuleInterop: false,
+        baseUrl: ".",
+        paths: {
+          "@hakit/core": ["packages/core/dist"],
+          "@components": ["packages/components/src"],
+          "@hooks": ["packages/core/src/hooks"],
+          "@utils/*": ["packages/core/src/utils/*"],
+          "@typings": ["packages/core/src/types"],
+        }
       },
     }
   },
@@ -73,6 +86,7 @@ export default ({
             plugins: ['@emotion/babel-plugin'],
           },
         }),
+        svgr(),
       ],
     };
   },

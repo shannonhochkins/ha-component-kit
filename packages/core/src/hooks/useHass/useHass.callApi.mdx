@@ -1,0 +1,63 @@
+import { Source, Meta } from '@storybook/blocks';
+
+<Meta title="HOOKS/useHass/callApi" />
+
+# callApi()
+###### `callApi(endpoint: string, options?: FetchOptions)`
+This will trigger a request to the [REST API](https://developers.home-assistant.io/docs/api/rest/#actions) for home assistant.
+
+By default, this will trigger a GET request, you'll need to provide the options argument to update the method and body of the request of changing to POST.
+
+You will at least need to add the following to your configuration.yaml in home assistant to [enable the api](https://www.home-assistant.io/integrations/api):
+
+<Source dark language="yaml" code={`
+# Example configuration.yaml entry
+api:
+`} />
+
+**NOTE**: If you're developing locally, you'll need to add the port of your local server to the `cors_allowed_origins` list in your configuration.yaml, example:
+
+<Source dark language="yaml" code={`
+# Example configuration.yaml entry
+http:
+  cors_allowed_origins: 
+    - http://localhost:8080
+`} />
+
+### Example Usage
+The below is an example of how to use the hook to retrieve calendar events from home assistant.
+I recomend you read the documentation for the [REST API](https://developers.home-assistant.io/docs/api/rest/#actions) before attempting to use the callApi function as it will help you understand what you need to pass to the function and what you can expect to get back.
+
+<Source dark language="ts" code={`
+import { useCallback, useState } from 'react';
+import { useHass } from '@hakit/core';
+export type DateFormat = {
+  dateTime: string;
+  date: string;
+};
+
+export interface CalendarEvent {
+  start: DateFormat;
+  end: DateFormat;
+  summary: string;
+  location?: string;
+  description?: string;
+  uid?: string;
+  recurrence_id?: string;
+  rrule?: string;
+}
+export function CallApiExample() {
+  const { callApi } = useHass();
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const retrieveCalendarEvents = useCallback(() => {
+    const response = await callApi<CalendarEvent[]>('/calendars/calendar.google_calendar?start=2023-09-30T14:00:00.000Z&end=2023-11-11T13:00:00.000Z');
+    setEvents(response);
+  }, [callApi]);
+  return <>
+    <FabCard icon="mdi:view-module" onClick={retrieveCalendarEvents} />
+    {events.length ? \`There is $\{events.length} events!\` : 'No events'}
+  </>
+}
+`} />
+
+**NOTE**: You do not need to provide the /api prefix to the endpoint. This is added automatically.

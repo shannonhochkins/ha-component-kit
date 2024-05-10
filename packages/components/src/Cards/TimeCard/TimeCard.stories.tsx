@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, TimeCard } from "@components";
 import type { TimeCardProps } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<TimeCardProps>) {
   return (
-    <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+    <HassConnect hassUrl="http://homeassistant.local:8123">
+      <ThemeProvider includeThemeControls />
       <TimeCard {...args} />
     </HassConnect>
   );
@@ -16,7 +16,7 @@ function WithoutDate(args?: Partial<TimeCardProps>) {
   return (
     <div>
       <h2>TimeCard without the date</h2>
-      <Template includeDate={false} {...args} />
+      <Template hideDate {...args} />
     </div>
   );
 }
@@ -26,13 +26,7 @@ export default {
   component: TimeCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
-  },
-  argTypes: {
-    title: { control: "text" },
-    icon: { control: "text" },
-    includeDate: { control: "boolean" },
-    includeIcon: { control: "boolean" },
+    fullWidth: true,
   },
 } satisfies Meta<typeof TimeCard>;
 export type TimeStory = StoryObj<typeof TimeCard>;

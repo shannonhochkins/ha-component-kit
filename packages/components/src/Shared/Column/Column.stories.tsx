@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, Column, ButtonCard } from "@components";
 import type { ColumnProps } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<ColumnProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Column {...args}>
         <ButtonCard entity="light.fake_light_1" />
         <ButtonCard entity="switch.fake_switch" />
@@ -21,10 +21,9 @@ export default {
   component: Column,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
   argTypes: {
-    theme: { table: { disable: true } },
     justifyContent: {
       control: "text",
       description: "standard flex css properties for justify-content",
@@ -41,5 +40,6 @@ export const ColumnExample: TimeStory = {
   render: Template,
   args: {
     gap: "0.5rem",
+    fullWidth: true,
   },
 };

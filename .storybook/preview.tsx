@@ -1,32 +1,71 @@
 import type { Preview } from "@storybook/react";
 import { Title, Description, Primary, ArgTypes } from "@storybook/blocks";
 import React from "react";
+import { withThemeFromJSXProvider } from '@storybook/addon-themes';
+import { ThemeProvider } from '@storybook/theming';
 import './global.css';
+
+const THEME = {
+  typography: {
+    fonts: {
+      base: 'Arial, sans-serif',
+      mono: 'Courier, monospace'
+    }
+  }
+};
 
 export default {
   decorators: [
+    withThemeFromJSXProvider({
+      themes: {
+        dark: THEME,
+        light: THEME,
+      },
+      defaultTheme: 'dark',
+      Provider: ThemeProvider,
+    }),
     (Story, args) => {
       const centered = args.parameters.centered ? {
         width: '100%',
-        height: '100%',
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center',
-        padding: 0,
+        padding: '1rem',
       } : {};
+      if (window.parent) {
+        const parentDocument = window.parent.document;
+        const logo = parentDocument.querySelector('.sidebar-header div img') as HTMLElement;
+        if (logo) {
+          logo.style.maxWidth = '100%';
+        }
+        const panel = parentDocument.getElementById('storybook-panel-root');
+        if (args.parameters?.addons?.showPanel === false && panel !== null && panel.parentElement !== null) {
+          panel.parentElement.style.display = 'none';
+        } else if (panel !== null && panel.parentElement !== null) {
+          panel.parentElement.style.display = 'flex';
+        }
+        const previewer = parentDocument.querySelector('#root div div:has(main)') as HTMLElement;
+        if (previewer !== null) {
+          previewer.style.height = '100dvh';
+        }
+      }
+      if (args.parameters.standalone) {
+        return <Story />;
+      }
       return <div id="storybook-inner-preview">
         <div style={{
           padding: args.parameters.padding ?? '2rem',
-          width: args.parameters.width ?? 'calc(100% - 4rem)',
+          width: args.parameters.width ?? '100%',
           height: args.parameters.height,
           ...centered,
-        }}><Story /></div>
+        }}><div style={{
+          width: args.parameters.fillWidth || args.parameters.fullWidth ? '100%' : undefined,
+          height: args.parameters.fillHeight ? '100%' : undefined,
+        }}><Story /></div></div>
       </div>
     },
   ],
 
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
     layout: 'centered',
     controls: {
       matchers: {
@@ -36,37 +75,32 @@ export default {
     },    
     options: {
       storySort: (a, b) => {
-        // Split the ID into parts on '/'
-        const aSplit = a.title.split('/');
-        const bSplit = b.title.split('/');
-
-        // Get the top-level titles
-        const aTopLevel = aSplit[0];
-        const bTopLevel = bSplit[0];
-
-
-        // Define the order
-        const order = ['INTRODUCTION', 'HOOKS', 'COMPONENTS', 'ADVANCED'];
-
-        // Compare the top-level titles based on the order array
-        const aTopLevelOrder = order.indexOf(aTopLevel);
-        const bTopLevelOrder = order.indexOf(bTopLevel);
-
-        // If both stories are in the order array, compare based on the order array
-        if (aTopLevelOrder !== -1 && bTopLevelOrder !== -1) {
-          return aTopLevelOrder - bTopLevelOrder;
+        const splitAndTakeFirst = (str, delimiter) => str.split(delimiter)[0];
+        const getOrderIndex = (order, item) => order.indexOf(item);
+        const getNumericPrefix = (str) => parseInt(str.match(/\d+/)?.[0] || "-1", 10);
+      
+        const aTitle = splitAndTakeFirst(a.title, '/');
+        const bTitle = splitAndTakeFirst(b.title, '/');
+      
+        const order = ['INTRODUCTION', 'COMPONENTS', 'HOOKS', 'ADVANCED'];
+      
+        const aOrderIndex = getOrderIndex(order, aTitle);
+        const bOrderIndex = getOrderIndex(order, bTitle);
+      
+        if (aOrderIndex !== -1 && bOrderIndex !== -1) {
+          if (aOrderIndex === bOrderIndex) {
+            // Both have the same top-level title. Sort based on the numeric prefix in importPath.
+            const aNumericPrefix = getNumericPrefix(a.importPath);
+            const bNumericPrefix = getNumericPrefix(b.importPath);
+            return aNumericPrefix - bNumericPrefix;
+          }
+          return aOrderIndex - bOrderIndex;
         }
-
-        // If only one story is in the order array, put it first
-        if (aTopLevelOrder !== -1) {
-          return -1;
-        }
-        if (bTopLevelOrder !== -1) {
-          return 1;
-        }
-
-        // If neither story is in the order array, compare alphabetically
-        return aTopLevel.localeCompare(bTopLevel);
+      
+        if (aOrderIndex !== -1) return -1;
+        if (bOrderIndex !== -1) return 1;
+      
+        return aTitle.localeCompare(bTitle);
       },
     },
     docs: {

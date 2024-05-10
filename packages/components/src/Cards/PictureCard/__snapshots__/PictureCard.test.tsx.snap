@@ -24,12 +24,11 @@ exports[`<PictureCard /> renders PictureCard 1`] = `
   -webkit-justify-content: space-between;
   justify-content: space-between;
   cursor: pointer;
-  background-color: var(--ha-primary-background);
+  background-color: var(--ha-S200);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: background-color,box-shadow,background-image;
-  will-change: width,height;
   background-image: url(FAKE);
   -webkit-background-size: cover;
   background-size: cover;
@@ -40,7 +39,7 @@ exports[`<PictureCard /> renders PictureCard 1`] = `
 
 .emotion-0:hover {
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-  background-color: var(--ha-primary-background-hover);
+  background-color: var(--ha-S300);
 }
 
 .emotion-1 {

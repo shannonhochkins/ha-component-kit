@@ -1,49 +1,48 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import styled from "@emotion/styled";
 import { lowerCase, startCase } from "lodash";
-import type {
-  DomainService,
-  ExtractDomain,
-  ServiceData,
-  HassEntityWithApi,
-  EntityName,
-} from "@hakit/core";
-import {
-  useEntity,
-  useIconByDomain,
-  useIcon,
-  useIconByEntity,
-} from "@hakit/core";
-import { Ripples, ModalByEntityDomain } from "@components";
+import type { EntityName } from "@hakit/core";
+import { useEntity, useHass, useIconByDomain, useIcon, useIconByEntity, isUnavailableState, ON } from "@hakit/core";
+import { fallback, Column, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { computeDomain } from "@utils/computeDomain";
-import type { MotionProps } from "framer-motion";
-import { motion } from "framer-motion";
-import { useLongPress } from "react-use";
+import { ErrorBoundary } from "react-error-boundary";
 
-const StyledButtonCard = styled(motion.button)`
-  all: unset;
+const StyledButtonCard = styled(CardBase)`
+  &.slim {
+    justify-content: center;
+    .fab-card-inner {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+  .children {
+    width: 100%;
+  }
+  &.slim-vertical {
+    justify-content: center;
+    .fab-card-inner {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+  &:not(.disabled),
+  &:not(:disabled) {
+    &:hover {
+      .fab-card-inner {
+        background-color: var(--ha-S500);
+        color: var(--ha-S500-contrast);
+      }
+    }
+  }
+`;
+
+const Contents = styled.div`
   padding: 1rem;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  width: var(--ha-device-button-card-width);
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  justify-content: space-between;
-  cursor: pointer;
-  background-color: var(--ha-primary-background);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-color, box-shadow;
-
-  &:active {
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-  }
-  &:hover {
-    background-color: var(--ha-primary-background-hover);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-  }
+  align-items: center;
+  justify-content: stretch;
+  height: 100%;
 `;
 
 interface ToggleProps {
@@ -51,26 +50,23 @@ interface ToggleProps {
 }
 
 const ToggleState = styled.div<ToggleProps>`
-  background-color: white;
+  background-color: var(--ha-100);
   border-radius: 100%;
   width: 16px;
   height: 16px;
   position: absolute;
   top: 2px;
   left: 0;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: left, transform;
   left: ${(props) => (props.active ? "100%" : "0px")};
-  transform: ${(props) =>
-    props.active
-      ? "translate3d(calc(-100% - 2px), 0, 0)"
-      : "translate3d(calc(0% + 2px), 0, 0)"};
+  transform: ${(props) => (props.active ? "translate3d(calc(-100% - 2px), 0, 0)" : "translate3d(calc(0% + 2px), 0, 0)")};
 `;
 
 const Toggle = styled.div<ToggleProps>`
   position: relative;
-  background-color: ${(props) =>
-    props.active ? "var(--ha-primary-active)" : "var(--ha-primary-inactive)"};
+  background-color: ${(props) => (props.active ? "var(--ha-A400)" : "var(--ha-S100)")};
   border-radius: 10px;
   width: 40px;
   height: 20px;
@@ -81,26 +77,28 @@ const Toggle = styled.div<ToggleProps>`
 `;
 
 const Fab = styled.div<{
-  rgbaColor: string;
-  rgbColor: string;
+  backgroundColor: string;
+  textColor: string;
   brightness: string;
 }>`
   border-radius: 100%;
   padding: 6px;
-  width: 24px;
-  height: 24px;
+  width: 2rem;
+  height: 2rem;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
   ${(props) =>
-    props.rgbaColor &&
+    props.backgroundColor &&
     `
-    background-color: ${props.rgbaColor};
+    background-color: ${props.backgroundColor};
   `}
   ${(props) =>
-    props.rgbColor &&
+    props.textColor &&
     `
-    color: ${props.rgbColor};
+    color: ${props.textColor};
   `}
   ${(props) =>
     props.brightness &&
@@ -120,75 +118,83 @@ const LayoutBetween = styled.div`
   align-items: center;
   justify-content: space-between;
   flex-direction: row;
-  margin-bottom: 20px;
   gap: 10px;
+  width: 100%;
+  &.vertical {
+    flex-direction: column;
+    height: 100%;
+  }
 `;
 
-const LayoutRow = styled.div`
+const Footer = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
   flex-direction: row;
+  margin-top: 20px;
+  width: 100%;
 `;
 
 const Title = styled.div`
-  color: var(--ha-secondary-color);
+  color: var(--ha-S500-contrast);
   font-size: 0.7rem;
   margin: 2px 0;
+  text-align: left;
+  width: 100%;
+  &.slim-vertical {
+    text-align: center;
+  }
 `;
 
 const Description = styled.div`
-  color: var(--ha-primary-color);
+  color: var(--ha-S50-contrast);
   font-size: 0.8rem;
+  font-weight: 500;
 `;
-type Extendable = Omit<
-  React.ComponentProps<"button">,
-  "title" | "onClick" | "ref"
-> &
-  MotionProps;
-export interface ButtonCardProps<
-  E extends EntityName,
-  S extends DomainService<ExtractDomain<E>>,
-> extends Extendable {
+
+type OmitProperties = "as" | "children" | "ref";
+
+export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
   icon?: string | null;
   /** the css color value of the icon */
   iconColor?: string | null;
-  /** By default, the title is retrieved from the domain name, or you can specify a manual title */
-  title?: string | null;
   /** By default, the description is retrieved from the friendly name of the entity, or you can specify a manual description */
   description?: string | null;
-  /** The service name, eg "toggle, turnOn ..." */
-  service?: S;
-  /** The data to pass to the service */
-  serviceData?: ServiceData<ExtractDomain<E>, S>;
-  /** The name of your entity */
-  entity?: E;
-  /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
-  onClick?: (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
-  /** Optional active param, By default this is updated via home assistant */
-  active?: boolean;
-  /** the layout of the button card, this changes slightly, just preferences really @default default */
-  defaultLayout?: "default" | "slim";
+  /** The layout of the button card, mimics the style of HA mushroom cards in slim/slim-vertical @default default */
+  defaultLayout?: "default" | "slim" | "slim-vertical";
+  /** Hide the state value */
+  hideState?: boolean;
+  /** Hide the last updated time */
+  hideLastUpdated?: boolean;
+  /** The children to render at the bottom of the card */
+  children?: React.ReactNode;
+  /** This forces hideState, hideLastUpdated and will only show the entity name / description prop */
+  hideDetails?: boolean;
 }
-/** The ButtonCard component is an easy way to represent the state and control of an entity with a simple button, eventually I'll provide further options per domain, like being able to set the colours for lights etc... */
-export function ButtonCard<
-  E extends EntityName,
-  S extends DomainService<ExtractDomain<E>>,
->({
-  service,
+function _ButtonCard<E extends EntityName>({
   entity: _entity,
+  service,
+  serviceData,
   iconColor,
   icon: _icon,
   active,
-  serviceData,
   onClick,
   description: _description,
   title: _title,
   defaultLayout,
+  disabled = false,
+  className,
+  hideState,
+  hideLastUpdated,
+  children,
+  hideDetails,
+  cssStyles,
+  key,
   ...rest
-}: ButtonCardProps<E, S>): JSX.Element {
-  const [openModal, setOpenModal] = useState(false);
+}: ButtonCardProps<E>): React.ReactNode {
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const domain = _entity ? computeDomain(_entity) : null;
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
@@ -200,121 +206,122 @@ export function ButtonCard<
   const entityIcon = useIconByEntity(_entity || "unknown", {
     color: iconColor || undefined,
   });
-  const isDefaultLayout =
-    defaultLayout === "default" || defaultLayout === undefined;
-  const on = entity ? entity.state !== "off" : active || false;
+  const isDefaultLayout = defaultLayout === "default" || defaultLayout === undefined;
+  const isSlimLayout = defaultLayout === "slim" || defaultLayout === "slim-vertical";
+  const isUnavailable = typeof entity?.state === "string" ? isUnavailableState(entity.state) : false;
+  const on = entity ? entity.state !== "off" && !isUnavailable : active || false;
   const iconElement = useIcon(icon, {
     color: iconColor || undefined,
   });
-  const longPressEvent = useLongPress((e) => {
-    // ignore on right click
-    if ("button" in e && e.button === 2) return;
-    setOpenModal(true);
-  });
-
-  const useApiHandler = useCallback(() => {
-    // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
-    if (typeof service === "string" && entity) {
-      // @ts-expect-error - we don't actually know the service at this level
-      const caller = entity.api[service];
-      caller(serviceData);
-    }
-    if (typeof onClick === "function")
-      onClick(entity as HassEntityWithApi<ExtractDomain<E>>);
-  }, [service, entity, serviceData, onClick]);
   // use the input description if provided, else use the friendly name if available, else entity name, else null
   const description = useMemo(() => {
-    return _description === null
-      ? null
-      : _description ||
-          entity?.attributes.friendly_name ||
-          entity?.entity_id ||
-          null;
+    return _description === null ? null : _description || entity?.attributes.friendly_name || entity?.entity_id || null;
   }, [_description, entity]);
   // use the input title if provided, else use the domain if available, else null
-  const title = useMemo(
-    () => _title || (domain !== null ? startCase(lowerCase(domain)) : null),
-    [_title, domain],
-  );
+  const title = useMemo(() => _title || (domain !== null ? startCase(lowerCase(domain)) : null), [_title, domain]);
+
+  function renderState() {
+    if (hideState) return null;
+    if (typeof active === "boolean") {
+      // static usage without entity
+      return active ? "- on" : "- off";
+    }
+    if (entity && entity.state === ON && domain === "light") {
+      // dynamic usage with entity if it's a light
+      return `- ${entity.custom.brightnessValue}%`;
+    }
+    if (entity) {
+      return entity.state;
+    }
+    return null;
+  }
+
   return (
-    <>
-      <Ripples borderRadius="1rem" whileTap={{ scale: 0.9 }}>
-        <StyledButtonCard
-          {...longPressEvent}
-          layoutId={
-            typeof _entity === "string" ? `${_entity}-button-card` : undefined
-          }
-          {...rest}
-          onClick={useApiHandler}
-        >
-          <LayoutBetween>
-            <Fab
-              brightness={
-                (on && entity?.custom.brightness) || "brightness(100%)"
-              }
-              rgbaColor={
-                entity
-                  ? on
-                    ? entity.custom.rgbaColor
-                    : "rgba(255,255,255,0.15)"
-                  : on
-                  ? "var(--ha-primary-active)"
-                  : "var(--ha-primary-inactive)"
-              }
-              rgbColor={
-                entity
-                  ? on
-                    ? entity.custom.rgbColor
-                    : "white"
-                  : on
-                  ? "var(--ha-secondary-active)"
-                  : "var(--ha-secondary-inactive)"
-              }
-            >
-              {iconElement || entityIcon || domainIcon}
-            </Fab>
-            {isDefaultLayout && (
-              <Toggle active={on}>
-                <ToggleState active={on} />
-              </Toggle>
-            )}
-            {!isDefaultLayout && <Description>{description}</Description>}
-          </LayoutBetween>
-          <LayoutRow>
-            {!isDefaultLayout && (
-              <Title>
-                {title}{" "}
-                {typeof active === "boolean"
-                  ? active
-                    ? "- on"
-                    : "- off"
-                  : entity
-                  ? `- ${entity.state}`
-                  : ""}
-                {entity ? ` - ${entity.custom.relativeTime}` : ""}
-              </Title>
-            )}
-            {isDefaultLayout && (
-              <Title>
-                {title && <Title>{title}</Title>}
-                {description && <Description>{description}</Description>}
-                {entity && <Title>Updated: {entity.custom.relativeTime}</Title>}
-              </Title>
-            )}
-          </LayoutRow>
-        </StyledButtonCard>
-      </Ripples>
-      {typeof _entity === "string" && (
-        <ModalByEntityDomain
-          entity={_entity as EntityName}
-          title={title || "Unknown title"}
-          onClose={() => {
-            setOpenModal(false);
-          }}
-          open={openModal}
-          id={`${_entity}-button-card`}
-        />
-      )}
-    </>
+    <StyledButtonCard
+      key={key}
+      as="button"
+      // @ts-expect-error - don't know the entity name, so we can't know the service type
+      service={service}
+      // @ts-expect-error - don't know the entity name, so we can't know the service data
+      serviceData={serviceData}
+      active={active}
+      entity={_entity as EntityName}
+      title={title ?? undefined}
+      disabled={disabled || isUnavailable}
+      onClick={onClick}
+      className={`${className ?? ""} ${defaultLayout ?? "default"} button-card`}
+      cssStyles={`
+        ${globalComponentStyle.buttonCard ?? ""}
+        ${cssStyles ?? ""}
+      `}
+      {...rest}
+    >
+      <Contents>
+        <LayoutBetween className={`layout-between ${defaultLayout === "slim-vertical" ? "vertical" : ""}`}>
+          <Fab
+            brightness={(on && entity?.custom.brightness) || "brightness(100%)"}
+            className={`fab-card-inner icon`}
+            backgroundColor={
+              on ? (domain === "light" ? entity?.custom?.rgbaColor ?? "var(--ha-A400)" : "var(--ha-A400)") : "var(--ha-S400)"
+            }
+            textColor={
+              entity ? (on ? entity.custom.rgbColor : "var(--ha-S500-contrast)") : on ? "var(--ha-A400)" : "var(--ha-S500-contrast)"
+            }
+          >
+            {iconElement || entityIcon || domainIcon}
+          </Fab>
+          {isDefaultLayout && (
+            <Toggle active={on} className="toggle">
+              {!isUnavailable && <ToggleState active={on} className="toggle-state" />}
+            </Toggle>
+          )}
+          {isSlimLayout && (
+            <Column fullWidth alignItems={defaultLayout === "slim-vertical" ? "center" : "flex-start"}>
+              <Description className="description">{description}</Description>
+              {!hideDetails && (
+                <Title className={`title ${defaultLayout ?? ""}`}>
+                  {title} {renderState()}
+                  {entity && !hideLastUpdated ? ` - ${entity.custom.relativeTime}` : ""}
+                </Title>
+              )}
+            </Column>
+          )}
+        </LayoutBetween>
+        {isDefaultLayout && (
+          <Footer className="footer">
+            <Title className="title">
+              {!hideDetails && title && (
+                <Title className="title">
+                  {title}
+                  {isUnavailable && entity && !hideState ? ` - ${entity.state}` : ""}
+                </Title>
+              )}
+              {description && <Description className="description">{description}</Description>}
+              {!hideDetails && entity && !hideLastUpdated && <Title className="title">Updated: {entity.custom.relativeTime}</Title>}
+            </Title>
+          </Footer>
+        )}
+        {children && <div className="children">{children}</div>}
+      </Contents>
+    </StyledButtonCard>
+  );
+}
+/**
+ * The ButtonCard component is an easy way to represent the state and control of an entity with a simple button, eventually I'll provide further options per domain, like being able to set the colours for lights etc...
+ * Below are a few examples of layouts that the ButtonCard supports
+ * */
+export function ButtonCard<E extends EntityName>(props: ButtonCardProps<E>) {
+  const defaultColumns: AvailableQueries = {
+    xxs: 12,
+    xs: 6,
+    sm: 4,
+    md: 3,
+    lg: 2,
+    xlg: 2,
+  };
+  return (
+    <ErrorBoundary {...fallback({ prefix: "ButtonCard" })}>
+      <_ButtonCard {...defaultColumns} {...props} />
+    </ErrorBoundary>
   );
 }

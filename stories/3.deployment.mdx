@@ -1,15 +1,22 @@
-import { Meta } from '@storybook/blocks';
+import { Meta, Source } from '@storybook/blocks';
 
 <Meta title="INTRODUCTION/Deploying" />
 
 ## Deploying to Home Assistant
 
-Once you've built your new dashboard and you're happy with it locally, we can setup a script to copy the files over to home assistant automatically!
+To setup a project with @hakit, you can use the following command:
 
-Homeassistant is served with a webserver, which we can utilize to host our new dashboard. To do this, we need to copy the `dist` folder to our home assistant instance.
-The simplest way to copy your website to home assistant, is to copy your distributable files from your dashboard you've just created into the `www` folder of your home assistant configuration directory.
+<Source dark code={`
+  npm create hakit@latest
+`} />
 
-There's many ways to copy it, you can simply use the files exporer and copy it over, or you can use the `scp` command to copy it over with a script:
+This script will completely scaffold your project, produce documentation for the next steps in the README.md file, and a really quick way to get up and going!
+
+There is some further information required to get the deploy script working, so please read on.
+
+Homeassistant is bundled with a webserver, which we can utilize to host our new dashboard, we do need to gather/setup some credentials to get going:
+
+## Retrieving SSH Credentials
 
 1. In Homeassistant: Install and setup the Terminal & SSH addon, this is very easy!
   - Click on your "Profile name" in your HA dashboard
@@ -17,41 +24,91 @@ There's many ways to copy it, you can simply use the files exporer and copy it o
   - Go to Settings -> Addons -> search for "Terminal & SSH" -> Install
   - Go to the configuration tab, enter a password into the field and save
   - Ensure the PORT is 22, save, the default username is `root`
-2. In your react project, Install scp & dotenv, this is a very easy way to copy files over ssh:
+2. Finally, update the .env file that's created with the `create hakit` script, or add it to your project manually:
 
+```bash
+VITE_HA_URL=http://homeassistant.local:8123 # your home assistant hostname or IP address
+VITE_FOLDER_NAME=ha-dashboard # the folder name you want to copy the files to, this should also match the base name in the vite.config.ts `base: '/local/ha-dashboard/'`
+VITE_SSH_USERNAME=root # the default username is root, if you changed this, change this value
+VITE_SSH_PASSWORD=yourpassword # the password you set in the addon
+VITE_SSH_HOSTNAME=yourhostname # your home assistant hostname or IP address, if you get EHOSTUNREACH when connecting, try your IP address `ping homeassistant.local` to get your IP address
+```
+
+The `VITE_HA_TOKEN` instructions can be found [here](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-typescriptsync--docs) under the pre-requisites section.
+
+That's it! You should be able to run `npm run build && npm run deploy` and your dashboard should be available at a link printed in the terminal!
+
+## Home Assistant Addon
+
+If you want to use the HAKIT addon for home assistant so you can access your custom dashboard from your home assistant sidebar, you can install and follow the [setup steps here](https://github.com/shannonhochkins/ha-component-kit/blob/master/ADDON.md)
+
+## Manual Deployment Script
+Once you've built your new dashboard and you're happy with it locally, we can setup a script to copy the files over to home assistant automatically!
+
+If you're attempting to update an existing project, we need to copy the `dist` folder to our home assistant instance.
+The simplest way to copy your website to home assistant, is to copy your distributable files from your dashboard you've just created into the `www` folder of your home assistant configuration directory.
+There's many ways to copy it, you can simply use the files exporer and copy it over, or you can use the `scp` command to copy it over with a script:
+
+1. In your react project, Install scp & dotenv, this is a very easy way to copy files over ssh:
 ```bash
 npm install --save dotenv node-scp
 # or
 yarn add dotenv node-scp
 ```
-
-3. In your project at the root level, create a file called `deploy.ts` and add the following code:
+2. In your project at the root level, create a file called `deploy.ts` and add the following code:
 
 ```ts
 import { Client } from 'node-scp';
 import * as dotenv from 'dotenv';
+import { join } from 'path';
+import { access, constants } from 'fs/promises';
 dotenv.config();
 
-const USERNAME = process.env.SSH_USERNAME;
-const PASSWORD = process.env.SSH_PASSWORD;
-const HOST_OR_IP_ADDRESS = process.env.SSH_HOSTNAME;
+const HA_URL = process.env.VITE_HA_URL;
+const USERNAME = process.env.VITE_SSH_USERNAME;
+const PASSWORD = process.env.VITE_SSH_PASSWORD;
+const HOST_OR_IP_ADDRESS = process.env.VITE_SSH_HOSTNAME;
 const PORT = 22;
-const REMOTE_FOLDER_NAME = 'dashboard'; // the folder name you want to copy the files to
-const LOCAL_DIRECTORY = './dist'; // the pathname to your output files from your react project.
-
+const REMOTE_FOLDER_NAME = process.env.VITE_FOLDER_NAME;
+const LOCAL_DIRECTORY = './dist';
 const REMOTE_PATH = `/config/www/${REMOTE_FOLDER_NAME}`;
 
+async function checkDirectoryExists() {
+  try {
+    await access(LOCAL_DIRECTORY, constants.F_OK);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
 
 async function deploy() {
   try {
+    if (!HA_URL) {
+      throw new Error('Missing VITE_HA_URL in .env file');
+    }
+    if (!REMOTE_FOLDER_NAME) {
+      throw new Error('Missing VITE_FOLDER_NAME in .env file');
+    }
+    if (!USERNAME) {
+      throw new Error('Missing VITE_SSH_USERNAME in .env file');
+    }
+    if (!PASSWORD) {
+      throw new Error('Missing VITE_SSH_PASSWORD in .env file');
+    }
+    if (!HOST_OR_IP_ADDRESS) {
+      throw new Error('Missing VITE_SSH_HOSTNAME in .env file');
+    }
+    const exists = await checkDirectoryExists();
+    if (!exists) {
+      throw new Error('Missing ./dist directory, have you run `npm run build`?');
+    }
+    console.info(`Deploying to ${USERNAME}:${PASSWORD}@${HOST_OR_IP_ADDRESS}:${PORT}:${REMOTE_PATH}`)
     const client = await Client({
       host: HOST_OR_IP_ADDRESS,
       port: PORT,
       username: USERNAME,
       password: PASSWORD,
-      // if you have extra security, here's how you can use the privateKey / passphrase
-      // privateKey: fs.readFileSync('./key.pem'),
-      // passphrase: 'your key passphrase',
     })
     // empty the directory initially so we remove anything that doesn't need to be there
     try {
@@ -62,24 +119,30 @@ async function deploy() {
     // upload the folder to your home assistant server
     await client.uploadDir(LOCAL_DIRECTORY, REMOTE_PATH);
     client.close() // remember to close connection after you finish
-    console.log('Successfully deployed!')
-  } catch (e) {
-    console.log('Error:', e.message)
+    console.info('\nSuccessfully deployed!');
+    const url = join(HA_URL, '/local', REMOTE_FOLDER_NAME, '/index.html');
+    console.info(`\n\nVISIT the following URL to preview your dashboard:\n`);
+    console.info(url);
+    console.info('\n\n');
+  } catch (e: unknown) {
+    console.error('Error:', e)
   }
 }
 
-deploy()
+deploy();
 ```
 
-4. In your project, create a file called `.env` and add the following code:
+4. In your project, create a file called `.env` and add the following code, this setup assumes you're using VITE, adjust accordingly if you're not:
 
 ```bash
-SSH_USERNAME=root
-SSH_PASSWORD=yourpassword # the password you set in the addon
-SSH_HOSTNAME=yourhostname # your home assistant hostname or IP address, if you get EHOSTUNREACH when connecting, try your IP address `ping homeassistant.local` to get your IP address
+VITE_FOLDER_NAME=ha-dashboard
+VITE_HA_URL=http://homeassistant.local:8123 # your home assistant hostname or IP address
+VITE_SSH_USERNAME=root
+VITE_SSH_PASSWORD=yourpassword # the password you set in the addon
+VITE_SSH_HOSTNAME=yourhostname # your home assistant hostname or IP address, if you get EHOSTUNREACH when connecting, try your IP address `ping homeassistant.local` to get your IP address
 ```
 
-5. in your package.json under `"scripts"`, add `"deploy": "npx tsx ./deploy.ts"` and run `npm run deploy` or `yarn deploy`
+5. in your package.json under `"scripts"`, add `"deploy": "npx ts-node --esm scripts/deploy.ts"` and run `npm run deploy` or `yarn deploy`
 
 Now you should be able to access your dashboard (assuming you haven't changed the `REMOTE_FOLDER_NAME` in the script):
 

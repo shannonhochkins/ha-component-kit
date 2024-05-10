@@ -1,22 +1,18 @@
-import type {
-  HassEntity,
-  HassServiceTarget,
-} from "home-assistant-js-websocket";
+import type { HassEntity, HassServiceTarget } from "home-assistant-js-websocket";
 import type { DefaultServices } from "./supported-services";
 import type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 export type { DefinedPropertiesByDomain } from "./entitiesByDomain";
+import type { TimelineState, EntityHistoryState } from "../hooks/useHistory/history";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore - ignore the next check as this is extendable from the client side.
-// eslint-disable-next-line
-export interface CustomSupportedServices<
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  T extends ServiceFunctionTypes = "target",
-> {}
+export type { HistoryStreamMessage, TimelineState, HistoryResult, EntityHistoryState } from "../hooks/useHistory/history";
+
+export interface CustomSupportedServices<T extends ServiceFunctionTypes = "target"> {
+  // populated by the sync script and will be overwritten by the user
+  UNDETERMINED: T;
+}
+
 // dodgey hack to determine if the custom supported services are empty or not, if they're empty we use the default services
-export type SupportedServices<T extends ServiceFunctionTypes = "target"> = [
-  keyof CustomSupportedServices<T>,
-] extends [never]
+export type SupportedServices<T extends ServiceFunctionTypes = "target"> = [keyof CustomSupportedServices<T>] extends ["UNDETERMINED"]
   ? DefaultServices<T>
   : CustomSupportedServices<T>;
 
@@ -27,16 +23,12 @@ export type FilterByDomain<
 > = T extends `${Prefix}${infer _Rest}` ? T : never;
 
 export type DefaultEntityName = `${AllDomains}.${string}`;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore - ignore the next check as this is extendable from the client side.
-// eslint-disable-next-line
 export interface CustomEntityNameContainer {}
 
 export type EntityName =
   | ([keyof CustomEntityNameContainer] extends [never]
       ? DefaultEntityName
-      : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore - ignore the next check as this is extendable from the client side.
+      : // @ts-expect-error - this is created client side to extend the types
         CustomEntityNameContainer["names"])
   | "unknown";
 
@@ -44,6 +36,8 @@ export type HassEntityCustom = HassEntity & {
   custom: {
     /** the difference in time between the last updated value and now, eg "1 minute ago, 1 day ago etc, 5 days from now" */
     relativeTime: string;
+    /** the difference in time in milliseconds between now and the time the entity was updated / triggered */
+    timeDiff: number;
     /** if the last updated value was considered "now" */
     active: boolean;
     /** the hexColor value if the entity is a light */
@@ -60,22 +54,23 @@ export type HassEntityCustom = HassEntity & {
     color: [number, number, number];
   };
 };
-type HassEntityHelper<T extends AllDomains> =
-  T extends keyof DefinedPropertiesByDomain
-    ? DefinedPropertiesByDomain[T]
-    : HassEntity;
+export type HassEntityHelper<T extends AllDomains> =
+  CamelToSnake<T> extends keyof DefinedPropertiesByDomain ? DefinedPropertiesByDomain[CamelToSnake<T>] : HassEntity;
 
-export type HassEntityWithApi<T extends AllDomains> = HassEntityCustom &
-  HassEntityHelper<T> & {
-    /** all the services associated with the domain provided, this does not require entity as the first argument */
-    api: T extends keyof SupportedServices
-      ? SupportedServices<"no-target">[SnakeToCamel<T>]
-      : never;
+export type HassEntityWithService<T extends AllDomains> = HassEntityCustom &
+  HassEntityHelper<SnakeToCamel<T>> & {
+    history: {
+      timeline: TimelineState[];
+      entityHistory: EntityHistoryState[];
+      coordinates: number[][];
+      loading: boolean;
+    };
+    service: SnakeToCamel<T> extends keyof SupportedServices<"no-target"> ? SupportedServices<"no-target">[SnakeToCamel<T>] : never;
   };
 
 export type ServiceFunctionWithEntity<Data = object> = (
-  /** the entity string name from home assistant */
-  entity: string,
+  /** the entity target from home assistant, string, string[] or object */
+  entity: Target,
   /** the data to send to the service */
   data?: Data,
 ) => void;
@@ -85,28 +80,16 @@ export type ServiceFunctionWithoutEntity<Data = object> = {
   (data?: Data): void;
 };
 
-export type ServiceFunction<
-  T extends ServiceFunctionTypes = "target",
-  Data = object,
-> = {
+export type ServiceFunction<T extends ServiceFunctionTypes = "target", Data = object> = {
   /** with target, the service method expects a Target value as the first argument */
   target: ServiceFunctionWithEntity<Data>;
   /** without target, the service method does not expect a Target value as the first argument */
   "no-target": ServiceFunctionWithoutEntity<Data>;
 }[T];
-export type StaticDomains =
-  | "sun"
-  | "sensor"
-  | "stt"
-  | "binarySensor"
-  | "weather";
-export type SnakeOrCamelStaticDomains =
-  | CamelToSnake<StaticDomains>
-  | SnakeToCamel<StaticDomains>;
+export type StaticDomains = "sun" | "sensor" | "stt" | "binarySensor" | "weather" | "alert" | "plant";
+export type SnakeOrCamelStaticDomains = CamelToSnake<StaticDomains> | SnakeToCamel<StaticDomains>;
 /** the key names on the interface object all as camel case */
-export type CamelCaseDomains = SnakeToCamel<
-  NonSymbolNumberKeys<SupportedServices>
->;
+export type CamelCaseDomains = SnakeToCamel<NonSymbolNumberKeys<SupportedServices>>;
 /** the key names on the interface object all as snake case */
 export type SnakeCaseDomains = CamelToSnake<CamelCaseDomains>;
 /** the key names on the interface object all as snake case or camel case */
@@ -115,16 +98,11 @@ export type SnakeOrCamelDomains = SnakeCaseDomains | CamelCaseDomains;
 export type AllDomains = SnakeOrCamelStaticDomains | SnakeOrCamelDomains;
 
 /** will extract the domain name from the entity value, eg light.something will return "light" if it extends SnakeOrCamelDomains */
-export type ExtractDomain<E> = E extends `${infer D}.${string}`
-  ? D extends AllDomains
-    ? D
-    : never
-  : never;
+export type ExtractDomain<E> = E extends `${infer D}.${string}` ? (D extends AllDomains ? D : never) : never;
 /** Will convert a string to camel case */
-export type SnakeToCamel<Key extends string> =
-  Key extends `${infer FirstPart}_${infer FirstLetter}${infer LastPart}`
-    ? `${FirstPart}${Uppercase<FirstLetter>}${SnakeToCamel<LastPart>}`
-    : Key;
+export type SnakeToCamel<Key extends string> = Key extends `${infer FirstPart}_${infer FirstLetter}${infer LastPart}`
+  ? `${FirstPart}${Uppercase<FirstLetter>}${SnakeToCamel<LastPart>}`
+  : Key;
 /** Will convert a string to snake case */
 export type CamelToSnake<S extends string> = S extends `${infer T}${infer U}`
   ? `${T extends Uppercase<T> ? "_" : ""}${Lowercase<T>}${CamelToSnake<U>}`
@@ -136,24 +114,15 @@ export type DomainService<D extends SnakeOrCamelDomains> =
   | CamelToSnake<NonSymbolNumberKeys<SupportedServices[SnakeToCamel<D>]>>;
 
 /** returns the supported data to be used with the ServiceFunction */
-export type ServiceData<
-  D extends SnakeOrCamelDomains,
-  S extends DomainService<D>,
-> = S extends keyof SupportedServices[SnakeToCamel<D>]
-  ? SupportedServices[SnakeToCamel<D>][S] extends ServiceFunction<
-      "target",
-      infer Params
-    >
+export type ServiceData<D extends SnakeOrCamelDomains, S extends DomainService<D>> = S extends keyof SupportedServices[SnakeToCamel<D>]
+  ? SupportedServices[SnakeToCamel<D>][S] extends ServiceFunction<"target", infer Params>
     ? Params
     : never
   : SnakeToCamel<S> extends keyof SupportedServices[SnakeToCamel<D>]
-  ? SupportedServices[SnakeToCamel<D>][SnakeToCamel<S>] extends ServiceFunction<
-      "target",
-      infer Params
-    >
-    ? Params
-    : never
-  : never;
+    ? SupportedServices[SnakeToCamel<D>][SnakeToCamel<S>] extends ServiceFunction<"target", infer Params>
+      ? Params
+      : never
+    : never;
 /** simple helper to exclude symbol and number from keyof */
 export type NonSymbolNumberKeys<T> = Exclude<keyof T, symbol | number>;
 /** Wrapper for HassServiceTarget to also allow string or string[] */

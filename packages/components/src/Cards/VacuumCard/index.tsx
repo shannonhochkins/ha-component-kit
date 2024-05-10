@@ -1,36 +1,24 @@
-import React, { useState, useMemo } from "react";
+import { useMemo } from "react";
 import styled from "@emotion/styled";
-import type { HassEntityWithApi } from "@hakit/core";
-import { ModalByEntityDomain, Row, FabCard } from "@components";
+import { Row, CardBase, ButtonBar, ButtonBarButton, type CardBaseProps, type AvailableQueries, fallback } from "@components";
 import type { VacuumControlsProps } from "@components";
-import { useEntity, useIconByDomain, useIconByEntity } from "@hakit/core";
-import { Ripples } from "@components";
-import { motion } from "framer-motion";
-import type { MotionProps } from "framer-motion";
-import { useLongPress } from "react-use";
+import { useHass, useEntity, useIconByDomain, isUnavailableState, useIconByEntity, type EntityName, type FilterByDomain } from "@hakit/core";
 import { VacuumToolbar } from '../../Shared/VacuumControls';
-import { icons, activeColors } from "../../Shared/VacuumControls/shared";
+import { icons } from "../../Shared/VacuumControls/shared";
+import { ErrorBoundary } from "react-error-boundary";
 
-const StyledVacuumCard = styled(motion.button)`
-  all: unset;
+const StyledVacuumCard = styled(CardBase)`
+  
+`;
+
+const Contents = styled.div`
   padding: 1rem;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  width: var(--ha-device-climate-card-width);
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  justify-content: center;
-  cursor: pointer;
-  background-color: var(--ha-primary-background);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: box-shadow, background-color;
-  &:hover {
-    background-color: var(--ha-primary-background-hover);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-  }
+  justify-content: space-between;
 `;
 
 const Gap = styled.div`
@@ -59,45 +47,37 @@ const Description = styled.div`
   gap: 0.5rem;
   text-transform: capitalize;
 `;
-type Extendable = Omit<VacuumControlsProps, "onClick"> &
-  MotionProps &
-  Omit<React.ComponentPropsWithoutRef<"button">, "onClick">;
-export interface VacuumCardProps extends Extendable {
+type OmitProperties = '';
+export type VacuumCardProps = Omit<CardBaseProps<"div", FilterByDomain<EntityName, "vacuum">>, OmitProperties> & {
   /** An optional override for the title */
   title?: string;
-  /** the onClick handler is called when the card is pressed  */
-  onClick?: (entity: HassEntityWithApi<"vacuum">) => void;
-}
+} & VacuumControlsProps;
 
-/** The VacuumCard is a card to easily interact with vacuum entities, whilst it's not documented below, the types are correct and you can also pass through anything related to ModalVacuumControlsProps */
-export function VacuumCard({
+function _VacuumCard({
   entity: _entity,
   title: _title,
   onClick,
-  vacuumModes,
+  shortcuts,
   hideCurrentBatteryLevel,
-  hideFanMode = false,
   hideState = false,
   hideUpdated = false,
   hideToolbar = false,
+  disabled,
+  className,
+  cssStyles,
+  serviceData,
+  service,
+  modalProps,
   ...rest
 }: VacuumCardProps): JSX.Element {
-  const [openModal, setOpenModal] = useState(false);
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const entity = useEntity(_entity);
   const entityIcon = useIconByEntity(_entity);
   const domainIcon = useIconByDomain("vacuum");
-  // as mentioned in the shared layout, this probably isn't the best way to retrieve the current mode
-  // best to use the entity.state value directly, and display a default icon if not specified
-  // (i've updated the shared layout file for you to show you what i mean)
-  const currentMode = entity.state in icons ? entity.state : "unknown-mode";
   const title = _title || entity.attributes.friendly_name;
-  const { fan_speed } = entity.attributes;
   const isDocked = entity.state === "docked";
-  const longPressEvent = useLongPress((e) => {
-    // ignore on right click
-    if ("button" in e && e.button === 2) return;
-    setOpenModal(true);
-  });
+  const isUnavailable = typeof entity?.state === "string" ? isUnavailableState(entity.state) : false;
 
   const titleValue = useMemo(() => {
     // I think the title value should just be entity.state
@@ -109,57 +89,83 @@ export function VacuumCard({
   }, [isDocked]);
 
   return (
-    <>
-      <Ripples borderRadius="1rem" whileTap={{ scale: 0.9 }}>
-        <StyledVacuumCard
-          {...longPressEvent}
-          layoutId={`${_entity}-vacuum-card`}
-          {...rest}
-          onClick={() => {
-            if (typeof onClick === "function") {
-              onClick(entity);
-            }
-          }}
-        >
-          <LayoutBetween>
-            <Description>
-              <Icon
-                style={{
-                  color:
-                    currentMode === "unknown"
-                      ? undefined
-                      : activeColors[currentMode],
-                }}
-              >
-                {entityIcon || domainIcon}
-              </Icon>{" "}
-              {title} - {titleValue}
-            </Description>
-            <Title>{entity.custom.relativeTime}</Title>
-          </LayoutBetween>
-          <Gap />
+    <StyledVacuumCard
+      title={title ?? undefined}
+      disabled={disabled || isUnavailable}
+      onClick={onClick}
+      className={`${className ?? ""} vacuum-card`}
+      modalProps={{
+        ...modalProps,
+        hideCurrentBatteryLevel,
+        hideState,
+        hideUpdated,
+        hideToolbar,
+      }}
+      entity={_entity}
+      // @ts-expect-error - don't know the entity name, so we can't know the service type
+      service={service}
+      // @ts-expect-error - don't know the entity name, so we can't know the service data
+      serviceData={serviceData}
+      disableActiveState
+      disableRipples
+      cssStyles={`
+        ${globalComponentStyle.vacuumCard ?? ""}
+        ${cssStyles ?? ""}
+      `}
+      {...rest}
+    >
+      <Contents>
+        <LayoutBetween>
+          <Description>
+            <Icon
+            >
+              {entityIcon || domainIcon}
+            </Icon>{" "}
+            {title} - {titleValue}
+          </Description>
+          <Title>{entity.custom.relativeTime}</Title>
+        </LayoutBetween>
+        <Gap />
+        <Row gap="0.5rem" justifyContent="space-between">
           <VacuumToolbar entity={_entity} hideToolbar={hideToolbar} />
-          <Row fullWidth gap="0.5rem" wrap="nowrap">
-            
-            {(vacuumModes || []).map((mode) => (
-              <FabCard size={35} key={mode} title={mode} icon={icons[mode]} />
-            ))}
-          </Row>
-        </StyledVacuumCard>
-      </Ripples>
-      <ModalByEntityDomain
-        vacuumModes={vacuumModes}
-        hideCurrentBatteryLevel={hideCurrentBatteryLevel}
-        hideState={hideState}
-        hideUpdated={hideUpdated}
-        entity={_entity}
-        title={title || "Unknown title"}
-        onClose={() => {
-          setOpenModal(false);
-        }}
-        open={openModal}
-        id={`${_entity}-vacuum-card`}
-      />
-    </>
+          {(shortcuts ?? []).length > 0 && <ButtonBar>
+            {(shortcuts ?? [])
+              .concat()
+              .filter((x) => !!x)
+              .map(({ onClick, active, ...rest }, index) => (
+                <ButtonBarButton
+                  size={35}
+                  iconColor={active ? 'var(--ha-300)' : undefined}
+                  rippleProps={{
+                    preventPropagation: true,
+                  }}
+                  key={index}
+                  active={active}
+                  onClick={() => onClick(entity)}
+                  {...rest}
+                />
+              ))}
+          </ButtonBar>}
+        </Row>
+      </Contents>
+    </StyledVacuumCard>
+  );
+}
+
+/** The VacuumCard is a card to easily interact with vacuum entities, you should have full control over your vacuum entity and even more controls when you long press on the card.
+ */
+export function VacuumCard(props: VacuumCardProps) {
+  const defaultColumns: AvailableQueries = {
+    xxs: 12,
+    xs: 6,
+    sm: 6,
+    md: 4,
+    lg: 4,
+    xlg: 3,
+  };
+  return (
+    <ErrorBoundary {...fallback({ prefix: "VacuumCard" })}>
+      <_VacuumCard {...defaultColumns} {...props} />
+    </ErrorBoundary>
   );
 }

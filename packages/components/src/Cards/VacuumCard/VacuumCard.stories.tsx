@@ -1,6 +1,6 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
 import { ThemeProvider, VacuumCard } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
   return (
@@ -16,7 +16,7 @@ export default {
   component: VacuumCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
 } satisfies Meta<typeof VacuumCard>;
 export type VacuumStory = StoryObj<typeof VacuumCard>;
@@ -25,9 +25,29 @@ export const VacuumCardExample: VacuumStory = {
   args: {},
 };
 
-export const VacuumCardWithCustomExample: VacuumStory = {
+export const CustomShortcuts: VacuumStory = {
   render: Render,
   args: {
-    fanSpeeds: ["Silent", "Standard", "Medium", "Turbo"],
+    shortcuts: [{
+      title: 'Send to home!',
+      icon: 'mdi:home',
+      onClick(entity) {
+        entity.service.returnToBase();
+      }
+    }, {
+      title: 'Set fan speed',
+      icon: 'mdi:fan',
+      onClick(entity) {
+        entity.service.setFanSpeed({
+          fan_speed: 'high',
+        });
+      }
+    }, {
+      title: 'Clean spot',
+      icon: 'mdi:vacuum-cleaner',
+      onClick(entity) {
+        entity.service.cleanSpot();
+      }
+    }],
   },
 };

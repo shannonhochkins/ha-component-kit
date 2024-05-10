@@ -1,77 +1,47 @@
 import { Source } from "@storybook/blocks";
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, Group, ButtonCard } from "@components";
+import { ThemeProvider, Group, Column, ButtonCard } from "@components";
 import type { ButtonCardProps } from "@components";
-import type { DomainService } from "@hakit/core";
-import { HassConnect } from "@stories/HassConnectFake";
-// @ts-expect-error - Don't have types for jsx-to-string
-import jsxToString from "jsx-to-string";
 
-function Template(
-  args?: Partial<
-    ButtonCardProps<"switch.fake_switch", DomainService<"switch">>
-  >,
-) {
+import { HassConnect } from "@hass-connect-fake";
+import jsxToString from "react-element-to-jsx-string";
+
+function Template(args?: Partial<ButtonCardProps<"switch.fake_switch">>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
-      <Group title="Examples">
+      <ThemeProvider includeThemeControls />
+      <Group title="Examples" alignItems="stretch">
         <ButtonCard
           {...args}
           entity="switch.fake_switch"
           onClick={(entity) => {
-            entity.api.toggle();
+            entity.service.toggle();
           }}
         />
         <ButtonCard service="toggle" entity="light.fake_light_1" />
         <ButtonCard service="toggle" entity="media_player.fake_tv" />
+        <ButtonCard service="toggle" entity="light.unavailable" />
       </Group>
     </HassConnect>
   );
 }
 
-function TemplateOnclick(
-  args?: Partial<
-    ButtonCardProps<"climate.air_conditioner", DomainService<"climate">>
-  >,
-) {
+function TemplateOnclick(args?: Partial<ButtonCardProps<"climate.air_conditioner">>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <ButtonCard
         {...args}
         entity="climate.air_conditioner"
         onClick={(entity) => {
-          entity.api.setHvacMode({
+          entity.service.setHvacMode({
             hvac_mode: entity.state === "off" ? "heat" : "off",
           });
-          entity.api.setTemperature({
+          entity.service.setTemperature({
             temperature: 25,
           });
         }}
       />
-    </HassConnect>
-  );
-}
-
-function LayoutExampleTemplate() {
-  return (
-    <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
-      <Group title="Examples">
-        <ButtonCard
-          defaultLayout="slim"
-          title="Slim example"
-          entity="switch.fake_switch"
-          service="toggle"
-        />
-        <ButtonCard
-          defaultLayout="default"
-          title="Default example"
-          entity="switch.fake_switch"
-          service="toggle"
-        />
-      </Group>
     </HassConnect>
   );
 }
@@ -81,34 +51,31 @@ function ExampleDocs() {
     <div>
       <h2>ButtonCard</h2>
       <p>
-        This component is designed to make it very easy to use and control a
-        device, the code below is all you need to control your device.
+        This component is designed to make it very easy to use and control a device, the code below is all you need to control your device.
       </p>
       <p>
-        This will automatically extract the friendly name, icon, last updated,
-        state, light color and group of the entity to render the ButtonCard
-        below, if there's no icon linked in home assistant it will use a
-        predefined default by domain.
+        This will automatically extract the friendly name, icon, last updated, state, light color and group of the entity to render the
+        ButtonCard below, if there's no icon linked in home assistant it will use a predefined default by domain.
       </p>
       <h3>Custom onClick</h3>
       <p>
-        If you don't want to call a specific service or want to do multiple
-        things with the entity, you can omit the service prop and perform your
-        logic manually
+        If you don't want to call a specific service or want to do multiple things with the entity, you can omit the service prop and
+        perform your logic manually
       </p>
       <TemplateOnclick />
       <h3>Source Code</h3>
       <Source
+        dark
         code={`
       <HassConnect hassUrl="http://localhost:8123">
-        <ThemeProvider />
+        <ThemeProvider includeThemeControls />
         <ButtonCard
           entity="climate.air_conditioner"
           onClick={entity => {
-            entity.api.setHvacMode({
+            entity.service.setHvacMode({
               hvac_mode: entity.state === 'off' ? 'heat' : 'off',
             });
-            entity.api.setTemperature({
+            entity.service.setTemperature({
               temperature: 25,
             });
           }}
@@ -118,11 +85,8 @@ function ExampleDocs() {
       />
       <Template />
       <h3>Source Code</h3>
-      <p>
-        This example shows how you can use the Group component to create a group
-        of cards.
-      </p>
-      <Source code={jsxToString(Template())} />
+      <p>This example shows how you can use the Group component to create a group of cards.</p>
+      <Source dark code={jsxToString(Template())} />
     </div>
   );
 }
@@ -130,23 +94,13 @@ function ExampleDocs() {
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
-      <ButtonCard {...args} />
-    </HassConnect>
-  );
-}
-
-function RenderClimate(args?: Args) {
-  return (
-    <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
-      <ButtonCard
-        {...args}
-        entity="climate.air_conditioner"
-        onClick={(entity) => {
-          entity.state === "off" ? entity.api.turnOn() : entity.api.turnOff();
-        }}
-      />
+      <ThemeProvider includeThemeControls />
+      <Column gap="1rem" fullWidth>
+        <ButtonCard {...args} />
+        <ButtonCard {...args} entity="light.fake_light_1" service="toggle" defaultLayout="slim" />
+        <ButtonCard {...args} entity="cover.cover_position_only" service="toggle" defaultLayout="slim-vertical" />
+        <ButtonCard service="toggle" entity="light.fake_light_1" />
+      </Column>
     </HassConnect>
   );
 }
@@ -156,45 +110,23 @@ export default {
   component: ButtonCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
   argTypes: {
     title: { control: "text" },
   },
 } satisfies Meta<typeof ButtonCard>;
-export type LightStory = StoryObj<
-  typeof ButtonCard<"light.fake_light_1", "toggle">
->;
-export const LightExample: LightStory = {
-  render: Render,
-  args: {
-    service: "toggle",
-    entity: "light.fake_light_1",
-  },
-};
 
-export const ClimateExample: StoryObj<
-  typeof ButtonCard<"climate.air_conditioner", "turnOn">
-> = {
-  render: RenderClimate,
-  args: {},
-};
-export type SwitchStory = StoryObj<
-  typeof ButtonCard<"switch.fake_switch", "toggle">
->;
-export const SwitchExample: SwitchStory = {
+export type ExamplesStory = StoryObj<typeof ButtonCard<"switch.fake_switch">>;
+export const Examples: ExamplesStory = {
   render: Render,
   args: {
     service: "toggle",
     entity: "switch.fake_switch",
   },
 };
+
 export type GroupStory = StoryObj<typeof ExampleDocs>;
 export const DetailedExample: GroupStory = {
   render: ExampleDocs,
-};
-
-export type LayoutStory = StoryObj<typeof LayoutExampleTemplate>;
-export const LayoutExample: LayoutStory = {
-  render: LayoutExampleTemplate,
 };

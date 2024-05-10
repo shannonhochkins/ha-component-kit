@@ -1,60 +1,59 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Global, css } from "@emotion/react";
-import {
-  ThemeProvider,
-  SidebarCard,
-  ButtonCard,
-  Row,
-  RoomCard,
-  Group,
-  Column,
-  SceneCard,
-} from "@components";
+import { ThemeProvider, SidebarCard, ButtonCard, Row, AreaCard, Group, Column, TriggerCard } from "@components";
 import { Source } from "@storybook/blocks";
 import { useEntity } from "@hakit/core";
 import type { SidebarCardProps } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
-import office from "../RoomCard/office.jpg";
-import livingRoom from "../RoomCard/living-room.jpg";
+import { HassConnect } from "@hass-connect-fake";
+import office from "../AreaCard/office.jpg";
+import livingRoom from "../AreaCard/living-room.jpg";
+
+const MakeFullScreen = () => {
+  return (
+    <Global
+      styles={css`
+        #storybook-inner-preview > div > div {
+          height: 100%;
+        }
+        .docs-story > div {
+          padding: 0;
+          margin: 0;
+        }
+      `}
+    />
+  );
+};
 
 function Template(args?: Partial<SidebarCardProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
-      <Row
-        alignItems="stretch"
-        justifyContent="flex-start"
-        fullWidth
-        fullHeight
-        wrap="nowrap"
-      >
-        <SidebarCard {...args}>
+      <ThemeProvider includeThemeControls />
+      <MakeFullScreen />
+      <Row alignItems="stretch" justifyContent="flex-start" fullWidth fullHeight wrap="nowrap">
+        <SidebarCard startOpen={false} {...args}>
           <p>You can insert any children in the sidebar here</p>
         </SidebarCard>
-        <Row fullWidth fullHeight gap="0.5rem">
-          <RoomCard
-            hash="office"
-            image={office}
-            title="Office"
-            icon="mdi:office-chair"
-          >
+        <Row
+          fullWidth
+          fullHeight
+          gap="0.5rem"
+          style={{
+            padding: "1rem",
+          }}
+        >
+          <AreaCard hash="office" image={office} title="Office" icon="mdi:office-chair">
             <Column gap="1rem">
               <Group title="Striplights">
                 <ButtonCard entity="light.fake_light_1" service="toggle" />
                 <ButtonCard entity="light.fake_light_2" service="toggle" />
                 <ButtonCard entity="light.fake_light_3" service="toggle" />
               </Group>
-              <SceneCard entity="scene.good_morning" data-testid="scene-card" />
+              <TriggerCard entity="scene.good_morning" data-testid="scene-card" />
             </Column>
-          </RoomCard>
-          <RoomCard
-            hash="living-room"
-            image={livingRoom}
-            title="Living Room"
-            icon="mdi:sofa"
-          >
+          </AreaCard>
+          <AreaCard hash="living-room" image={livingRoom} title="Living Room" icon="mdi:sofa">
             <div>LivingRoom</div>
-          </RoomCard>
+          </AreaCard>
         </Row>
       </Row>
     </HassConnect>
@@ -71,10 +70,7 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
       menuItems={[
         {
           title: "Air Conditioner",
-          description:
-            ac.state !== "off"
-              ? `${ac.state} - currently ${ac.attributes.temperature}°`
-              : "Not running",
+          description: ac.state !== "off" ? `${ac.state} - currently ${ac.attributes.temperature}°` : "Not running",
           icon:
             ac.state !== "off" ? (
               <Row>
@@ -86,7 +82,7 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
                   icon={"mdi:arrow-up"}
                   onClick={(event) => {
                     event.stopPropagation();
-                    ac.api.setTemperature({
+                    ac.service.setTemperature({
                       hvac_mode: "cool",
                       temperature: ac.attributes.temperature + 1,
                     });
@@ -96,7 +92,7 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
                   icon={"mdi:arrow-down"}
                   onClick={(event) => {
                     event.stopPropagation();
-                    ac.api.setTemperature({
+                    ac.service.setTemperature({
                       hvac_mode: "cool",
                       temperature: ac.attributes.temperature - 1,
                     });
@@ -110,9 +106,9 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
           onClick(event) {
             event.stopPropagation();
             if (ac.state === "off") {
-              ac.api.turnOn();
+              ac.service.turnOn();
             } else {
-              ac.api.turnOff();
+              ac.service.turnOff();
             }
           },
         },
@@ -152,14 +148,14 @@ function Replica() {
           marginLeft: 10
         }} icon={'mdi:arrow-up'} onClick={(event) => {
           event.stopPropagation();
-          ac.api.setTemperature({
+          ac.service.setTemperature({
             hvac_mode: 'cool',
             temperature: ac.attributes.temperature + 1
           });
         }}/>
         <Icon icon={'mdi:arrow-down'} onClick={(event) => {
           event.stopPropagation();
-          ac.api.setTemperature({
+          ac.service.setTemperature({
             hvac_mode: 'cool',
             temperature: ac.attributes.temperature - 1
           });
@@ -169,9 +165,9 @@ function Replica() {
       onClick(event) {
         event.stopPropagation();
         if (ac.state === 'off') {
-          ac.api.turnOn();
+          ac.service.turnOn();
         } else {
-          ac.api.turnOff();
+          ac.service.turnOff();
         }
       },
     },
@@ -181,14 +177,9 @@ function Replica() {
 function TemplateMenuItems(args?: Partial<SidebarCardProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
-      <Row
-        alignItems="stretch"
-        justifyContent="flex-start"
-        fullWidth
-        fullHeight
-        wrap="nowrap"
-      >
+      <ThemeProvider includeThemeControls />
+      <MakeFullScreen />
+      <Row alignItems="stretch" justifyContent="flex-start" fullWidth fullHeight wrap="nowrap">
         <SidebarMenuItems {...args} />
         <Row fullWidth fullHeight gap="0.5rem">
           <p
@@ -196,9 +187,8 @@ function TemplateMenuItems(args?: Partial<SidebarCardProps>) {
               maxWidth: 600,
             }}
           >
-            This is just an example of the level of customization achievable,
-            this isn't fully implemented as you will see when you collapse this
-            sidebar!
+            This is just an example of the level of customization achievable, this isn't fully implemented as you will see when you collapse
+            this sidebar!
           </p>
           <Source dark code={Replica()} />
         </Row>
@@ -229,7 +219,7 @@ export const SidebarExample: SidebarStory = {
         icon: "mdi:fan",
         active: false,
         onClick() {
-          console.log("do something on click!");
+          console.info("do something on click!");
         },
       },
     ],

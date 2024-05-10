@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "1.0.21",
+  "version": "3.1.5",
   "private": false,
   "keywords": [
     "react",
@@ -23,23 +23,23 @@
     "node": ">=16.0.0"
   },
   "description": "A series of components to work with @hakit/core",
-  "main": "./dist/hakit-components.cjs.cjs",
-  "module": "./dist/hakit-components.es.js",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es/index.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/hakit-components.es.js",
-      "require": "./dist/hakit-components.cjs.cjs",
+      "import": "./dist/es/index.js",
+      "require": "./dist/cjs/index.js",
       "types": "./dist/types/index.d.ts"
     }
   },
   "author": "Shannon Hochkins <mail@shannonhochkins.com>",
-  "license": "ISC",
+  "license": "SEE LICENSE IN LICENSE.md",
   "files": [
     "dist",
     "README.md",
     "package.json",
-    "LICENCE.md"
+    "LICENSE.md"
   ],
   "repository": {
     "type": "git",
@@ -53,8 +53,9 @@
   "funding": "https://github.com/shannonhochkins/ha-component-kit?sponsor=1",
   "scripts": {
     "dev": "vite",
-    "prebuild": "rm -rf ./dist && npm run lint && npm run prettier",
+    "prebuild": "rm -rf ./dist && npm run lint",
     "build": "NODE_ENV=production vite build",
+    "postbuild": "npm run prettier",
     "watch:build": "NODE_ENV=production vite build --watch",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
@@ -63,19 +64,30 @@
     "test": "NODE_ENV=test jest --rootDir=src"
   },
   "peerDependencies": {
+    "@emotion/is-prop-valid": ">=1.x.x",
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
+    "@fullcalendar/react": ">=6.x.x",
+    "@hakit/core": "^3.1.5",
+    "@use-gesture/react": ">=10.x",
+    "autolinker": ">=4.x",
     "framer-motion": ">=10.x",
-    "@hakit/core": "^1.0.18",
-    "@use-gesture/react": ">=10.x",    
+    "fullcalendar": ">=6.x.x",
+    "hls.js": ">=1.x.x",
+    "leaflet": ">=1.x.x",
     "lodash": ">=4.x",
     "react": ">=16.x",
     "react-dom": ">=16.x",
-    "react-router-dom": ">=6.x",
-    "react-thermostat": "^2.0.2",
-    "react-use": ">=17.x"
+    "react-error-boundary": "^4.x",
+    "react-leaflet": ">=4.x.x",
+    "react-resize-detector": ">=9.x.x",
+    "react-use": ">=17.x",
+    "use-debounce": ">=9.x",
+    "use-long-press": ">=3.x.x",
+    "zustand": "^4.x.x"
   },
   "devDependencies": {
-    "@emotion/babel-plugin": "^11.x"
+    "@types/leaflet": "^1.9.12",
+    "vite-plugin-svgr": "^4.2.0"
   }
 }

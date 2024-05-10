@@ -19,12 +19,12 @@ const addedAlias: string[] = [];
 const cloneRepo = async () => {  
     // Check if the directory already exists
   if (existsSync(OUTPUT_PATH)) {
-    console.log(`Directory ${OUTPUT_PATH} already exists. Skipping git clone.`);
+    console.info(`Directory ${OUTPUT_PATH} already exists. Skipping git clone.`);
     return;
   }
   const { simpleGit, CleanOptions } = await import('simple-git');
   const git = simpleGit().clean(CleanOptions.FORCE);
-  console.log('cloning home assistant repository');
+  console.info('cloning home assistant repository');
   await git.clone(REPOSITORY_URL, OUTPUT_PATH);
 };
 
@@ -294,21 +294,25 @@ const extractMatches = async (tsFilePaths: string[]): Promise<string> => {
       constants.push(exploreInterface(interfaceDeclaration));
       const baseTypes = interfaceDeclaration.getType().getBaseTypes();
       if (baseTypes.some(baseType => baseType.getText().includes('HassEntityBase'))) {
-        console.log('Found Match:', interfaceDeclaration.getName());
+        console.info('Found Match:', interfaceDeclaration.getName());
         const relatedTypes = findRelatedTypes(interfaceDeclaration);
         const code = generateTypeScriptCode(interfaceDeclaration, relatedTypes);
-        output += code;
+        output += code.replace(/export interface/g, 'interface').replace(/interface /g, 'export interface ');
       }
     });
     const types = sourceFile.getTypeAliases();
 
     types.forEach((typeAliasDeclaration) => {
       if (typeAliasDeclaration.getText().includes('HassEntityBase')) {
-        console.log('Found Match:', typeAliasDeclaration.getName());
+        console.info('Found Match:', typeAliasDeclaration.getName());
         constants.push(exploreTypeAlias(typeAliasDeclaration));
         const relatedTypes = findRelatedTypes(typeAliasDeclaration);
         const code = generateTypeScriptCode(typeAliasDeclaration, relatedTypes);
-        output += code;
+        const replaced = code.replace(/export type/g, 'type').replace(/type /g, 'export type ');
+        const dec = code.match(/export type (\w+)/);
+        if (dec && dec[0] && !output.includes(dec[0])) {
+          output += replaced;
+        }
       }
     });
   });

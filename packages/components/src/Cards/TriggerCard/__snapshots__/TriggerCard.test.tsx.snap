@@ -1,0 +1,385 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TriggerCard /> renders TriggerCard with override title 1`] = `
+.emotion-0 {
+  all: unset;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  width: var(--ha-device-scene-card-width);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: stretch;
+  -webkit-box-align: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: var(--ha-S200);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: box-shadow,background-color;
+}
+
+.emotion-0:hover {
+  background-color: var(--ha-S300);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+}
+
+.emotion-1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.emotion-2 {
+  color: var(--ha-300);
+  font-size: 0.9rem;
+}
+
+.emotion-3 {
+  height: 20px;
+}
+
+.emotion-5 {
+  color: var(--ha-secondary-color);
+  font-size: 0.7rem;
+}
+
+.emotion-6 {
+  position: relative;
+  background-color: var(--ha-secondary-inactive);
+  border-radius: 30px;
+  width: 120px;
+  height: 40px;
+  -webkit-box-flex: 0;
+  -webkit-flex-grow: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-transition: background-color var(--ha-transition-duration) var(--ha-easing);
+  transition: background-color var(--ha-transition-duration) var(--ha-easing);
+  margin-left: 20px;
+  overflow: hidden;
+}
+
+.emotion-7 {
+  background-color: white;
+  border-radius: 100%;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 5px;
+  left: 0px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: left,transform;
+  left: 0px;
+  -webkit-transform: translate3d(calc(0% + 5px), 0, 0);
+  -moz-transform: translate3d(calc(0% + 5px), 0, 0);
+  -ms-transform: translate3d(calc(0% + 5px), 0, 0);
+  transform: translate3d(calc(0% + 5px), 0, 0);
+}
+
+.emotion-7 svg {
+  color: var(--ha-primary-inactive);
+  font-size: 40px;
+}
+
+.emotion-8 {
+  font-size: 0.6rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
+  height: 100%;
+  padding: 0 6px 0 8px;
+  -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: justify-content,color;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
+  color: var(--ha-secondary-color);
+}
+
+<button
+  class="emotion-0"
+  data-testid="scene-card"
+>
+  <div
+    class="emotion-1"
+  >
+    <div
+      class="emotion-2"
+    >
+      Good morning San Francisco!
+    </div>
+    <span />
+  </div>
+  <div
+    class="emotion-3"
+  />
+  <div
+    class="emotion-1"
+  >
+    <div
+      class="emotion-5"
+    >
+      1 year ago
+    </div>
+    <div
+      class="emotion-6"
+    >
+      <div
+        class="emotion-7"
+      >
+        <span />
+      </div>
+      <span
+        class="emotion-8"
+      >
+        Start scene
+         
+        <span />
+      </span>
+    </div>
+  </div>
+</button>
+`;
+
+exports[`<TriggerCard /> renders TriggerCard with title from entity 1`] = `
+.emotion-0 {
+  all: unset;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  width: var(--ha-device-scene-card-width);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: stretch;
+  -webkit-box-align: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: var(--ha-S200);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: box-shadow,background-color;
+}
+
+.emotion-0:hover {
+  background-color: var(--ha-S300);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+}
+
+.emotion-1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+.emotion-2 {
+  color: var(--ha-300);
+  font-size: 0.9rem;
+}
+
+.emotion-3 {
+  height: 20px;
+}
+
+.emotion-5 {
+  color: var(--ha-secondary-color);
+  font-size: 0.7rem;
+}
+
+.emotion-6 {
+  position: relative;
+  background-color: var(--ha-secondary-inactive);
+  border-radius: 30px;
+  width: 120px;
+  height: 40px;
+  -webkit-box-flex: 0;
+  -webkit-flex-grow: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-transition: background-color var(--ha-transition-duration) var(--ha-easing);
+  transition: background-color var(--ha-transition-duration) var(--ha-easing);
+  margin-left: 20px;
+  overflow: hidden;
+}
+
+.emotion-7 {
+  background-color: white;
+  border-radius: 100%;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 5px;
+  left: 0px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: left,transform;
+  left: 0px;
+  -webkit-transform: translate3d(calc(0% + 5px), 0, 0);
+  -moz-transform: translate3d(calc(0% + 5px), 0, 0);
+  -ms-transform: translate3d(calc(0% + 5px), 0, 0);
+  transform: translate3d(calc(0% + 5px), 0, 0);
+}
+
+.emotion-7 svg {
+  color: var(--ha-primary-inactive);
+  font-size: 40px;
+}
+
+.emotion-8 {
+  font-size: 0.6rem;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
+  height: 100%;
+  padding: 0 6px 0 8px;
+  -webkit-transition: var(--ha-transition-duration) var(--ha-easing);
+  transition: var(--ha-transition-duration) var(--ha-easing);
+  transition-property: justify-content,color;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
+  color: var(--ha-secondary-color);
+}
+
+<button
+  class="emotion-0"
+  data-testid="scene-card"
+>
+  <div
+    class="emotion-1"
+  >
+    <div
+      class="emotion-2"
+    >
+      Goodmorning
+    </div>
+    <span />
+  </div>
+  <div
+    class="emotion-3"
+  />
+  <div
+    class="emotion-1"
+  >
+    <div
+      class="emotion-5"
+    >
+      1 year ago
+    </div>
+    <div
+      class="emotion-6"
+    >
+      <div
+        class="emotion-7"
+      >
+        <span />
+      </div>
+      <span
+        class="emotion-8"
+      >
+        Start scene
+         
+        <span />
+      </span>
+    </div>
+  </div>
+</button>
+`;

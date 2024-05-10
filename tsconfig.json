@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["es2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
@@ -25,12 +25,13 @@
       "@core": ["packages/core/src"],
       "@components": ["packages/components/src"],
       "@stories/*": ["stories/*"],
+      "@hass-connect-fake": ["hass-connect-fake/index.tsx"],
+      "@hass-connect-fake/*": ["hass-connect-fake/*"],
       "@hooks": ["packages/core/src/hooks"],
       "@utils/*": ["packages/core/src/utils/*"],
       "@typings": ["packages/core/src/types"],
-      "@mocks/*": ["packages/core/mocks/*"]
+      "@mocks/*": ["hass-connect-fake/mocks/*"]
     }
   },
-  "include": ["./stories/**/*"],
-  "exclude": ["**/*./", "**/node_modules"]
+  "exclude": ["node_modules", "node_modules/**", "dist"]
 }

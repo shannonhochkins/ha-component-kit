@@ -1,64 +1,105 @@
-# Overview
+<table>
+  <tr>
+    <td width="127"><img src="https://cdn.discordapp.com/icons/1231534799248691252/4b6124f952f099f855b5186d8a68f33e.webp?size=100" alt="LOGO" ></td>
+    <td><h1>HA COMPONENT KIT</h1></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td width="200">
+        <a aria-label="@HAKIT/CORE" href="https://www.npmjs.com/package/@hakit/core" width="250">
+    <img alt="" src="https://img.shields.io/npm/v/@hakit/core.svg?style=for-the-badge&labelColor=000000&label=@hakit/CORE" align="center">
+  </a>
+    </td>
+    <td width="250"><a aria-label="@HAKIT/COMPONENTS" href="https://www.npmjs.com/package/@hakit/components">
+    <img alt="" src="https://img.shields.io/npm/v/@hakit/components.svg?style=for-the-badge&labelColor=000000&label=@HAKIT/COMPONENTS" align="center">
+  </a></td>
+    <td width="210"><a aria-label="Join the community on Discord" href="https://discord.com/invite/cGgbmppKJZ">
+    <img alt="" src="https://img.shields.io/badge/Join%20the%20Discord-blueviolet.svg?style=for-the-badge&logo=Discord&labelColor=000000&logoWidth=20" align="center">
+  </a></td>
+  </tr>
+<tr>
+    <td align="center">
+        <a aria-label="@HAKIT/CORE" href="https://www.npmjs.com/package/@hakit/core" width="250">
+    <img alt="" src="https://img.shields.io/npm/dt/%40hakit%2Fcore.svg?style=flat&colorA=000000&colorB=000000&label=Downloads" align="top">
+  </a>
+    </td>
+  <td align="center">
+    <a aria-label="@HAKIT/COMPONENTS" href="https://www.npmjs.com/package/@hakit/components">
+    <img src="https://img.shields.io/npm/dt/%40hakit%2Fcomponents.svg?style=flat&colorA=000000&colorB=000000&label=Downloads" alt="" align="top">
+  </a>
+  </td>
+  <td align="center">Join our community!</td>
+  </tr>
+</table>
 
-This repository contains functionality to easily generate custom dashboards for Home Assistant using the official web socket connection that the standard lovelace dashboards use.
-If you like anything here, be sure to 🌟 [my repo!](https://github.com/shannonhochkins/ha-component-kit)
+Unlock the ultimate customization for your Home Assistant dashboards with this package, leveraging React for seamless, personalized interfaces.
+
+
+## Demo
+
+Visit the [Demo](https://shannonhochkins.github.io/ha-component-kit/iframe.html?args=&id=introduction-demo--default&viewMode=story#) to try it out!
+
+If you like anything here, be sure to 🌟 [the repo!](https://github.com/shannonhochkins/ha-component-kit)
 
 ![DEMO](https://github.com/shannonhochkins/ha-component-kit/blob/master/stories/hakit-demo.gif?raw=true)
 
+### Documentation
+
+There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
+
 ## Help me out?
 
-I've spent a lot of time on this, you're free to use it but would appreciate a small donation if you're feeling generous! Buy me a coffee!
+As you can probably tell, a $*#% tonne of hours have gone into this! I'd really appreciate a small donation as it will help me validate that my time is well spent and will guarantee future additional changes :)
 
-[Buy me a coffee!](https://www.buymeacoffee.com/jinglezzz)
+<a href="https://www.buymeacoffee.com/jinglezzz" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" style="height: 40px !important;width: auto !important;" ></a>
 
 ### Get Started
 There's an npm create command which will setup react, typescript, vite & hakit automatically for you with a terminal wizard!
+
 ```
   npm create hakit@latest
 ```
 
-There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
+Or, if you want to install [@hakit/core](https://www.npmjs.com/package/@hakit/core) or [@hakit/components](https://www.npmjs.com/package/@hakit/components) manually on an existing project:
+```
+  npm install @hakit/core @hakit/components
+```
+
+### Home Assistant Addon (WIP)
+There's a [Home Assistant Addon](ADDON.md) available which will serve your dashboard to a new sidebar link in home assistant making it easier to access your custom dashboard.
+
+
+### Supported Cards
+- [FamilyCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-familycard--docs)
+- [AreaCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-areacard--docs)
+- [ButtonCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-buttoncard--docs)
+- [ClimateCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-climatecard--docs)
+- [CameraCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-cameracard--docs)
+- [CalendarCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-calendarcard--docs)
+- [EntitiesCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-entitiescard--docs)
+- [FabCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-fabcard--docs)
+- [GarbageCollectionCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-garbagecollectioncard--docs)
+- [MediaPlayerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-mediaplayercard--docs)
+- [PictureCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-picturecard--docs)
+- [SensorCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-sensorcard--docs)
+- [SidebarCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-sidebarcard--docs)
+- [TimeCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-timecard--docs)
+- [TriggerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-triggercard--docs)
+- [WeatherCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-weathercard--docs)
+
+### Known Issues
+- Anything else? Please, if you notice anything that doesn't feel / look right, please report it, i rely on user testing to make improvements.
 
 ### What's next?
-Have your say! Vote for what you'd like to see next in [upcoming features!](https://github.com/shannonhochkins/ha-component-kit/discussions/28)
+
+There's a Roadmap.md file with a few things i'm working on!
+Have your say! Join the [discord](https://discord.com/invite/cGgbmppKJZ) and let me know what you'd like to see next!
 
 ### Contributors!
 
-#### Local Storybook
-To spin up the storybook interface, run the following command from the root of the repository:
+I welcome anyone who's willing to contribute to the package, if you're interested in helping out or have some suggestions to changes, please feel free to open a PR or an issue!
 
-```bash
-npm install && npm start
-```
-
-#### Local Development / Contribution
-If you want to contribute, fix bugs, integrate new features you can work with @hakit locally with your own dashboard
-
-##### 1. Clone the repisitory
-```shell
-git clone https://github.com/shannonhochkins/ha-component-kit.git
-cd ha-component-kit
-npm install
-```
-
-##### 2. Prep for local development
-This will simply build everything locally and setup workspace links:
-
-```shell  
-npm run build && npm link -ws
-```
-Now that you've built the packages and setup links, you can either run `npm run watch:build:core` or `npm run watch:build:components` to watch for changes in the core or components packages respectively.
-
-```shell
-npm run watch:build:core
-```
-
-##### 3. Link @hakit to your local dashboard
-Now you can link your local @hakit packages to your dashboard. This will allow you to make changes to the core or components packages and see them reflected in your dashboard, run the following command in your local dashboard
-
-```shell
-npm link @hakit/core @hakit/components
-```
-If you now navigate to your node_modules under @hakit, you should see the packages linked to your local @hakit packages and changes you make in hakit should reflect on your dashboard.
+There's detailed instructions on how to get started if you want to introduce a new feature to the repository [here](CONTRIBUTING.md).
 
 

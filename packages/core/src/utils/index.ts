@@ -10,3 +10,8 @@ export * from "./colors/convert-color";
 export * from "./light";
 export * from "./colors.ts";
 export * from "./computeDomain";
+export * from "./supports-feature";
+export * from "./time/time-ago";
+export * from "./entity";
+export * from "./string";
+export * from "./number";

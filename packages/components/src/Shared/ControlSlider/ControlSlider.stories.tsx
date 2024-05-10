@@ -2,7 +2,7 @@ import { useRef } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, ControlSlider, Row, Column } from "@components";
 import type { ControlSliderProps } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 
 interface SliderProps {
   value: number;
@@ -44,8 +44,8 @@ function Template(args?: Partial<ControlSliderProps>) {
   ] satisfies SliderProps[];
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
-      <Row gap={"1rem"}>
+      <ThemeProvider includeThemeControls />
+      <Row gap={"1rem"} fullWidth>
         {sliders.map(({ value, thickness, sliderColor, ref }, index) => (
           <Column key={index} gap="0.5rem">
             <ControlSlider
@@ -54,12 +54,10 @@ function Template(args?: Partial<ControlSliderProps>) {
               value={value}
               {...args}
               onChange={(value) => {
-                if (ref.current)
-                  ref.current.innerText = Math.round(value).toString() + "%";
+                if (ref.current) ref.current.innerText = Math.round(value).toString() + "%";
               }}
               onChangeApplied={(value) => {
-                if (ref.current)
-                  ref.current.innerText = Math.round(value).toString() + "%";
+                if (ref.current) ref.current.innerText = Math.round(value).toString() + "%";
               }}
             />
             <span ref={ref}>{args?.disabled ? "disabled" : `${value}%`}</span>
@@ -75,7 +73,7 @@ export default {
   component: ControlSlider,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
 } satisfies Meta<typeof ControlSlider>;
 export type TimeStory = StoryObj<typeof ControlSlider>;

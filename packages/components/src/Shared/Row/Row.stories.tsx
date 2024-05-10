@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, Row, ButtonCard } from "@components";
 import type { RowProps } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<RowProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <Row {...args}>
         <ButtonCard entity="light.fake_light_1" />
         <ButtonCard entity="switch.fake_switch" />
@@ -21,10 +21,9 @@ export default {
   component: Row,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
   argTypes: {
-    theme: { table: { disable: true } },
     justifyContent: { control: "text" },
     alignItems: { control: "text" },
     gap: { control: "text" },
@@ -35,5 +34,6 @@ export const RowExample: TimeStory = {
   render: Template,
   args: {
     gap: "0.5rem",
+    fullWidth: true,
   },
 };

@@ -1,6 +1,8 @@
 import { m } from "framer-motion";
+import { css } from "@emotion/react";
 import type { MotionProps } from "framer-motion";
 import styled from "@emotion/styled";
+import isValidProp from "@emotion/is-prop-valid";
 
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 export interface ColumnProps extends Extendable {
@@ -17,18 +19,38 @@ export interface ColumnProps extends Extendable {
   /** should the column stretch to the width of the parent */
   fullWidth?: boolean;
 }
-/** A simple helper component to layout child components in a column, justify/align properties as well as gap are supported */
-export const Column = styled(m.div)<ColumnProps>`
+const _Column = styled(m.div, {
+  shouldForwardProp: (prop) => isValidProp(prop),
+})<ColumnProps>`
   display: flex;
   flex-direction: column;
   flex-wrap: ${({ wrap }) => wrap || "wrap"};
   justify-content: ${({ justifyContent }) => justifyContent || "center"};
   align-items: ${({ alignItems }) => alignItems || "center"};
+  ${({ justifyContent }) => `
+    --stretch: ${justifyContent === "stretch" ? "100%" : "false"};
+  `}
   ${(props) =>
     typeof props.gap === "string" &&
     `
     gap: ${props.gap};
+    --gap: ${props.gap ?? "0px"};
   `}
   ${(props) => props.fullHeight && `height: 100%;`}
   ${(props) => props.fullWidth && `width: 100%;`}
 `;
+
+/** A simple helper component to layout child components in a column, justify/align properties as well as gap are supported */
+export function Column(props: ColumnProps) {
+  return (
+    <_Column
+      {...props}
+      cssStyles={css`
+        ${props.cssStyles ?? ""}
+      `}
+      className={`${props.className ?? ""} ${props.fullHeight ? "full-height" : ""} ${props.fullWidth ? "full-width" : ""} ${
+        props.justifyContent ? props.justifyContent : "center"
+      } ${props.alignItems ? props.alignItems : "center"} ${props.wrap ? props.wrap : "wrap"}`}
+    />
+  );
+}

@@ -1,24 +1,27 @@
-import { useRef, useMemo, useState } from "react";
+import React, { useRef, useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
-import { Column, FabCard, Row } from "@components";
-import { useEntity } from "@hakit/core";
+import { ButtonBarButton, ButtonBar, Column, FabCard, Row, ButtonBarButtonProps } from "@components";
+import { useEntity, type HassEntityWithService, type EntityName, batteryIconByLevel } from "@hakit/core";
 import { useDebounce } from "react-use";
 import type { MotionProps } from "framer-motion";
-import { activeColors, icons } from "./shared";
+import { icons } from "./shared";
 import { Icon } from "@iconify/react";
 import DEFAULT_IMAGE from './vacuum.svg';
 
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 
+interface Shortcut extends Omit<ButtonBarButtonProps<EntityName>, 'onClick'> {
+  onClick: (entity: HassEntityWithService<'vacuum'>) => void;
+}
 export interface VacuumControlsProps extends Extendable {
   entity: `${"vacuum"}.${string}`;
-  /** provide a list of vacuumModes you want to support/display in the UI, will use all by default */
-  vacuumModes?: string[];
+  /** provide a list of shorts you want to support/display in the UI, you can call your own service if need be! */
+  shortcuts?: Shortcut[];
+  /** hide the fan mode shown in the popup @default false */
+  hideFanModes?: boolean;
   /** hide the current battery level @default false */
   hideCurrentBatteryLevel?: boolean;
-  /** hide the fan mode fab @default false */
-  hideFanMode?: boolean;
   /** hide the state of the vacuum entity @default false */
   hideState?: boolean;
   /** hide the last updated time @default false */
@@ -63,6 +66,17 @@ const VacuumImage = styled.img`
   width: 60%;
 `;
 
+// .vacuum.on,
+// .vacuum.cleaning,
+// .vacuum.mowing,
+// .vacuum.edgecut,
+// .vacuum.auto,
+// .vacuum.spot,
+// .vacuum.edge,
+// .vacuum.single_room {
+//   animation: cleaning 5s linear infinite;
+// }
+
 const FanModeColumn = styled(Column)`
   position: absolute;
   top: 0%;
@@ -80,14 +94,14 @@ const spin = keyframes`
 `;
 
 const CurrentBatteryLevel = styled.div`
-  position: absolute;
-  top: 0;
-  right: 1rem;
   font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 1rem 0;
   span {
-    position: absolute;
-    top: 0.2rem;
-    right: -1rem;
+    padding-bottom: 0.8rem;
     font-size: 0.8rem;
   }
 `;
@@ -95,8 +109,7 @@ const CurrentBatteryLevel = styled.div`
 const Current = styled.div`
   font-size: 0.6rem;
   text-transform: uppercase;
-  position: absolute;
-  bottom: -0.6rem;
+  padding-bottom: 0.5rem;
 `;
 
 const FanMode = styled(FabCard)<{
@@ -131,82 +144,143 @@ export function VacuumToolbar({
   if (hideToolbar) {
     return null;
   }
-
   switch (entity.state) {
     case 'on':
     case 'auto':
     case 'spot':
     case 'edge':
     case 'single_room':
+    case 'mowing':
+    case 'edgecut':
     case 'cleaning': {
       return <Row gap="0.5rem">
-        <FabCard title="pause" size={35} icon="mdi:pause" onClick={() => entity.api.pause()} />
-        <FabCard title="stop" size={35} icon="mdi:stop" onClick={() => entity.api.stop()} />
-        <FabCard title="return to base" size={35} icon="mdi:home-map-marker"onClick={() => entity.api.returnToBase()} />
+        <ButtonBar>
+          <ButtonBarButton
+            size={35}
+            rippleProps={{
+              preventPropagation: true,
+            }}
+            title="Play"
+            icon={icons['on']}
+            onClick={() => entity.service.pause()} />
+          <ButtonBarButton
+            size={35}
+            rippleProps={{
+              preventPropagation: true,
+            }}
+            title="Stop"
+            icon={icons['stop']}
+            onClick={() => entity.service.stop()} />
+          <ButtonBarButton
+            size={35}
+            rippleProps={{
+              preventPropagation: true,
+            }}
+            title="Return to base"
+            icon={icons['returning']}
+            onClick={() => entity.service.returnToBase()} />
+        </ButtonBar>
       </Row>;
     }
 
     case 'paused': {
       return <Row gap="0.5rem">
-        <FabCard title="start" size={35} icon="mdi:play"
-          onClick={() => entity.api.startPause()}
-        />
-        <FabCard title="return to base" size={35} icon="mdi:home-map-marker"onClick={() => entity.api.returnToBase()} />
+        <ButtonBar>
+          <ButtonBarButton
+            size={35}
+            rippleProps={{
+              preventPropagation: true,
+            }}
+            title="Play"
+            icon={icons['on']}
+            onClick={() => entity.service.pause()} />
+          <ButtonBarButton
+            size={35}
+            rippleProps={{
+              preventPropagation: true,
+            }}
+            title="Return to base"
+            icon={icons['returning']}
+            onClick={() => entity.service.returnToBase()} />
+        </ButtonBar>
       </Row>
     }
 
     case 'returning': {
       return <Row gap="0.5rem">
-        <FabCard title="start" size={35} icon="mdi:play" onClick={() => entity.api.startPause()} />
-        <FabCard title="pause" size={35} icon="mdi:pause" onClick={() => entity.api.pause()} />
+        <ButtonBar>
+          <ButtonBarButton
+            size={35}
+            rippleProps={{
+              preventPropagation: true,
+            }}
+            title="Play"
+            icon={icons['on']}
+            onClick={() => entity.service.pause()} />
+          <ButtonBarButton
+            size={35}
+            rippleProps={{
+              preventPropagation: true,
+            }}
+            title="Stop"
+            icon={icons['stop']}
+            onClick={() => entity.service.stop()} />
+        </ButtonBar>
       </Row>
     }
     case 'docked':
     case 'idle':
     default: {
-      const dockButton = <FabCard title="return to base" size={35} icon="mdi:home-map-marker"onClick={() => entity.api.returnToBase()} />
-
       return <Row gap="0.5rem">
-        <FabCard title="start" size={35} icon="mdi:play" onClick={() => entity.api.start()} />
-        <FabCard title="locate" size={35} icon="mdi:map-marker" onClick={() => entity.api.locate()} />
-        {entity.state === 'idle' ? dockButton : null}
+        <ButtonBar>
+          <ButtonBarButton
+            size={35}
+            rippleProps={{
+              preventPropagation: true,
+            }}
+            title="Play"
+            icon={icons['on']}
+            onClick={() => entity.service.pause()} />
+          <ButtonBarButton
+            size={35}
+            rippleProps={{
+              preventPropagation: true,
+            }}
+            title="Locate"
+            icon={'mdi:map-marker'}
+            onClick={() => entity.service.locate()} />
+          {entity.state === 'idle' && <ButtonBarButton
+            size={35}
+            rippleProps={{
+              preventPropagation: true,
+            }}
+            title="Return to base"
+            icon={icons['returning']}
+            onClick={() => entity.service.returnToBase()} />}
+        </ButtonBar>
       </Row>
     }
   }
 }
 
-/** This layout is shared for the popup for a buttonCard and fabCard when long pressing on a card with a vacuum entity, and also the vacuumCard, this will fill the width/height of the parent component */
+/** TODO TODO */
 export function VacuumControls({
   entity: _entity,
-  vacuumModes,
   hideCurrentBatteryLevel = false,
-  hideFanMode = false,
-  hideState = false,
-  hideUpdated = false,
+  hideFanModes = false,
   hideToolbar = false,
   customImage = DEFAULT_IMAGE,
   ...rest
 }: VacuumControlsProps) {
   const entity = useEntity(_entity);
   const isDocked = entity.state === 'docked';
-  // I suggest you always show the state, regardless of the icon if you don't have something supported in icons, the mode will show
-  // as unknown mode instead of the actual state value, best to show a default icon in the case where you don't
-  // have one set in the icons object
-  const stateIcon = entity.state in icons ? icons[entity.state] : "mdi:question-box-outline";
   const { battery_level, fan_speed, fan_speed_list } = entity.attributes || {};
   const [internalFanSpeed, setInternalFanSpeed] = useState(fan_speed);
-  const stateRef = useRef<HTMLDivElement>(null);
-  const titleValue = useMemo(() => {
-    if (isDocked) {
-      return "docked";
-    }
-    return "cleaning";
-  }, [isDocked]);
 
   useDebounce(
     () => {
       if (typeof internalFanSpeed === 'string') {
-        entity.api.setFanSpeed({
+        entity.service.setFanSpeed({
           fan_speed: internalFanSpeed,
         });
       }
@@ -214,33 +288,31 @@ export function VacuumControls({
     200,
     [internalFanSpeed],
   );
+  const fanSpeedList = fan_speed_list ?? [];
 
   return (
     <Column fullHeight fullWidth wrap="nowrap" {...rest}>
-      {!hideState && <State ref={stateRef}>{titleValue}</State>}
-      {!hideUpdated && <Updated>{entity.custom.relativeTime}</Updated>}
       <VacuumSize>
         <Column gap="0.5rem">
           <VacuumImage src={customImage} />
-          {!hideFanMode && !isDocked && (
+          {!hideFanModes && !isDocked && fanSpeedList.length > 0 && (
             <FanModeColumn gap="0.5rem">
               <FanMode
                 size={40}
                 disabled={isDocked}
-                title="Fan Mode"
+                title={internalFanSpeed}
                 speed={isDocked ? undefined : internalFanSpeed}
                 active={!isDocked}
                 icon="mdi:fan"
                 onClick={() => {
-                  const list = fan_speed_list ?? [];
-                  const currentIndex = list.findIndex(
+                  const currentIndex = fanSpeedList.findIndex(
                     speed => speed.toLowerCase() === (internalFanSpeed ?? '').toLowerCase(),
                   );
-                  const fanSpeed = list[currentIndex + 1]
-                    ? list[currentIndex + 1]
-                    : list[0];
+                  const fanSpeed = fanSpeedList[currentIndex + 1]
+                    ? fanSpeedList[currentIndex + 1]
+                    : fanSpeedList[0];
                   setInternalFanSpeed(fanSpeed);
-                  entity.api.setFanSpeed({
+                  entity.service.setFanSpeed({
                     fan_speed: fanSpeed,
                   });
                 }}
@@ -249,18 +321,16 @@ export function VacuumControls({
               {internalFanSpeed}
             </FanModeColumn>
           )}
-          {!hideCurrentBatteryLevel && (
-            <>
-              <div>Battery Level {battery_level}</div>
-              <CurrentBatteryLevel>
+          {!hideCurrentBatteryLevel && typeof battery_level === 'number' && (
+            <CurrentBatteryLevel>
+              <Current>BATTERY LEVEL</Current>
+              <Row>
+                <Icon icon={batteryIconByLevel(battery_level)} />
                 {battery_level}
                 <span>%</span>
-                <Current>CURRENT</Current>
-              </CurrentBatteryLevel>
-            </>
+              </Row>
+            </CurrentBatteryLevel>
           )}
-          StateIcon: <Icon icon={stateIcon} />
-          State: {entity.state}
           <VacuumToolbar entity={_entity} hideToolbar={hideToolbar} />
         </Column>
       </VacuumSize>

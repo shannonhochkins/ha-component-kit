@@ -1,67 +1,72 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import styled from "@emotion/styled";
-import { motion } from "framer-motion";
-import type { MotionProps } from "framer-motion";
-import {
-  useEntity,
-  useIconByDomain,
-  useIcon,
-  useIconByEntity,
-} from "@hakit/core";
+import { useEntity, useIconByDomain, useHass, useIcon, useIconByEntity, isUnavailableState } from "@hakit/core";
 import { computeDomain } from "@utils/computeDomain";
-import type {
-  DomainService,
-  ExtractDomain,
-  ServiceData,
-  HassEntityWithApi,
-  EntityName,
-} from "@hakit/core";
-import { Ripples, ModalByEntityDomain } from "@components";
-import { useLongPress } from "react-use";
+import type { EntityName } from "@hakit/core";
+import { CardBase, fallback, Tooltip } from "@components";
+import type { TooltipProps, CardBaseProps } from "@components";
 import { startCase, lowerCase } from "lodash";
+import { ErrorBoundary } from "react-error-boundary";
 
-const StyledFabCard = styled(motion.button)<{
-  size: number;
-  active: boolean;
-}>`
-  all: unset;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  text-align: center;
-  border-radius: 50%;
-  background-color: var(--ha-secondary-background);
-  color: ${(props) =>
-    props.active ? `var(--ha-primary-active)` : `var(--ha-primary-color)`};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-color, box-shadow;
-  &:not(:disabled):hover {
-    background-color: var(--ha-secondary-background-hover);
+const StyledFabCard = styled(<E extends EntityName>({ service, serviceData, key, ...props }: CardBaseProps<"button", E>) => (
+  <CardBase
+    key={key}
+    // @ts-expect-error - don't know entity name
+    service={service}
+    // @ts-expect-error - don't know entity name
+    serviceData={serviceData}
+    {...props}
+  />
+))<
+  CardBaseProps<"button", EntityName> & {
+    hasChildren?: boolean;
+    size: number;
   }
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.8;
-  }
-  font-size: 0.7rem;
+>`
+  flex-shrink: 0;
+  border-radius: ${(props) => props.borderRadius};
+  color: ${(props) => (props.active ? `var(--ha-A400)` : `var(--ha-S500-contrast)`)};
   ${(props) =>
     props.size &&
     `
+    font-size: ${props.size * 0.37}px;
     height: ${props.size}px;
-    width: ${props.size}px;
+    ${!props.hasChildren ? `width: ${props.size}px;` : ``}
+  `}
+  > .ripple-parent {
+    > .ripple-inner {
+      height: 100%;
+    }
+  }
+`;
+
+const Contents = styled.div<{
+  size: number;
+  hasChildren: boolean;
+}>`
+  text-align: center;
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  svg {
+    ${(props) => (props.hasChildren ? `margin-right: 0.5rem;` : ``)}
+  }
+  ${(props) => `
+    ${
+      props.hasChildren
+        ? `padding: 0 ${props.size * 0.2}px;`
+        : `
+    `
+    }
   `}
 `;
 
-type Extendable = Omit<React.ComponentProps<"button">, "onClick" | "ref"> &
-  MotionProps;
+type OmitProperties = "as" | "title" | "ref";
 
-export interface FabCardProps<
-  E extends EntityName,
-  S extends DomainService<ExtractDomain<E>>,
-> extends Extendable {
+export interface FabCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
   /** The size of the Fab, this applies to the width and height @default 48 */
   size?: number;
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
@@ -70,117 +75,101 @@ export interface FabCardProps<
   iconColor?: string | null;
   /** will not show any icons */
   noIcon?: boolean;
-  /** The service name, eg "toggle, turnOn ..." */
-  service?: S;
-  /** The data to pass to the service */
-  serviceData?: ServiceData<ExtractDomain<E>, S>;
-  /** The name of your entity */
-  entity?: E;
-  /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
-  onClick?: (entity: HassEntityWithApi<ExtractDomain<E>>) => void;
-  /** optional override to set the Fab to an active state @defaults to entity value */
-  active?: boolean;
-  /** the children of the fabCard, useful or small text */
-  children?: React.ReactNode;
-  /** disable the fab card, onClick will not fire */
-  disabled?: boolean;
+  /** the title used for the tooltip and or modal that will expands, defaults to entity name or domain name  */
+  title?: string;
+  /** the tooltip placement @default "top" */
+  tooltipPlacement?: TooltipProps["placement"];
 }
 
-/** The Fab (Floating Action Button) Card is a simple button with an icon to trigger something on press */
-export function FabCard<
-  E extends EntityName,
-  S extends DomainService<ExtractDomain<E>>,
->({
+function _FabCard<E extends EntityName>({
+  title: _title,
+  tooltipPlacement,
   icon: _icon,
   iconColor,
   noIcon,
   size = 48,
   entity: _entity,
-  serviceData,
-  service,
-  onClick,
   active: _active,
   children,
-  disabled,
+  disabled = false,
+  borderRadius,
+  className,
+  service,
+  serviceData,
+  cssStyles,
+  key,
   ...rest
-}: FabCardProps<E, S>): JSX.Element {
-  const [openModal, setOpenModal] = useState(false);
+}: FabCardProps<E>): React.ReactNode {
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
   });
   const domain = _entity ? computeDomain(_entity) : null;
   const icon = typeof _icon === "string" ? _icon : null;
   const domainIcon = useIconByDomain(domain === null ? "unknown" : domain, {
-    fontSize: size / 2,
-    color: iconColor || "currentcolor",
+    fontSize: `${size / 1.7}px`,
+    color: iconColor ?? undefined,
   });
+  const hasChildren = typeof children !== "undefined";
+  const _borderRadius = hasChildren ? borderRadius ?? "10px" : borderRadius ?? "50%";
+  const isUnavailable = typeof entity?.state === "string" ? isUnavailableState(entity.state) : false;
   const entityIcon = useIconByEntity(_entity || "unknown", {
-    fontSize: size / 2,
-    color: iconColor || "currentcolor",
+    fontSize: `${size / 1.7}px`,
+    color: iconColor ?? undefined,
   });
   const iconElement = useIcon(icon, {
-    fontSize: size / 2,
-    color: iconColor || "currentcolor",
+    fontSize: `${size / 1.7}px`,
+    color: iconColor ?? undefined,
   });
-  const longPressEvent = useLongPress((e) => {
-    // ignore on right click
-    if ("button" in e && e.button === 2) return;
-    setOpenModal(true);
-  });
-  const active =
-    typeof _active === "boolean"
-      ? _active
-      : entity === null
-      ? false
-      : entity.state !== "off";
-  const useApiHandler = useCallback(() => {
-    if (disabled) return;
-    // so we can expect it to throw errors however the parent level ts validation will catch invalid params.
-    if (typeof service === "string" && entity) {
-      // @ts-expect-error - we don't actually know the service at this level
-      const caller = entity.api[service];
-      caller(serviceData);
-    }
-    if (typeof onClick === "function")
-      onClick(entity as HassEntityWithApi<ExtractDomain<E>>);
-  }, [service, entity, serviceData, disabled, onClick]);
-  const title = useMemo(
-    () => (domain === null ? null : startCase(lowerCase(domain))),
-    [domain],
-  );
+  const active = typeof _active === "boolean" ? _active : entity === null ? false : entity.state !== "off" && !isUnavailable;
+
+  const title = useMemo(() => _title ?? (domain === null ? null : startCase(lowerCase(domain))), [_title, domain]);
   return (
     <>
-      <Ripples
-        disabled={disabled}
-        borderRadius="50%"
-        whileTap={{ scale: disabled ? 1 : 0.9 }}
+      <Tooltip
+        key={key}
+        placement={tooltipPlacement}
+        title={`${_title ?? entity?.attributes?.friendly_name ?? title ?? ""}${entity?.state ? ` - ${entity.state}` : ""}`}
       >
         <StyledFabCard
-          disabled={disabled}
+          as="button"
+          title={title}
+          // @ts-expect-error - don't know the entity name, so we can't know the service type
+          service={service}
+          // @ts-expect-error - don't know the entity name, so we can't know the service data
+          serviceData={serviceData}
+          entity={_entity}
+          className={`fab-card ${className ?? ""}`}
+          disabled={disabled || isUnavailable}
           active={active}
-          layoutId={
-            typeof _entity === "string" ? `${_entity}-fab-card` : undefined
-          }
           size={size}
-          {...longPressEvent}
+          borderRadius={_borderRadius}
+          hasChildren={hasChildren}
+          disableColumns={true}
+          cssStyles={`
+            ${globalComponentStyle?.fabCard ?? ""}
+            ${cssStyles ?? ""}
+          `}
           {...rest}
-          onClick={useApiHandler}
         >
-          {noIcon !== true && (iconElement || entityIcon || domainIcon)}
-          {typeof children !== "undefined" ? children : undefined}
+          <Contents size={size} hasChildren={hasChildren}>
+            {noIcon !== true && (iconElement || entityIcon || domainIcon)}
+            {hasChildren ? children : undefined}
+          </Contents>
         </StyledFabCard>
-      </Ripples>
-      {typeof _entity === "string" && (
-        <ModalByEntityDomain
-          entity={_entity as EntityName}
-          title={title || "Unknown title"}
-          onClose={() => {
-            setOpenModal(false);
-          }}
-          open={openModal}
-          id={`${_entity}-fab-card`}
-        />
-      )}
+      </Tooltip>
     </>
+  );
+}
+/** The Fab (Floating Action Button) Card is a simple button with an icon to trigger something on press
+ *
+ * NOTE: This component does NOT have any media queries by default, it will just be the width set by the size prop or the default size.
+ */
+export function FabCard<E extends EntityName>(props: FabCardProps<E>) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "FabCard" })}>
+      <_FabCard {...props} />
+    </ErrorBoundary>
   );
 }

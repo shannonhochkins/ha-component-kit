@@ -4,6 +4,9 @@
     "skipLibCheck": true,
   },
   "rootDir": "./src",
-  "include": ["src", "mocks"],
+  "include": ["src", "../../.d.ts", "./vite-env.d.ts"],
+  "exclude": [
+    "node_modules"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

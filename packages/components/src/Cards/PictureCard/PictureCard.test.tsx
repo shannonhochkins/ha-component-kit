@@ -1,5 +1,5 @@
 // important that these are imported first or the mock won't work.
-import { TestWrapper, onReady } from "@mocks/mockConnection";
+import { TestWrapper, onReady } from "@hass-connect-fake/mocks/mockConnection";
 import { PictureCard } from "@components";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 describe("<PictureCard />", () => {
@@ -10,14 +10,7 @@ describe("<PictureCard />", () => {
   it("renders PictureCard", async () => {
     const mockFunction = jest.fn();
     const { getByTestId } = render(
-      <PictureCard
-        title="Office"
-        image="FAKE"
-        id="test"
-        icon="mdi:cross"
-        onClick={mockFunction}
-        data-testid="picture-card"
-      />,
+      <PictureCard title="Office" image="FAKE" id="test" icon="mdi:cross" onClick={mockFunction} data-testid="picture-card" />,
       {
         wrapper: TestWrapper,
       },

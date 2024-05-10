@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, PictureCard } from "@components";
 import type { PictureCardProps } from "@components";
-import { HassConnect } from "@stories/HassConnectFake";
+import { HassConnect } from "@hass-connect-fake";
 import office from "./office.jpg";
 
 function Template(args: PictureCardProps) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider />
+      <ThemeProvider includeThemeControls />
       <PictureCard {...args} />
     </HassConnect>
   );
@@ -18,7 +18,7 @@ export default {
   component: PictureCard,
   tags: ["autodocs"],
   parameters: {
-    centered: true,
+    fullWidth: true,
   },
   argTypes: {
     title: { control: "text" },

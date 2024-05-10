@@ -1,0 +1,31 @@
+import { Meta, Source } from '@storybook/blocks';
+
+<Meta title="HOOKS/useHistory" />
+
+# useHistory()
+###### `useHistory(entityId: EntityName, options: HistoryOptions)`
+This hook is designed to retrieve the current history information from the entitiy if available.
+
+<b>NOTE:</b> This hook is already connected to the useEntity hook and returned as part of the entity object so you may never need to use this directly.
+
+This will automatically subscribe/unsubscribe for you so there's no need to manage anything.
+
+
+### Example Usage
+
+<Source dark code={`
+import { HassConnect, useHistory } from '@hakit/core';
+function Office() {
+  const history = useHistory('light.some_light');
+  // can now access all properties relating to the history for this light.
+  return <div>
+    DO SOMETHING WITH THE HISTORY!
+  </div>
+}
+function App() {
+  return <HassConnect hassUrl="http://localhost:1234">
+    <Office />
+  </HassConnect>
+}
+`} />
+

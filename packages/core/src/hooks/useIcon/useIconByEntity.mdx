@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/blocks';
+import { Meta, Source } from '@storybook/blocks';
 
 <Meta title="HOOKS/useIconByEntity" />
 
@@ -10,19 +10,19 @@ To find an available icon name, simply search for an icon on [iconify](https://i
 
 ### Example Usage
 
-```ts
+<Source dark code={`
 import { useIconByEntity } from '@hakit/core';
 function IconExample() {
   const icon = useIconByEntity('light.fake_light_1');
   return <div>{icon}</div>
 }
-```
+`}/>
 
 ## Custom Props
 
 If you want to provide props that the Icon component that [@iconify/react](https://iconify.design/docs/icon-components/react/) supports, pass it as the second parameter.
 This example will change the color to red and the size to 40px.
-```ts
+<Source dark code={`
 import { useIconByEntity } from '@hakit/core';
 function IconExample() {
   const icon = useIconByEntity('light.fake_light_1', {
@@ -33,4 +33,4 @@ function IconExample() {
   });
   return <div>{icon}</div>
 }
-```
+`}/>

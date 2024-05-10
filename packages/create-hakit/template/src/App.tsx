@@ -4,8 +4,8 @@ import Dashboard from './Dashboard';
 
 function App() {
   return <>
-    <ThemeProvider />
     <HassConnect hassUrl={import.meta.env.VITE_HA_URL}>
+      <ThemeProvider includeThemeControls />
       <Dashboard />
     </HassConnect>
   </>

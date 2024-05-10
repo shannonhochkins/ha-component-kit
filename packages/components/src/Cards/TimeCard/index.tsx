@@ -1,47 +1,42 @@
 import styled from "@emotion/styled";
-import { useMemo, useEffect, useState } from "react";
-import { useEntity, useHass } from "@hakit/core";
+import { useMemo } from "react";
+import { type HassEntityWithService, useHass, useEntity } from "@hakit/core";
 import { Icon } from "@iconify/react";
-import { Row, Column } from "@components";
-import { motion } from "framer-motion";
-import type { MotionProps } from "framer-motion";
+import { Row, Column, fallback, Alert, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
+import { ErrorBoundary } from "react-error-boundary";
 
-const Card = styled(motion.div)`
-  all: unset;
-  padding: 1rem;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  width: var(--ha-device-time-card-width);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
+const Card = styled(CardBase)`
   cursor: default;
-  background-color: var(--ha-primary-background);
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s cubic-bezier(0.06, 0.67, 0.37, 0.99);
-  &:hover {
-    background-color: var(--ha-primary-background-hover);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
-  }
 `;
 
-const StyledIcon = styled(Icon)`
-  color: var(--ha-primary-active);
-  font-size: 30px;
+const Contents = styled.div`
+  padding: 1rem;
+  height: 100%;
+  .primary-icon {
+    color: var(--ha-A200);
+    font-size: 30px;
+  }
+  &:not(:disabled),
+  &:not(.disabled) {
+    &:hover,
+    &:active {
+      .primary-icon {
+        color: var(--ha-A400);
+      }
+    }
+  }
 `;
 
 const Time = styled.h4`
   all: unset;
   font-size: 2rem;
-  color: var(--ha-primary-color);
+  color: var(--ha-S200-contrast);
   font-weight: 400;
 `;
 const AmOrPm = styled.h4`
   all: unset;
   font-size: 2rem;
-  color: var(--ha-secondary-color);
+  color: var(--ha-S400-contrast);
   font-weight: 300;
 `;
 
@@ -64,13 +59,12 @@ function convertTo12Hour(time: string) {
   return formatter.formatToParts(date);
 }
 
-function formatDate(dateString: string, timeZone: string): string {
+function formatDate(dateString: string): string {
   // Create a new Date object
   const date = new Date(dateString);
 
   // Use Intl.DateTimeFormat to format the date
   const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone,
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -106,59 +100,122 @@ function formatDate(dateString: string, timeZone: string): string {
 
   return formattedDate;
 }
-type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
-export interface TimeCardProps extends Extendable {
-  /** set this to false this if you do not want to include the date, @default true */
-  includeDate?: boolean;
-  /** remove the icon before the time, @default true */
-  includeIcon?: boolean;
+
+type OmitProperties = "title" | "as" | "active" | "ref" | "entity" | "service" | "serviceData" | "longPressCallback" | "modalProps";
+export interface TimeCardProps extends Omit<CardBaseProps<"div">, OmitProperties> {
+  /** add this if you do not want to include the date, @default false */
+  hideDate?: boolean;
+  /** add this if you do not want to include the time, @default false */
+  hideTime?: boolean;
+  /** remove the icon before the time, @default false */
+  hideIcon?: boolean;
   /** the name of the icon, defaults to the sensor.date icon or mdi:calendar @default mdi:calendar */
   icon?: string;
   /** center everything instead of left aligned @default false */
   center?: boolean;
+  /** callback when the card is pressed, it will return the time sensor entity */
+  onClick?: (entity: HassEntityWithService<"sensor">, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
 }
-/** There's no required props on this component, by default it retrieves information from the time and date sensor from your home assistant information and the dates are formatted by the timezone specified in your home assistant settings. */
-export function TimeCard({
-  includeDate = true,
-  includeIcon = true,
+
+const Warning = () => (
+  <Alert type="warning">
+    <p>
+      Time or Date sensor is unavailable, please add the <b>"time"</b> & <b>"date"</b> display options to the <b>"date_time"</b> sensor to
+      your configuration.yaml in Home Assistant.
+    </p>
+    <p>
+      You can follow the guide{" "}
+      <a href="https://www.home-assistant.io/integrations/time_date/" target="_blank">
+        here
+      </a>
+      .
+    </p>
+  </Alert>
+);
+function _TimeCard({
+  hideDate = false,
+  hideIcon = false,
+  hideTime = false,
   center = false,
   icon,
+  className,
+  children,
+  disabled,
+  onClick,
+  cssStyles,
+  key,
   ...rest
-}: TimeCardProps): JSX.Element {
-  const { getConfig } = useHass();
-  const [timeZone, setTimeZone] = useState<string>("UTC");
-  const sensor = useEntity("sensor.time");
-  const dateSensor = useEntity("sensor.date");
-  const parts = convertTo12Hour(sensor.state);
+}: TimeCardProps): React.ReactNode {
+  const { useStore } = useHass();
+  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const timeSensor = useEntity("sensor.time", {
+    returnNullIfNotFound: true,
+  });
+  const dateSensor = useEntity("sensor.date", {
+    returnNullIfNotFound: true,
+  });
   const [formatted, amOrPm] = useMemo(() => {
+    const parts = convertTo12Hour(timeSensor?.state ?? "00:00");
     const hour = parts.find((part) => part.type === "hour");
     const minute = parts.find((part) => part.type === "minute");
     const amOrPm = parts.find((part) => part.type === "dayPeriod");
     return [`${hour?.value}:${minute?.value}`, amOrPm?.value];
-  }, [parts]);
-  useEffect(() => {
-    async function getTimeZone() {
-      const config = await getConfig();
-      if (config) {
-        setTimeZone(config.time_zone);
-      }
-    }
-    getTimeZone();
-  });
+  }, [timeSensor?.state]);
+  const hasOnClick = typeof onClick === "function";
+  if (!dateSensor || !timeSensor) {
+    return <Warning />;
+  }
   return (
-    <Card {...rest}>
-      <Column gap="0.5rem" alignItems={center ? "center" : "flex-start"}>
-        <Row gap="0.5rem" alignItems="center" wrap="nowrap">
-          {includeIcon && (
-            <StyledIcon
-              icon={icon || dateSensor.attributes.icon || "mdi:calendar"}
-            />
+    <Card
+      key={key}
+      cssStyles={`
+        ${globalComponentStyle?.timeCard ?? ""}
+        ${cssStyles ?? ""}
+      `}
+      className={`${className ?? ""} time-card`}
+      whileTap={{ scale: disabled || !hasOnClick ? 1 : 0.9 }}
+      disableActiveState={rest.disableActiveState ?? !hasOnClick}
+      disableRipples={rest.disableRipples ?? !hasOnClick}
+      onClick={(_: unknown, event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        if (hasOnClick) {
+          onClick?.(timeSensor, event);
+        }
+      }}
+      {...rest}
+    >
+      <Contents>
+        <Column className="column" gap="0.5rem" alignItems={center ? "center" : "flex-start"} fullHeight wrap="nowrap">
+          {(!hideIcon || !hideTime) && (
+            <Row className="row" gap="0.5rem" alignItems="center" wrap="nowrap">
+              {!hideIcon && <Icon className="icon primary-icon" icon={icon || dateSensor.attributes.icon || "mdi:calendar"} />}
+              {!hideTime && (
+                <>
+                  <Time className="time">{formatted}</Time>
+                  <AmOrPm className="time-suffix">{amOrPm}</AmOrPm>
+                </>
+              )}
+            </Row>
           )}
-          <Time>{formatted}</Time>
-          <AmOrPm>{amOrPm}</AmOrPm>
-        </Row>
-        {includeDate && <Row>{formatDate(dateSensor.state, timeZone)}</Row>}
-      </Column>
+          {!hideDate && <Row>{formatDate(dateSensor.state)}</Row>}
+        </Column>
+        {children && <div className="children">{children}</div>}
+      </Contents>
     </Card>
+  );
+}
+/** There's no required props on this component, by default it retrieves information from the time and date sensor from your home assistant information and the dates are formatted by the timezone specified in your home assistant settings. */
+export function TimeCard(props: TimeCardProps) {
+  const defaultColumns: AvailableQueries = {
+    xxs: 12,
+    xs: 6,
+    sm: 6,
+    md: 4,
+    lg: 4,
+    xlg: 3,
+  };
+  return (
+    <ErrorBoundary {...fallback({ prefix: "TimeCard" })}>
+      <_TimeCard {...defaultColumns} {...props} />
+    </ErrorBoundary>
   );
 }

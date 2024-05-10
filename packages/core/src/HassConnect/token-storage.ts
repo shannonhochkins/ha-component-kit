@@ -1,55 +1,56 @@
 import { AuthData } from "home-assistant-js-websocket";
 
-const storage =
-  typeof window !== "undefined" ? window.localStorage : ({} as Storage);
+const storage = typeof window !== "undefined" ? window.localStorage : null;
+const supportsStorage = storage !== null;
 
-type TokenCache = {
-  tokens?: AuthData | null;
-  writeEnabled: boolean;
-};
-
-const tokenCache: TokenCache = {
-  tokens: undefined,
-  writeEnabled: true,
-};
-
-const extractSearchParam = (param: string): string | null => {
-  if (typeof location === "undefined") return null; // Protect against server-side execution
-  const urlParams = new URLSearchParams(location.search);
-  return urlParams.get(param);
-};
-
-export function saveTokens(tokens: AuthData | null) {
-  tokenCache.tokens = tokens;
-
-  if (!tokenCache.writeEnabled && extractSearchParam("storeToken") === "true") {
-    tokenCache.writeEnabled = true;
-  }
-
-  if (tokenCache.writeEnabled && typeof storage !== "undefined") {
-    try {
-      storage.hassTokens = JSON.stringify(tokens);
-    } catch (err: unknown) {
-      // write failed, ignore it. Happens if storage is full or private mode.
-    }
+export function clearTokens() {
+  if (supportsStorage) {
+    storage.removeItem("hassTokens");
+  } else {
+    console.error("Local storage not supported on this device.");
   }
 }
 
-export function loadTokens() {
-  if (tokenCache.tokens === undefined && typeof storage !== "undefined") {
+export function saveTokens(tokens: AuthData | null) {
+  if (supportsStorage) {
     try {
-      // Delete the old token cache.
-      delete storage.tokens;
-      const tokens = storage.hassTokens;
-      if (tokens) {
-        tokenCache.tokens = JSON.parse(tokens);
-        tokenCache.writeEnabled = true;
+      storage.setItem("hassTokens", JSON.stringify(tokens));
+    } catch (err: unknown) {
+      // write failed, ignore it. Happens if storage is full or private mode.
+      console.error("Failed to save tokens, probably due to private mode or storage full");
+    }
+  } else {
+    console.error("Local storage not supported on this device.");
+  }
+}
+
+export function loadTokens(hassUrl: string): AuthData | null {
+  if (!supportsStorage) {
+    console.error("Local storage not supported on this device.");
+    return null;
+  }
+  const tokens = storage.getItem("hassTokens");
+  if (tokens) {
+    try {
+      const storedTokens = JSON.parse(tokens) as AuthData;
+      // only return the tokens if the urls match
+      if (storedTokens.hassUrl === hassUrl) {
+        // return the saved tokens
+        return storedTokens;
       } else {
-        tokenCache.tokens = null;
+        // Delete the old token cache.
+        clearTokens();
+        // will force the auth method to retry
+        return null;
       }
     } catch (err: unknown) {
-      tokenCache.tokens = null;
+      console.error("Error parsing stored tokens.", (err as Error)?.message || "");
+      // Delete the old token cache.
+      clearTokens();
+      // will force the auth method to retry
+      return null;
     }
   }
-  return tokenCache.tokens;
+  // at this point, the provider might be fetching / authenticating
+  return null;
 }
