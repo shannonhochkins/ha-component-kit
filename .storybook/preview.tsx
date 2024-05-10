@@ -38,14 +38,19 @@ export default {
           logo.style.maxWidth = '100%';
         }
         const panel = parentDocument.getElementById('storybook-panel-root');
-        if (args.parameters?.addons?.showPanel === false && panel !== null && panel.parentElement !== null) {
+        const shouldHidePanel = args.parameters?.addons?.showPanel === false;
+        if (shouldHidePanel && panel !== null && panel.parentElement !== null) {
           panel.parentElement.style.display = 'none';
         } else if (panel !== null && panel.parentElement !== null) {
           panel.parentElement.style.display = 'flex';
         }
         const previewer = parentDocument.querySelector('#root div div:has(main)') as HTMLElement;
-        if (previewer !== null) {
+        if (previewer !== null && shouldHidePanel) {
           previewer.style.height = '100dvh';
+          previewer.style.width = '100%';
+        } else {
+          // remove the width/height inline styles
+          previewer?.removeAttribute('style');
         }
       }
       if (args.parameters.standalone) {
