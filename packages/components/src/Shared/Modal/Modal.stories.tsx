@@ -158,6 +158,40 @@ function TestingModalStore() {
   );
 }
 
+const exampleComplex = `
+<HassConnect hassUrl="http://localhost:8123">
+  <ThemeProvider />
+  <ModalProvider options={{
+    reducedMotion: "always"
+  }}>
+    // Now by default, all modals rendered within the App will no longer perform the complex animations
+    <App />
+  </ModalProvider>  
+</HassConnect>
+`
+
+function RenderModalProviderDisableAnimation() {
+  return (
+    <HassConnect hassUrl="http://localhost:8123">
+      <ThemeProvider />
+      <ModalProvider
+        options={{
+          reducedMotion: "always", // this will remove complex layout animations completely
+        }}
+      >
+        <Column gap="1rem" fullWidth>
+          <TestingModalStore />
+          <P>
+            By setting the `reducedMotion` to `always` you can disable all complex animations within the modal, this may be useful for devices with lower performance.
+          </P>
+          <Source dark code={exampleComplex} />
+        </Column>
+      </ModalProvider>
+    </HassConnect>
+  );
+
+}
+
 const example = `
 <HassConnect hassUrl="http://localhost:8123">
   <ThemeProvider />
@@ -168,7 +202,6 @@ const example = `
     <App />
   </ModalProvider>  
 </HassConnect>
-
 `;
 
 function RenderModalProvider() {
@@ -411,5 +444,10 @@ export const ModalProviderExample: ModalStory = {
 
 export const ReplaceModalAnimation: ModalStory = {
   render: RenderModalAnimationExample,
+  args: {},
+};
+
+export const DisableComplexAnimations: ModalStory = {
+  render: RenderModalProviderDisableAnimation,
   args: {},
 };

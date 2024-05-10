@@ -319,7 +319,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
             {children}
           </Trigger>
         ) : (
-          <StyledRipples {...rippleProps} borderRadius={_borderRadius} disabled={disabled || isUnavailable}>
+          <StyledRipples {...rippleProps} key={rippleProps?.key} borderRadius={_borderRadius} disabled={disabled || isUnavailable}>
             <Trigger className="contents" onClick={onClickHandler}>
               {children}
             </Trigger>
