@@ -207,20 +207,18 @@ function _CameraCard({
     if (supportsLiveStream) {
       buttons.push(
         <ButtonBarButton
-          {...{
-            key: "live",
-            icon: "mdi:video",
-            size: DEFAULT_ICON_BUTTON_SIZE,
-            disabled: isUnavailable,
-            onClick: () => {
-              setView("live");
-            },
-            active: _view === "live",
-            title: "Live View",
-            tooltipPlacement: "top",
-            rippleProps: {
-              preventPropagation: true,
-            },
+          key="live"
+          icon="mdi:video"
+          size={DEFAULT_ICON_BUTTON_SIZE}
+          disabled={isUnavailable}
+          onClick={() => {
+            setView("live");
+          }}
+          active={_view === "live"}
+          title="Live View"
+          tooltipPlacement="top"
+          rippleProps={{
+            preventPropagation: true,
           }}
         />,
       );
@@ -228,37 +226,33 @@ function _CameraCard({
     buttons.push(
       ...([
         <ButtonBarButton
-          {...{
-            key: "motion",
-            icon: "mdi:video-image",
-            size: DEFAULT_ICON_BUTTON_SIZE,
-            disabled: isUnavailable,
-            onClick: () => {
-              setView("motion");
-            },
-            active: _view === "motion",
-            title: "Motion View",
-            tooltipPlacement: "top",
-            rippleProps: {
-              preventPropagation: true,
-            },
+          key="motion"
+          icon="mdi:video-image"
+          size={DEFAULT_ICON_BUTTON_SIZE}
+          disabled={isUnavailable}
+          onClick={() => {
+            setView("motion");
+          }}
+          active={_view === "motion"}
+          title="Motion View"
+          tooltipPlacement="top"
+          rippleProps={{
+            preventPropagation: true,
           }}
         />,
         <ButtonBarButton
-          {...{
-            key: "poster",
-            onClick: () => {
-              setView("poster");
-            },
-            disabled: isUnavailable,
-            size: DEFAULT_ICON_BUTTON_SIZE,
-            icon: "el:picture",
-            active: _view === "poster",
-            title: "Poster View",
-            tooltipPlacement: "top",
-            rippleProps: {
-              preventPropagation: true,
-            },
+          key="poster"
+          icon="el:picture"
+          size={DEFAULT_ICON_BUTTON_SIZE}
+          disabled={isUnavailable}
+          onClick={() => {
+            setView("poster");
+          }}
+          active={_view === "poster"}
+          title="Poster View"
+          tooltipPlacement="top"
+          rippleProps={{
+            preventPropagation: true,
           }}
         />,
       ] satisfies ButtonBarProps["children"]),
@@ -310,6 +304,7 @@ function _CameraCard({
                         rippleProps: {
                           preventPropagation: true,
                           ...(child?.props?.rippleProps ?? {}),
+                          key: child.key || index,
                         },
                       });
                     }
