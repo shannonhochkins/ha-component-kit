@@ -12,6 +12,7 @@
     "noEmit": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react",
     "declaration": true,
     "strict": true,
     "noUnusedLocals": true,

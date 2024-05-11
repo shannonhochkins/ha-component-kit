@@ -11,7 +11,7 @@ import {
   localizeStateMessage,
   localizeTriggerSource,
   timeAgo,
-  localize,
+  localizeLogbook,
   ON,
   type EntityRegistryEntry,
   type LogbookEntry,
@@ -151,7 +151,7 @@ function _LogBookRenderer({
   id,
   style,
   ...rest
-}: LogBookRendererProps) {
+}: LogBookRendererProps): React.ReactNode {
   const logs = useLogs(entity, options);
   const { useStore, getServices, joinHassUrl } = useHass();
   const entities = useStore((state) => state.entities);
@@ -328,7 +328,7 @@ function _LogBookRenderer({
             : undefined;
         return (
           <>
-            <span className="triggered-by">{localize("triggered_by_state_of")}</span>
+            <span className="triggered-by">{localizeLogbook("triggered_by_state_of")}</span>
             {_renderEntity(item.context_entity_id, item.context_entity_id_name)}
             <span>
               {historicStateObj
@@ -342,7 +342,7 @@ function _LogBookRenderer({
       if (item.context_event_type === "call_service") {
         return (
           <>
-            <span className="triggered-by">{localize("triggered_by_service")}</span>
+            <span className="triggered-by">{localizeLogbook("triggered_by_service")}</span>
             {item.context_domain && item.context_service ? (
               <span className="service-trigger-details">
                 {item.context_domain}:{" "}
@@ -363,7 +363,7 @@ function _LogBookRenderer({
         return (
           <>
             <span className="triggered-by">
-              {localize(item.context_event_type === "automation_triggered" ? "triggered_by_automation" : "triggered_by_script")}
+              {localizeLogbook(item.context_event_type === "automation_triggered" ? "triggered_by_automation" : "triggered_by_script")}
             </span>
             {_renderEntity(item.context_entity_id, item.context_entity_id_name)}
             {item.context_message ? _formatMessageWithPossibleEntity(contextTriggerSource, seenEntityIds, undefined) : null}
@@ -374,7 +374,7 @@ function _LogBookRenderer({
       // These are not localizable
       return (
         <>
-          <span className="triggered-by">{localize("triggered_by")}</span>
+          <span className="triggered-by">{localizeLogbook("triggered_by")}</span>
           <span className="trigger-name">{item.context_name}</span>
           {_formatMessageWithPossibleEntity(item.context_message, seenEntityIds, item.context_entity_id)}
           {_renderUnseenContextSourceEntity(item, seenEntityIds)}

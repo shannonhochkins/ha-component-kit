@@ -13,9 +13,10 @@
     "library",
     "api",
     "ha-component-kit",
-    "hakit/core",
-    "hakit/components",
+    "@hakit/core",
+    "@hakit/components",
     "dashboard",
+    "smarthome",
     "custom"
   ],
   "engines": {

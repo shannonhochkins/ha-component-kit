@@ -21,6 +21,7 @@ export { useWeather, type UseWeatherOptions } from "./useWeather";
 export { getSupportedForecastTypes, type ForecastType, type ModernForecastType } from "./useWeather/helpers";
 export * from "./useLogs/logbook";
 export { useAreas, type Area } from "./useAreas";
+export { localize, useTranslations, updateLocalTranslations } from "./useTranslations";
 // other subscription based models used by useAreas
 export { subscribeAreaRegistry, type AreaRegistryEntry } from "./useAreas/subscribe/areas";
 export { subscribeEntityRegistry, type EntityRegistryEntry } from "./useAreas/subscribe/entities";
