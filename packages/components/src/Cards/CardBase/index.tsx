@@ -40,7 +40,7 @@ const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
     return styled(MotionElement)``;
   }
   return styled(MotionElement, {
-    shouldForwardProp: (prop) => isValidProp(prop) || prop === "layoutId",
+    shouldForwardProp: (prop) => isValidProp(prop),
   })<{
     disableActiveState: boolean;
   }>`

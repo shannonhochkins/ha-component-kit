@@ -1,3 +1,30 @@
+# 3.2.0
+## @hakit/components
+- NEW VacuumCard - A new card to interact with vacuum entities, this card will show the current state of the vacuum, the battery level, the current cleaning status and the ability to start, pause, stop and return to dock. It provides the ability to create custom shortcuts and much more, you can long press on the card to display the new custom popup. Demo available on the main [demo](https://shannonhochkins.github.io/ha-component-kit/iframe.html?args=&id=introduction-demo--default&viewMode=story#) page.
+- NEW - ModalProvider - a new provider to wrap your application to control global animations, full examples and information is available in the [documentation](https://shannonhochkins.github.io/ha-component-kit) link. Here you can also provide custom animations for the modals, disable complex animations, animate the modal, header and content of the modal independently with framer-motion.
+- BUGFIX - Modal animations were broken in the previous version, this has been fixed and now the animations are working as expected. Additionally, the documentation mentioned the default duration of animations was 0.25s however I noticed the default was actually set to 1s making animations and interactions feel sluggish and slow.
+- BUGFIX - Modal animations previously had a glitch where it was expanding and zooming in whilst closing, this has been fixed
+- BUGFIX - Modal animations with round edges previously weren't animating correctly and i noticed that this is because framer-motion cannot transition border radius with rem values so this has been fixed to transition to pixels instead.
+- NEW - `useModalOptions` hook to retrieve the modal store values, not really necessary for general use so wasn't documented in storybook, however this is available from the components package.
+- NEW - Modal now has the ability to hide the logbook option
+- NEW - SidebarCard, Group - These now have the ability to disable the collapsible functionality, Thanks to @kdkavanagh for this contribution!
+- NEW - WeatherCard - now has the ability to add rows to the forecast, ability to hide the forecast, day and title and the forecast toggle. Thanks to @kdkavanagh for this contribution!
+- BREAKING - potential breaking change if users have custom styles on the ButtonBar component as the base class was changed from `button-group` to `button-bar` to align with the rest of the components.
+
+## @hakit/core
+- NEW useTranslations hook - this hook will return translations from your home assistant instance, this may be useful if you intend to display content in your own language, to add more categories to fetch, update HassConnect to include the required categories. NOTE - this currently isn't wired into the entire application, there's currently no way to fetch the common language from home assistant via websockets and I've opened an [issue](https://github.com/home-assistant/frontend/issues/20769) with home assistant to fix this issue.
+- NEW - HassConnect - option to add additional translation categories to fetch from home assistant, all available options/categories are typed in typescript so it's easy to see what's available. This will be available when using the `useTranslations` hook within your application.
+- NEW - localize - a new helper method to retrieve a value from the fetched translations, this can be used anywhere in your application and doesn't need to abide by react hook rules, you can fetch and also search/replace values with this helper method.
+
+
+## Storybook
+- Fixed bug that wasn't showing the interaction/actions panel on stories
+- Rearranged sidebar so COMPONENTS is before HOOKS
+
+## General
+- Fixed multiple typescript issues
+
+
 # 3.1.5
 ## @hakit/components
 - Previously all react props passed to the component were rendering as props on output elements, this wasn't visible with vite as it strips these out compile time, webpack however does not and some other bundlers don't either, now the cards will only render valid html props passed to components.

@@ -71,7 +71,6 @@ There's a [Home Assistant Addon](ADDON.md) available which will serve your dashb
 
 
 ### Supported Cards
-- [FamilyCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-familycard--docs)
 - [AreaCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-areacard--docs)
 - [ButtonCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-buttoncard--docs)
 - [ClimateCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-climatecard--docs)
@@ -79,6 +78,7 @@ There's a [Home Assistant Addon](ADDON.md) available which will serve your dashb
 - [CalendarCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-calendarcard--docs)
 - [EntitiesCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-entitiescard--docs)
 - [FabCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-fabcard--docs)
+- [FamilyCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-familycard--docs)
 - [GarbageCollectionCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-garbagecollectioncard--docs)
 - [MediaPlayerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-mediaplayercard--docs)
 - [PictureCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-picturecard--docs)
@@ -87,6 +87,7 @@ There's a [Home Assistant Addon](ADDON.md) available which will serve your dashb
 - [TimeCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-timecard--docs)
 - [TriggerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-triggercard--docs)
 - [WeatherCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-weathercard--docs)
+- [NEW VacuumCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-vacuumcard--docs)
 
 ### Known Issues
 - Anything else? Please, if you notice anything that doesn't feel / look right, please report it, i rely on user testing to make improvements.
