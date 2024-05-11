@@ -81,6 +81,7 @@ function _ClimateCard({
   service,
   serviceData,
   cssStyles,
+  key,
   ...rest
 }: ClimateCardProps): React.ReactNode {
   const { getConfig, useStore } = useHass();
@@ -121,6 +122,7 @@ function _ClimateCard({
   return (
     <>
       <StyledClimateCard
+        key={key}
         disableActiveState
         className={`climate-card ${className ?? ""}`}
         disabled={disabled || isUnavailable}
@@ -284,8 +286,6 @@ function _ClimateCard({
   );
 }
 /** The ClimateCard is a card to easily interact with climate entities, whilst it's not documented below, the types are correct and you can also pass through anything related to ModalClimateControlsProps
- *
- * I will be updating this card as it's not as wildly supported as other cards where it checks for device support, so if you have any issues please let me know.
  */
 export function ClimateCard(props: ClimateCardProps) {
   const defaultColumns: AvailableQueries = {

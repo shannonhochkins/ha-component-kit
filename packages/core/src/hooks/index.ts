@@ -8,7 +8,7 @@ import { useService as useServiceActual } from "./useService";
  */
 export const useApi = useServiceActual;
 export { useService, createService } from "./useService";
-export { useIconByDomain, useIcon, useIconByEntity, getIconByEntity } from "./useIcon";
+export { useIconByDomain, useIcon, useIconByEntity, getIconByEntity, batteryIconByLevel } from "./useIcon";
 export { useLightBrightness } from "./useLightBrightness";
 export { useLightTemperature } from "./useLightTemperature";
 export { useLightColor } from "./useLightColor";
@@ -21,6 +21,7 @@ export { useWeather, type UseWeatherOptions } from "./useWeather";
 export { getSupportedForecastTypes, type ForecastType, type ModernForecastType } from "./useWeather/helpers";
 export * from "./useLogs/logbook";
 export { useAreas, type Area } from "./useAreas";
+export { localize, useTranslations, updateLocalTranslations } from "./useTranslations";
 // other subscription based models used by useAreas
 export { subscribeAreaRegistry, type AreaRegistryEntry } from "./useAreas/subscribe/areas";
 export { subscribeEntityRegistry, type EntityRegistryEntry } from "./useAreas/subscribe/entities";

@@ -243,8 +243,10 @@ type Extendable = Omit<React.ComponentProps<"div">, "ref"> & MotionProps;
 export interface SidebarCardProps extends Extendable {
   /** should the time card be included by default @default true */
   includeTimeCard?: boolean;
-  /** should the sidebar start opened @default true */
+  /** should the sidebar start opened,  True by default if collapsible=false @default true */
   startOpen?: boolean;
+  /** Whether the sidebar can be collapsed by the end-user @default true */
+  collapsible?: boolean;
   /** the props for the weather card , if omitted, weather card is not rendered @default undefined */
   weatherCardProps?: WeatherCardProps;
   /** Adding menu items can also add routes by default, disabled this if need be @default true */
@@ -266,6 +268,7 @@ function _SidebarCard({
     center: true,
   },
   startOpen = true,
+  collapsible = true,
   menuItems = [],
   children,
   autoIncludeRoutes = true,
@@ -273,6 +276,7 @@ function _SidebarCard({
   className,
   cssStyles,
   sortSidebarMenuItems,
+  key,
   ...rest
 }: SidebarCardProps) {
   const [open, setOpen] = useState(startOpen);
@@ -320,6 +324,7 @@ function _SidebarCard({
         `}
       />
       <StyledSidebarCard
+        key={key ?? `ha-sidebar-closed`}
         css={css`
           ${cssStyles ?? ""}
         `}
@@ -329,7 +334,6 @@ function _SidebarCard({
           maxWidth: open ? `var(--ha-device-sidebar-card-width-expanded, 19rem)` : `var(--ha-device-sidebar-card-width-collapsed, 5rem)`,
         }}
         initial={false}
-        key={`ha-sidebar-closed`}
         {...rest}
       >
         <Column className="column" wrap="nowrap" fullHeight fullWidth alignItems="flex-start" justifyContent="space-between">
@@ -359,30 +363,32 @@ function _SidebarCard({
                   {...timeCardProps}
                 />
               )}
-              <HamburgerMenu
-                open={open}
-                className="hamburger-menu"
-                key="hamburger-menu-open"
-                animate={{
-                  width: devices.xxs || devices.xs ? "auto" : !open ? "100%" : "40%",
-                  position: devices.xxs || devices.xs ? "fixed" : "relative",
-                }}
-              >
-                <motion.li
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setOpen(!open);
+              {collapsible && (
+                <HamburgerMenu
+                  open={open}
+                  className="hamburger-menu"
+                  key="hamburger-menu-open"
+                  animate={{
+                    width: devices.xxs || devices.xs ? "auto" : !open ? "100%" : "40%",
+                    position: devices.xxs || devices.xs ? "fixed" : "relative",
                   }}
                 >
-                  <a
-                    style={{
-                      justifyContent: "center",
+                  <motion.li
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setOpen(!open);
                     }}
                   >
-                    <Icon className="icon" icon={open ? "mdi:close" : "mdi:menu"} />
-                  </a>
-                </motion.li>
-              </HamburgerMenu>
+                    <a
+                      style={{
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Icon className="icon" icon={open ? "mdi:close" : "mdi:menu"} />
+                    </a>
+                  </motion.li>
+                </HamburgerMenu>
+              )}
             </Row>
             <Divider className="divider" />
             <Menu open={open} className="menu">

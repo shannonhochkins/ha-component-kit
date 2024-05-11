@@ -131,7 +131,7 @@ const locale = {
   not_loaded: "[%key:ui::dialogs::helper_settings::platform_not_loaded%]",
 } as const;
 
-export const localize = (str: keyof typeof locale, search?: string, replace?: string) => {
+export const localizeLogbook = (str: keyof typeof locale, search?: string, replace?: string) => {
   if (search && replace) {
     return locale[str].replace(`{${search}}`, replace);
   }
@@ -154,7 +154,7 @@ export const localizeTriggerSource = (source: string) => {
       return source.replace(
         triggerPhrase,
         // @ts-expect-error - this is fine, it'll return undefined
-        `${localize(`${triggerPhrases[triggerPhrase]}`)}`,
+        `${localizeLogbook(`${triggerPhrases[triggerPhrase]}`)}`,
       );
     }
   }
@@ -166,15 +166,15 @@ export const localizeStateMessage = (state: string, stateObj: HassEntity, domain
     case "device_tracker":
     case "person":
       if (state === "not_home") {
-        return localize(`was_away`);
+        return localizeLogbook(`was_away`);
       }
       if (state === "home") {
-        return localize(`was_at_home`);
+        return localizeLogbook(`was_at_home`);
       }
-      return localize(`was_at_state`, "state", state);
+      return localizeLogbook(`was_at_state`, "state", state);
 
     case "sun":
-      return state === "above_horizon" ? localize(`rose`) : localize(`set`);
+      return state === "above_horizon" ? localizeLogbook(`rose`) : localizeLogbook(`set`);
 
     case "binary_sensor": {
       const isOn = state === ON;
@@ -184,19 +184,19 @@ export const localizeStateMessage = (state: string, stateObj: HassEntity, domain
       switch (device_class) {
         case "battery":
           if (isOn) {
-            return localize(`was_low`);
+            return localizeLogbook(`was_low`);
           }
           if (isOff) {
-            return localize(`was_normal`);
+            return localizeLogbook(`was_normal`);
           }
           break;
 
         case "connectivity":
           if (isOn) {
-            return localize(`was_connected`);
+            return localizeLogbook(`was_connected`);
           }
           if (isOff) {
-            return localize(`was_disconnected`);
+            return localizeLogbook(`was_disconnected`);
           }
           break;
 
@@ -205,46 +205,46 @@ export const localizeStateMessage = (state: string, stateObj: HassEntity, domain
         case "opening":
         case "window":
           if (isOn) {
-            return localize(`was_opened`);
+            return localizeLogbook(`was_opened`);
           }
           if (isOff) {
-            return localize(`was_closed`);
+            return localizeLogbook(`was_closed`);
           }
           break;
 
         case "lock":
           if (isOn) {
-            return localize(`was_unlocked`);
+            return localizeLogbook(`was_unlocked`);
           }
           if (isOff) {
-            return localize(`was_locked`);
+            return localizeLogbook(`was_locked`);
           }
           break;
 
         case "plug":
           if (isOn) {
-            return localize(`was_plugged_in`);
+            return localizeLogbook(`was_plugged_in`);
           }
           if (isOff) {
-            return localize(`was_unplugged`);
+            return localizeLogbook(`was_unplugged`);
           }
           break;
 
         case "presence":
           if (isOn) {
-            return localize(`was_at_home`);
+            return localizeLogbook(`was_at_home`);
           }
           if (isOff) {
-            return localize(`was_away`);
+            return localizeLogbook(`was_away`);
           }
           break;
 
         case "safety":
           if (isOn) {
-            return localize(`was_unsafe`);
+            return localizeLogbook(`was_unsafe`);
           }
           if (isOff) {
-            return localize(`was_safe`);
+            return localizeLogbook(`was_safe`);
           }
           break;
 
@@ -260,19 +260,19 @@ export const localizeStateMessage = (state: string, stateObj: HassEntity, domain
         case "sound":
         case "vibration":
           if (isOn) {
-            return localize(`detected_device_class`, "device_class", device_class);
+            return localizeLogbook(`detected_device_class`, "device_class", device_class);
           }
           if (isOff) {
-            return localize(`cleared_device_class`, "device_class", device_class);
+            return localizeLogbook(`cleared_device_class`, "device_class", device_class);
           }
           break;
 
         case "tamper":
           if (isOn) {
-            return localize(`detected_tampering`);
+            return localizeLogbook(`detected_tampering`);
           }
           if (isOff) {
-            return localize(`cleared_tampering`);
+            return localizeLogbook(`cleared_tampering`);
           }
           break;
       }
@@ -283,51 +283,51 @@ export const localizeStateMessage = (state: string, stateObj: HassEntity, domain
     case "cover":
       switch (state) {
         case "open":
-          return localize(`was_opened`);
+          return localizeLogbook(`was_opened`);
         case "opening":
-          return localize(`is_opening`);
+          return localizeLogbook(`is_opening`);
         case "closing":
-          return localize(`is_closing`);
+          return localizeLogbook(`is_closing`);
         case "closed":
-          return localize(`was_closed`);
+          return localizeLogbook(`was_closed`);
       }
       break;
 
     case "event": {
-      return localize(`detected_event_no_type`);
+      return localizeLogbook(`detected_event_no_type`);
     }
 
     case "lock":
       switch (state) {
         case "unlocked":
-          return localize(`was_unlocked`);
+          return localizeLogbook(`was_unlocked`);
         case "locking":
-          return localize(`is_locking`);
+          return localizeLogbook(`is_locking`);
         case "unlocking":
-          return localize(`is_unlocking`);
+          return localizeLogbook(`is_unlocking`);
         case "locked":
-          return localize(`was_locked`);
+          return localizeLogbook(`was_locked`);
         case "jammed":
-          return localize(`is_jammed`);
+          return localizeLogbook(`is_jammed`);
       }
       break;
   }
 
   if (state === ON) {
-    return localize(`turned_on`);
+    return localizeLogbook(`turned_on`);
   }
 
   if (state === OFF) {
-    return localize(`turned_off`);
+    return localizeLogbook(`turned_off`);
   }
 
   if (state === UNKNOWN) {
-    return localize(`became_unknown`);
+    return localizeLogbook(`became_unknown`);
   }
 
   if (state === UNAVAILABLE) {
-    return localize(`became_unavailable`);
+    return localizeLogbook(`became_unavailable`);
   }
 
-  return localize(`changed_to_state`, "state", stateObj ? stateObj.state : state);
+  return localizeLogbook(`changed_to_state`, "state", stateObj ? stateObj.state : state);
 };

@@ -21,7 +21,7 @@ import type {
   Store,
 } from "@hakit/core";
 import { isArray } from "lodash";
-import { HassContext } from '@hakit/core';
+import { HassContext, updateLocalTranslations } from '@hakit/core';
 import { entities as ENTITIES } from './mocks/mockEntities';
 import fakeApi from './mocks/fake-call-service';
 import { create } from "zustand";
@@ -31,6 +31,7 @@ import { mockCallApi } from './mocks/fake-call-api';
 import reolinkSnapshot from './assets/reolink-snapshot.jpg';
 import { logs } from './mocks/mockLogs';
 import {dailyForecast, hourlyForecast} from './mocks/mockWeather';
+import { translations } from "./mocks/translations";
 
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
@@ -426,6 +427,10 @@ function HassProvider({
     };
   }, [routes, setHash, setRoutes]);
 
+  useEffect(() => {
+    updateLocalTranslations(translations);
+  }, [])
+
   const joinHassUrl = useCallback((path: string) => path, []);
 
   const getRoute = useCallback(
@@ -465,7 +470,7 @@ function HassProvider({
 }
 
 
-import { ReactNode, ReactElement } from "react";
+import { ReactNode } from "react";
 
 export type HassConnectProps = {
   /** Any react node to render when authenticated */
@@ -480,7 +485,7 @@ export const HassConnect = ({
   children,
   hassUrl,
   fallback = null,
-}: HassConnectProps): ReactElement => {
+}: HassConnectProps): ReactNode => {
   return (
     <HassProvider hassUrl={hassUrl}>
       {(ready) => (ready ? children : fallback)}

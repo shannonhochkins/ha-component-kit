@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "3.1.5",
+  "version": "3.2.0",
   "private": false,
   "keywords": [
     "react",
@@ -13,9 +13,10 @@
     "library",
     "api",
     "ha-component-kit",
-    "hakit/core",
-    "hakit/components",
+    "@hakit/core",
+    "@hakit/components",
     "dashboard",
+    "smarthome",
     "custom"
   ],
   "engines": {
@@ -68,7 +69,7 @@
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
     "@fullcalendar/react": ">=6.x.x",
-    "@hakit/core": "^3.1.5",
+    "@hakit/core": "^3.2.0",
     "@use-gesture/react": ">=10.x",
     "autolinker": ">=4.x",
     "framer-motion": ">=10.x",
@@ -83,7 +84,8 @@
     "react-resize-detector": ">=9.x.x",
     "react-use": ">=17.x",
     "use-debounce": ">=9.x",
-    "use-long-press": ">=3.x.x"
+    "use-long-press": ">=3.x.x",
+    "zustand": "^4.x.x"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.12",

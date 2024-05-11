@@ -27,8 +27,9 @@ import {
   ERR_INVALID_AUTH,
   ERR_INVALID_HTTPS_TO_HTTP,
 } from "home-assistant-js-websocket";
-import { isArray, snakeCase, isEmpty } from "lodash";
-import { ServiceData, SnakeOrCamelDomains, DomainService, Target } from "@typings";
+import { isArray, snakeCase, isEmpty, uniq } from "lodash";
+import { ServiceData, SnakeOrCamelDomains, DomainService, Target, TranslationCategory } from "@typings";
+import { updateLocalTranslations } from "../hooks/useTranslations";
 import { saveTokens, loadTokens, clearTokens } from "./token-storage";
 import { diff } from "deep-object-diff";
 import { create } from "zustand";
@@ -67,7 +68,8 @@ export type SupportedComponentOverrides =
   | "weatherCard"
   | "menu"
   | "personCard"
-  | "familyCard";
+  | "familyCard"
+  | "vacuumCard";
 export interface Store {
   entities: HassEntities;
   setEntities: (entities: HassEntities) => void;
@@ -233,6 +235,8 @@ export interface HassProviderProps {
   children: (ready: boolean) => React.ReactNode;
   /** the home assistant url */
   hassUrl: string;
+  /** additional translations to fetch to retrieve with the store, @default ["title"]  */
+  translations?: TranslationCategory[];
 }
 
 function translateErr(err: number | string | Error | unknown): string {
@@ -355,7 +359,7 @@ const ignoreForDiffCheck = (
   };
 };
 
-export function HassProvider({ children, hassUrl }: HassProviderProps) {
+export function HassProvider({ children, hassUrl, translations }: HassProviderProps) {
   const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
   const authenticated = useRef(false);
   const fetchedConfig = useRef(false);
@@ -511,19 +515,45 @@ export function HassProvider({ children, hassUrl }: HassProviderProps) {
     }
   }
 
+  const fetchTranslations = useCallback(
+    async (connection: Connection, config: HassConfig | null): Promise<Record<string, string>> => {
+      const categories = uniq(["title", ...(translations ?? [])]);
+      const responses = await Promise.all(
+        categories.map(async (category) => {
+          const response = await connection.sendMessagePromise<{ resources: Record<string, string> }>({
+            type: "frontend/get_translations",
+            category,
+            language: config?.language,
+          });
+          return response.resources;
+        }),
+      );
+      return responses.reduce<Record<string, string>>((acc, current) => ({ ...acc, ...current }), {} as Record<string, string>);
+    },
+    [translations],
+  );
+
   useEffect(() => {
     if (config === null && !fetchedConfig.current && connection !== null) {
       fetchedConfig.current = true;
       getConfig()
         .then((config) => {
-          setConfig(config);
+          fetchTranslations(connection, config)
+            .then((translations) => {
+              // purposely setting config here to delay the rendering process of the application until translations are retrieved
+              setConfig(config);
+              updateLocalTranslations(translations);
+            })
+            .catch((e) => {
+              setError(`Error retrieving translations from Home Assistant: ${e?.message ?? e}`);
+            });
         })
         .catch((e) => {
           fetchedConfig.current = false;
           setError(`Error retrieving configuration from Home Assistant: ${e?.message ?? e}`);
         });
     }
-  }, [config, connection, getConfig, setConfig, setError]);
+  }, [config, connection, fetchTranslations, getConfig, setConfig, setError]);
 
   useEffect(() => {
     if (location.hash === "") return;

@@ -5,15 +5,20 @@ import { css } from "@emotion/react";
 import { ReactElement, Children, isValidElement, cloneElement } from "react";
 
 type Extendable = React.ComponentPropsWithoutRef<"div">;
+
+// Define the allowed children types
+type AllowedChild = ReactElement<typeof ButtonBarButton> | false | null;
+type AllowedChildren = AllowedChild | AllowedChild[];
+
 export interface ButtonBarProps extends Extendable {
-  /** standard flex css properties for align-items, @default center */
+  /** standard flex css properties for align-items, @default "center" */
   alignItems?: React.CSSProperties["alignItems"];
-  /** standard flex css properties for justify-content, @default center */
+  /** standard flex css properties for justify-content, @default "center" */
   justifyContent?: React.CSSProperties["justifyContent"];
-  /** standard flex css properties for flex-wrap property, @default wrap */
+  /** standard flex css properties for flex-wrap property, @default "wrap" */
   wrap?: React.CSSProperties["justifyContent"];
   /** the children for the ButtonBar, it accepts ButtonBarButton components */
-  children: ReactElement<typeof ButtonBarButton> | ReactElement<typeof ButtonBarButton>[];
+  children: AllowedChildren;
 }
 
 const ButtonBarParent = styled.div<Partial<ButtonBarProps>>`
@@ -51,7 +56,7 @@ const ButtonBarInner = styled.div<Partial<ButtonBarProps>>`
   }
 `;
 
-function _ButtonBar({ alignItems, justifyContent, wrap, style, id, className, cssStyles, children, ...rest }: ButtonBarProps) {
+function _ButtonBar({ key, alignItems, justifyContent, wrap, style, id, className, cssStyles, children, ...rest }: ButtonBarProps) {
   const childrenWithKeys = Children.map(children, (child, index) => {
     if (isValidElement(child)) {
       return cloneElement(child, {
@@ -62,11 +67,12 @@ function _ButtonBar({ alignItems, justifyContent, wrap, style, id, className, cs
   });
   return (
     <ButtonBarParent
+      key={key}
       id={id ?? ""}
       css={css`
         ${cssStyles ?? ""}
       `}
-      className={`button-group ${className ?? ""}`}
+      className={`button-bar ${className ?? ""}`}
       style={{
         ...(style ?? {}),
       }}

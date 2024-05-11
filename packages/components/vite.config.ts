@@ -35,6 +35,7 @@ const globals = {
   "@fullcalendar/list": "@fullcalendar/list",
   'autolinker': 'autolinker',
   'use-long-press': 'use-long-press',
+  'zustand': 'zustand',
 };
 
 // https://vitejs.dev/config/

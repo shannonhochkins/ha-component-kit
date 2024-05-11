@@ -23,9 +23,9 @@ import { Icon } from "@iconify/react";
 type OmitProperties = "onClick" | "children" | "active" | "as" | "title" | "ref" | "disableActiveState";
 
 type Extendable = Omit<CardBaseProps<"div", FilterByDomain<EntityName, "camera">>, OmitProperties>;
-export interface CameraCardProps extends Extendable {
+export interface CameraCardProps<E extends FilterByDomain<EntityName, "camera">> extends Extendable {
   /** the camera entity to display */
-  entity: FilterByDomain<EntityName, "camera">;
+  entity: E;
   /** override the camera name displayed in the card */
   name?: string;
   /** hide the camera name @default false */
@@ -110,7 +110,7 @@ const StyledIcon = styled(Icon)`
 
 const DEFAULT_ICON_BUTTON_SIZE = 30;
 
-function _CameraCard({
+function _CameraCard<E extends FilterByDomain<EntityName, "camera">>({
   entity,
   view = "poster",
   autoPlay = true,
@@ -128,8 +128,9 @@ function _CameraCard({
   service,
   serviceData,
   cssStyles,
+  key,
   ...rest
-}: CameraCardProps) {
+}: CameraCardProps<E>) {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const cameraUpdater = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -206,20 +207,18 @@ function _CameraCard({
     if (supportsLiveStream) {
       buttons.push(
         <ButtonBarButton
-          {...{
-            key: "live",
-            icon: "mdi:video",
-            size: DEFAULT_ICON_BUTTON_SIZE,
-            disabled: isUnavailable,
-            onClick: () => {
-              setView("live");
-            },
-            active: _view === "live",
-            title: "Live View",
-            tooltipPlacement: "top",
-            rippleProps: {
-              preventPropagation: true,
-            },
+          key="live"
+          icon="mdi:video"
+          size={DEFAULT_ICON_BUTTON_SIZE}
+          disabled={isUnavailable}
+          onClick={() => {
+            setView("live");
+          }}
+          active={_view === "live"}
+          title="Live View"
+          tooltipPlacement="top"
+          rippleProps={{
+            preventPropagation: true,
           }}
         />,
       );
@@ -227,37 +226,33 @@ function _CameraCard({
     buttons.push(
       ...([
         <ButtonBarButton
-          {...{
-            key: "motion",
-            icon: "mdi:video-image",
-            size: DEFAULT_ICON_BUTTON_SIZE,
-            disabled: isUnavailable,
-            onClick: () => {
-              setView("motion");
-            },
-            active: _view === "motion",
-            title: "Motion View",
-            tooltipPlacement: "top",
-            rippleProps: {
-              preventPropagation: true,
-            },
+          key="motion"
+          icon="mdi:video-image"
+          size={DEFAULT_ICON_BUTTON_SIZE}
+          disabled={isUnavailable}
+          onClick={() => {
+            setView("motion");
+          }}
+          active={_view === "motion"}
+          title="Motion View"
+          tooltipPlacement="top"
+          rippleProps={{
+            preventPropagation: true,
           }}
         />,
         <ButtonBarButton
-          {...{
-            key: "poster",
-            onClick: () => {
-              setView("poster");
-            },
-            disabled: isUnavailable,
-            size: DEFAULT_ICON_BUTTON_SIZE,
-            icon: "el:picture",
-            active: _view === "poster",
-            title: "Poster View",
-            tooltipPlacement: "top",
-            rippleProps: {
-              preventPropagation: true,
-            },
+          key="poster"
+          icon="el:picture"
+          size={DEFAULT_ICON_BUTTON_SIZE}
+          disabled={isUnavailable}
+          onClick={() => {
+            setView("poster");
+          }}
+          active={_view === "poster"}
+          title="Poster View"
+          tooltipPlacement="top"
+          rippleProps={{
+            preventPropagation: true,
           }}
         />,
       ] satisfies ButtonBarProps["children"]),
@@ -270,6 +265,7 @@ function _CameraCard({
   return (
     <>
       <Wrapper
+        key={key}
         entity={entity}
         // @ts-expect-error - don't know the entity name, so we can't know the service type
         service={service}
@@ -300,6 +296,7 @@ function _CameraCard({
             {headerSensors && (
               <Row justifyContent="flex-start" gap="0.5rem">
                 <ButtonBar>
+                  {/* @ts-expect-error E doesn't extend EntityName, it's filtered by camera name and we can't really fix that here */}
                   {Children.map(headerSensors, (child, index) => {
                     if (isValidElement<ButtonBarButtonProps<EntityName>>(child)) {
                       return cloneElement(child, {
@@ -308,6 +305,7 @@ function _CameraCard({
                         rippleProps: {
                           preventPropagation: true,
                           ...(child?.props?.rippleProps ?? {}),
+                          key: child.key || index,
                         },
                       });
                     }
@@ -367,7 +365,7 @@ function _CameraCard({
  *
  * Note: If you want to just use the stream, you can also import CameraStream from @hakit/components to use the stream as a video player element.
  * */
-export function CameraCard(props: CameraCardProps) {
+export function CameraCard<E extends FilterByDomain<EntityName, "camera">>(props: CameraCardProps<E>) {
   const defaultColumns: AvailableQueries = {
     xxs: 12,
     xs: 6,

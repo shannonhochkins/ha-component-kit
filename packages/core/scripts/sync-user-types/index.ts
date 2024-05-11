@@ -51,7 +51,7 @@ export async function typeSync({
   });
   const output = custom ? `
     ${warning}
-    import { ServiceFunction, ServiceFunctionTypes } from "@hakit/core";
+    import { ServiceFunction, ServiceFunctionTypes, VacuumEntityState } from "@hakit/core";
     declare module '@hakit/core' {
       export interface CustomSupportedServices<T extends ServiceFunctionTypes = "target"> {
         ${serviceInterfaces}

@@ -8,9 +8,18 @@ export interface ButtonBarButtonProps<E extends EntityName> extends FabCardProps
 
 const DEFAULT_ICON_SIZE = 35;
 
-export function ButtonBarButton<E extends EntityName>({ children, active, className, size, cssStyles, ...rest }: ButtonBarButtonProps<E>) {
+export function ButtonBarButton<E extends EntityName>({
+  key,
+  children,
+  active,
+  className,
+  size,
+  cssStyles,
+  ...rest
+}: ButtonBarButtonProps<E>) {
   return (
     <FabCard
+      key={key}
       className={`button-bar-button ${className ?? ""}`}
       disableScale
       borderRadius={0}

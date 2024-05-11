@@ -190,6 +190,7 @@ function _ButtonCard<E extends EntityName>({
   children,
   hideDetails,
   cssStyles,
+  key,
   ...rest
 }: ButtonCardProps<E>): React.ReactNode {
   const { useStore } = useHass();
@@ -237,6 +238,7 @@ function _ButtonCard<E extends EntityName>({
 
   return (
     <StyledButtonCard
+      key={key}
       as="button"
       // @ts-expect-error - don't know the entity name, so we can't know the service type
       service={service}

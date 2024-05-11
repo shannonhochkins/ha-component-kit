@@ -4,7 +4,7 @@
     "skipLibCheck": true,
   },
   "rootDir": "./src",
-  "include": ["src", "../../.d.ts", "./vite-env.d.ts"],
+  "include": ["src", "./src/.d.ts", "../../.d.ts", "./vite-env.d.ts"],
   "exclude": [
     "node_modules"
   ],

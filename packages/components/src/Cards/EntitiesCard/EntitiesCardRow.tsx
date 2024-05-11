@@ -43,7 +43,7 @@ const EntityRowInner = styled(motion.div)`
   }
 `;
 
-export interface EntitiesCardRowProps<E extends EntityName> {
+export interface EntitiesCardRowProps<E extends EntityName> extends Omit<React.ComponentPropsWithoutRef<"div">, "onClick"> {
   /** The name of the entity to render */
   entity: E;
   /** the icon name to use @default entity_icon */
@@ -67,6 +67,7 @@ function _EntitiesCardRow<E extends EntityName>({
   renderState,
   onClick,
   modalProps,
+  key,
   includeLastUpdated = false,
 }: EntitiesCardRowProps<E>) {
   const _id = useId();
@@ -97,7 +98,7 @@ function _EntitiesCardRow<E extends EntityName>({
 
   return (
     <>
-      <EntityRowInner className={`entities-card-row`} layoutId={_id} {...bind()}>
+      <EntityRowInner key={key} className={`entities-card-row`} layoutId={_id} {...bind()}>
         <Row className={`row`} wrap="nowrap" gap="1rem" fullWidth onClick={() => onClick && onClick(entity)}>
           <IconWrapper
             className={`icon-wrapper`}

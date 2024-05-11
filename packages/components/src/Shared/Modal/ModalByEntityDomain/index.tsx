@@ -12,6 +12,7 @@ import {
   ModalPersonControls,
   ModalSwitchControls,
   ModalWeatherControls,
+  ModalVacuumControls,
   type ModalCameraControlsProps,
   type ModalClimateControlsProps,
   type ModalCoverControlsProps,
@@ -20,6 +21,7 @@ import {
   type ModalPersonControlsProps,
   type ModalSwitchControlsProps,
   type ModalWeatherControlsProps,
+  type ModalVacuumControlsProps,
 } from "@components";
 import styled from "@emotion/styled";
 import {
@@ -74,6 +76,7 @@ interface ModalPropsByDomain {
   cover: ModalCoverControlsProps;
   media_player: ModalMediaPlayerControlsProps;
   person: ModalPersonControlsProps;
+  vacuum: ModalVacuumControlsProps;
 }
 
 export type ModalPropsHelper<D extends AllDomains> = D extends keyof ModalPropsByDomain
@@ -86,6 +89,7 @@ export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<Ex
   hideState?: boolean;
   hideUpdated?: boolean;
   hideAttributes?: boolean;
+  hideLogbook?: boolean;
   stateTitle?: string;
 } & Omit<ModalProps, "children">;
 
@@ -94,6 +98,7 @@ export function ModalByEntityDomain<E extends EntityName>({
   hideState,
   hideUpdated,
   hideAttributes,
+  hideLogbook = false,
   ...rest
 }: ModalByEntityDomainProps<E>) {
   const { joinHassUrl, useStore } = useHass();
@@ -194,6 +199,10 @@ export function ModalByEntityDomain<E extends EntityName>({
           />
         );
       }
+      case "vacuum": {
+        return <ModalVacuumControls entity={entity as `vacuum.${string}`} {...childProps} />;
+      }
+
       default:
         return null;
     }
@@ -210,7 +219,7 @@ export function ModalByEntityDomain<E extends EntityName>({
       headerActions={() => {
         return (
           <>
-            {showLogbook && (
+            {!hideLogbook && showLogbook && (
               <FabCard
                 title="Show Controls"
                 tooltipPlacement="left"
@@ -219,7 +228,7 @@ export function ModalByEntityDomain<E extends EntityName>({
                 onClick={() => setShowLogbook(false)}
               />
             )}
-            {!showLogbook && (
+            {!hideLogbook && !showLogbook && (
               <FabCard
                 title="Show Logbook Information"
                 tooltipPlacement="left"
@@ -231,7 +240,7 @@ export function ModalByEntityDomain<E extends EntityName>({
             {device && device.device_id && (
               <FabCard title="Open Device" tooltipPlacement="left" icon="mdi:cog" size={30} onClick={openDevice} />
             )}
-            <Separator />
+            {(!hideLogbook || (device && device.device_id)) && <Separator />}
           </>
         );
       }}
@@ -242,14 +251,16 @@ export function ModalByEntityDomain<E extends EntityName>({
         </>
       ) : (
         <>
-          <Column fullWidth>
-            {!hideState && (
-              <State className="state" ref={stateRef}>
-                {titleValue}
-              </State>
-            )}
-            {!hideUpdated && <Updated className="last-updated">{_entity.custom.relativeTime}</Updated>}
-          </Column>
+          {(!hideUpdated || !hideState) && (
+            <Column fullWidth>
+              {!hideState && (
+                <State className="state" ref={stateRef}>
+                  {titleValue}
+                </State>
+              )}
+              {!hideUpdated && <Updated className="last-updated">{_entity.custom.relativeTime}</Updated>}
+            </Column>
+          )}
           {children}
           {!hideAttributes && <EntityAttributes entity={entity} />}
         </>

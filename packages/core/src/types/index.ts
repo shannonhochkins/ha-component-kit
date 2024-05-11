@@ -4,6 +4,24 @@ import type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 export type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 import type { TimelineState, EntityHistoryState } from "../hooks/useHistory/history";
 
+export type TranslationCategory =
+  | "title"
+  | "state"
+  | "entity"
+  | "entity_component"
+  | "exceptions"
+  | "config"
+  | "config_panel"
+  | "options"
+  | "device_automation"
+  | "mfa_setup"
+  | "system_health"
+  | "application_credentials"
+  | "issues"
+  | "selector"
+  | "services"
+  | "conversation";
+
 export type { HistoryStreamMessage, TimelineState, HistoryResult, EntityHistoryState } from "../hooks/useHistory/history";
 
 export interface CustomSupportedServices<T extends ServiceFunctionTypes = "target"> {

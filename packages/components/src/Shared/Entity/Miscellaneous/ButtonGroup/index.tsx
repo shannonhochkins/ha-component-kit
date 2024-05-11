@@ -53,7 +53,7 @@ export interface ButtonGroupProps extends RowProps {
   children: ReactElement<typeof ButtonGroupButton> | ReactElement<typeof ButtonGroupButton>[];
 }
 
-function _ButtonGroup({ orientation = "vertical", reverse = false, thickness = 100, children, ...rest }: ButtonGroupProps) {
+function _ButtonGroup({ key, orientation = "vertical", reverse = false, thickness = 100, children, ...rest }: ButtonGroupProps) {
   const childrenWithKeys = Children.map(children, (child, index) => {
     if (isValidElement(child)) {
       return cloneElement(child, {
@@ -64,6 +64,7 @@ function _ButtonGroup({ orientation = "vertical", reverse = false, thickness = 1
   });
   return (
     <Row
+      key={key}
       {...rest}
       gap="1rem"
       style={{
