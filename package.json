@@ -1,6 +1,5 @@
 {
   "name": "@hakit/monorepo",
-  "version": "1.0.0",
   "workspaces": [
     "packages/core",
     "packages/components",

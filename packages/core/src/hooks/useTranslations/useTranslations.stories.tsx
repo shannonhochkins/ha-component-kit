@@ -15,7 +15,10 @@ export default {
             <mark>{`useTranslations()`}</mark>
           </h5>
           <Description />
-          <p>This hook will simply return all available translations retrieved from Home Assistant, you don't need to use this hook at all unless you want to transform the value. You can use the `localize` method directly anywhere in your application.</p>
+          <p>
+            This hook will simply return all available translations retrieved from Home Assistant, you don't need to use this hook at all
+            unless you want to transform the value. You can use the `localize` method directly anywhere in your application.
+          </p>
 
           <p>The following is the use of the hook:</p>
           <Source
@@ -30,9 +33,10 @@ export function MyComponent() {
 
           <p>
             The following would return you the translations set by default. This will fetch the translations based on your home assistant
-            language setting and return an object with key/value pairs. The localize function provides additional functionality to find/replace values in the translations.
+            language setting and return an object with key/value pairs. The localize function provides additional functionality to
+            find/replace values in the translations.
           </p>
-<Source
+          <Source
             dark
             code={`
 import { localize } from '@hakit/core';

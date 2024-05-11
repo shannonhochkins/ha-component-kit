@@ -234,7 +234,7 @@ export interface HassProviderProps {
   children: (ready: boolean) => React.ReactNode;
   /** the home assistant url */
   hassUrl: string;
-  /** additional translations to fetch to retrieve with the store, @default ["title", "services", "entity", "entity_component", "device_automation", "selector"]  */
+  /** additional translations to fetch to retrieve with the store, @default ["title"]  */
   translations?: TranslationCategory[];
 }
 
@@ -516,15 +516,7 @@ export function HassProvider({ children, hassUrl, translations }: HassProviderPr
 
   const fetchTranslations = useCallback(
     async (connection: Connection, config: HassConfig | null): Promise<Record<string, string>> => {
-      const categories = uniq([
-        "title",
-        "services",
-        "entity",
-        "entity_component",
-        "device_automation",
-        "selector",
-        ...(translations ?? []),
-      ]);
+      const categories = uniq(["title", ...(translations ?? [])]);
       const responses = await Promise.all(
         categories.map(async (category) => {
           const response = await connection.sendMessagePromise<{ resources: Record<string, string> }>({
