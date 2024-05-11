@@ -13,6 +13,8 @@ import { alarmPanelIcon } from "./domains/alarm";
 import { weatherIcon } from "./domains/weather";
 import { FIXED_DOMAIN_ICONS } from "./domains/constants";
 
+export { batteryIconByLevel } from "./domains/battery";
+
 export function useIconByDomain<D extends AllDomains | CamelToSnake<AllDomains> | "unknown">(
   domain: D,
   iconProps?: Omit<IconProps, "icon">,

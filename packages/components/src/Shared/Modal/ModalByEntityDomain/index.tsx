@@ -12,6 +12,7 @@ import {
   ModalPersonControls,
   ModalSwitchControls,
   ModalWeatherControls,
+  ModalVacuumControls,
   type ModalCameraControlsProps,
   type ModalClimateControlsProps,
   type ModalCoverControlsProps,
@@ -20,6 +21,7 @@ import {
   type ModalPersonControlsProps,
   type ModalSwitchControlsProps,
   type ModalWeatherControlsProps,
+  type ModalVacuumControlsProps,
 } from "@components";
 import styled from "@emotion/styled";
 import {
@@ -74,6 +76,7 @@ interface ModalPropsByDomain {
   cover: ModalCoverControlsProps;
   media_player: ModalMediaPlayerControlsProps;
   person: ModalPersonControlsProps;
+  vacuum: ModalVacuumControlsProps;
 }
 
 export type ModalPropsHelper<D extends AllDomains> = D extends keyof ModalPropsByDomain
@@ -196,6 +199,10 @@ export function ModalByEntityDomain<E extends EntityName>({
           />
         );
       }
+      case "vacuum": {
+        return <ModalVacuumControls entity={entity as `vacuum.${string}`} {...childProps} />;
+      }
+
       default:
         return null;
     }

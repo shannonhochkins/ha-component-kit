@@ -50,6 +50,8 @@ export { TimeCard, type TimeCardProps } from "./Cards/TimeCard";
 export { AreaCard, type AreaCardProps } from "./Cards/AreaCard";
 // ts-ignore
 import { AreaCard as ActualAreaCard, type AreaCardProps as ActualAreaCardProps } from "./Cards/AreaCard";
+// VacuumCard
+export { VacuumCard, type VacuumCardProps } from "./Cards/VacuumCard";
 
 /**
  * @deprecated RoomCard has been renamed to AreaCard. Please use {@link AreaCard} instead.
@@ -122,6 +124,9 @@ export { ModalMediaPlayerControls, type ModalMediaPlayerControlsProps } from "./
 export { ModalPersonControls, type ModalPersonControlsProps } from "./Shared/Modal/ModalByEntityDomain/Person";
 export { ModalSwitchControls, type ModalSwitchControlsProps } from "./Shared/Modal/ModalByEntityDomain/Switch";
 export { ModalWeatherControls, type ModalWeatherControlsProps } from "./Shared/Modal/ModalByEntityDomain/Weather";
+export { ModalVacuumControls, type ModalVacuumControlsProps } from "./Shared/Modal/ModalByEntityDomain/Vacuum";
+// VacuumControls
+export { VacuumControls, type VacuumControlsProps } from "./Shared/Entity/Vacuum/VacuumControls/index.tsx";
 // ControlSlider
 export { ControlSlider, type ControlSliderProps } from "./Shared/ControlSlider";
 // ControlToggle

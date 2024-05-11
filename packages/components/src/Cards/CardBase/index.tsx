@@ -126,7 +126,7 @@ export type CardBaseProps<T extends ElementType = "div", E extends EntityName = 
     title?: ReactNode;
     /** The name of your entity */
     entity?: E;
-    /** The service name, eg "toggle, turnOn ..." */
+    /** The service name to call */
     service?: DomainService<ExtractDomain<E>>;
     /** The data to pass to the service */
     serviceData?: ServiceData<ExtractDomain<E>, DomainService<ExtractDomain<E>>>;

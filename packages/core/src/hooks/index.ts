@@ -8,7 +8,7 @@ import { useService as useServiceActual } from "./useService";
  */
 export const useApi = useServiceActual;
 export { useService, createService } from "./useService";
-export { useIconByDomain, useIcon, useIconByEntity, getIconByEntity } from "./useIcon";
+export { useIconByDomain, useIcon, useIconByEntity, getIconByEntity, batteryIconByLevel } from "./useIcon";
 export { useLightBrightness } from "./useLightBrightness";
 export { useLightTemperature } from "./useLightTemperature";
 export { useLightColor } from "./useLightColor";

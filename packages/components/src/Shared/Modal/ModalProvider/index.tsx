@@ -2,8 +2,7 @@
 import React, { createContext, useEffect, useRef } from "react";
 import { type CustomModalAnimation } from "@components";
 import { create } from "zustand";
-import { MotionConfig, type MotionConfigProps } from "framer-motion"
-
+import { MotionConfig, type MotionConfigProps } from "framer-motion";
 
 export interface Store extends ModalOptions {
   setModalAnimation: (animation: CustomModalAnimation) => void;
@@ -15,7 +14,7 @@ export const useModalStore = create<Store>((set) => ({
   setAnimationDuration: (duration: number) => set({ animationDuration: duration }),
 }));
 
-export interface ModalOptions extends Omit<MotionConfigProps, 'children' | 'isValidProp'> {
+export interface ModalOptions extends Omit<MotionConfigProps, "children" | "isValidProp"> {
   /** override the global animation duration */
   animationDuration?: number;
   /** controls for the modalAnimations globally, by default the modal will animate expanding from the originating card */
@@ -35,7 +34,7 @@ export function ModalProvider({ children, options = {} }: ModalProviderProps): R
   const { animationDuration, modalAnimation, ...rest } = options;
   const hasAnimationDuration = typeof animationDuration === "number";
   const hasModalAnimation = typeof modalAnimation === "function";
-  const applied = useRef((hasAnimationDuration || hasModalAnimation) ? false : true);
+  const applied = useRef(hasAnimationDuration || hasModalAnimation ? false : true);
   const { setAnimationDuration, setModalAnimation } = useModalStore();
   useEffect(() => {
     if (typeof animationDuration === "number") {
@@ -46,7 +45,9 @@ export function ModalProvider({ children, options = {} }: ModalProviderProps): R
     }
     applied.current = true;
   }, [setModalAnimation, setAnimationDuration, animationDuration, modalAnimation]);
-  return <MotionConfig {...rest}>
-    <ModalContext.Provider value={options}>{applied.current && children}</ModalContext.Provider>
-  </MotionConfig>
+  return (
+    <MotionConfig {...rest}>
+      <ModalContext.Provider value={options}>{applied.current && children}</ModalContext.Provider>
+    </MotionConfig>
+  );
 }

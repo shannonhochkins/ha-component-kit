@@ -27,6 +27,20 @@ const BATTERY_CHARGING_ICONS = {
   100: "mdi:battery-charging",
 };
 
+export const batteryIconByLevel = (batteryValue: number, batteryCharging: boolean = false) => {
+  const batteryRound = Math.round(batteryValue / 10) * 10;
+  if (batteryCharging && batteryValue >= 10) {
+    return BATTERY_CHARGING_ICONS[batteryRound as keyof typeof BATTERY_CHARGING_ICONS];
+  }
+  if (batteryCharging) {
+    return "mdi:battery-charging-outline";
+  }
+  if (batteryValue <= 5) {
+    return "mdi:battery-alert-variant-outline";
+  }
+  return BATTERY_ICONS[batteryRound as keyof typeof BATTERY_ICONS];
+};
+
 export const batteryStateIcon = (batteryState: HassEntity, batteryChargingState?: HassEntity) => {
   const battery = batteryState.state;
   const batteryCharging = batteryChargingState && batteryChargingState.state === "on";
@@ -45,16 +59,5 @@ export const batteryIcon = (batteryState: number | string, batteryCharging?: boo
     }
     return "mdi:battery-unknown";
   }
-
-  const batteryRound = Math.round(batteryValue / 10) * 10;
-  if (batteryCharging && batteryValue >= 10) {
-    return BATTERY_CHARGING_ICONS[batteryRound as keyof typeof BATTERY_CHARGING_ICONS];
-  }
-  if (batteryCharging) {
-    return "mdi:battery-charging-outline";
-  }
-  if (batteryValue <= 5) {
-    return "mdi:battery-alert-variant-outline";
-  }
-  return BATTERY_ICONS[batteryRound as keyof typeof BATTERY_ICONS];
+  return batteryIconByLevel(batteryValue, batteryCharging);
 };
