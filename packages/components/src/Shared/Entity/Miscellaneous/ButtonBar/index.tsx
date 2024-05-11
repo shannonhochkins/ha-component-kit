@@ -5,6 +5,11 @@ import { css } from "@emotion/react";
 import { ReactElement, Children, isValidElement, cloneElement } from "react";
 
 type Extendable = React.ComponentPropsWithoutRef<"div">;
+
+// Define the allowed children types
+type AllowedChild = ReactElement<typeof ButtonBarButton> | false | null;
+type AllowedChildren = AllowedChild | AllowedChild[];
+
 export interface ButtonBarProps extends Extendable {
   /** standard flex css properties for align-items, @default "center" */
   alignItems?: React.CSSProperties["alignItems"];
@@ -13,7 +18,7 @@ export interface ButtonBarProps extends Extendable {
   /** standard flex css properties for flex-wrap property, @default "wrap" */
   wrap?: React.CSSProperties["justifyContent"];
   /** the children for the ButtonBar, it accepts ButtonBarButton components */
-  children: ReactElement<typeof ButtonBarButton> | false | null | (ReactElement<typeof ButtonBarButton> | false | null)[];
+  children: AllowedChildren;
 }
 
 const ButtonBarParent = styled.div<Partial<ButtonBarProps>>`
@@ -59,7 +64,7 @@ function _ButtonBar({ key, alignItems, justifyContent, wrap, style, id, classNam
       });
     }
     return child;
-  })
+  });
   return (
     <ButtonBarParent
       key={key}
@@ -67,7 +72,7 @@ function _ButtonBar({ key, alignItems, justifyContent, wrap, style, id, classNam
       css={css`
         ${cssStyles ?? ""}
       `}
-      className={`button-group ${className ?? ""}`}
+      className={`button-bar ${className ?? ""}`}
       style={{
         ...(style ?? {}),
       }}

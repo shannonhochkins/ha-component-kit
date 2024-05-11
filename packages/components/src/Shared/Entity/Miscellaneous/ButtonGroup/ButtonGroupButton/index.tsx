@@ -58,7 +58,7 @@ const Button = styled.button<{
 export interface ButtonGroupButtonProps<E extends EntityName> extends Omit<TooltipProps, "title" | "children" | "onClick"> {
   /** the entity name to render */
   entity?: E;
-  /** The service name, eg "toggle, turnOn ..." */
+  /** The service name to call" */
   service?: DomainService<ExtractDomain<E>>;
   /** The data to pass to the service */
   serviceData?: ServiceData<ExtractDomain<E>, DomainService<ExtractDomain<E>>>;

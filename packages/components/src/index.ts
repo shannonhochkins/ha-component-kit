@@ -126,7 +126,7 @@ export { ModalSwitchControls, type ModalSwitchControlsProps } from "./Shared/Mod
 export { ModalWeatherControls, type ModalWeatherControlsProps } from "./Shared/Modal/ModalByEntityDomain/Weather";
 export { ModalVacuumControls, type ModalVacuumControlsProps } from "./Shared/Modal/ModalByEntityDomain/Vacuum";
 // VacuumControls
-export { VacuumControls, type VacuumControlsProps } from './Shared/VacuumControls'
+export { VacuumControls, type VacuumControlsProps } from "./Shared/Entity/Vacuum/VacuumControls/index.tsx";
 // ControlSlider
 export { ControlSlider, type ControlSliderProps } from "./Shared/ControlSlider";
 // ControlToggle

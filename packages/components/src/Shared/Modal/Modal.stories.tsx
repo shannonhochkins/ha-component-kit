@@ -168,7 +168,7 @@ const exampleComplex = `
     <App />
   </ModalProvider>  
 </HassConnect>
-`
+`;
 
 function RenderModalProviderDisableAnimation() {
   return (
@@ -182,14 +182,14 @@ function RenderModalProviderDisableAnimation() {
         <Column gap="1rem" fullWidth>
           <TestingModalStore />
           <P>
-            By setting the `reducedMotion` to `always` you can disable all complex animations within the modal, this may be useful for devices with lower performance.
+            By setting the `reducedMotion` to `always` you can disable all complex animations within the modal, this may be useful for
+            devices with lower performance.
           </P>
           <Source dark code={exampleComplex} />
         </Column>
       </ModalProvider>
     </HassConnect>
   );
-
 }
 
 const example = `
@@ -412,7 +412,7 @@ export default {
     fullWidth: true,
   },
 } satisfies Meta<typeof Modal>;
-export type ModalStory = StoryObj<typeof ButtonCard<"light.fake_light_1", 'toggle'>>;
+export type ModalStory = StoryObj<typeof ButtonCard<"light.fake_light_1", "toggle">>;
 export const ModalExample: ModalStory = {
   render: Render,
   args: {

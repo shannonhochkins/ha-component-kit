@@ -1,15 +1,21 @@
-import { useMemo } from "react";
+import { useMemo, useState, useCallback } from "react";
 import styled from "@emotion/styled";
-import { Row, CardBase, ButtonBar, ButtonBarButton, type CardBaseProps, type AvailableQueries, fallback } from "@components";
+import { Row, CardBase, type CardBaseProps, type AvailableQueries, fallback } from "@components";
 import type { VacuumControlsProps } from "@components";
-import { useHass, useEntity, useIconByDomain, isUnavailableState, useIconByEntity, type EntityName, type FilterByDomain } from "@hakit/core";
-import { VacuumToolbar } from '../../Shared/VacuumControls';
-import { icons } from "../../Shared/VacuumControls/shared";
+import {
+  useHass,
+  useEntity,
+  useIconByDomain,
+  isUnavailableState,
+  useIconByEntity,
+  type EntityName,
+  type FilterByDomain,
+} from "@hakit/core";
+import { VacuumToolbar } from "../../Shared/Entity/Vacuum/VacuumControls";
+import { VacuumImage } from "../../Shared/Entity/Vacuum/VacuumControls/VacuumImage";
 import { ErrorBoundary } from "react-error-boundary";
 
-const StyledVacuumCard = styled(CardBase)`
-  
-`;
+const StyledVacuumCard = styled(CardBase)``;
 
 const Contents = styled.div`
   padding: 1rem;
@@ -42,12 +48,19 @@ const Icon = styled.div`
 const Description = styled.div`
   font-size: 0.9rem;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
+  flex-direction: column;
   gap: 0.5rem;
   text-transform: capitalize;
 `;
-type OmitProperties = '';
+
+
+const StyledVacuumImage = styled(VacuumImage)`
+  width: 20%;
+`;
+
+type OmitProperties = 'title';
 export type VacuumCardProps = Omit<CardBaseProps<"div", FilterByDomain<EntityName, "vacuum">>, OmitProperties> & {
   /** An optional override for the title */
   title?: string;
@@ -68,25 +81,28 @@ function _VacuumCard({
   serviceData,
   service,
   modalProps,
+  customImage,
   ...rest
 }: VacuumCardProps): JSX.Element {
   const { useStore } = useHass();
+  const [flash, setFlash] = useState(false);
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const entity = useEntity(_entity);
   const entityIcon = useIconByEntity(_entity);
   const domainIcon = useIconByDomain("vacuum");
   const title = _title || entity.attributes.friendly_name;
-  const isDocked = entity.state === "docked";
   const isUnavailable = typeof entity?.state === "string" ? isUnavailableState(entity.state) : false;
 
   const titleValue = useMemo(() => {
-    // I think the title value should just be entity.state
-    // to show you if it's returning to home, or cleaning, or paused, etc
-    if (isDocked) {
-      return "docked";
-    }
-    return "cleaning";
-  }, [isDocked]);
+    return flash ? "Locating" : entity.attributes.status ?? title;
+  }, [entity.attributes.status, title, flash]);
+
+  const locateFlash = useCallback(() => {
+    setFlash(true);
+    setTimeout(() => {
+      setFlash(false);
+    }, 2000);
+  }, []);
 
   return (
     <StyledVacuumCard
@@ -96,10 +112,12 @@ function _VacuumCard({
       className={`${className ?? ""} vacuum-card`}
       modalProps={{
         ...modalProps,
+        stateTitle: titleValue,
         hideCurrentBatteryLevel,
         hideState,
         hideUpdated,
         hideToolbar,
+        shortcuts,
       }}
       entity={_entity}
       // @ts-expect-error - don't know the entity name, so we can't know the service type
@@ -117,35 +135,23 @@ function _VacuumCard({
       <Contents>
         <LayoutBetween>
           <Description>
-            <Icon
-            >
-              {entityIcon || domainIcon}
-            </Icon>{" "}
-            {title} - {titleValue}
+            <Row><Icon style={{
+              marginRight: '1rem'
+            }}>{entityIcon || domainIcon}</Icon> {title} - {titleValue}</Row>
+            <Title>{entity.custom.relativeTime}</Title>
           </Description>
-          <Title>{entity.custom.relativeTime}</Title>
+          <StyledVacuumImage src={customImage} className={entity.state} />
         </LayoutBetween>
         <Gap />
         <Row gap="0.5rem" justifyContent="space-between">
-          <VacuumToolbar entity={_entity} hideToolbar={hideToolbar} />
-          {(shortcuts ?? []).length > 0 && <ButtonBar>
-            {(shortcuts ?? [])
-              .concat()
-              .filter((x) => !!x)
-              .map(({ onClick, active, ...rest }, index) => (
-                <ButtonBarButton
-                  size={35}
-                  iconColor={active ? 'var(--ha-300)' : undefined}
-                  rippleProps={{
-                    preventPropagation: true,
-                  }}
-                  key={index}
-                  active={active}
-                  onClick={() => onClick(entity)}
-                  {...rest}
-                />
-              ))}
-          </ButtonBar>}
+          <VacuumToolbar
+            entity={_entity}
+            hideToolbar={hideToolbar}
+            shortcuts={shortcuts}
+            onLocate={() => {
+              locateFlash();
+            }}
+          />
         </Row>
       </Contents>
     </StyledVacuumCard>

@@ -27,6 +27,7 @@ import {
   FamilyCard,
   PersonCard,
   ButtonGroupButton,
+  VacuumCard,
 } from '@components';
 import office from './office.jpg';
 import livingRoom from './living-room.jpg';
@@ -244,6 +245,7 @@ function Template() {
             <PersonCard entity="person.john_doe" />
             <PersonCard entity="person.jane_doe" />
           </FamilyCard>
+          <VacuumCard entity="vacuum.robot_vacuum" />
         </Row>
       </Group>
     </Column>

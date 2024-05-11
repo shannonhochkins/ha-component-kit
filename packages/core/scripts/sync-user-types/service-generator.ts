@@ -54,9 +54,8 @@ export const generateServiceTypes = (input: HassServices, {
       // the data passed to the ServiceFunction<object>
       const data = Object.entries(fields).map(([field, { selector, example, description, ...rest }]) => {
         const required = rest.required ?? false;
-        const staticTypes = REMAPPED_TYPES_BY_DOMAIN[domain] ?? REMAPPED_TYPES;
         // some fields come back as number[] but we know these should be something specific, these are hard coded above
-        const type = field in staticTypes ? staticTypes[field] : resolveSelectorType(selector as Selector);
+        const type = field in REMAPPED_TYPES ? REMAPPED_TYPES[field] : resolveSelectorType(selector as Selector);
         const exampleUsage = example ? ` @example ${example}` : '';
         return `// ${sanitizeString(`${description}${exampleUsage}`)}\n${field}${required ? '' : '?'}: ${type};`;
       });

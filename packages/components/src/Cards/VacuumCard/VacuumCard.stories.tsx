@@ -28,26 +28,30 @@ export const VacuumCardExample: VacuumStory = {
 export const CustomShortcuts: VacuumStory = {
   render: Render,
   args: {
-    shortcuts: [{
-      title: 'Send to home!',
-      icon: 'mdi:home',
-      onClick(entity) {
-        entity.service.returnToBase();
-      }
-    }, {
-      title: 'Set fan speed',
-      icon: 'mdi:fan',
-      onClick(entity) {
-        entity.service.setFanSpeed({
-          fan_speed: 'high',
-        });
-      }
-    }, {
-      title: 'Clean spot',
-      icon: 'mdi:vacuum-cleaner',
-      onClick(entity) {
-        entity.service.cleanSpot();
-      }
-    }],
+    shortcuts: [
+      {
+        title: "Send to home!",
+        icon: "mdi:home",
+        onClick(entity) {
+          entity.service.returnToBase();
+        },
+      },
+      {
+        title: "Set fan speed",
+        icon: "mdi:fan",
+        onClick(entity) {
+          entity.service.setFanSpeed({
+            fan_speed: "high",
+          });
+        },
+      },
+      {
+        title: "Clean spot",
+        icon: "mdi:vacuum-cleaner",
+        onClick(entity) {
+          entity.service.cleanSpot();
+        },
+      },
+    ],
   },
 };

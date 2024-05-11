@@ -200,14 +200,9 @@ export function ModalByEntityDomain<E extends EntityName>({
         );
       }
       case "vacuum": {
-        return (
-          <ModalVacuumControls
-            entity={entity as `vacuum.${string}`}
-            {...childProps}
-          />
-        );
+        return <ModalVacuumControls entity={entity as `vacuum.${string}`} {...childProps} />;
       }
-      
+
       default:
         return null;
     }

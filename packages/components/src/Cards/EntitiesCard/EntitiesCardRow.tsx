@@ -43,7 +43,7 @@ const EntityRowInner = styled(motion.div)`
   }
 `;
 
-export interface EntitiesCardRowProps<E extends EntityName> extends Omit<React.ComponentPropsWithoutRef<"div">, 'onClick'> {
+export interface EntitiesCardRowProps<E extends EntityName> extends Omit<React.ComponentPropsWithoutRef<"div">, "onClick"> {
   /** The name of the entity to render */
   entity: E;
   /** the icon name to use @default entity_icon */
