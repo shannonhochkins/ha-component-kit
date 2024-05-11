@@ -55,12 +55,11 @@ const Description = styled.div`
   text-transform: capitalize;
 `;
 
-
 const StyledVacuumImage = styled(VacuumImage)`
   width: 20%;
 `;
 
-type OmitProperties = 'title';
+type OmitProperties = "title";
 export type VacuumCardProps = Omit<CardBaseProps<"div", FilterByDomain<EntityName, "vacuum">>, OmitProperties> & {
   /** An optional override for the title */
   title?: string;
@@ -91,7 +90,7 @@ function _VacuumCard({
   const entityIcon = useIconByEntity(_entity);
   const domainIcon = useIconByDomain("vacuum");
   const title = _title || entity.attributes.friendly_name;
-  const isUnavailable = typeof entity?.state === "string" ? isUnavailableState(entity.state) : false;
+  const isUnavailable = isUnavailableState(entity.state);
 
   const titleValue = useMemo(() => {
     return flash ? "Locating" : entity.attributes.status ?? title;
@@ -135,10 +134,17 @@ function _VacuumCard({
       <Contents>
         <LayoutBetween>
           <Description>
-            <Row><Icon style={{
-              marginRight: '1rem'
-            }}>{entityIcon || domainIcon}</Icon> {title} - {titleValue}</Row>
-            <Title>{entity.custom.relativeTime}</Title>
+            <Row>
+              <Icon
+                style={{
+                  marginRight: "1rem",
+                }}
+              >
+                {entityIcon || domainIcon}
+              </Icon>{" "}
+              {title} - {titleValue}
+            </Row>
+            {!hideUpdated && <Title>{entity.custom.relativeTime}</Title>}
           </Description>
           <StyledVacuumImage src={customImage} className={entity.state} />
         </LayoutBetween>

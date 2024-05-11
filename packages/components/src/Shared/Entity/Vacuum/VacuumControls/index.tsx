@@ -6,7 +6,7 @@ import { useEntity, type HassEntityWithService, type EntityName, batteryIconByLe
 import { useDebounce } from "react-use";
 import type { MotionProps } from "framer-motion";
 import { icons } from "./shared";
-import { VacuumImage } from './VacuumImage';
+import { VacuumImage } from "./VacuumImage";
 
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 
@@ -89,9 +89,11 @@ interface VacuumToolbarProps {
 }
 
 function Shortcuts({
-  shortcuts
+  shortcuts,
+  entity,
 }: {
   shortcuts?: Shortcut[];
+  entity: HassEntityWithService<"vacuum">;
 }): React.ReactElement<typeof ButtonBarButton>[] {
   return (shortcuts ?? [])
     .concat()
@@ -108,15 +110,10 @@ function Shortcuts({
         onClick={() => onClick(entity)}
         {...rest}
       />
-  )) as React.ReactElement<typeof ButtonBarButton>[];
+    )) as React.ReactElement<typeof ButtonBarButton>[];
 }
 
-export function VacuumToolbar({
-  entity: _entity,
-  shortcuts,
-  onLocate,
-  hideToolbar = false,
-}: VacuumToolbarProps) {
+export function VacuumToolbar({ entity: _entity, shortcuts, onLocate, hideToolbar = false }: VacuumToolbarProps) {
   const entity = useEntity(_entity);
 
   if (hideToolbar) {
@@ -161,7 +158,7 @@ export function VacuumToolbar({
               icon={icons["returning"]}
               onClick={() => entity.service.returnToBase()}
             />
-            <Shortcuts shortcuts={shortcuts} />
+            <Shortcuts shortcuts={shortcuts} entity={entity} />
           </ButtonBar>
         </Row>
       );
@@ -189,7 +186,7 @@ export function VacuumToolbar({
               icon={icons["returning"]}
               onClick={() => entity.service.returnToBase()}
             />
-            <Shortcuts shortcuts={shortcuts} />
+            <Shortcuts shortcuts={shortcuts} entity={entity} />
           </ButtonBar>
         </Row>
       );
@@ -217,7 +214,7 @@ export function VacuumToolbar({
               icon={icons["pause"]}
               onClick={() => entity.service.pause()}
             />
-            <Shortcuts shortcuts={shortcuts} />
+            <Shortcuts shortcuts={shortcuts} entity={entity} />
           </ButtonBar>
         </Row>
       );
@@ -262,7 +259,7 @@ export function VacuumToolbar({
                 onClick={() => entity.service.returnToBase()}
               />
             )}
-            <Shortcuts shortcuts={shortcuts} />
+            <Shortcuts shortcuts={shortcuts} entity={entity} />
           </ButtonBar>
         </Row>
       );

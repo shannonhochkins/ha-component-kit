@@ -100,7 +100,6 @@ export const StyledVacuumImage = styled.img`
   }
 `;
 
-
 // React component that applies default props
 export const VacuumImage = ({ src = DEFAULT_IMAGE, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) => {
   return <StyledVacuumImage src={src} {...props} />;

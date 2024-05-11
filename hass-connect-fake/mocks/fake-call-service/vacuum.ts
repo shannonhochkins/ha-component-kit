@@ -14,7 +14,6 @@ export function vacuumUpdates({
     last_updated: now,
   }
   if (typeof target !== 'string') return true;
-  console.log('target', { target, service, serviceData })
 
   if (returningTimeout) {
     clearTimeout(returningTimeout);
