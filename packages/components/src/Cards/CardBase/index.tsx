@@ -65,8 +65,8 @@ const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
       color: var(--ha-S200-contrast);
       transition: color var(--ha-transition-duration) var(--ha-easing);
     }
-    &:not(:disabled):hover,
-    &:not(.disabled):hover {
+    &:not(:disabled):not(:focus):hover,
+    &:not(.disabled):not(:focus):hover {
       background-color: var(--ha-S400);
       color: var(--ha-500-contrast);
       svg {
