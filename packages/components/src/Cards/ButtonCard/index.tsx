@@ -138,6 +138,7 @@ const Footer = styled.div`
 const Title = styled.div`
   color: var(--ha-S500-contrast);
   font-size: 0.7rem;
+  font-family: var(--ha-font-family);
   margin: 2px 0;
   text-align: left;
   width: 100%;
@@ -146,9 +147,21 @@ const Title = styled.div`
   }
 `;
 
-const Description = styled.div`
-  color: var(--ha-S50-contrast);
-  font-size: 0.8rem;
+const Description = styled.div<{
+  textColor: string;
+  textSize: string;
+  textAlign: string;
+}>`
+  ${(props) =>
+    `color: ${props.textColor ? props.textColor : "var(--ha-S50-contrast)"};
+  `}
+  ${(props) =>
+    `font-size: ${props.textSize ? props.textSize : "0.8rem"};
+  `}
+  ${(props) =>
+    `text-align: ${props.textAlign ? props.textAlign : "center"};
+  `}
+  font-family: var(--ha-font-family);
   font-weight: 500;
 `;
 
@@ -171,6 +184,8 @@ export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProp
   children?: React.ReactNode;
   /** This forces hideState, hideLastUpdated and will only show the entity name / description prop */
   hideDetails?: boolean;
+  /** Whether to display a toggle button in the card */
+  showToggle?: boolean;
 }
 function _ButtonCard<E extends EntityName>({
   entity: _entity,
@@ -191,6 +206,7 @@ function _ButtonCard<E extends EntityName>({
   hideDetails,
   cssStyles,
   key,
+  showToggle = true,
   ...rest
 }: ButtonCardProps<E>): React.ReactNode {
   const { useStore } = useHass();
@@ -270,7 +286,7 @@ function _ButtonCard<E extends EntityName>({
           >
             {iconElement || entityIcon || domainIcon}
           </Fab>
-          {isDefaultLayout && (
+          {isDefaultLayout && showToggle && (
             <Toggle active={on} className="toggle">
               {!isUnavailable && <ToggleState active={on} className="toggle-state" />}
             </Toggle>
