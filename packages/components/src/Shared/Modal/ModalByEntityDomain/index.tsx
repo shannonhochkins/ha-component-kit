@@ -91,7 +91,7 @@ export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<Ex
   hideAttributes?: boolean;
   hideLogbook?: boolean;
   stateTitle?: string;
-} & Omit<ModalProps, "children">;
+};
 
 export function ModalByEntityDomain<E extends EntityName>({
   entity,
@@ -99,6 +99,7 @@ export function ModalByEntityDomain<E extends EntityName>({
   hideUpdated,
   hideAttributes,
   hideLogbook = false,
+  children,
   ...rest
 }: ModalByEntityDomainProps<E>) {
   const { joinHassUrl, useStore } = useHass();
@@ -155,7 +156,7 @@ export function ModalByEntityDomain<E extends EntityName>({
     if (!stateRef.current) return;
     stateRef.current.innerText = value;
   }, []);
-  const children = useMemo(() => {
+  const defaultChildren = useMemo(() => {
     switch (domain) {
       case "light":
         return <ModalLightControls entity={entity as FilterByDomain<EntityName, "light">} onStateChange={onStateChange} {...childProps} />;
@@ -262,6 +263,7 @@ export function ModalByEntityDomain<E extends EntityName>({
             </Column>
           )}
           {children}
+          {defaultChildren}
           {!hideAttributes && <EntityAttributes entity={entity} />}
         </>
       )}
