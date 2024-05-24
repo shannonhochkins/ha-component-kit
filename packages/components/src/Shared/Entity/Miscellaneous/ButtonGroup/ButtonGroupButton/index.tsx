@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Tooltip, fallback, type TooltipProps } from "@components";
+import { Tooltip, fallback, type TooltipProps, Row, Column } from "@components";
 import {
   useIcon,
   ON,
@@ -15,6 +15,7 @@ import { ErrorBoundary } from "react-error-boundary";
 
 const Button = styled.button<{
   borderRadius?: number;
+  activeColor?: string;
 }>`
   outline: none;
   cursor: pointer;
@@ -44,13 +45,13 @@ const Button = styled.button<{
     opacity: 0.8;
   }
   &.active {
-    background-color: var(--ha-A400);
+    background-color: ${(props) => props.activeColor ?? "var(--ha-A400)"};
     color: var(--ha-900-contrast);
     svg {
       color: var(--ha-900-contrast);
     }
     &:hover {
-      background-color: var(--ha-A700);
+      background-color: ${(props) => props.activeColor ?? "var(--ha-A700)"};
     }
   }
 `;
@@ -70,6 +71,9 @@ export interface ButtonGroupButtonProps<E extends EntityName> extends Omit<Toolt
   onClick?: (entity: HassEntityWithService<ExtractDomain<E>> | null) => void;
   /** optional override to determine if the button should render in an active state */
   active?: boolean;
+  /** optional override to the button color when active */
+  activeColor?: string;
+  showTitle?: boolean;
 }
 
 function _ButtonGroupButton<E extends EntityName>({
@@ -81,6 +85,8 @@ function _ButtonGroupButton<E extends EntityName>({
   service,
   serviceData,
   key,
+  showTitle = false,
+  activeColor,
   ...rest
 }: ButtonGroupButtonProps<E>) {
   const _entity = useEntity(entity ?? "unknown", {
@@ -97,6 +103,7 @@ function _ButtonGroupButton<E extends EntityName>({
     <Tooltip placement="left" title={titleValue} key={key} {...rest}>
       <Button
         className={`button-group-button ${_active ? "active" : ""}`}
+        activeColor={activeColor}
         onClick={() => {
           // @ts-expect-error - this is fine, entity name, service etc aren't known here
           if (onClick) onClick(_entity);
@@ -106,7 +113,20 @@ function _ButtonGroupButton<E extends EntityName>({
           }
         }}
       >
-        {_icon}
+        {showTitle && (
+          <Column>
+            <Row fullWidth>{_icon}</Row>
+            <Row
+              fullWidth
+              style={{
+                fontSize: "1.2rem",
+              }}
+            >
+              {title}
+            </Row>
+          </Column>
+        )}
+        {!showTitle && _icon}
       </Button>
     </Tooltip>
   );

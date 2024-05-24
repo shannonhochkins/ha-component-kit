@@ -78,6 +78,8 @@ export { ClimateHumiditySlider, type ClimateHumiditySliderProps } from "./Shared
 export * from "./Shared/Entity/Climate/ClimateControls/data";
 // LightControls
 export { LightControls, type LightControlsProps } from "./Shared/Entity/Light/LightControls";
+// AlarmControls
+export { AlarmControls, type AlarmControlsProps } from "./Shared/Entity/Alarm/AlarmControls";
 // CoverControls
 export { CoverControls, type CoverControlsProps } from "./Shared/Entity/Cover/CoverControls";
 // SwitchControls
@@ -117,6 +119,7 @@ export { Modal, type ModalProps, type CustomModalAnimation } from "./Shared/Moda
 export { ModalProvider, useModalStore, type ModalOptions, type ModalProviderProps } from "./Shared/Modal/ModalProvider";
 export { ModalByEntityDomain, type ModalByEntityDomainProps, type ModalPropsHelper } from "./Shared/Modal/ModalByEntityDomain";
 export { ModalCameraControls, type ModalCameraControlsProps } from "./Shared/Modal/ModalByEntityDomain/Camera";
+export { ModalAlarmControls, type ModalAlarmControlsProps } from "./Shared/Modal/ModalByEntityDomain/AlarmControlPanel";
 export { ModalClimateControls, type ModalClimateControlsProps } from "./Shared/Modal/ModalByEntityDomain/Climate";
 export { ModalCoverControls, type ModalCoverControlsProps } from "./Shared/Modal/ModalByEntityDomain/Cover";
 export { ModalLightControls, type ModalLightControlsProps } from "./Shared/Modal/ModalByEntityDomain/Light";

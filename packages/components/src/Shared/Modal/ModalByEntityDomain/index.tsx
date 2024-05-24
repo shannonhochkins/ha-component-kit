@@ -4,6 +4,7 @@ import {
   FabCard,
   LogBookRenderer,
   Modal,
+  ModalAlarmControlsProps,
   ModalCameraControls,
   ModalClimateControls,
   ModalCoverControls,
@@ -37,6 +38,7 @@ import { computeDomain } from "@utils/computeDomain";
 import { lowerCase, startCase } from "lodash";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ModalProps } from "..";
+import { ModalAlarmControls } from "./AlarmControlPanel";
 
 const Separator = styled.div`
   height: 30px;
@@ -77,6 +79,7 @@ interface ModalPropsByDomain {
   media_player: ModalMediaPlayerControlsProps;
   person: ModalPersonControlsProps;
   vacuum: ModalVacuumControlsProps;
+  alarm_control_panel: ModalAlarmControlsProps;
 }
 
 export type ModalPropsHelper<D extends AllDomains> = D extends keyof ModalPropsByDomain
@@ -201,6 +204,9 @@ export function ModalByEntityDomain<E extends EntityName>({
       }
       case "vacuum": {
         return <ModalVacuumControls entity={entity as `vacuum.${string}`} {...childProps} />;
+      }
+      case "alarm_control_panel": {
+        return <ModalAlarmControls entity={entity as `alarm_control_panel.${string}`} {...childProps} />;
       }
 
       default:
