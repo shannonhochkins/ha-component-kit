@@ -95,15 +95,27 @@ const generateVariantVars = (variants: string[], type: "Light" | "Dark", tint: n
       const indexOffset = !isLight ? LIGHT.length + 1 : 0;
       const offsetBackground = darkMode ? baseLightness + DIFF * (i + indexOffset) : baseLightness - DIFF * (i + indexOffset);
 
-      return `
-        --ha-${variant}-h: var(--ha-h);
-        --ha-${variant}-s: ${saturation};
-        --ha-${variant}-l: ${lightness};
-        --ha-${variant}: hsl(var(--ha-${variant}-h), var(--ha-${variant}-s), var(--ha-${variant}-l));
-        --ha-${variant}-contrast: ${contrast};
-        --ha-S${variant}: hsl(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), ${offsetBackground}%);
-        --ha-S${variant}-contrast: hsl(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), calc(((100% - ${offsetBackground}%) + ${indexOffset} * 10%)));
+      const baseVars = `
+      --ha-${variant}-h: var(--ha-h);
+      --ha-${variant}-s: ${saturation};
+      --ha-${variant}-l: ${lightness};
       `;
+      const alphas = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
+      const varStyles = alphas
+        .map((alpha) => {
+          const suffix = alpha < 1 ? `-a${alpha * 10}` : "";
+          return `
+        --ha-${variant}${suffix}: hsla(var(--ha-${variant}-h), var(--ha-${variant}-s), var(--ha-${variant}-l), ${alpha});
+        --ha-${variant}${suffix}-contrast: ${contrast};
+        --ha-S${variant}${suffix}: hsla(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), ${offsetBackground}%, ${alpha});
+        --ha-S${variant}${suffix}-contrast: hsla(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), calc(((100% - ${offsetBackground}%) + ${indexOffset} * 10%)), ${alpha});`;
+        })
+        .join("");
+
+      return `
+        ${baseVars}
+        ${varStyles}
+        `;
     })
     .join("");
 };
@@ -116,14 +128,26 @@ const generateAccentVars = (variants: string[], tint: number, darkMode: boolean)
       const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
       const offsetBackground = darkMode ? baseLightness + DIFF * (indexOffset + i) : baseLightness - DIFF * (indexOffset + i);
 
-      return `
+      const baseVars = `
         --ha-${variant}-h: calc(var(--ha-h) * var(--mtc-h-${variant}));
         --ha-${variant}-s: calc(var(--mtc-s-${variant}) * 100%);
         --ha-${variant}-l: calc(var(--mtc-l-${variant}) * 100%);
-        --ha-${variant}: hsl(var(--ha-${variant}-h), var(--ha-${variant}-s), var(--ha-${variant}-l));
-        --ha-S${variant}: hsl(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), ${offsetBackground}%);
-        --ha-S${variant}-contrast: hsl(var(--ha-${variant}-s), calc(var(--ha-${variant}-s) * ${tint}), calc(((100% - ${offsetBackground}%))));
       `;
+      const alphas = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
+      const varStyles = alphas
+        .map((alpha) => {
+          const suffix = alpha < 1 ? `-a${alpha * 10}` : "";
+          return `
+          --ha-${variant}${suffix}: hsla(var(--ha-${variant}-h), var(--ha-${variant}-s), var(--ha-${variant}-l), ${alpha});
+          --ha-S${variant}${suffix}: hsla(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), ${offsetBackground}%, ${alpha});
+          --ha-S${variant}${suffix}-contrast: hsla(var(--ha-${variant}-s), calc(var(--ha-${variant}-s) * ${tint}), calc(((100% - ${offsetBackground}%))), ${alpha});`;
+        })
+        .join("");
+
+      return `
+        ${baseVars}
+        ${varStyles}
+        `;
     })
     .join("");
 };
