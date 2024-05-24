@@ -94,9 +94,9 @@ function _AlarmControls({ entity: _entity, orientation = "vertical", onStateChan
   );
 }
 
-/** This component will render controls for a cover, it supports tilt & position sliders, as well as a button mode
+/** This component will render controls for a an alarm system, it supports arm home, arm away, and disarm buttons.
+ *  It does not currently support using passcodes to arm or disarm
  *
- * The below demos show how different cover entities will render based on what they support, this is automatic and no need to configure anything.
  */
 export function AlarmControls(props: AlarmControlsProps) {
   return (
