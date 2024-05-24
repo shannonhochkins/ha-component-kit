@@ -325,6 +325,9 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
             overflow-x: hidden;
             overflow-y: var(--ha-hide-body-overflow-y);
           }
+          body * {
+            font-family: var(--ha-font-family);
+          }
           ${generateColumnBreakpoints(_breakpoints)}
           ${globalStyles ?? ""}
         `}

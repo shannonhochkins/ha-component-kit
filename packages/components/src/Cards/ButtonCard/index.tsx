@@ -138,7 +138,6 @@ const Footer = styled.div`
 const Title = styled.div`
   color: var(--ha-S500-contrast);
   font-size: 0.7rem;
-  font-family: var(--ha-font-family);
   margin: 2px 0;
   text-align: left;
   width: 100%;
@@ -161,7 +160,6 @@ const Description = styled.div<{
   ${(props) =>
     `text-align: ${props.textAlign ? props.textAlign : "center"};
   `}
-  font-family: var(--ha-font-family);
   font-weight: 500;
 `;
 
