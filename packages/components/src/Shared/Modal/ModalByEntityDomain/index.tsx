@@ -85,13 +85,18 @@ export type ModalPropsHelper<D extends AllDomains> = D extends keyof ModalPropsB
       entity: EntityName;
     };
 
+// remove children from ModalProps, and make it optional
+type OptionalChildrenModalProps = Omit<ModalProps, "children"> & {
+  children?: React.ReactNode;
+};
+
 export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<ExtractDomain<E>> & {
   hideState?: boolean;
   hideUpdated?: boolean;
   hideAttributes?: boolean;
   hideLogbook?: boolean;
   stateTitle?: string;
-} & Omit<ModalProps, "children">;
+} & OptionalChildrenModalProps;
 
 export function ModalByEntityDomain<E extends EntityName>({
   entity,
@@ -99,6 +104,7 @@ export function ModalByEntityDomain<E extends EntityName>({
   hideUpdated,
   hideAttributes,
   hideLogbook = false,
+  children,
   ...rest
 }: ModalByEntityDomainProps<E>) {
   const { joinHassUrl, useStore } = useHass();
@@ -155,7 +161,7 @@ export function ModalByEntityDomain<E extends EntityName>({
     if (!stateRef.current) return;
     stateRef.current.innerText = value;
   }, []);
-  const children = useMemo(() => {
+  const defaultChildren = useMemo(() => {
     switch (domain) {
       case "light":
         return <ModalLightControls entity={entity as FilterByDomain<EntityName, "light">} onStateChange={onStateChange} {...childProps} />;
@@ -261,7 +267,8 @@ export function ModalByEntityDomain<E extends EntityName>({
               {!hideUpdated && <Updated className="last-updated">{_entity.custom.relativeTime}</Updated>}
             </Column>
           )}
-          {children}
+          {children ?? null}
+          {defaultChildren}
           {!hideAttributes && <EntityAttributes entity={entity} />}
         </>
       )}
