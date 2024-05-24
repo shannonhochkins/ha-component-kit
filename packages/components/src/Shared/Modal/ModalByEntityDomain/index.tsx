@@ -85,13 +85,18 @@ export type ModalPropsHelper<D extends AllDomains> = D extends keyof ModalPropsB
       entity: EntityName;
     };
 
+// remove children from ModalProps, and make it optional
+type OptionalChildrenModalProps = Omit<ModalProps, "children"> & {
+  children?: React.ReactNode;
+};
+
 export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<ExtractDomain<E>> & {
   hideState?: boolean;
   hideUpdated?: boolean;
   hideAttributes?: boolean;
   hideLogbook?: boolean;
   stateTitle?: string;
-};
+} & OptionalChildrenModalProps;
 
 export function ModalByEntityDomain<E extends EntityName>({
   entity,
@@ -262,7 +267,7 @@ export function ModalByEntityDomain<E extends EntityName>({
               {!hideUpdated && <Updated className="last-updated">{_entity.custom.relativeTime}</Updated>}
             </Column>
           )}
-          {children}
+          {children ?? null}
           {defaultChildren}
           {!hideAttributes && <EntityAttributes entity={entity} />}
         </>
