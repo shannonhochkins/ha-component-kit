@@ -27,7 +27,7 @@ const StyledButtonCard = styled(CardBase)`
   }
   &:not(.disabled),
   &:not(:disabled) {
-    &:hover {
+    &:not(:focus):hover {
       .fab-card-inner {
         background-color: var(--ha-S500);
         color: var(--ha-S500-contrast);
