@@ -4,24 +4,6 @@ import type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 export type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 import type { TimelineState, EntityHistoryState } from "../hooks/useHistory/history";
 
-export type TranslationCategory =
-  | "title"
-  | "state"
-  | "entity"
-  | "entity_component"
-  | "exceptions"
-  | "config"
-  | "config_panel"
-  | "options"
-  | "device_automation"
-  | "mfa_setup"
-  | "system_health"
-  | "application_credentials"
-  | "issues"
-  | "selector"
-  | "services"
-  | "conversation";
-
 export type { HistoryStreamMessage, TimelineState, HistoryResult, EntityHistoryState } from "../hooks/useHistory/history";
 
 export interface CustomSupportedServices<T extends ServiceFunctionTypes = "target"> {
@@ -123,9 +105,12 @@ export type SnakeToCamel<Key extends string> = Key extends `${infer FirstPart}_$
   : Key;
 /** Will convert a string to snake case */
 export type CamelToSnake<S extends string> = S extends `${infer T}${infer U}`
-  ? `${T extends Uppercase<T> ? "_" : ""}${Lowercase<T>}${CamelToSnake<U>}`
-  : "";
-
+  ? T extends "_"
+    ? `${T}${CamelToSnake<U>}`
+    : T extends Uppercase<T>
+      ? `_${Lowercase<T>}${CamelToSnake<U>}`
+      : `${T}${CamelToSnake<U>}`
+  : S;
 /** Returns a union of all available services by domain in both snake and camel case */
 export type DomainService<D extends SnakeOrCamelDomains> =
   | NonSymbolNumberKeys<SupportedServices[SnakeToCamel<D>]>

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useCallback, useImperativeHandle, forwardRef } from "react";
 import styled from "@emotion/styled";
+import { localize } from "@hakit/core";
 
 export type VideoState = "canplay" | "canplaythrough" | "waiting" | "stalled" | "loadeddata" | "play" | "playing" | "pause";
 
@@ -88,7 +89,7 @@ export const VideoPlayer = forwardRef<HTMLVideoElement, VideoPlayerProps>(({ src
   return (
     <Video ref={videoRef} {...rest}>
       <source src={src} type={type} />
-      Your browser does not support the video tag.
+      {localize("format_description")}
     </Video>
   );
 });

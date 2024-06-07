@@ -1,4 +1,4 @@
-import { memo, type ReactNode } from "react";
+import { memo, useMemo, type ReactNode } from "react";
 import { useRef } from "react";
 import { HassProvider } from "./Provider";
 import type { HassProviderProps } from "./Provider";
@@ -11,6 +11,8 @@ export type HassConnectProps = {
   children: ReactNode;
   /** The url to your home assistant instance, can be local, nabucasa or any hosted url with home-assistant.  */
   hassUrl: string;
+  /** if you provide a hassToken you will bypass the login screen altogether - @see https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token */
+  hassToken?: string;
   /** Any react node to render when not authenticated or loading */
   loading?: ReactNode;
   /** called once the entity subscription is successful, and only once */
@@ -84,18 +86,29 @@ const MotionDiv = styled(motion.div)`
 export const HassConnect = memo(function HassConnect({
   children,
   hassUrl,
+  hassToken,
   loading = <Loader />,
   onReady,
   options = {},
 }: HassConnectProps): ReactNode {
   const onReadyCalled = useRef(false);
 
-  if (!hassUrl) {
-    return <>{`Provide the hassUrl prop with the url to your home assistant instance.`}</>;
+  const sanitizedUrl = useMemo(() => {
+    try {
+      // htftp://lofcalhost:1234/ => origin of "null" so we need to account for malformed urls
+      // @see https://github.com/shannonhochkins/ha-component-kit/issues/146#issuecomment-2138352567
+      return new URL(hassUrl).origin;
+    } catch (e) {
+      return null;
+    }
+  }, [hassUrl]);
+
+  if (!sanitizedUrl || sanitizedUrl === "null" || sanitizedUrl === null) {
+    return <>{`Provide the hassUrl prop with a valid url to your home assistant instance.`}</>;
   }
 
   return (
-    <HassProvider hassUrl={hassUrl} {...options}>
+    <HassProvider hassUrl={sanitizedUrl} hassToken={hassToken} {...options}>
       {(ready) => (
         <AnimatePresence mode="wait">
           {ready ? (

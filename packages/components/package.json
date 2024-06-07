@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "3.2.0",
+  "version": "4.0.0",
   "private": false,
   "keywords": [
     "react",
@@ -69,7 +69,7 @@
     "@emotion/react": ">=10.x",
     "@emotion/styled": ">=10.x",
     "@fullcalendar/react": ">=6.x.x",
-    "@hakit/core": "^3.2.0",
+    "@hakit/core": "^4.0.0",
     "@use-gesture/react": ">=10.x",
     "autolinker": ">=4.x",
     "framer-motion": ">=10.x",
@@ -89,6 +89,7 @@
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.12",
+    "rollup-plugin-visualizer": "^5.12.0",
     "vite-plugin-svgr": "^4.2.0"
   }
 }

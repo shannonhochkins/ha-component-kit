@@ -1,4 +1,4 @@
-import { useEntity, useIconByDomain, useIconByEntity, computeDomain, isUnavailableState, ON } from "@hakit/core";
+import { useEntity, useIconByDomain, useIconByEntity, computeDomain, isUnavailableState, ON, localize } from "@hakit/core";
 import type { EntityName, ExtractDomain, HassEntityWithService } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { Row, fallback, ModalByEntityDomain, type ModalPropsHelper } from "@components";
@@ -131,7 +131,7 @@ function _EntitiesCardRow<E extends EntityName>({
       {typeof _entity === "string" && (
         <ModalByEntityDomain
           entity={_entity as EntityName}
-          title={title ?? "Unknown title"}
+          title={title ?? localize("unknown")}
           onClose={() => {
             setOpenModal(false);
           }}

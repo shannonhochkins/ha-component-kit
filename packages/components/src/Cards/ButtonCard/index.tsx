@@ -1,8 +1,18 @@
 import { useMemo } from "react";
 import styled from "@emotion/styled";
-import { lowerCase, startCase } from "lodash";
 import type { EntityName } from "@hakit/core";
-import { useEntity, useHass, useIconByDomain, useIcon, useIconByEntity, isUnavailableState, ON } from "@hakit/core";
+import {
+  localize,
+  useEntity,
+  useHass,
+  useIconByDomain,
+  useIcon,
+  useIconByEntity,
+  isUnavailableState,
+  ON,
+  OFF,
+  computeDomainTitle,
+} from "@hakit/core";
 import { fallback, Column, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { computeDomain } from "@utils/computeDomain";
 import { ErrorBoundary } from "react-error-boundary";
@@ -218,13 +228,16 @@ function _ButtonCard<E extends EntityName>({
     return _description === null ? null : _description || entity?.attributes.friendly_name || entity?.entity_id || null;
   }, [_description, entity]);
   // use the input title if provided, else use the domain if available, else null
-  const title = useMemo(() => _title || (domain !== null ? startCase(lowerCase(domain)) : null), [_title, domain]);
+  const title = useMemo(
+    () => _title || (domain !== null && _entity ? computeDomainTitle(_entity, entity?.attributes?.device_class) : null),
+    [_title, domain, entity, _entity],
+  );
 
   function renderState() {
     if (hideState) return null;
     if (typeof active === "boolean") {
       // static usage without entity
-      return active ? "- on" : "- off";
+      return active ? `- ${localize(ON)}` : `- ${localize(OFF)}`;
     }
     if (entity && entity.state === ON && domain === "light") {
       // dynamic usage with entity if it's a light
@@ -297,7 +310,11 @@ function _ButtonCard<E extends EntityName>({
                 </Title>
               )}
               {description && <Description className="description">{description}</Description>}
-              {!hideDetails && entity && !hideLastUpdated && <Title className="title">Updated: {entity.custom.relativeTime}</Title>}
+              {!hideDetails && entity && !hideLastUpdated && (
+                <Title className="title">
+                  {localize("last_updated")}: {entity.custom.relativeTime}
+                </Title>
+              )}
             </Title>
           </Footer>
         )}

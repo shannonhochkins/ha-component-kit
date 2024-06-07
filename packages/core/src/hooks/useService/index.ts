@@ -1,5 +1,6 @@
 import { useMemo, useCallback } from "react";
-import { useHass } from "@core";
+import { useHass } from "../useHass";
+import { localize } from "../useLocale";
 import type { SupportedServices, DomainService, SnakeOrCamelDomains, ServiceData, SnakeToCamel, Target } from "@typings";
 import type { HassContextProps } from "@core";
 import { uniq } from "lodash";
@@ -27,10 +28,16 @@ export function createService<T extends SnakeOrCamelDomains>(
             target = [...uniq(target)];
           }
 
-          console.info(`Calling ${domain}.${service} with`, {
-            target,
-            serviceData,
-          });
+          console.info(
+            `${localize("call_service_name", {
+              search: "{name}",
+              replace: `${domain}.${service}`,
+            })} ${domain}.${service}:`,
+            {
+              target,
+              serviceData,
+            },
+          );
           return callService({
             domain,
             service,

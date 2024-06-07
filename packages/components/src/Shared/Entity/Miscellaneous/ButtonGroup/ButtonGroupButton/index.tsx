@@ -9,6 +9,7 @@ import {
   type ExtractDomain,
   type HassEntityWithService,
   type EntityName,
+  localize,
 } from "@hakit/core";
 import { useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -94,7 +95,7 @@ function _ButtonGroupButton<E extends EntityName>({
   });
   const _icon = useIcon(icon ?? _entity?.attributes?.icon ?? "mdi:help-circle-outline");
   const titleValue = useMemo(() => {
-    return title ?? _entity?.attributes?.friendly_name ?? _entity?.entity_id ?? "unknown";
+    return title ?? _entity?.attributes?.friendly_name ?? _entity?.entity_id ?? localize("unknown");
   }, [_entity, title]);
   const _active = useMemo(() => {
     return active ?? _entity?.state === ON;

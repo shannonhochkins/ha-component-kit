@@ -8,6 +8,7 @@ import {
   useIconByDomain,
   isUnavailableState,
   useIconByEntity,
+  localize,
   type EntityName,
   type FilterByDomain,
 } from "@hakit/core";
@@ -81,6 +82,7 @@ function _VacuumCard({
   service,
   modalProps,
   customImage,
+  locatingNode,
   ...rest
 }: VacuumCardProps): JSX.Element {
   const { useStore } = useHass();
@@ -93,8 +95,8 @@ function _VacuumCard({
   const isUnavailable = isUnavailableState(entity.state);
 
   const titleValue = useMemo(() => {
-    return flash ? "Locating" : entity.attributes.status ?? title;
-  }, [entity.attributes.status, title, flash]);
+    return flash ? locatingNode ?? `${localize("locate")}...` : entity.attributes.status ?? title;
+  }, [entity.attributes.status, locatingNode, title, flash]);
 
   const locateFlash = useCallback(() => {
     setFlash(true);
@@ -112,6 +114,7 @@ function _VacuumCard({
       modalProps={{
         ...modalProps,
         stateTitle: titleValue,
+        locatingNode,
         hideCurrentBatteryLevel,
         hideState,
         hideUpdated,

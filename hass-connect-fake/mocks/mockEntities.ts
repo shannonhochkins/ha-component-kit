@@ -13,6 +13,7 @@ import { createSensor } from "./createSensor";
 import { createSwitch } from "./createSwitch";
 import { createVacuum } from "./createVacuum";
 import { createWeather } from "./createWeather";
+import { createAlarmPanel } from "./createAlarmPanel";
 // fixtures
 import openWeatherFixture from './fixtures/open-weather';
 
@@ -245,4 +246,5 @@ export const entities: HassEntities = {
     state: "not_home",
     attributes: { friendly_name: "Jane", latitude: 48.857543231604986, longitude: 2.274926660937714 },
   }),
+  ...createAlarmPanel("alarm_control_panel.home_alarm"),
 } as const;

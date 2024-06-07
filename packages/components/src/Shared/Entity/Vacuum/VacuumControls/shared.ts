@@ -1,5 +1,4 @@
-import { DomainService } from "@core";
-import type { VacuumEntityState } from "@hakit/core";
+import type { DomainService, VacuumEntityState } from "@hakit/core";
 
 type VacuumData<T> = {
   [key in VacuumEntityState | DomainService<"vacuum">]: T;

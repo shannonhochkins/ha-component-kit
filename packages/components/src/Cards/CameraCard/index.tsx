@@ -1,5 +1,5 @@
 import type { EntityName, FilterByDomain, CameraEntityExtended } from "@hakit/core";
-import { useCamera, useHass, isUnavailableState, STREAM_TYPE_WEB_RTC, STREAM_TYPE_HLS } from "@hakit/core";
+import { useCamera, useHass, isUnavailableState, STREAM_TYPE_WEB_RTC, STREAM_TYPE_HLS, localize } from "@hakit/core";
 import styled from "@emotion/styled";
 import { useEffect, useCallback, useRef, useState, useMemo, Children, isValidElement, cloneElement } from "react";
 import {
@@ -215,7 +215,7 @@ function _CameraCard<E extends FilterByDomain<EntityName, "camera">>({
             setView("live");
           }}
           active={_view === "live"}
-          title="Live View"
+          title={localize("preload_camera_stream")}
           tooltipPlacement="top"
           rippleProps={{
             preventPropagation: true,
@@ -234,7 +234,7 @@ function _CameraCard<E extends FilterByDomain<EntityName, "camera">>({
             setView("motion");
           }}
           active={_view === "motion"}
-          title="Motion View"
+          title={`${localize("motion")} ${localize("view")}`}
           tooltipPlacement="top"
           rippleProps={{
             preventPropagation: true,
@@ -249,7 +249,7 @@ function _CameraCard<E extends FilterByDomain<EntityName, "camera">>({
             setView("poster");
           }}
           active={_view === "poster"}
-          title="Poster View"
+          title={`${localize("image")} ${localize("view")}`}
           tooltipPlacement="top"
           rippleProps={{
             preventPropagation: true,
@@ -285,10 +285,14 @@ function _CameraCard<E extends FilterByDomain<EntityName, "camera">>({
         <Header justifyContent="space-between" gap="0.5rem">
           <Row justifyContent="flex-start" gap="0.5rem">
             <StateFabCard active borderRadius={10} disableScale size={30} noIcon>
-              <div ref={stateValueRef}>{loading ? "CONNECTING" : _view === "live" ? "loading" : camera.state}</div>
+              <div ref={stateValueRef}>{loading || _view === "live" ? localize("loading") : camera.state}</div>
             </StateFabCard>
           </Row>
-          {isUnavailable && <CameraName>Unavailable {camera.entity_id}</CameraName>}
+          {isUnavailable && (
+            <CameraName>
+              {localize("unavailable")} {camera.entity_id}
+            </CameraName>
+          )}
           {!hideName && <CameraName>{cameraName}</CameraName>}
         </Header>
         {!hideFooter && (

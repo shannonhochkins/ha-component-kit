@@ -1,6 +1,6 @@
 import { Menu, FabCard, ButtonBar, ButtonBarButton, fallback } from "@components";
 import type { EntityName, FilterByDomain } from "@hakit/core";
-import { useEntity, HvacMode, toReadableString, OFF } from "@hakit/core";
+import { useEntity, HvacMode, toReadableString, OFF, localize } from "@hakit/core";
 import { useState, useEffect, useCallback } from "react";
 import { supportsFeatureFromAttributes, UNAVAILABLE } from "@hakit/core";
 import { motion, type MotionProps } from "framer-motion";
@@ -162,14 +162,14 @@ function _ClimateControls({
             <ButtonBarButton
               active={_mainControl === "temperature"}
               disabled={entity!.state === UNAVAILABLE}
-              title="Temperature"
+              title={localize("temperature")}
               icon="mdi:thermometer"
               onClick={() => setMainControl("temperature")}
             />
             <ButtonBarButton
               active={_mainControl === "humidity"}
               disabled={entity!.state === UNAVAILABLE}
-              title="Humidity"
+              title={localize("humidity")}
               onClick={() => setMainControl("humidity")}
               icon="mdi:water-percent"
             />

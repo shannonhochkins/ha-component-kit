@@ -7,6 +7,7 @@ import dts from 'vite-plugin-dts';
 import svgr from "vite-plugin-svgr";
 import { fileURLToPath } from 'node:url';
 import { extname, relative, resolve } from 'path'
+import { visualizer } from 'rollup-plugin-visualizer';
 import { glob } from 'glob'
 
 const globals = {
@@ -36,10 +37,68 @@ const globals = {
   'autolinker': 'autolinker',
   'use-long-press': 'use-long-press',
   'zustand': 'zustand',
+  'react-error-boundary': 'react-error-boundary',
 };
 
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
+  const plugins = [
+    tsconfigPaths({
+      root: resolve(__dirname, './')
+    }),
+    react({
+      jsxImportSource: '@emotion/react',
+      babel: {
+        plugins: [
+          [
+            '@emotion/babel-plugin',
+            {
+              sourceMap: configEnv.mode !== 'production', // Disable source maps for Emotion in production mode
+              autoLabel: 'dev-only',
+              labelFormat: '[local]',
+              cssPropOptimization: true,
+            },
+          ],
+        ],
+      },
+    }),
+    svgr(),
+    linterPlugin({
+      include: ['./src}/**/*.{ts,tsx}'],
+      linters: [new EsLinter({ configEnv })],
+    }),
+    dts({
+      rollupTypes: false,
+      root: resolve(__dirname, './'),
+      outDir: resolve(__dirname, './dist/types'),
+      include: [resolve(__dirname, './src')],
+      exclude: ['node_modules/**', 'framer-motion'],
+      clearPureImport: true,
+      copyDtsFiles: true,
+      insertTypesEntry: true,
+      aliasesExclude: ['@hakit/core'],
+      beforeWriteFile: (filePath, content) => {
+        const base = resolve(__dirname, './dist/types/packages/components/src');
+        const replace = resolve(__dirname, './dist/types');
+        if (filePath.includes('test.d.ts')) return false;
+        if (filePath.includes('stories.d.ts')) return false;
+        if (filePath.includes('src/index.d.ts')) {
+          content = `/// <reference path="./.d.ts" />
+${content}`
+        }
+        return {
+          filePath: filePath.replace(base, replace),
+          content,
+        }
+      },
+    })
+  ] satisfies UserConfig['plugins'];
+  if (configEnv.mode === 'production') {
+    plugins.push(visualizer({
+      filename: './dist/stats.html',
+      open: true,
+    }));
+  }
   return {
     build: {
       target: 'es2020',
@@ -50,7 +109,13 @@ export default defineConfig(configEnv => {
       },
       rollupOptions: {
         input: Object.fromEntries(
-           glob.sync('src/**/index.{ts,tsx}').map(file => [
+          glob.sync([
+            'src/*.{ts,tsx}',
+            'src/**/*.{ts,tsx}',
+            'src/**/**/*.{ts,tsx}',
+          ], {
+            ignore: ['**/*stories.ts', '**/*stories.tsx', "**/*.test.{ts,tsx}"]
+          }).map(file => [
              // The name of the entry point
              // src/nested/foo.ts becomes nested/foo
              relative(
@@ -81,51 +146,12 @@ export default defineConfig(configEnv => {
           globals,
           assetFileNames: 'assets/[name][extname]',
           entryFileNames: '[format]/[name].js',
+          exports: 'named',
         }
       },
       sourcemap: true,
       minify: true,
     },
-    plugins: [
-      tsconfigPaths({
-        root: resolve(__dirname, './')
-      }),
-      react({
-        jsxImportSource: '@emotion/react',
-        babel: {
-          plugins: ['@emotion/babel-plugin'],
-        },
-      }),
-      svgr(),
-      linterPlugin({
-        include: ['./src}/**/*.{ts,tsx}'],
-        linters: [new EsLinter({ configEnv })],
-      }),
-      dts({
-        rollupTypes: false,
-        root: resolve(__dirname, './'),
-        outDir: resolve(__dirname, './dist/types'),
-        include: [resolve(__dirname, './src')],
-        exclude: ['node_modules/**', 'framer-motion'],
-        clearPureImport: true,
-        copyDtsFiles: true,
-        insertTypesEntry: true,
-        aliasesExclude: ['@hakit/core'],
-        beforeWriteFile: (filePath, content) => {
-          const base = resolve(__dirname, './dist/types/packages/components/src');
-          const replace = resolve(__dirname, './dist/types');
-          if (filePath.includes('test.d.ts')) return false;
-          if (filePath.includes('stories.d.ts')) return false;
-          if (filePath.includes('src/index.d.ts')) {
-            content = `/// <reference path="./.d.ts" />
-${content}`
-          }
-          return {
-            filePath: filePath.replace(base, replace),
-            content,
-          }
-        },
-      })
-    ],
+    plugins,
   } satisfies UserConfig;
 });

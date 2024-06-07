@@ -1,11 +1,18 @@
 import { useMemo } from "react";
 import styled from "@emotion/styled";
-import { useEntity, useIconByDomain, useHass, useIcon, useIconByEntity, isUnavailableState } from "@hakit/core";
-import { computeDomain } from "@utils/computeDomain";
-import type { EntityName } from "@hakit/core";
+import {
+  useEntity,
+  useIconByDomain,
+  useHass,
+  useIcon,
+  useIconByEntity,
+  isUnavailableState,
+  computeDomainTitle,
+  computeDomain,
+  type EntityName,
+} from "@hakit/core";
 import { CardBase, fallback, Tooltip } from "@components";
 import type { TooltipProps, CardBaseProps } from "@components";
-import { startCase, lowerCase } from "lodash";
 import { ErrorBoundary } from "react-error-boundary";
 
 const StyledFabCard = styled(<E extends EntityName>({ service, serviceData, key, ...props }: CardBaseProps<"button", E>) => (
@@ -123,8 +130,10 @@ function _FabCard<E extends EntityName>({
     color: iconColor ?? undefined,
   });
   const active = typeof _active === "boolean" ? _active : entity === null ? false : entity.state !== "off" && !isUnavailable;
-
-  const title = useMemo(() => _title ?? (domain === null ? null : startCase(lowerCase(domain))), [_title, domain]);
+  const title = useMemo(
+    () => _title || (domain !== null && _entity ? computeDomainTitle(_entity, entity?.attributes?.device_class) : null),
+    [_title, domain, entity, _entity],
+  );
   return (
     <>
       <Tooltip

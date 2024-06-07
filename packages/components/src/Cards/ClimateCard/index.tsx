@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import type { HassEntityWithService, HvacMode } from "@hakit/core";
 import type { ClimateControlsProps, AvailableQueries, CardBaseProps } from "@components";
-import { useEntity, useIconByDomain, useIconByEntity, OFF, isUnavailableState, useHass } from "@hakit/core";
+import { useEntity, useIconByDomain, useIconByEntity, OFF, isUnavailableState, useHass, localize } from "@hakit/core";
 import { fallback, Row, CardBase, ButtonBar, Column, ButtonBarButton } from "@components";
 import { capitalize } from "lodash";
 import { icons, activeColors } from "../../Shared/Entity/Climate/ClimateControls/shared";
@@ -182,13 +182,23 @@ function _ClimateCard({
               <span className="fan-speed">Speed: {entity.attributes.fan_mode || "Unknown"}</span>
               <span className="temperature">
                 <Temperature>
-                  <div>Temperature: {temperature}</div>
+                  <div>
+                    {localize("temperature")}: {temperature}
+                  </div>
                   <span>{unit_of_measurement ?? config?.unit_system.temperature}</span>
                 </Temperature>
               </span>
               <span className="current-temperature">
                 <Temperature>
-                  <div>Current Temperature: {current_temperature}</div>
+                  <div>
+                    {capitalize(
+                      localize("name_current_temperature", {
+                        search: "{name} ",
+                        replace: "",
+                      }),
+                    )}
+                    : {current_temperature}
+                  </div>
                   <span>{unit_of_measurement ?? config?.unit_system.temperature}</span>
                 </Temperature>
               </span>
@@ -212,7 +222,7 @@ function _ClimateCard({
                 rippleProps={{
                   preventPropagation: true,
                 }}
-                title={"Decrease Temperature"}
+                title={localize("decrease_temperature")}
                 icon={"mdi:minus"}
                 onClick={() => {
                   entity.service.setTemperature({
@@ -228,7 +238,12 @@ function _ClimateCard({
                 }}
                 borderRadius={0}
                 noIcon
-                title={"Current Temperature"}
+                title={capitalize(
+                  localize("name_current_temperature", {
+                    search: "{name} ",
+                    replace: "",
+                  }),
+                )}
                 cssStyles={`
                   button {
                     cursor: default;
@@ -246,7 +261,7 @@ function _ClimateCard({
                 rippleProps={{
                   preventPropagation: true,
                 }}
-                title={"Increase Temperature"}
+                title={localize("increase_temperature")}
                 icon={"mdi:plus"}
                 onClick={() => {
                   entity.service.setTemperature({

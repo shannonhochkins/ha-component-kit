@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { ReactNode } from "react";
-import { useEntity } from "@hakit/core";
+import { localize, useEntity } from "@hakit/core";
 import type { EntityName, HassEntityWithService, ExtractDomain } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { Row, fallback, Tooltip, mq } from "@components";
@@ -38,7 +38,7 @@ function _WeatherCardDetail({ icon, entity, title, suffix, render, ...rest }: We
   const _title = title ?? _entity.attributes.friendly_name ?? "";
   return (
     <DetailsRow className="details" gap="0rem" justifyContent="flex-start" {...rest}>
-      <Tooltip title={_title ?? "unknown title"}>
+      <Tooltip title={_title ?? localize("unknown")}>
         <Row className="row" fullWidth gap="0.5rem" justifyContent="flex-start">
           <Icon className="icon" icon={icon ?? _entity.attributes.icon ?? "mdi:info"} />
           <State className="state">

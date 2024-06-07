@@ -13,6 +13,7 @@ import {
   isUnavailableState,
   useEntity,
   useHass,
+  localize,
 } from "@hakit/core";
 import { CSSInterpolation } from "@emotion/serialize";
 import {
@@ -330,7 +331,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
         <ModalByEntityDomain
           {...modalProps}
           entity={_entity as EntityName}
-          title={modalProps?.title ?? title ?? "Unknown title"}
+          title={modalProps?.title ?? title ?? localize("unknown")}
           onClose={() => {
             setOpenModal(false);
             if (modalProps?.onClose) {

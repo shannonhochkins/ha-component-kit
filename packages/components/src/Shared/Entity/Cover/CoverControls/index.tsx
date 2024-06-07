@@ -1,7 +1,7 @@
 import { useMemo, useEffect, useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import { ControlSlider, Column, Row, FabCard, useBreakpoint, fallback, ButtonGroup, ButtonGroupButton } from "@components";
-import { useEntity, supportsFeatureFromAttributes, isUnavailableState } from "@hakit/core";
+import { useEntity, supportsFeatureFromAttributes, isUnavailableState, localize } from "@hakit/core";
 import type { EntityName, CoverEntity, FilterByDomain } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -34,6 +34,7 @@ const ButtonBar = styled.div`
 const Label = styled.span`
   font-size: 0.8rem;
   margin-top: 0.5rem;
+  text-transform: uppercase;
 `;
 
 function computeTitleDisplay(entity: CoverEntity, position?: number) {
@@ -147,7 +148,7 @@ function _CoverControls({
                       if (onStateChange) onStateChange(computeTitleDisplay(entity, Math.round(value)));
                     }}
                   />
-                  <Label>POSITION</Label>
+                  <Label>{localize("cover_position")}</Label>
                 </Column>
               )}
               {supportsTiltPosition && typeof entity.attributes.current_tilt_position !== "undefined" && (
@@ -172,7 +173,7 @@ function _CoverControls({
                       if (onStateChange) onStateChange(computeTitleDisplay(entity, Math.round(value)));
                     }}
                   />
-                  <Label>TILT</Label>
+                  <Label>{localize("cover_tilt_position")}</Label>
                 </Column>
               )}
             </Row>
@@ -190,40 +191,50 @@ function _CoverControls({
                 <Column>
                   <ButtonGroup thickness={device.xxs ? 70 : 100} reverse={reverse} orientation={orientation}>
                     <ButtonGroupButton
-                      title="Open Cover"
+                      title={localize("open_cover")}
                       entity={_entity}
                       service="openCover"
                       icon={reverse ? "mdi:arrow-down" : "mdi:arrow-up"}
                     />
-                    <ButtonGroupButton title="Stop Cover" entity={_entity} service="stopCover" icon={"mdi:stop-circle-outline"} />
                     <ButtonGroupButton
-                      title="Close Cover"
+                      title={localize("stop_cover")}
+                      entity={_entity}
+                      service="stopCover"
+                      icon={"mdi:stop-circle-outline"}
+                    />
+                    <ButtonGroupButton
+                      title={localize("close_cover")}
                       entity={_entity}
                       service="closeCover"
                       icon={!reverse ? "mdi:arrow-down" : "mdi:arrow-up"}
                     />
                   </ButtonGroup>
-                  <Label>CONTROLS</Label>
+                  <Label>{localize("control")}</Label>
                 </Column>
               )}
               {supportsTilt && (
                 <Column>
                   <ButtonGroup thickness={device.xxs ? 70 : 100} reverse={reverse} orientation={orientation}>
                     <ButtonGroupButton
-                      title="Open cover tilt"
+                      title={localize("open_cover_tilt")}
                       entity={_entity}
                       service="openCoverTilt"
                       icon={reverse ? "mdi:arrow-collapse" : "mdi:arrow-expand"}
                     />
-                    <ButtonGroupButton title="Stop Cover tilt" entity={_entity} service="stopCoverTilt" icon={"mdi:stop-circle-outline"} />
                     <ButtonGroupButton
-                      title="Close Cover tilt"
+                      title={localize("close_cover")}
+                      entity={_entity}
+                      service="stopCoverTilt"
+                      icon={"mdi:stop-circle-outline"}
+                    />
+                    <ButtonGroupButton
+                      title={localize("close_cover_tilt")}
                       entity={_entity}
                       service="closeCoverTilt"
                       icon={!reverse ? "mdi:arrow-collapse" : "mdi:arrow-expand"}
                     />
                   </ButtonGroup>
-                  <Label>TILT CONTROLS</Label>
+                  <Label>{localize("tilt_position")}</Label>
                 </Column>
               )}
             </Row>
@@ -234,6 +245,7 @@ function _CoverControls({
             <FabCard
               icon="mdi:hamburger-menu"
               active={_mode === "position"}
+              title={localize("position")}
               onClick={() => {
                 setMode("position");
               }}
@@ -241,6 +253,7 @@ function _CoverControls({
             <FabCard
               icon="mdi:swap-vertical"
               active={_mode === "button"}
+              title={localize("button")}
               onClick={() => {
                 setMode("button");
               }}

@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import styled from "@emotion/styled";
 import type { EntityName, HistoryOptions } from "@hakit/core";
-import { useEntity, useIconByDomain, useIcon, useHass, useIconByEntity, computeDomain, isUnavailableState } from "@hakit/core";
+import { useEntity, useIconByDomain, useIcon, useHass, useIconByEntity, computeDomain, isUnavailableState, localize } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 import { fallback, SvgGraph, Alert, AvailableQueries, CardBase, type CardBaseProps } from "@components";
 
@@ -149,11 +149,11 @@ function _SensorCard<E extends EntityName>({
         {!hideGraph && (
           <div className={"history"}>
             {entity.history.loading ? (
-              <Alert className={"loading"} description="Loading..." />
+              <Alert className={"loading"} description={localize("loading")} />
             ) : entity.history.coordinates.length > 0 ? (
               <SvgGraph coordinates={entity.history.coordinates} />
             ) : (
-              <Alert className={"no-state-history"} description="No state history found." />
+              <Alert className={"no-state-history"} description={localize("no_state_history_found")} />
             )}
           </div>
         )}

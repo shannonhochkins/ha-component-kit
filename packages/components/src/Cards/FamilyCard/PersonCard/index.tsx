@@ -1,6 +1,6 @@
 import { AvailableQueries, CardBase, CardBaseProps, fallback } from "@components";
 import styled from "@emotion/styled";
-import { EntityName, FilterByDomain, useEntity, useHass, useIcon } from "@hakit/core";
+import { EntityName, FilterByDomain, localize, useEntity, useHass, useIcon } from "@hakit/core";
 import { useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -139,7 +139,7 @@ export const UserAvatar = ({
 
 function _PersonCard({
   entity,
-  personStateMap = { home: { text: "Home", icon: "mdi:home" }, not_home: { text: "Away", icon: "mdi:walk" } },
+  personStateMap: _personStateMap = {},
   cssStyles,
   modalProps,
   className,
@@ -147,6 +147,12 @@ function _PersonCard({
 }: PersonCardProps): React.ReactNode {
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+
+  const personStateMapDefault: PersonStateMap = {
+    home: { text: localize("home"), icon: "mdi:home" },
+    not_home: { text: localize("away"), icon: "mdi:walk" },
+  };
+  const personStateMap = { ...personStateMapDefault, ..._personStateMap };
 
   const person = useEntity(entity);
   const stateText = personStateMap[person.state]?.text ?? person.state;

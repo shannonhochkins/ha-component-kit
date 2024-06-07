@@ -1,7 +1,17 @@
 import { useCallback, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import type { EntityName } from "@hakit/core";
-import { useEntity, useHass, useIconByDomain, useIcon, useIconByEntity, computeDomain, isUnavailableState } from "@hakit/core";
+import {
+  computeDomainTitle,
+  useEntity,
+  useHass,
+  useIconByDomain,
+  useIcon,
+  useIconByEntity,
+  computeDomain,
+  isUnavailableState,
+  localize,
+} from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 import { fallback, CardBase, type AvailableQueries, type CardBaseProps } from "@components";
 
@@ -207,7 +217,14 @@ function _TriggerCard<E extends EntityName>({
                   {sliderIcon ?? powerIcon}
                 </ToggleState>
                 <ToggleMessage hideArrow={hideArrow} active={active} className={`toggle-message`}>
-                  {active ? sliderTextActive ?? "Success..." : sliderTextInactive ?? `Run ${domain}`} {!active && !hideArrow && arrowIcon}
+                  {active
+                    ? sliderTextActive ??
+                      localize("triggered_name", {
+                        search: " {name}",
+                        replace: "",
+                      })
+                    : sliderTextInactive ?? `${localize("run")} ${computeDomainTitle(_entity, entity?.attributes?.device_class)}`}{" "}
+                  {!active && !hideArrow && arrowIcon}
                 </ToggleMessage>
               </>
             )}

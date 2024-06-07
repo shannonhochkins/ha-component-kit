@@ -12,6 +12,7 @@ import {
   supportsFeatureFromAttributes,
   stateActive,
   toReadableString,
+  localize,
 } from "@hakit/core";
 import styled from "@emotion/styled";
 import { useDebouncedCallback } from "use-debounce";
@@ -212,7 +213,7 @@ export function ClimateControlSlider({ entity: _entity, showCurrent = false }: C
 
     const actionLabel = toReadableString(entity.attributes.hvac_action);
 
-    return <p className="label">{action && action !== "off" && action !== "idle" ? actionLabel : `Target`}</p>;
+    return <p className="label">{action && action !== "off" && action !== "idle" ? actionLabel : localize("target_temperature")}</p>;
   }, [entity.attributes.hvac_action, entity.state, supportsTargetTemperature, supportsTargetTemperatureRange]);
 
   const _valueChanged = useCallback(

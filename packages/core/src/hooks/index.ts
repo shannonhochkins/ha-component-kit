@@ -21,7 +21,10 @@ export { useWeather, type UseWeatherOptions } from "./useWeather";
 export { getSupportedForecastTypes, type ForecastType, type ModernForecastType } from "./useWeather/helpers";
 export * from "./useLogs/logbook";
 export { useAreas, type Area } from "./useAreas";
-export { localize, useTranslations, updateLocalTranslations } from "./useTranslations";
+export { localize, useLocale, useLocales, updateLocales } from "./useLocale";
+export { type Locales, type LocaleKeys } from "./useLocale/locales/types";
+// dynamic fetch module for locales
+export { default as locales } from "./useLocale/locales";
 // other subscription based models used by useAreas
 export { subscribeAreaRegistry, type AreaRegistryEntry } from "./useAreas/subscribe/areas";
 export { subscribeEntityRegistry, type EntityRegistryEntry } from "./useAreas/subscribe/entities";

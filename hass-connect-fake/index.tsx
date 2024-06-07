@@ -21,7 +21,7 @@ import type {
   Store,
 } from "@hakit/core";
 import { isArray } from "lodash";
-import { HassContext, updateLocalTranslations } from '@hakit/core';
+import { HassContext, updateLocales, locales } from '@hakit/core';
 import { entities as ENTITIES } from './mocks/mockEntities';
 import fakeApi from './mocks/fake-call-service';
 import { create } from "zustand";
@@ -31,8 +31,6 @@ import { mockCallApi } from './mocks/fake-call-api';
 import reolinkSnapshot from './assets/reolink-snapshot.jpg';
 import { logs } from './mocks/mockLogs';
 import {dailyForecast, hourlyForecast} from './mocks/mockWeather';
-import { translations } from "./mocks/translations";
-
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
   service: M;
@@ -233,6 +231,8 @@ const useStore = create<Store>((set) => ({
   setError: (error) => set({ error }),
   hassUrl: '',
   setHassUrl: (hassUrl) => set({ hassUrl }),
+  portalRoot: undefined,
+  setPortalRoot: (portalRoot) => set({ portalRoot }),
   callApi: async () => {
     return {};
   },
@@ -253,6 +253,7 @@ const useStore = create<Store>((set) => ({
   globalComponentStyles: {},
   setGlobalComponentStyles: (globalComponentStyles) => set({ globalComponentStyles }),
 }))
+
 
 function HassProvider({
   children,
@@ -427,10 +428,6 @@ function HassProvider({
     };
   }, [routes, setHash, setRoutes]);
 
-  useEffect(() => {
-    updateLocalTranslations(translations);
-  }, [])
-
   const joinHassUrl = useCallback((path: string) => path, []);
 
   const getRoute = useCallback(
@@ -446,6 +443,10 @@ function HassProvider({
     },
     []
   );
+
+  useEffect(() => {
+    locales.find(locale => locale.code === 'en')?.fetch().then(updateLocales);
+  }, [])
 
   return (
     <HassContext.Provider

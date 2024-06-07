@@ -7,6 +7,7 @@ import {
   OFF,
   supportsFeatureFromAttributes,
   type MediaPlayerEntity,
+  localize,
 } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
@@ -163,7 +164,7 @@ export const MediaPlayerControls = ({
         )}
         {allEntityIds.length > 1 && (
           <Group
-            title="Related Players"
+            title={localize("related_entities")}
             disableColumns
             cssStyles={`
             &.group {

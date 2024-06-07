@@ -28,6 +28,7 @@ import styled from "@emotion/styled";
 import {
   useEntity,
   useHass,
+  localize,
   type AllDomains,
   type EntityName,
   type EntityRegistryEntry,
@@ -36,7 +37,7 @@ import {
 } from "@hakit/core";
 import { computeDomain } from "@utils/computeDomain";
 import { lowerCase, startCase } from "lodash";
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, ReactNode } from "react";
 import type { ModalProps } from "..";
 import { ModalAlarmControls } from "./AlarmControlPanel";
 
@@ -98,7 +99,7 @@ export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<Ex
   hideUpdated?: boolean;
   hideAttributes?: boolean;
   hideLogbook?: boolean;
-  stateTitle?: string;
+  stateTitle?: ReactNode;
 } & OptionalChildrenModalProps;
 
 export function ModalByEntityDomain<E extends EntityName>({
@@ -233,7 +234,7 @@ export function ModalByEntityDomain<E extends EntityName>({
           <>
             {!hideLogbook && showLogbook && (
               <FabCard
-                title="Show Controls"
+                title={localize("device")}
                 tooltipPlacement="left"
                 icon="mdi:arrow-back"
                 size={30}
@@ -242,7 +243,7 @@ export function ModalByEntityDomain<E extends EntityName>({
             )}
             {!hideLogbook && !showLogbook && (
               <FabCard
-                title="Show Logbook Information"
+                title={localize("logbook")}
                 tooltipPlacement="left"
                 icon="mdi:graph-box"
                 size={30}
@@ -250,7 +251,7 @@ export function ModalByEntityDomain<E extends EntityName>({
               />
             )}
             {device && device.device_id && (
-              <FabCard title="Open Device" tooltipPlacement="left" icon="mdi:cog" size={30} onClick={openDevice} />
+              <FabCard title={localize("open_device_settings")} tooltipPlacement="left" icon="mdi:cog" size={30} onClick={openDevice} />
             )}
             {(!hideLogbook || (device && device.device_id)) && <Separator />}
           </>

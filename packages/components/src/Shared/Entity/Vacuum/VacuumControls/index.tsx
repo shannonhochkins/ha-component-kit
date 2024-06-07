@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { ButtonBarButton, ButtonBar, Column, FabCard, Row, ButtonBarButtonProps } from "@components";
-import { useEntity, type HassEntityWithService, type EntityName, batteryIconByLevel } from "@hakit/core";
+import { useEntity, type HassEntityWithService, type EntityName, batteryIconByLevel, localize } from "@hakit/core";
 import { useDebounce } from "react-use";
 import type { MotionProps } from "framer-motion";
 import { icons } from "./shared";
@@ -29,6 +29,8 @@ export interface VacuumControlsProps extends Extendable {
   hideToolbar?: boolean;
   /** change the default custom image to display @default vacuum.png */
   customImage?: string;
+  /** the text/node to render when locating @default 'Locate...' in preferred language */
+  locatingNode?: React.ReactNode;
 }
 
 const VacuumSize = styled.div`
@@ -136,7 +138,7 @@ export function VacuumToolbar({ entity: _entity, shortcuts, onLocate, hideToolba
               rippleProps={{
                 preventPropagation: true,
               }}
-              title="Start"
+              title={localize("start")}
               icon={icons["pause"]}
               onClick={() => entity.service.pause()}
             />
@@ -145,7 +147,7 @@ export function VacuumToolbar({ entity: _entity, shortcuts, onLocate, hideToolba
               rippleProps={{
                 preventPropagation: true,
               }}
-              title="Stop"
+              title={localize("stop")}
               icon={icons["stop"]}
               onClick={() => entity.service.stop()}
             />
@@ -154,7 +156,7 @@ export function VacuumToolbar({ entity: _entity, shortcuts, onLocate, hideToolba
               rippleProps={{
                 preventPropagation: true,
               }}
-              title="Return to base"
+              title={localize("return_home")}
               icon={icons["returning"]}
               onClick={() => entity.service.returnToBase()}
             />
@@ -173,7 +175,7 @@ export function VacuumToolbar({ entity: _entity, shortcuts, onLocate, hideToolba
               rippleProps={{
                 preventPropagation: true,
               }}
-              title="Start"
+              title={localize("start")}
               icon={icons["on"]}
               onClick={() => entity.service.start()}
             />
@@ -182,7 +184,7 @@ export function VacuumToolbar({ entity: _entity, shortcuts, onLocate, hideToolba
               rippleProps={{
                 preventPropagation: true,
               }}
-              title="Return to base"
+              title={localize("return_home")}
               icon={icons["returning"]}
               onClick={() => entity.service.returnToBase()}
             />
@@ -201,7 +203,7 @@ export function VacuumToolbar({ entity: _entity, shortcuts, onLocate, hideToolba
               rippleProps={{
                 preventPropagation: true,
               }}
-              title="Play"
+              title={localize("start")}
               icon={icons["on"]}
               onClick={() => entity.service.start()}
             />
@@ -210,7 +212,7 @@ export function VacuumToolbar({ entity: _entity, shortcuts, onLocate, hideToolba
               rippleProps={{
                 preventPropagation: true,
               }}
-              title="Pause"
+              title={localize("pause")}
               icon={icons["pause"]}
               onClick={() => entity.service.pause()}
             />
@@ -230,7 +232,7 @@ export function VacuumToolbar({ entity: _entity, shortcuts, onLocate, hideToolba
               rippleProps={{
                 preventPropagation: true,
               }}
-              title="Play"
+              title={localize("start")}
               icon={icons["on"]}
               onClick={() => entity.service.start()}
             />
@@ -239,7 +241,7 @@ export function VacuumToolbar({ entity: _entity, shortcuts, onLocate, hideToolba
               rippleProps={{
                 preventPropagation: true,
               }}
-              title="Locate"
+              title={localize("locate")}
               icon={"mdi:map-marker"}
               onClick={() => {
                 entity.service.locate();
@@ -254,7 +256,7 @@ export function VacuumToolbar({ entity: _entity, shortcuts, onLocate, hideToolba
                 rippleProps={{
                   preventPropagation: true,
                 }}
-                title="Return to base"
+                title={localize("return_home")}
                 icon={icons["returning"]}
                 onClick={() => entity.service.returnToBase()}
               />
@@ -330,7 +332,7 @@ export function VacuumControls({
                       });
                     }}
                   />
-                  <div>Fan Mode</div>
+                  <div>{localize("fan_speed")}</div>
                   {internalFanSpeed}
                 </ModeColumn>
               )}
@@ -342,7 +344,7 @@ export function VacuumControls({
               {shouldShowBatteryLevel && (
                 <ModeColumn gap="0.5rem">
                   <FabCard size={40} disabled={isDocked} title={`${battery_level}%`} icon={batteryIconByLevel(battery_level)} />
-                  <div>Battery Level</div>
+                  <div>{localize("battery_level")}</div>
                   {`${battery_level}%`}
                 </ModeColumn>
               )}

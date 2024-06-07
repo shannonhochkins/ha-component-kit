@@ -10,7 +10,7 @@ import { useBreakpoint, fallback, FabCard, Modal, type BreakPoints } from "@comp
 import { ErrorBoundary } from "react-error-boundary";
 import { motion } from "framer-motion";
 import { LIGHT, DARK, ACCENT, DEFAULT_START_LIGHT, DEFAULT_START_DARK, DIFF, DEFAULT_THEME_OPTIONS } from "./constants";
-import { useHass, type SupportedComponentOverrides } from "@hakit/core";
+import { localize, useHass, type SupportedComponentOverrides } from "@hakit/core";
 import { ThemeControls } from "./ThemeControls";
 import type { ThemeControlsProps } from "./ThemeControls";
 import { generateColumnBreakpoints } from "./breakpoints";
@@ -362,7 +362,7 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
           <FabCard
             onClick={() => setOpen(true)}
             tooltipPlacement="left"
-            title="Theme Controls"
+            title={localize("theme")}
             layoutId="theme-controls"
             icon="mdi:color"
           />
@@ -373,7 +373,7 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
           description="The theme is entirely calculated using css formulas, no javascript!"
           id="theme-controls"
           open={open}
-          title="Theme Controls"
+          title={localize("theme")}
           onClose={() => {
             setOpen(false);
           }}

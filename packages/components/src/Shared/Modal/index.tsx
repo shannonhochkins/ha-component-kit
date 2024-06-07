@@ -1,7 +1,7 @@
 import { Column, FabCard, Row, fallback, mq, useModalStore } from "@components";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { useHass } from "@hakit/core";
+import { localize, useHass } from "@hakit/core";
 import { AnimatePresence, HTMLMotionProps, MotionProps, type Variant, type Transition, motion } from "framer-motion";
 import { Fragment, ReactNode, memo, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -209,6 +209,7 @@ function _Modal({
   const { useStore } = useHass();
   const modalStore = useModalStore();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const portalRoot = useStore((store) => store.portalRoot);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [ready, setReady] = useState(false);
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
@@ -312,7 +313,7 @@ function _Modal({
                   }}
                   className={`modal-close-button`}
                   tooltipPlacement="left"
-                  title="Close"
+                  title={localize("close")}
                   icon="mdi:close"
                   disableRipples
                   disableScale
@@ -336,7 +337,7 @@ function _Modal({
         </Fragment>
       )}
     </AnimatePresence>,
-    document.body,
+    portalRoot ?? document.body,
   );
 }
 /** The modal component was built to easily generate a popup dialog from any element by passing through an "open" value, if you pass an id value, and the same id value is used on another motion element from framer-motion the Modal will animate from this element, see the examples below. */

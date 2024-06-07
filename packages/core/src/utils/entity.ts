@@ -1,4 +1,4 @@
-import { isUnavailableState, UNAVAILABLE, OFF, computeDomain, EntityName } from "@core";
+import { isUnavailableState, UNAVAILABLE, OFF, computeDomain, EntityName } from "../";
 import { HassEntity } from "home-assistant-js-websocket";
 
 // we just hardcode the light domain here so types work

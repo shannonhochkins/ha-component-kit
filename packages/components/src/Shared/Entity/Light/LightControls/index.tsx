@@ -12,6 +12,7 @@ import {
   lightSupportsBrightness,
   lightSupportsColorMode,
   lightSupportsColor,
+  localize,
 } from "@hakit/core";
 import type { EntityName, FilterByDomain } from "@hakit/core";
 import colorWheel from "./color_wheel.png";
@@ -126,7 +127,7 @@ function _LightControls({ entity: _entity, onStateChange }: LightControlsProps) 
     if (entity.state === ON) {
       return `${brightnessValue}%`;
     }
-    return "Unavailable";
+    return localize("unavailable");
   }, [brightnessValue, entity.state]);
 
   useEffect(() => {

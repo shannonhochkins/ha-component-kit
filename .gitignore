@@ -28,6 +28,8 @@ coverage
 
 supported-types.d.ts
 .ha-repo-cache
+.cache
+.env
 ha-dashboard
 packages/core/.env
 
