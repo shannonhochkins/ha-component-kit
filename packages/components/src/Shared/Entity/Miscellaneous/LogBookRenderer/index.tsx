@@ -158,6 +158,7 @@ function _LogBookRenderer({
   const connection = useStore((state) => state.connection);
   const requestedServices = useRef(false);
   const [services, setServices] = useState<HassServices | null>(null);
+  const language = useStore((state) => state.config?.language);
 
   useEffect(() => {
     if (requestedServices.current) return;
@@ -431,7 +432,7 @@ function _LogBookRenderer({
         : // Domain is there if there is no entity ID.
           item.domain!;
       const then = new Date(item.when * 1000);
-      const relativeTime = timeAgo.format(then);
+      const relativeTime = timeAgo(then, language);
 
       return (
         <div key={index} className="entry-container">
@@ -457,7 +458,17 @@ function _LogBookRenderer({
         </div>
       );
     },
-    [_renderContextMessage, _renderIndicator, _renderMessage, entities, formatDateMem, formatTimeWithSecondsMem, logs, hideIndicator],
+    [
+      _renderContextMessage,
+      _renderIndicator,
+      _renderMessage,
+      entities,
+      formatDateMem,
+      formatTimeWithSecondsMem,
+      logs,
+      hideIndicator,
+      language,
+    ],
   );
 
   return (

@@ -46,6 +46,16 @@ export default {
         }
         const previewer = parentDocument.querySelector('#root div div:has(main)') as HTMLElement;
         if (previewer !== null && shouldHidePanel) {
+          const rootDiv = parentDocument.querySelector('#root > div') as HTMLElement;
+          if (rootDiv !== null) {
+            rootDiv.style.display = 'flex';  
+            rootDiv.style.flexDirection = 'row-reverse';
+            rootDiv.style.flexWrap = 'nowrap';
+            const sidebarContainer = parentDocument.querySelector('#root > div > div:has(.sidebar-container)') as HTMLElement;
+            if (sidebarContainer) {
+              sidebarContainer.style.width = '300px';
+            }
+          }
           previewer.style.height = '100dvh';
           previewer.style.width = '100%';
         } else {

@@ -1,49 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // auto generated, do not manipulate, instead run the sync-ha-types script
-import {
-  HassEntityBase,
-  HassEntityAttributeBase,
-} from "home-assistant-js-websocket";
-export type HvacAction =
-  | "off"
-  | "preheating"
-  | "heating"
-  | "cooling"
-  | "drying"
-  | "idle"
-  | "fan";
+import { HassEntityBase, HassEntityAttributeBase } from "home-assistant-js-websocket";
+export type HvacAction = "off" | "preheating" | "heating" | "cooling" | "drying" | "idle" | "fan";
 
 export type HvacMode = (typeof HVAC_MODES)[number];
-export const HVAC_MODES = [
-  "auto",
-  "heat_cool",
-  "heat",
-  "cool",
-  "dry",
-  "fan_only",
-  "off",
-] as const;
+export const HVAC_MODES = ["auto", "heat_cool", "heat", "cool", "dry", "fan_only", "off"] as const;
 
 export type HumidifierAction = "off" | "idle" | "humidifying" | "drying";
 export const MODES = ["single", "restart", "queued", "parallel"] as const;
 
 export type OperationMode = (typeof OPERATION_MODES)[number];
-export const OPERATION_MODES = [
-  "electric",
-  "gas",
-  "heat_pump",
-  "eco",
-  "performance",
-  "high_demand",
-  "off",
-] as const;
+export const OPERATION_MODES = ["electric", "gas", "heat_pump", "eco", "performance", "high_demand", "off"] as const;
 
 export interface AlarmControlPanelEntity extends HassEntityBase {
   attributes: AlarmControlPanelEntityAttributes;
 }
 
-export interface AlarmControlPanelEntityAttributes
-  extends HassEntityAttributeBase {
+export interface AlarmControlPanelEntityAttributes extends HassEntityAttributeBase {
   code_format?: "text" | "number";
   changed_by?: string | null;
   code_arm_required?: boolean;
@@ -183,8 +156,7 @@ export const LIGHT_COLOR_MODES = {
   RGBWW: "rgbww",
   WHITE: "white",
 };
-export type LightColorMode =
-  (typeof LIGHT_COLOR_MODES)[keyof typeof LIGHT_COLOR_MODES];
+export type LightColorMode = (typeof LIGHT_COLOR_MODES)[keyof typeof LIGHT_COLOR_MODES];
 export interface LightEntity extends HassEntityBase {
   attributes: LightEntityAttributes;
 }
@@ -217,16 +189,7 @@ export interface LockEntityAttributes extends HassEntityAttributeBase {
 }
 export interface MediaPlayerEntity extends HassEntityBase {
   attributes: MediaPlayerEntityAttributes;
-  state:
-    | "playing"
-    | "paused"
-    | "idle"
-    | "off"
-    | "on"
-    | "unavailable"
-    | "unknown"
-    | "standby"
-    | "buffering";
+  state: "playing" | "paused" | "idle" | "off" | "on" | "unavailable" | "unknown" | "standby" | "buffering";
 }
 
 export interface MediaPlayerEntityAttributes extends HassEntityAttributeBase {

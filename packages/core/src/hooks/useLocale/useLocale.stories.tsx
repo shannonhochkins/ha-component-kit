@@ -142,7 +142,7 @@ function Page() {
         </Column>
       </h5>
       <Description />
-      <p>You can change the lanage here, and then find the locale in the dropdown to use within your application.</p>
+      <p>You can change the language here and then find the locale in the dropdown to use within your application.</p>
       <Row gap="1rem" alignItems="start" justifyContent="start" fullWidth wrap="nowrap">
         <FormControl
           style={{
