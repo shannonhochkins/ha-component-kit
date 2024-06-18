@@ -8,7 +8,8 @@ function Render(args?: Args) {
       <ThemeProvider includeThemeControls />
       <Row gap="2rem">
         <ClimateCard entity={"climate.air_conditioner"} {...args} />
-        <ClimateCard hvacModes={["cool", "heat"]} entity={"climate.air_conditioner"} {...args} />
+        <ClimateCard layoutType="slim-vertical" hvacModes={["cool", "heat"]} entity={"climate.air_conditioner"} {...args} />
+        <ClimateCard layoutType="slim" entity={"climate.air_conditioner"} {...args} />
       </Row>
     </HassConnect>
   );

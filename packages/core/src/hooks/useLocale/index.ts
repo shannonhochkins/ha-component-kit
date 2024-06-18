@@ -26,8 +26,8 @@ export function localize(key: LocaleKeys, { search, replace, fallback }: Options
     // as a generic fallback, we just return the keyname
     return key;
   }
-  if (search && replace) {
-    return LOCALES[key].replace(`${search}`, replace);
+  if (typeof search === "string" && typeof replace === "string") {
+    return LOCALES[key].replace(`${search}`, replace).trim();
   }
   return LOCALES[key];
 }

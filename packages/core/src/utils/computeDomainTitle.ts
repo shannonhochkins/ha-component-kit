@@ -15,6 +15,8 @@ export const computeDomainTitle = <E extends EntityName | "unknown">(entityId: E
       }
       return localize("switch");
     }
+    case "alarm_control_panel":
+      return localize("alarm_panel");
     case "tts":
       return localize("text_to_speech");
     case "cloud":

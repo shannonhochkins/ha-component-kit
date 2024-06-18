@@ -1,6 +1,5 @@
-import { useMemo } from "react";
+import { useMemo, Children, isValidElement, ReactNode, ReactElement } from "react";
 import styled from "@emotion/styled";
-import type { EntityName } from "@hakit/core";
 import {
   localize,
   useEntity,
@@ -12,9 +11,14 @@ import {
   ON,
   OFF,
   computeDomainTitle,
+  computeDomain,
+  type LocaleKeys,
+  type HassEntityWithService,
+  type ExtractDomain,
+  type EntityName
 } from "@hakit/core";
+import { type IconProps } from "@iconify/react";
 import { fallback, Column, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
-import { computeDomain } from "@utils/computeDomain";
 import { ErrorBoundary } from "react-error-boundary";
 
 const StyledButtonCard = styled(CardBase)`
@@ -38,7 +42,7 @@ const StyledButtonCard = styled(CardBase)`
   &:not(.disabled),
   &:not(:disabled) {
     &:not(:focus):hover {
-      .fab-card-inner {
+      .fab-card-inner:not(.custom) {
         background-color: var(--ha-S500);
         color: var(--ha-S500-contrast);
       }
@@ -86,9 +90,7 @@ const Toggle = styled.div<ToggleProps>`
   margin-left: 20px;
 `;
 
-const Fab = styled.div<{
-  backgroundColor: string;
-  textColor: string;
+const Fab = styled.div<React.ComponentProps<'div'> & {
   brightness: string;
 }>`
   border-radius: 100%;
@@ -100,16 +102,6 @@ const Fab = styled.div<{
   align-items: center;
   justify-content: center;
   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
-  ${(props) =>
-    props.backgroundColor &&
-    `
-    background-color: ${props.backgroundColor};
-  `}
-  ${(props) =>
-    props.textColor &&
-    `
-    color: ${props.textColor};
-  `}
   ${(props) =>
     props.brightness &&
     `
@@ -165,42 +157,57 @@ const Description = styled.div`
 type OmitProperties = "as" | "children" | "ref";
 
 export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
-  /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
-  icon?: string | null;
-  /** the css color value of the icon */
-  iconColor?: string | null;
+  /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value, provide a string with the name of the icon, or a custom icon by providing a react node  */
+  icon?: ReactNode | null;
+  /** the props for the icon, which includes styles for the icon */
+  iconProps?: Omit<IconProps, "icon">;
+  /** the props to provide to the Fab element within the card, useful if you want to re-style it */
+  fabProps?: React.ComponentProps<'div'>;
   /** By default, the description is retrieved from the friendly name of the entity, or you can specify a manual description */
-  description?: string | null;
-  /** The layout of the button card, mimics the style of HA mushroom cards in slim/slim-vertical @default default */
-  defaultLayout?: "default" | "slim" | "slim-vertical";
-  /** Hide the state value */
+  description?: ReactNode | null;
+  /** override the unit displayed alongside the state if the entity has a unit of measurement */
+  unitOfMeasurement?: ReactNode;
+  /** The layout of the button card, mimics the style of HA mushroom cards in slim/slim-vertical @default "default" */
+  layoutType?: "default" | "slim" | "slim-vertical";
+  /** custom method to render the state however you choose, this will just change how the "suffix" of the title will appear */
+  customRenderState?: (entity: HassEntityWithService<ExtractDomain<E>> | null) => ReactNode;
+  /** hide the icon shown in the component @default false */
+  hideIcon?: boolean;
+  /** Hide the state value @default false */
   hideState?: boolean;
-  /** Hide the last updated time */
+  /** Hide the last updated time @default false */
   hideLastUpdated?: boolean;
+  /** This forces hideState, hideLastUpdated and will only show the entity name / description prop @default false */
+  hideDetails?: boolean;
+  /** Will hide the "toggle" element shown in the default layout @default false */
+  hideToggle?: boolean;
   /** The children to render at the bottom of the card */
   children?: React.ReactNode;
-  /** This forces hideState, hideLastUpdated and will only show the entity name / description prop */
-  hideDetails?: boolean;
 }
 function _ButtonCard<E extends EntityName>({
   entity: _entity,
   service,
   serviceData,
-  iconColor,
+  iconProps,
   icon: _icon,
+  fabProps,
   active,
   onClick,
   description: _description,
   title: _title,
-  defaultLayout,
+  layoutType,
   disabled = false,
   className,
-  hideState,
-  hideLastUpdated,
+  hideIcon = false,
+  hideState = false,
+  hideLastUpdated = false,
   children,
-  hideDetails,
+  hideDetails = false,
   cssStyles,
   key,
+  hideToggle = false,
+  unitOfMeasurement,
+  customRenderState,
   ...rest
 }: ButtonCardProps<E>): React.ReactNode {
   const { useStore } = useHass();
@@ -209,19 +216,19 @@ function _ButtonCard<E extends EntityName>({
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
   });
-  const icon = typeof _icon === "string" ? _icon : null;
+  const iconNode = typeof _icon !== "undefined" && typeof _icon !== 'string' ? _icon : null;
   const domainIcon = useIconByDomain(domain === null ? "unknown" : domain, {
-    color: iconColor || undefined,
+    ...iconProps ?? {},
   });
   const entityIcon = useIconByEntity(_entity || "unknown", {
-    color: iconColor || undefined,
+    ...iconProps ?? {},
   });
-  const isDefaultLayout = defaultLayout === "default" || defaultLayout === undefined;
-  const isSlimLayout = defaultLayout === "slim" || defaultLayout === "slim-vertical";
+  const isDefaultLayout = layoutType === "default" || layoutType === undefined;
+  const isSlimLayout = layoutType === "slim" || layoutType === "slim-vertical";
   const isUnavailable = typeof entity?.state === "string" ? isUnavailableState(entity.state) : false;
-  const on = entity ? entity.state !== "off" && !isUnavailable : active || false;
-  const iconElement = useIcon(icon, {
-    color: iconColor || undefined,
+  const on = entity ? entity.state !== "off" && !isUnavailable && !disabled : active || false;
+  const iconElement = useIcon(typeof _icon === "string" ? _icon : null, {
+    ...iconProps ?? {},
   });
   // use the input description if provided, else use the friendly name if available, else entity name, else null
   const description = useMemo(() => {
@@ -235,20 +242,27 @@ function _ButtonCard<E extends EntityName>({
 
   function renderState() {
     if (hideState) return null;
+    if (customRenderState) return customRenderState(entity);
     if (typeof active === "boolean") {
       // static usage without entity
-      return active ? `- ${localize(ON)}` : `- ${localize(OFF)}`;
+      return active ? `${localize(ON)}` : `${localize(OFF)}`;
     }
+    if (isUnavailable) return localize('unavailable');
     if (entity && entity.state === ON && domain === "light") {
       // dynamic usage with entity if it's a light
-      return `- ${entity.custom.brightnessValue}%`;
+      return `${entity.custom.brightnessValue}%`;
     }
     if (entity) {
-      return entity.state;
+      if (entity.attributes.unit_of_measurement) {
+        return `${localize(entity.state as LocaleKeys)}${unitOfMeasurement ?? entity.attributes.unit_of_measurement}`;
+      }
+      return `${localize(entity.state as LocaleKeys)}`;
     }
     return null;
   }
-
+  const hasFeatures = Children.toArray(rest?.features).filter(
+    (child): child is ReactElement => isValidElement(child)
+  ).length > 0;
   return (
     <StyledButtonCard
       key={key}
@@ -262,38 +276,38 @@ function _ButtonCard<E extends EntityName>({
       title={title ?? undefined}
       disabled={disabled || isUnavailable}
       onClick={onClick}
-      className={`${className ?? ""} ${defaultLayout ?? "default"} button-card`}
+      className={`${className ?? ""} ${layoutType ?? "default"} button-card`}
       cssStyles={`
         ${globalComponentStyle.buttonCard ?? ""}
         ${cssStyles ?? ""}
       `}
       {...rest}
     >
-      <Contents>
-        <LayoutBetween className={`layout-between ${defaultLayout === "slim-vertical" ? "vertical" : ""}`}>
-          <Fab
+      <Contents className={`contents ${hasFeatures ? 'has-features' : ''}`}>
+        <LayoutBetween className={`layout-between ${layoutType === "slim-vertical" ? "vertical" : ""}`}>
+          {!hideIcon && <Fab
             brightness={(on && entity?.custom.brightness) || "brightness(100%)"}
-            className={`fab-card-inner icon`}
-            backgroundColor={
-              on ? (domain === "light" ? entity?.custom?.rgbaColor ?? "var(--ha-A400)" : "var(--ha-A400)") : "var(--ha-S400)"
-            }
-            textColor={
-              entity ? (on ? entity.custom.rgbColor : "var(--ha-S500-contrast)") : on ? "var(--ha-A400)" : "var(--ha-S500-contrast)"
-            }
+            {...fabProps}
+            className={`fab-card-inner icon ${fabProps?.className} ${fabProps?.style ? 'custom' : ''}`}
+            style={{
+              ...fabProps?.style,
+              backgroundColor: fabProps?.style?.backgroundColor ?? (on ? (domain === "light" ? entity?.custom?.rgbaColor ?? "var(--ha-A400)" : "var(--ha-A400)") : "var(--ha-S400)"),
+              color: fabProps?.style?.color ?? (entity ? (on ? entity.custom.rgbColor : "var(--ha-S500-contrast)") : on ? "var(--ha-A400)" : "var(--ha-S500-contrast)")
+            }}
           >
-            {iconElement || entityIcon || domainIcon}
-          </Fab>
-          {isDefaultLayout && (
+            {iconNode ?? iconElement ?? entityIcon ?? domainIcon}
+          </Fab>}
+          {(isDefaultLayout && !hideToggle) && (
             <Toggle active={on} className="toggle">
               {!isUnavailable && <ToggleState active={on} className="toggle-state" />}
             </Toggle>
           )}
           {isSlimLayout && (
-            <Column fullWidth alignItems={defaultLayout === "slim-vertical" ? "center" : "flex-start"}>
+            <Column fullWidth alignItems={layoutType === "slim-vertical" ? "center" : "flex-start"}>
               <Description className="description">{description}</Description>
               {!hideDetails && (
-                <Title className={`title ${defaultLayout ?? ""}`}>
-                  {title} {renderState()}
+                <Title className={`title ${layoutType ?? ""}`}>
+                  {title} {!hideState ? ` - ${renderState()}` : ''}
                   {entity && !hideLastUpdated ? ` - ${entity.custom.relativeTime}` : ""}
                 </Title>
               )}
@@ -306,7 +320,7 @@ function _ButtonCard<E extends EntityName>({
               {!hideDetails && title && (
                 <Title className="title">
                   {title}
-                  {isUnavailable && entity && !hideState ? ` - ${entity.state}` : ""}
+                  {entity && !hideState ? ` - ${renderState()}` : ""}
                 </Title>
               )}
               {description && <Description className="description">{description}</Description>}

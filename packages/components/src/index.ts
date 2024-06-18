@@ -14,8 +14,13 @@ export {
 export { useBreakpoint } from "./hooks/useBreakpoint";
 // the base card component
 export { CardBase, type CardBaseProps } from "./Cards/CardBase";
+// related entities to use through CardBase components
+export { RelatedEntity, type RelatedEntityProps } from "./Cards/CardBase/RelatedEntity";
+// features similar to home assistants feature capabilities, this will create a ButtonBar group at the bottom of the card
+export { FeatureEntity, type FeatureEntityProps } from "./Cards/CardBase/FeatureEntity";
 // tooltip
 export { Tooltip, type TooltipProps } from "./Shared/Tooltip";
+export { AlarmCard, type AlarmCardProps } from "./Cards/AlarmCard";
 // tooltip
 export { RangeSlider, type RangeSliderProps } from "./Shared/RangeSlider";
 // Ripples

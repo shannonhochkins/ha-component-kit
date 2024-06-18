@@ -14,6 +14,7 @@ import {
 import { CardBase, fallback, Tooltip } from "@components";
 import type { TooltipProps, CardBaseProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
+import { type IconProps } from '@iconify/react';
 
 const StyledFabCard = styled(<E extends EntityName>({ service, serviceData, key, ...props }: CardBaseProps<"button", E>) => (
   <CardBase
@@ -71,15 +72,15 @@ const Contents = styled.div<{
   `}
 `;
 
-type OmitProperties = "as" | "title" | "ref";
+type OmitProperties = "title" | "ref";
 
-export interface FabCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
+export interface FabCardProps<E extends EntityName> extends Omit<CardBaseProps<'button', E>, OmitProperties> {
   /** The size of the Fab, this applies to the width and height @default 48 */
   size?: number;
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
   icon?: string | null;
-  /** the css color value of the icon */
-  iconColor?: string | null;
+  /** the props for the icon, which includes styles for the icon */
+  iconProps?: Omit<IconProps, "icon">;
   /** will not show any icons */
   noIcon?: boolean;
   /** the title used for the tooltip and or modal that will expands, defaults to entity name or domain name  */
@@ -92,7 +93,7 @@ function _FabCard<E extends EntityName>({
   title: _title,
   tooltipPlacement,
   icon: _icon,
-  iconColor,
+  iconProps,
   noIcon,
   size = 48,
   entity: _entity,
@@ -115,19 +116,19 @@ function _FabCard<E extends EntityName>({
   const domain = _entity ? computeDomain(_entity) : null;
   const icon = typeof _icon === "string" ? _icon : null;
   const domainIcon = useIconByDomain(domain === null ? "unknown" : domain, {
-    fontSize: `${size / 1.7}px`,
-    color: iconColor ?? undefined,
+    ...iconProps ?? {},
+    fontSize: iconProps?.fontSize ?? `${size / 1.7}px`,
   });
   const hasChildren = typeof children !== "undefined";
   const _borderRadius = hasChildren ? borderRadius ?? "10px" : borderRadius ?? "50%";
   const isUnavailable = typeof entity?.state === "string" ? isUnavailableState(entity.state) : false;
   const entityIcon = useIconByEntity(_entity || "unknown", {
-    fontSize: `${size / 1.7}px`,
-    color: iconColor ?? undefined,
+    ...iconProps ?? {},
+    fontSize: iconProps?.fontSize ?? `${size / 1.7}px`,
   });
   const iconElement = useIcon(icon, {
-    fontSize: `${size / 1.7}px`,
-    color: iconColor ?? undefined,
+    ...iconProps ?? {},
+    fontSize: iconProps?.fontSize ?? `${size / 1.7}px`,
   });
   const active = typeof _active === "boolean" ? _active : entity === null ? false : entity.state !== "off" && !isUnavailable;
   const title = useMemo(

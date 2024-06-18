@@ -1,3 +1,8 @@
+## #hakit/components
+
+- BREAKING - iconProps (iconStyles gone)
+- BREWAKING - timeCard - defaults now to using system time unless entity is specified, no longer expects time entity to exist
+
 # 3.2.0
 ## @hakit/components
 - NEW VacuumCard - A new card to interact with vacuum entities, this card will show the current state of the vacuum, the battery level, the current cleaning status and the ability to start, pause, stop and return to dock. It provides the ability to create custom shortcuts and much more, you can long press on the card to display the new custom popup. Demo available on the main [demo](https://shannonhochkins.github.io/ha-component-kit/iframe.html?args=&id=introduction-demo--default&viewMode=story#) page.

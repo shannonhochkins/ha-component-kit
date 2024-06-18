@@ -1,12 +1,13 @@
 import { useEntity, useIconByDomain, useIconByEntity, computeDomain, isUnavailableState, ON, localize } from "@hakit/core";
 import type { EntityName, ExtractDomain, HassEntityWithService } from "@hakit/core";
-import { Icon } from "@iconify/react";
+import { Icon, type IconProps } from "@iconify/react";
 import { Row, fallback, ModalByEntityDomain, type ModalPropsHelper } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import React, { ReactNode, useId, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useLongPress } from "use-long-press";
 import styled from "@emotion/styled";
+
 const IconWrapper = styled(Row)`
   width: 100%;
   max-width: 2rem;
@@ -48,6 +49,8 @@ export interface EntitiesCardRowProps<E extends EntityName> extends Omit<React.C
   entity: E;
   /** the icon name to use @default entity_icon */
   icon?: string;
+  /** the props for the icon, which includes styles for the icon */
+  iconProps?: Omit<IconProps, "icon">;
   /** the name of the entity @default friendly_name */
   name?: ReactNode;
   /** the function to call when the row is clicked @default undefined */
@@ -63,6 +66,7 @@ export interface EntitiesCardRowProps<E extends EntityName> extends Omit<React.C
 function _EntitiesCardRow<E extends EntityName>({
   entity: _entity,
   icon: _icon,
+  iconProps,
   name: _name,
   renderState,
   onClick,
@@ -108,7 +112,7 @@ function _EntitiesCardRow<E extends EntityName>({
               filter: (on && entity?.custom.brightness) || "brightness(100%)",
             }}
           >
-            {_icon ? <Icon className={`icon`} icon={_icon} /> : entityIcon ?? domainIcon}
+            {_icon ? <Icon className={`icon`} icon={_icon} {...iconProps ?? {}} /> : entityIcon ?? domainIcon}
           </IconWrapper>
           <Name className={`name`}>
             {title}

@@ -202,7 +202,9 @@ export const MediaPlayerControls = ({
                         {!supportsGrouping && (
                           <Fab
                             className="media-player-power"
-                            iconColor={`var(--ha-S200-contrast)`}
+                            iconProps={{
+                              color: `var(--ha-S200-contrast)`
+                            }}
                             active={!isOff && !isUnavailable}
                             disabled={!supportsTurnOn || !supportsTurnOff}
                             size={30}
@@ -235,7 +237,9 @@ export const MediaPlayerControls = ({
                                 preventPropagation: true,
                               }}
                               className="speaker-group"
-                              iconColor={`var(--ha-S200-contrast)`}
+                              iconProps={{
+                                color: `var(--ha-S200-contrast)`
+                              }}
                               active={isPlaying}
                               disabled={false}
                               size={30}

@@ -48,6 +48,8 @@ export interface ClimateControlsProps extends Extendable {
   entity: FilterByDomain<EntityName, "climate">;
   /** provide a list of hvacModes you want to support/display in the UI, will use all by default */
   hvacModes?: HvacMode[];
+  /** use custom labels for the displayed hvac modes */
+  hvacModeLabels?: Record<HvacMode, string>;
   /** hide the current temperature @default false */
   hideCurrentTemperature?: boolean;
   /** hide the hvac modes button @default false */
@@ -67,6 +69,7 @@ export interface ClimateControlsProps extends Extendable {
 function _ClimateControls({
   entity: _entity,
   hvacModes,
+  hvacModeLabels,
   hideCurrentTemperature,
   hideHvacModes,
   hideSwingModes,
@@ -186,7 +189,7 @@ function _ClimateControls({
                   return {
                     active: entity.state === mode,
                     icon: computeHvacModeIcon(mode),
-                    label: toReadableString(mode),
+                    label: hvacModeLabels?.[mode] ?? toReadableString(mode),
                     onClick: () => {
                       _handleOperationModeChanged(mode);
                     },

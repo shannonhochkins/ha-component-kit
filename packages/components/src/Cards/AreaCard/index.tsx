@@ -56,6 +56,7 @@ const StyledAreaCard = styled(CardBase)<Partial<PictureCardProps>>`
 
 const PictureCardFooter = styled.div`
   all: unset;
+  font-family: var(--ha-font-family);
   padding: 1rem;
   color: var(--ha-500-contrast);
   background-color: var(--ha-background-opaque);

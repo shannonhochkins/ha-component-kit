@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useMemo } from "react";
 import { type HassEntityWithService, useHass, useEntity } from "@hakit/core";
-import { Icon } from "@iconify/react";
+import { Icon, type IconProps } from "@iconify/react";
 import { Row, Column, fallback, Alert, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -29,12 +29,14 @@ const Contents = styled.div`
 
 const Time = styled.h4`
   all: unset;
+  font-family: var(--ha-font-family);
   font-size: 2rem;
   color: var(--ha-S200-contrast);
   font-weight: 400;
 `;
 const AmOrPm = styled.h4`
   all: unset;
+  font-family: var(--ha-font-family);
   font-size: 2rem;
   color: var(--ha-S400-contrast);
   font-weight: 300;
@@ -111,6 +113,8 @@ export interface TimeCardProps extends Omit<CardBaseProps<"div">, OmitProperties
   hideIcon?: boolean;
   /** the name of the icon, defaults to the sensor.date icon or mdi:calendar @default mdi:calendar */
   icon?: string;
+  /** the props for the icon, which includes styles for the icon */
+  iconProps?: Omit<IconProps, "icon">;
   /** center everything instead of left aligned @default false */
   center?: boolean;
   /** callback when the card is pressed, it will return the time sensor entity */
@@ -138,6 +142,7 @@ function _TimeCard({
   hideTime = false,
   center = false,
   icon,
+  iconProps,
   className,
   children,
   disabled,
@@ -187,7 +192,7 @@ function _TimeCard({
         <Column className="column" gap="0.5rem" alignItems={center ? "center" : "flex-start"} fullHeight wrap="nowrap">
           {(!hideIcon || !hideTime) && (
             <Row className="row" gap="0.5rem" alignItems="center" wrap="nowrap">
-              {!hideIcon && <Icon className="icon primary-icon" icon={icon || dateSensor.attributes.icon || "mdi:calendar"} />}
+              {!hideIcon && <Icon className="icon primary-icon" icon={icon || dateSensor.attributes.icon || "mdi:calendar"} {...iconProps ?? {}} />}
               {!hideTime && (
                 <>
                   <Time className="time">{formatted}</Time>

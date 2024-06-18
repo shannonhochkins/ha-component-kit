@@ -14,6 +14,7 @@ import {
 } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 import { fallback, CardBase, type AvailableQueries, type CardBaseProps } from "@components";
+import { IconProps } from "@iconify/react";
 
 const StyledTriggerCard = styled(CardBase)``;
 
@@ -117,6 +118,10 @@ export interface TriggerCardProps<E extends EntityName> extends Omit<CardBasePro
   description?: string;
   /** optional override to replace the icon that appears in the card */
   icon?: string;
+  /** the props for the icon, which includes styles for the icon */
+  iconProps?: Omit<IconProps, "icon">;
+  /** the props for the icon, which includes styles for the icon */
+  sliderIconProps?: Omit<IconProps, "icon">;
   /** optional override for the slider icon */
   sliderIcon?: string;
   /** override for the slider text when the state is active */
@@ -136,6 +141,8 @@ function _TriggerCard<E extends EntityName>({
   onClick,
   disabled: _disabled,
   icon: _icon,
+  iconProps,
+  sliderIconProps,
   sliderIcon: _sliderIcon,
   sliderTextActive,
   sliderTextInactive,
@@ -152,16 +159,18 @@ function _TriggerCard<E extends EntityName>({
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const domain = computeDomain(_entity);
   const entity = useEntity(_entity);
-  const entityIcon = useIconByEntity(_entity);
-  const domainIcon = useIconByDomain(domain);
+  const entityIcon = useIconByEntity(_entity, iconProps);
+  const domainIcon = useIconByDomain(domain, iconProps);
   const timeRef = useRef<NodeJS.Timeout | null>(null);
   const [active, setActive] = useState(false);
-  const icon = useIcon(_icon ?? null);
-  const sliderIcon = useIcon(_sliderIcon ?? null);
-  const powerIcon = useIcon("mdi:power");
+  const icon = useIcon(_icon ?? null, iconProps);
+  const sliderIcon = useIcon(_sliderIcon ?? null, sliderIconProps);
+  const powerIcon = useIcon("mdi:power", iconProps);
   const arrowIcon = useIcon("mingcute:arrows-right-line", {
+    ...iconProps,
     style: {
       fontSize: "16px",
+      ...iconProps?.style,
     },
   });
   const isUnavailable = isUnavailableState(entity.state);

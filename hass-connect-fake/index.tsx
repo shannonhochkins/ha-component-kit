@@ -215,11 +215,13 @@ const useStore = create<Store>((set) => ({
     }
     return state;
   }),
+  locales: null,
+  setLocales: (locales) => set({ locales }),
   connection: new MockConnection(),
   setConnection: (connection) => set({ connection }),
   cannotConnect: false,
   setCannotConnect: (cannotConnect) => set({ cannotConnect }),
-  ready: true,
+  ready: false,
   setReady: (ready) => set({ ready }),
   lastUpdated: new Date(),
   setLastUpdated: (lastUpdated) => set({ lastUpdated }),
@@ -266,6 +268,8 @@ function HassProvider({
   const setHash = useStore(store => store.setHash);
   const _hash = useStore(store => store.hash);
   const ready = useStore(store => store.ready);
+  const setReady = useStore(store => store.setReady);
+  const setLocales = useStore(store => store.setLocales);
   const clock = useRef<NodeJS.Timeout | null>(null);
   const getStates = async () => null;
   const getServices = async () => null;
@@ -282,6 +286,7 @@ function HassProvider({
     }: CallServiceArgs<T, M>) => {
       if (typeof target !== 'string' && !isArray(target)) return;
       const now = new Date().toISOString();
+      console.log('domain', domain);
       if (domain in fakeApi) {
         const api = fakeApi[domain as 'scene'] as (params: ServiceArgs<'scene'>) => boolean;
         const skip = api({
@@ -445,8 +450,12 @@ function HassProvider({
   );
 
   useEffect(() => {
-    locales.find(locale => locale.code === 'en')?.fetch().then(updateLocales);
-  }, [])
+    locales.find(locale => locale.code === 'en')?.fetch().then(_locales => {
+      setLocales(_locales);
+      updateLocales(_locales);
+      setReady(true);
+    });
+  }, []);
 
   return (
     <HassContext.Provider

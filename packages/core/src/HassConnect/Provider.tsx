@@ -38,6 +38,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { Locales } from "../hooks/useLocale/locales/types";
 import locales from "../hooks/useLocale/locales";
 import { updateLocales } from "../hooks/useLocale";
+import { LocaleKeys } from "packages/core/dist/types";
 
 export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
@@ -73,7 +74,8 @@ export type SupportedComponentOverrides =
   | "menu"
   | "personCard"
   | "familyCard"
-  | "vacuumCard";
+  | "vacuumCard"
+  | "alarmCard";
 export interface Store {
   entities: HassEntities;
   setEntities: (entities: HassEntities) => void;
@@ -118,6 +120,8 @@ export interface Store {
   globalComponentStyles: Partial<Record<SupportedComponentOverrides, CSSInterpolation>>;
   portalRoot?: HTMLElement;
   setPortalRoot: (portalRoot: HTMLElement) => void;
+  locales: Record<LocaleKeys, string> | null;
+  setLocales: (locales: Record<LocaleKeys, string>) => void;
 }
 
 const useStore = create<Store>((set) => ({
@@ -127,6 +131,8 @@ const useStore = create<Store>((set) => ({
   setHassUrl: (hassUrl) => set({ hassUrl }),
   hassUrl: null,
   hash: "",
+  locales: null,
+  setLocales: (locales) => set({ locales }),
   setHash: (hash) => set({ hash }),
   setPortalRoot: (portalRoot) => set({ portalRoot }),
   setEntities: (newEntities) =>
@@ -135,7 +141,7 @@ const useStore = create<Store>((set) => ({
       if (!isEmpty(entitiesDiffChanged)) {
         // purposely not making this throttle configurable
         // because lights can animate etc, which doesn't need to reflect in the UI
-        // simply throttle updates every 50ms
+        // if a user want's to control individual entities this can be done with useEntity by passing a throttle to it's options.
         const updatedEntities = Object.keys(entitiesDiffChanged).reduce<HassEntities>(
           (acc, entityId) => ({
             ...acc,
@@ -403,6 +409,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
   const setConfig = useStore((store) => store.setConfig);
   const setHassUrl = useStore((store) => store.setHassUrl);
   const setPortalRoot = useStore((store) => store.setPortalRoot);
+  const setLocales = useStore((store) => store.setLocales);
 
   useEffect(() => {
     if (portalRoot) setPortalRoot(portalRoot);
@@ -568,11 +575,12 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
     fetchLocale(null)
       .then((locales) => {
         updateLocales(locales);
+        setLocales(locales);
       })
       .catch((e) => {
         setError(`Error retrieving translations from Home Assistant: ${e?.message ?? e}`);
       });
-  }, [locale, fetchLocale, setError]);
+  }, [locale, fetchLocale, setLocales, setError]);
 
   useEffect(() => {
     if (config === null && !fetchedConfig.current && connection !== null) {
@@ -584,6 +592,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
               // purposely setting config here to delay the rendering process of the application until locales are retrieved
               setConfig(config);
               updateLocales(locales);
+              setLocales(locales);
             })
             .catch((e) => {
               setError(`Error retrieving translations from Home Assistant: ${e?.message ?? e}`);
@@ -594,7 +603,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
           setError(`Error retrieving configuration from Home Assistant: ${e?.message ?? e}`);
         });
     }
-  }, [config, connection, fetchLocale, getConfig, setConfig, setError]);
+  }, [config, connection, setLocales, fetchLocale, getConfig, setConfig, setError]);
 
   useEffect(() => {
     if (location.hash === "") return;

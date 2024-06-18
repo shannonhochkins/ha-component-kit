@@ -247,4 +247,19 @@ export const entities: HassEntities = {
     attributes: { friendly_name: "Jane", latitude: 48.857543231604986, longitude: 2.274926660937714 },
   }),
   ...createAlarmPanel("alarm_control_panel.home_alarm"),
+  ...createAlarmPanel("alarm_control_panel.no_code", {
+    attributes: {
+      supported_features: 11,
+      code_format: undefined,
+    }
+  }),
+  ...createSensor("sensor.alarm_battery", {
+    state: "20",
+    attributes: {
+      icon: undefined,
+      friendly_name: "Alarm battery",
+      device_class: "battery",
+      unit_of_measurement: "%",
+    },
+  }),
 } as const;

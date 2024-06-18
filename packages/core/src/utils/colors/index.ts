@@ -9,9 +9,10 @@ export const stateColorBrightness = (
   if (entity && entity.attributes && entity.attributes.brightness && !entity.entity_id.startsWith("plant")) {
     // lowest brightness will be around 50% (that's pretty dark)
     const brightness = entity.attributes.brightness;
+    const rounded = Number(Number((brightness + 245) / 5).toFixed(0));
     return {
-      raw: (brightness + 245) / 5,
-      css: `brightness(${(brightness + 245) / 5}%)`,
+      raw: rounded,
+      css: `brightness(${rounded}%)`,
     };
   }
   return {

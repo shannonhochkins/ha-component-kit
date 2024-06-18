@@ -67,22 +67,22 @@ function Template() {
           lg={6}
           xlg={6}
           title="ButtonCard"
-          description={<span>With defaultLayout="slim" we can change the layout of the ButtonCard</span>}
+          description={<span>With layoutType="slim" we can change the layout of the ButtonCard</span>}
           justifyContent="flex-start"
           alignItems="stretch">
-          <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_1" service="toggle" md={6} lg={4} xlg={4} />
-          <ButtonCard id="slim" defaultLayout="slim" entity="weather.entity" md={6} lg={4} xlg={4} />
-          <ButtonCard id="slim" defaultLayout="slim" entity="climate.air_conditioner" md={6} lg={4} xlg={4} />
-          <ButtonCard id="slim" defaultLayout="slim" entity="switch.fake_switch" service="toggle" md={6} lg={4} xlg={4} />
-          <ButtonCard id="slim" defaultLayout="slim" entity="cover.cover_with_tilt" service="toggle" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_1" service="toggle" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" layoutType="slim" entity="weather.entity" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" layoutType="slim" entity="climate.air_conditioner" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" layoutType="slim" entity="switch.fake_switch" service="toggle" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" layoutType="slim" entity="cover.cover_with_tilt" service="toggle" md={6} lg={4} xlg={4} />
         </Group>
       </Row>
-      <Group title="ButtonCard"  description={<span>With defaultLayout="slim-vertical" we can change the layout of the ButtonCard</span>} justifyContent="flex-start" alignItems="stretch">
-        <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_1" service="toggle" />
-        <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_2" service="toggle" icon="mdi:power" />
-        <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_3" service="toggle" />
-        <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="switch.fake_switch" service="toggle" />
-        <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="vacuum.robot_vacuum" service="start" />
+      <Group title="ButtonCard"  description={<span>With layoutType="slim-vertical" we can change the layout of the ButtonCard</span>} justifyContent="flex-start" alignItems="stretch">
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_1" service="toggle" />
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_2" service="toggle" icon="mdi:power" />
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_3" service="toggle" />
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="switch.fake_switch" service="toggle" />
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="vacuum.robot_vacuum" service="start" />
       </Group>
       <Group title="FabCard & ButtonBar & ButtonGroup" justifyContent="flex-start" alignItems="stretch" description="FabCard is a great way to show simple entities you just want to perform a simple action and don't care about the name / data, there's a bunch of different ways to render and control entities" gap="1rem">
         <FabCard entity="light.fake_light_1" service="toggle" />

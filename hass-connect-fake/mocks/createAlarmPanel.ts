@@ -3,13 +3,14 @@ import { createEntity } from './createEntity';
 
 const now = new Date();
 
-const defaults = {
+export const defaults = {
   entity_id: "alarm_control_panel.home_alarm",
   state: "disarmed",
   attributes: {
     code_format: "number",
     changed_by: null,
     code_arm_required: true,
+    supported_features: 31,
     code_disarm_required: true,
     friendly_name: "Home Alarm",
     icon: "mdi:security",
