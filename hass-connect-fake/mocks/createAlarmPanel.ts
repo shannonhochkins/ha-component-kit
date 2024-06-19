@@ -11,7 +11,6 @@ export const defaults = {
     changed_by: null,
     code_arm_required: true,
     supported_features: 31,
-    code_disarm_required: true,
     friendly_name: "Home Alarm",
     icon: "mdi:security",
   },

@@ -1,3 +1,5 @@
+import { HassConfig } from "home-assistant-js-websocket";
+
 const DAY_IN_MILLISECONDS = 86400000;
 const HOUR_IN_MILLISECONDS = 3600000;
 const MINUTE_IN_MILLISECONDS = 60000;
@@ -13,7 +15,6 @@ export const UNIT_TO_MILLISECOND_CONVERT = {
 
 export const formatDuration = (duration: string, units: keyof typeof UNIT_TO_MILLISECOND_CONVERT): string =>
   millisecondsToDuration(parseFloat(duration) * UNIT_TO_MILLISECOND_CONVERT[units]) || "0";
-
 
 const leftPad = (num: number, digits = 2) => {
   let paddedNum = "" + num;
@@ -73,3 +74,52 @@ export function checkValidDate(date?: Date): boolean {
 
   return date instanceof Date && !isNaN(date.valueOf());
 }
+
+const dateFormatterCache: { [key: string]: Intl.DateTimeFormat } = {};
+const timeFormatterCache: { [key: string]: Intl.DateTimeFormat } = {};
+const dateTimeFormatterCache: { [key: string]: Intl.DateTimeFormat } = {};
+
+const getDateFormatter = (timeZone: string) => {
+  if (!dateFormatterCache[timeZone]) {
+    dateFormatterCache[timeZone] = new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      timeZone,
+    });
+  }
+  return dateFormatterCache[timeZone];
+};
+
+const getTimeFormatter = (timeZone: string) => {
+  if (!timeFormatterCache[timeZone]) {
+    timeFormatterCache[timeZone] = new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hourCycle: "h12",
+      timeZone,
+    });
+  }
+  return timeFormatterCache[timeZone];
+};
+
+const getDateTimeFormatter = (timeZone: string) => {
+  if (!dateTimeFormatterCache[timeZone]) {
+    dateTimeFormatterCache[timeZone] = new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hourCycle: "h12",
+      timeZone,
+    });
+  }
+  return dateTimeFormatterCache[timeZone];
+};
+// 9:15 PM || 21:15
+export const formatDate = (dateObj: Date, config: HassConfig) => getDateFormatter(config.time_zone).format(dateObj);
+// 9:15 PM || 21:15
+export const formatTime = (dateObj: Date, config: HassConfig) => getTimeFormatter(config.time_zone).format(dateObj);
+// August 9, 2021, 8:23 AM
+export const formatDateTime = (dateObj: Date, config: HassConfig) => getDateTimeFormatter(config.time_zone).format(dateObj);

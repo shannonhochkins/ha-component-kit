@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, memo } from "react";
 import { css, Global } from "@emotion/react";
 import { CSSInterpolation } from "@emotion/serialize";
 import styled from "@emotion/styled";
-import { isEqual, merge } from "lodash";
+import { merge } from "lodash";
 import { theme as defaultTheme } from "./theme";
 import type { ThemeParams } from "./theme";
 import { convertToCssVars } from "./helpers";
@@ -243,11 +243,6 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
     });
   }, [device]);
 
-  useEffect(() => {
-    const newTheme = getTheme();
-    if (isEqual(newTheme, _theme)) return;
-    setTheme(newTheme);
-  }, [_theme, c, darkMode, getTheme, h, l, s, t]);
   return (
     <EmotionProvider
       options={

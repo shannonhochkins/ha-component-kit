@@ -85,7 +85,8 @@
     "react-use": ">=17.x",
     "use-debounce": ">=9.x",
     "use-long-press": ">=3.x.x",
-    "zustand": "^4.x.x"
+    "zustand": "^4.x.x",
+    "react-switch": "^7.x.x"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.12",

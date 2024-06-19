@@ -38,6 +38,7 @@ const globals = {
   'use-long-press': 'use-long-press',
   'zustand': 'zustand',
   'react-error-boundary': 'react-error-boundary',
+  'react-switch': 'react-switch',
 };
 
 // https://vitejs.dev/config/
@@ -148,6 +149,7 @@ ${content}`
           "@fullcalendar/daygrid",
           "@fullcalendar/interaction",
           "@fullcalendar/list",
+          "react-switch",
         ],
         output: {
           globals,

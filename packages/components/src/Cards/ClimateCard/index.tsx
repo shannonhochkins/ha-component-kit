@@ -96,8 +96,6 @@ function _ClimateCard({
   const [config, setConfig] = useState<HassConfig | null>(null);
   const currentMode = entity.state in icons ? entity.state : "unknown-mode";
   const isUnavailable = isUnavailableState(entity.state);
-  console.log("currentMode", currentMode);
-
   const on = entity.state !== "off" && !isUnavailable && !disabled;
   const {
     current_temperature,

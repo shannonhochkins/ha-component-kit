@@ -28,6 +28,7 @@ import {
   PersonCard,
   ButtonGroupButton,
   VacuumCard,
+  AlarmCard,
 } from '@components';
 import office from './office.jpg';
 import livingRoom from './living-room.jpg';
@@ -44,8 +45,8 @@ function Template() {
     }}>
       <Group title="Time & Date" layout="row" justifyContent="flex-start" alignItems="stretch" description="Displays some variations for the TimeCard">
         <TimeCard />
-        <TimeCard hideDate center />
-        <TimeCard hideTime hideIcon center />
+        <TimeCard hideDate hideIcon center />
+        <TimeCard timeFormat="hh:mm:ss a" dateFormat={"MMM DD"} />
       </Group>
       <Row fullWidth  justifyContent="flex-start" alignItems="stretch" gap="1rem">
         <Group
@@ -118,11 +119,7 @@ function Template() {
           <EntitiesCard includeLastUpdated>
             <EntitiesCardRow entity="sensor.time" />
             <EntitiesCardRow entity="sensor.date" />
-            <EntitiesCardRow entity="switch.fake_switch" icon="mdi:gamepad-classic" name="Gaming Computer" onClick={ (entity) => {
-              alert(`You clicked on ${entity.attributes.friendly_name}!`);
-            }} renderState={(entity) => {
-              return entity.state === "on" ? <span>On!</span> : <span>Off!</span>;
-            }} />
+            <EntitiesCardRow entity="switch.fake_switch" icon="mdi:gamepad-classic" name="Gaming Computer" />
           </EntitiesCard>
           <MediaPlayerCard entity="media_player.fake_speaker_2" layout="slim" />
           <TriggerCard entity="scene.good_morning" />
@@ -246,6 +243,7 @@ function Template() {
             <PersonCard entity="person.jane_doe" />
           </FamilyCard>
           <VacuumCard entity="vacuum.robot_vacuum" />
+          <AlarmCard entity="alarm_control_panel.home_alarm" defaultCode={1234} />
         </Row>
       </Group>
     </Column>

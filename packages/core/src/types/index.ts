@@ -86,7 +86,7 @@ export type ServiceFunction<T extends ServiceFunctionTypes = "target", Data = ob
   /** without target, the service method does not expect a Target value as the first argument */
   "no-target": ServiceFunctionWithoutEntity<Data>;
 }[T];
-export type StaticDomains = "sun" | "sensor" | "stt" | "binarySensor" | "weather" | "alert" | "plant";
+export type StaticDomains = "sun" | "sensor" | "stt" | "binarySensor" | "weather" | "alert" | "plant" | "datetime" | "water_heater";
 export type SnakeOrCamelStaticDomains = CamelToSnake<StaticDomains> | SnakeToCamel<StaticDomains>;
 /** the key names on the interface object all as camel case */
 export type CamelCaseDomains = SnakeToCamel<NonSymbolNumberKeys<SupportedServices>>;
@@ -135,3 +135,19 @@ export type ServiceFunctionTypes = "target" | "no-target";
 /** all the supported services */
 export type * from "./supported-services";
 export type * from "./entitiesByDomain";
+
+export type EntityCategory = "config" | "diagnostic";
+
+export interface EntityRegistryDisplayEntry extends HassEntity {
+  entity_id: string;
+  name?: string;
+  icon?: string;
+  device_id?: string;
+  area_id?: string;
+  labels: string[];
+  hidden?: boolean;
+  entity_category?: EntityCategory;
+  translation_key?: string;
+  platform?: string;
+  display_precision?: number;
+}

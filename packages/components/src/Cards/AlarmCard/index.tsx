@@ -99,6 +99,14 @@ function _AlarmCard<E extends FilterByDomain<EntityName, "alarm_control_panel">>
       title={_title}
       hideToggle
       className={`alarm-card ${className ?? ""} ${entity.state}`}
+      fabProps={{
+        style: {
+          backgroundColor: color,
+          color: `var(--ha-S500-contrast)`,
+          // now set the hover/disabled states
+          
+        }
+      }}
       cssStyles={`
           .fab-card-inner.icon {
             background-color: ${color};
@@ -151,10 +159,10 @@ export function AlarmCard<E extends FilterByDomain<EntityName, "alarm_control_pa
   const defaultColumns: AvailableQueries = {
     xxs: 12,
     xs: 6,
-    sm: 4,
-    md: 3,
-    lg: 2,
-    xlg: 2,
+    sm: 6,
+    md: 4,
+    lg: 4,
+    xlg: 3,
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "AlarmCard" })}>

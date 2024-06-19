@@ -1,8 +1,7 @@
 import { EntityName, WeatherEntity, computeDomain, localize } from "@core";
 import { HassConfig, HassEntities, HassEntity } from "home-assistant-js-websocket";
-import { formatNumber } from './number';
-import { formatDuration, isDate, isTimestamp, checkValidDate } from './date';
-
+import { formatNumber } from "./number";
+import { formatDuration, isDate, isTimestamp, checkValidDate } from "./date";
 
 export const TEMPERATURE_ATTRIBUTES = new Set([
   "temperature",
@@ -17,7 +16,6 @@ export const TEMPERATURE_ATTRIBUTES = new Set([
 ]);
 
 type Formatter = (value: number) => string;
-
 
 export const DOMAIN_ATTRIBUTES_FORMATERS: Record<string, Record<string, Formatter>> = {
   light: {
@@ -79,8 +77,6 @@ export const DOMAIN_ATTRIBUTES_UNITS = {
   },
 } as const satisfies Record<string, Record<string, string>>;
 
-
-
 export const getWeatherUnit = (config: HassConfig, stateObj: WeatherEntity, measure: string): string => {
   const lengthUnit = config.unit_system.length || "";
   switch (measure) {
@@ -107,7 +103,6 @@ export const getWeatherUnit = (config: HassConfig, stateObj: WeatherEntity, meas
     }
   }
 };
-
 
 export const computeAttributeValueDisplay = (
   entity: HassEntity,

@@ -23,7 +23,12 @@ function Render(args?: Args) {
               return entity.state === "on" ? <span>On!</span> : <span>Off!</span>;
             }}
           />
+          <EntitiesCardRow
+            entity="switch.fake_switch"
+          />
+          <EntitiesCardRow {...args} entity="climate.air_conditioner" />
           <EntitiesCardRow entity="light.missing_entity_example" />
+          
         </EntitiesCard>
         <Alert type="warning" description="Error above is intentional to show how error boundaries are handled." />
       </Column>
