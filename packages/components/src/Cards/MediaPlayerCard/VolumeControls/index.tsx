@@ -72,7 +72,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
       {!hideMute && supportsVolumeMute && (
         <Fab
           iconProps={{
-            color: `var(--ha-S200-contrast)`
+            color: `var(--ha-S200-contrast)`,
           }}
           className={`volume-mute ${is_volume_muted ? "muted" : "not-muted"}`}
           disabled={disabled}
@@ -95,7 +95,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
               preventPropagation: true,
             }}
             iconProps={{
-              color: `var(--ha-S200-contrast)`
+              color: `var(--ha-S200-contrast)`,
             }}
             className="volume-down"
             disabled={disabled}
@@ -108,7 +108,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
               preventPropagation: true,
             }}
             iconProps={{
-              color: `var(--ha-S200-contrast)`
+              color: `var(--ha-S200-contrast)`,
             }}
             className="volume-up"
             disabled={disabled}

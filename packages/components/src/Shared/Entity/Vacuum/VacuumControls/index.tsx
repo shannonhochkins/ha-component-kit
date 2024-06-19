@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
-import { ButtonGroup, ButtonGroupButton, Column, FabCard, Row, type ButtonGroupProps, type ButtonGroupButtonProps, useBreakpoint } from "@components";
+import {
+  ButtonGroup,
+  ButtonGroupButton,
+  Column,
+  FabCard,
+  Row,
+  type ButtonGroupProps,
+  type ButtonGroupButtonProps,
+  useBreakpoint,
+} from "@components";
 import { useEntity, type HassEntityWithService, type EntityName, batteryIconByLevel, localize } from "@hakit/core";
 import { useDebounce } from "react-use";
 import type { MotionProps } from "framer-motion";
@@ -10,7 +19,7 @@ import { VacuumImage } from "./VacuumImage";
 
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 
-interface Shortcut extends Omit<ButtonGroupButtonProps<EntityName>, "onClick"> {
+interface Shortcut extends Partial<Omit<ButtonGroupButtonProps<EntityName>, "onClick">> {
   onClick: (entity: HassEntityWithService<"vacuum">) => void;
 }
 export interface VacuumControlsProps extends Extendable {
@@ -32,7 +41,7 @@ export interface VacuumControlsProps extends Extendable {
   /** the text/node to render when locating @default 'Locate...' in preferred language */
   locatingNode?: React.ReactNode;
   /** additional props to pass to the button-group */
-  buttonGroupProps?: Omit<ButtonGroupProps, 'children'>
+  buttonGroupProps?: Omit<ButtonGroupProps, "children">;
 }
 
 const VacuumSize = styled.div`
@@ -91,12 +100,13 @@ interface VacuumToolbarProps {
   /** a callback when the locate button is clicked */
   onLocate?: () => void;
   /** additional props to pass to the button-group */
-  buttonGroupProps?: Omit<ButtonGroupProps, 'children'>
+  buttonGroupProps?: Omit<ButtonGroupProps, "children">;
 }
 
 export function VacuumToolbar({
   entity: _entity,
-  shortcuts, onLocate,
+  shortcuts,
+  onLocate,
   hideToolbar = false,
   buttonGroupProps,
   ...rest
@@ -108,24 +118,34 @@ export function VacuumToolbar({
     return null;
   }
   const actions = getToolbarActions({ entity, shortcuts, onLocate });
-  return <Row gap="0.5rem" {...rest}>
-    <ButtonGroup wrap="nowrap" alignItems="center" justifyContent="center" orientation="horizontal" thickness={device.xxs ? 60 : 80} maintainAspectRatio {...buttonGroupProps}>
-      {actions.map((action, index) => (
-        <ButtonGroupButton
-          key={index}
-          iconProps={{
-            color: action?.active ? "var(--ha-300)" : undefined
-          }}
-          rippleProps={{
-            preventPropagation: true,
-          }}
-          // @ts-expect-error - cannot assume the types at this level because of how generics work
-          onClick={(_, event) => action?.onClick?.(entity, event)}
-          {...action}
-        />
-      ))}
-    </ButtonGroup>
-  </Row>
+  return (
+    <Row gap="0.5rem" {...rest}>
+      <ButtonGroup
+        wrap="nowrap"
+        alignItems="center"
+        justifyContent="center"
+        orientation="horizontal"
+        thickness={device.xxs ? 60 : 80}
+        maintainAspectRatio
+        {...buttonGroupProps}
+      >
+        {actions.map((action, index) => (
+          <ButtonGroupButton
+            key={index}
+            iconProps={{
+              color: action?.active ? "var(--ha-300)" : undefined,
+            }}
+            rippleProps={{
+              preventPropagation: true,
+            }}
+            // @ts-expect-error - cannot assume the types at this level because of how generics work
+            onClick={(_, event) => action?.onClick?.(entity, event)}
+            {...action}
+          />
+        ))}
+      </ButtonGroup>
+    </Row>
+  );
 }
 
 /** The VacuumControls component can be used in isolation of the VacuumCard and will display the some information that's displayed

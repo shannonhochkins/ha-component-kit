@@ -54,7 +54,17 @@ const PictureCardFooter = styled(motion.h4)`
   font-size: 1.2rem;
 `;
 
-function _PictureCard({ title, key, image, icon, iconProps, className, preloadProps, children, ...rest }: PictureCardProps): React.ReactNode {
+function _PictureCard({
+  title,
+  key,
+  image,
+  icon,
+  iconProps,
+  className,
+  preloadProps,
+  children,
+  ...rest
+}: PictureCardProps): React.ReactNode {
   return (
     <StyledPictureCard
       key={key}
@@ -77,7 +87,7 @@ function _PictureCard({ title, key, image, icon, iconProps, className, preloadPr
         >
           <PictureCardFooter className="footer">
             <Row gap={"0.5rem"} className="row">
-              {icon && <Icon icon={icon} className="icon" {...iconProps ?? {}} />}
+              {icon && <Icon icon={icon} className="icon" {...(iconProps ?? {})} />}
               {title}
             </Row>
           </PictureCardFooter>

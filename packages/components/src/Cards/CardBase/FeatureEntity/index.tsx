@@ -1,12 +1,6 @@
 import { memo } from "react";
-import {
-  type EntityName,
-} from "@hakit/core";
-import {
-  fallback,
-  ButtonBarButton,
-  type ButtonBarButtonProps
-} from "@components";
+import { type EntityName } from "@hakit/core";
+import { fallback, ButtonBarButton, type ButtonBarButtonProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
 export interface FeatureEntityProps<E extends EntityName = EntityName> extends ButtonBarButtonProps<E> {
@@ -14,11 +8,7 @@ export interface FeatureEntityProps<E extends EntityName = EntityName> extends B
   entity?: E;
 }
 
-function _FeatureEntity<E extends EntityName>({
-  children,
-  active,
-  ...rest
-}: FeatureEntityProps<E>)  {
+function _FeatureEntity<E extends EntityName>({ children, active, ...rest }: FeatureEntityProps<E>) {
   return (
     <ButtonBarButton
       // @ts-expect-error - will need to fix this typescript problem later
@@ -36,7 +26,8 @@ function _FeatureEntity<E extends EntityName>({
           }
         }
       `}
-      {...rest}>
+      {...rest}
+    >
       {children}
     </ButtonBarButton>
   );

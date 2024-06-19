@@ -1,6 +1,6 @@
-import { UserConfig, defineConfig } from 'vite';
+import { UserConfig, PluginOption, defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { EsLinter, linterPlugin, } from 'vite-plugin-linter';
+import { EsLinter, linterPlugin } from 'vite-plugin-linter';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 import dts from 'vite-plugin-dts';
@@ -67,6 +67,8 @@ export default defineConfig(configEnv => {
       include: ['./src}/**/*.{ts,tsx}'],
       linters: [new EsLinter({ configEnv })],
     }),
+  ] satisfies UserConfig['plugins'];
+  const productionPlugins = [
     dts({
       rollupTypes: false,
       root: resolve(__dirname, './'),
@@ -91,13 +93,36 @@ ${content}`
           content,
         }
       },
-    })
-  ] satisfies UserConfig['plugins'];
-  if (configEnv.mode === 'production') {
-    plugins.push(visualizer({
+    }),
+    visualizer({
       filename: './dist/stats.html',
       open: true,
-    }));
+    })
+  ] satisfies PluginOption[];
+  if (configEnv.mode === 'production') {
+    plugins.push(...productionPlugins);
+  }
+  let input = undefined;
+  if (configEnv.mode === 'production') {
+    input = Object.fromEntries(
+      glob.sync([
+        'src/*.{ts,tsx}',
+        'src/**/*.{ts,tsx}',
+        'src/**/**/*.{ts,tsx}',
+      ], {
+        ignore: ['**/*stories.ts', '**/*stories.tsx', "**/*.test.{ts,tsx}"]
+      }).map(file => [
+         // The name of the entry point
+         // src/nested/foo.ts becomes nested/foo
+         relative(
+           'src',
+           file.slice(0, file.length - extname(file).length)
+         ),
+         // The absolute path to the entry file
+         // src/nested/foo.ts becomes /project/src/nested/foo.ts
+         fileURLToPath(new URL(file, import.meta.url))
+       ])
+    )
   }
   return {
     build: {
@@ -108,25 +133,7 @@ ${content}`
         formats: ['es', 'cjs'],
       },
       rollupOptions: {
-        input: Object.fromEntries(
-          glob.sync([
-            'src/*.{ts,tsx}',
-            'src/**/*.{ts,tsx}',
-            'src/**/**/*.{ts,tsx}',
-          ], {
-            ignore: ['**/*stories.ts', '**/*stories.tsx', "**/*.test.{ts,tsx}"]
-          }).map(file => [
-             // The name of the entry point
-             // src/nested/foo.ts becomes nested/foo
-             relative(
-               'src',
-               file.slice(0, file.length - extname(file).length)
-             ),
-             // The absolute path to the entry file
-             // src/nested/foo.ts becomes /project/src/nested/foo.ts
-             fileURLToPath(new URL(file, import.meta.url))
-           ])
-        ),
+        input,
         external:[
           ...Object.keys(packageJson.peerDependencies),
           'react/jsx-runtime',
@@ -150,7 +157,7 @@ ${content}`
         }
       },
       sourcemap: true,
-      minify: true,
+      minify: configEnv.mode === 'production',
     },
     plugins,
   } satisfies UserConfig;

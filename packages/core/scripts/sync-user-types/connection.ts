@@ -1,4 +1,4 @@
-import { createConnection, createLongLivedTokenAuth, Auth, getServices, getStates, HassEntity, HassServices, Connection } from 'home-assistant-js-websocket';
+import { createConnection, createLongLivedTokenAuth, Auth, getServices, getStates, HassEntity, HassServices } from 'home-assistant-js-websocket';
 import WebSocket from 'ws';
 
 interface HaWebSocket extends WebSocket {

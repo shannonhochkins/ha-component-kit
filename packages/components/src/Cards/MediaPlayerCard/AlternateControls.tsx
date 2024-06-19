@@ -41,7 +41,7 @@ export function AlternateControls({
           layoutId={layoutId}
           className="speaker-group"
           iconProps={{
-            color: `var(--ha-S200-contrast)`
+            color: `var(--ha-S200-contrast)`,
           }}
           active={groups.length > 0}
           disabled={disabled}
@@ -59,7 +59,7 @@ export function AlternateControls({
       <Fab
         className="media-player-power"
         iconProps={{
-          color: `var(--ha-S200-contrast)`
+          color: `var(--ha-S200-contrast)`,
         }}
         active={!isOff && !isUnavailable}
         disabled={disabled || !supportsTurnOn || !supportsTurnOff}

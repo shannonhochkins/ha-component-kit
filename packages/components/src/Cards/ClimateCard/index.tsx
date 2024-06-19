@@ -1,14 +1,17 @@
 import { useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import type { HassEntityWithService, HvacMode } from "@hakit/core";
-import type { ClimateControlsProps, AvailableQueries, ButtonCardProps, FeatureEntityProps } from "@components";
+import type { ClimateControlsProps, AvailableQueries } from "@components";
 import { useEntity, OFF, isUnavailableState, useHass, localize } from "@hakit/core";
-import { fallback, Row, ButtonCard, ButtonBar, Column, FeatureEntity } from "@components";
+import { fallback, Row, ButtonBar, Column } from "@components";
 import { capitalize } from "lodash";
 import { icons, activeColors, colors } from "../../Shared/Entity/Climate/ClimateControls/shared";
 import { ErrorBoundary } from "react-error-boundary";
 import type { HassConfig } from "home-assistant-js-websocket";
 import { LocaleKeys } from "@hooks";
+import { FeatureEntity, type FeatureEntityProps } from "../CardBase/FeatureEntity";
+
+import { ButtonCard, type ButtonCardProps } from "../ButtonCard";
 
 const StyledClimateCard = styled(ButtonCard)``;
 
@@ -93,7 +96,7 @@ function _ClimateCard({
   const [config, setConfig] = useState<HassConfig | null>(null);
   const currentMode = entity.state in icons ? entity.state : "unknown-mode";
   const isUnavailable = isUnavailableState(entity.state);
-  console.log('currentMode', currentMode);
+  console.log("currentMode", currentMode);
 
   const on = entity.state !== "off" && !isUnavailable && !disabled;
   const {
@@ -111,9 +114,9 @@ function _ClimateCard({
       return localize("unavailable");
     }
     if (isOff) {
-      return localize('off');
+      return localize("off");
     }
-    return hvac_action ? localize(hvac_action) : localize('unknown');
+    return hvac_action ? localize(hvac_action) : localize("unknown");
   }, [hvac_action, isUnavailable, isOff]);
 
   useEffect(() => {
@@ -175,47 +178,55 @@ function _ClimateCard({
             } satisfies FeatureEntityProps;
             if (hvacModeLabels?.[mode] && showHvacModeLabels) {
               const customLabel = hvacModeLabels?.[mode];
-              return <FeatureEntity key={mode} {...props} title={customLabel}>
-                {customLabel}
-              </FeatureEntity>
+              return (
+                <FeatureEntity key={mode} {...props} title={customLabel}>
+                  {customLabel}
+                </FeatureEntity>
+              );
             }
             return <FeatureEntity key={mode} {...props} />;
           })}
         fabProps={{
           style: {
             color: on ? "var(--ha-A400)" : "var(--ha-S500-contrast)",
-            backgroundColor: isUnavailable || disabled
-              ? colors["off"][1]
-              : currentMode === "unknown-mode"
-                ? "var(--ha-S500-contrast)"
-                : colors[currentMode as HvacMode][1],
-          }
+            backgroundColor:
+              isUnavailable || disabled
+                ? colors["off"][1]
+                : currentMode === "unknown-mode"
+                  ? "var(--ha-S500-contrast)"
+                  : colors[currentMode as HvacMode][1],
+          },
         }}
-        description={<Row justifyContent="flex-start">
-          <Description className="climate-description"
-          >
-            <span>{titleValue}</span>
-            <span className="fan-speed">{localize('speed')}: {localize(entity.attributes.fan_mode as LocaleKeys) || localize('unknown')}</span>
-            {!hideCurrentTemperature && <span className="current-temperature">
-              <Temperature>
-                <div>
-                  {capitalize(
-                    localize("name_current_temperature", {
-                      search: "{name} ",
-                      replace: "",
-                    }),
-                  )}
-                  : {current_temperature}
-                </div>
-                <span>{unit_of_measurement ?? config?.unit_system.temperature}</span>
-              </Temperature>
-            </span>}
-          </Description>
-        </Row>}
+        description={
+          <Row justifyContent="flex-start">
+            <Description className="climate-description">
+              <span>{titleValue}</span>
+              <span className="fan-speed">
+                {localize("speed")}: {localize(entity.attributes.fan_mode as LocaleKeys) || localize("unknown")}
+              </span>
+              {!hideCurrentTemperature && (
+                <span className="current-temperature">
+                  <Temperature>
+                    <div>
+                      {capitalize(
+                        localize("name_current_temperature", {
+                          search: "{name} ",
+                          replace: "",
+                        }),
+                      )}
+                      : {current_temperature}
+                    </div>
+                    <span>{unit_of_measurement ?? config?.unit_system.temperature}</span>
+                  </Temperature>
+                </span>
+              )}
+            </Description>
+          </Row>
+        }
         {...rest}
       >
-        
-          {showTemperatureControls && <Column
+        {showTemperatureControls && (
+          <Column
             alignItems="flex-start"
             fullWidth
             fullHeight
@@ -279,7 +290,8 @@ function _ClimateCard({
                 }}
               />
             </ButtonBar>
-        </Column>}
+          </Column>
+        )}
       </StyledClimateCard>
     </>
   );

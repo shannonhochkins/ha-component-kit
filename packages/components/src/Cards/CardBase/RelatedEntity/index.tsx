@@ -11,18 +11,24 @@ import {
   useEntity,
   useIconByDomain,
   useIconByEntity,
-  useIcon
+  useIcon,
 } from "@hakit/core";
-import {
-  fallback,
-} from "@components";
+import { fallback } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { type IconProps } from "@iconify/react";
 
+type Position =
+  | "left top"
+  | "left center"
+  | "left bottom"
+  | "center top"
+  | "center center"
+  | "center bottom"
+  | "right top"
+  | "right center"
+  | "right bottom";
 
-type Position = "left top" | "left center" | "left bottom" | "center top" | "center center" | "center bottom" | "right top" | "right center" | "right bottom";
-
-export interface RelatedEntityProps<E extends EntityName = EntityName> extends Omit<React.ComponentPropsWithoutRef<'div'>, 'onClick'> {
+export interface RelatedEntityProps<E extends EntityName = EntityName> extends Omit<React.ComponentPropsWithoutRef<"div">, "onClick"> {
   /** The name of the entity */
   entity: E;
   /** The service name to call */
@@ -40,39 +46,39 @@ export interface RelatedEntityProps<E extends EntityName = EntityName> extends O
   /** custom render method for the element, this will replace any default children of this component */
   render?: (entity: HassEntityWithService<ExtractDomain<E>>, icon: ReactNode | null) => ReactNode;
   /** margin for the custom element @default 1rem */
-  margin?: CSSProperties['margin'];
+  margin?: CSSProperties["margin"];
   /** padding for the custom element @default 0 */
-  padding?: CSSProperties['padding'];
+  padding?: CSSProperties["padding"];
   /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
   onClick?: (entity: HassEntityWithService<ExtractDomain<E>>, event: React.MouseEvent<HTMLElement>) => void;
 }
 
-type PartialStyleProps = Pick<RelatedEntityProps<EntityName>, 'position' | 'padding' | 'margin'>;
+type PartialStyleProps = Pick<RelatedEntityProps<EntityName>, "position" | "padding" | "margin">;
 
 const RelatedEntityEl = styled.div<PartialStyleProps>`
   position: absolute;
-  margin: ${(props) => props.margin || '1rem'};
-  padding: ${(props) => props.padding || '0'};
-  cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
+  margin: ${(props) => props.margin || "1rem"};
+  padding: ${(props) => props.padding || "0"};
+  cursor: ${(props) => (props.onClick ? "pointer" : "default")};
   ${(props) => {
     switch (props.position) {
-      case 'left top':
+      case "left top":
         return `top: 0; left: 0;`;
-      case 'left center':
+      case "left center":
         return `top: 50%; left: 0; transform: translateY(-50%);`;
-      case 'left bottom':
+      case "left bottom":
         return `bottom: 0; left: 0;`;
-      case 'center top':
+      case "center top":
         return `top: 0; left: 50%; transform: translateX(-50%);`;
-      case 'center center':
+      case "center center":
         return `top: 50%; left: 50%; transform: translate(-50%, -50%);`;
-      case 'center bottom':
+      case "center bottom":
         return `bottom: 0; left: 50%; transform: translateX(-50%);`;
-      case 'right top':
+      case "right top":
         return `top: 0; right: 0;`;
-      case 'right center':
+      case "right center":
         return `top: 50%; right: 0; transform: translateY(-50%);`;
-      case 'right bottom':
+      case "right bottom":
         return `bottom: 0; right: 0;`;
       default:
         return `top: 0; right: 0;`;
@@ -91,7 +97,7 @@ function _RelatedEntity<E extends EntityName>({
   service,
   serviceData,
   ...rest
-}: RelatedEntityProps<E>)  {
+}: RelatedEntityProps<E>) {
   const entity = useEntity(_entity);
   const iconElement = useIcon(_icon ?? null, iconProps);
   const domain = computeDomain(_entity);
@@ -121,13 +127,10 @@ function _RelatedEntity<E extends EntityName>({
   );
   return (
     <RelatedEntityEl position={position} onClick={onClickHandler} {...rest}>
-      {render ? render(entity, icon) : <>
-        {icon}
-      </>}
+      {render ? render(entity, icon) : <>{icon}</>}
     </RelatedEntityEl>
   );
 }
-
 
 /**
  * This can be used within the `relatedEntities` prop for any card that extends CardBase where you can place icons/elements in predefined positions across the card with full control over style/positions/rendering capabilities, click actions and more.

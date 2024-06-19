@@ -15,7 +15,7 @@ import {
   type LocaleKeys,
   type HassEntityWithService,
   type ExtractDomain,
-  type EntityName
+  type EntityName,
 } from "@hakit/core";
 import { type IconProps } from "@iconify/react";
 import { fallback, Column, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
@@ -90,9 +90,11 @@ const Toggle = styled.div<ToggleProps>`
   margin-left: 20px;
 `;
 
-const Fab = styled.div<React.ComponentProps<'div'> & {
-  brightness: string;
-}>`
+const Fab = styled.div<
+  React.ComponentProps<"div"> & {
+    brightness: string;
+  }
+>`
   border-radius: 100%;
   padding: 6px;
   width: 2rem;
@@ -162,7 +164,7 @@ export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProp
   /** the props for the icon, which includes styles for the icon */
   iconProps?: Omit<IconProps, "icon">;
   /** the props to provide to the Fab element within the card, useful if you want to re-style it */
-  fabProps?: React.ComponentProps<'div'>;
+  fabProps?: React.ComponentProps<"div">;
   /** By default, the description is retrieved from the friendly name of the entity, or you can specify a manual description */
   description?: ReactNode | null;
   /** override the unit displayed alongside the state if the entity has a unit of measurement */
@@ -170,7 +172,7 @@ export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProp
   /** The layout of the button card, mimics the style of HA mushroom cards in slim/slim-vertical @default "default" */
   layoutType?: "default" | "slim" | "slim-vertical";
   /** custom method to render the state however you choose, this will just change how the "suffix" of the title will appear */
-  customRenderState?: (entity: HassEntityWithService<ExtractDomain<E>> | null) => ReactNode;
+  customRenderState?: (entity: HassEntityWithService<ExtractDomain<E>>) => ReactNode;
   /** hide the icon shown in the component @default false */
   hideIcon?: boolean;
   /** Hide the state value @default false */
@@ -216,19 +218,19 @@ function _ButtonCard<E extends EntityName>({
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
   });
-  const iconNode = typeof _icon !== "undefined" && typeof _icon !== 'string' ? _icon : null;
+  const iconNode = typeof _icon !== "undefined" && typeof _icon !== "string" ? _icon : null;
   const domainIcon = useIconByDomain(domain === null ? "unknown" : domain, {
-    ...iconProps ?? {},
+    ...(iconProps ?? {}),
   });
   const entityIcon = useIconByEntity(_entity || "unknown", {
-    ...iconProps ?? {},
+    ...(iconProps ?? {}),
   });
   const isDefaultLayout = layoutType === "default" || layoutType === undefined;
   const isSlimLayout = layoutType === "slim" || layoutType === "slim-vertical";
   const isUnavailable = typeof entity?.state === "string" ? isUnavailableState(entity.state) : false;
   const on = entity ? entity.state !== "off" && !isUnavailable && !disabled : active || false;
   const iconElement = useIcon(typeof _icon === "string" ? _icon : null, {
-    ...iconProps ?? {},
+    ...(iconProps ?? {}),
   });
   // use the input description if provided, else use the friendly name if available, else entity name, else null
   const description = useMemo(() => {
@@ -242,12 +244,15 @@ function _ButtonCard<E extends EntityName>({
 
   function renderState() {
     if (hideState) return null;
-    if (customRenderState) return customRenderState(entity);
+    if (customRenderState && entity) {
+      // @ts-expect-error - this is correct, no idea why it's complaining
+      return customRenderState(entity);
+    }
     if (typeof active === "boolean") {
       // static usage without entity
       return active ? `${localize(ON)}` : `${localize(OFF)}`;
     }
-    if (isUnavailable) return localize('unavailable');
+    if (isUnavailable) return localize("unavailable");
     if (entity && entity.state === ON && domain === "light") {
       // dynamic usage with entity if it's a light
       return `${entity.custom.brightnessValue}%`;
@@ -260,9 +265,7 @@ function _ButtonCard<E extends EntityName>({
     }
     return null;
   }
-  const hasFeatures = Children.toArray(rest?.features).filter(
-    (child): child is ReactElement => isValidElement(child)
-  ).length > 0;
+  const hasFeatures = Children.toArray(rest?.features).filter((child): child is ReactElement => isValidElement(child)).length > 0;
   return (
     <StyledButtonCard
       key={key}
@@ -283,21 +286,27 @@ function _ButtonCard<E extends EntityName>({
       `}
       {...rest}
     >
-      <Contents className={`contents ${hasFeatures ? 'has-features' : ''}`}>
+      <Contents className={`contents ${hasFeatures ? "has-features" : ""}`}>
         <LayoutBetween className={`layout-between ${layoutType === "slim-vertical" ? "vertical" : ""}`}>
-          {!hideIcon && <Fab
-            brightness={(on && entity?.custom.brightness) || "brightness(100%)"}
-            {...fabProps}
-            className={`fab-card-inner icon ${fabProps?.className} ${fabProps?.style ? 'custom' : ''}`}
-            style={{
-              ...fabProps?.style,
-              backgroundColor: fabProps?.style?.backgroundColor ?? (on ? (domain === "light" ? entity?.custom?.rgbaColor ?? "var(--ha-A400)" : "var(--ha-A400)") : "var(--ha-S400)"),
-              color: fabProps?.style?.color ?? (entity ? (on ? entity.custom.rgbColor : "var(--ha-S500-contrast)") : on ? "var(--ha-A400)" : "var(--ha-S500-contrast)")
-            }}
-          >
-            {iconNode ?? iconElement ?? entityIcon ?? domainIcon}
-          </Fab>}
-          {(isDefaultLayout && !hideToggle) && (
+          {!hideIcon && (
+            <Fab
+              brightness={(on && entity?.custom.brightness) || "brightness(100%)"}
+              {...fabProps}
+              className={`fab-card-inner icon ${fabProps?.className} ${fabProps?.style ? "custom" : ""}`}
+              style={{
+                ...fabProps?.style,
+                backgroundColor:
+                  fabProps?.style?.backgroundColor ??
+                  (on ? (domain === "light" ? entity?.custom?.rgbaColor ?? "var(--ha-A400)" : "var(--ha-A400)") : "var(--ha-S400)"),
+                color:
+                  fabProps?.style?.color ??
+                  (entity ? (on ? entity.custom.rgbColor : "var(--ha-S500-contrast)") : on ? "var(--ha-A400)" : "var(--ha-S500-contrast)"),
+              }}
+            >
+              {iconNode ?? iconElement ?? entityIcon ?? domainIcon}
+            </Fab>
+          )}
+          {isDefaultLayout && !hideToggle && (
             <Toggle active={on} className="toggle">
               {!isUnavailable && <ToggleState active={on} className="toggle-state" />}
             </Toggle>
@@ -307,7 +316,7 @@ function _ButtonCard<E extends EntityName>({
               <Description className="description">{description}</Description>
               {!hideDetails && (
                 <Title className={`title ${layoutType ?? ""}`}>
-                  {title} {!hideState ? ` - ${renderState()}` : ''}
+                  {title} {!hideState ? ` - ${renderState()}` : ""}
                   {entity && !hideLastUpdated ? ` - ${entity.custom.relativeTime}` : ""}
                 </Title>
               )}

@@ -87,9 +87,10 @@ const generateVariantVars = (variants: string[], type: "Light" | "Dark", tint: n
       const lightness = isLight
         ? `calc(((var(--ha-l) - var(--mtc-light-l)) * var(--mtc-l-${variant}) + var(--mtc-light-l)) * 1%)`
         : `calc(((1 - var(--mtc-l-${variant})) * var(--ha-l) * var(--ha-l) / 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%)`;
-      const contrast = (alpha: number) => isLight
-        ? `hsla(0, 0%, calc(((((1 - var(--mtc-l-${variant})) * 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)), ${alpha})`
-        : `hsla(0, 0%, calc(((((1 - var(--mtc-l-${variant})) * var(--ha-l) * var(--ha-l) / 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)), ${alpha})`;
+      const contrast = (alpha: number) =>
+        isLight
+          ? `hsla(0, 0%, calc(((((1 - var(--mtc-l-${variant})) * 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)), ${alpha})`
+          : `hsla(0, 0%, calc(((((1 - var(--mtc-l-${variant})) * var(--ha-l) * var(--ha-l) / 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)), ${alpha})`;
 
       const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
       const indexOffset = !isLight ? LIGHT.length + 1 : 0;

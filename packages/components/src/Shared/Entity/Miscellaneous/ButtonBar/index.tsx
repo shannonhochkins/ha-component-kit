@@ -59,7 +59,6 @@ const ButtonBarInner = styled.div<Partial<ButtonBarProps>>`
   height: ${({ fullHeight }) => (fullHeight ? "100%" : "auto")};
   overflow: hidden;
 
-
   > * {
     height: 100%;
     width: auto;
@@ -71,7 +70,7 @@ const ButtonBarInner = styled.div<Partial<ButtonBarProps>>`
       align-items: stretch;
     }
   }
-  
+
   &.grouped {
     background-color: var(--ha-S300);
     border-radius: 0.5rem;
@@ -112,7 +111,7 @@ function _ButtonBar({
   className,
   cssStyles,
   children,
-  layoutType = 'grouped',
+  layoutType = "grouped",
   ...rest
 }: ButtonBarProps) {
   const childrenWithKeys = Children.map(children, (child, index) => {
@@ -121,7 +120,7 @@ function _ButtonBar({
         key: child.key || index,
         // @ts-expect-error - it does exist, fix types later
         size: 30,
-        borderRadius: layoutType === 'bubble' ? '8px' : '0px',
+        borderRadius: layoutType === "bubble" ? "8px" : "0px",
       });
     }
     return null;
@@ -152,7 +151,7 @@ function _ButtonBar({
             wrap,
             gap,
             fullWidth,
-            fullHeight
+            fullHeight,
           }}
         >
           {/* @ts-expect-error - fix later */}

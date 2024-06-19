@@ -126,7 +126,7 @@ export async function getConnection(url: string, token: string): Promise<{
   }
 }
 
-export const fetchTranslations =  async (langs, combinedTranslations: Record<string, Record<string, string>>): Promise<void> => {
+export const fetchTranslations =  async (langs: string[], combinedTranslations: Record<string, Record<string, string>>): Promise<void> => {
   const { connection } = await getConnection(process.env.VITE_HA_URL!, process.env.VITE_HA_TOKEN!);
   await Promise.all(
     categories.map(async (category) => {
@@ -155,7 +155,7 @@ export const fetchTranslations =  async (langs, combinedTranslations: Record<str
 
 function removeDuplicatesByValue(keyMap: Record<string, string>): Record<string, string> {
   // Create a new map to store the shortest key for each unique value
-  const valueToKeyMap = new Map();
+  const valueToKeyMap = new Map<string, string>();
 
   // Iterate over the entries of the keyMap
   for (const [key, value] of Object.entries(keyMap)) {
@@ -164,7 +164,7 @@ function removeDuplicatesByValue(keyMap: Record<string, string>): Record<string,
           // Get the existing key for this value
           const existingKey = valueToKeyMap.get(value);
           // If the new key is shorter, update the map
-          if (key.length < existingKey.length) {
+          if (existingKey && key.length < existingKey.length) {
               valueToKeyMap.set(value, key);
           }
       } else {
@@ -174,11 +174,10 @@ function removeDuplicatesByValue(keyMap: Record<string, string>): Record<string,
   }
 
   // Create a new object to store the result
-  const result = {};
-
+  const result: Record<string, string> = {};
   // Populate the result object with the shortest keys and their values
   for (const [value, key] of valueToKeyMap.entries()) {
-      result[key] = value;
+    result[key] = value;
   }
 
   return result;

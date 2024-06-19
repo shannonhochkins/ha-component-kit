@@ -112,7 +112,7 @@ function _EntitiesCardRow<E extends EntityName>({
               filter: (on && entity?.custom.brightness) || "brightness(100%)",
             }}
           >
-            {_icon ? <Icon className={`icon`} icon={_icon} {...iconProps ?? {}} /> : entityIcon ?? domainIcon}
+            {_icon ? <Icon className={`icon`} icon={_icon} {...(iconProps ?? {})} /> : entityIcon ?? domainIcon}
           </IconWrapper>
           <Name className={`name`}>
             {title}

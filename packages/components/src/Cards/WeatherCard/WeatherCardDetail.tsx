@@ -42,7 +42,7 @@ function _WeatherCardDetail({ icon, iconProps, entity, title, suffix, render, ..
     <DetailsRow className="details" gap="0rem" justifyContent="flex-start" {...rest}>
       <Tooltip title={_title ?? localize("unknown")}>
         <Row className="row" fullWidth gap="0.5rem" justifyContent="flex-start">
-          <Icon className="icon" icon={icon ?? _entity.attributes.icon ?? "mdi:info"} {...iconProps ?? {}} />
+          <Icon className="icon" icon={icon ?? _entity.attributes.icon ?? "mdi:info"} {...(iconProps ?? {})} />
           <State className="state">
             {typeof render === "function"
               ? render(_entity)

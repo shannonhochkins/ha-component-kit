@@ -189,14 +189,19 @@ function _CoverControls({
             >
               {supportsOpenClose && (
                 <Column>
-                  <ButtonGroup thickness={device.xxs ? 60 : 96} reverse={reverse} orientation={orientation} style={{
-                    minHeight: orientation === 'vertical' ? '200px' : undefined,
-                    maxHeight: orientation === 'vertical' ? '320px' : undefined,
-                    height: orientation === 'vertical' ? '45vh' : undefined,
-                    minWidth: orientation === 'horizontal' ? '320px' : undefined,
-                    maxWidth: orientation === 'horizontal' ? '420px' : undefined,
-                    flexWrap: 'nowrap'
-                  }}>
+                  <ButtonGroup
+                    thickness={device.xxs ? 60 : 96}
+                    reverse={reverse}
+                    orientation={orientation}
+                    style={{
+                      minHeight: orientation === "vertical" ? "200px" : undefined,
+                      maxHeight: orientation === "vertical" ? "320px" : undefined,
+                      height: orientation === "vertical" ? "45vh" : undefined,
+                      minWidth: orientation === "horizontal" ? "320px" : undefined,
+                      maxWidth: orientation === "horizontal" ? "420px" : undefined,
+                      flexWrap: "nowrap",
+                    }}
+                  >
                     <ButtonGroupButton
                       title={localize("open_cover")}
                       entity={_entity}
@@ -221,14 +226,19 @@ function _CoverControls({
               )}
               {supportsTilt && (
                 <Column>
-                  <ButtonGroup thickness={device.xxs ? 60 : 96} reverse={reverse} orientation={orientation} style={{
-                    minHeight: orientation === 'vertical' ? '200px' : undefined,
-                    maxHeight: orientation === 'vertical' ? '320px' : undefined,
-                    height: orientation === 'vertical' ? '45vh' : undefined,
-                    minWidth: orientation === 'horizontal' ? '320px' : undefined,
-                    maxWidth: orientation === 'horizontal' ? '420px' : undefined,
-                    flexWrap: 'nowrap'
-                  }}>
+                  <ButtonGroup
+                    thickness={device.xxs ? 60 : 96}
+                    reverse={reverse}
+                    orientation={orientation}
+                    style={{
+                      minHeight: orientation === "vertical" ? "200px" : undefined,
+                      maxHeight: orientation === "vertical" ? "320px" : undefined,
+                      height: orientation === "vertical" ? "45vh" : undefined,
+                      minWidth: orientation === "horizontal" ? "320px" : undefined,
+                      maxWidth: orientation === "horizontal" ? "420px" : undefined,
+                      flexWrap: "nowrap",
+                    }}
+                  >
                     <ButtonGroupButton
                       title={localize("open_cover_tilt")}
                       entity={_entity}

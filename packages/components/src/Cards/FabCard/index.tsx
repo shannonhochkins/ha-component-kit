@@ -14,7 +14,7 @@ import {
 import { CardBase, fallback, Tooltip } from "@components";
 import type { TooltipProps, CardBaseProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import { type IconProps } from '@iconify/react';
+import { type IconProps } from "@iconify/react";
 
 const StyledFabCard = styled(<E extends EntityName>({ service, serviceData, key, ...props }: CardBaseProps<"button", E>) => (
   <CardBase
@@ -74,7 +74,7 @@ const Contents = styled.div<{
 
 type OmitProperties = "title" | "ref";
 
-export interface FabCardProps<E extends EntityName> extends Omit<CardBaseProps<'button', E>, OmitProperties> {
+export interface FabCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
   /** The size of the Fab, this applies to the width and height @default 48 */
   size?: number;
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
@@ -116,18 +116,18 @@ function _FabCard<E extends EntityName>({
   const domain = _entity ? computeDomain(_entity) : null;
   const icon = typeof _icon === "string" ? _icon : null;
   const domainIcon = useIconByDomain(domain === null ? "unknown" : domain, {
-    ...iconProps ?? {},
+    ...(iconProps ?? {}),
     fontSize: iconProps?.fontSize ?? `${size / 1.7}px`,
   });
   const hasChildren = typeof children !== "undefined";
   const _borderRadius = hasChildren ? borderRadius ?? "10px" : borderRadius ?? "50%";
   const isUnavailable = typeof entity?.state === "string" ? isUnavailableState(entity.state) : false;
   const entityIcon = useIconByEntity(_entity || "unknown", {
-    ...iconProps ?? {},
+    ...(iconProps ?? {}),
     fontSize: iconProps?.fontSize ?? `${size / 1.7}px`,
   });
   const iconElement = useIcon(icon, {
-    ...iconProps ?? {},
+    ...(iconProps ?? {}),
     fontSize: iconProps?.fontSize ?? `${size / 1.7}px`,
   });
   const active = typeof _active === "boolean" ? _active : entity === null ? false : entity.state !== "off" && !isUnavailable;

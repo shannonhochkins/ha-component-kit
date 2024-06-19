@@ -2,7 +2,9 @@ import styled from "@emotion/styled";
 import type { EntityName } from "@hakit/core";
 import { useHass } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
-import { fallback, AvailableQueries, ButtonCard, type ButtonCardProps } from "@components";
+import { AvailableQueries } from "@components";
+import { ButtonCard, type ButtonCardProps } from "../ButtonCard";
+import { fallback } from "../../Shared/ErrorBoundary";
 
 const StyledSensorCard = styled(ButtonCard)``;
 
@@ -34,7 +36,7 @@ function _SensorCard<E extends EntityName>({
       graph={{
         entity: _entity,
         // content spacing is 1rem, so we offset it here by the same amount
-        adjustGraphSpaceBy: '1rem',
+        adjustGraphSpaceBy: "1rem",
       }}
       entity={_entity}
       className={`sensor-card ${className ?? ""}`}

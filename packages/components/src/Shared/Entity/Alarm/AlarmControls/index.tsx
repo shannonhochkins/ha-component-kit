@@ -1,14 +1,24 @@
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import { useEffect, useState, CSSProperties, useRef } from "react";
-import { localize, useHass, type AlarmMode, type AlarmPanelCardConfigState, type EntityName, type HassEntityWithService, type FilterByDomain, useEntity, LocaleKeys } from "@hakit/core";
+import {
+  localize,
+  useHass,
+  type AlarmMode,
+  type AlarmPanelCardConfigState,
+  type EntityName,
+  type HassEntityWithService,
+  type FilterByDomain,
+  useEntity,
+  LocaleKeys,
+} from "@hakit/core";
 import { fallback, ButtonGroup, ButtonGroupButton } from "@components";
 import { motion, type MotionProps } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
-import { TextField } from '../../../Form/TextField';
+import { TextField } from "../../../Form/TextField";
 import { snakeCase } from "lodash";
 
-import { _getActionLabel, _getActionColor, filterSupportedAlarmStates, ALARM_MODE_STATE_MAP, ALARM_MODES, DEFAULT_STATES } from './shared';
+import { _getActionLabel, _getActionColor, filterSupportedAlarmStates, ALARM_MODE_STATE_MAP, ALARM_MODES, DEFAULT_STATES } from "./shared";
 
 const BUTTONS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "clear"];
 // split the buttons into 3 rows so we can render them like an input pad
@@ -73,7 +83,7 @@ const Wrapper = styled(motion.div)`
       z-index: 1;
     }
     &:before {
-      content: '';
+      content: "";
       position: absolute;
       top: -10%;
       left: -10%;
@@ -85,7 +95,11 @@ const Wrapper = styled(motion.div)`
       pointer-events: none;
       transition: var(--ha-transition-duration) var(--ha-easing);
       transition-property: background;
-      background: radial-gradient(var(--ha-alarm-controls-size) at var(--ha-alarm-controls-position), var(--ha-alarm-controls-color, transparent) 0%, transparent 100%);
+      background: radial-gradient(
+        var(--ha-alarm-controls-size) at var(--ha-alarm-controls-position),
+        var(--ha-alarm-controls-color, transparent) 0%,
+        transparent 100%
+      );
     }
   }
 
@@ -100,9 +114,9 @@ const Wrapper = styled(motion.div)`
 
 const ControlPanelSize = styled.div<{
   buttonSize: number;
-  buttonGap: CSSProperties['gap'];
+  buttonGap: CSSProperties["gap"];
 }>`
-  ${props => {
+  ${(props) => {
     return `
       display: flex;
       justify-content: center;
@@ -122,16 +136,16 @@ const ControlPanelSize = styled.div<{
         width: 100%;
         gap: ${props.buttonGap};
       }
-    `
+    `;
   }}
 `;
 
 interface Slot {
-  position: '1' | '2' | '3' | '4';
+  position: "1" | "2" | "3" | "4";
   children: React.ReactNode;
 }
 
-type AlarmServices = keyof HassEntityWithService<'alarm_control_panel'>['service'];
+type AlarmServices = keyof HassEntityWithService<"alarm_control_panel">["service"];
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 export interface AlarmControlsProps extends Extendable {
   /** The alarm entity to control */
@@ -143,7 +157,7 @@ export interface AlarmControlsProps extends Extendable {
   /** The size of the buttons for the keypad in pixels @default 80 */
   buttonSize?: number;
   /** The gap between each button @default '0.5rem' */
-  buttonGap?: CSSProperties['gap'];
+  buttonGap?: CSSProperties["gap"];
   /** hide the code input field, useful if you only want to show the keypad @default false */
   hideCodeInput?: boolean;
   /** hide the keypad, useful if you only want to show the action buttons or just the code input field @default false */
@@ -151,7 +165,7 @@ export interface AlarmControlsProps extends Extendable {
   /** use a custom color for the background gradient behind the keypad depending on the state, if you return undefined it will use the default */
   customActionColor?: (state: AlarmMode) => string | undefined;
   /** overwrite the labels used on the buttons by assigning the state value to a label, by default this will use the same values as home assistant */
-  labelMap?: Record<AlarmPanelCardConfigState | 'disarm', string>;
+  labelMap?: Record<AlarmPanelCardConfigState | "disarm", string>;
   /** you can customize and add in additional content/layout by inserting custom slots, this allows you to insert custom elements within the component layout. */
   slots?: Slot[];
 }
@@ -163,7 +177,7 @@ function _AlarmControls({
   cssStyles,
   defaultCode,
   buttonSize = 80,
-  buttonGap = '0.5rem',
+  buttonGap = "0.5rem",
   hideCodeInput = false,
   hideKeypad = false,
   customActionColor,
@@ -176,21 +190,21 @@ function _AlarmControls({
   const entity = useEntity(_entity);
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
-  
+
   const states = _states || filterSupportedAlarmStates(entity, DEFAULT_STATES);
 
   const _handlePadClick = (val: string): void => {
-    setInputVal(val === "clear" ? "" : inputVal + val)
-  }
+    setInputVal(val === "clear" ? "" : inputVal + val);
+  };
 
-  const _handleActionClick = (state: AlarmPanelCardConfigState | 'disarm'): void => {
+  const _handleActionClick = (state: AlarmPanelCardConfigState | "disarm"): void => {
     entity.service[snakeCase(`alarm_${state}`) as AlarmServices]({
       code: inputVal,
     });
     if (!defaultCode) {
       setInputVal("");
     }
-  }
+  };
 
   useEffect(() => {
     if (defaultCode) {
@@ -200,102 +214,117 @@ function _AlarmControls({
 
   useEffect(() => {
     if (!wrapperRef.current) return;
-    wrapperRef.current.style.setProperty("--ha-alarm-controls-position", '50% 50%');
-    wrapperRef.current.style.setProperty("--ha-alarm-controls-size", '50% 50%');
+    wrapperRef.current.style.setProperty("--ha-alarm-controls-position", "50% 50%");
+    wrapperRef.current.style.setProperty("--ha-alarm-controls-size", "50% 50%");
     wrapperRef.current.style.setProperty("--ha-alarm-controls-color", _getActionColor(entity.state, customActionColor));
   }, [entity.state, customActionColor]);
 
   const localizeState = (): string => {
-    if (entity.state === 'triggered') return localize('pending');
-    if (entity.state.includes('custom_bypass')) return localize('custom_bypass');
-    if (entity.state.includes('armed_')) return localize('armed');
+    if (entity.state === "triggered") return localize("pending");
+    if (entity.state.includes("custom_bypass")) return localize("custom_bypass");
+    if (entity.state.includes("armed_")) return localize("armed");
     return localize(entity.state as LocaleKeys);
-  }
+  };
 
-  const isLoading = ['pending', 'triggered', 'arming'].includes(entity.state);
+  const isLoading = ["pending", "triggered", "arming"].includes(entity.state);
 
   const showKeypad = entity.attributes.code_format === FORMAT_NUMBER && !defaultCode && !hideKeypad;
-  const unpackSlot = (position: '1' | '2' | '3' | '4') => slots?.find((slot) => slot.position === position)?.children ?? null;
+  const unpackSlot = (position: "1" | "2" | "3" | "4") => slots?.find((slot) => slot.position === position)?.children ?? null;
 
-  return <Wrapper
-        ref={wrapperRef}
-        className={`alarm-control-panel ${isLoading ? 'is-loading' : ''} ${className ?? ""}`}
-        cssStyles={`
+  return (
+    <Wrapper
+      ref={wrapperRef}
+      className={`alarm-control-panel ${isLoading ? "is-loading" : ""} ${className ?? ""}`}
+      cssStyles={`
           ${globalComponentStyle.alarmCard ?? ""}
           ${cssStyles ?? ""}
         `}
-        {...rest}
-  >   
-      {unpackSlot('1')}
+      {...rest}
+    >
+      {unpackSlot("1")}
       <ControlPanelSize className="actions-wrapper" buttonSize={buttonSize} buttonGap={buttonGap}>
-        <ButtonGroup id="armActions" className="actions" orientation="horizontal" thickness={buttonSize} gap={buttonGap} maintainAspectRatio={false}>
-          {(entity.state === "disarmed"
-            ? states
-            : (["disarm"] as const)
-          ).map(
-            (stateAction) => <ButtonGroupButton
+        <ButtonGroup
+          id="armActions"
+          className="actions"
+          orientation="horizontal"
+          thickness={buttonSize}
+          gap={buttonGap}
+          maintainAspectRatio={false}
+        >
+          {(entity.state === "disarmed" ? states : (["disarm"] as const)).map((stateAction) => (
+            <ButtonGroupButton
               key={stateAction}
-              icon={stateAction in ALARM_MODE_STATE_MAP ? ALARM_MODES[ALARM_MODE_STATE_MAP[stateAction]].icon : ''}
+              icon={stateAction in ALARM_MODE_STATE_MAP ? ALARM_MODES[ALARM_MODE_STATE_MAP[stateAction]].icon : ""}
               iconProps={{
-                fontSize: '30px',
+                fontSize: "30px",
                 style: {
-                  marginBottom: '6px'
-                }
+                  marginBottom: "6px",
+                },
               }}
-              title={!inputVal ? localize('enter_code') : _getActionLabel(stateAction, labelMap)}
+              title={!inputVal ? localize("enter_code") : _getActionLabel(stateAction, labelMap)}
               placement="top"
               style={{
-                flexDirection: 'column',
-                fontSize: '14px',
-                aspectRatio: 'unset',
+                flexDirection: "column",
+                fontSize: "14px",
+                aspectRatio: "unset",
               }}
               disabled={!inputVal || isLoading}
               onClick={() => _handleActionClick(stateAction)}
             >
               {_getActionLabel(stateAction, labelMap)}
             </ButtonGroupButton>
-          )}
+          ))}
         </ButtonGroup>
       </ControlPanelSize>
-      {unpackSlot('2')}
-      {!entity.attributes.code_format || defaultCode || hideCodeInput
-        ? null
-        : <ControlPanelSize className="actions-wrapper-input" buttonSize={buttonSize} buttonGap={buttonGap}>
-            <TextField value={inputVal} type="password" label={localize('code')} id="alarmCode" disabled={isLoading} />
-          </ControlPanelSize>}
-      {unpackSlot('3')}
-      {!showKeypad
-        ? null
-        : <ControlPanelSize className="keypad" buttonSize={buttonSize} buttonGap={buttonGap}>
-          {BUTTON_ROWS.map((buttons, index) => {
-            return <ButtonGroup key={index} orientation="horizontal" gap={buttonGap} thickness={buttonSize} className="keypad-buttons">
-              {buttons.map((val, j) => {
-                return <ButtonGroupButton
-                  key={`${index}-${j}`}
-                  className={`keypad-button keypad-button-${val === "" ? 'empty' : val} ${val !== 'clear' ? 'numberkey' : ''}`}
-                  disabled={isLoading || val === ''}
-                  disableScaleEffect={val === ''}
-                  onClick={() => {
-                  _handlePadClick(val);
-                }}
-                style={{
-                  opacity: val === '' ? 0.2 : 1,
-                  zIndex: val === '' ? -1: undefined,
-                  cursor: val === '' ? 'default' : 'pointer',
-                }}>
-                  <span>{val === 'clear' ? localize('clear') : val}</span>
-                </ButtonGroupButton>
-              })}
-            </ButtonGroup>
-          })}
-      </ControlPanelSize>}
-      {isLoading && <>
-        <ControlPanelSize className="loading-wrapper" buttonSize={buttonSize} buttonGap={buttonGap}>
-          <div className="loading-indicator"><span>{localizeState()}</span></div>
+      {unpackSlot("2")}
+      {!entity.attributes.code_format || defaultCode || hideCodeInput ? null : (
+        <ControlPanelSize className="actions-wrapper-input" buttonSize={buttonSize} buttonGap={buttonGap}>
+          <TextField value={inputVal} type="password" label={localize("code")} id="alarmCode" disabled={isLoading} />
         </ControlPanelSize>
-      </>}
-      {unpackSlot('4')}
-    </Wrapper>;
+      )}
+      {unpackSlot("3")}
+      {!showKeypad ? null : (
+        <ControlPanelSize className="keypad" buttonSize={buttonSize} buttonGap={buttonGap}>
+          {BUTTON_ROWS.map((buttons, index) => {
+            return (
+              <ButtonGroup key={index} orientation="horizontal" gap={buttonGap} thickness={buttonSize} className="keypad-buttons">
+                {buttons.map((val, j) => {
+                  return (
+                    <ButtonGroupButton
+                      key={`${index}-${j}`}
+                      className={`keypad-button keypad-button-${val === "" ? "empty" : val} ${val !== "clear" ? "numberkey" : ""}`}
+                      disabled={isLoading || val === ""}
+                      disableScaleEffect={val === ""}
+                      onClick={() => {
+                        _handlePadClick(val);
+                      }}
+                      style={{
+                        opacity: val === "" ? 0.2 : 1,
+                        zIndex: val === "" ? -1 : undefined,
+                        cursor: val === "" ? "default" : "pointer",
+                      }}
+                    >
+                      <span>{val === "clear" ? localize("clear") : val}</span>
+                    </ButtonGroupButton>
+                  );
+                })}
+              </ButtonGroup>
+            );
+          })}
+        </ControlPanelSize>
+      )}
+      {isLoading && (
+        <>
+          <ControlPanelSize className="loading-wrapper" buttonSize={buttonSize} buttonGap={buttonGap}>
+            <div className="loading-indicator">
+              <span>{localizeState()}</span>
+            </div>
+          </ControlPanelSize>
+        </>
+      )}
+      {unpackSlot("4")}
+    </Wrapper>
+  );
 }
 
 /** This component will render controls for a an alarm system, it supports arm home, arm away, and disarm buttons.

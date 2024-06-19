@@ -1,17 +1,13 @@
 import { useMemo, useState, useCallback } from "react";
 import styled from "@emotion/styled";
-import { ButtonCard, type ButtonCardProps, type AvailableQueries, fallback, FeatureEntity } from "@components";
+import { type AvailableQueries, fallback } from "@components";
 import type { VacuumControlsProps } from "@components";
-import {
-  useHass,
-  useEntity,
-  localize,
-  type EntityName,
-  type FilterByDomain,
-} from "@hakit/core";
+import { useHass, useEntity, localize, type EntityName, type FilterByDomain } from "@hakit/core";
 import { VacuumImage } from "../../Shared/Entity/Vacuum/VacuumControls/VacuumImage";
 import { ErrorBoundary } from "react-error-boundary";
 import { getToolbarActions } from "../../Shared/Entity/Vacuum/VacuumControls/shared";
+import { FeatureEntity } from "../CardBase/FeatureEntity";
+import { ButtonCard, type ButtonCardProps } from "../ButtonCard";
 
 const StyledVacuumCard = styled(ButtonCard)`
   .footer {
@@ -66,7 +62,7 @@ function _VacuumCard({
     shortcuts,
     onLocate() {
       locateFlash();
-    }
+    },
   });
   return (
     <StyledVacuumCard
@@ -98,21 +94,21 @@ function _VacuumCard({
       fabProps={{
         style: {
           padding: 0,
-          backgroundColor: 'none',
-          width: '3rem',
-          height: '3rem'
-        }
+          backgroundColor: "none",
+          width: "3rem",
+          height: "3rem",
+        },
       }}
-      features={features.map(feature => (
+      features={features.map((feature) => (
         <FeatureEntity
           iconProps={{
-            color: feature?.active ? "var(--ha-300)" : undefined
+            color: feature?.active ? "var(--ha-300)" : undefined,
           }}
           {...feature}
-          />
+        />
       ))}
       {...rest}
-    />      
+    />
   );
 }
 

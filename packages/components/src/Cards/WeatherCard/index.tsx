@@ -228,7 +228,7 @@ function _WeatherCard({
                       state: forecast.condition as string,
                     }) as string
                   }
-                  {...iconProps ?? {}}
+                  {...(iconProps ?? {})}
                 />
                 <Temperature className="temperature">
                   {forecast.temperature}
@@ -262,7 +262,7 @@ function _WeatherCard({
         refreshRate: 500,
         onResize(_width) {
           setWidth(_width ?? 0);
-        }
+        },
       }}
       cssStyles={`
         ${globalComponentStyle?.weatherCard ?? ""}

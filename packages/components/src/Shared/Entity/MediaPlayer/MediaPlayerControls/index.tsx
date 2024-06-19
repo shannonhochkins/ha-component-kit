@@ -203,7 +203,7 @@ export const MediaPlayerControls = ({
                           <Fab
                             className="media-player-power"
                             iconProps={{
-                              color: `var(--ha-S200-contrast)`
+                              color: `var(--ha-S200-contrast)`,
                             }}
                             active={!isOff && !isUnavailable}
                             disabled={!supportsTurnOn || !supportsTurnOff}
@@ -238,7 +238,7 @@ export const MediaPlayerControls = ({
                               }}
                               className="speaker-group"
                               iconProps={{
-                                color: `var(--ha-S200-contrast)`
+                                color: `var(--ha-S200-contrast)`,
                               }}
                               active={isPlaying}
                               disabled={false}

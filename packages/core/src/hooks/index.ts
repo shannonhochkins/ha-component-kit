@@ -1,12 +1,6 @@
 // hooks
 export { useHass } from "./useHass";
 export { useEntity } from "./useEntity";
-// Import useService from its location
-import { useService as useServiceActual } from "./useService";
-/**
- * @deprecated useApi has been renamed to useService. Please use {@link useService} instead.
- */
-export const useApi = useServiceActual;
 export { useService, createService } from "./useService";
 export { useIconByDomain, useIcon, useIconByEntity, getIconByEntity, batteryIconByLevel } from "./useIcon";
 export { useLightBrightness } from "./useLightBrightness";

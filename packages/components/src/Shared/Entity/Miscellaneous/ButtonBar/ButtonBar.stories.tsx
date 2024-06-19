@@ -7,10 +7,13 @@ function Template(args?: Partial<ButtonBarProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
-      <Row gap="1rem" style={{
-        padding: `1rem`,
-        backgroundColor: `var(--ha-S500)`
-      }}>
+      <Row
+        gap="1rem"
+        style={{
+          padding: `1rem`,
+          backgroundColor: `var(--ha-S500)`,
+        }}
+      >
         <ButtonBar {...args}>
           <ButtonBarButton entity="light.fake_light_1" service="toggle" />
           <ButtonBarButton title="Power Me!" icon="mdi:power" />
@@ -23,7 +26,10 @@ function Template(args?: Partial<ButtonBarProps>) {
         </ButtonBar>
       </Row>
       <Alert type="info" style={{ marginTop: `1rem` }}>
-        <p>The background color above is not part of the component, was only set as these buttons have a similar colour to the main background color as they're typically used within other cards which have a lighter background.</p>
+        <p>
+          The background color above is not part of the component, was only set as these buttons have a similar colour to the main
+          background color as they're typically used within other cards which have a lighter background.
+        </p>
       </Alert>
     </HassConnect>
   );

@@ -118,7 +118,7 @@ function _ButtonGroupButton<E extends EntityName>({
   return (
     <Tooltip placement="left" title={titleValue} key={key} {...rest}>
       <Button
-        className={`button-group-button ${showTitle ? 'has-title' : ''} ${_active ? "active" : ""}`}
+        className={`button-group-button ${showTitle ? "has-title" : ""} ${_active ? "active" : ""}`}
         activeColor={activeColor}
         disabled={disabled}
         whileTap={{ scale: disabled || disableScaleEffect ? 1 : 0.9 }}

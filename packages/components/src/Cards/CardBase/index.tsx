@@ -2,7 +2,21 @@ import { motion, type MotionProps, type HTMLMotionProps, type ForwardRefComponen
 import { css } from "@emotion/react";
 import { useLongPress, type LongPressReactEvents } from "use-long-press";
 import { lowerCase, startCase } from "lodash";
-import { memo, useMemo, useId, useState, useCallback, Children, isValidElement, cloneElement, type ReactElement, type ReactNode, type ElementType, CSSProperties, useRef } from "react";
+import {
+  memo,
+  useMemo,
+  useId,
+  useState,
+  useCallback,
+  Children,
+  isValidElement,
+  cloneElement,
+  type ReactElement,
+  type ReactNode,
+  type ElementType,
+  CSSProperties,
+  useRef,
+} from "react";
 import {
   type EntityName,
   type DomainService,
@@ -30,14 +44,15 @@ import {
   ButtonBar,
   ButtonBarProps,
   SvgGraphProps,
+  type RelatedEntity,
+  type RelatedEntityProps,
 } from "@components";
+import { type FeatureEntity, type FeatureEntityProps } from "./FeatureEntity";
 import { ErrorBoundary } from "react-error-boundary";
 import { isValidProp } from "../../utils/isValidProp";
-import { RelatedEntity, RelatedEntityProps } from './RelatedEntity';
-import { FeatureEntity, FeatureEntityProps } from './FeatureEntity';
 import styled from "@emotion/styled";
 import { useResizeDetector } from "react-resize-detector";
-import { Props as ResizeDetectorProps } from 'react-resize-detector/build/types/types';
+import { Props as ResizeDetectorProps } from "react-resize-detector/build/types/types";
 import { SVG_HEIGHT, SVG_WIDTH } from "../../Shared/SvgGraph/constants";
 
 const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
@@ -209,7 +224,7 @@ export type CardBaseProps<T extends ElementType = "div", E extends EntityName = 
       adjustGraphSpaceBy?: CSSProperties["paddingBottom"];
       /** options to pass to the history request */
       historyOptions?: HistoryOptions;
-    }
+    };
     /**
      *
      * A css string to update the card, this is similar to how you'd write scss.
@@ -370,12 +385,8 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rest.xxs, rest.xs, rest.sm, rest.md, rest.lg, rest.xlg]);
 
-  const filteredRelatedEntities = Children.toArray(relatedEntities).filter(
-    (child): child is ReactElement => isValidElement(child)
-  );
-  const filteredFeaturedEntities = Children.toArray(features).filter(
-    (child): child is ReactElement => isValidElement(child)
-  );
+  const filteredRelatedEntities = Children.toArray(relatedEntities).filter((child): child is ReactElement => isValidElement(child));
+  const filteredFeaturedEntities = Children.toArray(features).filter((child): child is ReactElement => isValidElement(child));
 
   const featuredElements = Children.map(filteredFeaturedEntities, (child, index) => {
     if (isValidElement<FeatureEntityProps<EntityName>>(child)) {
@@ -395,7 +406,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
 
   function calculateSvgHeight(parentWidth: number): CSSProperties["paddingBottom"] {
     const aspectRatio = SVG_WIDTH / SVG_HEIGHT;
-    return `calc(${(parentWidth / aspectRatio)}px - ${graph?.adjustGraphSpaceBy ?? '0px'});`;
+    return `calc(${parentWidth / aspectRatio}px - ${graph?.adjustGraphSpaceBy ?? "0px"});`;
   }
 
   const svgHeight = calculateSvgHeight(width);
@@ -408,11 +419,13 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
       active ? "active" : "",
       isUnavailable ? "unavailable" : "",
       disabled ? "disabled" : "",
-      hasFeatures ? 'has-features' : '',
-      graphEntity ? 'has-graph' : '',
-    ].filter(x => !!x).join(" ");
+      hasFeatures ? "has-features" : "",
+      graphEntity ? "has-graph" : "",
+    ]
+      .filter((x) => !!x)
+      .join(" ");
   }, [active, className, columnClassNames, disableColumns, disabled, graphEntity, hasFeatures, isUnavailable]);
-  
+
   return (
     <>
       <StyledElement
@@ -421,7 +434,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
         id={id ?? ""}
         className={_classes}
         css={css`
-          padding-bottom: ${graphEntity ? svgHeight : 'inherit'};
+          padding-bottom: ${graphEntity ? svgHeight : "inherit"};
           ${globalComponentStyle.cardBase ?? ""}
           ${cssStyles ?? ""}
         `}
@@ -435,7 +448,6 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
         {...bind()}
         {...rest}
       >
-
         {graphEntity && (
           <div className={"graph-element history"}>
             {graphEntity.history.loading ? (
@@ -461,13 +473,13 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
           </StyledRipples>
         )}
         {Children.map(filteredRelatedEntities, (child, index) => {
-            if (isValidElement<RelatedEntityProps<EntityName>>(child)) {
-              return cloneElement(child, {
-                key: child.key || `${_id}${index}`,
-                ...child.props,
-              });
-            }
-            return child;
+          if (isValidElement<RelatedEntityProps<EntityName>>(child)) {
+            return cloneElement(child, {
+              key: child.key || `${_id}${index}`,
+              ...child.props,
+            });
+          }
+          return child;
         })}
       </StyledElement>
       {typeof _entity === "string" && (

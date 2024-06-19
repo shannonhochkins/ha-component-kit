@@ -35,3 +35,5 @@ packages/core/.env
 
 hakit/config
 hakit/server/options.json
+trace
+trace/*

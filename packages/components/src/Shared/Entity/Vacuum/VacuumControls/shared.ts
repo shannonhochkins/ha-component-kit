@@ -22,12 +22,16 @@ export const icons: VacuumData<string> = {
   unknown: "mdi:alert",
 };
 
-
-export const getToolbarActions = ({ entity: entity, shortcuts = [], onLocate }: {
+export const getToolbarActions = ({
+  entity: entity,
+  shortcuts = [],
+  onLocate,
+}: {
   entity: HassEntityWithService<"vacuum">;
-  shortcuts: VacuumControlsProps['shortcuts'];
+  shortcuts: VacuumControlsProps["shortcuts"];
   onLocate?: () => void;
 }): Partial<ButtonBarButtonProps<EntityName>>[] => {
+  const _shortcuts = shortcuts as Partial<ButtonBarButtonProps<EntityName>>[];
 
   switch (entity.state) {
     case "on":
@@ -38,73 +42,90 @@ export const getToolbarActions = ({ entity: entity, shortcuts = [], onLocate }: 
     case "mowing":
     case "edgecut":
     case "cleaning": {
-      return [{
-        title: localize("pause"),
-        icon: icons["pause"],
-        onClick: () => entity.service.pause(),
-      }, {
-        title: localize("stop"),
-        icon: icons["stop"],
-        onClick: () => entity.service.stop(),
-      }, {
-        title: localize("return_home"),
-        icon: icons["returning"],
-        onClick: () => entity.service.returnToBase(),
-      }, ...shortcuts];
+      return [
+        {
+          title: localize("pause"),
+          icon: icons["pause"],
+          onClick: () => entity.service.pause(),
+        },
+        {
+          title: localize("stop"),
+          icon: icons["stop"],
+          onClick: () => entity.service.stop(),
+        },
+        {
+          title: localize("return_home"),
+          icon: icons["returning"],
+          onClick: () => entity.service.returnToBase(),
+        },
+        ..._shortcuts,
+      ];
     }
 
     case "paused": {
-      return [{
-        title: localize("start"),
-        icon: icons["on"],
-        onClick: () => entity.service.start(),
-      }, {
-        title: localize("stop"),
-        icon: icons["stop"],
-        onClick: () => entity.service.stop(),
-      }, {
-        title: localize("return_home"),
-        icon: icons["returning"],
-        onClick: () => entity.service.returnToBase(),
-      }, ...shortcuts];
+      return [
+        {
+          title: localize("start"),
+          icon: icons["on"],
+          onClick: () => entity.service.start(),
+        },
+        {
+          title: localize("stop"),
+          icon: icons["stop"],
+          onClick: () => entity.service.stop(),
+        },
+        {
+          title: localize("return_home"),
+          icon: icons["returning"],
+          onClick: () => entity.service.returnToBase(),
+        },
+        ..._shortcuts,
+      ];
     }
 
     case "returning": {
-      return [{
-        title: localize("start"),
-        icon: icons["on"],
-        onClick: () => entity.service.start(),
-      }, {
-        title: localize("pause"),
-        icon: icons["pause"],
-        onClick: () => entity.service.pause(),
-      }, ...shortcuts];
+      return [
+        {
+          title: localize("start"),
+          icon: icons["on"],
+          onClick: () => entity.service.start(),
+        },
+        {
+          title: localize("pause"),
+          icon: icons["pause"],
+          onClick: () => entity.service.pause(),
+        },
+        ..._shortcuts,
+      ];
     }
     case "docked":
     case "idle":
     default: {
-      const actions = [{
-        title: localize("start"),
-        icon: icons["on"],
-        onClick: () => entity.service.start(),
-      }, {
-        title: localize("locate"),
-        icon: icons['cleanSpot'],
-        onClick: () => {
-          entity.service.locate();
-          if (typeof onLocate === "function") {
-            onLocate();
-          }
+      const actions = [
+        {
+          title: localize("start"),
+          icon: icons["on"],
+          onClick: () => entity.service.start(),
         },
-      }];
-      if (entity.state === 'idle') {
+        {
+          title: localize("locate"),
+          icon: icons["cleanSpot"],
+          onClick: () => {
+            entity.service.locate();
+            if (typeof onLocate === "function") {
+              onLocate();
+            }
+          },
+        },
+      ];
+      if (entity.state === "idle") {
         actions.push({
           title: localize("return_home"),
           icon: icons["returning"],
           onClick: () => entity.service.returnToBase(),
         });
       }
-      return [...actions, ...shortcuts];
+      return [...actions, ..._shortcuts];
     }
   }
-}
+};

@@ -1,4 +1,4 @@
-import { ErrorBoundaryProps } from "react-error-boundary";
+import { type ErrorBoundaryProps } from "react-error-boundary";
 import { Alert } from "@components";
 import { localize } from "@hakit/core";
 

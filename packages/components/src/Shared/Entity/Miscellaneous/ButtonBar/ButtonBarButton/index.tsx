@@ -24,7 +24,7 @@ export function ButtonBarButton<E extends EntityName>({
   return (
     <FabCard
       key={key}
-      className={`button-bar-button ${className ?? ""} ${hideActiveBorder ? 'hide-active-border' : ''}`}
+      className={`button-bar-button ${className ?? ""} ${hideActiveBorder ? "hide-active-border" : ""}`}
       disableScale
       borderRadius={borderRadius ?? 0}
       size={size ?? DEFAULT_ICON_SIZE}

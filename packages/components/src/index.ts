@@ -53,19 +53,8 @@ export { GarbageCollectionCard, type GarbageCollectionCardProps, type GarbageCol
 export { TimeCard, type TimeCardProps } from "./Cards/TimeCard";
 // AreaCard
 export { AreaCard, type AreaCardProps } from "./Cards/AreaCard";
-// ts-ignore
-import { AreaCard as ActualAreaCard, type AreaCardProps as ActualAreaCardProps } from "./Cards/AreaCard";
 // VacuumCard
 export { VacuumCard, type VacuumCardProps } from "./Cards/VacuumCard";
-
-/**
- * @deprecated RoomCard has been renamed to AreaCard. Please use {@link AreaCard} instead.
- */
-export const RoomCard = ActualAreaCard;
-/**
- * @deprecated RoomCardProps has been renamed to AreaCardProps. Please use {@link AreaCardProps} instead.
- */
-export type RoomCardProps = ActualAreaCardProps;
 // picture card
 export { PictureCard, type PictureCardProps } from "./Cards/PictureCard";
 // FabCard

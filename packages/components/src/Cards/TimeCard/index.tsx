@@ -192,7 +192,9 @@ function _TimeCard({
         <Column className="column" gap="0.5rem" alignItems={center ? "center" : "flex-start"} fullHeight wrap="nowrap">
           {(!hideIcon || !hideTime) && (
             <Row className="row" gap="0.5rem" alignItems="center" wrap="nowrap">
-              {!hideIcon && <Icon className="icon primary-icon" icon={icon || dateSensor.attributes.icon || "mdi:calendar"} {...iconProps ?? {}} />}
+              {!hideIcon && (
+                <Icon className="icon primary-icon" icon={icon || dateSensor.attributes.icon || "mdi:calendar"} {...(iconProps ?? {})} />
+              )}
               {!hideTime && (
                 <>
                   <Time className="time">{formatted}</Time>

@@ -10,28 +10,37 @@ import {
   type EntityName,
   type FilterByDomain,
   useEntity,
-  type AlarmPanelCardConfigState
+  type AlarmPanelCardConfigState,
 } from "@hakit/core";
-import { fallback, ButtonCard, FeatureEntity } from "@components";
-import type { AlarmControlsProps, AvailableQueries, ButtonCardProps } from "@components";
+import type { AlarmControlsProps, AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import { _getActionLabel, _getActionColor, ALARM_MODES, ALARM_MODE_STATE_MAP, filterSupportedAlarmStates, DEFAULT_STATES } from '../../Shared/Entity/Alarm/AlarmControls/shared';
-import { snakeCase } from 'lodash';
+import { fallback } from "../../Shared/ErrorBoundary";
+import {
+  _getActionLabel,
+  _getActionColor,
+  ALARM_MODES,
+  ALARM_MODE_STATE_MAP,
+  filterSupportedAlarmStates,
+  DEFAULT_STATES,
+} from "../../Shared/Entity/Alarm/AlarmControls/shared";
+import { snakeCase } from "lodash";
+import { FeatureEntity } from "../CardBase/FeatureEntity";
+import { ButtonCard, type ButtonCardProps } from "../ButtonCard";
 
-type OmitProperties = "title" | 'entity' | 'as';
-type Extendable<E extends FilterByDomain<EntityName, "alarm_control_panel">> = Omit<ButtonCardProps<E>, OmitProperties>
+type OmitProperties = "title" | "entity" | "as";
+type Extendable<E extends FilterByDomain<EntityName, "alarm_control_panel">> = Omit<ButtonCardProps<E>, OmitProperties>;
 export interface AlarmCardProps<E extends FilterByDomain<EntityName, "alarm_control_panel">> extends Extendable<E> {
   /** the alarm entity to control */
   entity: E;
   /** overwrite the default actions that are displayed, by default it will show what's supported by the entity */
-  states?: AlarmControlsProps['states'];
+  states?: AlarmControlsProps["states"];
   /** title used in the card for the name of the entity and the modal  */
   title?: ReactNode;
   /** default code for the feature buttons to appear, this does not flow throw to the modal, to use the default code in the modal use modalProps.defaultCode @default undefined */
   defaultCode?: number;
 }
 
-type AlarmServices = keyof HassEntityWithService<'alarm_control_panel'>['service'];
+type AlarmServices = keyof HassEntityWithService<"alarm_control_panel">["service"];
 
 const Wrapper = styled(ButtonCard)``;
 
@@ -55,43 +64,42 @@ function _AlarmCard<E extends FilterByDomain<EntityName, "alarm_control_panel">>
   title: _title,
   states: _states,
   modalProps,
-  layoutType = 'slim-vertical',
+  layoutType = "slim-vertical",
   defaultCode,
   children,
   icon: _icon,
   ...rest
 }: AlarmCardProps<E>) {
-  const entity = useEntity<E>(_entity) as HassEntityWithService<'alarm_control_panel'>;
+  const entity = useEntity<E>(_entity) as HassEntityWithService<"alarm_control_panel">;
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
-  const stateLabel = useCallback((state: AlarmMode | 'unavailable') => {
-    return state === UNAVAILABLE
-      ? localize("unavailable")
-      : localize(ALARM_STATE_TO_MODE_MAP[state]);
+  const stateLabel = useCallback((state: AlarmMode | "unavailable") => {
+    return state === UNAVAILABLE ? localize("unavailable") : localize(ALARM_STATE_TO_MODE_MAP[state]);
   }, []);
   const title = useMemo(() => _title ?? entity.attributes.friendly_name, [_title, entity.attributes.friendly_name]);
   const stateTitle = stateLabel(entity.state);
   const states = _states || filterSupportedAlarmStates(entity, DEFAULT_STATES);
 
-  const _handleActionClick = (state: AlarmPanelCardConfigState | 'disarm'): void => {
+  const _handleActionClick = (state: AlarmPanelCardConfigState | "disarm"): void => {
     if (!defaultCode) return;
     entity.service[snakeCase(`alarm_${state}`) as AlarmServices]({
       code: defaultCode.toString(),
     });
-  }
+  };
   const color = _getActionColor(entity.state, modalProps?.customActionColor);
-  return <Wrapper
-        // @ts-expect-error - this is fine, FabCard is hard coded to type of button because of typescript generic shit
-        as="div"
-        key={key}
-        entity={_entity}
-        layoutType={layoutType}
-        icon={_icon ?? (entity.state in ALARM_MODES ? ALARM_MODES[entity.state].icon : undefined)}
-        // purposely using _title here as we don't want to render the entity title twice
-        title={_title}
-        hideToggle
-        className={`alarm-card ${className ?? ""} ${entity.state}`}
-        cssStyles={`
+  return (
+    <Wrapper
+      // @ts-expect-error - this is fine, FabCard is hard coded to type of button because of typescript generic shit
+      as="div"
+      key={key}
+      entity={_entity}
+      layoutType={layoutType}
+      icon={_icon ?? (entity.state in ALARM_MODES ? ALARM_MODES[entity.state].icon : undefined)}
+      // purposely using _title here as we don't want to render the entity title twice
+      title={_title}
+      hideToggle
+      className={`alarm-card ${className ?? ""} ${entity.state}`}
+      cssStyles={`
           .fab-card-inner.icon {
             background-color: ${color};
             color: var(--ha-S500-contrast);
@@ -108,29 +116,32 @@ function _AlarmCard<E extends FilterByDomain<EntityName, "alarm_control_panel">>
           ${globalComponentStyle.alarmCard ?? ""}
           ${cssStyles ?? ""}
         `}
-        features={!defaultCode ? [] : (entity.state === "disarmed"
-          ? states
-          : (["disarm"] as const)
-        )
-          .map(state => <FeatureEntity
-            entity={_entity}
-            onClick={() => _handleActionClick(state)}
-            icon={state in ALARM_MODE_STATE_MAP ? ALARM_MODES[ALARM_MODE_STATE_MAP[state]].icon : undefined}>
-              {_getActionLabel(state, modalProps?.labelMap)}
-          </FeatureEntity>)}
-        disableActiveState
-        modalProps={{
-          title: title,
-          stateTitle,
-          states,
-          ...modalProps,
-        }}
-        {...rest}
-  >
-    {children}   
-    </Wrapper>;
+      features={
+        !defaultCode
+          ? []
+          : (entity.state === "disarmed" ? states : (["disarm"] as const)).map((state) => (
+              <FeatureEntity
+                entity={_entity}
+                onClick={() => _handleActionClick(state)}
+                icon={state in ALARM_MODE_STATE_MAP ? ALARM_MODES[ALARM_MODE_STATE_MAP[state]].icon : undefined}
+              >
+                {_getActionLabel(state, modalProps?.labelMap)}
+              </FeatureEntity>
+            ))
+      }
+      disableActiveState
+      modalProps={{
+        title: title,
+        stateTitle,
+        states,
+        ...modalProps,
+      }}
+      {...rest}
+    >
+      {children}
+    </Wrapper>
+  );
 }
-
 
 /**
  The AlarmCard is a wrapper for the ButtonCard which automates the "features" at the bottom of the card when there's a defaultCode added to the entity.

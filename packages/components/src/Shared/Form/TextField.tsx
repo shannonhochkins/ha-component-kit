@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Icon } from '@iconify/react';
+import React, { useState, useEffect, useRef } from "react";
+import { Icon } from "@iconify/react";
 import styled from "@emotion/styled";
 
-interface TextFieldProps extends React.ComponentPropsWithoutRef<'div'> {
+interface TextFieldProps extends React.ComponentPropsWithoutRef<"div"> {
   type?: string;
   value?: string;
   errorMessage?: string;
@@ -17,7 +17,7 @@ interface TextFieldProps extends React.ComponentPropsWithoutRef<'div'> {
   helperText?: string;
   charCounter?: boolean;
   disabled?: boolean;
-  inputProps?: React.ComponentPropsWithoutRef<'input'>;
+  inputProps?: React.ComponentPropsWithoutRef<"input">;
 }
 
 const TextFieldBase = styled.div`
@@ -40,7 +40,8 @@ const TextFieldBase = styled.div`
 
   margin: var(--margin-vertical) 0;
 
-  &:disabled, &.disabled {
+  &:disabled,
+  &.disabled {
     cursor: not-allowed;
     opacity: 0.8;
   }
@@ -200,8 +201,8 @@ const TextFieldBase = styled.div`
     left: var(--padding-horizontal);
     max-width: var(--label-scale-width);
     padding: 0 var(--floating-label-padding-horizontal) 0 0;
-    transform: translate3d(0, calc(-100% - var(--label-font-size-active) * 0.5px), 0) scale3d(var(--label-scale-factor), var(--label-scale-factor), 1);
-
+    transform: translate3d(0, calc(-100% - var(--label-font-size-active) * 0.5px), 0)
+      scale3d(var(--label-scale-factor), var(--label-scale-factor), 1);
   }
 
   .field-wrapper._focused label.floating {
@@ -255,12 +256,11 @@ const TextFieldBase = styled.div`
   .hints .char-counter {
     margin: 0 0 0 12px;
   }
-
 `;
 
 export const TextField: React.FC<TextFieldProps> = ({
-  type = 'text',
-  value: initialValue = '',
+  type = "text",
+  value: initialValue = "",
   errorMessage: initialErrorMessage = null,
   label,
   placeholder,
@@ -281,7 +281,7 @@ export const TextField: React.FC<TextFieldProps> = ({
   const [value, setValue] = useState<string | null>(initialValue);
   const [errorMessage, setErrorMessage] = useState<string | null>(initialErrorMessage);
   const [valid, setValid] = useState(true);
-  
+
   const container = useRef<HTMLDivElement>(null);
   const floatingLabelRef = useRef<HTMLLabelElement>(null);
   const inputField = useRef<HTMLInputElement>(null);
@@ -289,17 +289,17 @@ export const TextField: React.FC<TextFieldProps> = ({
   const setLabelWidthStyleProperty = () => {
     if (floatingLabelRef.current && container.current) {
       const dims = floatingLabelRef.current.getBoundingClientRect();
-      container.current.style.setProperty('--label-active-width', `${dims.width}px`);
+      container.current.style.setProperty("--label-active-width", `${dims.width}px`);
     } else if (container.current) {
-      container.current.style.setProperty('--label-active-width', '0px');
+      container.current.style.setProperty("--label-active-width", "0px");
     }
   };
 
   useEffect(() => {
     setLabelWidthStyleProperty();
-    window.addEventListener('resize', setLabelWidthStyleProperty);
+    window.addEventListener("resize", setLabelWidthStyleProperty);
     return () => {
-      window.removeEventListener('resize', setLabelWidthStyleProperty);
+      window.removeEventListener("resize", setLabelWidthStyleProperty);
     };
   }, []);
 
@@ -328,14 +328,14 @@ export const TextField: React.FC<TextFieldProps> = ({
 
   const getStyleClasses = () => {
     const classes = [];
-    if (label) classes.push('_floating-label');
-    if (leadingIcon) classes.push('_leading-icon');
-    if (trailingIcon) classes.push('_trailing-icon');
-    if (!valid) classes.push('_invalid');
-    if (value) classes.push('_has-value');
-    if (focused) classes.push('_focused');
-    if (disabled) classes.push('disabled');
-    return classes.join(' ');
+    if (label) classes.push("_floating-label");
+    if (leadingIcon) classes.push("_leading-icon");
+    if (trailingIcon) classes.push("_trailing-icon");
+    if (!valid) classes.push("_invalid");
+    if (value) classes.push("_has-value");
+    if (focused) classes.push("_focused");
+    if (disabled) classes.push("disabled");
+    return classes.join(" ");
   };
 
   const showHintContainer = () => {
@@ -355,22 +355,32 @@ export const TextField: React.FC<TextFieldProps> = ({
 
   useEffect(() => {
     if (!valid) {
-      setError('This field is required');
+      setError("This field is required");
     }
   }, [valid]);
 
   return (
-    <TextFieldBase className={`outline-input ${className ?? ''}`} {...rest} ref={container}>
+    <TextFieldBase className={`outline-input ${className ?? ""}`} {...rest} ref={container}>
       <div className={`field-wrapper ${getStyleClasses()}`} onClick={focusField}>
         {label ? <label className="floating">{label}</label> : null}
-        {label ? <label ref={floatingLabelRef} className="floating reference" style={{ opacity: 0, pointerEvents: 'none', visibility: 'hidden', zIndex: -9999999999 }}>{label}</label> : null}
-        {leadingIcon ? <Icon
-          className={"icon leading"}
-          icon={leadingIcon}
-          style={{
-            color: `var(--ha-500-contrast)`,
-          }}
-        /> : null}
+        {label ? (
+          <label
+            ref={floatingLabelRef}
+            className="floating reference"
+            style={{ opacity: 0, pointerEvents: "none", visibility: "hidden", zIndex: -9999999999 }}
+          >
+            {label}
+          </label>
+        ) : null}
+        {leadingIcon ? (
+          <Icon
+            className={"icon leading"}
+            icon={leadingIcon}
+            style={{
+              color: `var(--ha-500-contrast)`,
+            }}
+          />
+        ) : null}
         <input
           ref={inputField}
           type={type}
@@ -379,20 +389,22 @@ export const TextField: React.FC<TextFieldProps> = ({
           min={min}
           max={max}
           placeholder={focused && label ? placeholder : placeholder}
-          value={value || ''}
+          value={value || ""}
           onChange={updateValue}
           onFocus={onFocus}
           onBlur={onBlur}
           disabled={disabled}
           {...inputProps}
-           />
-        {trailingIcon ? <Icon
-                  className={"icon trailing"}
-                  icon={trailingIcon}
-                  style={{
-                    color: `var(--ha-500-contrast)`,
-                  }}
-                /> : null}
+        />
+        {trailingIcon ? (
+          <Icon
+            className={"icon trailing"}
+            icon={trailingIcon}
+            style={{
+              color: `var(--ha-500-contrast)`,
+            }}
+          />
+        ) : null}
         <div className="borders">
           <div className="border left" />
           <div className="middle">
@@ -405,13 +417,21 @@ export const TextField: React.FC<TextFieldProps> = ({
           <div className="border right" />
         </div>
       </div>
-      {showHintContainer() ? <div className="hints">
-        {errorMessage || helperText ? <div className="messages">
-          {!valid && errorMessage ? <div className="error">{errorMessage}</div> : null}
-          {valid && helperText ? <div className="helper">{helperText}</div> : null}
-        </div> : null}
-        {maxLength ? <div className="char-counter">{value ? value.length : 0}/{maxLength}</div> : null}
-      </div> : null}
+      {showHintContainer() ? (
+        <div className="hints">
+          {errorMessage || helperText ? (
+            <div className="messages">
+              {!valid && errorMessage ? <div className="error">{errorMessage}</div> : null}
+              {valid && helperText ? <div className="helper">{helperText}</div> : null}
+            </div>
+          ) : null}
+          {maxLength ? (
+            <div className="char-counter">
+              {value ? value.length : 0}/{maxLength}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </TextFieldBase>
   );
 };

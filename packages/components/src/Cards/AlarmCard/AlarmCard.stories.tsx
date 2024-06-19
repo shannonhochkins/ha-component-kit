@@ -11,22 +11,16 @@ function Render(args?: Args) {
           entity={"alarm_control_panel.home_alarm"}
           defaultCode={1234}
           {...args}
-          relatedEntities={
-            <RelatedEntity entity="sensor.alarm_battery" position="left top" />
-          } />
-        <AlarmCard
-          entity={"alarm_control_panel.home_alarm"}
-          defaultCode={1234}
-          layoutType="slim"
-          {...args} />
+          relatedEntities={<RelatedEntity entity="sensor.alarm_battery" position="left top" />}
+        />
+        <AlarmCard entity={"alarm_control_panel.home_alarm"} defaultCode={1234} layoutType="slim" {...args} />
         <AlarmCard
           entity={"alarm_control_panel.home_alarm"}
           defaultCode={1234}
           layoutType="default"
           {...args}
-          relatedEntities={
-            <RelatedEntity entity="sensor.alarm_battery" position="right top" />
-          } />
+          relatedEntities={<RelatedEntity entity="sensor.alarm_battery" position="right top" />}
+        />
       </Row>
     </HassConnect>
   );

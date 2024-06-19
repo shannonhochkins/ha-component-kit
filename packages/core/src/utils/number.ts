@@ -23,6 +23,8 @@ export const getDefaultFormatOptions = (num: string | number, options?: Intl.Num
   return defaultOptions;
 };
 
+export const round = (value: number, precision = 2): number => Math.round(value * 10 ** precision) / 10 ** precision;
+
 /**
  * Formats a number based on the user's preference with thousands separator(s) and decimal character for better legibility.
  *
@@ -38,10 +40,19 @@ export const formatNumber = (num: string | number, options?: Intl.NumberFormatOp
       return typeof input === "number" && isNaN(input);
     };
 
-  try {
-    return new Intl.NumberFormat(["en-US", "en"], getDefaultFormatOptions(num, options)).format(Number(num));
-  } catch (err) {
-    console.error(err);
-    return new Intl.NumberFormat(undefined, getDefaultFormatOptions(num, options)).format(Number(num));
+  if (!Number.isNaN(Number(num)) && num !== "") {
+    // If NumberFormat is none, use en-US format without grouping.
+    return new Intl.NumberFormat(
+      "en-US",
+      getDefaultFormatOptions(num, {
+        ...options,
+        useGrouping: false,
+      }),
+    ).format(Number(num));
   }
+
+  if (typeof num === "string") {
+    return num;
+  }
+  return `${round(num, options?.maximumFractionDigits).toString()}${options?.style === "currency" ? ` ${options.currency}` : ""}`;
 };

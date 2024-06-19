@@ -3,9 +3,11 @@ import styled from "@emotion/styled";
 import { Row, fallback, ButtonGroupButton, type RowProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
-const ButtonGroupParent = styled(Row)<{
-  thickness: number;
-} & RowProps>`
+const ButtonGroupParent = styled(Row)<
+  {
+    thickness: number;
+  } & RowProps
+>`
   --ha-control-button-group-thickness: ${(props) => props.thickness}px;
   width: auto;
   &:not(.maintain-aspect-ratio) {
@@ -30,7 +32,7 @@ const ButtonGroupParent = styled(Row)<{
         width: var(--ha-control-button-group-thickness);
       }
     }
-  }  
+  }
   &.vertical {
     width: var(--ha-control-button-group-thickness);
     &.maintain-aspect-ratio {
@@ -65,7 +67,7 @@ function _ButtonGroup({
   thickness = 100,
   children,
   className,
-  gap = '1rem',
+  gap = "1rem",
   maintainAspectRatio = true,
   ...rest
 }: ButtonGroupProps) {
@@ -85,7 +87,9 @@ function _ButtonGroup({
       maintainAspectRatio ? "maintain-aspect-ratio" : "",
       reverse ? "reverse" : "",
       orientation === "vertical" ? "vertical" : "",
-    ].filter(x => !!x).join(" ");
+    ]
+      .filter((x) => !!x)
+      .join(" ");
   }, [maintainAspectRatio, className, reverse, orientation]);
   const flexDirection = useMemo(() => {
     if (reverse) {
@@ -103,7 +107,8 @@ function _ButtonGroup({
       }}
       gap={gap}
       thickness={thickness}
-      className={_classes}>
+      className={_classes}
+    >
       {childrenWithKeys}
     </ButtonGroupParent>
   );
