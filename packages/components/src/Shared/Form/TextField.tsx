@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
 import styled from "@emotion/styled";
 
-interface TextFieldProps extends React.ComponentPropsWithoutRef<"div"> {
+export interface TextFieldProps extends React.ComponentPropsWithoutRef<"div"> {
   type?: string;
   value?: string;
   errorMessage?: string;

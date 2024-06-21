@@ -28,6 +28,18 @@ const StyledButtonCard = styled(CardBase)`
       width: 3rem;
       height: 3rem;
     }
+    .button-card-trigger {
+      align-items: center;
+      > .contents {
+        width: 100%;
+      }
+    }
+  }
+  .button-card-trigger > .features {
+    width: 100%;
+  }
+  .button-card-trigger > .features > .fit-content {
+    flex-basis: 100%;
   }
   .children {
     width: 100%;
@@ -37,6 +49,9 @@ const StyledButtonCard = styled(CardBase)`
     .fab-card-inner {
       width: 3rem;
       height: 3rem;
+    }
+    .button-card-trigger {
+      align-items: center;
     }
   }
   &:not(.disabled),
@@ -280,6 +295,7 @@ function _ButtonCard<E extends EntityName>({
       disabled={disabled || isUnavailable}
       onClick={onClick}
       className={`${className ?? ""} ${layoutType ?? "default"} button-card`}
+      triggerClass={`button-card-trigger`}
       cssStyles={`
         ${globalComponentStyle.buttonCard ?? ""}
         ${cssStyles ?? ""}

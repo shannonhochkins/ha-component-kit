@@ -7,3 +7,4 @@ export interface ModalLightControlsProps extends LightControlsProps {
 export function ModalLightControls(props: ModalLightControlsProps) {
   return <LightControls {...props} />;
 }
+export default ModalLightControls;

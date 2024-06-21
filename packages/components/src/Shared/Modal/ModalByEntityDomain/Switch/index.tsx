@@ -19,3 +19,4 @@ export function ModalSwitchControls({ entity, onStateChange, ...props }: ModalSw
     </Row>
   );
 }
+export default ModalSwitchControls;

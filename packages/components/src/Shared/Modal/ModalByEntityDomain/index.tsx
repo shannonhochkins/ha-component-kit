@@ -4,16 +4,7 @@ import {
   FabCard,
   LogBookRenderer,
   Modal,
-  ModalAlarmControlsProps,
-  ModalCameraControls,
-  ModalClimateControls,
-  ModalCoverControls,
-  ModalLightControls,
-  ModalMediaPlayerControls,
-  ModalPersonControls,
-  ModalSwitchControls,
-  ModalWeatherControls,
-  ModalVacuumControls,
+  type ModalAlarmControlsProps,
   type ModalCameraControlsProps,
   type ModalClimateControlsProps,
   type ModalCoverControlsProps,
@@ -35,11 +26,11 @@ import {
   type ExtractDomain,
   type FilterByDomain,
 } from "@hakit/core";
+import { Icon } from "@iconify/react";
 import { computeDomain } from "@utils/computeDomain";
 import { lowerCase, startCase } from "lodash";
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState, ReactNode } from "react";
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, ReactNode } from "react";
 import type { ModalProps } from "..";
-import { ModalAlarmControls } from "./AlarmControlPanel";
 
 const Separator = styled.div`
   height: 30px;
@@ -68,6 +59,10 @@ const Updated = styled.div`
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   margin-bottom: 2rem;
+`;
+
+const StyledIcon = styled(Icon)`
+  font-size: 2rem;
 `;
 
 interface ModalPropsByDomain {
@@ -101,6 +96,22 @@ export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<Ex
   hideLogbook?: boolean;
   stateTitle?: ReactNode;
 } & OptionalChildrenModalProps;
+
+function getLazyModal<D extends keyof ModalPropsByDomain>(domain: D): (() => Promise<{ default: React.ComponentType<ModalPropsByDomain[D]> }>) | null {
+  const modals: { [K in keyof ModalPropsByDomain]: () => Promise<{ default: React.ComponentType<ModalPropsByDomain[K]> }> } = {
+    'cover': () => import('./Cover'),
+    'alarm_control_panel': () => import('./AlarmControlPanel'),
+    'camera': () => import('./Camera'),
+    'light': () => import('./Light'),
+    'media_player': () => import('./MediaPlayer'),
+    'person': () => import('./Person'),
+    'switch': () => import('./Switch'),
+    'vacuum': () => import('./Vacuum'),
+    'weather': () => import('./Weather'),
+    'climate': () => import('./Climate'),
+  };
+  return modals[domain] ?? null;
+}
 
 export function ModalByEntityDomain<E extends EntityName>({
   entity,
@@ -165,61 +176,34 @@ export function ModalByEntityDomain<E extends EntityName>({
     if (!stateRef.current) return;
     stateRef.current.innerText = value;
   }, []);
+  const LazyModalComponent = useMemo(() => {
+    const modal = getLazyModal(domain as keyof ModalPropsByDomain);
+    if (!modal) return null;
+    return lazy(modal);
+  }, [domain]);
   const defaultChildren = useMemo(() => {
-    switch (domain) {
-      case "light":
-        return <ModalLightControls entity={entity as FilterByDomain<EntityName, "light">} onStateChange={onStateChange} {...childProps} />;
-      case "climate":
-        return (
-          <ModalClimateControls entity={entity as FilterByDomain<EntityName, "climate">} onStateChange={onStateChange} {...childProps} />
-        );
-      case "switch":
-      case "script":
-      case "automation":
-        return (
-          <ModalSwitchControls entity={entity as FilterByDomain<EntityName, "switch">} onStateChange={onStateChange} {...childProps} />
-        );
-      case "camera":
-        return (
-          <ModalCameraControls entity={entity as FilterByDomain<EntityName, "camera">} onStateChange={onStateChange} {...childProps} />
-        );
-      case "cover":
-        return <ModalCoverControls entity={entity as FilterByDomain<EntityName, "cover">} onStateChange={onStateChange} {...childProps} />;
-      case "weather":
-        return <ModalWeatherControls entity={entity as FilterByDomain<EntityName, "weather">} {...childProps} />;
-      case "person":
-        return (
-          <Suspense fallback={<div>Loading map...</div>}>
-            <ModalPersonControls
-              entity={entity as FilterByDomain<EntityName, "person">}
-              mapHeight={modalProps.open ? 300 : 0}
-              {...childProps}
-            />
-          </Suspense>
-        );
-      case "media_player": {
-        return (
-          // @ts-expect-error - child prop types are correct, it does have groupEntities but ts doesn't think it does, will fix later, parent intellisense is correct
-          <ModalMediaPlayerControls
-            onStateChange={onStateChange}
-            {...{
-              ...childProps,
-              entity,
-            }}
-          />
-        );
-      }
-      case "vacuum": {
-        return <ModalVacuumControls entity={entity as `vacuum.${string}`} {...childProps} />;
-      }
-      case "alarm_control_panel": {
-        return <ModalAlarmControls entity={entity as `alarm_control_panel.${string}`} {...childProps} />;
-      }
-
-      default:
-        return null;
+    if (!LazyModalComponent) return null;
+    const fallback = <Column fullWidth fullHeight><StyledIcon icon="eos-icons:three-dots-loading" className="preloader-loading-icon" /></Column>;
+    if (domain === 'person') {
+      return <Suspense fallback={fallback}>
+        <LazyModalComponent
+          entity={entity as FilterByDomain<EntityName, "person">}
+          mapHeight={modalProps.open ? 300 : 0}
+          {...childProps}
+        />
+      </Suspense>;
     }
-  }, [entity, childProps, onStateChange, domain, modalProps.open]);
+    return <Suspense fallback={fallback}>
+      <LazyModalComponent
+        // @ts-expect-error types are impossible to fix at this level, cast it as anything
+        entity={entity as FilterByDomain<EntityName, "light">}
+        onStateChange={onStateChange}
+        {...{
+          ...childProps,
+          entity,
+        }} />
+    </Suspense>
+  }, [entity, LazyModalComponent, childProps, onStateChange, domain, modalProps.open]);
 
   const stateRef = useRef<HTMLDivElement>(null);
   const titleValue = useMemo(() => {

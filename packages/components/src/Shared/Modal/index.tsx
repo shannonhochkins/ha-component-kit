@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { localize, useHass } from "@hakit/core";
 import { AnimatePresence, HTMLMotionProps, MotionProps, type Variant, type Transition, motion } from "framer-motion";
-import { Fragment, ReactNode, memo, useEffect, useRef, useState } from "react";
+import { Fragment, ReactNode, memo, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import { useKeyPress } from "react-use";
@@ -223,21 +223,19 @@ function _Modal({
     }
   }, [isPressed, onClose, open]);
 
-  useEffect(() => {
-    if (hasCustomAnimation) return;
-    if (!open) {
-      setReady(false);
-      return;
-    }
+  const delayUpdate = useCallback(() => {
+    // this will delay the rendering of the children until the animation
+    // is complete
+    if (!open) return;
     if (timerRef.current) return;
     timerRef.current = setTimeout(
       () => {
         setReady(true);
         timerRef.current = null;
       },
-      (duration * 1000) / 2,
+      duration,
     );
-  }, [duration, hasCustomAnimation, open]);
+  }, [duration, open]);
 
   const { modal = {}, content = {}, header = {} } = animation(duration, id);
 
@@ -267,7 +265,12 @@ function _Modal({
             exit={{
               opacity: 0,
             }}
-            onClick={onClose}
+            onClick={() => {
+              // stops double tapping the backdrop whilst animating
+              if (open && ready) {
+                onClose();
+              }
+            }}
             {...backdropProps}
           />
           <ModalContainer
@@ -283,6 +286,9 @@ function _Modal({
             initial="initial"
             animate="animate"
             exit="exit"
+            onAnimationComplete={() => {
+              delayUpdate();
+            }}
             {...modal}
             key={`${id}-container`}
             className={`modal-container ${className ?? ""}`}

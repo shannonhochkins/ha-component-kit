@@ -94,12 +94,19 @@ function Template() {
         <FabCard entity="vacuum.robot_vacuum" service="start">
           <span>Custom Content</span>
         </FabCard>
-        <ButtonBar>
-          <ButtonBarButton entity="switch.record" />
-          <ButtonBarButton entity="binary_sensor.vehicle" />
-          <ButtonBarButton entity="sensor.air_conditioner_inside_temperature" />
-        </ButtonBar>
-        <ButtonGroup orientation="horizontal" thickness={60}>
+        <Row gap="1rem">
+          <ButtonBar>
+            <ButtonBarButton entity="switch.record" />
+            <ButtonBarButton entity="binary_sensor.vehicle" />
+            <ButtonBarButton entity="sensor.air_conditioner_inside_temperature" />
+          </ButtonBar>
+          <ButtonBar layoutType="bubble">
+            <ButtonBarButton entity="switch.record" />
+            <ButtonBarButton entity="binary_sensor.vehicle" />
+            <ButtonBarButton entity="sensor.air_conditioner_inside_temperature" />
+          </ButtonBar>
+        </Row>
+        <ButtonGroup orientation="horizontal" thickness={40}>
           <ButtonGroupButton
             entity="light.fake_light_1"
             service="toggle"
@@ -123,7 +130,7 @@ function Template() {
           </EntitiesCard>
           <MediaPlayerCard entity="media_player.fake_speaker_2" layout="slim" />
           <TriggerCard entity="scene.good_morning" />
-          <ClimateCard entity="climate.air_conditioner" />
+          <ClimateCard layoutType="slim-vertical" entity="climate.air_conditioner" />
           <WeatherCard entity="weather.entity" />
           <GarbageCollectionCard description="Here's the upcoming garbage collection schedule." schedules={[
             {

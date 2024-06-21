@@ -12,6 +12,8 @@ export {
 } from "./ThemeProvider/breakpoints";
 // media query helpers
 export { useBreakpoint } from "./hooks/useBreakpoint";
+// TextField component
+export { TextField, type TextFieldProps } from './Shared/Form/TextField';
 // the base card component
 export { CardBase, type CardBaseProps } from "./Cards/CardBase";
 // related entities to use through CardBase components

@@ -20,7 +20,7 @@ import { CameraStream } from "./stream";
 import { type VideoState } from "./players";
 import { Icon } from "@iconify/react";
 
-type OmitProperties = "onClick" | "children" | "active" | "as" | "title" | "ref" | "disableActiveState";
+type OmitProperties = "onClick" | "children" | "active" | "as" | "title" | "ref" | "disableActiveState" | 'features';
 
 type Extendable = Omit<CardBaseProps<"div", FilterByDomain<EntityName, "camera">>, OmitProperties>;
 export interface CameraCardProps<E extends FilterByDomain<EntityName, "camera">> extends Extendable {
@@ -108,7 +108,7 @@ const StyledIcon = styled(Icon)`
   font-size: 2rem;
 `;
 
-const DEFAULT_ICON_BUTTON_SIZE = 30;
+const DEFAULT_ICON_BUTTON_SIZE = 40;
 
 function _CameraCard<E extends FilterByDomain<EntityName, "camera">>({
   entity,
@@ -271,6 +271,7 @@ function _CameraCard<E extends FilterByDomain<EntityName, "camera">>({
         service={service}
         // @ts-expect-error - don't know the entity name, so we can't know the service data
         serviceData={serviceData}
+        disableActiveState
         title={cameraName}
         className={`camera-card ${className ?? ""}`}
         onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -298,30 +299,26 @@ function _CameraCard<E extends FilterByDomain<EntityName, "camera">>({
         {!hideFooter && (
           <Footer justifyContent="space-between" gap="0.5rem" wrap="nowrap">
             {headerSensors && (
-              <Row justifyContent="flex-start" gap="0.5rem">
-                <ButtonBar>
-                  {/* @ts-expect-error E doesn't extend EntityName, it's filtered by camera name and we can't really fix that here */}
-                  {Children.map(headerSensors, (child, index) => {
-                    if (isValidElement<ButtonBarButtonProps<EntityName>>(child)) {
-                      return cloneElement(child, {
+              <ButtonBar layoutType="bubble" gap="0.5rem">
+                {/* @ts-expect-error E doesn't extend EntityName, it's filtered by camera name and we can't really fix that here */}
+                {Children.map(headerSensors, (child, index) => {
+                  if (isValidElement<ButtonBarButtonProps<EntityName>>(child)) {
+                    return cloneElement(child, {
+                      key: child.key || index,
+                      size: child.props.size ?? DEFAULT_ICON_BUTTON_SIZE,
+                      rippleProps: {
+                        preventPropagation: true,
+                        ...(child?.props?.rippleProps ?? {}),
                         key: child.key || index,
-                        size: child.props.size ?? DEFAULT_ICON_BUTTON_SIZE,
-                        rippleProps: {
-                          preventPropagation: true,
-                          ...(child?.props?.rippleProps ?? {}),
-                          key: child.key || index,
-                        },
-                      });
-                    }
-                    return child;
-                  })}
-                </ButtonBar>
-              </Row>
+                      },
+                    });
+                  }
+                  return child;
+                })}
+              </ButtonBar>
             )}
             {!hideViewControls && (
-              <Row justifyContent="flex-start" gap="0.5rem">
-                <ButtonBar>{viewButtons}</ButtonBar>
-              </Row>
+              <ButtonBar gap="0.5rem" layoutType="bubble">{viewButtons}</ButtonBar>
             )}
           </Footer>
         )}

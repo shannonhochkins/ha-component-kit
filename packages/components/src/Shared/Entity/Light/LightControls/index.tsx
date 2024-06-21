@@ -175,7 +175,7 @@ function _LightControls({ entity: _entity, onStateChange }: LightControlsProps) 
                 sliderColor={entity.custom.color}
                 min={1}
                 max={100}
-                thickness={device.xxs ? 70 : 100}
+                thickness={device.xxs ? 90 : 100}
                 borderRadius={24}
                 value={brightnessValue}
                 disabled={isUnavailable || entity.state === OFF}

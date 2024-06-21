@@ -45,7 +45,6 @@ export interface VacuumControlsProps extends Extendable {
 }
 
 const VacuumSize = styled.div`
-  aspect-ratio: 1/1.7;
   height: 100%;
   max-height: 45vh;
   min-height: 300px;
@@ -125,7 +124,7 @@ export function VacuumToolbar({
         alignItems="center"
         justifyContent="center"
         orientation="horizontal"
-        thickness={device.xxs ? 60 : 80}
+        thickness={device.xxs ? 80 : 80}
         maintainAspectRatio
         {...buttonGroupProps}
       >

@@ -9,6 +9,7 @@ import {
   isUnavailableState,
   computeDomainTitle,
   computeDomain,
+  ON,
   type EntityName,
 } from "@hakit/core";
 import { CardBase, fallback, Tooltip } from "@components";
@@ -72,7 +73,7 @@ const Contents = styled.div<{
   `}
 `;
 
-type OmitProperties = "title" | "ref";
+type OmitProperties = "title" | "ref" | 'active';
 
 export interface FabCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
   /** The size of the Fab, this applies to the width and height @default 48 */
@@ -87,6 +88,8 @@ export interface FabCardProps<E extends EntityName> extends Omit<CardBaseProps<"
   title?: string;
   /** the tooltip placement @default "top" */
   tooltipPlacement?: TooltipProps["placement"];
+  /** active flag for the state of the fab, by default this is active if the entity.state value is ON, if you want to control this just pass the prop */
+  active?: boolean;
 }
 
 function _FabCard<E extends EntityName>({
@@ -130,7 +133,7 @@ function _FabCard<E extends EntityName>({
     ...(iconProps ?? {}),
     fontSize: iconProps?.fontSize ?? `${size / 1.7}px`,
   });
-  const active = typeof _active === "boolean" ? _active : entity === null ? false : entity.state !== "off" && !isUnavailable;
+  const active = typeof _active === "boolean" ? _active : entity === null ? false : entity.state === ON && !isUnavailable;
   const title = useMemo(
     () => _title || (domain !== null && _entity ? computeDomainTitle(_entity, entity?.attributes?.device_class) : null),
     [_title, domain, entity, _entity],

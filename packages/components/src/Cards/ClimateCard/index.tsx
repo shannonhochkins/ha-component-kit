@@ -13,7 +13,18 @@ import { FeatureEntity, type FeatureEntityProps } from "../CardBase/FeatureEntit
 
 import { ButtonCard, type ButtonCardProps } from "../ButtonCard";
 
-const StyledClimateCard = styled(ButtonCard)``;
+const StyledClimateCard = styled(ButtonCard)`
+  &.slim {
+    &.has-temp-controls {
+      
+    }
+  }
+  &.slim-vertical {
+    &.has-temp-controls {
+      
+    }
+  }
+`;
 
 const Gap = styled.div`
   height: 20px;
@@ -58,7 +69,7 @@ const Temperature = styled.span`
   }
 `;
 
-type OmitProperties = "onClick" | "children" | "active" | "as" | "ref" | "disableActiveState";
+type OmitProperties = "onClick" | "children" | "active" | "as" | "ref" | "disableActiveState" | 'features';
 
 type Extendable = Omit<ClimateControlsProps, "onClick"> & Omit<ButtonCardProps<ClimateControlsProps["entity"]>, OmitProperties>;
 export interface ClimateCardProps extends Extendable {
@@ -86,6 +97,7 @@ function _ClimateCard({
   service,
   serviceData,
   cssStyles,
+  layoutType,
   key,
   title,
   ...rest
@@ -129,7 +141,7 @@ function _ClimateCard({
         key={key}
         hideToggle={hideToggle}
         disableActiveState
-        className={`climate-card ${className ?? ""}`}
+        className={`climate-card ${showTemperatureControls ? 'has-temp-controls' : ''} ${className ?? ""}`}
         disabled={disabled || isUnavailable}
         entity={_entity}
         title={<Title className="custom-title">{title ?? entity.attributes.friendly_name}</Title>}
@@ -137,6 +149,7 @@ function _ClimateCard({
         service={service}
         // @ts-expect-error - don't know the entity name, so we can't know the service data
         serviceData={serviceData}
+        layoutType={layoutType}
         modalProps={{
           ...modalProps,
           hvacModes: havacModesToUse,
@@ -225,12 +238,9 @@ function _ClimateCard({
       >
         {showTemperatureControls && (
           <Column
-            alignItems="flex-start"
+            alignItems={layoutType === "slim-vertical" ? "center" : "flex-start"}
             fullWidth
             fullHeight
-            style={{
-              padding: "1rem",
-            }}
           >
             <Gap />
             <ButtonBar fullWidth>
@@ -250,7 +260,7 @@ function _ClimateCard({
               />
               <FeatureEntity
                 size={40}
-                disabled={disabled || isUnavailable || temperature === min_temp}
+                disabled
                 rippleProps={{
                   preventPropagation: true,
                 }}

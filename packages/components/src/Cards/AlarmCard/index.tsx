@@ -104,8 +104,7 @@ function _AlarmCard<E extends FilterByDomain<EntityName, "alarm_control_panel">>
           backgroundColor: color,
           color: `var(--ha-S500-contrast)`,
           // now set the hover/disabled states
-          
-        }
+        },
       }}
       cssStyles={`
           .fab-card-inner.icon {

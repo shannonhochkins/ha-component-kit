@@ -97,8 +97,7 @@ const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
       left: 0;
       right: 0;
     }
-    &:not(:disabled):not(:focus):hover,
-    &:not(.disabled):not(:focus):hover {
+    &:not(.disabled):not(:disabled):not(:focus):hover {
       background-color: var(--ha-S400);
       color: var(--ha-500-contrast);
       svg {
@@ -119,7 +118,7 @@ const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
         svg {
           color: var(--ha-900-contrast);
         }
-        &:not(:disabled):hover, &:not(.disabled):hover {
+        &:not(:disabled):not(.disabled):hover {
           background-color: var(--ha-A700);
           color: var(--ha-900-contrast);
         }
@@ -142,7 +141,7 @@ const Trigger = styled.div`
     flex-direction: column;
   }
   > .features {
-    margin: 0 1rem 1rem;
+    padding: 0 1rem 1rem;
     > .fit-content > .button-group-inner > * {
       width: auto;
       flex-grow: 1;
@@ -214,6 +213,8 @@ export type CardBaseProps<T extends ElementType = "div", E extends EntityName = 
     disableColumns?: boolean;
     /** props to pass to the ripple component if enabled */
     rippleProps?: Omit<RipplesProps, "children">;
+    /** className to provide to the trigger element */
+    triggerClass?: string;
     /** the graph settings containing the entity to display a graph in the background of the card */
     graph?: {
       /** the entity to display the graph for */
@@ -253,11 +254,11 @@ export type CardBaseProps<T extends ElementType = "div", E extends EntityName = 
 
 const DEFAULT_SIZES: Required<AvailableQueries> = {
   xxs: 12,
-  xs: 12,
-  sm: 12,
-  md: 12,
-  lg: 12,
-  xlg: 12,
+  xs: 6,
+  sm: 6,
+  md: 4,
+  lg: 4,
+  xlg: 3,
 };
 
 const _CardBase = function _CardBase<T extends ElementType, E extends EntityName>({
@@ -292,6 +293,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
   featureBarProps,
   graph,
   resizeDetectorProps,
+  triggerClass,
   ...rest
 }: CardBaseProps<T, E>) {
   const _id = useId();
@@ -418,7 +420,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
       disableColumns ? "" : columnClassNames,
       active ? "active" : "",
       isUnavailable ? "unavailable" : "",
-      disabled ? "disabled" : "",
+      disabled || isUnavailable ? "disabled" : "",
       hasFeatures ? "has-features" : "",
       graphEntity ? "has-graph" : "",
     ]
@@ -445,6 +447,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
         whileTap={whileTap ?? { scale: disableScale || disabled || isUnavailable ? 1 : 0.9 }}
         layoutId={layoutId ?? _id}
         disableActiveState={disableActiveState}
+        disabled={isUnavailable || disabled}
         {...bind()}
         {...rest}
       >
@@ -460,13 +463,13 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
           </div>
         )}
         {disableRipples ? (
-          <Trigger className="contents trigger-element" onClick={onClickHandler}>
+          <Trigger className={`contents trigger-element ${triggerClass}`} onClick={onClickHandler}>
             {children}
             {featureBar}
           </Trigger>
         ) : (
           <StyledRipples {...rippleProps} key={rippleProps?.key} borderRadius={_borderRadius} disabled={disabled || isUnavailable}>
-            <Trigger className="contents trigger-element" onClick={onClickHandler}>
+            <Trigger className={`contents trigger-element ${triggerClass}`} onClick={onClickHandler}>
               {children}
               {featureBar}
             </Trigger>
@@ -502,8 +505,10 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
 };
 
 /**
- * This is the base care component that every other card component should extend, it comes with everything we need to be able to replicate functionality
+ * This is the base card component that every other card component should extend, it comes with everything we need to be able to replicate functionality
  * like the modal popup, ripples and more.
+ * 
+ * You can use this if you want an empty shell of a component that you can build on top of.
  * */
 export const CardBase = memo(function CardBase<T extends ElementType, E extends EntityName>(props: CardBaseProps<T, E>) {
   return (

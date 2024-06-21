@@ -45,3 +45,4 @@ export function ModalCameraControls({ entity, onStateChange, ...props }: ModalCa
     </Row>
   );
 }
+export default ModalCameraControls;

@@ -1,10 +1,9 @@
-
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 import { EntityName, computeDomain, computeStateDisplay, isUnavailableState, ON, OFF, useHass } from "@hakit/core";
-import { HassConfig, Connection } from 'home-assistant-js-websocket';
-import { useCallback, useState, useEffect, useRef } from 'react';
+import { HassConfig, Connection } from "home-assistant-js-websocket";
+import { useCallback, useState, useEffect, useRef } from "react";
 import Switch from "react-switch";
-import { StateProps } from './types';
+import { StateProps } from "./types";
 
 const Wrapper = styled.div`
   display: flex;
@@ -25,29 +24,19 @@ const StyledSwitch = styled(Switch)`
   }
 `;
 
-export default function ToggleState({
-  entity,
-  className,
-  ...rest
-}: StateProps) {
+export default function ToggleState({ entity, className, ...rest }: StateProps) {
   const { useStore } = useHass();
   const timeout = useRef<NodeJS.Timeout | null>(null);
   const config = useStore((state) => state.config);
-  const entities = useStore(store => store.entities);
-  const connection = useStore(store => store.connection);
+  const entities = useStore((store) => store.entities);
+  const connection = useStore((store) => store.connection);
   const isUnavailable = isUnavailableState(entity.state);
-  const computeState = useCallback(() => computeStateDisplay(
-    entity,
-    connection as Connection,
-    config as HassConfig,
-    entities,
-    entity.state,
-  ), [config, connection, entities, entity]);
+  const computeState = useCallback(
+    () => computeStateDisplay(entity, connection as Connection, config as HassConfig, entities, entity.state),
+    [config, connection, entities, entity],
+  );
 
-  const showToggle =
-      entity.state === ON ||
-      entity.state === OFF ||
-      isUnavailable;
+  const showToggle = entity.state === ON || entity.state === OFF || isUnavailable;
   const [isOn, setIsOn] = useState(entity.state === ON);
 
   const _callService = async (turnOn: boolean): Promise<void> => {
@@ -79,37 +68,37 @@ export default function ToggleState({
       if (timeout.current) clearTimeout(timeout.current);
       timeout.current = null;
     } catch (err) {
-      console.error('Error calling service', err);
+      console.error("Error calling service", err);
       if (timeout.current) clearTimeout(timeout.current);
       timeout.current = null;
       setIsOn(previousIsOn);
     }
-  }
+  };
 
   useEffect(() => {
     if (timeout.current || isOn === (entity.state === ON)) return;
     setIsOn(entity.state === ON);
   }, [entity.state, isOn]);
 
-  console.log('state', isOn)
-
-  return (<Wrapper className={`action-type-toggle ${className}`} {...rest}>
-    {showToggle
-      ? <StyledSwitch
-        disabled={isUnavailable}
-        checked={isOn}
-        className={`${ isOn ? 'checked' : ''}`}
-        // These will not be used, i've only included these so it's clear that they are not used
-        onColor='#fff'
-        offColor='#fff'
-        checkedIcon={false}
-        uncheckedIcon={false}
-        height={20}
-        width={37}
-        onChange={() => _callService(isOn ? false : true)}
+  return (
+    <Wrapper className={`action-type-toggle ${className}`} {...rest}>
+      {showToggle ? (
+        <StyledSwitch
+          disabled={isUnavailable}
+          checked={isOn}
+          className={`${isOn ? "checked" : ""}`}
+          // These will not be used, i've only included these so it's clear that they are not used
+          onColor="#fff"
+          offColor="#fff"
+          checkedIcon={false}
+          uncheckedIcon={false}
+          height={20}
+          width={37}
+          onChange={() => _callService(isOn ? false : true)}
         />
-      : <div className="text-content">
-        {computeState()}
-      </div>}
-  </Wrapper>);
+      ) : (
+        <div className="text-content">{computeState()}</div>
+      )}
+    </Wrapper>
+  );
 }

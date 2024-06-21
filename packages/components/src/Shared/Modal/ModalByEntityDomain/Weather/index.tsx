@@ -11,3 +11,4 @@ export function ModalWeatherControls({ entity, ...props }: ModalWeatherControlsP
     </Row>
   );
 }
+export default ModalWeatherControls;

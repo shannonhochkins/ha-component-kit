@@ -134,7 +134,7 @@ function _CoverControls({
                     max={100}
                     mode={reverse ? "end" : "start"}
                     vertical={orientation === "vertical"}
-                    thickness={device.xxs ? 70 : 100}
+                    thickness={device.xxs ? 90 : 100}
                     borderRadius={24}
                     value={entity.attributes.current_position}
                     disabled={isUnavailable}
@@ -159,7 +159,7 @@ function _CoverControls({
                     max={100}
                     mode={reverse ? "end" : "start"}
                     vertical={orientation === "vertical"}
-                    thickness={device.xxs ? 70 : 100}
+                    thickness={device.xxs ? 90 : 100}
                     borderRadius={24}
                     value={entity.attributes.current_tilt_position}
                     disabled={isUnavailable}
@@ -190,7 +190,7 @@ function _CoverControls({
               {supportsOpenClose && (
                 <Column>
                   <ButtonGroup
-                    thickness={device.xxs ? 60 : 96}
+                    thickness={device.xxs ? 80 : 96}
                     reverse={reverse}
                     orientation={orientation}
                     style={{
@@ -227,7 +227,7 @@ function _CoverControls({
               {supportsTilt && (
                 <Column>
                   <ButtonGroup
-                    thickness={device.xxs ? 60 : 96}
+                    thickness={device.xxs ? 80 : 96}
                     reverse={reverse}
                     orientation={orientation}
                     style={{

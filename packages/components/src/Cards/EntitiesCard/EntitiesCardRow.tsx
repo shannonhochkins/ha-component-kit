@@ -1,4 +1,14 @@
-import { computeStateDisplay, useHass, useEntity, useIconByDomain, useIconByEntity, computeDomain, isUnavailableState, ON, localize } from "@hakit/core";
+import {
+  computeStateDisplay,
+  useHass,
+  useEntity,
+  useIconByDomain,
+  useIconByEntity,
+  computeDomain,
+  isUnavailableState,
+  ON,
+  localize,
+} from "@hakit/core";
 import type { EntityName, ExtractDomain, AllDomains, HassEntityWithService } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, fallback, ModalByEntityDomain, type ModalPropsHelper } from "@components";
@@ -46,9 +56,9 @@ const EntityRowInner = styled(motion.div)`
 `;
 
 const LAZY_LOAD_STATE_TYPES = {
-  "climate": () => import("./action-types/climate"),
-  "toggle": () => import("./action-types/toggle"),
-  "sensor": () => import("./action-types/sensor"),
+  climate: () => import("./action-types/climate"),
+  toggle: () => import("./action-types/toggle"),
+  sensor: () => import("./action-types/sensor"),
 };
 
 const DOMAIN_TO_ELEMENT_TYPE: Partial<Record<AllDomains, keyof typeof LAZY_LOAD_STATE_TYPES>> = {
@@ -125,8 +135,8 @@ function _EntitiesCardRow<E extends EntityName>({
   const [openModal, setOpenModal] = React.useState(false);
   const { useStore } = useHass();
   const config = useStore((state) => state.config);
-  const entities = useStore(store => store.entities);
-  const connection = useStore(store => store.connection);
+  const entities = useStore((store) => store.entities);
+  const connection = useStore((store) => store.connection);
   const entity = useEntity(_entity);
   const domain = computeDomain(_entity);
   const domainIcon = useIconByDomain(domain === null ? "unknown" : domain);
@@ -150,13 +160,10 @@ function _EntitiesCardRow<E extends EntityName>({
       },
     },
   );
-  const computeState = useCallback(() => computeStateDisplay(
-    entity,
-    connection as Connection,
-    config as HassConfig,
-    entities,
-    entity.state,
-  ), [config, connection, entities, entity]);
+  const computeState = useCallback(
+    () => computeStateDisplay(entity, connection as Connection, config as HassConfig, entities, entity.state),
+    [config, connection, entities, entity],
+  );
   const lazyKey = DOMAIN_TO_ELEMENT_TYPE[domain];
 
   const LazyComponent = useMemo(() => {
@@ -183,19 +190,15 @@ function _EntitiesCardRow<E extends EntityName>({
             {includeLastUpdated && <span>{entity.custom.relativeTime}</span>}
           </Name>
           <State className={`state`}>
-          {typeof renderState === "function" ? (
-            renderState(entity)
-          ) : isUnavailable ? (
-            entity.state
-          ) : (LazyComponent) ? (
-            <Suspense fallback={<div>Loading...</div>}>
-              {<LazyComponent entity={entity as HassEntityWithService<AllDomains>} />}
-            </Suspense>
-          ) : (
-            <>
-              {computeState()}
-            </>
-          )}
+            {typeof renderState === "function" ? (
+              renderState(entity)
+            ) : isUnavailable ? (
+              localize('unavailable')
+            ) : LazyComponent ? (
+              <Suspense fallback={<div>Loading...</div>}>{<LazyComponent entity={entity as HassEntityWithService<AllDomains>} />}</Suspense>
+            ) : (
+              <>{computeState()}</>
+            )}
           </State>
         </Row>
       </EntityRowInner>

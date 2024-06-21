@@ -3,7 +3,7 @@ import { useMemo, useRef, useCallback, useEffect, useState } from "react";
 import { type HassEntityWithService, useHass, useEntity } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, Column, fallback, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
-import { createDateFormatter } from './formatter';
+import { createDateFormatter } from "./formatter";
 import { ErrorBoundary } from "react-error-boundary";
 import { FormatFunction } from "./types";
 
@@ -172,17 +172,31 @@ function _TimeCard({
   }, [timeSensor?.state]);
   const hasOnClick = typeof onClick === "function";
 
-  const timeValue = timeSensor && !timeFormat ? (<>
-    <Time className="time">{formatted}</Time>
-    <AmOrPm className="time-suffix">{amOrPm}</AmOrPm>
-  </>) : <Time className="time">{typeof timeFormat === 'function' ? timeFormat(currentTime, customFormatter) : customFormatter(currentTime, timeFormat ?? DEFAULT_TIME_FORMAT)}</Time>;
-  const dateValue = dateSensor && !dateFormat ? formatDate(dateSensor.state) : typeof dateFormat === 'function' ? dateFormat(currentTime, customFormatter) : customFormatter(currentTime, dateFormat ?? DEFAULT_DATE_FORMAT);
-
+  const timeValue =
+    timeSensor && !timeFormat ? (
+      <>
+        <Time className="time">{formatted}</Time>
+        <AmOrPm className="time-suffix">{amOrPm}</AmOrPm>
+      </>
+    ) : (
+      <Time className="time">
+        {typeof timeFormat === "function"
+          ? timeFormat(currentTime, customFormatter)
+          : customFormatter(currentTime, timeFormat ?? DEFAULT_TIME_FORMAT)}
+      </Time>
+    );
+  const dateValue =
+    dateSensor && !dateFormat
+      ? formatDate(dateSensor.state)
+      : typeof dateFormat === "function"
+        ? dateFormat(currentTime, customFormatter)
+        : customFormatter(currentTime, dateFormat ?? DEFAULT_DATE_FORMAT);
 
   const updateClock = useCallback(() => {
     const now = Date.now();
     const elapsed = now - previousTimeRef.current;
-    if (elapsed >= throttleTime) { // Update the clock every second
+    if (elapsed >= throttleTime) {
+      // Update the clock every second
       setCurrentTime(new Date());
       previousTimeRef.current = now - (elapsed % throttleTime); // Adjust for any drift
     }
@@ -232,7 +246,7 @@ function _TimeCard({
 }
 /** There's no required props on this component, by default it retrieves information from the time and date sensor
  * from your home assistant information and the dates are formatted by the timezone specified in your home assistant settings.
- * 
+ *
  * If you do NOT want to use the entities from home assistant, even if they're available, simply provide a "format" attribute and it will skip
  * the retrieval of the time and date sensors and use the format provided using a custom implementation outside of home assistant.
  * */

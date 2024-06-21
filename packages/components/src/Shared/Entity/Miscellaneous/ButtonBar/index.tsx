@@ -119,7 +119,7 @@ function _ButtonBar({
       return cloneElement(child, {
         key: child.key || index,
         // @ts-expect-error - it does exist, fix types later
-        size: 30,
+        size: child?.props?.size ?? (layoutType === "bubble" ? 35 : 30),
         borderRadius: layoutType === "bubble" ? "8px" : "0px",
       });
     }
@@ -132,9 +132,6 @@ function _ButtonBar({
       css={css`
         ${cssStyles ?? ""}
       `}
-      fullWidth={fullWidth}
-      fullHeight={fullHeight}
-      gap={gap}
       layoutType={layoutType}
       className={`button-bar ${layoutType} ${className ?? ""}`}
       style={{
@@ -149,7 +146,7 @@ function _ButtonBar({
             alignItems,
             justifyContent,
             wrap,
-            gap,
+            gap: gap ?? layoutType === "bubble" ? "0.5rem" : "0",
             fullWidth,
             fullHeight,
           }}

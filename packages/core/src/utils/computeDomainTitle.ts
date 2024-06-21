@@ -37,8 +37,12 @@ export const computeDomainTitle = <E extends EntityName | "unknown">(entityId: E
       return localize("persistent_notification");
     case "binary_sensor":
       return localize("binary_sensor");
+    case "datetime":
+      return localize("date_time");
     case "alert":
       return localize("alert_classes");
+    case "water_heater":
+      return `${localize("water")} ${localize("aux_heat")}`;
     case "stt":
     case "google":
     case "reolink":

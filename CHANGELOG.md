@@ -1,7 +1,75 @@
-## #hakit/components
+# 4.0.0
+## @hakit/components
+- NEW - [AlarmCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-alarmcard--docs)  - A new card to interact with alarm entities, this has a custom popup with keypad control and automate `features` added to the code when a `defaultCode` is present. [issue](https://github.com/shannonhochkins/ha-component-kit/issues/148)
+- NEW - [AlarmControls](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-shared-entity-alarm-alarmcontrols--docs) component to use independently of the AlarmCard
+- NEW - MULTILINGAL - The entire codebase has been refactored to use the new `localize` method from `@hakit/core` which will display previously hard coded values in english, as well as much more in the language of your choice, this can be configured by simply changing the language in your home assistant instance, or by providing it to HassConnect. As values may change in your language of choice, the layouts may also change to what you're expecting - please report any issues. [issue](https://github.com/shannonhochkins/ha-component-kit/issues/135)
+- NEW - CardBase - This is the component that every other Card extends, it has had some great upgrades
+  - new `features` prop that accepts `FeatureEntity` or `FeatureEntity[]` as a type to render actions as part of the "footer" of the card, this has already been introduced into the ClimateCard, AlarmCard & CameraCard, this is similar in terms of functionality to what Home Assistant provided for its "features"
+  - new `relatedEntities` prop that accepts `ReleatedEntity` or `ReleatedEntity[]` that has pre-calculated zones for position which will just overlay ontop of the card container, ie if the position prop is set to `right top` it will position the element in the right top most part of the container, the AlarmCard demo shows this through the use of the the battery icon, useful to display the battery level of an entity in a separate entity card.
+  - new `graph` prop which will allow you to show a graph like the "SensorCard" does by adding the `graph` to the bottom of the card, you can also control how the graph displays it's history, styles, position and more.
+  - new `resizeDetectorProps` - allows you to tap into the resizer to retrieve the size of the card in pixels from a callback for either width, height or both at once and more, this is currently throttled by 50ms, this is useful if your card needs to know it's own size
+- NEW - TimeCard - will no longer depend on `sensor.time` and `sensor.date` as entities, by default it will still use these, but now you can also just use the system clock of the browser running the instance, which opens up additional functionality to format the date/time values with a simple format string with the `dateFormat` and `timeFormat` props and also a custom formatting option as a callback for both date and time too. You can also control how often the update occurs by changing the `throttleTime` prop (defaults to 1000ms), also, `iconProps` was introduced here too.
+- NEW - VacuumCard - design changed slightly as it now extends the ButtonCard component, the `Fab` of the button card is now the animated vacuum image.
+- NEW - WeatherCard - `iconProps` added, internally, performance update made to use the global resize detector 
+- NEW - TriggerCard - `iconProps` and `sliderIconProps` added to style the icons independently
+- NEW - ButtonCard - `fabProps` added to style the wrapping element of the icon within the card, this allows you to change the background color amongst other things for the Fab element.
+- NEW - ButtonCard - `unitOfMeasurement` prop added to allow users the ability to change the displayed unit of measurement on entities.
+- NEW - ButtonCard - `customRenderState` - new prop added as a function to allow you to render the state within the card however you like, by default it will just render the state of the entity.
+- NEW - ButtonCard - `hideToggle` prop added to hide the toggle button in the default layout type.
+- NEW - ButtonCard - `hideIcon` - new prop to ide the icon
+- NEW - EntitiesCard - I've started to introduce custom "action" components based on the entity type used, for example a switch entity will now display a "toggle" that's clickable and will automatically trigger the "toggle" service when clicked, similar to home assistant. I've introduced toggle, climate and sensor so far as custom state parts of each row. More to come later like cover controls for example.
+- NEW - EntitiesCardRow - added `iconProps` to provide additional styles to the icon.
+- NEW - ClimateCard - `showHvacModeLabels` - add this prob to display the locale label of the mode in the feature buttons - note this may only be useful if you're displaying one or two hvac modes.
+- NEW - VacuumControls - added `locateNode` prop, the text/node to render when locating @default 'Locate...' in preferred language, added `buttonGroupProps` to adjust how the buttons are displayed.
+- NEW - TextField - new component to render a text field in the browser, currently used by the keypad for the AlarmCard
+- NEW - ButtonBar - added `layoutType` prop which now supports "bubble" and "grouped", grouped is the default and is what it was previously, bubble is what's used by the "features" within the cards. ButtonBar also supports new props to change the alignment within, like gap, and flex properties.
+- NEW - ButtonGroup - new `gap` property to adjust the spacing between the children, new `maintainAspectRatio` prop which is enabled by default to maintain the 1/1 ratio of the buttons.
+- NEW - ButtonGroupButton - Now accepts children, typically used to show a label if need be, `disabled`, `iconProps` and `disableScaleEffect` also now introduced.
+- NEW - ButtonBarButton - `hideActiveBorder` - when in bubble layoutType you can hide the bottom border of the button.
+- NEW - Modal popups are now loaded asynchronously, this should improve performance when rendering the popup and now the dashboard by default won't be required to load these assets on load.
+- NEW - PictureCard - `iconProps` added
+- NEW - ClimateControls - new prop `hvacModeLabels` to customize the hvac mode labels from the default, this can be passed down from the ClimateCard through the `modalProps` prop.
+- BREAKING - ClimateCard - technically it's not a breaking change, previously by default the card would display the temperature controls by default, now they're hidden by default as I figured it's more likely a seasonal change that's made and if temperature needs to be changed it can be done in the popup by long pressing the card, if you want to add them back in simply add the `showTemperatureControls` prop
+- BREAKING - ButtonCard - `defaultLayout` prop renamed to `layoutType`, to fix this, simply find and replace `defaultLayout` and replace with `layoutType`.
+- BREAKING - AllCards - `iconColor` renamed to `iconProps` to expose more functionality to the user to re-style the icon element.
+Previously, you'd provide an `iconColor` prop with a string which was available on all cards, below is an example of how to convert this to the new `iconProps` prop:
+```
+  <ButtonCard iconColor="red" />
+  <!-- convert to: -->
+  <ButtonCard iconProps={{
+    style: {
+      color: "red" 
+    }
+  }} />
+```
+- DEPRECATED - Removed RoomCard alias, this was previously renamed to AreaCard, if you're using RoomCard, you'll need to change this to AreaCard.
+- BREAKING/NEW - Potential breaking change, AlarmCard, SensorCard, ClimateCard & VacuumCard now all extend the ButtonCard component instead of the CardBase, this introduces new shared properties, allows new layouts for AlarmCard, SensorCard, ClimateCard & VacuumCard and extends more functionality to these cards.
+- BUGFIX - Scale effect on mouse down on cards was broken in the previous release
+- BUGFIX - Fixed a few font-family issues where some cards weren't honouring changes to the default font family through the css variable.
+- BUGFIX - ThemeProvider - There is new hsla variables exposed, and some of the colours didn't expose these values - this has been fixed
 
-- BREAKING - iconProps (iconStyles gone)
-- BREWAKING - timeCard - defaults now to using system time unless entity is specified, no longer expects time entity to exist
+## @hakit/core
+- BUGFIX - Fixed a bug where the hassUrl provided may have contained a trailing slash and was stored without it, it will now sanitize the input url to ensure it's stored correctly. [issue](https://github.com/shannonhochkins/,ha-component-kit/issues/146#issuecomment-2138352567), the `useTranslations` hook has also been removed.
+- NEW - `useLocale`, `useLocales` - a hook to retrieve the locales, useLocale is similar in nature to the `locale` function, useLocales will return all available locales from home assistant.
+- DEPRECATED/BREAKING - Removed `fetchTranslations` and replaced with multilingual support, this was previously used to fetch translations from home assistant, now this is done automatically through the `localize` method.
+- DEPRECATED/BREAKING - Removed `useTranslations` as this is now handled with the `localize` method.
+- NEW - HassConnect - Now accepts a `hassToken` property which will allow you to bypass the login screen [fixes](https://github.com/shannonhochkins/ha-component-kit/issues/147)
+- NEW - HassConnect - now accepts a locale property, by default it will retrieve the language from home assistant, but if you want to overwrite this you can here.
+- NEW - HassConnect - now accepts a `portalRoot` property, AreaCard, Tooltip, Modal - now have the ability to change the portal root, meaning if you're rendering within an iframe, you can change the root of the portal to render these elements in the correct location. This is configurable from HassConnect through the `portalRoot` option.
+- BUGFIX - Issue with the color calculations caused a floating point value for the RGBA values to cause unwanted re-renders as the value was technically changing by 5 decimal places whilst it's transitioning or animating whilst turning on, the values are now rounded so we don't get updates on the floating point values.
+- NEW - `computeAttributeDisplay` a method that will format the attribute value based on the entity you're accessing it from, it will suffix it with expected units, or format dates/numbers automatically for you.
+- NEW - `computeAttributeDisplay` a function that will convert a domain name into a localized title
+- NEW - `computeStateDisplay` - a function that will format the values of the state depending on the entity attributes and entity type.
+- NEW - `formatDate`, `formatTime`, `formatDateTime` - helper functions to convert a time value based on the config of the home assistant instance.
+## create-hakit
+- NEW - package will new prefer the `hassToken` option as a default and will prompt you to enter the token if you don't provide it.
+## Storybook
+- BUGFIX - Previously, whenever you interacted with a card on the demo page it would trigger a re-render of EVERY other card which made the demo feel clunky, this has been fixed to align with what actually happens on a real dashboard.
+- BUGFIX - Fixing issue on the demo page where it wasn't stretching to full width
+
+
+
+
 
 # 3.2.0
 ## @hakit/components

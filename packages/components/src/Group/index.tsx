@@ -10,7 +10,6 @@ const StyledGroup = styled(CardBase)<{
 }>`
   background-color: var(--ha-S200);
   color: var(--ha-S200-contrast);
-  border-radius: 1rem;
   padding: ${({ collapsed }) => (collapsed ? "0 2rem" : "0 2rem 2rem")};
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: padding, background-color;
@@ -37,7 +36,7 @@ const StyledGroup = styled(CardBase)<{
     ${mq(
       ["xxs", "xs"],
       `
-      padding: ${collapsed ? "0 1rem" : "0 1rem 1rem"};
+      padding: ${collapsed ? "1rem 0rem" : "1.5rem 0rem 1rem"};
     `,
     )}
   `};
@@ -52,7 +51,9 @@ const Description = styled.span`
   padding-left: 1rem;
 `;
 
-const Header = styled.div``;
+const Header = styled.div`
+
+`;
 const Title = styled.h3``;
 
 type OmitProperties =
@@ -116,6 +117,7 @@ function _Group({
       disableScale
       disableActiveState
       disableRipples
+      borderRadius={'16px'}
       className={`${className ?? ""} group`}
       collapsed={_collapsed}
       collapsible={collapsible}

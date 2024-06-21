@@ -35,11 +35,11 @@ export interface RelatedEntityProps<E extends EntityName = EntityName> extends O
   service?: DomainService<ExtractDomain<E>>;
   /** The data to pass to the service */
   serviceData?: ServiceData<ExtractDomain<E>, DomainService<ExtractDomain<E>>>;
-  /** overwrite the default for the sensor */
+  /** overwrite the default for the entity */
   icon?: string;
   /** properties for the icon */
   iconProps?: Omit<IconProps, "icon">;
-  /** the position of the sensor element, @default "top left" */
+  /** the position of the entity element, @default "top left" */
   position?: Position;
   /** should the element be disabled or not which will block the click events @default false */
   disabled?: boolean;
@@ -134,6 +134,8 @@ function _RelatedEntity<E extends EntityName>({
 
 /**
  * This can be used within the `relatedEntities` prop for any card that extends CardBase where you can place icons/elements in predefined positions across the card with full control over style/positions/rendering capabilities, click actions and more.
+ * Each individual related entity can have clickable actions, stylable and more.
+ * This would be useful to show an icon for an entity to indicate it's battery level or state.
  * */
 export const RelatedEntity = memo(function RelatedEntity<E extends EntityName>(props: RelatedEntityProps<E>) {
   return (
