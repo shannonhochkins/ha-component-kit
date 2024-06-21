@@ -18,12 +18,15 @@ Homeassistant is bundled with a webserver, which we can utilize to host our new 
 
 ## Retrieving SSH Credentials
 
-1. In Homeassistant: Install and setup the Terminal & SSH addon, this is very easy!
+1. In Homeassistant: Install and setup the [Advanced SSH & Web Terminal](https://github.com/hassio-addons/addon-ssh) addon, this is very easy!
   - Click on your "Profile name" in your HA dashboard
-  - Scroll down and enabled "Advanced mode"
-  - Go to Settings -> Addons -> search for "Terminal & SSH" -> Install
-  - Go to the configuration tab, enter a password into the field and save
-  - Ensure the PORT is 22, save, the default username is `root`
+  - Scroll down and enable "Advanced mode"
+  - Go to Settings -> Addons -> ADD-ON STORE for "SSH & Web Terminal" -> Install
+  - Once installed, Go to the configuration tab, enter a password into the field and save
+  - Change default password
+  - The username has to be set to `root` (default is `hassio`).
+  - The sftp flag has to be set to true (default is false, and true requires the username to be root).
+  - Ensure the PORT is 22, save
 2. Finally, update the .env file that's created with the `create hakit` script, or add it to your project manually:
 
 ```bash

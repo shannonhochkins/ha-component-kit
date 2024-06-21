@@ -42,11 +42,17 @@ Previously, you'd provide an `iconColor` prop with a string which was available 
     }
   }} />
 ```
+BREAKING - ButtonCard - swapped title and description on ButtonCard, it's always bothered me that the title is actually the "second" element on the button, this has been changed, to fix this if you're using either the description or the title prop or both, simply invert the names. Fixes [issue](https://github.com/shannonhochkins/ha-component-kit/issues/150)
+```
+<ButtonCard entity="switch.something" title="A description" description="A Title" />
+<-- This now changes to -->
+<ButtonCard entity="switch.something" description="A description" title="A Title" />
+```
 - DEPRECATED - Removed RoomCard alias, this was previously renamed to AreaCard, if you're using RoomCard, you'll need to change this to AreaCard.
 - BREAKING/NEW - Potential breaking change, AlarmCard, SensorCard, ClimateCard & VacuumCard now all extend the ButtonCard component instead of the CardBase, this introduces new shared properties, allows new layouts for AlarmCard, SensorCard, ClimateCard & VacuumCard and extends more functionality to these cards.
 - BUGFIX - Scale effect on mouse down on cards was broken in the previous release
 - BUGFIX - Fixed a few font-family issues where some cards weren't honouring changes to the default font family through the css variable.
-- BUGFIX - ThemeProvider - There is new hsla variables exposed, and some of the colours didn't expose these values - this has been fixed
+- BUGFIX - ThemeProvider - There is new hsla variables exposed, and some of the colours didn't expose these values - this has been fixed, additionally an [issue](https://github.com/shannonhochkins/ha-component-kit/issues/154) as been fixed that was causing a flashing effect with the controls.
 
 ## @hakit/core
 - BUGFIX - Fixed a bug where the hassUrl provided may have contained a trailing slash and was stored without it, it will now sanitize the input url to ensure it's stored correctly. [issue](https://github.com/shannonhochkins/,ha-component-kit/issues/146#issuecomment-2138352567), the `useTranslations` hook has also been removed.
@@ -57,6 +63,7 @@ Previously, you'd provide an `iconColor` prop with a string which was available 
 - NEW - HassConnect - now accepts a locale property, by default it will retrieve the language from home assistant, but if you want to overwrite this you can here.
 - NEW - HassConnect - now accepts a `portalRoot` property, AreaCard, Tooltip, Modal - now have the ability to change the portal root, meaning if you're rendering within an iframe, you can change the root of the portal to render these elements in the correct location. This is configurable from HassConnect through the `portalRoot` option.
 - BUGFIX - Issue with the color calculations caused a floating point value for the RGBA values to cause unwanted re-renders as the value was technically changing by 5 decimal places whilst it's transitioning or animating whilst turning on, the values are now rounded so we don't get updates on the floating point values.
+- NEW - `useDevice` a hook to retrieve extended information about a device from home assistant. [issue](https://github.com/shannonhochkins/ha-component-kit/issues/151)
 - NEW - `computeAttributeDisplay` a method that will format the attribute value based on the entity you're accessing it from, it will suffix it with expected units, or format dates/numbers automatically for you.
 - NEW - `computeAttributeDisplay` a function that will convert a domain name into a localized title
 - NEW - `computeStateDisplay` - a function that will format the values of the state depending on the entity attributes and entity type.
@@ -66,6 +73,7 @@ Previously, you'd provide an `iconColor` prop with a string which was available 
 ## Storybook
 - BUGFIX - Previously, whenever you interacted with a card on the demo page it would trigger a re-render of EVERY other card which made the demo feel clunky, this has been fixed to align with what actually happens on a real dashboard.
 - BUGFIX - Fixing issue on the demo page where it wasn't stretching to full width
+- DEPLOYMENT DOCS - updated to use the Advanced SSH and Web Terminal addon ([issue](https://github.com/shannonhochkins/ha-component-kit/issues/153))
 
 
 

@@ -6,13 +6,13 @@ import { useRef, useCallback, useState, useEffect, ComponentPropsWithoutRef } fr
 import {
   useLogs,
   useHass,
+  useDevice,
   computeDomain,
   createHistoricState,
   localizeStateMessage,
   localizeTriggerSource,
   timeAgo,
   ON,
-  type EntityRegistryEntry,
   type LogbookEntry,
   type EntityName,
   type UseLogOptions,
@@ -155,10 +155,10 @@ function _LogBookRenderer({
   const logs = useLogs(entity, options);
   const { useStore, getServices, joinHassUrl } = useHass();
   const entities = useStore((state) => state.entities);
-  const connection = useStore((state) => state.connection);
   const requestedServices = useRef(false);
   const [services, setServices] = useState<HassServices | null>(null);
   const language = useStore((state) => state.config?.language);
+  const device = useDevice(entity);
 
   useEffect(() => {
     if (requestedServices.current) return;
@@ -166,33 +166,16 @@ function _LogBookRenderer({
     getServices().then((services) => setServices(services));
   }, [services, getServices]);
 
-  const getDeviceId = useCallback(
-    async (entity: string) => {
-      if (!connection) return;
-      try {
-        const response = await connection.sendMessagePromise<EntityRegistryEntry>({
-          type: "config/entity_registry/get",
-          entity_id: entity,
-        });
-        return response;
-      } catch (e) {
-        // ignore, just won't be able to link to HA
-      }
-    },
-    [connection],
-  );
-
   const _entityClicked = useCallback(
     async (entityId: string | undefined) => {
       if (!entityId) {
         return;
       }
-      const device = await getDeviceId(entityId);
       if (device && device.device_id && typeof window !== "undefined") {
         window.open(joinHassUrl(`config/devices/device/${device.device_id}`), "_blank");
       }
     },
-    [getDeviceId, joinHassUrl],
+    [device, joinHassUrl],
   );
 
   const showMoreLogs = useCallback(() => {

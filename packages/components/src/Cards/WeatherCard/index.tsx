@@ -34,7 +34,7 @@ const Title = styled.h4`
   all: unset;
   font-family: var(--ha-font-family);
   font-size: 0.8rem;
-  color: var(--ha-S300-contrast);
+  color: var(--ha-S100-contrast);
   display: flex;
   align-items: center;
   justify-content: flex-start;

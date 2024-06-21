@@ -10,7 +10,7 @@ const TooltipSpan = styled.span<Pick<TooltipProps, "placement">>`
   top: 0;
   left: 0;
   background-color: var(--ha-S300);
-  color: var(--ha-S300-contrast);
+  color: var(--ha-S100-contrast);
   padding: 8px;
   border-radius: 4px;
   box-shadow: 0px 2px 4px var(--ha-S100);

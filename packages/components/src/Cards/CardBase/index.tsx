@@ -507,7 +507,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
 /**
  * This is the base card component that every other card component should extend, it comes with everything we need to be able to replicate functionality
  * like the modal popup, ripples and more.
- * 
+ *
  * You can use this if you want an empty shell of a component that you can build on top of.
  * */
 export const CardBase = memo(function CardBase<T extends ElementType, E extends EntityName>(props: CardBaseProps<T, E>) {

@@ -7,20 +7,28 @@ function Render(args?: Args) {
     <HassConnect hassUrl="https://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" fullWidth>
-      <CardBase relatedEntities={<>
-          <RelatedEntity {...args} entity="climate.air_conditioner" />
-          <RelatedEntity {...args} entity="climate.air_conditioner" position="right bottom" />
-          <RelatedEntity {...args} entity="climate.air_conditioner" position="center bottom" />
-          <RelatedEntity {...args} entity="climate.air_conditioner" position="left bottom" />
-          <RelatedEntity {...args} entity="climate.air_conditioner" position="left top" />
-          <RelatedEntity {...args} entity="climate.air_conditioner" position="center top" />
-        </>}>
-          <Row fullWidth fullHeight style={{
-            padding: '4rem'
-          }}>
+        <CardBase
+          relatedEntities={
+            <>
+              <RelatedEntity {...args} entity="climate.air_conditioner" />
+              <RelatedEntity {...args} entity="climate.air_conditioner" position="right bottom" />
+              <RelatedEntity {...args} entity="climate.air_conditioner" position="center bottom" />
+              <RelatedEntity {...args} entity="climate.air_conditioner" position="left bottom" />
+              <RelatedEntity {...args} entity="climate.air_conditioner" position="left top" />
+              <RelatedEntity {...args} entity="climate.air_conditioner" position="center top" />
+            </>
+          }
+        >
+          <Row
+            fullWidth
+            fullHeight
+            style={{
+              padding: "4rem",
+            }}
+          >
             LOOK HOW MANY ICONS I HAVE
           </Row>
-      </CardBase>
+        </CardBase>
       </Column>
     </HassConnect>
   );

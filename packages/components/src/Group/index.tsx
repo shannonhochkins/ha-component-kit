@@ -31,6 +31,7 @@ const StyledGroup = styled(CardBase)<{
         color: var(--ha-A400);
         width: 1rem;
       }`}
+    }
   }
   ${({ collapsed }) => `
     ${mq(
@@ -51,9 +52,7 @@ const Description = styled.span`
   padding-left: 1rem;
 `;
 
-const Header = styled.div`
-
-`;
+const Header = styled.div``;
 const Title = styled.h3``;
 
 type OmitProperties =
@@ -117,7 +116,7 @@ function _Group({
       disableScale
       disableActiveState
       disableRipples
-      borderRadius={'16px'}
+      borderRadius={"16px"}
       className={`${className ?? ""} group`}
       collapsed={_collapsed}
       collapsible={collapsible}

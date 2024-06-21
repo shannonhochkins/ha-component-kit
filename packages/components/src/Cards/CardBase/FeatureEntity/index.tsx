@@ -2,10 +2,7 @@ import { type EntityName } from "@hakit/core";
 import { fallback, ButtonBarButton, type ButtonBarButtonProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
-export interface FeatureEntityProps<E extends EntityName = EntityName> extends ButtonBarButtonProps<E> {
-  /** The name of the entity */
-  entity?: E;
-}
+export type FeatureEntityProps<E extends EntityName = EntityName> = ButtonBarButtonProps<E>;
 
 function _FeatureEntity<E extends EntityName>({ children, active, ...rest }: ButtonBarButtonProps<E>) {
   return (

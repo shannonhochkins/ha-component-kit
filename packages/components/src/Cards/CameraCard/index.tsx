@@ -20,7 +20,7 @@ import { CameraStream } from "./stream";
 import { type VideoState } from "./players";
 import { Icon } from "@iconify/react";
 
-type OmitProperties = "onClick" | "children" | "active" | "as" | "title" | "ref" | "disableActiveState" | 'features';
+type OmitProperties = "onClick" | "children" | "active" | "as" | "title" | "ref" | "disableActiveState" | "features";
 
 type Extendable = Omit<CardBaseProps<"div", FilterByDomain<EntityName, "camera">>, OmitProperties>;
 export interface CameraCardProps<E extends FilterByDomain<EntityName, "camera">> extends Extendable {
@@ -318,7 +318,9 @@ function _CameraCard<E extends FilterByDomain<EntityName, "camera">>({
               </ButtonBar>
             )}
             {!hideViewControls && (
-              <ButtonBar gap="0.5rem" layoutType="bubble">{viewButtons}</ButtonBar>
+              <ButtonBar gap="0.5rem" layoutType="bubble">
+                {viewButtons}
+              </ButtonBar>
             )}
           </Footer>
         )}

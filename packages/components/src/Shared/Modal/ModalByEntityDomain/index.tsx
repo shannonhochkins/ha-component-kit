@@ -19,17 +19,17 @@ import styled from "@emotion/styled";
 import {
   useEntity,
   useHass,
+  useDevice,
   localize,
   type AllDomains,
   type EntityName,
-  type EntityRegistryEntry,
   type ExtractDomain,
   type FilterByDomain,
 } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { computeDomain } from "@utils/computeDomain";
 import { lowerCase, startCase } from "lodash";
-import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, ReactNode } from "react";
+import { Suspense, lazy, useCallback, useMemo, useRef, useState, ReactNode } from "react";
 import type { ModalProps } from "..";
 
 const Separator = styled.div`
@@ -97,18 +97,20 @@ export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<Ex
   stateTitle?: ReactNode;
 } & OptionalChildrenModalProps;
 
-function getLazyModal<D extends keyof ModalPropsByDomain>(domain: D): (() => Promise<{ default: React.ComponentType<ModalPropsByDomain[D]> }>) | null {
+function getLazyModal<D extends keyof ModalPropsByDomain>(
+  domain: D,
+): (() => Promise<{ default: React.ComponentType<ModalPropsByDomain[D]> }>) | null {
   const modals: { [K in keyof ModalPropsByDomain]: () => Promise<{ default: React.ComponentType<ModalPropsByDomain[K]> }> } = {
-    'cover': () => import('./Cover'),
-    'alarm_control_panel': () => import('./AlarmControlPanel'),
-    'camera': () => import('./Camera'),
-    'light': () => import('./Light'),
-    'media_player': () => import('./MediaPlayer'),
-    'person': () => import('./Person'),
-    'switch': () => import('./Switch'),
-    'vacuum': () => import('./Vacuum'),
-    'weather': () => import('./Weather'),
-    'climate': () => import('./Climate'),
+    cover: () => import("./Cover"),
+    alarm_control_panel: () => import("./AlarmControlPanel"),
+    camera: () => import("./Camera"),
+    light: () => import("./Light"),
+    media_player: () => import("./MediaPlayer"),
+    person: () => import("./Person"),
+    switch: () => import("./Switch"),
+    vacuum: () => import("./Vacuum"),
+    weather: () => import("./Weather"),
+    climate: () => import("./Climate"),
   };
   return modals[domain] ?? null;
 }
@@ -122,30 +124,10 @@ export function ModalByEntityDomain<E extends EntityName>({
   children,
   ...rest
 }: ModalByEntityDomainProps<E>) {
-  const { joinHassUrl, useStore } = useHass();
-  const connection = useStore((state) => state.connection);
-  const [device, setDevice] = useState<EntityRegistryEntry | null>(null);
+  const { joinHassUrl } = useHass();
   const [showLogbook, setShowLogbook] = useState(false);
   const _entity = useEntity(entity);
-
-  const getDeviceId = useCallback(async () => {
-    if (!connection) return;
-    try {
-      if (device && device.entity_id === entity) return;
-      const response = await connection.sendMessagePromise<EntityRegistryEntry>({
-        type: "config/entity_registry/get",
-        entity_id: entity,
-      });
-      setDevice(response);
-    } catch (e) {
-      // ignore, just won't show the link to HA
-    }
-  }, [entity, device, connection]);
-
-  useEffect(() => {
-    if (!rest.open) return;
-    getDeviceId();
-  }, [getDeviceId, rest.open]);
+  const device = useDevice(entity);
 
   const openDevice = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -183,26 +165,35 @@ export function ModalByEntityDomain<E extends EntityName>({
   }, [domain]);
   const defaultChildren = useMemo(() => {
     if (!LazyModalComponent) return null;
-    const fallback = <Column fullWidth fullHeight><StyledIcon icon="eos-icons:three-dots-loading" className="preloader-loading-icon" /></Column>;
-    if (domain === 'person') {
-      return <Suspense fallback={fallback}>
-        <LazyModalComponent
-          entity={entity as FilterByDomain<EntityName, "person">}
-          mapHeight={modalProps.open ? 300 : 0}
-          {...childProps}
-        />
-      </Suspense>;
+    const fallback = (
+      <Column fullWidth fullHeight>
+        <StyledIcon icon="eos-icons:three-dots-loading" className="preloader-loading-icon" />
+      </Column>
+    );
+    if (domain === "person") {
+      return (
+        <Suspense fallback={fallback}>
+          <LazyModalComponent
+            entity={entity as FilterByDomain<EntityName, "person">}
+            mapHeight={modalProps.open ? 300 : 0}
+            {...childProps}
+          />
+        </Suspense>
+      );
     }
-    return <Suspense fallback={fallback}>
-      <LazyModalComponent
-        // @ts-expect-error types are impossible to fix at this level, cast it as anything
-        entity={entity as FilterByDomain<EntityName, "light">}
-        onStateChange={onStateChange}
-        {...{
-          ...childProps,
-          entity,
-        }} />
-    </Suspense>
+    return (
+      <Suspense fallback={fallback}>
+        <LazyModalComponent
+          // @ts-expect-error types are impossible to fix at this level, cast it as anything
+          entity={entity as FilterByDomain<EntityName, "light">}
+          onStateChange={onStateChange}
+          {...{
+            ...childProps,
+            entity,
+          }}
+        />
+      </Suspense>
+    );
   }, [entity, LazyModalComponent, childProps, onStateChange, domain, modalProps.open]);
 
   const stateRef = useRef<HTMLDivElement>(null);

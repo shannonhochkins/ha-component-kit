@@ -16,12 +16,10 @@ import { ButtonCard, type ButtonCardProps } from "../ButtonCard";
 const StyledClimateCard = styled(ButtonCard)`
   &.slim {
     &.has-temp-controls {
-      
     }
   }
   &.slim-vertical {
     &.has-temp-controls {
-      
     }
   }
 `;
@@ -54,12 +52,6 @@ const Description = styled.div`
   }
 `;
 
-const Title = styled.span`
-  color: var(--ha-S50-contrast);
-  font-size: 0.8rem;
-  font-weight: 500;
-`;
-
 const Temperature = styled.span`
   position: relative;
   display: flex;
@@ -69,7 +61,7 @@ const Temperature = styled.span`
   }
 `;
 
-type OmitProperties = "onClick" | "children" | "active" | "as" | "ref" | "disableActiveState" | 'features';
+type OmitProperties = "onClick" | "children" | "active" | "as" | "ref" | "disableActiveState" | "features";
 
 type Extendable = Omit<ClimateControlsProps, "onClick"> & Omit<ButtonCardProps<ClimateControlsProps["entity"]>, OmitProperties>;
 export interface ClimateCardProps extends Extendable {
@@ -141,10 +133,10 @@ function _ClimateCard({
         key={key}
         hideToggle={hideToggle}
         disableActiveState
-        className={`climate-card ${showTemperatureControls ? 'has-temp-controls' : ''} ${className ?? ""}`}
+        className={`climate-card ${showTemperatureControls ? "has-temp-controls" : ""} ${className ?? ""}`}
         disabled={disabled || isUnavailable}
         entity={_entity}
-        title={<Title className="custom-title">{title ?? entity.attributes.friendly_name}</Title>}
+        title={title ?? entity.attributes.friendly_name}
         // @ts-expect-error - don't know the entity name, so we can't know the service type
         service={service}
         // @ts-expect-error - don't know the entity name, so we can't know the service data
@@ -165,6 +157,7 @@ function _ClimateCard({
           ${globalComponentStyle.climateCard ?? ""}
           ${cssStyles ?? ""}
         `}
+        hideState
         features={havacModesToUse
           .concat()
           .filter((x) => !!x)
@@ -237,11 +230,7 @@ function _ClimateCard({
         {...rest}
       >
         {showTemperatureControls && (
-          <Column
-            alignItems={layoutType === "slim-vertical" ? "center" : "flex-start"}
-            fullWidth
-            fullHeight
-          >
+          <Column alignItems={layoutType === "slim-vertical" ? "center" : "flex-start"} fullWidth fullHeight>
             <Gap />
             <ButtonBar fullWidth>
               <FeatureEntity

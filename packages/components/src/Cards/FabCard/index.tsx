@@ -73,7 +73,7 @@ const Contents = styled.div<{
   `}
 `;
 
-type OmitProperties = "title" | "ref" | 'active';
+type OmitProperties = "title" | "ref" | "active";
 
 export interface FabCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
   /** The size of the Fab, this applies to the width and height @default 48 */

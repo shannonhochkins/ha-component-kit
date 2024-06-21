@@ -147,31 +147,38 @@ const LayoutBetween = styled.div`
 
 const Footer = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-start;
-  flex-direction: row;
+  flex-direction: column;
   margin-top: 20px;
   width: 100%;
 `;
 
 const Title = styled.div`
-  color: var(--ha-S500-contrast);
+  color: var(--ha-S100-contrast);
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+`;
+
+const Description = styled.div`
+  color: var(--ha-S300-contrast);
   font-size: 0.7rem;
   margin: 2px 0;
   text-align: left;
   width: 100%;
+  &.center {
+    text-align: center;
+  }
+  &.secondary {
+    color: var(--ha-S500-contrast);
+  }
   &.slim-vertical {
     text-align: center;
   }
 `;
 
-const Description = styled.div`
-  color: var(--ha-S50-contrast);
-  font-size: 0.8rem;
-  font-weight: 500;
-`;
-
-type OmitProperties = "as" | "children" | "ref";
+type OmitProperties = "as" | "children" | "ref" | "description";
 
 export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value, provide a string with the name of the icon, or a custom icon by providing a react node  */
@@ -180,7 +187,9 @@ export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProp
   iconProps?: Omit<IconProps, "icon">;
   /** the props to provide to the Fab element within the card, useful if you want to re-style it */
   fabProps?: React.ComponentProps<"div">;
-  /** By default, the description is retrieved from the friendly name of the entity, or you can specify a manual description */
+  /** By default, the tit is retrieved from the friendly name of the entity, or you can specify a manual tit */
+  tit?: ReactNode | null;
+  /** The description will naturally fall under the title, by default it will show the information of the entity like the state */
   description?: ReactNode | null;
   /** override the unit displayed alongside the state if the entity has a unit of measurement */
   unitOfMeasurement?: ReactNode;
@@ -248,13 +257,13 @@ function _ButtonCard<E extends EntityName>({
     ...(iconProps ?? {}),
   });
   // use the input description if provided, else use the friendly name if available, else entity name, else null
-  const description = useMemo(() => {
-    return _description === null ? null : _description || entity?.attributes.friendly_name || entity?.entity_id || null;
-  }, [_description, entity]);
+  const title = useMemo(() => {
+    return _title === null ? null : _title || entity?.attributes.friendly_name || entity?.entity_id || null;
+  }, [_title, entity]);
   // use the input title if provided, else use the domain if available, else null
-  const title = useMemo(
-    () => _title || (domain !== null && _entity ? computeDomainTitle(_entity, entity?.attributes?.device_class) : null),
-    [_title, domain, entity, _entity],
+  const description = useMemo(
+    () => _description || (domain !== null && _entity ? computeDomainTitle(_entity, entity?.attributes?.device_class) : null),
+    [_description, domain, entity, _entity],
   );
 
   function renderState() {
@@ -329,32 +338,34 @@ function _ButtonCard<E extends EntityName>({
           )}
           {isSlimLayout && (
             <Column fullWidth alignItems={layoutType === "slim-vertical" ? "center" : "flex-start"}>
-              <Description className="description">{description}</Description>
-              {!hideDetails && (
-                <Title className={`title ${layoutType ?? ""}`}>
-                  {title} {!hideState ? ` - ${renderState()}` : ""}
-                  {entity && !hideLastUpdated ? ` - ${entity.custom.relativeTime}` : ""}
-                </Title>
+              {title && <Title className="title">{title}</Title>}
+              {!hideDetails && description && (
+                <Description className={`description ${layoutType ?? ""}`}>
+                  {description} {!hideState ? ` - ${renderState()}` : ""}
+                </Description>
+              )}
+              {entity && !hideLastUpdated && (
+                <Description className={`description secondary ${layoutType === "slim-vertical" ? "center" : ""}`}>
+                  {localize("last_updated")}: {entity.custom.relativeTime}
+                </Description>
               )}
             </Column>
           )}
         </LayoutBetween>
         {isDefaultLayout && (
           <Footer className="footer">
-            <Title className="title">
-              {!hideDetails && title && (
-                <Title className="title">
-                  {title}
-                  {entity && !hideState ? ` - ${renderState()}` : ""}
-                </Title>
-              )}
-              {description && <Description className="description">{description}</Description>}
-              {!hideDetails && entity && !hideLastUpdated && (
-                <Title className="title">
-                  {localize("last_updated")}: {entity.custom.relativeTime}
-                </Title>
-              )}
-            </Title>
+            {title && <Title className="title">{title}</Title>}
+            {!hideDetails && description && (
+              <Description className="description">
+                {description}
+                {entity && !hideState ? ` - ${renderState()}` : ""}
+              </Description>
+            )}
+            {!hideDetails && entity && !hideLastUpdated && (
+              <Description className="description secondary">
+                {localize("last_updated")}: {entity.custom.relativeTime}
+              </Description>
+            )}
           </Footer>
         )}
         {children && <div className="children">{children}</div>}

@@ -193,7 +193,7 @@ function _EntitiesCardRow<E extends EntityName>({
             {typeof renderState === "function" ? (
               renderState(entity)
             ) : isUnavailable ? (
-              localize('unavailable')
+              localize("unavailable")
             ) : LazyComponent ? (
               <Suspense fallback={<div>Loading...</div>}>{<LazyComponent entity={entity as HassEntityWithService<AllDomains>} />}</Suspense>
             ) : (

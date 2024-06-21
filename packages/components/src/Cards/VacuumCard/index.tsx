@@ -19,7 +19,7 @@ const StyledVacuumImage = styled(VacuumImage)`
   width: 100%;
 `;
 
-type OmitProperties = "title" | 'features';
+type OmitProperties = "title" | "features";
 export type VacuumCardProps = Omit<ButtonCardProps<FilterByDomain<EntityName, "vacuum">>, OmitProperties> & {
   /** An optional override for the title */
   title?: string;

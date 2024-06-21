@@ -88,17 +88,19 @@ const LayoutBetween = styled.div`
   flex-direction: row;
 `;
 
-const Title = styled.div`
+const Description = styled.div`
   color: var(--ha-S500-contrast);
   font-size: 0.7rem;
   text-align: left;
 `;
-const Description = styled.div<{
+const Title = styled.div<{
   disabled?: boolean;
 }>`
-  color: var(--ha-S500-contrast);
-  ${(props) => props.disabled && `color: var(--ha-S50-contrast);`}
+  color: var(--ha-S300-contrast);
   font-size: 0.9rem;
+  font-weight: bold;
+  ${(props) => props.disabled && `color: var(--ha-S50-contrast);`}
+
   text-align: left;
   span {
     display: block;
@@ -207,18 +209,18 @@ function _TriggerCard<E extends EntityName>({
     >
       <Contents>
         <LayoutBetween className={`layout-between`}>
-          <Description disabled={disabled} className={`description`}>
+          <Title disabled={disabled} className={`description`}>
             {title || entity.attributes.friendly_name || _entity}
             {description && <span>{description}</span>}
-          </Description>
+          </Title>
           {icon ?? entityIcon ?? domainIcon}
         </LayoutBetween>
         <Gap className={`gap`} />
         <LayoutBetween className={`layout-between`}>
-          <Title className={`title`}>
+          <Description className={`title`}>
             {entity.custom.relativeTime}
             {disabled ? ` - ${entity.state}` : ""}
-          </Title>
+          </Description>
           <Toggle active={disabled ? false : active} className={`toggle`}>
             {disabled ? null : (
               <>

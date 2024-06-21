@@ -7,6 +7,7 @@ export { useLightBrightness } from "./useLightBrightness";
 export { useLightTemperature } from "./useLightTemperature";
 export { useLightColor } from "./useLightColor";
 export { useLowDevices, type LowDevicesOptions } from "./useLowDevices";
+export { useDevice, type ExtEntityRegistryEntry } from "./useDevice";
 export { useHistory, type HistoryOptions } from "./useHistory";
 export { coordinates, type NumericEntityHistoryState, type coordinatesMinimalResponseCompressedState } from "./useHistory/coordinates";
 export { useSubscribeEntity } from "./useSubscribeEntity";

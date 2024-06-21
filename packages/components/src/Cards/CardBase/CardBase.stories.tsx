@@ -7,12 +7,12 @@ function Render(args?: Args) {
     <HassConnect hassUrl="https://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" fullWidth>
-        <CardBase
-          {...args}
-        >
-          <div style={{
-            padding: '2rem'
-          }}>
+        <CardBase {...args}>
+          <div
+            style={{
+              padding: "2rem",
+            }}
+          >
             IM AN EMPTY SHELL!
           </div>
         </CardBase>

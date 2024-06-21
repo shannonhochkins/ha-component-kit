@@ -7,29 +7,54 @@ function Render(args?: Args) {
     <HassConnect hassUrl="https://homeassistant.local:8123">
       <ThemeProvider includeThemeControls />
       <Row gap="1rem" fullWidth>
-        <CardBase disableActiveState features={[
+        <CardBase
+          disableActiveState
+          features={[
             <FeatureEntity entity="switch.record" service="toggle" />,
             <FeatureEntity {...args} entity="switch.fake_switch" service="toggle" />,
             <FeatureEntity {...args} entity="switch.unavailable" service="toggle" />,
             <FeatureEntity {...args} entity="light.fake_light_1" service="toggle" />,
             <FeatureEntity {...args} entity="light.fake_light_2" service="toggle" />,
             <FeatureEntity {...args} entity="light.fake_light_3" service="toggle" />,
-          ]}>
-            <Row fullWidth fullHeight style={{
-              padding: '4rem'
-            }}>
-              Showing how feature entities work by default
-            </Row>
+          ]}
+        >
+          <Row
+            fullWidth
+            fullHeight
+            style={{
+              padding: "4rem",
+            }}
+          >
+            Showing how feature entities work by default
+          </Row>
         </CardBase>
-        <CardBase disableActiveState features={[
-          <FeatureEntity entity="switch.record" service="toggle">RECORD</FeatureEntity>,
-          <FeatureEntity {...args} entity="switch.fake_switch" service="toggle">SWITCH</FeatureEntity>
-        ]}>
-            <Row fullWidth fullHeight style={{
-              padding: '4rem'
-            }}>
-              Showing how feature entities work by default
-            </Row>
+        <CardBase
+          disableActiveState
+          features={[
+            <FeatureEntity entity="switch.record" service="toggle">
+              RECORD
+            </FeatureEntity>,
+            <FeatureEntity
+              {...args}
+              entity="switch.fake_switch"
+              service="toggle"
+              onClick={() => {
+                console.log("clicked");
+              }}
+            >
+              SWITCH
+            </FeatureEntity>,
+          ]}
+        >
+          <Row
+            fullWidth
+            fullHeight
+            style={{
+              padding: "4rem",
+            }}
+          >
+            Showing how feature entities work by default
+          </Row>
         </CardBase>
       </Row>
     </HassConnect>

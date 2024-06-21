@@ -228,13 +228,10 @@ function _Modal({
     // is complete
     if (!open) return;
     if (timerRef.current) return;
-    timerRef.current = setTimeout(
-      () => {
-        setReady(true);
-        timerRef.current = null;
-      },
-      duration,
-    );
+    timerRef.current = setTimeout(() => {
+      setReady(true);
+      timerRef.current = null;
+    }, duration);
   }, [duration, open]);
 
   const { modal = {}, content = {}, header = {} } = animation(duration, id);
