@@ -7,7 +7,6 @@ import dts from 'vite-plugin-dts';
 import svgr from "vite-plugin-svgr";
 import { fileURLToPath } from 'node:url';
 import { extname, relative, resolve } from 'path'
-import { visualizer } from 'rollup-plugin-visualizer';
 import { glob } from 'glob'
 
 const globals = {
@@ -94,10 +93,6 @@ ${content}`
           content,
         }
       },
-    }),
-    visualizer({
-      filename: './dist/stats.html',
-      open: true,
     })
   ] satisfies PluginOption[];
   if (configEnv.mode === 'production') {
