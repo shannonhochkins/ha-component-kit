@@ -1,5 +1,5 @@
-import { LightControls, type LightControlsProps } from "@components";
 import type { EntityName, FilterByDomain } from "@hakit/core";
+import { LightControls, LightControlsProps } from "../../../../Shared/Entity/Light/LightControls";
 export interface ModalLightControlsProps extends LightControlsProps {
   entity: FilterByDomain<EntityName, "light">;
 }

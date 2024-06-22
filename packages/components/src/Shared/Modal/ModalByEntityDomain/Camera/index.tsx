@@ -1,4 +1,5 @@
-import { CameraStream, Row, type CameraStreamProps } from "@components";
+import { type CameraStreamProps, CameraStream } from "../../../../Cards/CameraCard/stream";
+import { Row } from "../../../Row";
 import { isUnavailableState, localize, useEntity, type EntityName, type FilterByDomain } from "@hakit/core";
 import { useEffect } from "react";
 export interface ModalCameraControlsProps extends CameraStreamProps {

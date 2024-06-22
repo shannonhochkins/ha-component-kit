@@ -17,5 +17,6 @@ export * from "./entity";
 export * from "./string";
 export * from "./number";
 export * from "./date";
+export * from "./time/time-ago";
 export * from "./computeAttributeDisplay";
 export * from "./computeStateDisplay";

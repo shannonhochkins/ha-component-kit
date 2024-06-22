@@ -1,5 +1,6 @@
-import { CoverControls, Row, type CoverControlsProps } from "@components";
 import type { EntityName, FilterByDomain } from "@hakit/core";
+import { CoverControls, CoverControlsProps } from "../../../Entity/Cover/CoverControls";
+import { Row } from "../../../Row";
 export interface ModalCoverControlsProps extends CoverControlsProps {
   entity: FilterByDomain<EntityName, "cover">;
 }

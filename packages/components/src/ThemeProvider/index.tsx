@@ -76,6 +76,48 @@ const ThemeControlsBox = styled(motion.div)`
   z-index: 1;
 `;
 
+const INFO_COLORS = {
+  errorColor: [219, 68, 55],
+  warningColor: [255, 166, 0],
+  successColor: [67, 160, 71],
+  infoColor: [3, 155, 229],
+};
+
+const alphas = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
+
+const getLuminance = (rgb: number[], alpha: number): number => {
+  const [r, g, b] = rgb.map((value) => {
+    const channel = (value / 255) * alpha;
+    return channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+
+const getContrastColor = (rgb: number[], alpha: number): string => {
+  const luminance = getLuminance(rgb, alpha); // Scale luminance to 0-255 range
+  return luminance > 0.3 ? "rgba(0, 0, 0, 1)" : "rgba(255, 255, 255, 1)";
+};
+
+const generateInfoColors = (): string => {
+  return Object.entries(INFO_COLORS)
+    .map(([name, rgb]) =>
+      alphas
+        .map((alpha) => {
+          const suffix = alpha < 1 ? `-a${alpha * 10}` : "";
+          const varName = `--ha-${name
+            .replace(/([A-Z])/g, "-$1")
+            .toLowerCase()
+            .replace("-color", "")}-color${suffix}`;
+          const contrastVarName = `${varName}-contrast`;
+          const rgba = `rgba(${rgb.join(", ")}, ${alpha})`;
+          const contrastColor = getContrastColor(rgb, alpha);
+          return `${varName}: ${rgba};\n${contrastVarName}: ${contrastColor};`;
+        })
+        .join("\n"),
+    )
+    .join("\n");
+};
+
 // Function to generate light and dark variants
 const generateVariantVars = (variants: string[], type: "Light" | "Dark", tint: number, darkMode: boolean): string => {
   return variants
@@ -101,7 +143,6 @@ const generateVariantVars = (variants: string[], type: "Light" | "Dark", tint: n
       --ha-${variant}-s: ${saturation};
       --ha-${variant}-l: ${lightness};
       `;
-      const alphas = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
       const varStyles = alphas
         .map((alpha) => {
           const suffix = alpha < 1 ? `-a${alpha * 10}` : "";
@@ -134,7 +175,6 @@ const generateAccentVars = (variants: string[], tint: number, darkMode: boolean)
         --ha-${variant}-s: calc(var(--mtc-s-${variant}) * 100%);
         --ha-${variant}-l: calc(var(--mtc-l-${variant}) * 100%);
       `;
-      const alphas = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
       const varStyles = alphas
         .map((alpha) => {
           const suffix = alpha < 1 ? `-a${alpha * 10}` : "";
@@ -161,7 +201,6 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
   const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
   const offsetBackground = darkMode ? baseLightness + DIFF * 5 : baseLightness - DIFF * 5;
 
-  const alphas = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
   const varStyles = alphas
     .map((alpha) => {
       const suffix = alpha < 1 ? `-a${alpha * 10}` : "";
@@ -174,6 +213,7 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
     .join("");
 
   return `
+    ${generateInfoColors()}
     ${lightVars}
     --ha-500-h: var(--ha-h);
     --ha-500-s: calc(var(--ha-s) * 1%);
@@ -377,7 +417,7 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
       )}
       {includeThemeControls && (
         <Modal
-          description="The theme is entirely calculated using css formulas, no javascript!"
+          description="This interface showcases how the colors will behave and provides easy to access css variables"
           id="theme-controls"
           open={open}
           title={localize("theme")}
