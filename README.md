@@ -71,6 +71,7 @@ There's a [Home Assistant Addon](ADDON.md) available which will serve your dashb
 
 
 ### Supported Cards
+- [NEW AlarmCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-alarmcard--docs)
 - [AreaCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-areacard--docs)
 - [ButtonCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-buttoncard--docs)
 - [ClimateCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-climatecard--docs)
