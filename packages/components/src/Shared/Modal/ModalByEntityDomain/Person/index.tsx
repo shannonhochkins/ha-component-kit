@@ -1,5 +1,5 @@
-import { PersonControls, type PersonControlsProps } from "@components";
 import type { EntityName, FilterByDomain } from "@hakit/core";
+import { PersonControls, PersonControlsProps } from "../../../Entity/Person/PersonControls";
 
 export interface ModalPersonControlsProps extends PersonControlsProps {
   entity: FilterByDomain<EntityName, "person">;

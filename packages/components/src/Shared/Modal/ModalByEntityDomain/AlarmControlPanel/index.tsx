@@ -1,4 +1,4 @@
-import { AlarmControls, type AlarmControlsProps } from "@components";
+import { AlarmControls, type AlarmControlsProps } from "../../../../Shared/Entity/Alarm/AlarmControls";
 
 export type ModalAlarmControlsProps = AlarmControlsProps;
 

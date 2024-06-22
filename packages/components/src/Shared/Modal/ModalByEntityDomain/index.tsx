@@ -95,6 +95,10 @@ export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<Ex
   hideAttributes?: boolean;
   hideLogbook?: boolean;
   stateTitle?: ReactNode;
+  /** There's currently a few default header actions, this will allow you to place your own actions in a different order @default 'start' */
+  headerActionsPosition?: "start" | "middle" | "end";
+  /** This will hide the default lazy component thats loaded as the children of the modal if you want to create your own */
+  hideDefaultLayout?: boolean;
 } & OptionalChildrenModalProps;
 
 function getLazyModal<D extends keyof ModalPropsByDomain>(
@@ -120,7 +124,10 @@ export function ModalByEntityDomain<E extends EntityName>({
   hideState,
   hideUpdated,
   hideAttributes,
+  headerActionsPosition = "start",
+  headerActions,
   hideLogbook = false,
+  hideDefaultLayout = false,
   children,
   ...rest
 }: ModalByEntityDomainProps<E>) {
@@ -164,7 +171,7 @@ export function ModalByEntityDomain<E extends EntityName>({
     return lazy(modal);
   }, [domain]);
   const defaultChildren = useMemo(() => {
-    if (!LazyModalComponent) return null;
+    if (!LazyModalComponent || hideDefaultLayout) return null;
     const fallback = (
       <Column fullWidth fullHeight>
         <StyledIcon icon="eos-icons:three-dots-loading" className="preloader-loading-icon" />
@@ -194,13 +201,12 @@ export function ModalByEntityDomain<E extends EntityName>({
         />
       </Suspense>
     );
-  }, [entity, LazyModalComponent, childProps, onStateChange, domain, modalProps.open]);
+  }, [entity, hideDefaultLayout, LazyModalComponent, childProps, onStateChange, domain, modalProps.open]);
 
   const stateRef = useRef<HTMLDivElement>(null);
   const titleValue = useMemo(() => {
     return modalProps.stateTitle ?? startCase(lowerCase(`${_entity.state}${_entity.attributes.unit_of_measurement ?? ""}`));
   }, [_entity, modalProps.stateTitle]);
-
   return (
     <Modal
       {...modalProps}
@@ -216,6 +222,7 @@ export function ModalByEntityDomain<E extends EntityName>({
                 onClick={() => setShowLogbook(false)}
               />
             )}
+            {headerActionsPosition === "start" && headerActions && headerActions()}
             {!hideLogbook && !showLogbook && (
               <FabCard
                 title={localize("logbook")}
@@ -225,9 +232,11 @@ export function ModalByEntityDomain<E extends EntityName>({
                 onClick={() => setShowLogbook(true)}
               />
             )}
+            {headerActionsPosition === "middle" && headerActions && headerActions()}
             {device && device.device_id && (
               <FabCard title={localize("open_device_settings")} tooltipPlacement="left" icon="mdi:cog" size={30} onClick={openDevice} />
             )}
+            {headerActionsPosition === "end" && headerActions && headerActions()}
             {(!hideLogbook || (device && device.device_id)) && <Separator />}
           </>
         );

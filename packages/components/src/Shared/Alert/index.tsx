@@ -19,7 +19,6 @@ const StyledAlert = styled.div`
     right: 0;
     bottom: 0;
     left: 0;
-    opacity: 0.12;
     pointer-events: none;
     content: "";
     border-radius: 6px;
@@ -68,31 +67,31 @@ const StyledAlert = styled.div`
   }
 
   &.info > .icon {
-    color: var(--ha-alert-info-color);
+    color: var(--ha-info-color);
   }
   &.info::after {
-    background-color: var(--ha-alert-info-color);
+    background-color: var(--ha-info-color-a1);
   }
 
   &.warning > .icon {
-    color: var(--ha-alert-warning-color);
+    color: var(--ha-warning-color);
   }
   &.warning::after {
-    background-color: var(--ha-alert-warning-color);
+    background-color: var(--ha-warning-color-a1);
   }
 
   &.error > .icon {
-    color: var(--ha-alert-error-color);
+    color: var(--ha-error-color);
   }
   &.error::after {
-    background-color: var(--ha-alert-error-color);
+    background-color: var(--ha-error-color-a1);
   }
 
   &.success > .icon {
-    color: var(--ha-alert-success-color);
+    color: var(--ha-success-color);
   }
   &.success::after {
-    background-color: var(--ha-alert-success-color);
+    background-color: var(--ha-success-color-a1);
   }
 `;
 

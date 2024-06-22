@@ -3,6 +3,12 @@
 - NEW - [AlarmCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-alarmcard--docs)  - A new card to interact with alarm entities, this has a custom popup with keypad control and automate `features` added to the code when a `defaultCode` is present. [issue](https://github.com/shannonhochkins/ha-component-kit/issues/148)
 - NEW - [AlarmControls](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-shared-entity-alarm-alarmcontrols--docs) component to use independently of the AlarmCard
 - NEW - MULTILINGAL - The entire codebase has been refactored to use the new `localize` method from `@hakit/core` which will display previously hard coded values in english, as well as much more in the language of your choice, this can be configured by simply changing the language in your home assistant instance, or by providing it to HassConnect. As values may change in your language of choice, the layouts may also change to what you're expecting - please report any issues. [issue](https://github.com/shannonhochkins/ha-component-kit/issues/135)
+- NEW/BREAKING - ThemeProvider - There's now variations for rgba values for the `-ha-info-color` and other success/warning/error colors, this is also a breaking change as the variables were renamed slightly [issue](https://github.com/shannonhochkins/ha-component-kit/issues/152)
+```
+  background-color: var(--ha-alert-info-color);
+   <--> this becomes -->
+  background-color: var(--ha-info-color);
+```
 - NEW - CardBase - This is the component that every other Card extends, it has had some great upgrades
   - new `features` prop that accepts `FeatureEntity` or `FeatureEntity[]` as a type to render actions as part of the "footer" of the card, this has already been introduced into the ClimateCard, AlarmCard & CameraCard, this is similar in terms of functionality to what Home Assistant provided for its "features"
   - new `relatedEntities` prop that accepts `ReleatedEntity` or `ReleatedEntity[]` that has pre-calculated zones for position which will just overlay ontop of the card container, ie if the position prop is set to `right top` it will position the element in the right top most part of the container, the AlarmCard demo shows this through the use of the the battery icon, useful to display the battery level of an entity in a separate entity card.
@@ -68,6 +74,7 @@ BREAKING - ButtonCard - swapped title and description on ButtonCard, it's always
 - NEW - `computeAttributeDisplay` a function that will convert a domain name into a localized title
 - NEW - `computeStateDisplay` - a function that will format the values of the state depending on the entity attributes and entity type.
 - NEW - `formatDate`, `formatTime`, `formatDateTime` - helper functions to convert a time value based on the config of the home assistant instance.
+- NEW - `timeAgo` - exposing `timeAgo` function that displays the relative time from now from a date string, ie 8 hours ago, 2 days ago etc.
 ## create-hakit
 - NEW - package will new prefer the `hassToken` option as a default and will prompt you to enter the token if you don't provide it.
 ## Storybook
