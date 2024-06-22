@@ -97,8 +97,8 @@ function Render(args?: Args) {
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" fullWidth>
         <ButtonCard {...args} />
-        <ButtonCard {...args} entity="light.fake_light_1" service="toggle" defaultLayout="slim" />
-        <ButtonCard {...args} entity="cover.cover_position_only" service="toggle" defaultLayout="slim-vertical" />
+        <ButtonCard {...args} entity="light.fake_light_1" service="toggle" layoutType="slim" />
+        <ButtonCard {...args} entity="cover.cover_position_only" service="toggle" layoutType="slim-vertical" />
         <ButtonCard service="toggle" entity="light.fake_light_1" />
       </Column>
     </HassConnect>

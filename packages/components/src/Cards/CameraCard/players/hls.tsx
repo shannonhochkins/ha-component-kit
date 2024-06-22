@@ -1,5 +1,5 @@
 import type HlsType from "hls.js";
-import { type ErrorData } from "hls.js";
+import type { ErrorData } from "hls.js";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { Alert } from "@components";
 import { VideoPlayer, type VideoState } from "./";

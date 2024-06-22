@@ -1,16 +1,25 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
-import { ButtonBarButton, ButtonBar, Column, FabCard, Row, ButtonBarButtonProps } from "@components";
-import { useEntity, type HassEntityWithService, type EntityName, batteryIconByLevel } from "@hakit/core";
+import {
+  ButtonGroup,
+  ButtonGroupButton,
+  Column,
+  FabCard,
+  Row,
+  type ButtonGroupProps,
+  type ButtonGroupButtonProps,
+  useBreakpoint,
+} from "@components";
+import { useEntity, type HassEntityWithService, type EntityName, batteryIconByLevel, localize } from "@hakit/core";
 import { useDebounce } from "react-use";
 import type { MotionProps } from "framer-motion";
-import { icons } from "./shared";
+import { getToolbarActions } from "./shared";
 import { VacuumImage } from "./VacuumImage";
 
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 
-interface Shortcut extends Omit<ButtonBarButtonProps<EntityName>, "onClick"> {
+interface Shortcut extends Partial<Omit<ButtonGroupButtonProps<EntityName>, "onClick">> {
   onClick: (entity: HassEntityWithService<"vacuum">) => void;
 }
 export interface VacuumControlsProps extends Extendable {
@@ -29,10 +38,13 @@ export interface VacuumControlsProps extends Extendable {
   hideToolbar?: boolean;
   /** change the default custom image to display @default vacuum.png */
   customImage?: string;
+  /** the text/node to render when locating @default 'Locate...' in preferred language */
+  locatingNode?: React.ReactNode;
+  /** additional props to pass to the button-group */
+  buttonGroupProps?: Omit<ButtonGroupProps, "children">;
 }
 
 const VacuumSize = styled.div`
-  aspect-ratio: 1/1.7;
   height: 100%;
   max-height: 45vh;
   min-height: 300px;
@@ -86,185 +98,53 @@ interface VacuumToolbarProps {
   shortcuts?: Shortcut[];
   /** a callback when the locate button is clicked */
   onLocate?: () => void;
+  /** additional props to pass to the button-group */
+  buttonGroupProps?: Omit<ButtonGroupProps, "children">;
 }
 
-function Shortcuts({
+export function VacuumToolbar({
+  entity: _entity,
   shortcuts,
-  entity,
-}: {
-  shortcuts?: Shortcut[];
-  entity: HassEntityWithService<"vacuum">;
-}): React.ReactElement<typeof ButtonBarButton>[] {
-  return (shortcuts ?? [])
-    .concat()
-    .filter((x) => !!x)
-    .map(({ onClick, active, ...rest }, index) => (
-      <ButtonBarButton
-        size={35}
-        iconColor={active ? "var(--ha-300)" : undefined}
-        rippleProps={{
-          preventPropagation: true,
-        }}
-        key={index}
-        active={active}
-        onClick={() => onClick(entity)}
-        {...rest}
-      />
-    )) as React.ReactElement<typeof ButtonBarButton>[];
-}
-
-export function VacuumToolbar({ entity: _entity, shortcuts, onLocate, hideToolbar = false }: VacuumToolbarProps) {
+  onLocate,
+  hideToolbar = false,
+  buttonGroupProps,
+  ...rest
+}: VacuumToolbarProps) {
   const entity = useEntity(_entity);
+  const device = useBreakpoint();
 
   if (hideToolbar) {
     return null;
   }
-  switch (entity.state) {
-    case "on":
-    case "auto":
-    case "spot":
-    case "edge":
-    case "single_room":
-    case "mowing":
-    case "edgecut":
-    case "cleaning": {
-      return (
-        <Row gap="0.5rem">
-          <ButtonBar>
-            <ButtonBarButton
-              size={35}
-              rippleProps={{
-                preventPropagation: true,
-              }}
-              title="Start"
-              icon={icons["pause"]}
-              onClick={() => entity.service.pause()}
-            />
-            <ButtonBarButton
-              size={35}
-              rippleProps={{
-                preventPropagation: true,
-              }}
-              title="Stop"
-              icon={icons["stop"]}
-              onClick={() => entity.service.stop()}
-            />
-            <ButtonBarButton
-              size={35}
-              rippleProps={{
-                preventPropagation: true,
-              }}
-              title="Return to base"
-              icon={icons["returning"]}
-              onClick={() => entity.service.returnToBase()}
-            />
-            <Shortcuts shortcuts={shortcuts} entity={entity} />
-          </ButtonBar>
-        </Row>
-      );
-    }
-
-    case "paused": {
-      return (
-        <Row gap="0.5rem">
-          <ButtonBar>
-            <ButtonBarButton
-              size={35}
-              rippleProps={{
-                preventPropagation: true,
-              }}
-              title="Start"
-              icon={icons["on"]}
-              onClick={() => entity.service.start()}
-            />
-            <ButtonBarButton
-              size={35}
-              rippleProps={{
-                preventPropagation: true,
-              }}
-              title="Return to base"
-              icon={icons["returning"]}
-              onClick={() => entity.service.returnToBase()}
-            />
-            <Shortcuts shortcuts={shortcuts} entity={entity} />
-          </ButtonBar>
-        </Row>
-      );
-    }
-
-    case "returning": {
-      return (
-        <Row gap="0.5rem">
-          <ButtonBar>
-            <ButtonBarButton
-              size={35}
-              rippleProps={{
-                preventPropagation: true,
-              }}
-              title="Play"
-              icon={icons["on"]}
-              onClick={() => entity.service.start()}
-            />
-            <ButtonBarButton
-              size={35}
-              rippleProps={{
-                preventPropagation: true,
-              }}
-              title="Pause"
-              icon={icons["pause"]}
-              onClick={() => entity.service.pause()}
-            />
-            <Shortcuts shortcuts={shortcuts} entity={entity} />
-          </ButtonBar>
-        </Row>
-      );
-    }
-    case "docked":
-    case "idle":
-    default: {
-      return (
-        <Row gap="0.5rem">
-          <ButtonBar>
-            <ButtonBarButton
-              size={35}
-              rippleProps={{
-                preventPropagation: true,
-              }}
-              title="Play"
-              icon={icons["on"]}
-              onClick={() => entity.service.start()}
-            />
-            <ButtonBarButton
-              size={35}
-              rippleProps={{
-                preventPropagation: true,
-              }}
-              title="Locate"
-              icon={"mdi:map-marker"}
-              onClick={() => {
-                entity.service.locate();
-                if (typeof onLocate === "function") {
-                  onLocate();
-                }
-              }}
-            />
-            {entity.state === "idle" && (
-              <ButtonBarButton
-                size={35}
-                rippleProps={{
-                  preventPropagation: true,
-                }}
-                title="Return to base"
-                icon={icons["returning"]}
-                onClick={() => entity.service.returnToBase()}
-              />
-            )}
-            <Shortcuts shortcuts={shortcuts} entity={entity} />
-          </ButtonBar>
-        </Row>
-      );
-    }
-  }
+  const actions = getToolbarActions({ entity, shortcuts, onLocate });
+  return (
+    <Row gap="0.5rem" {...rest}>
+      <ButtonGroup
+        wrap="nowrap"
+        alignItems="center"
+        justifyContent="center"
+        orientation="horizontal"
+        thickness={device.xxs ? 80 : 80}
+        maintainAspectRatio
+        {...buttonGroupProps}
+      >
+        {actions.map((action, index) => (
+          <ButtonGroupButton
+            key={index}
+            iconProps={{
+              color: action?.active ? "var(--ha-300)" : undefined,
+            }}
+            rippleProps={{
+              preventPropagation: true,
+            }}
+            // @ts-expect-error - cannot assume the types at this level because of how generics work
+            onClick={(_, event) => action?.onClick?.(entity, event)}
+            {...action}
+          />
+        ))}
+      </ButtonGroup>
+    </Row>
+  );
 }
 
 /** The VacuumControls component can be used in isolation of the VacuumCard and will display the some information that's displayed
@@ -277,6 +157,7 @@ export function VacuumControls({
   hideToolbar = false,
   customImage,
   shortcuts,
+  buttonGroupProps,
   ...rest
 }: VacuumControlsProps) {
   const entity = useEntity(_entity);
@@ -330,7 +211,7 @@ export function VacuumControls({
                       });
                     }}
                   />
-                  <div>Fan Mode</div>
+                  <div>{localize("fan_speed")}</div>
                   {internalFanSpeed}
                 </ModeColumn>
               )}
@@ -342,13 +223,13 @@ export function VacuumControls({
               {shouldShowBatteryLevel && (
                 <ModeColumn gap="0.5rem">
                   <FabCard size={40} disabled={isDocked} title={`${battery_level}%`} icon={batteryIconByLevel(battery_level)} />
-                  <div>Battery Level</div>
+                  <div>{localize("battery_level")}</div>
                   {`${battery_level}%`}
                 </ModeColumn>
               )}
             </Row>
           )}
-          <VacuumToolbar entity={_entity} hideToolbar={hideToolbar} shortcuts={shortcuts} />
+          <VacuumToolbar entity={_entity} hideToolbar={hideToolbar} shortcuts={shortcuts} buttonGroupProps={buttonGroupProps} />
         </Column>
       </VacuumSize>
     </Column>

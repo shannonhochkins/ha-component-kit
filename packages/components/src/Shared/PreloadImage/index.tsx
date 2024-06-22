@@ -15,7 +15,7 @@ const PreloaderBackground = styled.div`
   right: 0;
   bottom: 0;
   left: 0;
-  transitionproperty: background-image, opacity;
+  transition-property: background-image, opacity;
   opacity: 0;
 `;
 const StyledIcon = styled(Icon)`

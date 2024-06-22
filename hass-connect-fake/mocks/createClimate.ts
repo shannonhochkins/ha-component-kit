@@ -5,7 +5,7 @@ const now = new Date();
 
 const defaults = {
   entity_id: "climate.air_conditioner",
-    state: "off",
+    state: "heat",
     attributes: {
       hvac_modes: ["fan_only", "dry", "cool", "heat", "heat_cool", "off"],
       min_temp: 7,
@@ -15,7 +15,7 @@ const defaults = {
       current_temperature: 24,
       temperature: 25,
       fan_mode: "High",
-      hvac_action: "off",
+      hvac_action: "heat",
       friendly_name: "Air Conditioner",
       supported_features: 9,
     },

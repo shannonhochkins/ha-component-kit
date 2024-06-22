@@ -65,8 +65,9 @@ const BinBox = styled(Column)`
 `;
 
 const Title = styled.div`
-  font-size: 1rem;
-  color: var(--ha-S50-contrast);
+  color: var(--ha-S100-contrast);
+  font-size: 0.9rem;
+  font-weight: bold;
 `;
 const Description = styled.div`
   font-size: 0.8rem;

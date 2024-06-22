@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, ComponentPropsWithoutRef } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
+import { SVG_HEIGHT, SVG_WIDTH } from "./constants";
 // Get the value at the end of a path in a nested object
 const midPoint = (_Ax: number, _Ay: number, _Bx: number, _By: number): number[] => {
   const _Zx = (_Ax - _Bx) / 2 + _Bx;
@@ -66,7 +67,7 @@ export function SvgGraph({ coordinates, strokeWidth = 5, cssStyles, className, .
       className={`${className ?? ""} svg-graph`}
       width="100%"
       height="100%"
-      viewBox="0 0 500 100"
+      viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
       css={css`
         ${cssStyles ?? ""}
       `}

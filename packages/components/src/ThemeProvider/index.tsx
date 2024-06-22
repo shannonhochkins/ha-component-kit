@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, memo } from "react";
 import { css, Global } from "@emotion/react";
 import { CSSInterpolation } from "@emotion/serialize";
 import styled from "@emotion/styled";
-import { isEqual, merge } from "lodash";
+import { merge } from "lodash";
 import { theme as defaultTheme } from "./theme";
 import type { ThemeParams } from "./theme";
 import { convertToCssVars } from "./helpers";
@@ -10,7 +10,7 @@ import { useBreakpoint, fallback, FabCard, Modal, type BreakPoints } from "@comp
 import { ErrorBoundary } from "react-error-boundary";
 import { motion } from "framer-motion";
 import { LIGHT, DARK, ACCENT, DEFAULT_START_LIGHT, DEFAULT_START_DARK, DIFF, DEFAULT_THEME_OPTIONS } from "./constants";
-import { useHass, type SupportedComponentOverrides } from "@hakit/core";
+import { localize, useHass, type SupportedComponentOverrides } from "@hakit/core";
 import { ThemeControls } from "./ThemeControls";
 import type { ThemeControlsProps } from "./ThemeControls";
 import { generateColumnBreakpoints } from "./breakpoints";
@@ -87,9 +87,10 @@ const generateVariantVars = (variants: string[], type: "Light" | "Dark", tint: n
       const lightness = isLight
         ? `calc(((var(--ha-l) - var(--mtc-light-l)) * var(--mtc-l-${variant}) + var(--mtc-light-l)) * 1%)`
         : `calc(((1 - var(--mtc-l-${variant})) * var(--ha-l) * var(--ha-l) / 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%)`;
-      const contrast = isLight
-        ? `hsl(0, 0%, calc(((((1 - var(--mtc-l-${variant})) * 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)))`
-        : `hsl(0, 0%, calc(((((1 - var(--mtc-l-${variant})) * var(--ha-l) * var(--ha-l) / 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)))`;
+      const contrast = (alpha: number) =>
+        isLight
+          ? `hsla(0, 0%, calc(((((1 - var(--mtc-l-${variant})) * 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)), ${alpha})`
+          : `hsla(0, 0%, calc(((((1 - var(--mtc-l-${variant})) * var(--ha-l) * var(--ha-l) / 100 + var(--mtc-l-${variant}) * var(--ha-l)) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)), ${alpha})`;
 
       const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
       const indexOffset = !isLight ? LIGHT.length + 1 : 0;
@@ -106,7 +107,7 @@ const generateVariantVars = (variants: string[], type: "Light" | "Dark", tint: n
           const suffix = alpha < 1 ? `-a${alpha * 10}` : "";
           return `
         --ha-${variant}${suffix}: hsla(var(--ha-${variant}-h), var(--ha-${variant}-s), var(--ha-${variant}-l), ${alpha});
-        --ha-${variant}${suffix}-contrast: ${contrast};
+        --ha-${variant}${suffix}-contrast: ${contrast(alpha)};
         --ha-S${variant}${suffix}: hsla(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), ${offsetBackground}%, ${alpha});
         --ha-S${variant}${suffix}-contrast: hsla(var(--ha-h), calc(var(--ha-${variant}-s) * ${tint}), calc(((100% - ${offsetBackground}%) + ${indexOffset} * 10%)), ${alpha});`;
         })
@@ -160,15 +161,25 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
   const baseLightness = darkMode ? DEFAULT_START_LIGHT : DEFAULT_START_DARK;
   const offsetBackground = darkMode ? baseLightness + DIFF * 5 : baseLightness - DIFF * 5;
 
+  const alphas = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
+  const varStyles = alphas
+    .map((alpha) => {
+      const suffix = alpha < 1 ? `-a${alpha * 10}` : "";
+      return `
+      --ha-500${suffix}-contrast: hsla(0, 0%, calc(((var(--ha-l) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)), ${alpha});
+      --ha-S500${suffix}: hsla(var(--ha-h), calc(var(--ha-500-s) * ${tint}), ${offsetBackground}%, ${alpha});
+      --ha-S500${suffix}-contrast: hsla(var(--ha-h), calc(var(--ha-500-s) * ${tint}), calc(((100% - ${offsetBackground}%))), ${alpha});
+    `;
+    })
+    .join("");
+
   return `
     ${lightVars}
     --ha-500-h: var(--ha-h);
     --ha-500-s: calc(var(--ha-s) * 1%);
     --ha-500-l: calc(var(--ha-l) * 1%);
     --ha-500: var(--ha);
-    --ha-500-contrast: hsl(0, 0%, calc(((var(--ha-l) * 1%) - var(--ha-contrast-threshold, 50%)) * (-100)));
-    --ha-S500: hsl(var(--ha-h), calc(var(--ha-500-s) * ${tint}), ${offsetBackground}%);
-    --ha-S500-contrast: hsl(var(--ha-h), calc(var(--ha-500-s) * ${tint}), calc(((100% - ${offsetBackground}%))));
+    ${varStyles}
     ${darkVars}
     ${accentVars}
   `;
@@ -232,11 +243,6 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
     });
   }, [device]);
 
-  useEffect(() => {
-    const newTheme = getTheme();
-    if (isEqual(newTheme, _theme)) return;
-    setTheme(newTheme);
-  }, [_theme, c, darkMode, getTheme, h, l, s, t]);
   return (
     <EmotionProvider
       options={
@@ -308,6 +314,7 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
             box-sizing: border-box;
             scrollbar-width: thin;
             scrollbar-color: var(--ha-S500) var(--ha-S200);
+            font-family: var(--ha-font-family);
             ::-webkit-scrollbar-corner {
               background: rgba(0, 0, 0, 0.5);
             }
@@ -362,7 +369,7 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
           <FabCard
             onClick={() => setOpen(true)}
             tooltipPlacement="left"
-            title="Theme Controls"
+            title={localize("theme")}
             layoutId="theme-controls"
             icon="mdi:color"
           />
@@ -373,7 +380,7 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
           description="The theme is entirely calculated using css formulas, no javascript!"
           id="theme-controls"
           open={open}
-          title="Theme Controls"
+          title={localize("theme")}
           onClose={() => {
             setOpen(false);
           }}

@@ -1,100 +1,54 @@
 import { useMemo, useState, useCallback } from "react";
 import styled from "@emotion/styled";
-import { Row, CardBase, type CardBaseProps, type AvailableQueries, fallback } from "@components";
+import { type AvailableQueries, fallback } from "@components";
 import type { VacuumControlsProps } from "@components";
-import {
-  useHass,
-  useEntity,
-  useIconByDomain,
-  isUnavailableState,
-  useIconByEntity,
-  type EntityName,
-  type FilterByDomain,
-} from "@hakit/core";
-import { VacuumToolbar } from "../../Shared/Entity/Vacuum/VacuumControls";
+import { useHass, useEntity, localize, type EntityName, type FilterByDomain } from "@hakit/core";
 import { VacuumImage } from "../../Shared/Entity/Vacuum/VacuumControls/VacuumImage";
 import { ErrorBoundary } from "react-error-boundary";
+import { getToolbarActions } from "../../Shared/Entity/Vacuum/VacuumControls/shared";
+import { FeatureEntity } from "../CardBase/FeatureEntity";
+import { ButtonCard, type ButtonCardProps } from "../ButtonCard";
 
-const StyledVacuumCard = styled(CardBase)``;
-
-const Contents = styled.div`
-  padding: 1rem;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: space-between;
-`;
-
-const Gap = styled.div`
-  height: 20px;
-`;
-
-const LayoutBetween = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: row;
-`;
-
-const Title = styled.div`
-  color: var(--ha-secondary-color);
-  font-size: 0.7rem;
-`;
-const Icon = styled.div`
-  color: var(--ha-primary-active);
-`;
-const Description = styled.div`
-  font-size: 0.9rem;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  flex-direction: column;
-  gap: 0.5rem;
-  text-transform: capitalize;
+const StyledVacuumCard = styled(ButtonCard)`
+  .footer {
+    margin-top: 0.5rem;
+  }
 `;
 
 const StyledVacuumImage = styled(VacuumImage)`
-  width: 20%;
+  width: 100%;
 `;
 
-type OmitProperties = "title";
-export type VacuumCardProps = Omit<CardBaseProps<"div", FilterByDomain<EntityName, "vacuum">>, OmitProperties> & {
+type OmitProperties = "title" | "features";
+export type VacuumCardProps = Omit<ButtonCardProps<FilterByDomain<EntityName, "vacuum">>, OmitProperties> & {
   /** An optional override for the title */
   title?: string;
 } & VacuumControlsProps;
 
 function _VacuumCard({
   entity: _entity,
-  title: _title,
-  onClick,
   shortcuts,
   hideCurrentBatteryLevel,
   hideState = false,
   hideUpdated = false,
   hideToolbar = false,
-  disabled,
   className,
   cssStyles,
   serviceData,
   service,
   modalProps,
   customImage,
+  locatingNode,
   ...rest
 }: VacuumCardProps): JSX.Element {
   const { useStore } = useHass();
   const [flash, setFlash] = useState(false);
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const entity = useEntity(_entity);
-  const entityIcon = useIconByEntity(_entity);
-  const domainIcon = useIconByDomain("vacuum");
-  const title = _title || entity.attributes.friendly_name;
-  const isUnavailable = isUnavailableState(entity.state);
 
   const titleValue = useMemo(() => {
-    return flash ? "Locating" : entity.attributes.status ?? title;
-  }, [entity.attributes.status, title, flash]);
+    return flash ? locatingNode ?? `${localize("locate")}...` : entity.attributes.status ?? entity.state;
+  }, [entity.attributes.status, locatingNode, entity.state, flash]);
 
   const locateFlash = useCallback(() => {
     setFlash(true);
@@ -103,15 +57,20 @@ function _VacuumCard({
     }, 2000);
   }, []);
 
+  const features = getToolbarActions({
+    entity,
+    shortcuts,
+    onLocate() {
+      locateFlash();
+    },
+  });
   return (
     <StyledVacuumCard
-      title={title ?? undefined}
-      disabled={disabled || isUnavailable}
-      onClick={onClick}
       className={`${className ?? ""} vacuum-card`}
       modalProps={{
         ...modalProps,
         stateTitle: titleValue,
+        locatingNode,
         hideCurrentBatteryLevel,
         hideState,
         hideUpdated,
@@ -125,42 +84,31 @@ function _VacuumCard({
       serviceData={serviceData}
       disableActiveState
       disableRipples
+      hideToggle
       cssStyles={`
         ${globalComponentStyle.vacuumCard ?? ""}
         ${cssStyles ?? ""}
       `}
+      icon={<StyledVacuumImage src={customImage} className={entity.state} />}
+      customRenderState={() => titleValue}
+      fabProps={{
+        style: {
+          padding: 0,
+          backgroundColor: "none",
+          width: "3rem",
+          height: "3rem",
+        },
+      }}
+      features={features.map((feature) => (
+        <FeatureEntity
+          iconProps={{
+            color: feature?.active ? "var(--ha-300)" : undefined,
+          }}
+          {...feature}
+        />
+      ))}
       {...rest}
-    >
-      <Contents>
-        <LayoutBetween>
-          <Description>
-            <Row>
-              <Icon
-                style={{
-                  marginRight: "1rem",
-                }}
-              >
-                {entityIcon || domainIcon}
-              </Icon>{" "}
-              {title} - {titleValue}
-            </Row>
-            {!hideUpdated && <Title>{entity.custom.relativeTime}</Title>}
-          </Description>
-          <StyledVacuumImage src={customImage} className={entity.state} />
-        </LayoutBetween>
-        <Gap />
-        <Row gap="0.5rem" justifyContent="space-between">
-          <VacuumToolbar
-            entity={_entity}
-            hideToolbar={hideToolbar}
-            shortcuts={shortcuts}
-            onLocate={() => {
-              locateFlash();
-            }}
-          />
-        </Row>
-      </Contents>
-    </StyledVacuumCard>
+    />
   );
 }
 

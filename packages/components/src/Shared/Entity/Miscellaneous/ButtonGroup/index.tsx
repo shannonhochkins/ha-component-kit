@@ -1,42 +1,45 @@
-import { ReactElement, Children, isValidElement, cloneElement } from "react";
+import { ReactElement, Children, isValidElement, cloneElement, CSSProperties, useMemo } from "react";
 import styled from "@emotion/styled";
 import { Row, fallback, ButtonGroupButton, type RowProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
-const ButtonGroupParent = styled.div<{
-  thickness: number;
-}>`
-  --ha-control-button-group-spacing: 12px;
+const ButtonGroupParent = styled(Row)<
+  {
+    thickness: number;
+  } & RowProps
+>`
   --ha-control-button-group-thickness: ${(props) => props.thickness}px;
   width: auto;
-  display: flex;
-  gap: var(--ha-control-button-group-spacing);
-  &.reverse {
-    flex-direction: row-reverse;
+  &:not(.maintain-aspect-ratio) {
+    > * {
+      flex: 1;
+      height: 100%;
+      width: 100%;
+    }
   }
-  &:not(.reverse) {
-    flex-direction: row;
+
+  &.maintain-aspect-ratio {
+    > * {
+      flex-grow: 0;
+    }
   }
-  > * {
-    flex: 1;
-    height: 100%;
-    width: 100%;
-  }
+
   &:not(.vertical) {
     height: var(--ha-control-button-group-thickness);
-    max-width: 420px;
-    min-width: 320px;
+    &.maintain-aspect-ratio {
+      > * {
+        height: 100%;
+        width: var(--ha-control-button-group-thickness);
+      }
+    }
   }
   &.vertical {
     width: var(--ha-control-button-group-thickness);
-    height: 45vh;
-    max-height: 320px;
-    min-height: 200px;
-    &.reverse {
-      flex-direction: column-reverse;
-    }
-    &:not(.reverse) {
-      flex-direction: column;
+    &.maintain-aspect-ratio {
+      > * {
+        width: 100%;
+        height: var(--ha-control-button-group-thickness);
+      }
     }
   }
 `;
@@ -51,9 +54,23 @@ export interface ButtonGroupProps extends RowProps {
   thickness?: number;
   /** This will only accept ButtonGroupButton as a child component */
   children: ReactElement<typeof ButtonGroupButton> | ReactElement<typeof ButtonGroupButton>[];
+  /** The gap between the buttons  @default '1rem' */
+  gap?: CSSProperties["gap"];
+  /** should the buttons maintain their aspect ratio, disabling this you'll need to control your own dimensions @default true */
+  maintainAspectRatio?: boolean;
 }
 
-function _ButtonGroup({ key, orientation = "vertical", reverse = false, thickness = 100, children, ...rest }: ButtonGroupProps) {
+function _ButtonGroup({
+  key,
+  orientation = "vertical",
+  reverse = false,
+  thickness = 100,
+  children,
+  className,
+  gap = "1rem",
+  maintainAspectRatio = true,
+  ...rest
+}: ButtonGroupProps) {
   const childrenWithKeys = Children.map(children, (child, index) => {
     if (isValidElement(child)) {
       return cloneElement(child, {
@@ -62,19 +79,38 @@ function _ButtonGroup({ key, orientation = "vertical", reverse = false, thicknes
     }
     return child;
   });
+
+  const _classes = useMemo(() => {
+    return [
+      "button-group-parent",
+      className,
+      maintainAspectRatio ? "maintain-aspect-ratio" : "",
+      reverse ? "reverse" : "",
+      orientation === "vertical" ? "vertical" : "",
+    ]
+      .filter((x) => !!x)
+      .join(" ");
+  }, [maintainAspectRatio, className, reverse, orientation]);
+  const flexDirection = useMemo(() => {
+    if (reverse) {
+      return orientation === "vertical" ? "column-reverse" : "row-reverse";
+    }
+    return orientation === "vertical" ? "column" : "row";
+  }, [reverse, orientation]);
   return (
-    <Row
+    <ButtonGroupParent
       key={key}
       {...rest}
-      gap="1rem"
       style={{
-        flexDirection: orientation === "vertical" ? "row" : "column",
+        ...(rest.style || {}),
+        flexDirection,
       }}
+      gap={gap}
+      thickness={thickness}
+      className={_classes}
     >
-      <ButtonGroupParent thickness={thickness} className={`${reverse ? "reverse" : ""} ${orientation === "vertical" ? "vertical" : ""}`}>
-        {childrenWithKeys}
-      </ButtonGroupParent>
-    </Row>
+      {childrenWithKeys}
+    </ButtonGroupParent>
   );
 }
 

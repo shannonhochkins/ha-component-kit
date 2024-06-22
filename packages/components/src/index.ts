@@ -12,10 +12,17 @@ export {
 } from "./ThemeProvider/breakpoints";
 // media query helpers
 export { useBreakpoint } from "./hooks/useBreakpoint";
+// TextField component
+export { TextField, type TextFieldProps } from "./Shared/Form/TextField";
 // the base card component
 export { CardBase, type CardBaseProps } from "./Cards/CardBase";
+// related entities to use through CardBase components
+export { RelatedEntity, type RelatedEntityProps } from "./Cards/CardBase/RelatedEntity";
+// features similar to home assistants feature capabilities, this will create a ButtonBar group at the bottom of the card
+export { FeatureEntity, type FeatureEntityProps } from "./Cards/CardBase/FeatureEntity";
 // tooltip
 export { Tooltip, type TooltipProps } from "./Shared/Tooltip";
+export { AlarmCard, type AlarmCardProps } from "./Cards/AlarmCard";
 // tooltip
 export { RangeSlider, type RangeSliderProps } from "./Shared/RangeSlider";
 // Ripples
@@ -48,19 +55,8 @@ export { GarbageCollectionCard, type GarbageCollectionCardProps, type GarbageCol
 export { TimeCard, type TimeCardProps } from "./Cards/TimeCard";
 // AreaCard
 export { AreaCard, type AreaCardProps } from "./Cards/AreaCard";
-// ts-ignore
-import { AreaCard as ActualAreaCard, type AreaCardProps as ActualAreaCardProps } from "./Cards/AreaCard";
 // VacuumCard
 export { VacuumCard, type VacuumCardProps } from "./Cards/VacuumCard";
-
-/**
- * @deprecated RoomCard has been renamed to AreaCard. Please use {@link AreaCard} instead.
- */
-export const RoomCard = ActualAreaCard;
-/**
- * @deprecated RoomCardProps has been renamed to AreaCardProps. Please use {@link AreaCardProps} instead.
- */
-export type RoomCardProps = ActualAreaCardProps;
 // picture card
 export { PictureCard, type PictureCardProps } from "./Cards/PictureCard";
 // FabCard

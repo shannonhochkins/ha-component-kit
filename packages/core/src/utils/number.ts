@@ -1,3 +1,37 @@
+import { HassEntityAttributeBase, HassEntity } from "home-assistant-js-websocket";
+import { EntityRegistryDisplayEntry } from "@typings";
+
+/**
+ * Checks if the current entity state should be formatted as an integer based on the `state` and `step` attribute and returns the appropriate `Intl.NumberFormatOptions` object with `maximumFractionDigits` set
+ * @param entityState The state object of the entity
+ * @returns An `Intl.NumberFormatOptions` object with `maximumFractionDigits` set to 0, or `undefined`
+ */
+export const getNumberFormatOptions = (
+  entityState?: HassEntity,
+  entity?: EntityRegistryDisplayEntry,
+): Intl.NumberFormatOptions | undefined => {
+  const precision = entity?.display_precision;
+  if (precision != null) {
+    return {
+      maximumFractionDigits: precision,
+      minimumFractionDigits: precision,
+    };
+  }
+  if (Number.isInteger(Number(entityState?.attributes?.step)) && Number.isInteger(Number(entityState?.state))) {
+    return { maximumFractionDigits: 0 };
+  }
+  return undefined;
+};
+
+/**
+ * Returns true if the entity is considered numeric based on the attributes it has
+ * @param stateObj The entity state object
+ */
+export const isNumericState = (stateObj: HassEntity): boolean => isNumericFromAttributes(stateObj.attributes);
+
+export const isNumericFromAttributes = (attributes: HassEntityAttributeBase, numericDeviceClasses?: string[]): boolean =>
+  !!attributes.unit_of_measurement || !!attributes.state_class || (numericDeviceClasses || []).includes(attributes.device_class || "");
+
 /**
  * Generates default options for Intl.NumberFormat
  * @param num The number to be formatted
@@ -23,6 +57,8 @@ export const getDefaultFormatOptions = (num: string | number, options?: Intl.Num
   return defaultOptions;
 };
 
+export const round = (value: number, precision = 2): number => Math.round(value * 10 ** precision) / 10 ** precision;
+
 /**
  * Formats a number based on the user's preference with thousands separator(s) and decimal character for better legibility.
  *
@@ -38,10 +74,19 @@ export const formatNumber = (num: string | number, options?: Intl.NumberFormatOp
       return typeof input === "number" && isNaN(input);
     };
 
-  try {
-    return new Intl.NumberFormat(["en-US", "en"], getDefaultFormatOptions(num, options)).format(Number(num));
-  } catch (err) {
-    console.error(err);
-    return new Intl.NumberFormat(undefined, getDefaultFormatOptions(num, options)).format(Number(num));
+  if (!Number.isNaN(Number(num)) && num !== "") {
+    // If NumberFormat is none, use en-US format without grouping.
+    return new Intl.NumberFormat(
+      "en-US",
+      getDefaultFormatOptions(num, {
+        ...options,
+        useGrouping: false,
+      }),
+    ).format(Number(num));
   }
+
+  if (typeof num === "string") {
+    return num;
+  }
+  return `${round(num, options?.maximumFractionDigits).toString()}${options?.style === "currency" ? ` ${options.currency}` : ""}`;
 };

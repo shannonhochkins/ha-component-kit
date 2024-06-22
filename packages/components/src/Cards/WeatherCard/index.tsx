@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { useState, useEffect, useMemo, ReactNode, ReactElement, Children, isValidElement, cloneElement } from "react";
 import { useWeather, useHass, isUnavailableState, getSupportedForecastTypes, getIconByEntity } from "@hakit/core";
 import type { FilterByDomain, ModernForecastType, EntityName } from "@hakit/core";
-import { Icon } from "@iconify/react";
+import { Icon, type IconProps } from "@iconify/react";
 import { capitalize } from "lodash";
 import {
   Row,
@@ -16,7 +16,6 @@ import {
   type AvailableQueries,
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import { useResizeDetector } from "react-resize-detector";
 import { getAdditionalWeatherInformation } from "./helpers";
 import { motion } from "framer-motion";
 
@@ -33,8 +32,9 @@ const Contents = styled.div`
 
 const Title = styled.h4`
   all: unset;
+  font-family: var(--ha-font-family);
   font-size: 0.8rem;
-  color: var(--ha-S300-contrast);
+  color: var(--ha-S100-contrast);
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -42,6 +42,7 @@ const Title = styled.h4`
 
 const SubTitle = styled.h4`
   all: unset;
+  font-family: var(--ha-font-family);
   font-size: 1rem;
   color: var(--ha-S500-contrast);
   margin-top: 0.3rem;
@@ -105,6 +106,8 @@ export interface WeatherCardProps extends Omit<CardBaseProps<"div", FilterByDoma
   entity: FilterByDomain<EntityName, "weather">;
   /** override the icon displayed before the title */
   icon?: string;
+  /** the props for the icon, which includes styles for the icon */
+  iconProps?: Omit<IconProps, "icon">;
   /** override the temperature suffix that's pulled from the entity, will retrieve the temperature_unit from entity by default"  */
   temperatureSuffix?: ReactNode;
   /** include a title showing the forecast name @default true */
@@ -135,6 +138,7 @@ function _WeatherCard({
   entity,
   title,
   icon: _icon,
+  iconProps,
   temperatureSuffix,
   includeTitle = true,
   includeForecast = true,
@@ -154,12 +158,9 @@ function _WeatherCard({
   ...rest
 }: WeatherCardProps): React.ReactNode {
   const { useStore, getConfig } = useHass();
+  const [width, setWidth] = useState<number>(0);
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
-  const { width, ref: widthRef } = useResizeDetector({
-    refreshMode: "debounce",
-    refreshRate: 500,
-  });
-  const itemsToRender = Math.floor((width ?? 0) / FORECAST_ITEM_PROJECTED_WIDTH);
+  const itemsToRender = Math.floor(width / FORECAST_ITEM_PROJECTED_WIDTH);
   const [timeZone, setTimeZone] = useState<string>("UTC");
   const [type, setType] = useState<ModernForecastType>(forecastType);
   const weather = useWeather(entity, {
@@ -227,6 +228,7 @@ function _WeatherCard({
                       state: forecast.condition as string,
                     }) as string
                   }
+                  {...(iconProps ?? {})}
                 />
                 <Temperature className="temperature">
                   {forecast.temperature}
@@ -256,13 +258,19 @@ function _WeatherCard({
       // @ts-expect-error - don't know the entity name, so we can't know the service data
       serviceData={serviceData}
       className={`${className ?? ""} weather-card`}
+      resizeDetectorProps={{
+        refreshRate: 500,
+        onResize(_width) {
+          setWidth(_width ?? 0);
+        },
+      }}
       cssStyles={`
         ${globalComponentStyle?.weatherCard ?? ""}
         ${cssStyles ?? ""}
       `}
       {...rest}
     >
-      <Contents ref={widthRef}>
+      <Contents>
         {includeCurrent && !isUnavailable && (
           <Row className="row" justifyContent="space-between" fullWidth>
             <Row wrap="nowrap">

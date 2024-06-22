@@ -412,6 +412,8 @@ export default {
     fullWidth: true,
   },
 } satisfies Meta<typeof Modal>;
+
+// @ts-expect-error - fix this later
 export type ModalStory = StoryObj<typeof ButtonCard<"light.fake_light_1", "toggle">>;
 export const ModalExample: ModalStory = {
   render: Render,

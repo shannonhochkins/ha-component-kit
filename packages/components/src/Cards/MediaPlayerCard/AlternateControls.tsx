@@ -40,7 +40,9 @@ export function AlternateControls({
         <Fab
           layoutId={layoutId}
           className="speaker-group"
-          iconColor={`var(--ha-S200-contrast)`}
+          iconProps={{
+            color: `var(--ha-S200-contrast)`,
+          }}
           active={groups.length > 0}
           disabled={disabled}
           rippleProps={{
@@ -56,7 +58,9 @@ export function AlternateControls({
       {(isUnavailable || isOff) && <SmallText>{entity.state}</SmallText>}
       <Fab
         className="media-player-power"
-        iconColor={`var(--ha-S200-contrast)`}
+        iconProps={{
+          color: `var(--ha-S200-contrast)`,
+        }}
         active={!isOff && !isUnavailable}
         disabled={disabled || !supportsTurnOn || !supportsTurnOff}
         size={DEFAULT_FAB_SIZE}

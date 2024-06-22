@@ -9,3 +9,4 @@ export interface ModalPersonControlsProps extends PersonControlsProps {
 export function ModalPersonControls({ entity, mapHeight, ...props }: ModalPersonControlsProps) {
   return <PersonControls entity={entity} mapHeight={mapHeight} {...props} />;
 }
+export default ModalPersonControls;

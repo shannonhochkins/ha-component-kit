@@ -10,6 +10,7 @@ function Render(args?: Args) {
         <EntitiesCardRow {...args} entity="sensor.time" />
         <EntitiesCardRow {...args} entity="sensor.date" />
         <EntitiesCardRow {...args} entity="person.john_doe" />
+        <EntitiesCardRow {...args} entity="climate.air_conditioner" />
       </Row>
     </HassConnect>
   );

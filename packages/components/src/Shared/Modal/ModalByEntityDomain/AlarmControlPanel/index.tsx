@@ -1,13 +1,8 @@
-import { AlarmControls, Row, type AlarmControlsProps } from "@components";
-import type { EntityName, FilterByDomain } from "@hakit/core";
-export interface ModalAlarmControlsProps extends AlarmControlsProps {
-  entity: FilterByDomain<EntityName, "alarm_control_panel">;
-}
+import { AlarmControls, type AlarmControlsProps } from "@components";
+
+export type ModalAlarmControlsProps = AlarmControlsProps;
 
 export function ModalAlarmControls(props: ModalAlarmControlsProps) {
-  return (
-    <Row fullWidth>
-      <AlarmControls {...props} />
-    </Row>
-  );
+  return <AlarmControls {...props} />;
 }
+export default ModalAlarmControls;

@@ -1,4 +1,4 @@
-import { STREAM_TYPE_WEB_RTC, STREAM_TYPE_HLS, useCamera } from "@hakit/core";
+import { STREAM_TYPE_WEB_RTC, STREAM_TYPE_HLS, useCamera, localize } from "@hakit/core";
 import type { FilterByDomain, EntityName } from "@hakit/core";
 import { HlsPlayer } from "../players/hls";
 import { WebRTCPlayer } from "../players/webrtc";
@@ -33,7 +33,7 @@ export function CameraStream({
   const camera = useCamera(entity);
   const { stream, poster, mjpeg } = camera;
   if (mjpeg.shouldRenderMJPEG && mjpeg.url) {
-    return <img src={mjpeg.url} alt={`Preview of the ${camera.attributes.friendly_name ?? camera.entity_id} camera.`} />;
+    return <img src={mjpeg.url} alt={`${localize("camera_view")} "${camera.attributes.friendly_name ?? camera.entity_id}".`} />;
   }
   if (camera.attributes.frontend_stream_type === STREAM_TYPE_HLS) {
     return (

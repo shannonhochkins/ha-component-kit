@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { useEffect, useMemo, useState, useId } from "react";
 import { createPortal } from "react-dom";
-import { useHass, type EntityName } from "@hakit/core";
+import { localize, useHass, type EntityName } from "@hakit/core";
 import { Row, FabCard, fallback, mq, PreloadImage, CardBase } from "@components";
 import type { PictureCardProps, CardBaseProps, AvailableQueries } from "@components";
 import { Icon } from "@iconify/react";
@@ -56,6 +56,7 @@ const StyledAreaCard = styled(CardBase)<Partial<PictureCardProps>>`
 
 const PictureCardFooter = styled.div`
   all: unset;
+  font-family: var(--ha-font-family);
   padding: 1rem;
   color: var(--ha-500-contrast);
   background-color: var(--ha-background-opaque);
@@ -127,6 +128,7 @@ function _AreaCard({
   const idRef = id ?? _id;
   const { useStore, addRoute, getRoute } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const portalRoot = useStore((store) => store.portalRoot);
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   const [open, setOpen] = useState(false);
   const route = useMemo(() => getRoute(hash), [hash, getRoute]);
@@ -202,7 +204,7 @@ function _AreaCard({
                       {title}
                     </Row>
                     <FabCard
-                      title="Close"
+                      title={localize("close")}
                       tooltipPlacement="left"
                       icon="mdi:close"
                       onClick={() => {
@@ -215,7 +217,7 @@ function _AreaCard({
               </FullScreen>
             )}
           </AnimatePresence>,
-          document.body,
+          portalRoot ?? document.body,
           idRef,
         )}
       <StyledAreaCard

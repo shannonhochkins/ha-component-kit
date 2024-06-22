@@ -5,7 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import { Icon } from "@iconify/react";
-import { isUnavailableState, useHass, getColorByIndex } from "@hakit/core";
+import { isUnavailableState, useHass, getColorByIndex, localize } from "@hakit/core";
 import type { FilterByDomain, EntityName } from "@hakit/core";
 import { HassEntity } from "home-assistant-js-websocket";
 import { useResizeDetector } from "react-resize-detector";
@@ -476,7 +476,7 @@ function _CalendarCard({
         });
       });
       if (errors.length > 0) {
-        setError(`Error retrieving events for: "${errors.join(", ")}".`);
+        setError(`${localize("calendar_event_retrieval_error")}: "${errors.join(", ")}".`);
         successCallback([]);
       } else {
         successCallback(calEvents);
@@ -617,7 +617,7 @@ function _CalendarCard({
             </Column>
             <ButtonBar className="button-group-nav">
               <ButtonBarButton
-                title="Previous"
+                title={localize("previous")}
                 size={35}
                 disabled={loading}
                 onClick={() => {
@@ -626,7 +626,7 @@ function _CalendarCard({
                 icon="mdi:navigate-before"
               />
               <ButtonBarButton
-                title="Next"
+                title={localize("next")}
                 size={35}
                 disabled={loading}
                 onClick={() => {
@@ -639,7 +639,7 @@ function _CalendarCard({
           <Row justifyContent="flex-end">
             <ButtonBar className="button-group-views">
               <ButtonBarButton
-                title="Today"
+                title={localize("today")}
                 size={35}
                 disabled={loading}
                 onClick={() => {
@@ -647,11 +647,11 @@ function _CalendarCard({
                 }}
                 noIcon
               >
-                TODAY
+                {localize("today").toUpperCase()}
               </ButtonBarButton>
               <ButtonBarButton
                 className="monthly-toggle-view"
-                title="Monthly View"
+                title={localize("monthly")}
                 active={activeView === "dayGridMonth"}
                 size={35}
                 disabled={loading}
@@ -661,7 +661,7 @@ function _CalendarCard({
                 icon="mdi:view-module"
               />
               <ButtonBarButton
-                title="7 day View"
+                title={localize("weekly")}
                 size={35}
                 disabled={loading}
                 onClick={() => {
@@ -670,7 +670,7 @@ function _CalendarCard({
                 icon="mdi:view-week"
               />
               <ButtonBarButton
-                title="Daily View"
+                title={localize("daily")}
                 size={35}
                 disabled={loading}
                 onClick={() => {
@@ -698,7 +698,7 @@ function _CalendarCard({
           {...defaultFullCalendarConfig}
         />
       </div>
-      {loading && <StyledAlert className={"loading"} description="Loading..." />}
+      {loading && <StyledAlert className={"loading"} description={`${localize("loading")}...`} />}
       {currentEvent && (
         <Modal
           title={currentEvent.eventData.summary}
@@ -743,7 +743,7 @@ function _CalendarCard({
         </Modal>
       )}
       {error && (
-        <Alert title="Event Retrieval" type="error">
+        <Alert title={localize("calendar_event_retrieval_error")} type="error">
           {error}
         </Alert>
       )}

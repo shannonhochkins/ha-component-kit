@@ -11,3 +11,5 @@ export function ModalCoverControls(props: ModalCoverControlsProps) {
     </Row>
   );
 }
+
+export default ModalCoverControls;

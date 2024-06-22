@@ -6,17 +6,17 @@ import { useRef, useCallback, useState, useEffect, ComponentPropsWithoutRef } fr
 import {
   useLogs,
   useHass,
+  useDevice,
   computeDomain,
   createHistoricState,
   localizeStateMessage,
   localizeTriggerSource,
   timeAgo,
-  localizeLogbook,
   ON,
-  type EntityRegistryEntry,
   type LogbookEntry,
   type EntityName,
   type UseLogOptions,
+  localize,
 } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -155,9 +155,10 @@ function _LogBookRenderer({
   const logs = useLogs(entity, options);
   const { useStore, getServices, joinHassUrl } = useHass();
   const entities = useStore((state) => state.entities);
-  const connection = useStore((state) => state.connection);
   const requestedServices = useRef(false);
   const [services, setServices] = useState<HassServices | null>(null);
+  const language = useStore((state) => state.config?.language);
+  const device = useDevice(entity);
 
   useEffect(() => {
     if (requestedServices.current) return;
@@ -165,33 +166,16 @@ function _LogBookRenderer({
     getServices().then((services) => setServices(services));
   }, [services, getServices]);
 
-  const getDeviceId = useCallback(
-    async (entity: string) => {
-      if (!connection) return;
-      try {
-        const response = await connection.sendMessagePromise<EntityRegistryEntry>({
-          type: "config/entity_registry/get",
-          entity_id: entity,
-        });
-        return response;
-      } catch (e) {
-        // ignore, just won't be able to link to HA
-      }
-    },
-    [connection],
-  );
-
   const _entityClicked = useCallback(
     async (entityId: string | undefined) => {
       if (!entityId) {
         return;
       }
-      const device = await getDeviceId(entityId);
       if (device && device.device_id && typeof window !== "undefined") {
         window.open(joinHassUrl(`config/devices/device/${device.device_id}`), "_blank");
       }
     },
-    [getDeviceId, joinHassUrl],
+    [device, joinHassUrl],
   );
 
   const showMoreLogs = useCallback(() => {
@@ -328,7 +312,7 @@ function _LogBookRenderer({
             : undefined;
         return (
           <>
-            <span className="triggered-by">{localizeLogbook("triggered_by_state_of")}</span>
+            <span className="triggered-by">{localize("triggered_by_state_of")}</span>
             {_renderEntity(item.context_entity_id, item.context_entity_id_name)}
             <span>
               {historicStateObj
@@ -342,7 +326,7 @@ function _LogBookRenderer({
       if (item.context_event_type === "call_service") {
         return (
           <>
-            <span className="triggered-by">{localizeLogbook("triggered_by_service")}</span>
+            <span className="triggered-by">{localize("triggered_by_service")}</span>
             {item.context_domain && item.context_service ? (
               <span className="service-trigger-details">
                 {item.context_domain}:{" "}
@@ -363,7 +347,7 @@ function _LogBookRenderer({
         return (
           <>
             <span className="triggered-by">
-              {localizeLogbook(item.context_event_type === "automation_triggered" ? "triggered_by_automation" : "triggered_by_script")}
+              {localize(item.context_event_type === "automation_triggered" ? "triggered_by_automation" : "triggered_by_script")}
             </span>
             {_renderEntity(item.context_entity_id, item.context_entity_id_name)}
             {item.context_message ? _formatMessageWithPossibleEntity(contextTriggerSource, seenEntityIds, undefined) : null}
@@ -374,7 +358,7 @@ function _LogBookRenderer({
       // These are not localizable
       return (
         <>
-          <span className="triggered-by">{localizeLogbook("triggered_by")}</span>
+          <span className="triggered-by">{localize("triggered_by")}</span>
           <span className="trigger-name">{item.context_name}</span>
           {_formatMessageWithPossibleEntity(item.context_message, seenEntityIds, item.context_entity_id)}
           {_renderUnseenContextSourceEntity(item, seenEntityIds)}
@@ -431,7 +415,7 @@ function _LogBookRenderer({
         : // Domain is there if there is no entity ID.
           item.domain!;
       const then = new Date(item.when * 1000);
-      const relativeTime = timeAgo.format(then);
+      const relativeTime = timeAgo(then, language);
 
       return (
         <div key={index} className="entry-container">
@@ -457,7 +441,17 @@ function _LogBookRenderer({
         </div>
       );
     },
-    [_renderContextMessage, _renderIndicator, _renderMessage, entities, formatDateMem, formatTimeWithSecondsMem, logs, hideIndicator],
+    [
+      _renderContextMessage,
+      _renderIndicator,
+      _renderMessage,
+      entities,
+      formatDateMem,
+      formatTimeWithSecondsMem,
+      logs,
+      hideIndicator,
+      language,
+    ],
   );
 
   return (
@@ -473,14 +467,14 @@ function _LogBookRenderer({
       {...rest}
     >
       {!logs.length ? (
-        <span className="no-entries">No logbook events found.</span>
+        <span className="no-entries">{localize("no_logbook_events_found")}</span>
       ) : (
         <Header>
           {!hideHeader && (
             <Row fullWidth justifyContent="space-between">
-              <h3>Logbook</h3>
+              <h3>{localize("logbook")}</h3>
               <button className="link" onClick={showMoreLogs}>
-                Show More
+                {localize("show_more")}
               </button>
             </Row>
           )}

@@ -1,12 +1,16 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { SensorCard, ThemeProvider } from "@components";
+import { SensorCard, ThemeProvider, Row } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Render(args: Args) {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider />
-      <SensorCard entity="sensor.air_conditioner_inside_temperature" {...args} />
+      <Row gap="1rem">
+        <SensorCard entity="sensor.air_conditioner_inside_temperature" {...args} />
+        <SensorCard entity="sensor.air_conditioner_inside_temperature" layoutType="slim-vertical" {...args} />
+        <SensorCard entity="sensor.air_conditioner_inside_temperature" layoutType="slim" {...args} />
+      </Row>
     </HassConnect>
   );
 }

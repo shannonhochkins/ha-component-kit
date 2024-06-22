@@ -1,12 +1,24 @@
-import { useEntity, useIconByDomain, useIconByEntity, computeDomain, isUnavailableState, ON } from "@hakit/core";
-import type { EntityName, ExtractDomain, HassEntityWithService } from "@hakit/core";
-import { Icon } from "@iconify/react";
+import {
+  computeStateDisplay,
+  useHass,
+  useEntity,
+  useIconByDomain,
+  useIconByEntity,
+  computeDomain,
+  isUnavailableState,
+  ON,
+  localize,
+} from "@hakit/core";
+import type { EntityName, ExtractDomain, AllDomains, HassEntityWithService } from "@hakit/core";
+import { Icon, type IconProps } from "@iconify/react";
 import { Row, fallback, ModalByEntityDomain, type ModalPropsHelper } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import React, { ReactNode, useId, useMemo } from "react";
+import React, { ReactNode, useId, useMemo, useCallback, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { useLongPress } from "use-long-press";
 import styled from "@emotion/styled";
+import { Connection, HassConfig } from "home-assistant-js-websocket";
+
 const IconWrapper = styled(Row)`
   width: 100%;
   max-width: 2rem;
@@ -43,11 +55,59 @@ const EntityRowInner = styled(motion.div)`
   }
 `;
 
+const LAZY_LOAD_STATE_TYPES = {
+  climate: () => import("./action-types/climate"),
+  toggle: () => import("./action-types/toggle"),
+  sensor: () => import("./action-types/sensor"),
+};
+
+const DOMAIN_TO_ELEMENT_TYPE: Partial<Record<AllDomains, keyof typeof LAZY_LOAD_STATE_TYPES>> = {
+  water_heater: "climate",
+  climate: "climate",
+  // _domain_not_found: "simple",
+  alert: "toggle",
+  automation: "toggle",
+  // button: "button",
+  // cover: "cover",
+  // date: "date",
+  // datetime: "datetime",
+  // event: "event",
+  fan: "toggle",
+  // group: "group",
+  // humidifier: "humidifier",
+  input_boolean: "toggle",
+  // input_button: "input-button",
+  // input_datetime: "input-datetime",
+  // input_number: "input-number",
+  // input_select: "input-select",
+  // input_text: "input-text",
+  light: "toggle",
+  // lock: "lock",
+  // media_player: "media-player",
+  // number: "number",
+  remote: "toggle",
+  // scene: "scene",
+  // script: "script",
+  // select: "select",
+  sensor: "sensor",
+  siren: "toggle",
+  switch: "toggle",
+  // text: "text",
+  // time: "time",
+  // timer: "timer",
+  // update: "update",
+  vacuum: "toggle",
+  // valve: "valve",
+  // weather: "weather",
+};
+
 export interface EntitiesCardRowProps<E extends EntityName> extends Omit<React.ComponentPropsWithoutRef<"div">, "onClick"> {
   /** The name of the entity to render */
   entity: E;
   /** the icon name to use @default entity_icon */
   icon?: string;
+  /** the props for the icon, which includes styles for the icon */
+  iconProps?: Omit<IconProps, "icon">;
   /** the name of the entity @default friendly_name */
   name?: ReactNode;
   /** the function to call when the row is clicked @default undefined */
@@ -63,6 +123,7 @@ export interface EntitiesCardRowProps<E extends EntityName> extends Omit<React.C
 function _EntitiesCardRow<E extends EntityName>({
   entity: _entity,
   icon: _icon,
+  iconProps,
   name: _name,
   renderState,
   onClick,
@@ -72,6 +133,10 @@ function _EntitiesCardRow<E extends EntityName>({
 }: EntitiesCardRowProps<E>) {
   const _id = useId();
   const [openModal, setOpenModal] = React.useState(false);
+  const { useStore } = useHass();
+  const config = useStore((state) => state.config);
+  const entities = useStore((store) => store.entities);
+  const connection = useStore((store) => store.connection);
   const entity = useEntity(_entity);
   const domain = computeDomain(_entity);
   const domainIcon = useIconByDomain(domain === null ? "unknown" : domain);
@@ -95,6 +160,16 @@ function _EntitiesCardRow<E extends EntityName>({
       },
     },
   );
+  const computeState = useCallback(
+    () => computeStateDisplay(entity, connection as Connection, config as HassConfig, entities, entity.state),
+    [config, connection, entities, entity],
+  );
+  const lazyKey = DOMAIN_TO_ELEMENT_TYPE[domain];
+
+  const LazyComponent = useMemo(() => {
+    if (!lazyKey || !(lazyKey in LAZY_LOAD_STATE_TYPES)) return null;
+    return lazy(LAZY_LOAD_STATE_TYPES[lazyKey]);
+  }, [lazyKey]);
 
   return (
     <>
@@ -108,7 +183,7 @@ function _EntitiesCardRow<E extends EntityName>({
               filter: (on && entity?.custom.brightness) || "brightness(100%)",
             }}
           >
-            {_icon ? <Icon className={`icon`} icon={_icon} /> : entityIcon ?? domainIcon}
+            {_icon ? <Icon className={`icon`} icon={_icon} {...(iconProps ?? {})} /> : entityIcon ?? domainIcon}
           </IconWrapper>
           <Name className={`name`}>
             {title}
@@ -118,12 +193,11 @@ function _EntitiesCardRow<E extends EntityName>({
             {typeof renderState === "function" ? (
               renderState(entity)
             ) : isUnavailable ? (
-              entity.state
+              localize("unavailable")
+            ) : LazyComponent ? (
+              <Suspense fallback={<div>Loading...</div>}>{<LazyComponent entity={entity as HassEntityWithService<AllDomains>} />}</Suspense>
             ) : (
-              <>
-                {entity.state}
-                {entity.attributes?.unit_of_measurement ? entity.attributes?.unit_of_measurement : ""}
-              </>
+              <>{computeState()}</>
             )}
           </State>
         </Row>
@@ -131,7 +205,7 @@ function _EntitiesCardRow<E extends EntityName>({
       {typeof _entity === "string" && (
         <ModalByEntityDomain
           entity={_entity as EntityName}
-          title={title ?? "Unknown title"}
+          title={title ?? localize("unknown")}
           onClose={() => {
             setOpenModal(false);
           }}

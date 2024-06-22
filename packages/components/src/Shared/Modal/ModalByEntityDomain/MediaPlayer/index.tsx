@@ -7,3 +7,4 @@ export interface ModalMediaPlayerControlsProps extends MediaPlayerControlsProps 
 export function ModalMediaPlayerControls(props: ModalMediaPlayerControlsProps) {
   return <MediaPlayerControls {...props} />;
 }
+export default ModalMediaPlayerControls;

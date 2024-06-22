@@ -9,3 +9,4 @@ export interface ModalVacuumControlsProps extends VacuumControlsProps {
 export function ModalVacuumControls(props: ModalVacuumControlsProps) {
   return <VacuumControls {...props} />;
 }
+export default ModalVacuumControls;

@@ -22,7 +22,9 @@ export function PlaybackControls({ entity: _entity, size = 20, feature, disabled
         className="skip-previous"
         disabled={disabled || isOff || !supportsPreviousTrack}
         size={size}
-        iconColor={`var(--ha-S200-contrast)`}
+        iconProps={{
+          color: `var(--ha-S200-contrast)`,
+        }}
         icon="mdi:skip-previous"
         rippleProps={{
           preventPropagation: true,
@@ -31,7 +33,9 @@ export function PlaybackControls({ entity: _entity, size = 20, feature, disabled
       />
       <Fab
         className="play-pause"
-        iconColor={`var(--ha-S200-contrast)`}
+        iconProps={{
+          color: `var(--ha-S200-contrast)`,
+        }}
         disabled={disabled || isOff || !supportsPlay}
         size={size * (feature ? 2 : 1)}
         rippleProps={{
@@ -51,7 +55,9 @@ export function PlaybackControls({ entity: _entity, size = 20, feature, disabled
           preventPropagation: true,
         }}
         className="skip-next"
-        iconColor={`var(--ha-S200-contrast)`}
+        iconProps={{
+          color: `var(--ha-S200-contrast)`,
+        }}
         disabled={disabled || isOff || !supportsNextTrack}
         size={size}
         icon="mdi:skip-next"

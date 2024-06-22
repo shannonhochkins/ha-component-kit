@@ -45,7 +45,7 @@ export const mocked = {
 
 jest.mock('home-assistant-js-websocket', () => mocked);
 
-import { HassConnect } from '@core';
+import { HassConnect } from '@hakit/core';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const onReady = jest.fn();

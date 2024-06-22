@@ -7,6 +7,7 @@ import {
   OFF,
   supportsFeatureFromAttributes,
   type MediaPlayerEntity,
+  localize,
 } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
@@ -163,7 +164,7 @@ export const MediaPlayerControls = ({
         )}
         {allEntityIds.length > 1 && (
           <Group
-            title="Related Players"
+            title={localize("related_entities")}
             disableColumns
             cssStyles={`
             &.group {
@@ -201,7 +202,9 @@ export const MediaPlayerControls = ({
                         {!supportsGrouping && (
                           <Fab
                             className="media-player-power"
-                            iconColor={`var(--ha-S200-contrast)`}
+                            iconProps={{
+                              color: `var(--ha-S200-contrast)`,
+                            }}
                             active={!isOff && !isUnavailable}
                             disabled={!supportsTurnOn || !supportsTurnOff}
                             size={30}
@@ -234,7 +237,9 @@ export const MediaPlayerControls = ({
                                 preventPropagation: true,
                               }}
                               className="speaker-group"
-                              iconColor={`var(--ha-S200-contrast)`}
+                              iconProps={{
+                                color: `var(--ha-S200-contrast)`,
+                              }}
                               active={isPlaying}
                               disabled={false}
                               size={30}

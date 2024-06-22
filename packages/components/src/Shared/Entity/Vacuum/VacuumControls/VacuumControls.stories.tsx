@@ -14,7 +14,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/VacuumControls",
+  title: "COMPONENTS/Shared/Entity/Vacuum/VacuumControls",
   component: VacuumControls,
   tags: ["autodocs"],
   parameters: {

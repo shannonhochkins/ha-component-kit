@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
-import { useHass, useSubscribeEntity } from "@core";
 import type { EntityName } from "@core";
+import { useSubscribeEntity } from "../useSubscribeEntity";
+import { useHass } from "../useHass";
 import { HassEntities, HassConfig } from "home-assistant-js-websocket";
 import { subscribeHistory, computeHistory } from "./history";
 import type { TimelineState, EntityHistoryState, HistoryStates } from "./history";
