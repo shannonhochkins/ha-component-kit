@@ -3,42 +3,28 @@ import { Meta, Source } from '@storybook/blocks';
 <Meta title="INTRODUCTION/Getting Started" />
 
 # Overview
-The [@hakit/core](https://www.npmjs.com/package/@hakit/core) provides all the core functionality to authenticate with Home Assistant to create a dynamic dashboard with React! There's also reusable components for creating custom dashboards for Home Assistant using react, this is a separate package to [@hakit/components](https://www.npmjs.com/package/@hakit/components), this uses the official [Home Assistant Web Socket](https://github.com/home-assistant/home-assistant-js-websocket) technology used by the home assistant dashboards you're used to using!
-Once logged in, the token will refresh and you'll never have to login again on that device unless you clear your browser cache / local storage.
+The [@hakit/core](https://www.npmjs.com/package/@hakit/core) uses the official [Home Assistant Web Socket](https://github.com/home-assistant/home-assistant-js-websocket) to provide all the core functionality to authenticate with Home Assistant to create a dynamic dashboard with React!
+
+There's also reusable components for creating custom dashboards for Home Assistant using react, this is a separate package to [@hakit/components](https://www.npmjs.com/package/@hakit/components).
 
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
 - **Node.js** version 18 or higher. If you do not have Node.js installed, you can download it from the [official Node.js website](https://nodejs.org/).
 - **npm** version 7 or higher. npm is distributed with Node.js - when you download Node.js, you automatically get npm installed on your computer.
+- **hassToken** technically not required, but recommended you create a <a href="https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token" target="_blank">Long Lived Access Token</a> to provide to `HassConnect`. You can create one in your home assistant instance at the bottom of your profile page.
 
 
-## Project Setup
+## Automated Setup Steps
 There's an npm create command which will setup react, typescript, vite & hakit automatically for you with a terminal wizard!
 
 <Source dark code={`npm create hakit@latest`} />
 
-If the above is successful, you can ignore everything else on this page and start developing!
+***Note: Remember to update the `.env` file with your home assistant url and token.***
 
-## Quick test
-There's a [Playground](/story/introduction-test-connection--playground) tool that will integrate with your home assistant instance, this will give you a simple interface of all the available services and entities with their respective actions where you can test
-the connection right here without installing anything.
+Once setup you can ignore everything else on this page and start developing!
 
-## Video Tutorials
-
-<iframe style={{
-    marginTop: 20,
-    display: 'block',
-    border: 0,
-  }}
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/videoseries?list=PLx2XQ2lsgvPoJj8tFS4ipaqPpqOWKO5oX"
-  title="YouTube video player"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowFullscreen></iframe>
-
-## Simple Installation Steps
+## Manual Installation Steps
 Install the [@hakit/core](https://www.npmjs.com/package/@hakit/core) for all authentication and react hooks, this is the all the core functionality you'll need, if you want to use some of the components I've built, also install [@hakit/components](https://www.npmjs.com/package/@hakit/components):
 
 <Source dark code={`npm i @hakit/core @hakit/components -D`} />
@@ -50,17 +36,18 @@ There's an awesome subfeature of this package that will generate types specific 
 
 ### Authenticate
 
-Then simply wrap your root component (usally App.tsx) with the [HassConnect](/docs/components-hassconnect--docs) component, don't forget to include the "ThemeProvider" to get the default theme.
+In your root component of your react aplication (usally App.tsx) wrap everything with the [HassConnect](/docs/components-hassconnect--docs) component, don't forget to include the `ThemeProvider` to get the default theme if you're using [@hakit/components](https://www.npmjs.com/package/@hakit/components).
 
 <Source dark code={`
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { HassConnect } from '@hakit/core';
 import { ThemeProvider } from '@hakit/components';
-// TODO: replace this with your home assistant url
+// TODO: replace this with your home assistant url & token, recommended you place these in a .env file if you're deploying to github.
 const HASS_URL = 'http://localhost:8123';
+const HASS_TOKEN = 'YOUR_TOKEN_HERE';
 function App() {
-  return <HassConnect hassUrl={HASS_URL}>
+  return <HassConnect hassUrl={HASS_URL} hassToken={HASS_TOKEN}>
     <ThemeProvider includeThemeControls />
     <p>This will render when connected!</p>
   </HassConnect>
@@ -71,45 +58,9 @@ const root = createRoot(document.getElementById('root'));
 root.render(<App />);
 `} />
 
-When you run/build your server you should see a familiar home assistant login form, login with your normal credentials and you should see your components within the HassConnect component render, this means
-we've authenticated successfully.
 
-Now you can use all the other functionality such as [useService()](/docs/hooks-useservice--docs)!
+That's it! Now you can use all the other functionality such as [useService()](/docs/hooks-useservice--docs)! Happy developing :D 
 
 
-## From Scratch - Create React App
-To get this up and running in it's simplest form, replace "dashboard" with your folder name / project name.
-
-<Source dark code={`npx create-react-app dashboard --template typescript`} />
-
-Once the above is complete, the terminal will show you steps on how to run it / use it.
-
-<Source dark code={`
-  cd dashboard && npm i @hakit/core @hakit/components
-`} />
-
-Open src/App.tsx and replace this with the following:
-
-**TIP:** Make sure you replace the HASS_URL with the url to your home assistant instance.
-
-
-<Source dark code={`
-// App.tsx
-import React from 'react';
-import { HassConnect } from '@hakit/core';
-import './App.css';
-// TODO: replace this with your home assistant url:
-const HASS_URL = 'http://localhost:8123';
-
-function App() {
-  return (
-    <HassConnect hassUrl={HASS_URL}>
-      <p>This will render when connected!</p>
-    </HassConnect>
-  );
-}
-
-export default App;
-`} />
-
-Now once you run your application, you should be prompted to login with Home Assistant, and then redirected to your custom dashboard!
+### Deploying to Home Assitant
+Once you're happy with your new dashboard, you can follow the steps to [deploy here](/?path=/docs/introduction-deploying--docs) which will guide you through the process of deploying your dashboard to Home Assistant!

@@ -8,7 +8,7 @@ export const Fab = styled(FabCard)`
     color: black;
   }
   opacity: 0.8;
-  transition: opacity var(--ha-transition-duration) var(--ha-easing);
+  transition-property: opacity, color, background-color;
   &:disabled {
     opacity: 0.38;
   }

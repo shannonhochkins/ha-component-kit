@@ -3,6 +3,7 @@ import { Column, RangeSlider, Row, FabCard, Tooltip, Alert } from "@components";
 import styled from "@emotion/styled";
 import { LIGHT, DARK, ACCENT, DEFAULT_THEME_OPTIONS } from "./constants";
 import { useDebouncedCallback } from "use-debounce";
+import { capitalize } from "lodash";
 
 const Title = styled.span`
   font-size: 0.9rem;
@@ -335,6 +336,44 @@ export function ThemeControls({
           );
         })}
       </Row>
+
+      {["info", "success", "error", "warning"].map((color, _index) => {
+        return (
+          <Row fullWidth justifyContent="flex-start">
+            {[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1].map((shade, index) => {
+              const suffix = shade === 1 ? "" : `-a${index + 1}`;
+              return (
+                <Column gap="1rem" key={`${shade}-${color}-${_index}`}>
+                  <Title>{index === 0 ? capitalize(color) : <>&nbsp;</>}</Title>
+                  <Tooltip
+                    placement="top"
+                    title={
+                      <Column alignItems="flex-start">
+                        <span>
+                          background-color: var(--ha-{color}-color{suffix});
+                        </span>
+                        <span>
+                          color: var(--ha-{color}-color{suffix}-contrast);
+                        </span>
+                      </Column>
+                    }
+                  >
+                    <Pallette
+                      style={{
+                        color: `var(--ha-${color}-color${suffix}-contrast)`,
+                        backgroundColor: `var(--ha-${color}-color${suffix})`,
+                      }}
+                    >
+                      {suffix}
+                      {shade === 1 ? shade : ""}
+                    </Pallette>
+                  </Tooltip>
+                </Column>
+              );
+            })}
+          </Row>
+        );
+      })}
     </Column>
   );
 }

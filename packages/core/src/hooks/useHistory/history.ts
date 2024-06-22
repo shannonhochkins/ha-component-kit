@@ -1,5 +1,5 @@
 import { Connection, HassEntities, HassEntity, HassConfig, HassEntityAttributeBase, MessageBase } from "home-assistant-js-websocket";
-import { computeDomain } from "@core";
+import { computeDomain, localize } from "@core";
 import type { EntityName } from "@core";
 
 const DOMAINS_USE_LAST_UPDATED = ["climate", "humidifier", "water_heater"];
@@ -302,7 +302,7 @@ export const computeHistory = (config: HassConfig, entities: HassEntities, state
       unit = stateWithUnitorStateClass.a.unit_of_measurement || " ";
     } else {
       unit = {
-        zone: "People in zone",
+        zone: localize("people_in_zone"),
         climate: config.unit_system.temperature,
         counter: "#",
         humidifier: "%",

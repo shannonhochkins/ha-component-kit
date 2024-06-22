@@ -17,12 +17,31 @@ export interface ButtonBarProps extends Extendable {
   justifyContent?: React.CSSProperties["justifyContent"];
   /** standard flex css properties for flex-wrap property, @default "wrap" */
   wrap?: React.CSSProperties["justifyContent"];
+  /** gap between buttons, note - will not be applied in "grouped" layoutType @default "0" */
+  gap?: React.CSSProperties["gap"];
   /** the children for the ButtonBar, it accepts ButtonBarButton components */
   children: AllowedChildren;
+  /** should the group stretch to the height of the parent */
+  fullHeight?: boolean;
+  /** should the group stretch to the width of the parent */
+  fullWidth?: boolean;
+  /** type of the layout, grouped will render all buttons together, bubble will render them as buttons in a row @default 'grouped' */
+  layoutType?: "grouped" | "bubble";
 }
 
 const ButtonBarParent = styled.div<Partial<ButtonBarProps>>`
   display: flex;
+  ${({ fullWidth }) => {
+    if (fullWidth) {
+      return `
+        > .fit-content {
+          flex-basis: auto;
+          width: 100%;
+        }
+      `;
+    }
+    return ``;
+  }};
 `;
 
 const FitContent = styled.div`
@@ -36,34 +55,75 @@ const ButtonBarInner = styled.div<Partial<ButtonBarProps>>`
   flex-wrap: ${({ wrap }) => wrap || "wrap"};
   justify-content: ${({ justifyContent }) => justifyContent || "center"};
   align-items: ${({ alignItems }) => alignItems || "center"};
-  background-color: var(--ha-S300);
-  border-radius: 0.5rem;
+  width: ${({ fullWidth }) => (fullWidth ? "100%" : "auto")};
+  height: ${({ fullHeight }) => (fullHeight ? "100%" : "auto")};
   overflow: hidden;
-  border: 1px solid var(--ha-S500);
+
   > * {
     height: 100%;
+    width: auto;
     display: flex;
     align-items: stretch;
-    border-right: 1px solid var(--ha-S500);
-    &:last-of-type {
-      border-right: none;
-    }
-    .fab-card {
+    .button-bar-button {
       height: 100%;
       display: flex;
       align-items: stretch;
     }
   }
+
+  &.grouped {
+    background-color: var(--ha-S300);
+    border-radius: 0.5rem;
+    border: 1px solid var(--ha-S500);
+    > * {
+      border-right: 1px solid var(--ha-S500);
+      &:last-of-type {
+        border-right: none;
+      }
+    }
+  }
+  &.bubble {
+    gap: ${({ gap }) => gap || "0px"};
+    > * {
+      flex-grow: 1;
+    }
+    .button-bar-button {
+      background-color: var(--ha-300-a3-contrast);
+      color: var(--ha-300);
+      &:not(.disabled):not(:focus):hover {
+        background-color: var(--ha-S50-a6);
+        color: var(--ha-500);
+      }
+    }
+  }
 `;
 
-function _ButtonBar({ key, alignItems, justifyContent, wrap, style, id, className, cssStyles, children, ...rest }: ButtonBarProps) {
+function _ButtonBar({
+  key,
+  alignItems,
+  fullWidth,
+  fullHeight,
+  gap,
+  justifyContent,
+  wrap,
+  style,
+  id,
+  className,
+  cssStyles,
+  children,
+  layoutType = "grouped",
+  ...rest
+}: ButtonBarProps) {
   const childrenWithKeys = Children.map(children, (child, index) => {
     if (isValidElement(child)) {
       return cloneElement(child, {
         key: child.key || index,
+        // @ts-expect-error - it does exist, fix types later
+        size: child?.props?.size ?? (layoutType === "bubble" ? 35 : 30),
+        borderRadius: layoutType === "bubble" ? "8px" : "0px",
       });
     }
-    return child;
+    return null;
   });
   return (
     <ButtonBarParent
@@ -72,7 +132,8 @@ function _ButtonBar({ key, alignItems, justifyContent, wrap, style, id, classNam
       css={css`
         ${cssStyles ?? ""}
       `}
-      className={`button-bar ${className ?? ""}`}
+      layoutType={layoutType}
+      className={`button-bar ${layoutType} ${className ?? ""}`}
       style={{
         ...(style ?? {}),
       }}
@@ -80,13 +141,17 @@ function _ButtonBar({ key, alignItems, justifyContent, wrap, style, id, classNam
     >
       <FitContent className="fit-content">
         <ButtonBarInner
-          className="button-group-inner"
+          className={`button-group-inner ${layoutType}`}
           {...{
             alignItems,
             justifyContent,
             wrap,
+            gap: gap ?? layoutType === "bubble" ? "0.5rem" : "0",
+            fullWidth,
+            fullHeight,
           }}
         >
+          {/* @ts-expect-error - fix later */}
           {childrenWithKeys}
         </ButtonBarInner>
       </FitContent>

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Icon } from "@iconify/react";
+import { Icon, type IconProps } from "@iconify/react";
 import { Row, fallback, PreloadImage, CardBase, type CardBaseProps, type PreloadImageProps, type AvailableQueries } from "@components";
 import { motion } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
@@ -25,6 +25,8 @@ export interface PictureCardProps extends Omit<CardBaseProps<"button">, OmitProp
   title: string;
   /** an optional icon to provide */
   icon?: string;
+  /** the props for the icon, which includes styles for the icon */
+  iconProps?: Omit<IconProps, "icon">;
   /** an object containing the props to pass to the preloader */
   preloadProps?: PreloadImageProps;
   /** called when the card is pressed */
@@ -42,6 +44,7 @@ const Inner = styled.div`
 
 const PictureCardFooter = styled(motion.h4)`
   all: unset;
+  font-family: var(--ha-font-family);
   padding: 1rem;
   color: var(--ha-500-contrast);
   background-color: var(--ha-background-opaque);
@@ -51,7 +54,17 @@ const PictureCardFooter = styled(motion.h4)`
   font-size: 1.2rem;
 `;
 
-function _PictureCard({ title, key, image, icon, className, preloadProps, children, ...rest }: PictureCardProps): React.ReactNode {
+function _PictureCard({
+  title,
+  key,
+  image,
+  icon,
+  iconProps,
+  className,
+  preloadProps,
+  children,
+  ...rest
+}: PictureCardProps): React.ReactNode {
   return (
     <StyledPictureCard
       key={key}
@@ -74,7 +87,7 @@ function _PictureCard({ title, key, image, icon, className, preloadProps, childr
         >
           <PictureCardFooter className="footer">
             <Row gap={"0.5rem"} className="row">
-              {icon && <Icon icon={icon} className="icon" />}
+              {icon && <Icon icon={icon} className="icon" {...(iconProps ?? {})} />}
               {title}
             </Row>
           </PictureCardFooter>

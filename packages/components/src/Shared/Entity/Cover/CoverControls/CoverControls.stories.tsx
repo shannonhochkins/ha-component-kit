@@ -7,7 +7,7 @@ function Template(args?: Partial<CoverControlsProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
-      <Row gap="5rem" fullWidth>
+      <Row gap="5rem" fullWidth alignItems="flex-start">
         <CoverControls entity="cover.cover_with_tilt" {...args} />
         <CoverControls entity="cover.cover_position_only" {...args} />
         <CoverControls entity="cover.cover_no_position" {...args} />

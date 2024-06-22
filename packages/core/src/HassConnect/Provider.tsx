@@ -15,6 +15,7 @@ import { type CSSInterpolation } from "@emotion/serialize";
 // methods
 import {
   getAuth,
+  createLongLivedTokenAuth,
   createConnection,
   subscribeEntities,
   callService as _callService,
@@ -23,17 +24,21 @@ import {
   getConfig as _getConfig,
   getUser as _getUser,
   ERR_HASS_HOST_REQUIRED,
+  ERR_CONNECTION_LOST,
   ERR_CANNOT_CONNECT,
   ERR_INVALID_AUTH,
   ERR_INVALID_HTTPS_TO_HTTP,
 } from "home-assistant-js-websocket";
-import { isArray, snakeCase, isEmpty, uniq } from "lodash";
-import { ServiceData, SnakeOrCamelDomains, DomainService, Target, TranslationCategory } from "@typings";
-import { updateLocalTranslations } from "../hooks/useTranslations";
+import { isArray, snakeCase, isEmpty } from "lodash";
+import { ServiceData, SnakeOrCamelDomains, DomainService, Target } from "@typings";
 import { saveTokens, loadTokens, clearTokens } from "./token-storage";
 import { diff } from "deep-object-diff";
 import { create } from "zustand";
 import { useDebouncedCallback } from "use-debounce";
+import { Locales } from "../hooks/useLocale/locales/types";
+import locales from "../hooks/useLocale/locales";
+import { updateLocales } from "../hooks/useLocale";
+import { LocaleKeys } from "packages/core/dist/types";
 
 export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
@@ -69,7 +74,8 @@ export type SupportedComponentOverrides =
   | "menu"
   | "personCard"
   | "familyCard"
-  | "vacuumCard";
+  | "vacuumCard"
+  | "alarmCard";
 export interface Store {
   entities: HassEntities;
   setEntities: (entities: HassEntities) => void;
@@ -112,6 +118,10 @@ export interface Store {
   /** a way to provide or overwrite default styles for any particular component */
   setGlobalComponentStyles: (styles: Partial<Record<SupportedComponentOverrides, CSSInterpolation>>) => void;
   globalComponentStyles: Partial<Record<SupportedComponentOverrides, CSSInterpolation>>;
+  portalRoot?: HTMLElement;
+  setPortalRoot: (portalRoot: HTMLElement) => void;
+  locales: Record<LocaleKeys, string> | null;
+  setLocales: (locales: Record<LocaleKeys, string>) => void;
 }
 
 const useStore = create<Store>((set) => ({
@@ -121,14 +131,17 @@ const useStore = create<Store>((set) => ({
   setHassUrl: (hassUrl) => set({ hassUrl }),
   hassUrl: null,
   hash: "",
+  locales: null,
+  setLocales: (locales) => set({ locales }),
   setHash: (hash) => set({ hash }),
+  setPortalRoot: (portalRoot) => set({ portalRoot }),
   setEntities: (newEntities) =>
     set((state) => {
       const entitiesDiffChanged = diff(ignoreForDiffCheck(state.entities), ignoreForDiffCheck(newEntities)) as HassEntities;
       if (!isEmpty(entitiesDiffChanged)) {
         // purposely not making this throttle configurable
         // because lights can animate etc, which doesn't need to reflect in the UI
-        // simply throttle updates every 50ms
+        // if a user want's to control individual entities this can be done with useEntity by passing a throttle to it's options.
         const updatedEntities = Object.keys(entitiesDiffChanged).reduce<HassEntities>(
           (acc, entityId) => ({
             ...acc,
@@ -235,19 +248,32 @@ export interface HassProviderProps {
   children: (ready: boolean) => React.ReactNode;
   /** the home assistant url */
   hassUrl: string;
-  /** additional translations to fetch to retrieve with the store, @default ["title"]  */
-  translations?: TranslationCategory[];
+  /** if you provide a hassToken you will bypass the login screen altogether - @see https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token */
+  hassToken?: string;
+  /** the language of the UI to use, this will also control the values used within the `localize` function or `useLocale` / `useLocales` hooks, by default this is retrieved from your home assistant instance. */
+  locale?: Locales;
+  /** location to render portals @default document.body */
+  portalRoot?: HTMLElement;
 }
 
-function translateErr(err: number | string | Error | unknown): string {
-  const message =
-    err === ERR_CANNOT_CONNECT
-      ? "Unable to connect"
-      : err === ERR_HASS_HOST_REQUIRED
-        ? "Please enter a Home Assistant URL."
-        : err === ERR_INVALID_HTTPS_TO_HTTP
-          ? `Cannot connect to Home Assistant instances over "http://".`
-          : null;
+function handleError(err: number | string | Error | unknown): string {
+  const getMessage = () => {
+    switch (err) {
+      case ERR_INVALID_AUTH:
+        return "ERR_INVALID_AUTH: Invalid authentication.";
+      case ERR_CANNOT_CONNECT:
+        return "ERR_CANNOT_CONNECT: Unable to connect";
+      case ERR_CONNECTION_LOST:
+        return "ERR_CONNECTION_LOST: Lost connection to home assistant.";
+      case ERR_HASS_HOST_REQUIRED:
+        return "ERR_HASS_HOST_REQUIRED: Please enter a Home Assistant URL.";
+      case ERR_INVALID_HTTPS_TO_HTTP:
+        return 'ERR_INVALID_HTTPS_TO_HTTP: Cannot connect to Home Assistant instances over "http://".';
+      default:
+        return null;
+    }
+  };
+  const message = getMessage();
   if (message !== null) return message;
   return (
     (
@@ -307,7 +333,7 @@ const tryConnection = async (init: "auth-callback" | "user-request" | "saved-tok
     }
     return {
       type: "error",
-      error: translateErr(err),
+      error: handleError(err),
     };
   } finally {
     // Clear url if we have a auth callback in url.
@@ -333,7 +359,7 @@ const tryConnection = async (init: "auth-callback" | "user-request" | "saved-tok
     }
     return {
       type: "error",
-      error: translateErr(err),
+      error: handleError(err),
     };
   }
   return {
@@ -359,7 +385,7 @@ const ignoreForDiffCheck = (
   };
 };
 
-export function HassProvider({ children, hassUrl, translations }: HassProviderProps) {
+export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot }: HassProviderProps) {
   const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
   const authenticated = useRef(false);
   const fetchedConfig = useRef(false);
@@ -382,6 +408,12 @@ export function HassProvider({ children, hassUrl, translations }: HassProviderPr
   const config = useStore((store) => store.config);
   const setConfig = useStore((store) => store.setConfig);
   const setHassUrl = useStore((store) => store.setHassUrl);
+  const setPortalRoot = useStore((store) => store.setPortalRoot);
+  const setLocales = useStore((store) => store.setLocales);
+
+  useEffect(() => {
+    if (portalRoot) setPortalRoot(portalRoot);
+  }, [portalRoot, setPortalRoot]);
 
   const reset = useCallback(() => {
     // when the hassUrl changes, reset some properties and re-authenticate
@@ -412,6 +444,14 @@ export function HassProvider({ children, hassUrl, translations }: HassProviderPr
   }, [reset, setError]);
 
   const handleConnect = useCallback(async () => {
+    if (hassToken) {
+      const auth = await createLongLivedTokenAuth(hassUrl, hassToken);
+      const connection = await createConnection({ auth });
+      setAuth(auth);
+      setConnection(connection);
+      _connectionRef.current = connection;
+      return;
+    }
     let connectionResponse: ConnectionResponse;
     // this will trigger on first mount
     if (location && location.search.indexOf("auth_callback=1") !== -1) {
@@ -455,7 +495,7 @@ export function HassProvider({ children, hassUrl, translations }: HassProviderPr
       return;
     }
     authenticated.current = false;
-  }, [hassUrl, setError, setAuth, setConnection, setCannotConnect]);
+  }, [hassUrl, hassToken, setError, setAuth, setConnection, setCannotConnect]);
 
   useEffect(() => {
     setHassUrl(hassUrl);
@@ -515,34 +555,44 @@ export function HassProvider({ children, hassUrl, translations }: HassProviderPr
     }
   }
 
-  const fetchTranslations = useCallback(
-    async (connection: Connection, config: HassConfig | null): Promise<Record<string, string>> => {
-      const categories = uniq(["title", ...(translations ?? [])]);
-      const responses = await Promise.all(
-        categories.map(async (category) => {
-          const response = await connection.sendMessagePromise<{ resources: Record<string, string> }>({
-            type: "frontend/get_translations",
-            category,
-            language: config?.language,
-          });
-          return response.resources;
-        }),
-      );
-      return responses.reduce<Record<string, string>>((acc, current) => ({ ...acc, ...current }), {} as Record<string, string>);
+  const fetchLocale = useCallback(
+    async (config: HassConfig | null): Promise<Record<string, string>> => {
+      const match = locales.find(({ code }) => code === (locale ?? config?.language));
+      if (!match) {
+        throw new Error(
+          `Locale "${locale ?? config?.language}" not found, available options are "${locales.map(({ code }) => `${code}`).join(", ")}"`,
+        );
+      } else {
+        return await match.fetch();
+      }
     },
-    [translations],
+    [locale],
   );
+
+  useEffect(() => {
+    if (!locale) return;
+    // purposely sending null for the config object as we're fetching a different language specified by the user
+    fetchLocale(null)
+      .then((locales) => {
+        updateLocales(locales);
+        setLocales(locales);
+      })
+      .catch((e) => {
+        setError(`Error retrieving translations from Home Assistant: ${e?.message ?? e}`);
+      });
+  }, [locale, fetchLocale, setLocales, setError]);
 
   useEffect(() => {
     if (config === null && !fetchedConfig.current && connection !== null) {
       fetchedConfig.current = true;
       getConfig()
         .then((config) => {
-          fetchTranslations(connection, config)
-            .then((translations) => {
-              // purposely setting config here to delay the rendering process of the application until translations are retrieved
+          fetchLocale(config)
+            .then((locales) => {
+              // purposely setting config here to delay the rendering process of the application until locales are retrieved
               setConfig(config);
-              updateLocalTranslations(translations);
+              updateLocales(locales);
+              setLocales(locales);
             })
             .catch((e) => {
               setError(`Error retrieving translations from Home Assistant: ${e?.message ?? e}`);
@@ -553,7 +603,7 @@ export function HassProvider({ children, hassUrl, translations }: HassProviderPr
           setError(`Error retrieving configuration from Home Assistant: ${e?.message ?? e}`);
         });
     }
-  }, [config, connection, fetchTranslations, getConfig, setConfig, setError]);
+  }, [config, connection, setLocales, fetchLocale, getConfig, setConfig, setError]);
 
   useEffect(() => {
     if (location.hash === "") return;
@@ -668,19 +718,23 @@ export function HassProvider({ children, hassUrl, translations }: HassProviderPr
   }, []);
 
   const debounceConnect = useDebouncedCallback(async () => {
-    if (_connectionRef.current && !connection) {
-      setConnection(_connectionRef.current);
+    try {
+      if (_connectionRef.current && !connection) {
+        setConnection(_connectionRef.current);
+        authenticated.current = true;
+        return;
+      }
+      if (!_connectionRef.current && connection) {
+        _connectionRef.current = connection;
+        authenticated.current = true;
+        return;
+      }
+      if (authenticated.current) return;
       authenticated.current = true;
-      return;
+      await handleConnect();
+    } catch (e) {
+      setError(`Unable to connect to Home Assistant, please check the URL: "${(e as Error)?.message ?? e}"`);
     }
-    if (!_connectionRef.current && connection) {
-      _connectionRef.current = connection;
-      authenticated.current = true;
-      return;
-    }
-    if (authenticated.current) return;
-    authenticated.current = true;
-    await handleConnect();
   }, 100);
 
   useEffect(() => {

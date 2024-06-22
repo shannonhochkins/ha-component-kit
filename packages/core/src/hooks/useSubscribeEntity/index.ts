@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { HassEntity } from "home-assistant-js-websocket";
-import { useHass } from "@core";
+import { localize, useHass } from "@core";
 import type { EntityName } from "@typings";
 
 type GetEntityFn = {
@@ -21,7 +21,7 @@ export function useSubscribeEntity(entityId: EntityName): GetEntityFn {
         if (returnNullIfNotFound) {
           return null;
         }
-        throw new Error(`Entity ${entityId} not found`);
+        throw new Error(`${localize("entity_not_found")} - "${entityId}"`);
       }
       return entity;
     },

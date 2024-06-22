@@ -1,5 +1,6 @@
-import { WeatherCard, Row, type WeatherCardProps } from "@components";
 import type { EntityName, FilterByDomain } from "@hakit/core";
+import { WeatherCard, type WeatherCardProps } from "../../../../Cards/WeatherCard";
+import { Row } from "../../../Row";
 export interface ModalWeatherControlsProps extends Omit<WeatherCardProps, "onClick"> {
   entity: FilterByDomain<EntityName, "weather">;
 }
@@ -11,3 +12,4 @@ export function ModalWeatherControls({ entity, ...props }: ModalWeatherControlsP
     </Row>
   );
 }
+export default ModalWeatherControls;

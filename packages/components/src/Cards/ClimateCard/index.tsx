@@ -1,21 +1,34 @@
 import { useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import type { HassEntityWithService, HvacMode } from "@hakit/core";
-import type { ClimateControlsProps, AvailableQueries, CardBaseProps } from "@components";
-import { useEntity, useIconByDomain, useIconByEntity, OFF, isUnavailableState, useHass } from "@hakit/core";
-import { fallback, Row, CardBase, ButtonBar, Column, ButtonBarButton } from "@components";
+import type { ClimateControlsProps, AvailableQueries } from "@components";
+import { useEntity, OFF, isUnavailableState, useHass, localize } from "@hakit/core";
+import { fallback, Row, ButtonBar, Column } from "@components";
 import { capitalize } from "lodash";
-import { icons, activeColors } from "../../Shared/Entity/Climate/ClimateControls/shared";
+import { icons, activeColors, colors } from "../../Shared/Entity/Climate/ClimateControls/shared";
 import { ErrorBoundary } from "react-error-boundary";
 import type { HassConfig } from "home-assistant-js-websocket";
+import { LocaleKeys } from "@hooks";
+import { FeatureEntity, type FeatureEntityProps } from "../CardBase/FeatureEntity";
 
-const StyledClimateCard = styled(CardBase)``;
+import { ButtonCard, type ButtonCardProps } from "../ButtonCard";
+
+const StyledClimateCard = styled(ButtonCard)`
+  &.slim {
+    &.has-temp-controls {
+    }
+  }
+  &.slim-vertical {
+    &.has-temp-controls {
+    }
+  }
+`;
 
 const Gap = styled.div`
   height: 20px;
 `;
 
-const Title = styled.div`
+const Description = styled.div`
   color: var(--ha-S400-contrast);
   font-size: 0.7rem;
   display: flex;
@@ -38,18 +51,6 @@ const Title = styled.div`
     }
   }
 `;
-const Icon = styled.div`
-  color: var(--ha-A400);
-`;
-const Description = styled.div`
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.5rem;
-  text-transform: capitalize;
-  color: var(--ha-S50-contrast);
-`;
 
 const Temperature = styled.span`
   position: relative;
@@ -60,20 +61,27 @@ const Temperature = styled.span`
   }
 `;
 
-type OmitProperties = "onClick" | "children" | "active" | "as" | "ref" | "disableActiveState";
+type OmitProperties = "onClick" | "children" | "active" | "as" | "ref" | "disableActiveState" | "features";
 
-type Extendable = Omit<ClimateControlsProps, "onClick"> & Omit<CardBaseProps<"div", ClimateControlsProps["entity"]>, OmitProperties>;
+type Extendable = Omit<ClimateControlsProps, "onClick"> & Omit<ButtonCardProps<ClimateControlsProps["entity"]>, OmitProperties>;
 export interface ClimateCardProps extends Extendable {
   /** the onClick handler is called when the card is pressed  */
   onClick?: (entity: HassEntityWithService<"climate">) => void;
+  /** show the labels in the button bar for the hvac modes @default false */
+  showHvacModeLabels?: boolean;
+  /** show the temperature controls within the main card, does not change the popup @default false */
+  showTemperatureControls?: boolean;
 }
 
 function _ClimateCard({
   entity: _entity,
-  title: _title,
   onClick,
   hvacModes,
+  hvacModeLabels,
+  showHvacModeLabels = false,
   hideCurrentTemperature,
+  showTemperatureControls = false,
+  hideToggle = true,
   hideHvacModes,
   disabled,
   className,
@@ -81,17 +89,18 @@ function _ClimateCard({
   service,
   serviceData,
   cssStyles,
+  layoutType,
   key,
+  title,
   ...rest
 }: ClimateCardProps): React.ReactNode {
   const { getConfig, useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const entity = useEntity(_entity);
-  const entityIcon = useIconByEntity(_entity);
-  const domainIcon = useIconByDomain("climate");
   const [config, setConfig] = useState<HassConfig | null>(null);
   const currentMode = entity.state in icons ? entity.state : "unknown-mode";
-  const title = _title || entity.attributes.friendly_name;
+  const isUnavailable = isUnavailableState(entity.state);
+  const on = entity.state !== "off" && !isUnavailable && !disabled;
   const {
     current_temperature,
     hvac_action,
@@ -101,17 +110,16 @@ function _ClimateCard({
     unit_of_measurement,
     temperature = 20,
   } = entity.attributes || {};
-  const isUnavailable = isUnavailableState(entity.state);
   const isOff = entity.state === OFF;
   const titleValue = useMemo(() => {
     if (isUnavailable) {
-      return entity.state;
+      return localize("unavailable");
     }
     if (isOff) {
-      return "Off";
+      return localize("off");
     }
-    return hvac_action;
-  }, [hvac_action, entity.state, isUnavailable, isOff]);
+    return hvac_action ? localize(hvac_action) : localize("unknown");
+  }, [hvac_action, isUnavailable, isOff]);
 
   useEffect(() => {
     getConfig().then(setConfig);
@@ -123,20 +131,23 @@ function _ClimateCard({
     <>
       <StyledClimateCard
         key={key}
+        hideToggle={hideToggle}
         disableActiveState
-        className={`climate-card ${className ?? ""}`}
+        className={`climate-card ${showTemperatureControls ? "has-temp-controls" : ""} ${className ?? ""}`}
         disabled={disabled || isUnavailable}
         entity={_entity}
-        title={title}
+        title={title ?? entity.attributes.friendly_name}
         // @ts-expect-error - don't know the entity name, so we can't know the service type
         service={service}
         // @ts-expect-error - don't know the entity name, so we can't know the service data
         serviceData={serviceData}
+        layoutType={layoutType}
         modalProps={{
           ...modalProps,
           hvacModes: havacModesToUse,
           hideCurrentTemperature,
           hideHvacModes,
+          hvacModeLabels,
         }}
         onClick={() => {
           if (isUnavailable || disabled || typeof onClick !== "function") return;
@@ -146,73 +157,89 @@ function _ClimateCard({
           ${globalComponentStyle.climateCard ?? ""}
           ${cssStyles ?? ""}
         `}
-        {...rest}
-      >
-        <Column
-          alignItems="flex-start"
-          fullWidth
-          fullHeight
-          style={{
-            padding: "1rem",
-          }}
-        >
-          <Row justifyContent="space-between" fullWidth>
-            <Description>
-              <Icon
-                style={{
-                  color:
-                    isUnavailable || disabled
-                      ? activeColors["off"]
-                      : currentMode === "unknown-mode"
-                        ? "var(--ha-S500-contrast)"
-                        : activeColors[currentMode as HvacMode],
-                }}
-              >
-                {entityIcon || domainIcon}
-              </Icon>{" "}
-              {title} - {titleValue}
+        hideState
+        features={havacModesToUse
+          .concat()
+          .filter((x) => !!x)
+          .map((mode) => {
+            const props = {
+              size: 35,
+              disabled: disabled || isUnavailable,
+              iconProps: {
+                color: currentMode === mode ? activeColors[mode] : undefined,
+              },
+              rippleProps: {
+                preventPropagation: true,
+              },
+              title: capitalize(mode.replace(/_/g, " ")),
+              active: currentMode === mode,
+              icon: icons[mode],
+              onClick: () => {
+                entity.service.setHvacMode({
+                  hvac_mode: mode,
+                });
+              },
+            } satisfies FeatureEntityProps;
+            if (hvacModeLabels?.[mode] && showHvacModeLabels) {
+              const customLabel = hvacModeLabels?.[mode];
+              return (
+                <FeatureEntity key={mode} {...props} title={customLabel}>
+                  {customLabel}
+                </FeatureEntity>
+              );
+            }
+            return <FeatureEntity key={mode} {...props} />;
+          })}
+        fabProps={{
+          style: {
+            color: on ? "var(--ha-A400)" : "var(--ha-S500-contrast)",
+            backgroundColor:
+              isUnavailable || disabled
+                ? colors["off"][1]
+                : currentMode === "unknown-mode"
+                  ? "var(--ha-S500-contrast)"
+                  : colors[currentMode as HvacMode][1],
+          },
+        }}
+        description={
+          <Row justifyContent="flex-start">
+            <Description className="climate-description">
+              <span>{titleValue}</span>
+              <span className="fan-speed">
+                {localize("speed")}: {localize(entity.attributes.fan_mode as LocaleKeys) || localize("unknown")}
+              </span>
+              {!hideCurrentTemperature && (
+                <span className="current-temperature">
+                  <Temperature>
+                    <div>
+                      {capitalize(
+                        localize("name_current_temperature", {
+                          search: "{name} ",
+                          replace: "",
+                        }),
+                      )}
+                      : {current_temperature}
+                    </div>
+                    <span>{unit_of_measurement ?? config?.unit_system.temperature}</span>
+                  </Temperature>
+                </span>
+              )}
             </Description>
           </Row>
-          <Row justifyContent="flex-start">
-            <Title
-              style={{
-                paddingLeft: "2rem",
-              }}
-            >
-              <span className="fan-speed">Speed: {entity.attributes.fan_mode || "Unknown"}</span>
-              <span className="temperature">
-                <Temperature>
-                  <div>Temperature: {temperature}</div>
-                  <span>{unit_of_measurement ?? config?.unit_system.temperature}</span>
-                </Temperature>
-              </span>
-              <span className="current-temperature">
-                <Temperature>
-                  <div>Current Temperature: {current_temperature}</div>
-                  <span>{unit_of_measurement ?? config?.unit_system.temperature}</span>
-                </Temperature>
-              </span>
-            </Title>
-          </Row>
-          <Row
-            justifyContent="flex-start"
-            style={{
-              paddingLeft: "2rem",
-              paddingTop: "0.5rem",
-            }}
-          >
-            <Title>{entity.custom.relativeTime}</Title>
-          </Row>
-          <Gap />
-          <Row fullWidth gap="0.5rem" justifyContent="space-between">
-            <ButtonBar>
-              <ButtonBarButton
-                size={35}
+        }
+        {...rest}
+      >
+        {showTemperatureControls && (
+          <Column alignItems={layoutType === "slim-vertical" ? "center" : "flex-start"} fullWidth fullHeight>
+            <Gap />
+            <ButtonBar fullWidth>
+              <FeatureEntity
+                size={40}
                 disabled={disabled || isUnavailable || temperature === min_temp}
                 rippleProps={{
                   preventPropagation: true,
                 }}
-                title={"Decrease Temperature"}
+                title={localize("decrease_temperature")}
                 icon={"mdi:minus"}
                 onClick={() => {
                   entity.service.setTemperature({
@@ -220,15 +247,20 @@ function _ClimateCard({
                   });
                 }}
               />
-              <ButtonBarButton
-                size={35}
-                disabled={disabled || isUnavailable || temperature === min_temp}
+              <FeatureEntity
+                size={40}
+                disabled
                 rippleProps={{
                   preventPropagation: true,
                 }}
                 borderRadius={0}
                 noIcon
-                title={"Current Temperature"}
+                title={capitalize(
+                  localize("name_current_temperature", {
+                    search: "{name} ",
+                    replace: "",
+                  }),
+                )}
                 cssStyles={`
                   button {
                     cursor: default;
@@ -239,14 +271,14 @@ function _ClimateCard({
                   <div>{temperature}</div>
                   <span>{unit_of_measurement ?? config?.unit_system.temperature}</span>
                 </Temperature>
-              </ButtonBarButton>
-              <ButtonBarButton
-                size={35}
+              </FeatureEntity>
+              <FeatureEntity
+                size={40}
                 disabled={disabled || isUnavailable || temperature === max_temp}
                 rippleProps={{
                   preventPropagation: true,
                 }}
-                title={"Increase Temperature"}
+                title={localize("increase_temperature")}
                 icon={"mdi:plus"}
                 onClick={() => {
                   entity.service.setTemperature({
@@ -255,37 +287,14 @@ function _ClimateCard({
                 }}
               />
             </ButtonBar>
-            <ButtonBar>
-              {havacModesToUse
-                .concat()
-                .filter((x) => !!x)
-                .map((mode) => (
-                  <ButtonBarButton
-                    size={35}
-                    disabled={disabled || isUnavailable}
-                    iconColor={currentMode === mode ? activeColors[mode] : undefined}
-                    rippleProps={{
-                      preventPropagation: true,
-                    }}
-                    key={mode}
-                    title={capitalize(mode.replace(/_/g, " "))}
-                    active={currentMode === mode}
-                    icon={icons[mode]}
-                    onClick={() => {
-                      entity.service.setHvacMode({
-                        hvac_mode: mode,
-                      });
-                    }}
-                  />
-                ))}
-            </ButtonBar>
-          </Row>
-        </Column>
+          </Column>
+        )}
       </StyledClimateCard>
     </>
   );
 }
 /** The ClimateCard is a card to easily interact with climate entities, whilst it's not documented below, the types are correct and you can also pass through anything related to ModalClimateControlsProps
+ * The ClimateCard shares the same functionality/props as the ButtonCard so you can display in different layouts and also utilize the same props
  */
 export function ClimateCard(props: ClimateCardProps) {
   const defaultColumns: AvailableQueries = {

@@ -1,4 +1,4 @@
-import React, { CSSProperties, memo, useCallback, useState, useRef, useEffect } from "react";
+import React, { CSSProperties, memo, useCallback, useRef, useEffect } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { fallback } from "@components";
@@ -64,7 +64,7 @@ const _Ripples = memo(
     id,
     ...rest
   }: RipplesProps) => {
-    const [rippleStyle, setRippleStyle] = useState<CSSProperties>({});
+    const rippleRef = useRef<HTMLDivElement | null>(null);
     const timeoutId = useRef<NodeJS.Timeout | null>(null);
     useEffect(() => {
       return () => {
@@ -96,23 +96,27 @@ const _Ripples = memo(
         const top = pageY - (rect.top + yMultiplier);
         const size = Math.max(rect.width, rect.height);
 
-        setRippleStyle((state) => ({
-          ...state,
-          left: isNaN(left) ? 0 : left,
-          top: isNaN(top) ? 0 : top,
-          opacity: 1,
-          transform: "translate(-50%, -50%)",
-          transition: "initial",
-          backgroundColor: color,
-        }));
+        if (rippleRef.current) {
+          const newStyles = {
+            left: isNaN(left) ? "0px" : `${left}px`,
+            top: isNaN(top) ? "0px" : `${top}px`,
+            opacity: 1,
+            transform: "translate(-50%, -50%)",
+            transition: "initial",
+            backgroundColor: color,
+          };
+          Object.assign(rippleRef.current.style, newStyles);
+        }
         // start a timeout to scale the ripple
         timeoutId.current = setTimeout(() => {
-          setRippleStyle((state) => ({
-            ...state,
-            opacity: 0,
-            transform: `scale(${size / 9})`,
-            transition: `all ${duration}ms`,
-          }));
+          if (rippleRef.current) {
+            const newStyles = {
+              opacity: 0,
+              transform: `scale(${size / 9})`,
+              transition: `all ${duration}ms`,
+            };
+            Object.assign(rippleRef.current.style, newStyles);
+          }
           timeoutId.current = null;
         }, 50);
 
@@ -149,11 +153,7 @@ const _Ripples = memo(
           onClick={onClickHandler}
         >
           {children}
-          <StyledRipple
-            style={{
-              ...rippleStyle,
-            }}
-          />
+          <StyledRipple ref={rippleRef} />
         </div>
       </ParentRipple>
     );

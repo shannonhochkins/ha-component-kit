@@ -3,12 +3,6 @@ export interface ThemeParams {
     family: string;
     size: string | number;
   };
-  alert: {
-    errorColor: string;
-    warningColor: string;
-    successColor: string;
-    infoColor: string;
-  };
   device: {
     areaCard: {
       zIndex: number;
@@ -30,12 +24,6 @@ export const theme: ThemeParams = {
   font: {
     size: "1rem",
     family: '"Roboto","Helvetica","Arial",sans-serif',
-  },
-  alert: {
-    errorColor: "#db4437",
-    warningColor: "#ffa600",
-    successColor: "#43a047",
-    infoColor: "#039be5",
   },
   device: {
     areaCard: {

@@ -1,0 +1,15 @@
+{
+  "name": "@hakit/sync-locales",
+  "version": "1.0.0",
+  "description": "Will download all the locales from the server and save them in the locales folder",
+  "main": "index.js",
+  "scripts": {
+    "sync": "npx tsx ./index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^22.10.0"
+  }
+}

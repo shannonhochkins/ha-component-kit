@@ -1,6 +1,6 @@
 import { Menu, FabCard, ButtonBar, ButtonBarButton, fallback } from "@components";
 import type { EntityName, FilterByDomain } from "@hakit/core";
-import { useEntity, HvacMode, toReadableString, OFF } from "@hakit/core";
+import { useEntity, HvacMode, toReadableString, OFF, localize } from "@hakit/core";
 import { useState, useEffect, useCallback } from "react";
 import { supportsFeatureFromAttributes, UNAVAILABLE } from "@hakit/core";
 import { motion, type MotionProps } from "framer-motion";
@@ -48,6 +48,8 @@ export interface ClimateControlsProps extends Extendable {
   entity: FilterByDomain<EntityName, "climate">;
   /** provide a list of hvacModes you want to support/display in the UI, will use all by default */
   hvacModes?: HvacMode[];
+  /** use custom labels for the displayed hvac modes */
+  hvacModeLabels?: Record<HvacMode, string>;
   /** hide the current temperature @default false */
   hideCurrentTemperature?: boolean;
   /** hide the hvac modes button @default false */
@@ -67,6 +69,7 @@ export interface ClimateControlsProps extends Extendable {
 function _ClimateControls({
   entity: _entity,
   hvacModes,
+  hvacModeLabels,
   hideCurrentTemperature,
   hideHvacModes,
   hideSwingModes,
@@ -162,14 +165,14 @@ function _ClimateControls({
             <ButtonBarButton
               active={_mainControl === "temperature"}
               disabled={entity!.state === UNAVAILABLE}
-              title="Temperature"
+              title={localize("temperature")}
               icon="mdi:thermometer"
               onClick={() => setMainControl("temperature")}
             />
             <ButtonBarButton
               active={_mainControl === "humidity"}
               disabled={entity!.state === UNAVAILABLE}
-              title="Humidity"
+              title={localize("humidity")}
               onClick={() => setMainControl("humidity")}
               icon="mdi:water-percent"
             />
@@ -186,7 +189,7 @@ function _ClimateControls({
                   return {
                     active: entity.state === mode,
                     icon: computeHvacModeIcon(mode),
-                    label: toReadableString(mode),
+                    label: hvacModeLabels?.[mode] ?? toReadableString(mode),
                     onClick: () => {
                       _handleOperationModeChanged(mode);
                     },

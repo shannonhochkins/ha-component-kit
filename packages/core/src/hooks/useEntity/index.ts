@@ -2,13 +2,17 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { cloneDeep, isEmpty, omit } from "lodash";
 import type { HassEntityWithService, HassEntityCustom, ExtractDomain, EntityName } from "@typings";
 import type { HassEntity } from "home-assistant-js-websocket";
-import { useService, useHistory, useSubscribeEntity, getIconByEntity } from "@core";
+import { useSubscribeEntity } from "../useSubscribeEntity";
+import { useService } from "../useService";
+import { useHistory } from "../useHistory";
+import { getIconByEntity } from "../useIcon";
 import { useDebouncedCallback } from "use-debounce";
 import { getCssColorValue } from "@utils/colors";
 import { computeDomain } from "@utils/computeDomain";
 import { diff } from "deep-object-diff";
 import type { HistoryOptions } from "../useHistory";
 import { timeAgo } from "@utils/time/time-ago";
+import { useHass } from "../useHass";
 
 interface UseEntityOptions {
   /** The amount of time to throttle updates in milliseconds */
@@ -49,29 +53,34 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
   const domain = computeDomain(entity) as ExtractDomain<E>;
   const service = useService(domain, entity);
   const history = useHistory(entity, historyOptions);
+  const { useStore } = useHass();
+  const language = useStore((state) => state.config?.language);
 
-  const formatEntity = useCallback((entity: HassEntity): HassEntityCustom => {
-    const now = new Date();
-    const then = new Date(entity.attributes.last_triggered ?? entity.last_updated);
-    const relativeTime = timeAgo.format(then);
-    const timeDiff = Math.abs(now.getTime() - then.getTime());
-    const active = relativeTime === "just now";
-    const { hexColor, rgbColor, brightness, brightnessValue, rgbaColor, color } = getCssColorValue(entity);
-    return {
-      ...entity,
-      custom: {
-        color,
-        relativeTime,
-        timeDiff,
-        active,
-        hexColor,
-        rgbColor,
-        brightness,
-        brightnessValue,
-        rgbaColor,
-      },
-    };
-  }, []);
+  const formatEntity = useCallback(
+    (entity: HassEntity): HassEntityCustom => {
+      const now = new Date();
+      const then = new Date(entity.attributes.last_triggered ?? entity.last_updated);
+      const relativeTime = timeAgo(then, language);
+      const timeDiff = Math.abs(now.getTime() - then.getTime());
+      const active = relativeTime === "just now";
+      const { hexColor, rgbColor, brightness, brightnessValue, rgbaColor, color } = getCssColorValue(entity);
+      return {
+        ...entity,
+        custom: {
+          color,
+          relativeTime,
+          timeDiff,
+          active,
+          hexColor,
+          rgbColor,
+          brightness,
+          brightnessValue,
+          rgbaColor,
+        },
+      };
+    },
+    [language],
+  );
   const debounceUpdate = useDebouncedCallback((entity: HassEntity) => {
     setEntity(formatEntity(entity));
   }, throttle);

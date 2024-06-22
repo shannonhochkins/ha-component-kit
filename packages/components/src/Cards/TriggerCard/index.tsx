@@ -1,9 +1,20 @@
 import { useCallback, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import type { EntityName } from "@hakit/core";
-import { useEntity, useHass, useIconByDomain, useIcon, useIconByEntity, computeDomain, isUnavailableState } from "@hakit/core";
+import {
+  computeDomainTitle,
+  useEntity,
+  useHass,
+  useIconByDomain,
+  useIcon,
+  useIconByEntity,
+  computeDomain,
+  isUnavailableState,
+  localize,
+} from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 import { fallback, CardBase, type AvailableQueries, type CardBaseProps } from "@components";
+import { IconProps } from "@iconify/react";
 
 const StyledTriggerCard = styled(CardBase)``;
 
@@ -77,17 +88,19 @@ const LayoutBetween = styled.div`
   flex-direction: row;
 `;
 
-const Title = styled.div`
+const Description = styled.div`
   color: var(--ha-S500-contrast);
   font-size: 0.7rem;
   text-align: left;
 `;
-const Description = styled.div<{
+const Title = styled.div<{
   disabled?: boolean;
 }>`
-  color: var(--ha-S500-contrast);
-  ${(props) => props.disabled && `color: var(--ha-S50-contrast);`}
+  color: var(--ha-S300-contrast);
   font-size: 0.9rem;
+  font-weight: bold;
+  ${(props) => props.disabled && `color: var(--ha-S50-contrast);`}
+
   text-align: left;
   span {
     display: block;
@@ -107,6 +120,10 @@ export interface TriggerCardProps<E extends EntityName> extends Omit<CardBasePro
   description?: string;
   /** optional override to replace the icon that appears in the card */
   icon?: string;
+  /** the props for the icon, which includes styles for the icon */
+  iconProps?: Omit<IconProps, "icon">;
+  /** the props for the icon, which includes styles for the icon */
+  sliderIconProps?: Omit<IconProps, "icon">;
   /** optional override for the slider icon */
   sliderIcon?: string;
   /** override for the slider text when the state is active */
@@ -126,6 +143,8 @@ function _TriggerCard<E extends EntityName>({
   onClick,
   disabled: _disabled,
   icon: _icon,
+  iconProps,
+  sliderIconProps,
   sliderIcon: _sliderIcon,
   sliderTextActive,
   sliderTextInactive,
@@ -142,16 +161,18 @@ function _TriggerCard<E extends EntityName>({
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const domain = computeDomain(_entity);
   const entity = useEntity(_entity);
-  const entityIcon = useIconByEntity(_entity);
-  const domainIcon = useIconByDomain(domain);
+  const entityIcon = useIconByEntity(_entity, iconProps);
+  const domainIcon = useIconByDomain(domain, iconProps);
   const timeRef = useRef<NodeJS.Timeout | null>(null);
   const [active, setActive] = useState(false);
-  const icon = useIcon(_icon ?? null);
-  const sliderIcon = useIcon(_sliderIcon ?? null);
-  const powerIcon = useIcon("mdi:power");
+  const icon = useIcon(_icon ?? null, iconProps);
+  const sliderIcon = useIcon(_sliderIcon ?? null, sliderIconProps);
+  const powerIcon = useIcon("mdi:power", iconProps);
   const arrowIcon = useIcon("mingcute:arrows-right-line", {
+    ...iconProps,
     style: {
       fontSize: "16px",
+      ...iconProps?.style,
     },
   });
   const isUnavailable = isUnavailableState(entity.state);
@@ -188,18 +209,18 @@ function _TriggerCard<E extends EntityName>({
     >
       <Contents>
         <LayoutBetween className={`layout-between`}>
-          <Description disabled={disabled} className={`description`}>
+          <Title disabled={disabled} className={`description`}>
             {title || entity.attributes.friendly_name || _entity}
             {description && <span>{description}</span>}
-          </Description>
+          </Title>
           {icon ?? entityIcon ?? domainIcon}
         </LayoutBetween>
         <Gap className={`gap`} />
         <LayoutBetween className={`layout-between`}>
-          <Title className={`title`}>
+          <Description className={`title`}>
             {entity.custom.relativeTime}
             {disabled ? ` - ${entity.state}` : ""}
-          </Title>
+          </Description>
           <Toggle active={disabled ? false : active} className={`toggle`}>
             {disabled ? null : (
               <>
@@ -207,7 +228,14 @@ function _TriggerCard<E extends EntityName>({
                   {sliderIcon ?? powerIcon}
                 </ToggleState>
                 <ToggleMessage hideArrow={hideArrow} active={active} className={`toggle-message`}>
-                  {active ? sliderTextActive ?? "Success..." : sliderTextInactive ?? `Run ${domain}`} {!active && !hideArrow && arrowIcon}
+                  {active
+                    ? sliderTextActive ??
+                      localize("triggered_name", {
+                        search: " {name}",
+                        replace: "",
+                      })
+                    : sliderTextInactive ?? `${localize("run")} ${computeDomainTitle(_entity, entity?.attributes?.device_class)}`}{" "}
+                  {!active && !hideArrow && arrowIcon}
                 </ToggleMessage>
               </>
             )}

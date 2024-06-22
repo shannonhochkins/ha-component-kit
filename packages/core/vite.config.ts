@@ -5,7 +5,8 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 import { fileURLToPath } from 'node:url';
 import { extname, relative, resolve } from 'path'
-import { glob } from 'glob'
+import { glob } from 'glob';
+
 import dts from 'vite-plugin-dts';
 
 const globals = {
@@ -17,8 +18,6 @@ const globals = {
   'framer-motion': 'framer-motion',
   'react/jsx-runtime': 'react/jsx-runtime',
   'home-assistant-js-websocket': 'home-assistant-js-websocket',
-  'javascript-time-ago': 'javascript-time-ago',
-  'javascript-time-ago/locale/en.json': 'javascript-time-ago/locale/en.json',
   '@emotion/styled': '@emotion/styled',
   '@emotion/react': '@emotion/react',
   '@emotion/sheet': '@emotion/sheet',
@@ -32,8 +31,11 @@ const globals = {
 export default defineConfig(configEnv => {
   return {
     root: resolve(__dirname, './'),
+    json: {
+      namedExports: false,
+    },
     build: {
-      target: 'es2020',
+      target: 'esnext',
       sourcemap: true,
       emptyOutDir: false,
       lib: {
@@ -44,8 +46,14 @@ export default defineConfig(configEnv => {
       rollupOptions: {
         input: Object.fromEntries(
           glob.sync([
-            'src/**/{index,Provider,coordinates,helpers,areas,entities,devices,constants}.{ts,tsx}',
-          ]).map(file => [
+            'src/*.{ts,tsx}',
+            'src/**/*.{ts,tsx}',
+            'src/**/**/*.{ts,tsx}',
+            'src/**/locales/**/*.json',
+          ], {
+            ignore: ['**/*stories.ts', '**/*stories.tsx', "**/*.test.{ts,tsx}"]
+          }).map(file => {
+            return [
             // The name of the entry point
             // src/nested/foo.ts becomes nested/foo
             relative(
@@ -55,13 +63,12 @@ export default defineConfig(configEnv => {
             // The absolute path to the entry file
             // src/nested/foo.ts becomes /project/src/nested/foo.ts
             fileURLToPath(new URL(file, import.meta.url))
-          ])
+          ]})
        ),
         external:[
           ...Object.keys(packageJson.peerDependencies),
           'react/jsx-runtime',
           'react-is',
-          'javascript-time-ago/locale/en.json',
           '@emotion/sheet',
           '@emotion/cache',
           '@emotion/serialize',
@@ -71,6 +78,7 @@ export default defineConfig(configEnv => {
           globals,
           assetFileNames: 'assets/[name][extname]',
           entryFileNames: '[format]/[name].js',
+          exports: 'named',
         }
       },
       minify: true,

@@ -1,5 +1,4 @@
 import {
-  AlarmControlPanelEntity,
   AutomationEntity,
   CameraEntity,
   ClimateEntity,
@@ -25,6 +24,7 @@ import {
 // custom overrides for the VacuumEntity
 import { VacuumEntity } from "../entities/vacuum";
 import { MediaPlayerEntity } from "../entities/mediaPlayer";
+import { AlarmControlPanelEntity } from "../entities/alarmControlPanel";
 
 export interface DefinedPropertiesByDomain {
   ["alarm_control_panel"]: AlarmControlPanelEntity;

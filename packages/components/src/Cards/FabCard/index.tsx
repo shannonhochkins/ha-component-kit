@@ -1,12 +1,21 @@
 import { useMemo } from "react";
 import styled from "@emotion/styled";
-import { useEntity, useIconByDomain, useHass, useIcon, useIconByEntity, isUnavailableState } from "@hakit/core";
-import { computeDomain } from "@utils/computeDomain";
-import type { EntityName } from "@hakit/core";
+import {
+  useEntity,
+  useIconByDomain,
+  useHass,
+  useIcon,
+  useIconByEntity,
+  isUnavailableState,
+  computeDomainTitle,
+  computeDomain,
+  ON,
+  type EntityName,
+} from "@hakit/core";
 import { CardBase, fallback, Tooltip } from "@components";
 import type { TooltipProps, CardBaseProps } from "@components";
-import { startCase, lowerCase } from "lodash";
 import { ErrorBoundary } from "react-error-boundary";
+import { type IconProps } from "@iconify/react";
 
 const StyledFabCard = styled(<E extends EntityName>({ service, serviceData, key, ...props }: CardBaseProps<"button", E>) => (
   <CardBase
@@ -64,28 +73,30 @@ const Contents = styled.div<{
   `}
 `;
 
-type OmitProperties = "as" | "title" | "ref";
+type OmitProperties = "title" | "ref" | "active";
 
 export interface FabCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
   /** The size of the Fab, this applies to the width and height @default 48 */
   size?: number;
   /** Optional icon param, this is automatically retrieved by the "domain" name if provided, or can be overwritten with a custom value  */
   icon?: string | null;
-  /** the css color value of the icon */
-  iconColor?: string | null;
+  /** the props for the icon, which includes styles for the icon */
+  iconProps?: Omit<IconProps, "icon">;
   /** will not show any icons */
   noIcon?: boolean;
   /** the title used for the tooltip and or modal that will expands, defaults to entity name or domain name  */
   title?: string;
   /** the tooltip placement @default "top" */
   tooltipPlacement?: TooltipProps["placement"];
+  /** active flag for the state of the fab, by default this is active if the entity.state value is ON, if you want to control this just pass the prop */
+  active?: boolean;
 }
 
 function _FabCard<E extends EntityName>({
   title: _title,
   tooltipPlacement,
   icon: _icon,
-  iconColor,
+  iconProps,
   noIcon,
   size = 48,
   entity: _entity,
@@ -108,23 +119,25 @@ function _FabCard<E extends EntityName>({
   const domain = _entity ? computeDomain(_entity) : null;
   const icon = typeof _icon === "string" ? _icon : null;
   const domainIcon = useIconByDomain(domain === null ? "unknown" : domain, {
-    fontSize: `${size / 1.7}px`,
-    color: iconColor ?? undefined,
+    ...(iconProps ?? {}),
+    fontSize: iconProps?.fontSize ?? `${size / 1.7}px`,
   });
   const hasChildren = typeof children !== "undefined";
   const _borderRadius = hasChildren ? borderRadius ?? "10px" : borderRadius ?? "50%";
   const isUnavailable = typeof entity?.state === "string" ? isUnavailableState(entity.state) : false;
   const entityIcon = useIconByEntity(_entity || "unknown", {
-    fontSize: `${size / 1.7}px`,
-    color: iconColor ?? undefined,
+    ...(iconProps ?? {}),
+    fontSize: iconProps?.fontSize ?? `${size / 1.7}px`,
   });
   const iconElement = useIcon(icon, {
-    fontSize: `${size / 1.7}px`,
-    color: iconColor ?? undefined,
+    ...(iconProps ?? {}),
+    fontSize: iconProps?.fontSize ?? `${size / 1.7}px`,
   });
-  const active = typeof _active === "boolean" ? _active : entity === null ? false : entity.state !== "off" && !isUnavailable;
-
-  const title = useMemo(() => _title ?? (domain === null ? null : startCase(lowerCase(domain))), [_title, domain]);
+  const active = typeof _active === "boolean" ? _active : entity === null ? false : entity.state === ON && !isUnavailable;
+  const title = useMemo(
+    () => _title || (domain !== null && _entity ? computeDomainTitle(_entity, entity?.attributes?.device_class) : null),
+    [_title, domain, entity, _entity],
+  );
   return (
     <>
       <Tooltip

@@ -1,12 +1,16 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, VacuumCard } from "@components";
+import { ThemeProvider, Row, VacuumCard } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
-      <VacuumCard {...args} entity="vacuum.robot_vacuum" />
+      <Row gap="1rem">
+        <VacuumCard entity="vacuum.robot_vacuum" {...args} />
+        <VacuumCard layoutType="slim-vertical" {...args} entity="vacuum.robot_vacuum" />
+        <VacuumCard layoutType="slim" {...args} entity="vacuum.robot_vacuum" />
+      </Row>
     </HassConnect>
   );
 }

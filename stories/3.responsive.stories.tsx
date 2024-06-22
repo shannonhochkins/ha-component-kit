@@ -34,9 +34,9 @@ function ResponsiveGroupsExample() {
       title="ButtonCard"
       justifyContent="flex-start"
       alignItems="stretch">
-      <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_1" service="toggle" sm={6} md={6} lg={4} xlg={4} />
-      <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_2" service="toggle" sm={6} icon="mdi:power" md={6} lg={4} xlg={4} />
-      <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_3" service="toggle" sm={6} md={6} lg={4} xlg={4} />
+      <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_1" service="toggle" sm={6} md={6} lg={4} xlg={4} />
+      <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_2" service="toggle" sm={6} icon="mdi:power" md={6} lg={4} xlg={4} />
+      <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_3" service="toggle" sm={6} md={6} lg={4} xlg={4} />
     </Group>
   </Row>;
 }

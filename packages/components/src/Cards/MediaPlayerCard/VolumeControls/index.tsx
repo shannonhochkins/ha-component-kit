@@ -71,7 +71,9 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
     <Row gap="0.5rem" wrap="nowrap">
       {!hideMute && supportsVolumeMute && (
         <Fab
-          iconColor={`var(--ha-S200-contrast)`}
+          iconProps={{
+            color: `var(--ha-S200-contrast)`,
+          }}
           className={`volume-mute ${is_volume_muted ? "muted" : "not-muted"}`}
           disabled={disabled}
           size={DEFAULT_FAB_SIZE}
@@ -92,7 +94,9 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
             rippleProps={{
               preventPropagation: true,
             }}
-            iconColor={`var(--ha-S200-contrast)`}
+            iconProps={{
+              color: `var(--ha-S200-contrast)`,
+            }}
             className="volume-down"
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}
@@ -103,7 +107,9 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
             rippleProps={{
               preventPropagation: true,
             }}
-            iconColor={`var(--ha-S200-contrast)`}
+            iconProps={{
+              color: `var(--ha-S200-contrast)`,
+            }}
             className="volume-up"
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}

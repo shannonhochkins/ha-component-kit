@@ -1,6 +1,5 @@
 import type { EntityName, FilterByDomain } from "@hakit/core";
-import { VacuumControls } from "@components";
-import type { VacuumControlsProps } from "@components";
+import { VacuumControls, type VacuumControlsProps } from "../../../../Shared/Entity/Vacuum/VacuumControls";
 
 export interface ModalVacuumControlsProps extends VacuumControlsProps {
   entity: FilterByDomain<EntityName, "vacuum">;
@@ -9,3 +8,4 @@ export interface ModalVacuumControlsProps extends VacuumControlsProps {
 export function ModalVacuumControls(props: ModalVacuumControlsProps) {
   return <VacuumControls {...props} />;
 }
+export default ModalVacuumControls;

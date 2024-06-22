@@ -11,7 +11,7 @@ const MSG_TYPE_AUTH_OK = "auth_ok";
 const ERR_CANNOT_CONNECT = 1;
 const ERR_INVALID_AUTH = 2;
 
-function createSocket(
+export function createSocket(
   auth: Auth,
 ): Promise<HaWebSocket> {
   // Convert from http:// -> ws://, https:// -> wss://

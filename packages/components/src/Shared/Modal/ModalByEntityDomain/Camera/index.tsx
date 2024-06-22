@@ -1,5 +1,6 @@
-import { CameraStream, Row, type CameraStreamProps } from "@components";
-import { isUnavailableState, useEntity, type EntityName, type FilterByDomain } from "@hakit/core";
+import { type CameraStreamProps, CameraStream } from "../../../../Cards/CameraCard/stream";
+import { Row } from "../../../Row";
+import { isUnavailableState, localize, useEntity, type EntityName, type FilterByDomain } from "@hakit/core";
 import { useEffect } from "react";
 export interface ModalCameraControlsProps extends CameraStreamProps {
   entity: FilterByDomain<EntityName, "camera">;
@@ -18,32 +19,31 @@ export function ModalCameraControls({ entity, onStateChange, ...props }: ModalCa
         entity={entity}
         {...props}
         onStateChange={(value) => {
-          let title = "Loading";
+          let title = localize("loading");
           switch (value) {
             case "playing":
             case "play":
-              title = "Playing";
+              title = localize("play");
               break;
             case "loadeddata":
-              title = "Loaded";
+            case "waiting":
+              title = localize("loading");
               break;
             case "pause":
-              title = "Paused";
+              title = localize("pause");
               break;
             case "stalled":
-              title = "Stalled";
-              break;
-            case "waiting":
-              title = "Loading";
+              title = localize("buffering");
               break;
             case "canplaythrough":
             case "canplay":
-              title = "Ready";
+              title = localize("nothing_playing");
               break;
           }
-          onStateChange(isUnavailable ? "Unavailable" : title);
+          onStateChange(isUnavailable ? localize("unavailable") : title);
         }}
       />
     </Row>
   );
 }
+export default ModalCameraControls;

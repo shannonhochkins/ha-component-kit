@@ -15,6 +15,7 @@
     "jsxImportSource": "@emotion/react",
     "declaration": true,
     "strict": true,
+    "noErrorTruncation": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "preserveConstEnums": true,

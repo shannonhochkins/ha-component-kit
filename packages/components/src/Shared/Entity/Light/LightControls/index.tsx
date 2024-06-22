@@ -12,6 +12,7 @@ import {
   lightSupportsBrightness,
   lightSupportsColorMode,
   lightSupportsColor,
+  localize,
 } from "@hakit/core";
 import type { EntityName, FilterByDomain } from "@hakit/core";
 import colorWheel from "./color_wheel.png";
@@ -126,7 +127,7 @@ function _LightControls({ entity: _entity, onStateChange }: LightControlsProps) 
     if (entity.state === ON) {
       return `${brightnessValue}%`;
     }
-    return "Unavailable";
+    return localize("unavailable");
   }, [brightnessValue, entity.state]);
 
   useEffect(() => {
@@ -174,7 +175,7 @@ function _LightControls({ entity: _entity, onStateChange }: LightControlsProps) 
                 sliderColor={entity.custom.color}
                 min={1}
                 max={100}
-                thickness={device.xxs ? 70 : 100}
+                thickness={device.xxs ? 90 : 100}
                 borderRadius={24}
                 value={brightnessValue}
                 disabled={isUnavailable || entity.state === OFF}

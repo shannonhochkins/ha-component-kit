@@ -1,4 +1,4 @@
-import { useEntity, type EntityName } from "@hakit/core";
+import { localize, useEntity, type EntityName } from "@hakit/core";
 import { fallback, Group, type GroupProps } from "@components";
 import styled from "@emotion/styled";
 import { useMemo } from "react";
@@ -40,7 +40,7 @@ function _EntityAttributes({ entity, title, ...rest }: EntityAttributesProps) {
   `}
       layout="column"
       alignItems="flex-start"
-      title={title ?? "Attributes & State"}
+      title={title ?? localize("show_attributes")}
       {...rest}
     >
       {memoizedAttributes.map(([key, value]) => (

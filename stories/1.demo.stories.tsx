@@ -28,6 +28,7 @@ import {
   PersonCard,
   ButtonGroupButton,
   VacuumCard,
+  AlarmCard,
 } from '@components';
 import office from './office.jpg';
 import livingRoom from './living-room.jpg';
@@ -44,8 +45,8 @@ function Template() {
     }}>
       <Group title="Time & Date" layout="row" justifyContent="flex-start" alignItems="stretch" description="Displays some variations for the TimeCard">
         <TimeCard />
-        <TimeCard hideDate center />
-        <TimeCard hideTime hideIcon center />
+        <TimeCard hideDate hideIcon center />
+        <TimeCard timeFormat="hh:mm:ss a" dateFormat={"MMM DD"} />
       </Group>
       <Row fullWidth  justifyContent="flex-start" alignItems="stretch" gap="1rem">
         <Group
@@ -67,22 +68,22 @@ function Template() {
           lg={6}
           xlg={6}
           title="ButtonCard"
-          description={<span>With defaultLayout="slim" we can change the layout of the ButtonCard</span>}
+          description={<span>With layoutType="slim" we can change the layout of the ButtonCard</span>}
           justifyContent="flex-start"
           alignItems="stretch">
-          <ButtonCard id="slim" defaultLayout="slim" entity="light.fake_light_1" service="toggle" md={6} lg={4} xlg={4} />
-          <ButtonCard id="slim" defaultLayout="slim" entity="weather.entity" md={6} lg={4} xlg={4} />
-          <ButtonCard id="slim" defaultLayout="slim" entity="climate.air_conditioner" md={6} lg={4} xlg={4} />
-          <ButtonCard id="slim" defaultLayout="slim" entity="switch.fake_switch" service="toggle" md={6} lg={4} xlg={4} />
-          <ButtonCard id="slim" defaultLayout="slim" entity="cover.cover_with_tilt" service="toggle" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_1" service="toggle" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" layoutType="slim" entity="weather.entity" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" layoutType="slim" entity="climate.air_conditioner" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" layoutType="slim" entity="switch.fake_switch" service="toggle" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" layoutType="slim" entity="cover.cover_with_tilt" service="toggle" md={6} lg={4} xlg={4} />
         </Group>
       </Row>
-      <Group title="ButtonCard"  description={<span>With defaultLayout="slim-vertical" we can change the layout of the ButtonCard</span>} justifyContent="flex-start" alignItems="stretch">
-        <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_1" service="toggle" />
-        <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_2" service="toggle" icon="mdi:power" />
-        <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="light.fake_light_3" service="toggle" />
-        <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="switch.fake_switch" service="toggle" />
-        <ButtonCard id="slim-vertical" defaultLayout="slim-vertical" entity="vacuum.robot_vacuum" service="start" />
+      <Group title="ButtonCard"  description={<span>With layoutType="slim-vertical" we can change the layout of the ButtonCard</span>} justifyContent="flex-start" alignItems="stretch">
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_1" service="toggle" />
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_2" service="toggle" icon="mdi:power" />
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_3" service="toggle" />
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="switch.fake_switch" service="toggle" />
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="vacuum.robot_vacuum" service="start" />
       </Group>
       <Group title="FabCard & ButtonBar & ButtonGroup" justifyContent="flex-start" alignItems="stretch" description="FabCard is a great way to show simple entities you just want to perform a simple action and don't care about the name / data, there's a bunch of different ways to render and control entities" gap="1rem">
         <FabCard entity="light.fake_light_1" service="toggle" />
@@ -93,12 +94,19 @@ function Template() {
         <FabCard entity="vacuum.robot_vacuum" service="start">
           <span>Custom Content</span>
         </FabCard>
-        <ButtonBar>
-          <ButtonBarButton entity="switch.record" />
-          <ButtonBarButton entity="binary_sensor.vehicle" />
-          <ButtonBarButton entity="sensor.air_conditioner_inside_temperature" />
-        </ButtonBar>
-        <ButtonGroup orientation="horizontal" thickness={60}>
+        <Row gap="1rem">
+          <ButtonBar>
+            <ButtonBarButton entity="switch.record" />
+            <ButtonBarButton entity="binary_sensor.vehicle" />
+            <ButtonBarButton entity="sensor.air_conditioner_inside_temperature" />
+          </ButtonBar>
+          <ButtonBar layoutType="bubble">
+            <ButtonBarButton entity="switch.record" />
+            <ButtonBarButton entity="binary_sensor.vehicle" />
+            <ButtonBarButton entity="sensor.air_conditioner_inside_temperature" />
+          </ButtonBar>
+        </Row>
+        <ButtonGroup orientation="horizontal" thickness={40}>
           <ButtonGroupButton
             entity="light.fake_light_1"
             service="toggle"
@@ -118,15 +126,11 @@ function Template() {
           <EntitiesCard includeLastUpdated>
             <EntitiesCardRow entity="sensor.time" />
             <EntitiesCardRow entity="sensor.date" />
-            <EntitiesCardRow entity="switch.fake_switch" icon="mdi:gamepad-classic" name="Gaming Computer" onClick={ (entity) => {
-              alert(`You clicked on ${entity.attributes.friendly_name}!`);
-            }} renderState={(entity) => {
-              return entity.state === "on" ? <span>On!</span> : <span>Off!</span>;
-            }} />
+            <EntitiesCardRow entity="switch.fake_switch" icon="mdi:gamepad-classic" name="Gaming Computer" />
           </EntitiesCard>
           <MediaPlayerCard entity="media_player.fake_speaker_2" layout="slim" />
           <TriggerCard entity="scene.good_morning" />
-          <ClimateCard entity="climate.air_conditioner" />
+          <ClimateCard layoutType="slim-vertical" entity="climate.air_conditioner" />
           <WeatherCard entity="weather.entity" />
           <GarbageCollectionCard description="Here's the upcoming garbage collection schedule." schedules={[
             {
@@ -246,6 +250,7 @@ function Template() {
             <PersonCard entity="person.jane_doe" />
           </FamilyCard>
           <VacuumCard entity="vacuum.robot_vacuum" />
+          <AlarmCard entity="alarm_control_panel.home_alarm" defaultCode={1234} />
         </Row>
       </Group>
     </Column>

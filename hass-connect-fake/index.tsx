@@ -11,7 +11,7 @@ import type {
   HaWebSocket,
   MessageBase,
 } from "home-assistant-js-websocket";
-import { Connection } from "home-assistant-js-websocket";
+import { Connection, HassEntity } from "home-assistant-js-websocket";
 import type {
   ServiceData,
   DomainService,
@@ -20,19 +20,18 @@ import type {
   Route,
   Store,
 } from "@hakit/core";
-import { isArray } from "lodash";
-import { HassContext, updateLocalTranslations } from '@hakit/core';
+import { isArray, isEmpty } from "lodash";
+import { HassContext, updateLocales, locales } from '@hakit/core';
 import { entities as ENTITIES } from './mocks/mockEntities';
 import fakeApi from './mocks/fake-call-service';
 import { create } from "zustand";
+import { diff } from "deep-object-diff";
 import type { ServiceArgs } from './mocks/fake-call-service/types';
 import mockHistory from './mock-history';
 import { mockCallApi } from './mocks/fake-call-api';
 import reolinkSnapshot from './assets/reolink-snapshot.jpg';
 import { logs } from './mocks/mockLogs';
 import {dailyForecast, hourlyForecast} from './mocks/mockWeather';
-import { translations } from "./mocks/translations";
-
 interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
   domain: T;
   service: M;
@@ -193,35 +192,71 @@ class MockConnection extends Connection {
   }
 }
 
+const IGNORE_KEYS_FOR_DIFF = ["last_changed", "last_updated", "context"];
+const ignoreForDiffCheck = (
+  obj: HassEntities,
+  keys: string[] = IGNORE_KEYS_FOR_DIFF,
+): {
+  [key: string]: Omit<HassEntity, "last_changed" | "last_updated" | "context">;
+} => {
+  return Object.fromEntries(
+    Object.entries(obj).map(([entityId, entityData]) => [
+      entityId,
+      Object.fromEntries(Object.entries(entityData).filter(([key]) => !keys.includes(key))),
+    ]),
+  ) as {
+    [key: string]: Omit<HassEntity, "last_changed" | "last_updated" | "context">;
+  };
+};
+
 const useStore = create<Store>((set) => ({
   routes: [],
   setRoutes: (routes) => set(() => ({ routes })),
   hash: '',
   setHash: (hash) => set({ hash }),
   entities: ENTITIES,
-  setEntities: (newEntities) => set(state => {
-    const entitiesCopy = { ...state.entities };
-    let hasChanged = false;
-
-    Object.keys(newEntities).forEach(entityId => {
-      // Check if this entity actually changed
-      entitiesCopy[entityId] = {
-        ...state.entities[entityId],
-        ...newEntities[entityId],
+  // this now matches the actual set Entities which fixed a state rendering issue on the demo page
+  setEntities: (newEntities) => set((state) => {
+    const entitiesDiffChanged = diff(ignoreForDiffCheck(state.entities), ignoreForDiffCheck(newEntities)) as HassEntities;
+    if (!isEmpty(entitiesDiffChanged)) {
+      // purposely not making this throttle configurable
+      // because lights can animate etc, which doesn't need to reflect in the UI
+      // if a user want's to control individual entities this can be done with useEntity by passing a throttle to it's options.
+      const updatedEntities = Object.keys(entitiesDiffChanged).reduce<HassEntities>(
+        (acc, entityId) => ({
+          ...acc,
+          [entityId]: newEntities[entityId],
+        }),
+        {},
+      );
+      // update the stateEntities with the newEntities with the keys that have changed
+      Object.keys(updatedEntities).forEach((entityId) => {
+        state.entities[entityId] = {
+          ...state.entities[entityId],
+          ...newEntities[entityId],
+        };
+      });
+      if (!state.ready) {
+        return {
+          ready: true,
+          lastUpdated: new Date(),
+          entities: state.entities,
+        };
+      }
+      return {
+        lastUpdated: new Date(),
+        entities: state.entities,
       };
-      hasChanged = true;
-    });
-
-    if (hasChanged) {
-      return { entities: entitiesCopy };
     }
     return state;
   }),
+  locales: null,
+  setLocales: (locales) => set({ locales }),
   connection: new MockConnection(),
   setConnection: (connection) => set({ connection }),
   cannotConnect: false,
   setCannotConnect: (cannotConnect) => set({ cannotConnect }),
-  ready: true,
+  ready: false,
   setReady: (ready) => set({ ready }),
   lastUpdated: new Date(),
   setLastUpdated: (lastUpdated) => set({ lastUpdated }),
@@ -233,6 +268,8 @@ const useStore = create<Store>((set) => ({
   setError: (error) => set({ error }),
   hassUrl: '',
   setHassUrl: (hassUrl) => set({ hassUrl }),
+  portalRoot: undefined,
+  setPortalRoot: (portalRoot) => set({ portalRoot }),
   callApi: async () => {
     return {};
   },
@@ -254,6 +291,7 @@ const useStore = create<Store>((set) => ({
   setGlobalComponentStyles: (globalComponentStyles) => set({ globalComponentStyles }),
 }))
 
+
 function HassProvider({
   children,
 }: HassProviderProps) {
@@ -265,6 +303,8 @@ function HassProvider({
   const setHash = useStore(store => store.setHash);
   const _hash = useStore(store => store.hash);
   const ready = useStore(store => store.ready);
+  const setReady = useStore(store => store.setReady);
+  const setLocales = useStore(store => store.setLocales);
   const clock = useRef<NodeJS.Timeout | null>(null);
   const getStates = async () => null;
   const getServices = async () => null;
@@ -309,6 +349,7 @@ function HassProvider({
             ...serviceData || {},
           }
           return setEntities({
+            ...entities,
             [target]: {
               ...entities[target],
               attributes: {
@@ -321,6 +362,7 @@ function HassProvider({
         case 'turn_off':
         case 'turnOff':
           return setEntities({
+            ...entities,
             [target]: {
               ...entities[target],
               attributes: {
@@ -333,6 +375,7 @@ function HassProvider({
           })
         case 'toggle':
           return setEntities({
+            ...entities,
             [target]: {
               ...entities[target],
               attributes: {
@@ -346,6 +389,7 @@ function HassProvider({
           });
         default:
           return setEntities({
+            ...entities,
             [target]: {
               ...entities[target],
               ...dates,
@@ -427,10 +471,6 @@ function HassProvider({
     };
   }, [routes, setHash, setRoutes]);
 
-  useEffect(() => {
-    updateLocalTranslations(translations);
-  }, [])
-
   const joinHassUrl = useCallback((path: string) => path, []);
 
   const getRoute = useCallback(
@@ -446,6 +486,14 @@ function HassProvider({
     },
     []
   );
+
+  useEffect(() => {
+    locales.find(locale => locale.code === 'en')?.fetch().then(_locales => {
+      setLocales(_locales);
+      updateLocales(_locales);
+      setReady(true);
+    });
+  }, []);
 
   return (
     <HassContext.Provider
