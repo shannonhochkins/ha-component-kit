@@ -20,4 +20,5 @@ jobs:
       uses: bitovi/github-actions-react-to-ghp@v1.2.4
       with:
         path: storybook-static
+        install_command: npm i
         build_command: NODE_ENV=production npm run build:for:storybook && npm run build:storybook
