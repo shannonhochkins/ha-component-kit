@@ -36,6 +36,7 @@
     "type-check": "tsc --noEmit --project tsconfig-type-check.json",
     "build:core": "npm run build --workspace=@hakit/core",
     "build:create": "npm run build --workspace=create-hakit",
+    "build:for:storybook": "npm run build:core && npm run build:components",
     "build:components": "npm run build --workspace=@hakit/components",
     "build:storybook": "BUILD_STORYBOOK=true storybook build",
     "watch:build:components": "npm run watch:build --workspace=@hakit/components",
