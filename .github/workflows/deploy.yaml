@@ -27,10 +27,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Build Core
+        run: npm run build:core
+        working-directory: packages/core
+
+      - name: Build Components
+        run: npm run build:components
+        working-directory: packages/components
+
       - name: Build Storybook
-        run: |
-          NODE_ENV=production npm run build
-          npm run build:storybook
+        run: npm run build:storybook
 
       - name: Verify Storybook build directory
         run: ls -la storybook-static
