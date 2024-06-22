@@ -8,4 +8,3 @@ These are listed in order of priority, but are subject to change. I will attempt
 * Make new install video
 * Make new preview gif
 * Make better demo page with a real world like dashboard
-* Fix gradient behind keypad on alarm controls

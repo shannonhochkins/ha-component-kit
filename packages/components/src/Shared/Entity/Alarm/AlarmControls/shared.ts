@@ -53,19 +53,19 @@ export const _getActionColor = (state: AlarmMode, customActionColor?: (state: Al
   if (customColor) return customColor;
   switch (state) {
     case "disarmed":
-      return "var(--ha-alert-error-color)";
+      return "var(--ha-error-color)";
     case "armed_away":
-      return "var(--ha-alert-success-color)";
+      return "var(--ha-success-color)";
     case "armed_home":
-      return "var(--ha-alert-success-color)";
+      return "var(--ha-success-color)";
     case "armed_custom_bypass":
-      return "var(--ha-alert-success-color)";
+      return "var(--ha-success-color)";
     case "armed_night":
-      return "var(--ha-alert-success-color)";
+      return "var(--ha-success-color)";
     case "armed_vacation":
-      return "var(--ha-alert-success-color)";
+      return "var(--ha-success-color)";
     default:
-      return "var(--ha-alert-warning-color)";
+      return "var(--ha-warning-color)";
   }
 };
 
