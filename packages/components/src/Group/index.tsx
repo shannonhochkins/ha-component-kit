@@ -37,7 +37,7 @@ const StyledGroup = styled(CardBase)<{
     ${mq(
       ["xxs", "xs"],
       `
-      padding: ${collapsed ? "1rem 0rem" : "1.5rem 0rem 1rem"};
+      padding: ${collapsed ? "1rem 0rem" : "1.5rem 1rem 1rem"};
     `,
     )}
   `};

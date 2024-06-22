@@ -45,7 +45,7 @@ interface HassProviderProps {
   throttle?: number;
 }
 
-const fakeConfig: HassConfig = {
+const fakeConfig = {
   "latitude": -33.25779010313883,
   "longitude": 151.4821529388428,
   "elevation": 0,
@@ -64,6 +64,7 @@ const fakeConfig: HassConfig = {
   "config_dir": "/config",
   "allowlist_external_dirs": [],
   "allowlist_external_urls": [],
+  "radius": 1,
   "version": "2023.8.2",
   "config_source": "storage",
   "safe_mode": false,
@@ -74,9 +75,9 @@ const fakeConfig: HassConfig = {
   "currency": "AUD",
   "country": "AU",
   "language": "en"
-};
+} satisfies HassConfig;
 
-const fakeAuth: Auth = {
+const fakeAuth = {
   data: {
     hassUrl: "",
     clientId: null,
@@ -94,7 +95,7 @@ const fakeAuth: Auth = {
   revoke: function (): Promise<void> {
     throw new Error("Function not implemented.");
   }
-}
+} satisfies Auth;
 
 class MockWebSocket {
   addEventListener() {}

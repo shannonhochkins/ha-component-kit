@@ -260,7 +260,7 @@ function _WeatherCard({
       className={`${className ?? ""} weather-card`}
       resizeDetectorProps={{
         refreshRate: 500,
-        onResize(_width) {
+        onResize({ width: _width }) {
           setWidth(_width ?? 0);
         },
       }}
