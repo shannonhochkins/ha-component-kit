@@ -54,6 +54,9 @@ const StyledButtonCard = styled(CardBase)`
       align-items: center;
     }
   }
+  .footer > .title {
+    text-align: left;
+  }
   &:not(.disabled),
   &:not(:disabled) {
     &:not(:focus):hover {
@@ -187,8 +190,8 @@ export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProp
   iconProps?: Omit<IconProps, "icon">;
   /** the props to provide to the Fab element within the card, useful if you want to re-style it */
   fabProps?: React.ComponentProps<"div">;
-  /** By default, the tit is retrieved from the friendly name of the entity, or you can specify a manual tit */
-  tit?: ReactNode | null;
+  /** By default, the title is retrieved from the friendly name of the entity, or you can specify a manual title */
+  title?: ReactNode | null;
   /** The description will naturally fall under the title, by default it will show the information of the entity like the state */
   description?: ReactNode | null;
   /** override the unit displayed alongside the state if the entity has a unit of measurement */
