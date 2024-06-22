@@ -16,8 +16,30 @@ jobs:
       url: ${{ steps.build-publish.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-    - id: build-publish
-      uses: bitovi/github-actions-react-to-ghp@v1.2.2
-      with:
-        path: storybook-static
-        build_command: NODE_ENV=production npm run build && npm run build:storybook
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Storybook
+        run: |
+          NODE_ENV=production npm run build
+          npm run build:storybook
+
+      - name: Verify Storybook build directory
+        run: ls -la storybook-static
+
+      - name: Archive Storybook build
+        run: tar -czf storybook-static.tar.gz storybook-static
+
+      - id: build-publish
+        uses: bitovi/github-actions-react-to-ghp@v1.2.2
+        with:
+          path: storybook-static
+          build_command: echo "Skipping build, already done in previous step"
