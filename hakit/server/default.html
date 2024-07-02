@@ -14,7 +14,7 @@
   <script>
     const baseUrl = window.location.origin + window.location.pathname;;
     function downloadNextJS() {
-      fetch(`${baseUrl}/download-nextjs`, {
+      fetch(`${baseUrl}download-nextjs`, {
         method: 'POST'
       })
       .then(response => response.text())
@@ -23,7 +23,7 @@
     }
 
     function buildNextJS() {
-      fetch(`${baseUrl}/build-nextjs`, {
+      fetch(`${baseUrl}build-nextjs`, {
         method: 'POST'
       })
       .then(response => response.text())
@@ -32,7 +32,7 @@
     }
 
     function startNextJS() {
-      fetch(`${baseUrl}/start-nextjs`, {
+      fetch(`${baseUrl}start-nextjs`, {
         method: 'POST'
       })
       .then(response => response.text())
