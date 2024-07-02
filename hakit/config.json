@@ -13,7 +13,7 @@
   "options": {
     "html_file_path": "www/ha-dashboard/index.html",
     "spa_mode": true,
-    "custom_dashboard": false
+    "custom_dashboard": true
   },
   "schema": {
     "html_file_path": "str",
