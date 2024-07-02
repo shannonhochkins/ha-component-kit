@@ -12,8 +12,9 @@
   <button onclick="startNextJS()">Start Next.js Server</button>
 
   <script>
+    const baseUrl = 'http://localhost:2022';
     function downloadNextJS() {
-      fetch('/download-nextjs', {
+      fetch(`${baseUrl}/download-nextjs`, {
         method: 'POST'
       })
       .then(response => response.text())
@@ -22,7 +23,7 @@
     }
 
     function buildNextJS() {
-      fetch('/build-nextjs', {
+      fetch(`${baseUrl}/build-nextjs`, {
         method: 'POST'
       })
       .then(response => response.text())
@@ -31,7 +32,7 @@
     }
 
     function startNextJS() {
-      fetch('/start-nextjs', {
+      fetch(`${baseUrl}/start-nextjs`, {
         method: 'POST'
       })
       .then(response => response.text())
