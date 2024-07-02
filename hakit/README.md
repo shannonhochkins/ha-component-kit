@@ -8,6 +8,7 @@ This (over time) will evolve into a much more complicated addon where users will
 
 - `html_file_path` - The relative path within the 'config' directory to the index.html file to serve.
 - `spa_mode` - Enable SPA mode to reroute all traffic to the index.html file for a single page application.
+- `custom_dashboard` - Enable custom dashboard mode to allow users to design their own dashboards, else it will show the UI to download the prebuilt dashboard UI
 
 
 ### Further Tips

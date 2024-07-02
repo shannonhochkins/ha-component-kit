@@ -19,7 +19,7 @@ RUN npm install
 # Attempt to build the application, with output for debugging
 RUN npm run build
 # manually copy the default.html file into the dist directory
-COPY /usr/app/server/default.html /usr/app/server/dist/default.html
+COPY server/default.html /usr/app/server/dist/default.html
 # Expose the port the app runs on
 EXPOSE 2022
 # Make the server run script executable
