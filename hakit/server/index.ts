@@ -108,14 +108,14 @@ async function loadConfig() {
             res.status(200).send('Next.js application downloaded and extracted successfully');
           })
           .on('error', (err: Error) => { // Change the type to capture full error object
-            console.error('Error extracting Next.js application:', err.message);
+            console.error('Error extracting Next.js application');
             // console.error('Error stack:', err.stack);
-            res.status(500).send('Error extracting Next.js application');
+            res.status(200).send(err);
           });
     
       } catch (error) {
-        console.error('Error downloading Next.js application:', error);
-        res.status(500).send('Error downloading Next.js application');
+        console.error('Error downloading Next.js application');
+        res.status(200).send(error);
       }
     });
 
