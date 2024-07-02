@@ -12,7 +12,7 @@
   <button onclick="startNextJS()">Start Next.js Server</button>
 
   <script>
-    const baseUrl = 'http://localhost:2022';
+    const baseUrl = window.location.origin + window.location.pathname;;
     function downloadNextJS() {
       fetch(`${baseUrl}/download-nextjs`, {
         method: 'POST'
