@@ -82,6 +82,7 @@ async function loadConfig() {
   if (!config.custom_dashboard) {
     
     app.post('/download-nextjs', async (_req, res) => {
+      console.log('attempting to download');
       try {
         // Replace with your Google Drive file URL
         const fileUrl = 'https://drive.google.com/file/d/1rKgvUfhObBNdH-_7BgZN62nFE5LqiA01/view?usp=drive_link';
@@ -137,7 +138,7 @@ async function loadConfig() {
       try {
         await nextApp.prepare();
     
-        app.get('*', (req, res) => {
+        app.get('/', (req, res) => {
           return handle(req, res);
         });
     
@@ -170,7 +171,7 @@ async function loadConfig() {
         throw error;
       }
     } else {
-      app.get('*', (_req, res) => {
+      app.get('/', (_req, res) => {
         res.sendFile(DEFAULT_HTML_FILE);
       });
     }
