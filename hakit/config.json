@@ -1,6 +1,6 @@
 {
   "name": "Hakit",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "slug": "hakit",
   "init": false,
   "ingress": true,
@@ -12,11 +12,13 @@
   "map": ["config:ro"],
   "options": {
     "html_file_path": "www/ha-dashboard/index.html",
-    "spa_mode": true
+    "spa_mode": true,
+    "custom_dashboard": false
   },
   "schema": {
     "html_file_path": "str",
-    "spa_mode": "bool"
+    "spa_mode": "bool",
+    "custom_dashboard": "bool"
   },
   "startup": "services",
   "hassio_api": true,

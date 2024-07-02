@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Next.js Manager</title>
+</head>
+<body>
+  <h1>Next.js Application Manager</h1>
+  <button onclick="downloadNextJS()">Download Next.js Application</button>
+  <button onclick="buildNextJS()">Build Next.js Application</button>
+  <button onclick="startNextJS()">Start Next.js Server</button>
+
+  <script>
+    function downloadNextJS() {
+      fetch('/download-nextjs', {
+        method: 'POST'
+      })
+      .then(response => response.text())
+      .then(data => alert(data))
+      .catch(error => console.error('Error:', error));
+    }
+
+    function buildNextJS() {
+      fetch('/build-nextjs', {
+        method: 'POST'
+      })
+      .then(response => response.text())
+      .then(data => alert(data))
+      .catch(error => console.error('Error:', error));
+    }
+
+    function startNextJS() {
+      fetch('/start-nextjs', {
+        method: 'POST'
+      })
+      .then(response => response.text())
+      .then(data => alert(data))
+      .catch(error => console.error('Error:', error));
+    }
+  </script>
+</body>
+</html>
