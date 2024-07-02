@@ -2,6 +2,7 @@ import path from 'path';
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
+import { fileURLToPath } from 'url';
 import fs from 'fs';
 import { readFile } from 'fs/promises';
 import next from 'next';
@@ -14,6 +15,10 @@ import { execSync } from 'child_process';
 ***************************************************************************************************************************/
 const PORT = process.env.PORT || 2022;
 const OPTIONS = process.env.OPTIONS || "./server/options.json";
+
+// Convert import.meta.url to __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const OUTPUT_DIR = process.env.NODE_ENV === 'production' ? '/config' : `${process.cwd()}/config`;
 const NEXTJS_DIR = path.join(__dirname, 'hakit-designer'); // Directory where Next.js app will be extracted
@@ -126,8 +131,7 @@ async function loadConfig() {
     });
 
     async function startApp() {
-      const outputPath = path.join(__dirname, 'hakit-designer');
-      const nextApp = next.default({ dev: false, dir: outputPath });
+      const nextApp = next.default({ dev: false, dir: NEXTJS_DIR });
       const handle = nextApp.getRequestHandler();
     
       try {
