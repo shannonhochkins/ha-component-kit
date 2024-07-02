@@ -32,9 +32,7 @@
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5",
-    "unzipper": "^0.12.1"
-  },
-  "devDependencies": {
+    "unzipper": "^0.12.1",
     "@types/axios": "^0.14.0",
     "@types/unzipper": "^0.10.9"
   }
