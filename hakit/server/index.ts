@@ -91,6 +91,7 @@ async function loadConfig() {
         if (!fs.existsSync(NEXTJS_DIR)) {
           fs.mkdirSync(NEXTJS_DIR);
         }
+        console.log('downloading')
       
         // Fetch the zip file
         const response = await axios({
@@ -98,6 +99,7 @@ async function loadConfig() {
           method: 'GET',
           responseType: 'stream'
         });
+        console.log('downloaded')
     
         // Pipe the zip file to unzipper
         response.data.pipe(unzipper.Extract({ path: NEXTJS_DIR }))
@@ -105,8 +107,9 @@ async function loadConfig() {
             console.log('Next.js application extracted successfully');
             res.status(200).send('Next.js application downloaded and extracted successfully');
           })
-          .on('error', (err: string) => {
-            console.error('Error extracting Next.js application:', err);
+          .on('error', (err: Error) => { // Change the type to capture full error object
+            console.error('Error extracting Next.js application:', err.message);
+            // console.error('Error stack:', err.stack);
             res.status(500).send('Error extracting Next.js application');
           });
     
