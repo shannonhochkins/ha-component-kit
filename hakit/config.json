@@ -1,6 +1,6 @@
 {
   "name": "Hakit",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "slug": "hakit",
   "init": false,
   "ingress": true,
