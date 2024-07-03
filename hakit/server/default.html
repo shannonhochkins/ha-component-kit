@@ -48,7 +48,7 @@
   <button onclick="writeToFile()">Write to File</button>
 
   <script>
-    let baseUrl = window.location.origin;
+    let baseUrl = window.location.origin + window.location.pathname;
 
     function getAddonInfo() {
       fetch(`${baseUrl}get-addon-info`, {
