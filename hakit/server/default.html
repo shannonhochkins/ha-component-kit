@@ -42,7 +42,7 @@
   <button onclick="runApplication()">Run & Build Application</button>
   <button onclick="checkApplicationStatus()">Check Application Status</button>
   <h2>Write to File</h2>
-  <input type="text" id="filename" placeholder="Filename" />
+  <input type="text" id="filename" placeholder="Filename" value="service-account.json" />
   <textarea id="fileContent" rows="10" placeholder="File content"></textarea>
   <button onclick="writeToFile()">Write to File</button>
 
@@ -89,7 +89,7 @@
       .catch(error => console.error('Error:', error));
     }
     function writeToFile() {
-      const filename = document.getElementById('filename').value;
+      const filename = document.getElementById('filename').value || 'service-account.json';
       const content = document.getElementById('fileContent').value;
 
       fetch(`${baseUrl}write-file`, {
