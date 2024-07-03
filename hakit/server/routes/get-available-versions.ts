@@ -1,7 +1,7 @@
 
 import { Request, Response } from 'express';
-import { listFilesInFolder } from 'server/google/drive/index.js';
-import { translateError } from 'server/helpers/index.js';
+import { listFilesInFolder } from '../google/drive/index.js';
+import { translateError } from '../helpers/index.js';
 
 export async function getAvailableVersions(_req: Request, res: Response) {
   try {

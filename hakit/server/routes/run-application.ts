@@ -3,9 +3,9 @@ import { Express } from 'express';
 import next from 'next';
 import { join } from 'path';
 import { existsSync, readFileSync } from 'fs';
-import { APP_DIRECTORY, DEFAULT_HTML_FILE } from 'server/constants.js';
+import { APP_DIRECTORY, DEFAULT_HTML_FILE } from '../constants.js';
 import { execSync } from 'child_process';
-import { translateError } from 'server/helpers/index.js';
+import { translateError } from '../helpers/index.js';
 
 let isAppRunning = false;
 

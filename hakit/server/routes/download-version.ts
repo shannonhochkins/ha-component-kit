@@ -2,9 +2,9 @@
 import { Request, Response } from 'express';
 import { join } from 'path';
 import unzipper from 'unzipper';
-import { APP_DIRECTORY } from 'server/constants.js';
-import { downloadFile, listFilesInFolder } from 'server/google/drive/index.js';
-import { ensureDirectoryExists, translateError } from 'server/helpers/index.js';
+import { APP_DIRECTORY } from '../constants.js';
+import { downloadFile, listFilesInFolder } from '../google/drive/index.js';
+import { ensureDirectoryExists, translateError } from '../helpers/index.js';
 
 export async function downloadVersion(_req: Request, res: Response) {
   // TODO - change download version to download a specific version
