@@ -4,7 +4,7 @@
   "description": "An addon for home assistant to render custom dashboards built with @hakit/core or @hakit/components",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node --esm -r tsconfig-paths/register server/index.ts",
+    "dev": "npx tsx -r tsconfig-paths/register server/index.ts",
     "build": "npx tsc",
     "start": "node server/dist/index.js"
   },
@@ -23,17 +23,18 @@
   },
   "homepage": "https://github.com/shannonhochkins/ha-component-kit#readme",
   "dependencies": {
+    "@googleapis/drive": "^8.11.0",
+    "@types/axios": "^0.14.0",
     "@types/cors": "^2.8.16",
     "@types/express": "^4.17.21",
     "@types/node": "^20.9.0",
+    "@types/unzipper": "^0.10.9",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "next": "^14.2.4",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5",
-    "unzipper": "^0.12.1",
-    "@types/axios": "^0.14.0",
-    "@types/unzipper": "^0.10.9"
+    "unzipper": "^0.12.1"
   }
 }

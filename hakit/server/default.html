@@ -1,44 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Next.js Manager</title>
-</head>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Manager</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h1 {
+        color: red;
+      }
+      button {
+        display: block;
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      input, textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
 <body>
   <h1>EXPERIMENTAL - DO NOT USE THIS, enable "custom_dashboard" in the configuration tab.</h1>
-  <button onclick="downloadNextJS()">Download Next.js Application</button>
-  <button onclick="buildNextJS()">Build Next.js Application</button>
-  <button onclick="startNextJS()">Start Next.js Server</button>
+  <button onclick="refreshList()">Refresh file list</button>
+  <button onclick="downloadAsset()">Download zip file</button>
+  <button onclick="runApplication()">Run & Build Application</button>
+  <button onclick="checkApplicationStatus()">Check Application Status</button>
+  <h2>Write to File</h2>
+  <input type="text" id="filename" placeholder="Filename" />
+  <textarea id="fileContent" rows="10" placeholder="File content"></textarea>
+  <button onclick="writeToFile()">Write to File</button>
 
   <script>
-    const baseUrl = window.location.origin + window.location.pathname;;
-    function downloadNextJS() {
-      fetch(`${baseUrl}download-nextjs`, {
+    const baseUrl = window.location.origin + window.location.pathname;
+
+    function checkApplicationStatus() {
+      fetch(`${baseUrl}status`, {
         method: 'POST'
       })
       .then(response => response.text())
-      .then(data => alert(data))
+      .then(data => {
+        alert(data);
+      })
       .catch(error => console.error('Error:', error));
     }
 
-    function buildNextJS() {
-      fetch(`${baseUrl}build-nextjs`, {
+    function downloadAsset() {
+      fetch(`${baseUrl}download-version`, {
+        method: 'POST'
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+      })
+      .catch(error => console.error('Error:', error));
+    }
+    function refreshList() {
+      fetch(`${baseUrl}get-available-versions`, {
+        method: 'POST'
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+      })
+      .catch(error => console.error('Error:', error));
+    }
+    function runApplication() {
+      fetch(`${baseUrl}run-application`, {
         method: 'POST'
       })
       .then(response => response.text())
       .then(data => alert(data))
+      .catch(error => console.error('Error:', error));
+    }
+    function writeToFile() {
+      const filename = document.getElementById('filename').value;
+      const content = document.getElementById('fileContent').value;
+
+      fetch(`${baseUrl}write-file`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ filename, content })
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+      })
       .catch(error => console.error('Error:', error));
     }
 
-    function startNextJS() {
-      fetch(`${baseUrl}start-nextjs`, {
-        method: 'POST'
-      })
-      .then(response => response.text())
-      .then(data => alert(data))
-      .catch(error => console.error('Error:', error));
-    }
   </script>
 </body>
 </html>

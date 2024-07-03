@@ -3,27 +3,27 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
+import bodyParser from 'body-parser';
 import fs from 'fs';
 import { readFile } from 'fs/promises';
-import next from 'next';
-import axios from 'axios';
-import unzipper from 'unzipper';
-import { execSync } from 'child_process';
+// actions/routes
+import { getAvailableVersions } from './routes/get-available-versions.js';
+import { downloadVersion } from './routes/download-version.js';
+import { runApplication } from './routes/run-application.js';
+import { writeFile } from './routes/write-file.js';
 
 /***************************************************************************************************************************
  * Load Environment Values
 ***************************************************************************************************************************/
 const PORT = process.env.PORT || 2022;
 const OPTIONS = process.env.OPTIONS || "./server/options.json";
+console.log('options', OPTIONS, Object.entries(process.env));
 
 // Convert import.meta.url to __dirname
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+export const __dirname = path.dirname(__filename);
 
 const OUTPUT_DIR = process.env.NODE_ENV === 'production' ? '/config' : `${process.cwd()}/config`;
-const NEXTJS_DIR = path.join(__dirname, 'hakit-designer'); // Directory where Next.js app will be extracted
-const DEFAULT_HTML_FILE = path.join(__dirname, 'default.html'); // Path to your default HTML file
-
 
 // http server
 const app = express();
@@ -79,110 +79,16 @@ async function loadConfig() {
   // listen for api endpoints with /api as base
   // enable cors
   app.use(cors());
+  // Middleware to parse JSON request bodies
+  app.use(bodyParser.json());
   if (!config.custom_dashboard) {
-    
-    app.post('/download-nextjs', async (_req, res) => {
-      console.log('attempting to download');
-      try {
-        // Replace with your Google Drive file URL
-        const fileUrl = 'https://drive.google.com/file/d/1rKgvUfhObBNdH-_7BgZN62nFE5LqiA01/view?usp=drive_link';
-    
-        // Create output directory if it doesn't exist
-        if (!fs.existsSync(NEXTJS_DIR)) {
-          fs.mkdirSync(NEXTJS_DIR);
-        }
-        console.log('downloading')
-      
-        // Fetch the zip file
-        const response = await axios({
-          url: fileUrl,
-          method: 'GET',
-          responseType: 'stream'
-        });
-        console.log('downloaded')
-    
-        // Pipe the zip file to unzipper
-        response.data.pipe(unzipper.Extract({ path: NEXTJS_DIR }))
-          .on('close', () => {
-            console.log('Next.js application extracted successfully');
-            res.status(200).send('Next.js application downloaded and extracted successfully');
-          })
-          .on('error', (err: Error) => { // Change the type to capture full error object
-            console.error('Error extracting Next.js application');
-            // console.error('Error stack:', err.stack);
-            res.status(500).send('message' in err ? err.message : err);
-          });
-    
-      } catch (error) {
-        console.error('Error downloading Next.js application');
-        if (error instanceof Error) {
-          console.error('Error message:', error.message);
-          return res.status(500).send('message' in error ? error.message : 'Error downloading Next.js application');
-        }
-        res.status(500).send('Error downloading Next.js application');
-        
-      }
-    });
 
-    app.post('/build-nextjs', (_req, res) => {
-      const installDependencies = `cd ${NEXTJS_DIR} && npm ci`;
-      const buildNextApp = `cd ${NEXTJS_DIR} && npm run build`;
-  
-      try {
-        execSync(installDependencies, { stdio: 'inherit' });
-        execSync(buildNextApp, { stdio: 'inherit' });
-  
-        res.status(200).send('Next.js application built successfully');
-      } catch (error) {
-        console.error('Error building Next.js application:', error);
-        res.status(500).send('Error building Next.js application');
-      }
-    });
-
-    async function startApp() {
-      const nextApp = next.default({ dev: false, dir: NEXTJS_DIR });
-      const handle = nextApp.getRequestHandler();
+    app.post('/get-available-versions', getAvailableVersions);
+    app.post('/download-version', downloadVersion);
+    const runApplicationRequest = await runApplication(app);
+    app.post('/run-application', runApplicationRequest);
+    app.post('/write-file', writeFile);
     
-      try {
-        await nextApp.prepare();
-    
-        app.get('/', (req, res) => {
-          return handle(req, res);
-        });
-    
-      } catch (error) {
-        console.error('Error starting Next.js server:', error);
-        throw error;
-      }
-    }
-
-    app.post('/start-nextjs', async (_req, res) => {
-    
-      try {
-        await startApp();
-        res.status(200).send('Next.js server started');
-      } catch (error) {
-        console.error('Error starting Next.js server:', error);
-        res.status(500).send('Error starting Next.js server');
-      }
-    });
-    // Check if the Next.js application has been downloaded and built
-    const nextJsBuilt = fs.existsSync(path.join(NEXTJS_DIR, '.next'));
-
-    if (nextJsBuilt) {
-      // Start the Next.js server if the application is available
-      try {
-        await startApp();
-    
-      } catch (error) {
-        console.error('Error starting Next.js server:', error);
-        throw error;
-      }
-    } else {
-      app.get('/', (_req, res) => {
-        res.sendFile(DEFAULT_HTML_FILE);
-      });
-    }
   } else {
     app.get('/', async (_req, res) => {
       try {

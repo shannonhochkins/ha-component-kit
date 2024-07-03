@@ -23,3 +23,21 @@ If you provide an invalid path, the addon will produce found html files and will
 
 If you're uploading a new version of your dashboard, there's no need to restart the addon, it will simply serve the latest files automatically :)
 
+
+### Local Development
+
+Running the dashboard interface for the addon is as simple as running:
+
+1. Create an `options.json` file under the `server` directory:
+```json
+{
+  "html_file_path": "www/ha-dashboard/index.html",
+  "spa_mode": true,
+  "custom_dashboard": false // switching to true will attempt to load a html file under hakit/config/www/ha-dashboard/index.html so you will need to create the `config` folder as well as all subdirectories if you're testing this flow.
+}
+```
+2. create a `service-account.json` file with credentials pointing to the google drive account in the `hakit` directory.
+3. `npm i && npm run dev`
+
+This will spin up a server under `http://localhost:2022`
+
