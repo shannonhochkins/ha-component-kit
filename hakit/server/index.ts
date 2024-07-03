@@ -11,6 +11,7 @@ import { getAvailableVersions } from './routes/get-available-versions.js';
 import { downloadVersion } from './routes/download-version.js';
 import { runApplication } from './routes/run-application.js';
 import { writeFile } from './routes/write-file.js';
+import { getAddonInfo } from './routes/get-addon-info.js';
 
 /***************************************************************************************************************************
  * Load Environment Values
@@ -88,6 +89,7 @@ async function loadConfig() {
     const runApplicationRequest = await runApplication(app);
     app.post('/run-application', runApplicationRequest);
     app.post('/write-file', writeFile);
+    app.post('/get-addon-info', getAddonInfo);
     
   } else {
     app.get('/', async (_req, res) => {

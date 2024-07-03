@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { Express } from 'express';
-import axios from 'axios';
 import next from 'next';
 import { join } from 'path';
 import { existsSync, readFileSync } from 'fs';
@@ -57,7 +56,7 @@ export async function runApplication(app: Express) {
     let version: string | null = null;
     try {
       const packageJsonPath = join(APP_DIRECTORY, 'app', 'package.json');
-      // check if the above ppath exists
+      // check if the above path exists
       const packageJSONExists = existsSync(packageJsonPath);
       if (!packageJSONExists) {
         version = null;
@@ -75,33 +74,11 @@ export async function runApplication(app: Express) {
       version: string | null;
       built: boolean;
       running: boolean;
-      ingressUrl: string | null;
     } = {
       version,
       built: nextJsBuilt,
       running: isAppRunning,
-      ingressUrl: null,
     };
-
-    // Function to get the ingress URL from Home Assistant API
-    const getIngressUrl = async (): Promise<string | null> => {
-      try {
-        const response = await axios.get('http://hassio/addons/self/info', {
-          headers: {
-            'Authorization': `Bearer ${process.env.SUPERVISOR_TOKEN}`
-          }
-        });
-        console.log('response', JSON.stringify(response.data, null, 2));
-        if (response.data && response.data.data && response.data.data.ingress_url) {
-          return response.data.data.ingress_url;
-        }
-      } catch (error) {
-        console.error('Error fetching ingress URL:', translateError(error));
-      }
-      return null;
-    };
-    const data = await getIngressUrl();
-    status.ingressUrl = data;
 
     res.json(status);
   });
@@ -110,8 +87,8 @@ export async function runApplication(app: Express) {
     const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', '.next'));
     try {
       if (!nextJsBuilt) {
-        const installDependencies = `cd ${join(APP_DIRECTORY, 'app')} && npm i`;
-        const buildNextApp = `cd ${join(APP_DIRECTORY, 'app')} && npm run build`;
+        const installDependencies = `cd ${join(APP_DIRECTORY, 'app')} && npm ci`;
+        const buildNextApp = `cd ${join(APP_DIRECTORY, 'app')} && SKIP_LINTING=true SKIP_TYPE_CHECKING=true npm run build`;
 
         try {
           console.log('Installing dependencies');
