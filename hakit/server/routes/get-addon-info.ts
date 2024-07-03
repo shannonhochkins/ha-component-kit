@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
-import { translateError } from 'server/helpers/index.js';
+import { translateError } from '../helpers/index.js';
 
 interface Data {
   name?: string;
