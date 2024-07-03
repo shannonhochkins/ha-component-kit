@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Express } from 'express';
+import axios from 'axios';
 import next from 'next';
 import { join } from 'path';
 import { existsSync, readFileSync } from 'fs';
@@ -52,7 +53,7 @@ export async function runApplication(app: Express) {
     });
   }
 
-  app.post('/status', (_req: Request, res: Response) => {
+  app.post('/status', async (_req: Request, res: Response) => {
     let version: string | null = null;
     try {
       const packageJsonPath = join(APP_DIRECTORY, 'app', 'package.json');
@@ -70,11 +71,37 @@ export async function runApplication(app: Express) {
 
     const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', '.next'));
 
-    const status = {
+    const status: {
+      version: string | null;
+      built: boolean;
+      running: boolean;
+      ingressUrl: string | null;
+    } = {
       version,
       built: nextJsBuilt,
       running: isAppRunning,
+      ingressUrl: null,
     };
+
+    // Function to get the ingress URL from Home Assistant API
+    const getIngressUrl = async (): Promise<string | null> => {
+      try {
+        const response = await axios.get('http://hassio/addons/self/info', {
+          headers: {
+            'Authorization': `Bearer ${process.env.SUPERVISOR_TOKEN}`
+          }
+        });
+        console.log('response', JSON.stringify(response.data, null, 2));
+        if (response.data && response.data.data && response.data.data.ingress_url) {
+          return response.data.data.ingress_url;
+        }
+      } catch (error) {
+        console.error('Error fetching ingress URL:', translateError(error));
+      }
+      return null;
+    };
+    const data = await getIngressUrl();
+    status.ingressUrl = data;
 
     res.json(status);
   });
