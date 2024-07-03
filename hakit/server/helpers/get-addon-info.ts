@@ -1,6 +1,5 @@
-import { Request, Response } from 'express';
 import axios from 'axios';
-import { translateError } from '../helpers/index.js';
+import { translateError } from './index.js';
 
 interface Data {
   name?: string;
@@ -84,7 +83,7 @@ interface Data {
 }
 
 
-export async function getAddonInfo(_req: Request, res: Response) {
+export async function getAddonInfo() {
   // Function to get the ingress URL from Home Assistant API
   try {
     const response = await axios.get<{
@@ -94,10 +93,7 @@ export async function getAddonInfo(_req: Request, res: Response) {
         'Authorization': `Bearer ${process.env.SUPERVISOR_TOKEN}`
       }
     });
-    return res.send({
-      status: typeof response?.data?.data !== 'undefined' ? 'success' : 'error',
-      data: response?.data?.data
-    });
+    return response?.data?.data;
   } catch (error) {
     console.error('Error fetching ingress URL:', translateError(error));
   }

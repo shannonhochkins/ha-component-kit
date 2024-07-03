@@ -2,7 +2,6 @@ import path from 'path';
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
-import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import fs from 'fs';
 import { readFile } from 'fs/promises';
@@ -11,20 +10,12 @@ import { getAvailableVersions } from './routes/get-available-versions.js';
 import { downloadVersion } from './routes/download-version.js';
 import { runApplication } from './routes/run-application.js';
 import { writeFile } from './routes/write-file.js';
-import { getAddonInfo } from './routes/get-addon-info.js';
+import { __dirname, PORT, OPTIONS, OUTPUT_DIR } from './constants.js';
 
 /***************************************************************************************************************************
  * Load Environment Values
 ***************************************************************************************************************************/
-const PORT = process.env.PORT || 2022;
-const OPTIONS = process.env.OPTIONS || "./server/options.json";
-console.log('options', OPTIONS, Object.entries(process.env));
-
-// Convert import.meta.url to __dirname
-const __filename = fileURLToPath(import.meta.url);
-export const __dirname = path.dirname(__filename);
-
-const OUTPUT_DIR = process.env.NODE_ENV === 'production' ? '/config' : `${process.cwd()}/config`;
+;
 
 // http server
 const app = express();
@@ -89,7 +80,6 @@ async function loadConfig() {
     const runApplicationRequest = await runApplication(app);
     app.post('/run-application', runApplicationRequest);
     app.post('/write-file', writeFile);
-    app.post('/get-addon-info', getAddonInfo);
     
   } else {
     app.get('/', async (_req, res) => {

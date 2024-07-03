@@ -6,10 +6,14 @@ import { existsSync, readFileSync } from 'fs';
 import { APP_DIRECTORY, DEFAULT_HTML_FILE } from '../constants.js';
 import { execSync } from 'child_process';
 import { translateError } from '../helpers/index.js';
+import { getAddonInfo } from '../helpers/get-addon-info.js';
 
 let isAppRunning = false;
 
 export async function runApplication(app: Express) {
+  const data = await getAddonInfo();
+  const htmlContent = readFileSync(DEFAULT_HTML_FILE, 'utf8');
+  const pageContent = htmlContent.replace('{{baseUrl}}', data?.ingress_url || '/');
   async function startApp() {
     // @ts-expect-error
     const nextApp = next({ dev: false, dir: join(APP_DIRECTORY, 'app') });
@@ -21,7 +25,7 @@ export async function runApplication(app: Express) {
 
       // must be defined first
       app.get('/config', (_req, res) => {
-        res.sendFile(DEFAULT_HTML_FILE);
+        res.send(pageContent);
       });
 
       app.get('*', (req, res) => {
@@ -47,8 +51,18 @@ export async function runApplication(app: Express) {
       throw error;
     }
   } else {
-    app.get('/', (_req, res) => {
-      res.sendFile(DEFAULT_HTML_FILE);
+    app.get('/config', (_req, res) => {
+      res.send(pageContent);
+    });
+    app.use((_req, res, next) => {
+      const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', '.next'));
+      // first check if the current path is the root level
+      if (!nextJsBuilt && (_req.path === '/' || _req.path === '')) {
+        res.redirect('/config');
+      } else {
+        next();
+      }
+
     });
   }
 

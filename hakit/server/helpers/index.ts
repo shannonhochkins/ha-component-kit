@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+export * from './get-addon-info.js';
+
 export function ensureDirectoryExists(filePath: string, empty: boolean = false) {
   const dirPath = path.dirname(filePath);
 
