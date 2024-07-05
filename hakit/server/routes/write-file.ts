@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { join } from 'path';
 import { writeFile as fsWriteFile } from 'fs/promises';
+import { APP_DIRECTORY } from 'server/constants.js';
 
 export async function writeFile(req: Request, res: Response) {
   try {
@@ -10,7 +11,7 @@ export async function writeFile(req: Request, res: Response) {
       return res.status(400).send('Filename and content are required.');
     }
 
-    const filePath = join(process.cwd(), filename);
+    const filePath = join(APP_DIRECTORY, filename);
     const fileContents = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
 
     await fsWriteFile(filePath, fileContents, 'utf8');

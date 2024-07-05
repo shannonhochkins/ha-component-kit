@@ -36,6 +36,5 @@ packages/core/.env
 hakit/config
 hakit/server/hakit-designer
 hakit/server/options.json
-hakit/service-account.json
 trace
 trace/*

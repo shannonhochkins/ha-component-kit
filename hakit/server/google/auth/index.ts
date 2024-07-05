@@ -1,8 +1,9 @@
 import { existsSync } from 'fs';
 import { GoogleAuth, GoogleAuthOptions } from 'google-auth-library';
 import { join } from 'path';
+import { APP_DIRECTORY } from '../../constants.js';
 
-const SERVICE_ACCOUNT_FILE = join(process.cwd(), 'service-account.json');
+const SERVICE_ACCOUNT_FILE = join(APP_DIRECTORY, 'service-account.json');
 
 export const SCOPES = [
   'https://www.googleapis.com/auth/drive.readonly',

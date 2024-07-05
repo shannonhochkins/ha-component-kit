@@ -36,7 +36,7 @@ Running the dashboard interface for the addon is as simple as running:
   "custom_dashboard": false // switching to true will attempt to load a html file under hakit/config/www/ha-dashboard/index.html so you will need to create the `config` folder as well as all subdirectories if you're testing this flow.
 }
 ```
-2. create a `service-account.json` file with credentials pointing to the google drive account in the `hakit` directory.
+2. create a `service-account.json` file with credentials pointing to the google drive account in the `hakit/config/hakit-designer` directory.
 3. `npm i && npm run dev`
 
 This will spin up a server under `http://localhost:2022`
