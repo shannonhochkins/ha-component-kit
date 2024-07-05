@@ -13,7 +13,7 @@ export async function writeFile(req: Request, res: Response) {
     }
 
     const filePath = join(APP_DIRECTORY, filename);
-    ensureDirectoryExists(filePath, false);
+    await ensureDirectoryExists(filePath, false);
     const fileContents = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
 
     await fsWriteFile(filePath, fileContents, 'utf8');

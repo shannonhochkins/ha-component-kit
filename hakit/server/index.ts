@@ -11,6 +11,7 @@ import { downloadVersion } from './routes/download-version.js';
 import { runApplication } from './routes/run-application.js';
 import { writeFile } from './routes/write-file.js';
 import { __dirname, PORT, OPTIONS, OUTPUT_DIR } from './constants.js';
+import { removeBuild } from './routes/remove-build.js';
 
 /***************************************************************************************************************************
  * Load Environment Values
@@ -80,6 +81,7 @@ async function loadConfig() {
     const runApplicationRequest = await runApplication(app);
     app.post('/run-application', runApplicationRequest);
     app.post('/write-file', writeFile);
+    app.post('/remove-build', removeBuild);
     
   } else {
     app.get('/', async (_req, res) => {

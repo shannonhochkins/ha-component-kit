@@ -16,7 +16,7 @@ export async function downloadVersion(_req: Request, res: Response) {
     if (file.id && file.name) {
       const outputFilePath = join(APP_DIRECTORY, 'zip', file.name);
       // this will destroy any existing files
-      ensureDirectoryExists(outputFilePath, true);
+      await ensureDirectoryExists(outputFilePath, true);
       // now download it
       outputFile = await downloadFile(file.id, outputFilePath);
       if (!outputFile) {

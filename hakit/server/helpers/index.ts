@@ -1,14 +1,15 @@
 import fs from 'fs';
+import { rm } from 'fs/promises';
 import path from 'path';
 
 export * from './get-addon-info.js';
 
-export function ensureDirectoryExists(filePath: string, empty: boolean = false) {
+export async function ensureDirectoryExists(filePath: string, empty: boolean = false) {
   const dirPath = path.dirname(filePath);
 
   // if empty is true, empty the contents of the directory
   if (empty && fs.existsSync(dirPath)) {
-    fs.rmdirSync(dirPath, { recursive: true });
+    await rm(dirPath, { recursive: true });
   }
 
   // Create output directory if it doesn't exist
