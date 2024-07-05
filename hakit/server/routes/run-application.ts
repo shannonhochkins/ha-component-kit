@@ -58,7 +58,7 @@ export async function runApplication(app: Express) {
       const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', '.next'));
       // first check if the current path is the root level
       if (!nextJsBuilt && (_req.path === '/' || _req.path === '')) {
-        res.redirect('/config');
+        res.redirect(data?.ingress_url + '/config');
       } else {
         next();
       }
