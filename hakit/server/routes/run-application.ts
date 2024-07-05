@@ -104,8 +104,8 @@ export async function runApplication(app: Express) {
     const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', '.next'));
     try {
       if (!nextJsBuilt) {
-        const installDependencies = `cd ${join(APP_DIRECTORY, 'app')} && npm ci`;
-        const buildNextApp = `cd ${join(APP_DIRECTORY, 'app')} && SKIP_LINTING=true SKIP_TYPE_CHECKING=true npm run build`;
+        const installDependencies = `cd ${join(APP_DIRECTORY, 'app')} && npm i`;
+        const buildNextApp = `cd ${join(APP_DIRECTORY, 'app')} && SKIP_TYPE_CHECKING=true npm run build`;
 
         try {
           console.log('Installing dependencies');
