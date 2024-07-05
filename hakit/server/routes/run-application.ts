@@ -7,6 +7,7 @@ import { APP_DIRECTORY, DEFAULT_HTML_FILE } from '../constants.js';
 import { execSync } from 'child_process';
 import { translateError } from '../helpers/index.js';
 import { getAddonInfo } from '../helpers/get-addon-info.js';
+import { removeBuildDirectory } from './remove-build.js';
 
 let isAppRunning = false;
 
@@ -36,6 +37,7 @@ export async function runApplication(app: Express) {
     } catch (error) {
       isAppRunning = false;
       console.error('Error starting Next.js server:', error);
+      await removeBuildDirectory();
       throw error;
     }
   }
@@ -46,7 +48,6 @@ export async function runApplication(app: Express) {
     // Start the Next.js server if the application is available
     try {
       await startApp();
-  
     } catch (error) {
       console.error('Error starting Next.js server:', translateError(error));
       throw error;
