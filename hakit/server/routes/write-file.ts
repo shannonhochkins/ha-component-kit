@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { join } from 'path';
 import { writeFile as fsWriteFile } from 'fs/promises';
-import { APP_DIRECTORY } from 'server/constants.js';
+import { APP_DIRECTORY } from '../constants.js';
 
 export async function writeFile(req: Request, res: Response) {
   try {
