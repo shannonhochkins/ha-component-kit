@@ -42,7 +42,7 @@ export async function runApplication(app: Express) {
     }
   }
 
-  const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', '.next'));
+  const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', 'node_modules'));
 
   if (nextJsBuilt) {
     // Start the Next.js server if the application is available
@@ -57,7 +57,7 @@ export async function runApplication(app: Express) {
       res.send(pageContent);
     });
     app.use((_req, res, next) => {
-      const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', '.next'));
+      const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', 'node_modules'));
       console.log('_req.path', _req.path);
       // first check if the current path is the root level
       if (!nextJsBuilt && (_req.path === '/' || _req.path === '')) {
@@ -85,7 +85,7 @@ export async function runApplication(app: Express) {
       console.error('Error reading package.json:', error);
     }
 
-    const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', '.next'));
+    const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', 'node_modules'));
 
     const status: {
       version: string | null;
@@ -101,17 +101,17 @@ export async function runApplication(app: Express) {
   });
 
   return async (_req: Request, res: Response) => {
-    const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', '.next'));
+    const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', 'node_modules'));
     try {
       if (!nextJsBuilt) {
-        const installDependencies = `cd ${join(APP_DIRECTORY, 'app')} && npm i`;
-        const buildNextApp = `cd ${join(APP_DIRECTORY, 'app')} && SKIP_TYPE_CHECKING=true npm run build`;
+        const installDependencies = `cd ${join(APP_DIRECTORY, 'app')} && npm ci`;
+        // const buildNextApp = `cd ${join(APP_DIRECTORY, 'app')} && SKIP_LINTING=true SKIP_TYPE_CHECKING=true npm run build`;
 
         try {
           console.log('Installing dependencies');
           execSync(installDependencies, { stdio: 'inherit' });
-          console.log('Building Next.js application');
-          execSync(buildNextApp, { stdio: 'inherit' });
+          // console.log('Building Next.js application');
+          // execSync(buildNextApp, { stdio: 'inherit' });
           console.log('Next.js application built successfully');
         } catch (error) {
           console.error('Error building Next.js application:', translateError(error));

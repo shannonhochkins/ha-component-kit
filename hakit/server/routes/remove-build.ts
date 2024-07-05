@@ -6,16 +6,15 @@ import { translateError } from '../helpers/index.js';
 
 export async function removeBuildDirectory() {
   // remove the directory .next
-  const buildDir = join(APP_DIRECTORY, 'app', '.next');
+  const buildDir = join(APP_DIRECTORY, 'app', 'node_modules');
   await rm(buildDir, { recursive: true, force: true });
-  console.log('.next directory removed successfully');
+  console.log('node_modules directory removed successfully');
 }
 
 
 export async function removeBuild(_req: Request, res: Response) {
   try {
     await removeBuildDirectory();
-    console.log('.next directory removed successfully');
     return res.status(200).send('Directory removed successfully');
   } catch (error) {
     console.error('Error removing build directory:', translateError(error));
