@@ -13,6 +13,7 @@ let isAppRunning = false;
 export async function runApplication(app: Express) {
   const data = await getAddonInfo();
   const htmlContent = readFileSync(DEFAULT_HTML_FILE, 'utf8');
+  const basePath = data?.ingress_url || '/';
   const pageContent = htmlContent.replace('{{baseUrl}}', data?.ingress_url || '/');
   async function startApp() {
     // @ts-expect-error
@@ -56,9 +57,10 @@ export async function runApplication(app: Express) {
     });
     app.use((_req, res, next) => {
       const nextJsBuilt = existsSync(join(APP_DIRECTORY, 'app', '.next'));
+      console.log('_req.path', _req.path);
       // first check if the current path is the root level
       if (!nextJsBuilt && (_req.path === '/' || _req.path === '')) {
-        res.redirect(data?.ingress_url + '/config');
+        res.redirect(basePath + 'config');
       } else {
         next();
       }
