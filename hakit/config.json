@@ -4,12 +4,23 @@
   "slug": "hakit",
   "init": false,
   "ingress": true,
+  "ingress_stream": true,
   "stage": "stable",
+  "url": "https://github.com/shannonhochkins/ha-component-kit",
   "ingress_port": 2022,
-  "description": "An addon to render custom dashboards for home assistant using @hakit/core & @hakit/components",
+  "description": "An addon to render custom dashboards for home assistant using @hakit",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
   "boot": "auto",
-  "map": ["config:ro"],
+  "map": [
+    "config:rw",
+    "all_addon_configs:rw",
+    "backup:rw",
+    "homeassistant_config:rw",
+    "media:rw",
+    "share:rw",
+    "ssl:rw",
+    "addon_config:rw"
+  ],
   "options": {
     "html_file_path": "www/ha-dashboard/index.html",
     "spa_mode": true,
@@ -22,6 +33,7 @@
   },
   "startup": "services",
   "hassio_api": true,
+  "homeassistant_api": true,
   "panel_admin": true,
   "panel_icon": "mdi:tablet-dashboard",
   "panel_title": "HAKIT Dashboard"
