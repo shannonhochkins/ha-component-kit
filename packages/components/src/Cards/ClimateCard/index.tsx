@@ -143,11 +143,11 @@ function _ClimateCard({
         serviceData={serviceData}
         layoutType={layoutType}
         modalProps={{
-          ...modalProps,
           hvacModes: havacModesToUse,
           hideCurrentTemperature,
           hideHvacModes,
           hvacModeLabels,
+          ...modalProps,
         }}
         onClick={() => {
           if (isUnavailable || disabled || typeof onClick !== "function") return;

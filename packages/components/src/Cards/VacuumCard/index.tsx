@@ -68,7 +68,6 @@ function _VacuumCard({
     <StyledVacuumCard
       className={`${className ?? ""} vacuum-card`}
       modalProps={{
-        ...modalProps,
         stateTitle: titleValue,
         locatingNode,
         hideCurrentBatteryLevel,
@@ -76,6 +75,7 @@ function _VacuumCard({
         hideUpdated,
         hideToolbar,
         shortcuts,
+        ...modalProps,
       }}
       entity={_entity}
       // @ts-expect-error - don't know the entity name, so we can't know the service type

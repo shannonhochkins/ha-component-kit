@@ -104,6 +104,8 @@ class MockWebSocket {
   close() {}
 }
 
+let renderTemplatePrevious = 'on';
+
 class MockConnection extends Connection {
   private _mockListeners: { [event: string]: ((data: any) => void)[] };
   private _mockResponses: {
@@ -174,6 +176,16 @@ class MockConnection extends Connection {
       if (params.forecast_type === 'hourly') {
         callback(hourlyForecast as Result);
       }
+    } else if (params && params.type === 'render_template') {
+      if (renderTemplatePrevious === 'on') {
+        callback({
+          result: 'The entity is on!!'
+        } as Result);
+      } else {
+        callback({
+          result: 'The entity is not on!!'
+        } as Result);
+      }
     } else {
       callback(mockHistory as Result);
     }
@@ -237,6 +249,10 @@ const useStore = create<Store>((set) => ({
           ...newEntities[entityId],
         };
       });
+      // used to mock out the render_template service
+      if (state.entities['light.fake_light_1']) {
+        renderTemplatePrevious = state.entities['light.fake_light_1'].state;
+      }
       if (!state.ready) {
         return {
           ready: true,

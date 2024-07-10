@@ -72,11 +72,15 @@ async function scrapeHomeAssistant(): Promise<[fileName: string, contents: strin
       // Navigate to the page
       await page.goto('http://homeassistant.local:8123/lovelace/home');
 
-      // Wait for some time to allow all requests to be intercepted
-      await page.waitForNetworkIdle({
-        idleTime: 5000,
-        timeout: 5000,
-      }); // Adjust the timeout as necessary
+      try {
+        // Wait for some time to allow all requests to be intercepted
+        await page.waitForNetworkIdle({
+          idleTime: 5000,
+          timeout: 5000,
+        }); // Adjust the timeout as necessary
+      } catch (e) {
+        // ignore
+      }
 
       await browser.close();
     })();

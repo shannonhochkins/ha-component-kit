@@ -40,7 +40,7 @@ export const mocked = {
   },
   subscribeEntities: jest.fn().mockImplementation((_: null, subScribeFn: (entities: HassEntities) => void) => {
     subScribeFn(ENTITIES);
-  })
+  }),
 }
 
 jest.mock('home-assistant-js-websocket', () => mocked);

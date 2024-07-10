@@ -24,5 +24,6 @@ export { default as locales } from "./useLocale/locales";
 export { subscribeAreaRegistry, type AreaRegistryEntry } from "./useAreas/subscribe/areas";
 export { subscribeEntityRegistry, type EntityRegistryEntry } from "./useAreas/subscribe/entities";
 export { subscribeDeviceRegistry, type DeviceRegistryEntry } from "./useAreas/subscribe/devices";
+export { useTemplate, type TemplateParams } from "./useTemplate";
 export { useCamera, type CameraEntityExtended, type UseCameraOptions } from "./useCamera";
 export * from "./useCamera/constants";

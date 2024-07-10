@@ -166,8 +166,8 @@ function _PersonCard({
       ${cssStyles ?? ""}
     `}
       modalProps={{
-        ...modalProps,
         stateTitle: stateText,
+        ...modalProps,
       }}
       {...rest}
     >

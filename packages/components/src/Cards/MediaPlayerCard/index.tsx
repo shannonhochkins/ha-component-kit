@@ -156,6 +156,7 @@ function _MediaPlayerCard({
   className,
   cssStyles,
   key,
+  modalProps,
   ...rest
 }: MediaPlayerCardProps) {
   const entity = useEntity(_entity);
@@ -307,6 +308,7 @@ function _MediaPlayerCard({
           groupedEntities,
           allEntityIds,
           onClose: () => setIsGroupingModalOpen(false),
+          ...modalProps,
         }}
         entity={_entity}
         // @ts-expect-error - don't know the entity name, so we can't know the service type

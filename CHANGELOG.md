@@ -1,3 +1,11 @@
+# 4.0.2
+## @hakit/components
+- BUGFIX - All cards using `modalProps` previously will spread the values first, and then provide internal defaults, making it impossible to overwrite values for the modal in some cases, additionally the MediaPlayerCard modal props were never spread through to the modal [discussion](https://github.com/shannonhochkins/ha-component-kit/discussions/159)
+
+## @hakit/core
+- NEW - useTemplate - a new hook to subscribe to changes for a custom template, processed exactly the same way that home assistant does when providing templates to yaml code
+- NEW - LOCALES - locales updated based on home assistant updates. [issue](https://github.com/shannonhochkins/ha-component-kit/issues/158)
+
 # 4.0.0
 ## @hakit/components
 - NEW - [AlarmCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-alarmcard--docs)  - A new card to interact with alarm entities, this has a custom popup with keypad control and automate `features` added to the code when a `defaultCode` is present. [issue](https://github.com/shannonhochkins/ha-component-kit/issues/148)

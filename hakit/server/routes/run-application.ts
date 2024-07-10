@@ -105,13 +105,13 @@ export async function runApplication(app: Express) {
     try {
       if (!nextJsBuilt) {
         const installDependencies = `cd ${join(APP_DIRECTORY, 'app')} && npm ci`;
-        // const buildNextApp = `cd ${join(APP_DIRECTORY, 'app')} && SKIP_LINTING=true SKIP_TYPE_CHECKING=true npm run build`;
+        const buildNextApp = `cd ${join(APP_DIRECTORY, 'app')} && SKIP_LINTING=true SKIP_TYPE_CHECKING=true npm run build`;
 
         try {
           console.log('Installing dependencies');
           execSync(installDependencies, { stdio: 'inherit' });
-          // console.log('Building Next.js application');
-          // execSync(buildNextApp, { stdio: 'inherit' });
+          console.log('Building Next.js application');
+          execSync(buildNextApp, { stdio: 'inherit' });
           console.log('Next.js application built successfully');
         } catch (error) {
           console.error('Error building Next.js application:', translateError(error));
