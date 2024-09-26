@@ -29,7 +29,7 @@ export function createService<T extends SnakeOrCamelDomains>(
           }
 
           console.info(
-            `${localize("action", {
+            `${localize("perform_action_name", {
               search: "{name}",
               replace: `${domain}.${service}`,
             })} ${domain}.${service}:`,
