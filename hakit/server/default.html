@@ -42,6 +42,7 @@
   <button onclick="runApplication()">Run & Build Application</button>
   <button onclick="checkApplicationStatus()">Check Application Status</button>
   <button onclick="removeBuild()">Remove Build</button>
+  <button onclick="removeNodeModules()">Remove Node Modules</button>
   <button onclick="go()">GO TO APP</button>
   <h2>Write to File</h2>
   <input type="text" id="filename" placeholder="Filename" value="service-account.json" />
@@ -56,7 +57,18 @@
     }
 
     function checkApplicationStatus() {
-      fetch(`${baseUrl}status`, {
+      fetch(`${baseUrl}api/v1/status`, {
+        method: 'POST'
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+      })
+      .catch(error => console.error('Error:', error));
+    }
+
+    function removeNodeModules() {
+      fetch(`${baseUrl}api/v1/remove-node-modules`, {
         method: 'POST'
       })
       .then(response => response.text())
@@ -67,7 +79,7 @@
     }
 
     function removeBuild() {
-      fetch(`${baseUrl}remove-build`, {
+      fetch(`${baseUrl}api/v1/remove-build`, {
         method: 'POST'
       })
       .then(response => response.text())
@@ -78,7 +90,7 @@
     }
 
     function downloadAsset() {
-      fetch(`${baseUrl}download-version`, {
+      fetch(`${baseUrl}api/v1/download-version`, {
         method: 'POST'
       })
       .then(response => response.text())
@@ -88,7 +100,7 @@
       .catch(error => console.error('Error:', error));
     }
     function refreshList() {
-      fetch(`${baseUrl}get-available-versions`, {
+      fetch(`${baseUrl}api/v1/list-versions`, {
         method: 'POST'
       })
       .then(response => response.text())
@@ -99,7 +111,7 @@
     }
     function runApplication() {
       console.log('xx', `${baseUrl}run-application`);
-      fetch(`${baseUrl}run-application`, {
+      fetch(`${baseUrl}api/v1/run-application`, {
         method: 'POST'
       })
       .then(response => response.text())
@@ -110,7 +122,7 @@
       const filename = document.getElementById('filename').value || 'service-account.json';
       const content = document.getElementById('fileContent').value;
 
-      fetch(`${baseUrl}write-file`, {
+      fetch(`${baseUrl}api/v1/write-file`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

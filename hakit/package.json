@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx tsx -r tsconfig-paths/register server/index.ts",
-    "build": "npx tsc",
-    "start": "node server/dist/index.js"
+    "build": "rm -rf ./server/dist && npx tsc",
+    "start": "node server/dist/server/index.js",
+    "copy-to-ha": "node scripts/copy-to-ha.js"
   },
   "author": "Shannon Hochkins <mail@shannonhochkins.com>",
   "repository": {
@@ -27,14 +28,22 @@
     "@types/axios": "^0.14.0",
     "@types/cors": "^2.8.16",
     "@types/express": "^4.17.21",
+    "@types/mime-types": "^2.1.4",
     "@types/node": "^20.9.0",
     "@types/unzipper": "^0.10.9",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "next": "^14.2.4",
+    "mime-types": "^2.1.35",
+    "next": "^14.2.5",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5",
     "unzipper": "^0.12.1"
+  },
+  "devDependencies": {
+    "chalk": "^5.3.0",
+    "dotenv": "^16.4.5",
+    "fs": "0.0.1-security",
+    "node-scp": "0.0.23"
   }
 }

@@ -1,0 +1,15 @@
+{
+  "/": {
+    "content": [],
+    "root": {
+      "props": {
+        "options": {
+          "general": {
+            "hassUrl": "http://localhost:8123"
+          }
+        }
+      }
+    },
+    "zones": {}
+  }
+}

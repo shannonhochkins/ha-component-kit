@@ -1,21 +1,26 @@
-import fs from 'fs';
-import { rm } from 'fs/promises';
-import path from 'path';
+import { rm, mkdir, unlink, lstat, readdir, access } from 'fs/promises';
+import { join } from 'path';
 
 export * from './get-addon-info.js';
 
-export async function ensureDirectoryExists(filePath: string, empty: boolean = false) {
-  const dirPath = path.dirname(filePath);
+export async function ensureDirectoryExists(directoryPath: string, empty: boolean = false) {
 
-  // if empty is true, empty the contents of the directory
-  if (empty && fs.existsSync(dirPath)) {
-    await rm(dirPath, { recursive: true });
+  // If empty is true, empty the contents of the directory without removing the directory itself
+  if (empty && await access(directoryPath).then(() => true).catch(() => false)) {
+    const files = await readdir(directoryPath);
+    for (const file of files) {
+      const filePath = join(directoryPath, file);
+      const stat = await lstat(filePath);
+      if (stat.isDirectory()) {
+        await rm(filePath, { recursive: true });
+      } else {
+        await unlink(filePath);
+      }
+    }
   }
 
-  // Create output directory if it doesn't exist
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true });
-  }
+  // Create the directory if it doesn't exist
+  await mkdir(directoryPath, { recursive: true });
 }
 
 
