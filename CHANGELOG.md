@@ -1,3 +1,10 @@
+# 4.0.3
+
+## @hakit/components
+- No functional changes, just updated to locales
+## @hakit/core
+- No functional changes, just updated to locales
+
 # 4.0.2
 ## @hakit/components
 - BUGFIX - All cards using `modalProps` previously will spread the values first, and then provide internal defaults, making it impossible to overwrite values for the modal in some cases, additionally the MediaPlayerCard modal props were never spread through to the modal [discussion](https://github.com/shannonhochkins/ha-component-kit/discussions/159)

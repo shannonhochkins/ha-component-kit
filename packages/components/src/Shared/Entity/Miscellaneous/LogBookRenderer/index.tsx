@@ -326,7 +326,7 @@ function _LogBookRenderer({
       if (item.context_event_type === "call_service") {
         return (
           <>
-            <span className="triggered-by">{localize("triggered_by_service")}</span>
+            <span className="triggered-by">{localize("triggered_by_action")}</span>
             {item.context_domain && item.context_service ? (
               <span className="service-trigger-details">
                 {item.context_domain}:{" "}
