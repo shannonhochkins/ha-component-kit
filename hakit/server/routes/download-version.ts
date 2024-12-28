@@ -6,7 +6,7 @@ import { APP_DIRECTORY } from '../constants.js';
 import { downloadFile, listFilesInFolder } from '../google/drive/index.js';
 import { ensureDirectoryExists, translateError } from '../helpers/index.js';
 import { loadFile } from '../helpers/read-file.js';
-import addonPackage from '../../package.json' assert { type: 'json' };
+import addonPackage from '../../package.json' with { type: 'json' };
 
 export async function downloadVersion(_req: Request, res: Response) {
   // TODO - change download version to download a specific version
