@@ -71,6 +71,25 @@ function convertDateTime(datetime: string, timezone: string) {
   return new Intl.DateTimeFormat("en-US", options).format(new Date(datetime));
 }
 
+function splitForecastsIntoRows<T>(arr: T[], rowCount: number, maxItemsPerRow: number): T[][] {
+  const maxItems = rowCount * maxItemsPerRow;
+  const limitedArray = arr.slice(0, maxItems); // Ignore items beyond rowCount * maxItemsPerRow
+  const result: T[][] = [];
+  let start = 0;
+
+  for (let i = 0; i < rowCount; i++) {
+    // Determine the maximum size for this group
+    const groupSize = Math.min(
+      Math.ceil((limitedArray.length - start) / (rowCount - i)), // Evenly distribute remaining elements
+      maxItemsPerRow,
+    );
+    result.push(limitedArray.slice(start, start + groupSize));
+    start += groupSize;
+  }
+
+  return result;
+}
+
 const Forecast = styled(motion.div)`
   display: flex;
   flex-direction: column;
@@ -202,9 +221,12 @@ function _WeatherCard({
 
   const feelsLikeBase = weatherDetails.apparent_temperature ?? weatherDetails.feelsLike;
   const feelsLike = feelsLikeBase === temperature ? null : feelsLikeBase;
+
+  const forcastRowArrs = splitForecastsIntoRows(weather.forecast?.forecast ?? [], forecastRows, itemsToRender);
+
   const genForecastRows = () => (
     <>
-      {[...Array(forecastRows)].map((_, rowIdx) => (
+      {forcastRowArrs.map((forecastForRow, rowIdx) => (
         <Row
           className="row"
           fullHeight
@@ -213,7 +235,7 @@ function _WeatherCard({
             justifyContent: "space-between",
           }}
         >
-          {(weather.forecast?.forecast ?? []).slice(rowIdx * itemsToRender, (rowIdx + 1) * itemsToRender).map((forecast, index) => {
+          {forecastForRow.map((forecast, index) => {
             const dateFormatted = convertDateTime(forecast.datetime, timeZone);
             const [day, , hour] = dateFormatted.split(",");
             return (
@@ -285,7 +307,7 @@ function _WeatherCard({
                 <SubTitle className="sub-title">
                   {temperature}
                   {temperatureSuffix || unit}, {capitalize(weather.state)}
-                  {feelsLike ? `, Feels like: ${feelsLike}${temperatureSuffix || unit}` : ""}
+                  {feelsLike ? `, Feels like: ${Math.round(feelsLike)}${temperatureSuffix || unit}` : ""}
                 </SubTitle>
               </Column>
             </Row>
