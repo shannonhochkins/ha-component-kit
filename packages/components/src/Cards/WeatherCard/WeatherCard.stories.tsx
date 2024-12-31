@@ -32,7 +32,7 @@ function Template(args?: Partial<WeatherCardProps>) {
             <WeatherCardDetail entity="sensor.openweathermap_pressure" />,
           ]}
         />
-        <p>Hourly, with 2 separate rows:</p>  
+        <p>Hourly, with 2 separate rows:</p>
         <WeatherCard entity="weather.entity" forecastRows={2} forecastType="hourly" md={6} lg={6} xlg={6} {...args} />
       </Column>
     </HassConnect>

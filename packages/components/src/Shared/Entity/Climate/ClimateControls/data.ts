@@ -36,6 +36,7 @@ export const CLIMATE_HVAC_ACTION_TO_MODE: Record<HvacAction, HvacMode> = {
   heating: "heat",
   idle: "off",
   off: "off",
+  defrosting: 'defrost'
 };
 
 export const CLIMATE_HVAC_ACTION_ICONS: Record<HvacAction, string> = {
@@ -46,6 +47,7 @@ export const CLIMATE_HVAC_ACTION_ICONS: Record<HvacAction, string> = {
   idle: "mdi:clock-outline",
   off: "mdi:power",
   preheating: "mdi:heat-wave",
+  defrosting: 'mdi:snowflake-alert'
 };
 
 export const CLIMATE_HVAC_MODE_ICONS: Record<HvacMode, string> = {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // auto generated, do not manipulate, instead run the sync-ha-types script
 import { HassEntityBase, HassEntityAttributeBase } from "home-assistant-js-websocket";
-export type HvacAction = "off" | "preheating" | "heating" | "cooling" | "drying" | "idle" | "fan";
+export type HvacAction = "cooling" | "defrosting" | "drying" | "fan" | "heating" | "idle" | "off" | "preheating";
 
 export type HvacMode = (typeof HVAC_MODES)[number];
 export const HVAC_MODES = ["auto", "heat_cool", "heat", "cool", "dry", "fan_only", "off"] as const;
@@ -62,6 +62,8 @@ export type ClimateEntity = HassEntityBase & {
     preset_modes?: string[];
     swing_mode?: string;
     swing_modes?: string[];
+    swing_horizontal_mode?: string;
+    swing_horizontal_modes?: string[];
     aux_heat?: "on" | "off";
   };
 };
@@ -217,6 +219,19 @@ export interface MediaPlayerEntityAttributes extends HassEntityAttributeBase {
   sound_mode?: string;
   sound_mode_list?: string[];
 }
+export interface PersonEntity extends HassEntityBase {
+  attributes: PersonEntityAttributes;
+}
+
+export interface PersonEntityAttributes extends HassEntityAttributeBase {
+  id?: string;
+  user_id?: string;
+  device_trackers?: string[];
+  editable?: boolean;
+  gps_accuracy?: number;
+  latitude?: number;
+  longitude?: number;
+}
 export type RemoteEntity = HassEntityBase & {
   attributes: HassEntityAttributeBase & {
     current_activity: string | null;
@@ -265,13 +280,15 @@ export interface UpdateEntity extends HassEntityBase {
 
 export interface UpdateEntityAttributes extends HassEntityAttributeBase {
   auto_update: boolean | null;
+  display_precision: number;
   installed_version: string | null;
-  in_progress: boolean | number;
+  in_progress: boolean;
   latest_version: string | null;
   release_summary: string | null;
   release_url: string | null;
   skipped_version: string | null;
   title: string | null;
+  update_percentage: number | null;
 }
 export interface VacuumEntity extends HassEntityBase {
   attributes: VacuumEntityAttributes;

@@ -200,15 +200,18 @@ function TemplateMenuItems(args?: Partial<SidebarCardProps>) {
 function TemplateCustomWidth(args?: Partial<SidebarCardProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls theme={{
-        device: {
-          sidebarCard: {
-            width: {
-              expanded: '25rem'
-            }
-          }
-        }
-      }} />
+      <ThemeProvider
+        includeThemeControls
+        theme={{
+          device: {
+            sidebarCard: {
+              width: {
+                expanded: "25rem",
+              },
+            },
+          },
+        }}
+      />
       <MakeFullScreen />
       <Row alignItems="stretch" justifyContent="flex-start" fullWidth fullHeight wrap="nowrap">
         <SidebarCard startOpen={true} {...args}>
@@ -220,9 +223,12 @@ function TemplateCustomWidth(args?: Partial<SidebarCardProps>) {
               maxWidth: 600,
             }}
           >
-            Simple example on how you can tweak the sidebar width, the reason this is done through the theme provider is because other components also consume this value to determine positions/functionality.
+            Simple example on how you can tweak the sidebar width, the reason this is done through the theme provider is because other
+            components also consume this value to determine positions/functionality.
           </p>
-          <Source dark code={`<ThemeProvider includeThemeControls theme={{
+          <Source
+            dark
+            code={`<ThemeProvider includeThemeControls theme={{
         device: {
           sidebarCard: {
             width: {
@@ -230,7 +236,8 @@ function TemplateCustomWidth(args?: Partial<SidebarCardProps>) {
             }
           }
         }
-      }} />`} />
+      }} />`}
+          />
         </Row>
       </Row>
     </HassConnect>
