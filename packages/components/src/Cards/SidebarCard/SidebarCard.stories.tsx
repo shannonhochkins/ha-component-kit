@@ -197,6 +197,46 @@ function TemplateMenuItems(args?: Partial<SidebarCardProps>) {
   );
 }
 
+function TemplateCustomWidth(args?: Partial<SidebarCardProps>) {
+  return (
+    <HassConnect hassUrl="http://localhost:8123">
+      <ThemeProvider includeThemeControls theme={{
+        device: {
+          sidebarCard: {
+            width: {
+              expanded: '25rem'
+            }
+          }
+        }
+      }} />
+      <MakeFullScreen />
+      <Row alignItems="stretch" justifyContent="flex-start" fullWidth fullHeight wrap="nowrap">
+        <SidebarCard startOpen={true} {...args}>
+          <p>You can insert any children in the sidebar here</p>
+        </SidebarCard>
+        <Row fullWidth fullHeight gap="0.5rem">
+          <p
+            style={{
+              maxWidth: 600,
+            }}
+          >
+            Simple example on how you can tweak the sidebar width, the reason this is done through the theme provider is because other components also consume this value to determine positions/functionality.
+          </p>
+          <Source dark code={`<ThemeProvider includeThemeControls theme={{
+        device: {
+          sidebarCard: {
+            width: {
+              expanded: '25rem'
+            }
+          }
+        }
+      }} />`} />
+        </Row>
+      </Row>
+    </HassConnect>
+  );
+}
+
 export default {
   title: "COMPONENTS/Cards/SidebarCard",
   component: SidebarCard,
@@ -232,6 +272,16 @@ export const SidebarExample: SidebarStory = {
 
 export const CustomMenuItemsExample: SidebarStory = {
   render: TemplateMenuItems,
+  args: {
+    weatherCardProps: {
+      entity: "weather.entity",
+      includeForecast: true,
+    },
+  },
+};
+
+export const CustomSidebarWidthExample: SidebarStory = {
+  render: TemplateCustomWidth,
   args: {
     weatherCardProps: {
       entity: "weather.entity",

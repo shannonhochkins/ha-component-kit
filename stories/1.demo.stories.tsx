@@ -38,7 +38,9 @@ import diningRoom from './dining-room.jpg';
 function Template() {
   const device = useBreakpoint();
   return <Row fullWidth wrap="nowrap" fullHeight alignItems="stretch">
-    <SidebarCard startOpen={false} />
+    <SidebarCard startOpen={false} weatherCardProps={{
+      entity: 'weather.entity',
+    }} />
     <Column fullWidth gap="1rem" wrap="nowrap" justifyContent="flex-start" style={{
       padding: device.xxs || device.xs ? '1rem' : '2rem',
       overflowY: 'auto',
@@ -259,7 +261,15 @@ function Template() {
 
 function Connector() {
   return <HassConnect hassUrl="https://homeassistant.local:8123">
-    <ThemeProvider includeThemeControls darkMode={true} />
+    <ThemeProvider includeThemeControls darkMode={true} theme={{
+      device: {
+        sidebarCard: {
+          width: {
+            expanded: '25rem'
+          }
+        }
+      }
+    }} />
     <Template />
   </HassConnect>
 }

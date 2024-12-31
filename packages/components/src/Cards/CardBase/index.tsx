@@ -52,7 +52,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { isValidProp } from "../../utils/isValidProp";
 import styled from "@emotion/styled";
 import { useResizeDetector } from "react-resize-detector";
-import { Props as ResizeDetectorProps } from "react-resize-detector/build/types/types";
+import { useResizeDetectorProps } from "react-resize-detector";
 import { SVG_HEIGHT, SVG_WIDTH } from "../../Shared/SvgGraph/constants";
 
 const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
@@ -249,7 +249,7 @@ export type CardBaseProps<T extends ElementType = "div", E extends EntityName = 
     /** remove all base styles of the card and just use the inbuilt functionality */
     onlyFunctionality?: boolean;
     /** props to pass to the resize detector, this is useful if you want to trigger something whenever the card resizes */
-    resizeDetectorProps?: ResizeDetectorProps;
+    resizeDetectorProps?: useResizeDetectorProps<HTMLElement>;
   };
 
 const DEFAULT_SIZES: Required<AvailableQueries> = {
@@ -309,6 +309,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
   const { width = 0 } = useResizeDetector({
     refreshMode: "debounce",
     refreshRate: 50,
+    handleHeight: false,
     skipOnMount: false,
     targetRef: (elRef as React.MutableRefObject<HTMLElement>) ?? internalRef,
     ...(resizeDetectorProps ?? {}),

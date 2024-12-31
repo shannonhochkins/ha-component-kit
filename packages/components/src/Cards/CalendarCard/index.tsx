@@ -414,6 +414,7 @@ function _CalendarCard({
   const [narrow, setNarrow] = useState<boolean>(false);
   const { width, ref: widthRef } = useResizeDetector({
     refreshMode: "debounce",
+    handleHeight: false,
     refreshRate: 500,
   });
   const { callApi, getAllEntities } = useHass();

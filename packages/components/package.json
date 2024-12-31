@@ -81,7 +81,7 @@
     "react-dom": ">=16.x",
     "react-error-boundary": "^4.x",
     "react-leaflet": ">=4.x.x",
-    "react-resize-detector": ">=9.x.x",
+    "react-resize-detector": ">=12.x.x",
     "react-switch": "^7.x.x",
     "react-use": ">=17.x",
     "use-debounce": ">=9.x",

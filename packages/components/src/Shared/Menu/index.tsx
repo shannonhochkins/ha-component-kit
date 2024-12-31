@@ -148,6 +148,7 @@ export function Menu({ children, placement = "bottom", items = [], cssStyles, ..
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const { width, ref } = useResizeDetector({
     refreshMode: "debounce",
+    handleHeight: false,
     refreshRate: 500,
   });
   // Reference to the menu popup
