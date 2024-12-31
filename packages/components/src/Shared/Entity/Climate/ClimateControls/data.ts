@@ -36,7 +36,7 @@ export const CLIMATE_HVAC_ACTION_TO_MODE: Record<HvacAction, HvacMode> = {
   heating: "heat",
   idle: "off",
   off: "off",
-  defrosting: 'defrost'
+  defrosting: 'cool'
 };
 
 export const CLIMATE_HVAC_ACTION_ICONS: Record<HvacAction, string> = {

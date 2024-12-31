@@ -4,7 +4,9 @@
 - WeatherCard - When using multiple forecast rows, the layout of the card was not aligned making it hard to read, this was fixed thanks to @kdkavanagh, additional examples added to storybook to demonstrate this.
 - CameraCard - WebRTC has recently received a lot of love with the lovelace cards, this functionality has been migrated over to the CameraCard thanks to @kdkavanagh
 ## @hakit/core
-- No functional changes, just updated to locales
+- Locales - Updated to match latest release
+- Updated ClimateEntity types to include swing properties & defrosting HVAC mode
+- Added PersonEntity type exported from core
 
 # 4.0.3
 
