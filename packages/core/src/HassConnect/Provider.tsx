@@ -30,7 +30,7 @@ import {
   ERR_INVALID_HTTPS_TO_HTTP,
 } from "home-assistant-js-websocket";
 import { isArray, snakeCase, isEmpty } from "lodash";
-import { ServiceData, SnakeOrCamelDomains, DomainService, Target } from "@typings";
+import { ServiceData, SnakeOrCamelDomains, DomainService, Target, ServiceResponse } from "@typings";
 import { saveTokens, loadTokens, clearTokens } from "./token-storage";
 import { diff } from "deep-object-diff";
 import { create } from "zustand";
@@ -45,6 +45,7 @@ export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends Domain
   service: M;
   serviceData?: ServiceData<T, M>;
   target?: Target;
+  returnResponse?: boolean;
 }
 
 export interface Route {
@@ -216,7 +217,9 @@ export interface HassContextProps {
   /** will retrieve HassUser */
   getUser: () => Promise<HassUser | null>;
   /** function to call a service through web sockets */
-  callService: <T extends SnakeOrCamelDomains, M extends DomainService<T>>(args: CallServiceArgs<T, M>) => void;
+  callService: <T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+    args: CallServiceArgs<T, M>,
+  ) => Promise<boolean | ServiceResponse>;
   /** add a new route to the provider */
   addRoute(route: Omit<Route, "active">): void;
   /** retrieve a route by name */
@@ -670,7 +673,8 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
       service,
       serviceData,
       target: _target,
-    }: CallServiceArgs<T, M>) => {
+      returnResponse,
+    }: CallServiceArgs<T, M>): Promise<boolean | ServiceResponse> => {
       const target =
         typeof _target === "string" || isArray(_target)
           ? {
@@ -682,14 +686,15 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
       }
       if (connection && ready) {
         try {
-          return await _callService(
+          return (await _callService(
             connection,
             snakeCase(domain),
             snakeCase(service),
             // purposely cast here as we know it's correct
             serviceData as object,
             target,
-          );
+            returnResponse,
+          )) as boolean | ServiceResponse;
         } catch (e) {
           // TODO - raise error to client here
         }

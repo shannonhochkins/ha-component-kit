@@ -1,4 +1,4 @@
-import type { HassEntity, HassServiceTarget } from "home-assistant-js-websocket";
+import type { HassEntity, HassServiceTarget, Context } from "home-assistant-js-websocket";
 import type { DefaultServices } from "./supported-services";
 import type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 export type { DefinedPropertiesByDomain } from "./entitiesByDomain";
@@ -68,16 +68,26 @@ export type HassEntityWithService<T extends AllDomains> = HassEntityCustom &
     service: SnakeToCamel<T> extends keyof SupportedServices<"no-target"> ? SupportedServices<"no-target">[SnakeToCamel<T>] : never;
   };
 
-export type ServiceFunctionWithEntity<Data = object> = (
+export interface ServiceResponse {
+  context: Context;
+  response: object;
+}
+
+export type ServiceFunctionWithEntity<Data = object> = <ReturnResponse extends boolean = false>(
   /** the entity target from home assistant, string, string[] or object */
   entity: Target,
   /** the data to send to the service */
   data?: Data,
-) => void;
+  /** whether to return the response object */
+  returnResponse?: ReturnResponse,
+) => ReturnResponse extends true ? Promise<ServiceResponse> : void;
 
 export type ServiceFunctionWithoutEntity<Data = object> = {
   /** the data to send to the service */
-  (data?: Data): void;
+  <ReturnResponse extends boolean = false>(
+    data?: Data,
+    returnResponse?: ReturnResponse,
+  ): ReturnResponse extends true ? Promise<ServiceResponse> : void;
 };
 
 export type ServiceFunction<T extends ServiceFunctionTypes = "target", Data = object> = {

@@ -19,10 +19,11 @@ export function createService<T extends SnakeOrCamelDomains>(
         const service = serviceInput as S;
         // Skip interception for inherited properties
         if (service === "toJSON") return;
-        return function (...args: [Target?, ServiceData<T, S>?]) {
+        return function (...args: [Target?, ServiceData<T, S>?, boolean?]) {
           // if rootTarget is available, use it. otherwise, use the first argument as target
           let target = rootTarget ?? (args[0] as Target);
           const serviceData = rootTarget ? (args[0] as ServiceData<T, S>) : args[1];
+          const returnResponse = rootTarget ? (args[1] as boolean) : args[2];
           if (Array.isArray(target)) {
             // ensure the target values are a unique array of ids
             target = [...uniq(target)];
@@ -43,6 +44,7 @@ export function createService<T extends SnakeOrCamelDomains>(
             service,
             serviceData,
             target,
+            returnResponse,
           });
         };
       },
