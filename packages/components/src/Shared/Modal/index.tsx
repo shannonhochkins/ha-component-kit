@@ -138,6 +138,8 @@ export interface ModalProps extends Omit<Extendable, "title"> {
   animationDuration?: number;
   /** controls for the modalAnimations, by default the modal will animate expanding from the originating element */
   modalAnimation?: CustomModalAnimation;
+  /** Automatically close the modal after the provided number of seconds */
+  autocloseSeconds?: number;
 }
 const LAYOUT_MODAL_ANIMATION: CustomModalAnimation = (duration, id) => {
   const transition = {
@@ -204,6 +206,7 @@ function _Modal({
   headerActions,
   modalAnimation,
   animationDuration = 0.25,
+  autocloseSeconds = undefined,
   ...rest
 }: ModalProps) {
   const { useStore } = useHass();
@@ -217,11 +220,35 @@ function _Modal({
   const customAnimation = modalStore.modalAnimation ?? modalAnimation;
   const hasCustomAnimation = customAnimation !== undefined;
   const animation = customAnimation ?? LAYOUT_MODAL_ANIMATION;
-  useEffect(() => {
-    if (isPressed && onClose && open) {
+  const autocloseRef = useRef<NodeJS.Timeout | null>(null);
+
+  const doClose = useCallback(() => {
+    if (autocloseRef.current) {
+      clearTimeout(autocloseRef.current);
+    }
+    if (onClose && open) {
       onClose();
     }
-  }, [isPressed, onClose, open]);
+  }, [open, onClose]);
+
+  useEffect(() => {
+    const removeCurrent = () => {
+      if (autocloseRef.current) {
+        clearTimeout(autocloseRef.current);
+      }
+    };
+    removeCurrent();
+    if (autocloseSeconds && open) {
+      autocloseRef.current = setTimeout(doClose, autocloseSeconds * 1000);
+      return removeCurrent;
+    }
+  }, [open, autocloseSeconds, doClose]);
+
+  useEffect(() => {
+    if (isPressed) {
+      doClose();
+    }
+  }, [isPressed, doClose, open]);
 
   const delayUpdate = useCallback(() => {
     // this will delay the rendering of the children until the animation
@@ -312,7 +339,7 @@ function _Modal({
                 {headerActions && headerActions()}
                 <FabCard
                   onClick={() => {
-                    onClose();
+                    doClose();
                   }}
                   className={`modal-close-button`}
                   tooltipPlacement="left"
