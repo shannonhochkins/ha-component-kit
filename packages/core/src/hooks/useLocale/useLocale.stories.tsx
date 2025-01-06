@@ -51,8 +51,8 @@ function useResetCache(data: number) {
 
 const ListboxComponent = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLElement>>(function ListboxComponent(props, ref) {
   const { children, ...other } = props;
-  const itemData: React.ReactElement[] = [];
-  (children as React.ReactElement[]).forEach((item: React.ReactElement & { children?: React.ReactElement[] }) => {
+  const itemData: React.ReactElement<HTMLElement>[] = [];
+  (children as React.ReactElement<HTMLElement>[]).forEach((item: React.ReactElement<HTMLElement> & { children?: React.ReactElement<HTMLElement>[] }) => {
     itemData.push(item);
     itemData.push(...(item.children || []));
   });

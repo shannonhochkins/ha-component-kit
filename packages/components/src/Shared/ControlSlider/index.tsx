@@ -257,7 +257,7 @@ function _ControlSlider({
   const sliderRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
   const inlineValue = useRef(value);
-  const timerRef = useRef<NodeJS.Timeout | undefined>();
+  const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const boundedValue = useCallback(
     (value: number) => {
       return Math.min(Math.max(value, min), max);

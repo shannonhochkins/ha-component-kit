@@ -388,8 +388,8 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rest.xxs, rest.xs, rest.sm, rest.md, rest.lg, rest.xlg]);
 
-  const filteredRelatedEntities = Children.toArray(relatedEntities).filter((child): child is ReactElement => isValidElement(child));
-  const filteredFeaturedEntities = Children.toArray(features).filter((child): child is ReactElement => isValidElement(child));
+  const filteredRelatedEntities = Children.toArray(relatedEntities).filter((child): child => isValidElement(child));
+  const filteredFeaturedEntities = Children.toArray(features).filter((child): child => isValidElement(child));
 
   const featuredElements = Children.map(filteredFeaturedEntities, (child, index) => {
     if (isValidElement<FeatureEntityProps<EntityName>>(child)) {
