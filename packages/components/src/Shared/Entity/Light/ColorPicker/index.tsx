@@ -185,11 +185,11 @@ function _ColorPicker({ disabled = false, entity: _entity, onChange, onChangeApp
   const parentRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gRef = useRef<SVGGElement>(null);
-  const hex = useRef<string>();
+  const hex = useRef<string>(undefined);
   const circleRef = useRef<SVGCircleElement>(null);
-  const _pressed = useRef<string>();
-  const _cursorPosition = useRef<[number, number]>();
-  const _localValue = useRef<[number, number]>();
+  const _pressed = useRef<string>(undefined);
+  const _cursorPosition = useRef<[number, number]>(undefined);
+  const _localValue = useRef<[number, number]>(undefined);
   const canvasSize = useMemo(() => {
     if (typeof window === "undefined") {
       return RENDER_SIZE;

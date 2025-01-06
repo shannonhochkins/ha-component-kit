@@ -78,7 +78,8 @@
     "prerelease": "npm run build",
     "release": "npm publish --access public",
     "sync-local-types": "npm run build:sync-script && node ./sync-local-types.cjs",
-    "sync-locales": "npx tsx ./scripts/sync-locales/index.ts"
+    "sync-locales": "npx tsx ./scripts/sync-locales/index.ts",
+    "clean": "rm -rf node_modules dist .ha-repo-cache scripts/sync-locals/.cache scripts/sync-locals/node_modules"
   },
   "tsup": {
     "entry": [
@@ -92,14 +93,14 @@
     "outDir": "dist/sync/cli"
   },
   "peerDependencies": {
-    "@emotion/react": ">=10.x",
-    "@emotion/styled": ">=10.x",
-    "@iconify/react": ">=4.x",
+    "@emotion/react": ">=11.x",
+    "@emotion/styled": ">=11.x",
+    "@iconify/react": ">=5.x",
     "deep-object-diff": ">=1.x.x",
-    "framer-motion": ">=10.x.x",
+    "framer-motion": ">=11.x.x",
     "home-assistant-js-websocket": ">=9.x",
     "lodash": ">=4.x",
-    "prettier": ">=3.x.x",
+    "prettier": ">=3.4.2",
     "react": ">=16.x",
     "react-dom": ">=16.x",
     "use-debounce": ">=9.x",
@@ -111,7 +112,7 @@
     "@liuli-util/vite-plugin-node": "^0.8.1",
     "@swc/core": "^1.3.78",
     "@types/ws": "^8.5.5",
-    "prettier": "^3.2.5",
+    "prettier": "^3.4.2",
     "rollup-plugin-node-externals": "^7.1.2",
     "simple-git": "^3.24.0",
     "ts-morph": "^22.0.0",

@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, type JSX } from "react";
 import styled from "@emotion/styled";
 import { type AvailableQueries, fallback } from "@components";
 import type { VacuumControlsProps } from "@components";

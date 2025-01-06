@@ -154,7 +154,7 @@ function _TimeCard({
 }: TimeCardProps): React.ReactNode {
   const [currentTime, setCurrentTime] = useState(new Date());
   const previousTimeRef = useRef<number>(Date.now());
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number>(undefined);
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const timeSensor = useEntity("sensor.time", {

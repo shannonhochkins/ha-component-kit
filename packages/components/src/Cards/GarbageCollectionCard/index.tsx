@@ -133,7 +133,7 @@ export module GarbageCollectionCardTypes {
     /** the icon name from iconify to display over the bin, if provided as well as name, the display may look odd */
     icon?: string;
     /** if provided, the default garbage bin will not be rendered and you can render your own */
-    render?: (bin: BinProperties, key: Key) => React.ReactElement;
+    render?: (bin: BinProperties, key: Key) => React.ReactElement<HTMLElement>;
   }
 
   export interface Schedule {

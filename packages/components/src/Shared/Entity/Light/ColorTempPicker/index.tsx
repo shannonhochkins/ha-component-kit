@@ -174,7 +174,7 @@ function _ColorTempPicker({
   const parentRef = useRef<HTMLDivElement>(null);
   const gRef = useRef<SVGGElement>(null);
   const circleRef = useRef<SVGCircleElement>(null);
-  const timerRef = useRef<NodeJS.Timeout | undefined>();
+  const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const _cursorPosition = useRef<[number, number]>([0, 0]);
   const min = entity.attributes.min_color_temp_kelvin || 2000;
   const max = entity.attributes.max_color_temp_kelvin || 10000;

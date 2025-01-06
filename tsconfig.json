@@ -5,6 +5,7 @@
     "lib": ["es2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "moduleDetection": "force",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "emitDeclarationOnly": false,
@@ -20,6 +21,7 @@
     "noUnusedParameters": true,
     "preserveConstEnums": true,
     "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
       "@hakit/core": ["packages/core/dist"],

@@ -292,7 +292,7 @@ function _ButtonCard<E extends EntityName>({
     }
     return null;
   }
-  const hasFeatures = Children.toArray(rest?.features).filter((child): child is ReactElement => isValidElement(child)).length > 0;
+  const hasFeatures = Children.toArray(rest?.features).filter((child) => isValidElement(child)).length > 0;
   return (
     <StyledButtonCard
       key={key}

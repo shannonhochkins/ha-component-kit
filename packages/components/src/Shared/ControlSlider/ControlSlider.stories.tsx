@@ -7,7 +7,7 @@ import { HassConnect } from "@hass-connect-fake";
 interface SliderProps {
   value: number;
   thickness: number;
-  ref: React.RefObject<HTMLDivElement>;
+  ref: React.RefObject<HTMLDivElement | null>;
   sliderColor?: [number, number, number];
 }
 
