@@ -67,6 +67,7 @@ export const rgbww2rgb = (
   try {
     ctRatio = ww / (cw + ww);
   } catch (_error) {
+    console.log("Error:", _error);
     ctRatio = 0.5;
   }
   const colorTempMired = minMireds + ctRatio * miredRange;

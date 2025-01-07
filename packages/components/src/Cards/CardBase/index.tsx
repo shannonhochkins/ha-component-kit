@@ -42,6 +42,7 @@ import {
   Alert,
   SvgGraph,
   ButtonBar,
+  ButtonBarButton,
   ButtonBarProps,
   SvgGraphProps,
   type RelatedEntity,
@@ -260,8 +261,13 @@ const DEFAULT_SIZES: Required<AvailableQueries> = {
   lg: 4,
   xlg: 3,
 };
-
-const _CardBase = function _CardBase<T extends ElementType, E extends EntityName>({
+/**
+ * This is the base card component that every other card component should extend, it comes with everything we need to be able to replicate functionality
+ * like the modal popup, ripples and more.
+ *
+ * You can use this if you want an empty shell of a component that you can build on top of.
+ * */
+export const CardBase = memo(function CardBase<T extends ElementType, E extends EntityName>({
   as = "div" as T,
   entity: _entity,
   title: _title,
@@ -295,7 +301,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
   resizeDetectorProps,
   triggerClass,
   ...rest
-}: CardBaseProps<T, E>) {
+}: CardBaseProps<T, E>): ReactElement<T> {
   const _id = useId();
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
@@ -388,8 +394,12 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rest.xxs, rest.xs, rest.sm, rest.md, rest.lg, rest.xlg]);
 
-  const filteredRelatedEntities = Children.toArray(relatedEntities).filter((child): child => isValidElement(child));
-  const filteredFeaturedEntities = Children.toArray(features).filter((child): child => isValidElement(child));
+  const filteredRelatedEntities = Children.toArray(relatedEntities).filter((child): child is ReactElement<typeof ButtonBarButton> =>
+    isValidElement(child),
+  );
+  const filteredFeaturedEntities = Children.toArray(features).filter((child): child is ReactElement<typeof ButtonBarButton> =>
+    isValidElement(child),
+  );
 
   const featuredElements = Children.map(filteredFeaturedEntities, (child, index) => {
     if (isValidElement<FeatureEntityProps<EntityName>>(child)) {
@@ -430,7 +440,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
   }, [active, className, columnClassNames, disableColumns, disabled, graphEntity, hasFeatures, isUnavailable]);
 
   return (
-    <>
+    <ErrorBoundary {...fallback({ prefix: "CardBase" })}>
       <StyledElement
         key={key}
         ref={elRef ?? internalRef}
@@ -501,9 +511,9 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
           id={_id}
         />
       )}
-    </>
+    </ErrorBoundary>
   );
-};
+});
 
 /**
  * This is the base card component that every other card component should extend, it comes with everything we need to be able to replicate functionality
@@ -511,10 +521,10 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
  *
  * You can use this if you want an empty shell of a component that you can build on top of.
  * */
-export const CardBase = memo(function CardBase<T extends ElementType, E extends EntityName>(props: CardBaseProps<T, E>) {
-  return (
-    <ErrorBoundary {...fallback({ prefix: "CardBase" })}>
-      <_CardBase {...props} />
-    </ErrorBoundary>
-  );
-});
+// export function CardBase<T extends ElementType, E extends EntityName>(props: CardBaseProps<T, E>): ReactElement<T> {
+//   return (
+//     <ErrorBoundary {...fallback({ prefix: "CardBase" })}>
+//       <InternalCardBase {...props} />
+//     </ErrorBoundary>
+//   );
+// };

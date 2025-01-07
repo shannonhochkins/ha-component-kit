@@ -1,6 +1,5 @@
 /* eslint-env node */
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
 const { typeSync } = require('./dist/sync/node/index.cjs');
 require('dotenv').config();
 (async function runner() {

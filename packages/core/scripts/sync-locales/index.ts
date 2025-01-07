@@ -79,6 +79,7 @@ async function scrapeHomeAssistant(): Promise<[fileName: string, contents: strin
           timeout: 5000,
         }); // Adjust the timeout as necessary
       } catch (e) {
+        console.log('Error:', e);
         // ignore
       }
 

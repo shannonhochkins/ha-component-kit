@@ -192,7 +192,7 @@ const LAYOUT_MODAL_ANIMATION: CustomModalAnimation = (duration, id) => {
   };
 };
 
-function _Modal({
+function InternalModal({
   open,
   id,
   title,
@@ -374,7 +374,7 @@ function _Modal({
 export const Modal = memo(function Modal(props: ModalProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "Modal" })}>
-      <_Modal {...props} />
+      <InternalModal {...props} />
     </ErrorBoundary>
   );
 });

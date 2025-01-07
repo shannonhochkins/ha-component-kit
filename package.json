@@ -3,7 +3,8 @@
   "workspaces": [
     "packages/core",
     "packages/components",
-    "packages/create-hakit"
+    "packages/create-hakit",
+    "packages/core/scripts/sync-locales"
   ],
   "engines": {
     "node": ">=20.0.0",
@@ -29,12 +30,12 @@
     "start": "storybook dev -p 6006",
     "dev": "npm run start",
     "test": "npm run test --workspaces --if-present",
-    "clean": "rm -rf node_modules && npm run clean --workspaces --if-present",
+    "clean": "rm -rf node_modules storybook-static trace && npm run clean --workspaces --if-present",
     "test:components": "npm run test --workspace=@hakit/components",
     "test:core": "npm run test --workspace=@hakit/core",
     "build": "VITE_CJS_TRACE=true npm run build:core && npm run build:components && npm run build:create",
     "postbuild": "npm run type-check",
-    "type-check": "tsc --noEmit --project tsconfig-type-check.json",
+    "type-check": "tsc --noEmit --project tsconfig-type-check.json && npm run type-check --workspaces --if-present",
     "build:core": "npm run build --workspace=@hakit/core",
     "build:create": "npm run build --workspace=create-hakit",
     "build:for:storybook": "npm run build:core --workspace=@hakit/core && npm run build --workspace=@hakit/components",
@@ -43,10 +44,9 @@
     "watch:build:components": "npm run watch:build --workspace=@hakit/components",
     "watch:build:core": "npm run watch:build --workspace=@hakit/core",
     "watch:build:sync-script": "npm run watch:build:sync-script --workspace=@hakit/core",
-    "release": "npm run release --workspaces --if-present",
-    "release:core": "npm run release --workspace=@hakit/core",
-    "release:components": "npm run release --workspace=@hakit/components",
-    "release:create-hakit": "npm run release --workspace=create-hakit",
+    "release:core": "npm run type-check && npm run release --workspace=@hakit/core",
+    "release:components": "npm run type-check && npm run release --workspace=@hakit/components",
+    "release:create-hakit": "npm run type-check && npm run release --workspace=create-hakit",
     "test:dashboard": " cd test-dashboard && npm start",
     "sync-local-types": "npm run sync-local-types --workspace=@hakit/core",
     "sync-locales": "npm run sync-locales --workspace=@hakit/core"
@@ -58,6 +58,7 @@
     "@changesets/cli": "^2.26.2",
     "@emotion/babel-plugin": "^11.11.0",
     "@emotion/jest": "^11.11.0",
+    "@eslint/js": "^9.17.0",
     "@mui/material": "^6.x.x",
     "@storybook/addon-controls": "^8.4.7",
     "@storybook/addon-docs": "^8.4.7",
@@ -80,17 +81,16 @@
     "@types/react": "^19.x",
     "@types/react-dom": "^19.x",
     "@types/react-window": "^1.8.8",
-    "@typescript-eslint/eslint-plugin": "^7.12.0",
-    "@typescript-eslint/parser": "^7.12.0",
-    "@typescript-eslint/typescript-estree": "^7.12.0",
     "@vitejs/plugin-react": "^4.3.4",
     "dotenv": "^16.3.1",
-    "eslint": "^8.57.0",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.4",
-    "eslint-plugin-storybook": "^0.6.15",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react": "^7.37.3",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "eslint-plugin-storybook": "^0.11.2",
     "framer-motion": "^11.15.0",
     "glob": "^10.4.1",
+    "globals": "^15.14.0",
     "jest": "^29.6.1",
     "jest-environment-jsdom": "^29.6.1",
     "jest-localstorage-mock": "^2.4.26",
@@ -104,6 +104,7 @@
     "ts-node": "^10.9.2",
     "type-fest": "^4.19.0",
     "typescript": "^5.7.2",
+    "typescript-eslint": "^8.19.0",
     "vite": "^6.0.7",
     "vite-plugin-dts": "^4.4.0",
     "vite-plugin-linter": "^3.0.1",
@@ -113,6 +114,9 @@
     "react-element-to-jsx-string": {
       "react": ">=19.x",
       "react-dom": ">=19.x"
-    }
+    },
+    "vite": "^6.0.7",
+    "vite-plugin-dts": "^4.4.0",
+    "typescript": "^5.7.2"
   }
 }

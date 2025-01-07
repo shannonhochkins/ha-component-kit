@@ -260,7 +260,7 @@ export interface SidebarCardProps extends Extendable {
   /** a method to apply a sort function to the sidebar menu items before they render */
   sortSidebarMenuItems?: (a: MenuItem, b: MenuItem) => number;
 }
-function _SidebarCard({
+function InternalSidebarCard({
   weatherCardProps,
   timeCardProps = {
     hideIcon: true,
@@ -452,7 +452,7 @@ function _SidebarCard({
 export function SidebarCard(props: SidebarCardProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "SidebarCard" })}>
-      <_SidebarCard {...props} />
+      <InternalSidebarCard {...props} />
     </ErrorBoundary>
   );
 }

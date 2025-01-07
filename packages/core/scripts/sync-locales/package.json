@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "sync": "npx tsx ./index.ts",
+    "clean": "rm -rf .cache node_modules",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

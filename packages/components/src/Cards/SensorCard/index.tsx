@@ -14,7 +14,7 @@ export interface SensorCardProps<E extends EntityName> extends Omit<ButtonCardPr
   entity: E;
 }
 
-function _SensorCard<E extends EntityName>({
+function InternalSensorCard<E extends EntityName>({
   entity: _entity,
   className,
   cssStyles,
@@ -60,7 +60,7 @@ export function SensorCard<E extends EntityName>(props: SensorCardProps<E>) {
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "SensorCard" })}>
-      <_SensorCard {...defaultColumns} {...props} />
+      <InternalSensorCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

@@ -134,7 +134,7 @@ const DEFAULT_DATE_FORMAT = "dddd, MMMM DD YYYY";
 
 const customFormatter = createDateFormatter({});
 
-function _TimeCard({
+function InternalTimeCard({
   timeFormat,
   dateFormat,
   throttleTime = 1000,
@@ -261,7 +261,7 @@ export function TimeCard(props: TimeCardProps) {
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "TimeCard" })}>
-      <_TimeCard {...defaultColumns} {...props} />
+      <InternalTimeCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

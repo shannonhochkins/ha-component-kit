@@ -28,6 +28,7 @@
       "@hakit/components": ["packages/components/dist"],
       "@core": ["packages/core/src"],
       "@components": ["packages/components/src"],
+      "@components/*": ["packages/components/src/*"],
       "@stories/*": ["stories/*"],
       "@hass-connect-fake": ["hass-connect-fake/index.tsx"],
       "@hass-connect-fake/*": ["hass-connect-fake/*"],

@@ -17,7 +17,7 @@ export function saveTokens(tokens: AuthData | null) {
       storage.setItem("hassTokens", JSON.stringify(tokens));
     } catch (err: unknown) {
       // write failed, ignore it. Happens if storage is full or private mode.
-      console.error("Failed to save tokens, probably due to private mode or storage full");
+      console.error("Failed to save tokens, probably due to private mode or storage full", err);
     }
   } else {
     console.error("Local storage not supported on this device.");

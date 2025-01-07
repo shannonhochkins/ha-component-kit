@@ -18,8 +18,8 @@ export default {
           <p>The following is the use of the hook:</p>
           <Source dark code={`const device = useDevice('camera.some_camera');`} />
           <p>
-            The above will either return null or the extended device information, this is not the entity, but rather the device, they're
-            different in the eyes of home assistant, and not all entities have devices.
+            The above will either return null or the extended device information, this is not the entity, but rather the device,
+            they&apos;re different in the eyes of home assistant, and not all entities have devices.
           </p>
           <p>The return type is provided with typescript so you can see the difference.</p>
         </>

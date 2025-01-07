@@ -126,8 +126,8 @@ function RenderModalByDomain() {
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
       <Column fullWidth>
-        <p>There's a helper component that will automatically load up pre-defined modals by entity/domain.</p>
-        <p>If the entity you're using has no predefined layout, it won't render anything.</p>
+        <p>There&apos;s a helper component that will automatically load up pre-defined modals by entity/domain.</p>
+        <p>If the entity you&apos;re using has no predefined layout, it won&apos;t render anything.</p>
         <p>
           Please note that this exact component is automatically wired up to the FabCard and ButtonCard when you long press on the buttons.
         </p>
@@ -371,24 +371,24 @@ function RenderModalAnimationExample() {
           <P>This animation will fade in and up and when closing it will fade out and up again.</P>
           <P>
             These modalAnimations are driven by{" "}
-            <a target="_blank" href="https://www.framer.com/motion/introduction/">
+            <a target="_blank" href="https://www.framer.com/motion/introduction/" rel="noreferrer">
               Framer Motion
             </a>
             , the{" "}
-            <a target="_blank" href="https://www.framer.com/motion/animation/#variants">
+            <a target="_blank" href="https://www.framer.com/motion/animation/#variants" rel="noreferrer">
               variants
             </a>{" "}
             have a preset of animate, exit and initial animation properties available and supports all properties that framer motion allows
             you to animate.
           </P>
           <P>
-            You can also simply provide a `layoutId` which is what's used by default within the modal component to create the default
+            You can also simply provide a `layoutId` which is what&apos;s used by default within the modal component to create the default
             animation.
           </P>
           <P>You can animate the modal, content and header separately!</P>
           <P>
-            Here's some example references for animations with{" "}
-            <a href="https://fireship.io/lessons/framer-motion-modal/" target="_blank">
+            Here&apos;s some example references for animations with{" "}
+            <a href="https://fireship.io/lessons/framer-motion-modal/" target="_blank" rel="noreferrer">
               framer motion
             </a>
           </P>

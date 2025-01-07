@@ -66,7 +66,7 @@ export interface ClimateControlsProps extends Extendable {
   mainControl?: MainControl;
 }
 
-function _ClimateControls({
+function InternalClimateControls({
   entity: _entity,
   hvacModes,
   hvacModeLabels,
@@ -276,7 +276,7 @@ function _ClimateControls({
 export function ClimateControls(props: ClimateControlsProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ClimateControls" })}>
-      <_ClimateControls {...props} />
+      <InternalClimateControls {...props} />
     </ErrorBoundary>
   );
 }

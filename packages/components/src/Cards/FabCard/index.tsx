@@ -92,7 +92,7 @@ export interface FabCardProps<E extends EntityName> extends Omit<CardBaseProps<"
   active?: boolean;
 }
 
-function _FabCard<E extends EntityName>({
+function InternalFabCard<E extends EntityName>({
   title: _title,
   tooltipPlacement,
   icon: _icon,
@@ -123,7 +123,7 @@ function _FabCard<E extends EntityName>({
     fontSize: iconProps?.fontSize ?? `${size / 1.7}px`,
   });
   const hasChildren = typeof children !== "undefined";
-  const _borderRadius = hasChildren ? borderRadius ?? "10px" : borderRadius ?? "50%";
+  const _borderRadius = hasChildren ? (borderRadius ?? "10px") : (borderRadius ?? "50%");
   const isUnavailable = typeof entity?.state === "string" ? isUnavailableState(entity.state) : false;
   const entityIcon = useIconByEntity(_entity || "unknown", {
     ...(iconProps ?? {}),
@@ -182,7 +182,7 @@ function _FabCard<E extends EntityName>({
 export function FabCard<E extends EntityName>(props: FabCardProps<E>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "FabCard" })}>
-      <_FabCard {...props} />
+      <InternalFabCard {...props} />
     </ErrorBoundary>
   );
 }

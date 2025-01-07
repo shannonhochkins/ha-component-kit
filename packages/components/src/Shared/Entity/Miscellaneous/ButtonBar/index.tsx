@@ -7,7 +7,7 @@ import { ReactElement, Children, isValidElement, cloneElement } from "react";
 type Extendable = React.ComponentPropsWithoutRef<"div">;
 
 // Define the allowed children types
-type AllowedChild = ReactElement<typeof ButtonBarButton> | false | null;
+export type AllowedChild = ReactElement<typeof ButtonBarButton> | false | null;
 type AllowedChildren = AllowedChild | AllowedChild[];
 
 export interface ButtonBarProps extends Extendable {
@@ -98,7 +98,7 @@ const ButtonBarInner = styled.div<Partial<ButtonBarProps>>`
   }
 `;
 
-function _ButtonBar({
+function InternalButtonBar({
   key,
   alignItems,
   fullWidth,
@@ -146,7 +146,7 @@ function _ButtonBar({
             alignItems,
             justifyContent,
             wrap,
-            gap: gap ?? layoutType === "bubble" ? "0.5rem" : "0",
+            gap: (gap ?? layoutType === "bubble") ? "0.5rem" : "0",
             fullWidth,
             fullHeight,
           }}
@@ -166,7 +166,7 @@ function _ButtonBar({
 export function ButtonBar(props: ButtonBarProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ButtonBar" })}>
-      <_ButtonBar {...props} />
+      <InternalButtonBar {...props} />
     </ErrorBoundary>
   );
 }

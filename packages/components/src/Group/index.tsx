@@ -90,7 +90,7 @@ export interface GroupProps extends Omit<CardBaseProps, OmitProperties> {
   /** fired when the group header section is clicked */
   onClick?: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
 }
-function _Group({
+function InternalGroup({
   title,
   description,
   children,
@@ -179,7 +179,7 @@ export function Group(props: GroupProps) {
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "Group" })}>
-      <_Group {...defaultColumns} {...props} />
+      <InternalGroup {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { fallback } from "@components";
@@ -90,7 +90,7 @@ export interface TooltipProps extends Omit<React.ComponentPropsWithoutRef<"div">
   children: React.ReactNode;
 }
 
-function _Tooltip({ placement = "top", title = null, children, ...rest }: TooltipProps) {
+function InternalTooltip({ placement = "top", title = null, children, ...rest }: TooltipProps) {
   const tooltipRef = useRef<HTMLSpanElement | null>(null);
   const childRef = useRef<HTMLDivElement | null>(null);
   const { useStore } = useHass();
@@ -179,7 +179,7 @@ function _Tooltip({ placement = "top", title = null, children, ...rest }: Toolti
 export function Tooltip(props: TooltipProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "Tooltip" })}>
-      <_Tooltip {...props} />
+      <InternalTooltip {...props} />
     </ErrorBoundary>
   );
 }

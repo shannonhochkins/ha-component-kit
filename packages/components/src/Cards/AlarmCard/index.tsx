@@ -56,7 +56,7 @@ const ALARM_STATE_TO_MODE_MAP: Record<AlarmMode, LocaleKeys> = {
   arming: "pending",
 };
 
-function _AlarmCard<E extends FilterByDomain<EntityName, "alarm_control_panel">>({
+function InternalAlarmCard<E extends FilterByDomain<EntityName, "alarm_control_panel">>({
   entity: _entity,
   cssStyles,
   key,
@@ -126,10 +126,11 @@ function _AlarmCard<E extends FilterByDomain<EntityName, "alarm_control_panel">>
       features={
         !defaultCode
           ? []
-          : (entity.state === "disarmed" ? states : (["disarm"] as const)).map((state) => (
+          : (entity.state === "disarmed" ? states : (["disarm"] as const)).map((state, index) => (
               <FeatureEntity
+                key={index}
                 entity={_entity}
-                // @ts-expect-error - dont know why this is complaining.... fix later
+                // @ts-expect-error - no need to type this here
                 onClick={() => {
                   _handleActionClick(state);
                 }}
@@ -168,7 +169,7 @@ export function AlarmCard<E extends FilterByDomain<EntityName, "alarm_control_pa
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "AlarmCard" })}>
-      <_AlarmCard {...defaultColumns} {...props} />
+      <InternalAlarmCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

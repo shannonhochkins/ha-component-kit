@@ -20,6 +20,7 @@ import { spring } from "framer-motion";
 const StyledMediaPlayerCard = styled(CardBase)`
   transform: none;
   will-change: width, height;
+  overflow: visible;
   svg {
     color: currentColor;
   }
@@ -190,7 +191,6 @@ export const MediaPlayerControls = ({
                   disableScale
                   disableActiveState
                   className={`entities-card entities-card-media-controls`}
-                  style={{ overflow: "visible" }}
                 >
                   <ErrorBoundary {...fallback({ prefix: "EntityRow" })}>
                     <StyledColumn gap={"0.5rem"} justifyContent={"space-between"}>

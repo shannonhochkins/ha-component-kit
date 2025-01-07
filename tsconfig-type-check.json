@@ -4,6 +4,6 @@
     "noEmit": true,
     "skipLibCheck": true,
   },
-  "include": ["./packages/core/src", ".d.ts"],
+  "include": [".d.ts"],
   "exclude": ["node_modules", "dist"]
 }

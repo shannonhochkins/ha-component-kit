@@ -17,7 +17,7 @@ export default {
           <Description />
           <p>The following is the use of the hook:</p>
           <Source dark code={`const areas = useAreas();`} />
-          <p>Here's how you could use the hook to render multiple AreaCards</p>
+          <p>Here&apos;s how you could use the hook to render multiple AreaCards</p>
           <Source
             dark
             code={`

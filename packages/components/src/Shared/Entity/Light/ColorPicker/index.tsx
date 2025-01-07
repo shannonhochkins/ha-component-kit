@@ -179,7 +179,7 @@ export interface ColorPickerProps extends Omit<React.ComponentPropsWithoutRef<"d
   /** will provide the color output as it's changing but not actually finished updating, the value may also trigger initially once the color calculations have been applied */
   onChange?: (colors: ColorPickerOutputColors) => void;
 }
-function _ColorPicker({ disabled = false, entity: _entity, onChange, onChangeApplied, className, cssStyles }: ColorPickerProps) {
+function InternalColorPicker({ disabled = false, entity: _entity, onChange, onChangeApplied, className, cssStyles }: ColorPickerProps) {
   const entity = useEntity(_entity);
   const lightColors = useLightColor(entity);
   const parentRef = useRef<HTMLDivElement>(null);
@@ -480,7 +480,7 @@ function _ColorPicker({ disabled = false, entity: _entity, onChange, onChangeApp
 export function ColorPicker(props: ColorPickerProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ColorPicker" })}>
-      <_ColorPicker {...props} />
+      <InternalColorPicker {...props} />
     </ErrorBoundary>
   );
 }

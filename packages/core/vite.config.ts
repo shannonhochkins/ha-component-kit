@@ -6,7 +6,6 @@ import packageJson from './package.json';
 import { fileURLToPath } from 'node:url';
 import { extname, relative, resolve } from 'path'
 import { glob } from 'glob';
-
 import dts from 'vite-plugin-dts';
 
 const globals = {
@@ -89,8 +88,8 @@ export default defineConfig(configEnv => {
       }),
       react(),
       linterPlugin({
-        include: ['./src}/**/*.{ts,tsx}'],
-        linters: [new EsLinter({ configEnv: configEnv })],
+        include: ['./src/**/*.{ts,tsx}'],
+        linters: [new EsLinter({ configEnv })],
       }),
       dts({
         logLevel: 'silent',

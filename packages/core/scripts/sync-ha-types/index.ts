@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { Project, SyntaxKind, InterfaceDeclaration, TypeAliasDeclaration, SourceFile, Symbol, PropertySignature, TypeNode, SymbolFlags, Type }from 'ts-morph';
 import { readdirSync, existsSync, writeFileSync } from 'fs';
 import { join } from 'path';

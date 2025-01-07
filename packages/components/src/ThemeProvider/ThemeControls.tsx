@@ -154,7 +154,7 @@ export function ThemeControls({
         />
       </Row>
       <Row justifyContent="flex-start" fullWidth>
-        <Alert>Hover over the pallette's below to see the respective css variables.</Alert>
+        <Alert>Hover over the pallette&apos;s below to see the respective css variables.</Alert>
       </Row>
       <Row wrap="nowrap" fullWidth justifyContent="flex-start">
         {LIGHT.map((color, index) => {
@@ -339,7 +339,7 @@ export function ThemeControls({
 
       {["info", "success", "error", "warning"].map((color, _index) => {
         return (
-          <Row fullWidth justifyContent="flex-start">
+          <Row fullWidth justifyContent="flex-start" key={_index}>
             {[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1].map((shade, index) => {
               const suffix = shade === 1 ? "" : `-a${index + 1}`;
               return (

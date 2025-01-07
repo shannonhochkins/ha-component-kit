@@ -159,7 +159,7 @@ function drawColorWheel(ctx: CanvasRenderingContext2D, minTemp: number, maxTemp:
   }
 }
 
-function _ColorTempPicker({
+function InternalColorTempPicker({
   disabled = false,
   entity: _entity,
   onChangeApplied,
@@ -391,7 +391,7 @@ function _ColorTempPicker({
 export function ColorTempPicker(props: ColorTempPickerProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ColorTempPicker" })}>
-      <_ColorTempPicker {...props} />
+      <InternalColorTempPicker {...props} />
     </ErrorBoundary>
   );
 }

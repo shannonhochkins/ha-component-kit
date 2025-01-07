@@ -137,7 +137,7 @@ export interface MediaPlayerCardProps extends Omit<CardBaseProps<"div", FilterBy
   /** show the artwork as the background of the card @default true */
   showArtworkBackground?: boolean;
 }
-function _MediaPlayerCard({
+function InternalMediaPlayerCard({
   entity: _entity,
   groupMembers = [],
   volumeLayout = "slider",
@@ -454,7 +454,7 @@ export function MediaPlayerCard(props: MediaPlayerCardProps) {
 
   return (
     <ErrorBoundary {...fallback({ prefix: "MediaPlayerCard" })}>
-      <_MediaPlayerCard {...defaultColumns} {...props} />
+      <InternalMediaPlayerCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

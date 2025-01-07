@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import React, { useMemo, useEffect, useCallback, useRef, useState, CSSProperties, Key } from "react";
+/* eslint-disable @typescript-eslint/prefer-namespace-keyword */
+import { useMemo, useEffect, useCallback, useRef, useState, CSSProperties, Key } from "react";
 import { useEntity, useHass } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { fallback, Row, Column, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
@@ -185,7 +186,7 @@ export interface GarbageCollectionCardProps extends Omit<CardBaseProps, OmitProp
   onClick?: () => void;
 }
 
-function _GarbageCollectionCard({
+function InternalGarbageCollectionCard({
   schedules,
   svg,
   title = "Garbage Collection",
@@ -221,10 +222,10 @@ function _GarbageCollectionCard({
   const renderBin = useCallback(
     (bin: CSSProperties["color"] | GarbageCollectionCardTypes.BinProperties | undefined, key: Key) => {
       if (typeof bin === "object" && typeof bin.render === "function") return bin.render(bin, key);
-      const size = typeof bin === "string" ? defaultSVGProperties.size : bin?.size ?? defaultSVGProperties.size;
-      const color = typeof bin === "string" ? bin : bin?.color ?? defaultSVGProperties.color;
-      const textColor = typeof bin === "string" ? defaultSVGProperties.textColor : bin?.textColor ?? defaultSVGProperties.textColor;
-      const iconColor = typeof bin === "string" ? defaultSVGProperties.iconColor : bin?.iconColor ?? defaultSVGProperties.iconColor;
+      const size = typeof bin === "string" ? defaultSVGProperties.size : (bin?.size ?? defaultSVGProperties.size);
+      const color = typeof bin === "string" ? bin : (bin?.color ?? defaultSVGProperties.color);
+      const textColor = typeof bin === "string" ? defaultSVGProperties.textColor : (bin?.textColor ?? defaultSVGProperties.textColor);
+      const iconColor = typeof bin === "string" ? defaultSVGProperties.iconColor : (bin?.iconColor ?? defaultSVGProperties.iconColor);
       const icon = typeof bin === "string" ? undefined : bin?.icon;
       return (
         <Bin className="bin-group" key={key} textColor={textColor} iconColor={iconColor}>
@@ -405,7 +406,7 @@ export function GarbageCollectionCard(props: GarbageCollectionCardProps) {
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "GarbageCollectionCard" })}>
-      <_GarbageCollectionCard {...defaultColumns} {...props} />
+      <InternalGarbageCollectionCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

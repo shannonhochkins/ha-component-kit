@@ -99,6 +99,7 @@ export const HassConnect = memo(function HassConnect({
       // @see https://github.com/shannonhochkins/ha-component-kit/issues/146#issuecomment-2138352567
       return new URL(hassUrl).origin;
     } catch (e) {
+      console.log("Error:", e);
       return null;
     }
   }, [hassUrl]);

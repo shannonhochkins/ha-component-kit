@@ -73,7 +73,7 @@ export interface ClimateCardProps extends Extendable {
   showTemperatureControls?: boolean;
 }
 
-function _ClimateCard({
+function InternalClimateCard({
   entity: _entity,
   onClick,
   hvacModes,
@@ -125,7 +125,7 @@ function _ClimateCard({
     getConfig().then(setConfig);
   }, [getConfig]);
 
-  const havacModesToUse = (hvacModes ?? []).length === 0 ? hvac_modes : hvacModes ?? [];
+  const havacModesToUse = (hvacModes ?? []).length === 0 ? hvac_modes : (hvacModes ?? []);
 
   return (
     <>
@@ -307,7 +307,7 @@ export function ClimateCard(props: ClimateCardProps) {
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "ClimateCard" })}>
-      <_ClimateCard {...defaultColumns} {...props} />
+      <InternalClimateCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

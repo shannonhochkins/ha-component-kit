@@ -110,7 +110,7 @@ const StyledIcon = styled(Icon)`
 
 const DEFAULT_ICON_BUTTON_SIZE = 40;
 
-function _CameraCard<E extends FilterByDomain<EntityName, "camera">>({
+function InternalCameraCard<E extends FilterByDomain<EntityName, "camera">>({
   entity,
   view = "poster",
   autoPlay = true,
@@ -328,7 +328,7 @@ function _CameraCard<E extends FilterByDomain<EntityName, "camera">>({
           <PreloadImage
             onLoad={onImageLoad}
             onLoading={onImageLoading}
-            src={_view === "motion" && mjpeg.url ? mjpeg.url : poster.url ?? ""}
+            src={_view === "motion" && mjpeg.url ? mjpeg.url : (poster.url ?? "")}
             style={{
               width: "100%",
               height: "100%",
@@ -379,7 +379,7 @@ export function CameraCard<E extends FilterByDomain<EntityName, "camera">>(props
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "CameraCard" })}>
-      <_CameraCard {...defaultColumns} {...props} />
+      <InternalCameraCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

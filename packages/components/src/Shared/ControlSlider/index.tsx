@@ -235,7 +235,7 @@ const SliderHolder = styled.div``;
 const SliderTrackBackground = styled.div``;
 const SliderTrackBar = styled.div``;
 
-function _ControlSlider({
+function InternalControlSlider({
   vertical = true,
   disabled = false,
   showHandle = true,
@@ -416,7 +416,7 @@ function _ControlSlider({
 export function ControlSlider(props: ControlSliderProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ControlSlider" })}>
-      <_ControlSlider {...props} />
+      <InternalControlSlider {...props} />
     </ErrorBoundary>
   );
 }

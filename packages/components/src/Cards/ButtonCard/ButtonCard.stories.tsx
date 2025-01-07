@@ -2,7 +2,6 @@ import { Source } from "@storybook/blocks";
 import type { Meta, StoryObj, Args } from "@storybook/react";
 import { ThemeProvider, Group, Column, ButtonCard } from "@components";
 import type { ButtonCardProps } from "@components";
-
 import { HassConnect } from "@hass-connect-fake";
 import jsxToString from "react-element-to-jsx-string";
 
@@ -55,11 +54,11 @@ function ExampleDocs() {
       </p>
       <p>
         This will automatically extract the friendly name, icon, last updated, state, light color and group of the entity to render the
-        ButtonCard below, if there's no icon linked in home assistant it will use a predefined default by domain.
+        ButtonCard below, if there&apos;s no icon linked in home assistant it will use a predefined default by domain.
       </p>
       <h3>Custom onClick</h3>
       <p>
-        If you don't want to call a specific service or want to do multiple things with the entity, you can omit the service prop and
+        If you don&apos;t want to call a specific service or want to do multiple things with the entity, you can omit the service prop and
         perform your logic manually
       </p>
       <TemplateOnclick />

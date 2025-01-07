@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useImperativeHandle, forwardRef } from "react";
+import { useEffect, useRef, useCallback, useImperativeHandle, forwardRef } from "react";
 import styled from "@emotion/styled";
 import { localize } from "@hakit/core";
 
@@ -93,3 +93,5 @@ export const VideoPlayer = forwardRef<HTMLVideoElement, VideoPlayerProps>(({ src
     </Video>
   );
 });
+
+VideoPlayer.displayName = "VideoPlayer";

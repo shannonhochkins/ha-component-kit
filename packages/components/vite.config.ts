@@ -7,7 +7,7 @@ import dts from 'vite-plugin-dts';
 import svgr from "vite-plugin-svgr";
 import { fileURLToPath } from 'node:url';
 import { extname, relative, resolve } from 'path'
-import { glob } from 'glob'
+import { glob } from 'glob';
 
 const globals = {
   react: 'React',
@@ -64,7 +64,7 @@ export default defineConfig(configEnv => {
     }),
     svgr(),
     linterPlugin({
-      include: ['./src}/**/*.{ts,tsx}'],
+      include: ['./src/**/*.{ts,tsx}'],
       linters: [new EsLinter({ configEnv })],
     }),
   ] satisfies UserConfig['plugins'];
@@ -95,11 +95,9 @@ ${content}`
       },
     })
   ] satisfies PluginOption[];
-  if (configEnv.mode === 'production') {
-    plugins.push(...productionPlugins);
-  }
   let input = undefined;
   if (configEnv.mode === 'production') {
+    plugins.push(...productionPlugins);
     input = Object.fromEntries(
       glob.sync([
         'src/*.{ts,tsx}',

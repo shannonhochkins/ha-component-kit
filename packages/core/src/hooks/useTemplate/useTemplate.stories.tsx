@@ -81,14 +81,14 @@ export default {
           </h5>
           <Description />
           <ArgTypes />
-          <p>The following is the use of the hook in it's default form:</p>
+          <p>The following is the use of the hook in it&apos;s default form:</p>
           <Source
             dark
             code={`const template = useTemplate({
   template: '{{ is_state_attr("climate.air_conditioner", "state", "heat") }}',
 });`}
           />
-          <p>Here's a working example of how this hook functions when connected to entities:</p>
+          <p>Here&apos;s a working example of how this hook functions when connected to entities:</p>
           <Template />
         </>
       ),

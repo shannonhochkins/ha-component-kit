@@ -153,7 +153,7 @@ export interface WeatherCardProps extends Omit<CardBaseProps<"div", FilterByDoma
 
 const FORECAST_ITEM_PROJECTED_WIDTH = 40;
 
-function _WeatherCard({
+function InternalWeatherCard({
   entity,
   title,
   icon: _icon,
@@ -283,7 +283,9 @@ function _WeatherCard({
       resizeDetectorProps={{
         refreshRate: 500,
         onResize({ width: _width }) {
-          setWidth(_width ?? 0);
+          if (_width) {
+            setWidth(_width);
+          }
         },
       }}
       cssStyles={`
@@ -369,7 +371,7 @@ export function WeatherCard(props: WeatherCardProps) {
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "WeatherCard" })}>
-      <_WeatherCard {...defaultColumns} {...props} />
+      <InternalWeatherCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

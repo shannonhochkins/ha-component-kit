@@ -1,4 +1,4 @@
-import React, {
+import {
   useCallback,
   useMemo,
   useRef,
@@ -107,7 +107,7 @@ class MockWebSocket {
 let renderTemplatePrevious = 'on';
 
 class MockConnection extends Connection {
-  private _mockListeners: { [event: string]: ((data: any) => void)[] };
+  private _mockListeners: { [event: string]: ((data: unknown) => void)[] };
   private _mockResponses: {
     [type: string]: object | ((message: object) => object) | undefined
   };
@@ -132,7 +132,7 @@ class MockConnection extends Connection {
     if (!(eventType in this._mockListeners)) {
       this._mockListeners[eventType] = [];
     }
-    this._mockListeners[eventType].push(eventCallback);
+    this._mockListeners[eventType].push(eventCallback as (ev: unknown) => void);
     return () => Promise.resolve();
   }
 
@@ -287,7 +287,7 @@ const useStore = create<Store>((set) => ({
   setHassUrl: (hassUrl) => set({ hassUrl }),
   portalRoot: undefined,
   setPortalRoot: (portalRoot) => set({ portalRoot }),
-  callApi: async () => {
+  callApi: async (): Promise<unknown> => {
     return {};
   },
   /** getter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
@@ -360,7 +360,7 @@ function HassProvider({
       }
       switch(service) {
         case 'turn_on':
-        case 'turnOn':
+        case 'turnOn': {
           const attributes = {
             ...entities[target].attributes,
             ...serviceData || {},
@@ -376,6 +376,7 @@ function HassProvider({
               state: 'on'
             }
           })
+        }
         case 'turn_off':
         case 'turnOff':
           return setEntities({
@@ -498,11 +499,24 @@ function HassProvider({
     [routes]
   );
   const callApi = useCallback(
-    async (endpoint: string): Promise<any> => {
-      return await mockCallApi(endpoint);
+    async function <T>(endpoint: string): Promise<{
+      data: T;
+      status: "success";
+    } | {
+      data: string;
+      status: "error";
+    }> {
+      return await mockCallApi(endpoint) as {
+        data: T;
+        status: "success";
+      } | {
+        data: string;
+        status: "error";
+      };
     },
     []
   );
+
 
   useEffect(() => {
     locales.find(locale => locale.code === 'en')?.fetch().then(_locales => {
@@ -510,7 +524,7 @@ function HassProvider({
       updateLocales(_locales);
       setReady(true);
     });
-  }, []);
+  }, [setLocales, setReady]);
 
   return (
     <HassContext.Provider

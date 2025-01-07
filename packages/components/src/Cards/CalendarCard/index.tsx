@@ -393,7 +393,7 @@ const defaultFullCalendarConfig: CalendarOptions = {
   },
 };
 
-function _CalendarCard({
+function InternalCalendarCard({
   entities,
   className,
   timeZone,
@@ -768,7 +768,7 @@ export function CalendarCard(props: CalendarCardProps) {
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "CalendarCard" })}>
-      <_CalendarCard {...defaultColumns} {...props} />
+      <InternalCalendarCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

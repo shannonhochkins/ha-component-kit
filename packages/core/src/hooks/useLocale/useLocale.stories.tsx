@@ -37,7 +37,7 @@ const OuterElementType = React.forwardRef<HTMLDivElement>((props, ref) => {
   const outerProps = React.useContext(OuterElementContext);
   return <div ref={ref} {...props} {...outerProps} />;
 });
-0;
+OuterElementType.displayName = "OuterElementType";
 
 function useResetCache(data: number) {
   const ref = React.useRef<VariableSizeList>(null);
@@ -52,10 +52,12 @@ function useResetCache(data: number) {
 const ListboxComponent = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLElement>>(function ListboxComponent(props, ref) {
   const { children, ...other } = props;
   const itemData: React.ReactElement<HTMLElement>[] = [];
-  (children as React.ReactElement<HTMLElement>[]).forEach((item: React.ReactElement<HTMLElement> & { children?: React.ReactElement<HTMLElement>[] }) => {
-    itemData.push(item);
-    itemData.push(...(item.children || []));
-  });
+  (children as React.ReactElement<HTMLElement>[]).forEach(
+    (item: React.ReactElement<HTMLElement> & { children?: React.ReactElement<HTMLElement>[] }) => {
+      itemData.push(item);
+      itemData.push(...(item.children || []));
+    },
+  );
   const itemCount = itemData.length;
   const height = Math.min(8, itemCount) * ITEM_HEIGHT;
   const gridRef = useResetCache(itemCount);
@@ -186,7 +188,7 @@ function Page() {
 
       {selectedKey && (
         <>
-          <h2>Key usage for "{selectedKey}"</h2>
+          <h2>Key usage for &quot;{selectedKey}&quot;</h2>
           <p>
             A simple method you can import and use where ever you like as long as the component is rendered within HassConnect or it will
             just return the key name.
@@ -202,7 +204,7 @@ export function MyComponent() {
 }
       `}
           />
-          <p>You can also use the useLocale hook which is less likely to be something you'll use but it is available.</p>
+          <p>You can also use the useLocale hook which is less likely to be something you&apos;ll use but it is available.</p>
           <Source
             dark
             code={`
@@ -219,8 +221,8 @@ export function MyComponent() {
 
       <h2>Examples</h2>
       <p>
-        This hook will simply return all available locales retrieved from Home Assistant, you don't need to use this hook at all unless you
-        want to transform the value or inspect all values available. You can use the `localize` method directly anywhere in your
+        This hook will simply return all available locales retrieved from Home Assistant, you don&apos;t need to use this hook at all unless
+        you want to transform the value or inspect all values available. You can use the `localize` method directly anywhere in your
         application.
       </p>
       <Source
@@ -234,7 +236,7 @@ export function MyComponent() {
       `}
       />
 
-      <p>If you want to find/replace a value that's expected to be dynamic as it might contain a value wrapped in curly braces:</p>
+      <p>If you want to find/replace a value that&apos;s expected to be dynamic as it might contain a value wrapped in curly braces:</p>
       <Source
         dark
         code={`
@@ -255,8 +257,8 @@ export function MyComponent() {
         assets and cache locally
       </p>
       <p>
-        Note: This is an example, you do NOT need to do this, it's automatically handled through HassConnect and retrieved from your home
-        assistant instance.
+        Note: This is an example, you do NOT need to do this, it&apos;s automatically handled through HassConnect and retrieved from your
+        home assistant instance.
       </p>
       <Source
         dark
@@ -272,9 +274,9 @@ export function MyComponent() {
     `}
       />
       <p>
-        Most of the time, what's available may work just fine for you, however if you want to replace the locales that the localize function
-        uses across the board, you can call `updateLocales` manually, however this will not update the types for LocaleKeys so you'll need
-        to most likely create a wrapping function for localize with your matching types.
+        Most of the time, what&apos;s available may work just fine for you, however if you want to replace the locales that the localize
+        function uses across the board, you can call `updateLocales` manually, however this will not update the types for LocaleKeys so
+        you&apos;ll need to most likely create a wrapping function for localize with your matching types.
       </p>
     </>
   );

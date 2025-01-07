@@ -25,7 +25,7 @@ export type VacuumCardProps = Omit<ButtonCardProps<FilterByDomain<EntityName, "v
   title?: string;
 } & VacuumControlsProps;
 
-function _VacuumCard({
+function InternalVacuumCard({
   entity: _entity,
   shortcuts,
   hideCurrentBatteryLevel,
@@ -47,7 +47,7 @@ function _VacuumCard({
   const entity = useEntity(_entity);
 
   const titleValue = useMemo(() => {
-    return flash ? locatingNode ?? `${localize("locate")}...` : entity.attributes.status ?? entity.state;
+    return flash ? (locatingNode ?? `${localize("locate")}...`) : (entity.attributes.status ?? entity.state);
   }, [entity.attributes.status, locatingNode, entity.state, flash]);
 
   const locateFlash = useCallback(() => {
@@ -99,8 +99,9 @@ function _VacuumCard({
           height: "3rem",
         },
       }}
-      features={features.map((feature) => (
+      features={features.map((feature, index) => (
         <FeatureEntity
+          key={index}
           iconProps={{
             color: feature?.active ? "var(--ha-300)" : undefined,
           }}
@@ -125,7 +126,7 @@ export function VacuumCard(props: VacuumCardProps) {
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "VacuumCard" })}>
-      <_VacuumCard {...defaultColumns} {...props} />
+      <InternalVacuumCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

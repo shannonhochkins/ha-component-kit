@@ -170,7 +170,7 @@ export interface AlarmControlsProps extends Extendable {
   slots?: Slot[];
 }
 
-function _AlarmControls({
+function InternalAlarmControls({
   entity: _entity,
   states: _states,
   className,
@@ -334,7 +334,7 @@ function _AlarmControls({
 export function AlarmControls(props: AlarmControlsProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "AlarmControls" })}>
-      <_AlarmControls {...props} />
+      <InternalAlarmControls {...props} />
     </ErrorBoundary>
   );
 }

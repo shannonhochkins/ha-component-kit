@@ -60,7 +60,7 @@ export interface PersonControlsProps {
   mapHeight: number;
 }
 
-function _PersonControls({ entity: _entity, mapHeight }: PersonControlsProps) {
+function InternalPersonControls({ entity: _entity, mapHeight }: PersonControlsProps) {
   const entity = useEntity(_entity);
   const position = new L.LatLng(entity.attributes.latitude, entity.attributes.longitude);
 
@@ -96,7 +96,7 @@ function _PersonControls({ entity: _entity, mapHeight }: PersonControlsProps) {
 export function PersonControls(props: PersonControlsProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "PersonControls" })}>
-      <_PersonControls {...props} />
+      <InternalPersonControls {...props} />
     </ErrorBoundary>
   );
 }

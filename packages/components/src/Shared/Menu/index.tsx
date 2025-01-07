@@ -191,7 +191,13 @@ export function Menu({ children, placement = "bottom", items = [], cssStyles, ..
         `}
       >
         {Children.map(children, (child) => {
-          if (isValidElement(child)) {
+          if (
+            isValidElement<
+              HTMLDivElement & {
+                onClick: () => void;
+              }
+            >(child)
+          ) {
             return cloneElement(child, {
               ...child.props,
               onClick: () => {

@@ -86,7 +86,7 @@ const RelatedEntityEl = styled.div<PartialStyleProps>`
   }}
 `;
 
-function _RelatedEntity<E extends EntityName>({
+function InternalRelatedEntity<E extends EntityName>({
   entity: _entity,
   icon: _icon,
   iconProps,
@@ -140,7 +140,7 @@ function _RelatedEntity<E extends EntityName>({
 export const RelatedEntity = memo(function RelatedEntity<E extends EntityName>(props: RelatedEntityProps<E>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "RelatedEntity" })}>
-      <_RelatedEntity {...props} />
+      <InternalRelatedEntity {...props} />
     </ErrorBoundary>
   );
 });
