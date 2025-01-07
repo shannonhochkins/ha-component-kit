@@ -6,7 +6,24 @@ export type Token = { type: DatePartName | "literal"; value: string };
 
 export type Parser = (date: Date) => DateParts;
 
-export type FormatterMask = "YYYY" | "YY" | "MMMM" | "MMM" | "MM" | "DD" | "dddd" | "ddd" | "A" | "a" | "HH" | "hh" | "mm" | "ss";
+export type FormatterMask =
+  | "YYYY"
+  | "YY"
+  | "MMMM"
+  | "MMM"
+  | "MM"
+  | "DD"
+  | "DDx"
+  | "dd"
+  | "ddx"
+  | "dddd"
+  | "ddd"
+  | "A"
+  | "a"
+  | "HH"
+  | "hh"
+  | "mm"
+  | "ss";
 
 export type Formatter = (tokens: DateParts, date: Date) => string;
 

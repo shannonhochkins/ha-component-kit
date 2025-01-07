@@ -3,7 +3,7 @@ import { useMemo, useRef, useCallback, useEffect, useState } from "react";
 import { type HassEntityWithService, useHass, useEntity } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, Column, fallback, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
-import { createDateFormatter } from "./formatter";
+import { createDateFormatter, daySuffix } from "./formatter";
 import { ErrorBoundary } from "react-error-boundary";
 import { FormatFunction } from "./types";
 
@@ -80,24 +80,7 @@ function formatDate(dateString: string): string {
 
   // Add the ordinal suffix
   const day = date.getDate();
-  let suffix = "";
-  switch (day) {
-    case 1:
-    case 21:
-    case 31:
-      suffix = "st";
-      break;
-    case 2:
-    case 22:
-      suffix = "nd";
-      break;
-    case 3:
-    case 23:
-      suffix = "rd";
-      break;
-    default:
-      suffix = "th";
-  }
+  const suffix = daySuffix(day);
 
   // Replace the day number with the number plus the suffix
   formattedDate = formattedDate.replace(/\d+/, `${day}${suffix}`);
