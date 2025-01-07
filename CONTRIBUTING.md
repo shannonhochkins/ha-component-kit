@@ -45,6 +45,20 @@ If you now navigate to your node_modules under @hakit, you should see the packag
 
 Now whenever you make changes in either core or components, the changes should reflect on your local test dashboard.
 
+##### Test by packaging locally
+1. Pack the Package Locally
+Use `npm pack` to create a .tgz file from your package. Run this command in the root directory of your package:
+```bash
+npm pack
+```
+This will generate a .tgz file (e.g., @hakit/core-1.0.0.tgz) in the current directory.
+
+2. Install the Packed Package
+Navigate to the directory where you want to test the package, then use npm install with the path to the .tgz file:
+```bash
+npm install /path/to/@hakit/core-1.0.0.tgz
+```
+
 
 ### Demo Gif
 I've been using quick time to record the screen to mov, then using ffmpeg to convert the mov to gif

@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "private": false,
   "type": "module",
   "keywords": [
@@ -101,8 +101,8 @@
     "home-assistant-js-websocket": ">=9.x",
     "lodash": ">=4.x",
     "prettier": ">=3.4.2",
-    "react": ">=17.x",
-    "react-dom": ">=17.x",
+    "react": ">=19.x",
+    "react-dom": ">=19.x",
     "use-debounce": ">=9.x",
     "ws": ">=8.x.x",
     "yargs": ">=17.x.x",
