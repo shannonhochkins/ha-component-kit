@@ -13,12 +13,13 @@ import type {
 } from "home-assistant-js-websocket";
 import { Connection, HassEntity } from "home-assistant-js-websocket";
 import type {
-  ServiceData,
   DomainService,
   SnakeOrCamelDomains,
-  Target,
   Route,
   Store,
+  CallServiceArgs,
+  HassContextProps,
+  ServiceResponse,
 } from "@hakit/core";
 import { isArray, isEmpty } from "lodash";
 import { HassContext, updateLocales, locales } from '@hakit/core';
@@ -32,12 +33,6 @@ import { mockCallApi } from './mocks/fake-call-api';
 import reolinkSnapshot from './assets/reolink-snapshot.jpg';
 import { logs } from './mocks/mockLogs';
 import {dailyForecast, hourlyForecast} from './mocks/mockWeather';
-interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
-  domain: T;
-  service: M;
-  serviceData?: ServiceData<T, M>;
-  target?: Target;
-}
 
 interface HassProviderProps {
   children: (ready: boolean) => React.ReactNode;
@@ -330,13 +325,10 @@ function HassProvider({
   const getAllEntities = useMemo(() => () => entities, [entities]);
 
   const callService = useCallback(
-    async <T extends SnakeOrCamelDomains, M extends DomainService<T>>({
-      service,
-      domain,
-      target,
-      serviceData
-    }: CallServiceArgs<T, M>) => {
-      if (typeof target !== 'string' && !isArray(target)) return;
+    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean>(
+      { domain, service, serviceData, target }: CallServiceArgs<T, M, R>,
+    ): Promise<R extends true ? ServiceResponse<ResponseType> : void> => {
+      if (typeof target !== 'string' && !isArray(target)) return undefined as R extends true ? never : void;
       const now = new Date().toISOString();
       if (domain in fakeApi) {
         const api = fakeApi[domain as 'scene'] as (params: ServiceArgs<'scene'>) => boolean;
@@ -351,9 +343,9 @@ function HassProvider({
           // @ts-expect-error - don't know domain
           serviceData,
         });
-        if (!skip) return;
+        if (!skip) return undefined as R extends true ? never : void;
       }
-      if (typeof target !== 'string') return;
+      if (typeof target !== 'string') return undefined as R extends true ? never : void;
       const dates = {
         last_changed: now,
         last_updated: now,
@@ -365,7 +357,7 @@ function HassProvider({
             ...entities[target].attributes,
             ...serviceData || {},
           }
-          return setEntities({
+          setEntities({
             ...entities,
             [target]: {
               ...entities[target],
@@ -377,9 +369,10 @@ function HassProvider({
             }
           })
         }
+        break;
         case 'turn_off':
         case 'turnOff':
-          return setEntities({
+          setEntities({
             ...entities,
             [target]: {
               ...entities[target],
@@ -390,9 +383,10 @@ function HassProvider({
               ...dates,
               state: 'off'
             }
-          })
+          });
+        break;
         case 'toggle':
-          return setEntities({
+          setEntities({
             ...entities,
             [target]: {
               ...entities[target],
@@ -405,18 +399,22 @@ function HassProvider({
               state: entities[target].state === 'on' ? 'off' : 'on'
             }
           });
+        break;
         default:
-          return setEntities({
+          setEntities({
             ...entities,
             [target]: {
               ...entities[target],
               ...dates,
             }
           });
+        break;
       }
+      return undefined as R extends true ? never : void;
     },
     [entities, setEntities]
   );
+
 
   useEffect(() => {
     if (clock.current) clearInterval(clock.current);
@@ -538,7 +536,7 @@ function HassProvider({
         getConfig,
         getUser,
         getAllEntities,
-        callService,
+        callService : callService as HassContextProps['callService'],
         callApi,
         joinHassUrl,
       }}

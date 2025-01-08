@@ -19,12 +19,12 @@ import {
   ERR_INVALID_HTTPS_TO_HTTP,
 } from "home-assistant-js-websocket";
 import { isArray, snakeCase } from "lodash";
-import { SnakeOrCamelDomains, DomainService, Locales, CallServiceArgs, Route } from "@typings";
+import { SnakeOrCamelDomains, DomainService, Locales, CallServiceArgs, Route, ServiceResponse } from "@typings";
 import { saveTokens, loadTokens, clearTokens } from "./token-storage";
 import { useDebouncedCallback } from "use-debounce";
 import locales from "../hooks/useLocale/locales";
 import { updateLocales } from "../hooks/useLocale";
-import { HassContext, useStore } from "./HassContext";
+import { HassContext, type HassContextProps, useStore } from "./HassContext";
 
 export interface HassProviderProps {
   /** components to render once authenticated, this accepts a child function which will pass if it is ready or not */
@@ -435,12 +435,9 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
   const getAllEntities = useCallback(() => entities, [entities]);
 
   const callService = useCallback(
-    async <T extends SnakeOrCamelDomains, M extends DomainService<T>>({
-      domain,
-      service,
-      serviceData,
-      target: _target,
-    }: CallServiceArgs<T, M>) => {
+    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean>(
+      { domain, service, serviceData, target: _target, returnResponse }: CallServiceArgs<T, M, R>,
+    ): Promise<R extends true ? ServiceResponse<ResponseType> : void> => {
       const target =
         typeof _target === "string" || isArray(_target)
           ? {
@@ -452,20 +449,27 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
       }
       if (connection && ready) {
         try {
-          return await _callService(
+          const result = await _callService(
             connection,
             snakeCase(domain),
             snakeCase(service),
             // purposely cast here as we know it's correct
             serviceData as object,
             target,
+            returnResponse,
           );
+          if (returnResponse) {
+            // Return the result if returnResponse is true
+            return result as R extends true ? ServiceResponse<ResponseType> : never;
+          }
+          // Otherwise, return void
+          return undefined as R extends true ? never : void;
         } catch (e) {
           // TODO - raise error to client here
           console.log("Error:", e);
         }
       }
-      return false;
+      return undefined as R extends true ? never : void;
     },
     [connection, ready],
   );
@@ -533,7 +537,8 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
         getUser,
         callApi,
         getAllEntities,
-        callService,
+        // cast here we don't have to redefine all the overloads, might fix later
+        callService: callService as HassContextProps['callService'],
         joinHassUrl,
       }}
     >

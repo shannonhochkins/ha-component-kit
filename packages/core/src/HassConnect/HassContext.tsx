@@ -3,14 +3,15 @@ import { createContext } from "react";
 import type { Connection, HassEntities, HassEntity, HassConfig, HassUser, HassServices, Auth } from "home-assistant-js-websocket";
 import { type CSSInterpolation } from "@emotion/serialize";
 import { isEmpty } from "lodash";
-import { ServiceData, SnakeOrCamelDomains, DomainService, Target, LocaleKeys } from "@typings";
+import { ServiceData, SnakeOrCamelDomains, DomainService, Target, LocaleKeys, ServiceResponse } from "@typings";
 import { diff } from "deep-object-diff";
 import { create } from "zustand";
-export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
+export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean> {
   domain: T;
   service: M;
   serviceData?: ServiceData<T, M>;
   target?: Target;
+  returnResponse?: R;
 }
 
 export interface Route {
@@ -199,7 +200,23 @@ export interface HassContextProps {
   /** will retrieve HassUser */
   getUser: () => Promise<HassUser | null>;
   /** function to call a service through web sockets */
-  callService: <T extends SnakeOrCamelDomains, M extends DomainService<T>>(args: CallServiceArgs<T, M>) => void;
+  callService: {
+    <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+      args: CallServiceArgs<T, M, true>
+    ): Promise<ServiceResponse<ResponseType>>;
+
+    /** Overload for when `returnResponse` is false */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+      args: CallServiceArgs<T, M, false>
+    ): void;
+
+    /** Overload for when `returnResponse` is omitted (defaults to false) */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+      args: Omit<CallServiceArgs<T, M, false>, "returnResponse">
+    ): void;
+  };
   /** add a new route to the provider */
   addRoute(route: Omit<Route, "active">): void;
   /** retrieve a route by name */

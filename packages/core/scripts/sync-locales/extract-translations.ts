@@ -83,7 +83,7 @@ export async function extractTranslations(filePath: string): Promise<Record<stri
   try {
     translations = JSON.parse(translationsJson);
   } catch (error) {
-    throw new Error('Error parsing translations JSON: ' + error.message);
+    throw new Error('Error parsing translations JSON: ' + error);
   }
   return translations as Record<string, Translation>;
 }

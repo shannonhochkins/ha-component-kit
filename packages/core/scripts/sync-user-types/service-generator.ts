@@ -62,7 +62,7 @@ export const generateServiceTypes = (input: HassServices, {
       // the data passed to the ServiceFunction<object>
       const serviceData = `${Object.keys(fields).length === 0 ? 'object' : `{${data.join('\n')}}`}`;
       return `// ${sanitizeString(description)}
-        ${camelService}: ServiceFunction<T, ${serviceData}>;
+        ${camelService}: ServiceFunction<object, T, ${serviceData}>;
       `;
     }).join('')
     const result = `${camelDomain}: {
