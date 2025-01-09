@@ -75,12 +75,12 @@ export type HassEntityWithService<T extends AllDomains> = HassEntityCustom &
 
   export type ServiceFunctionWithEntity<ResponseData extends object, Data = object> = {
     <CustomResponseData extends ResponseData = ResponseData>({
-        entity_id,
+        target,
         serviceData,
         returnResponse,
     }: {
       /** the entity target from home assistant, string, string[] or object */
-      entity_id: Target,
+      target: Target,
       /** the data to send to the service */
       serviceData?: Data,
       /** whether to return the response object */
@@ -88,21 +88,21 @@ export type HassEntityWithService<T extends AllDomains> = HassEntityCustom &
     }): Promise<ServiceResponse<CustomResponseData>>;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     <CustomResponseData extends ResponseData = ResponseData>({
-      entity_id,
+      target,
       serviceData
     }: {
     /** the entity target from home assistant, string, string[] or object */
-      entity_id: Target,
+      target: Target,
       /** the data to send to the service */
       serviceData?: Data
     }): void;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     <CustomResponseData extends ResponseData = ResponseData>({
-      entity_id,
+      target,
         serviceData
       }: {
       /** the entity target from home assistant, string, string[] or object */
-      entity_id: Target,
+      target: Target,
         /** the data to send to the service */
         serviceData?: Data,
         /** whether to return the response object */

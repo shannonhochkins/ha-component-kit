@@ -3,8 +3,10 @@ import { Source, Meta } from '@storybook/blocks';
 <Meta title="HOOKS/useHass/callService" />
 
 # callService()
-###### `callService(args: CallServiceArgs<SnakeOrCamelDomain, DomainService<SnakeOrCamelDomain>>)`
+###### `callService(args: CallServiceArgs<ResponseType, SnakeOrCamelDomain, DomainService<SnakeOrCamelDomain>>)`
 The call service helper will allow you to trigger any action in home assistant.
+
+> Note: We recommend you use the [useEntity()](/docs/hooks-useentity--docs) hook or the [useService()](/docs/hooks-useservice--docs) hook as these are more user friendly and don't require you to type out all generic inputs for typescript.
 
 If you have typescript, there's full intellisense on a large range of domains/service/data, if not, you can use developer tools enabled in home assistant,
 navigate to this inside your instance, here you'll see a dropdown list and if you open this you'll see there's a "sub title" under each dropdown option, eg "climate.turn_on", in this particular example, "climate" is the domain and "turn_on" is the service.
@@ -23,11 +25,12 @@ Additionally you could also use the [Playground](/story/introduction-testconnect
     device_id?: string | string[];
     area_id?: string | string[];
   } | string | string[] // if a string or string[] is passed it's automatically mapped back to entity_id
+  returnResponse?: boolean; // if the service is expected to return a response, enable this flag
 })`} />
 
 ### Example Usage
 
-```ts
+<Source dark language="ts" code={`
 function CallServiceExample() {
   const { callService } = useHass();
   const turnOnAC = useCallback(() => {
@@ -44,3 +47,44 @@ function CallServiceExample() {
     TURN ON CONDITIONER
   </Button>
 }
+`} />
+
+### Returning a response
+Some services return a response, like the calendar `get_events` service, you can access this response value by adding `returnResponse` to the service call.
+The response object type is able to be defined by passing a generic type to the service call itself, see example below:
+
+<Source dark language="ts" code={`
+interface CalendarEvent {
+  description: string;
+  end: string;
+  start: string;
+  summary: string;
+}
+interface CalendarResponse {
+  "calendar.some_calendar": {
+    events: CalendarEvent[];
+  }
+}
+function CallServiceExample() {
+  const { callService } = useHass();
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const getEvents = useCallback(() => {
+    callService<CalendarResponse[], 'calendar', 'get_events'>({
+      domain: 'calendar',
+      service: 'get_events',
+      returnResponse: true,
+      target: {
+        entity_id: 'calendar.my_calendar'
+      }
+    }).then((response) => {
+      setEvents(response);
+    })
+  }, [callService]);
+  return<>
+    <p>Events: {events.length}</p>
+    <Button onClick={getEvents}>
+      GET EVENTS
+    </Button>
+  </>
+}
+`} />

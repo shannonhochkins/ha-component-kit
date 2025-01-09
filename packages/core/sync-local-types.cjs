@@ -1,12 +1,16 @@
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { typeSync } = require('./dist/sync/node/index.cjs');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 (async function runner() {
-  if (!process.env.HA_URL || !process.env.HA_TOKEN) return;
+  if (!process.env.VITE_HA_URL || !process.env.VITE_HA_TOKEN) {
+    console.log('Missing .env params VITE_HA_URL and/or VITE_HA_TOKEN, skipping type sync');
+    return;
+  }
   await typeSync({
-    url: process.env.HA_URL,
-    token: process.env.HA_TOKEN,
+    url: process.env.VITE_HA_URL,
+    token: process.env.VITE_HA_TOKEN,
     outDir: './src/types',
     filename: 'supported-services.ts',
     custom: false,

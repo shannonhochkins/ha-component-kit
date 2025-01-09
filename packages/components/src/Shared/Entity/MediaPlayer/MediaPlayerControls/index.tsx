@@ -98,8 +98,13 @@ export const MediaPlayerControls = ({
 
       // no speakers are playing -> play media
       if (playingSpeakers.length === 0) {
-        mediaPlayerService.playMedia(entity.attributes?.group_members ?? entity.entity_id, { ...lastPlayedMedia, enqueue: "play" });
-        return mediaPlayerService.mediaPlay(entity.attributes?.group_members ?? entity.entity_id);
+        mediaPlayerService.playMedia({
+          entity_id: entity.attributes?.group_members ?? entity.entity_id,
+          serviceData: { ...lastPlayedMedia, enqueue: "play" },
+        });
+        return mediaPlayerService.mediaPlay({
+          entity_id: entity.attributes?.group_members ?? entity.entity_id,
+        });
       }
 
       // the target speaker is playing and only has one member in the group -> pause media
@@ -108,17 +113,24 @@ export const MediaPlayerControls = ({
           media_content_id: entity.attributes.media_content_id ?? "",
           media_content_type: entity.attributes.media_content_type ?? "",
         });
-        return mediaPlayerService.mediaPause(entity.attributes?.group_members ?? entity.entity_id);
+        return mediaPlayerService.mediaPause({
+          entity_id: entity.attributes?.group_members ?? entity.entity_id,
+        });
       }
 
       // the target speaker is playing and has more than one member in the group -> unjoin
       if ((entity.attributes?.group_members?.length || 0) > 1 && entity.state === "playing") {
-        return mediaPlayerService.unjoin(entityId);
+        return mediaPlayerService.unjoin({
+          entity_id: entityId
+        });
       }
 
       // the target speaker is not playing, and we have at least one speaker playing -> join
       if (entity.state !== "playing" && playingSpeakers.length > 0) {
-        return mediaPlayerService.join({ entity_id: playingSpeakers[0].entity_id }, { group_members: [entityId] });
+        return mediaPlayerService.join({
+          entity_id: playingSpeakers[0].entity_id,
+          serviceData: { group_members: [entityId] },
+        });
       }
     },
     [groupedEntities, mediaPlayerService, lastPlayedMedia],
@@ -214,9 +226,13 @@ export const MediaPlayerControls = ({
                             }}
                             onClick={() => {
                               if (isOff) {
-                                mediaPlayerService.turnOn(entity.entity_id);
+                                mediaPlayerService.turnOn({
+                                  entity_id: entity.entity_id
+                                });
                               } else {
-                                mediaPlayerService.turnOff(entity.entity_id);
+                                mediaPlayerService.turnOff({
+                                  entity_id: entity.entity_id
+                                });
                               }
                             }}
                           />

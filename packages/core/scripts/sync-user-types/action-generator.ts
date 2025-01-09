@@ -30,43 +30,49 @@ function sanitizeString(str: string | boolean | number): string {
   return `${str}`.replace(/"/g, "'").replace(/[\n\r]+/g, ' ');
 }
 
-interface ServiceTypeOptions {
+interface ActionTypeOptions {
   domainWhitelist?: string[];
   domainBlacklist?: string[];
   serviceWhitelist?: string[];
   serviceBlacklist?: string[];
 }
 
-export const generateServiceTypes = (input: HassServices, {
+export const generateActionTypes = (input: HassServices, {
   domainWhitelist = [],
   domainBlacklist = [],
   serviceWhitelist = [],
   serviceBlacklist = [],
-}: ServiceTypeOptions) => {
-  const interfaces = Object.entries(input).map(([domain, services]) => {
+}: ActionTypeOptions) => {
+  const interfaces = Object.entries(input).map(([domain, actions]) => {
     const camelDomain = _.camelCase(domain);
     if (domainBlacklist.length > 0 && (domainBlacklist.includes(camelDomain) || domainBlacklist.includes(domain))) return '';
     if (domainWhitelist.length > 0 && (!domainWhitelist.includes(camelDomain) || !domainWhitelist.includes(domain))) return '';
-    const domainServices = Object.entries(services).map(([service, { fields, description }]) => {
-      const camelService = _.camelCase(service);
-      if (serviceBlacklist.length > 0 && (serviceBlacklist.includes(camelService) || serviceBlacklist.includes(service))) return '';
-      if (serviceWhitelist.length > 0 && (!serviceWhitelist.includes(camelService) || !serviceWhitelist.includes(service))) return '';
+    const domainActions = Object.entries(actions).map(([action, { fields, description }]) => {
+      const camelAction = _.camelCase(action);
+      if (serviceBlacklist.length > 0 && (serviceBlacklist.includes(camelAction) || serviceBlacklist.includes(action))) return '';
+      if (serviceWhitelist.length > 0 && (!serviceWhitelist.includes(camelAction) || !serviceWhitelist.includes(action))) return '';
       // the data passed to the ServiceFunction<object>
       const data = Object.entries(fields).map(([field, { selector, example, description, ...rest }]) => {
         const required = rest.required ?? false;
-        // some fields come back as number[] but we know these should be something specific, these are hard coded above
-        const type = field in REMAPPED_TYPES ? REMAPPED_TYPES[field] : resolveSelectorType(selector as Selector);
+        const remapByDomainActionField = `${domain}.${action}.${field}`;
+        const remapByActionField = `${action}.${field}`;
+        const remapByField = field;
+        const domainActionFieldOverride = remapByDomainActionField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByDomainActionField] : undefined;
+        const actionFieldOverride = remapByActionField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByActionField] : undefined;
+        const fieldOverride = remapByField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByField] : undefined;
+        // some fields come back as an incorrect type but we know these should be something specific, these are hard coded in the REMAPPED_TYPES constant
+        const type = domainActionFieldOverride || actionFieldOverride || fieldOverride || resolveSelectorType(selector as Selector);
         const exampleUsage = example ? ` @example ${example}` : '';
         return `// ${sanitizeString(`${description}${exampleUsage}`)}\n${field}${required ? '' : '?'}: ${type};`;
       });
       // the data passed to the ServiceFunction<object>
-      const serviceData = `${Object.keys(fields).length === 0 ? 'object' : `{${data.join('\n')}}`}`;
+      const actionData = `${Object.keys(fields).length === 0 ? 'object' : `{${data.join('\n')}}`}`;
       return `// ${sanitizeString(description)}
-        ${camelService}: ServiceFunction<object, T, ${serviceData}>;
+        ${camelAction}: ServiceFunction<object, T, ${actionData}>;
       `;
     }).join('')
     const result = `${camelDomain}: {
-        ${domainServices}
+        ${domainActions}
       }
     `;
     return result;

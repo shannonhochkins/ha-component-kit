@@ -19,17 +19,24 @@ export function createService<T extends SnakeOrCamelDomains>(
         const service = serviceInput as S;
         // Skip interception for inherited properties
         if (service === "toJSON") return;
-        return function (...args: [Target?, ServiceData<T, S>?, boolean?]) {
+        return function (args: {
+          // TODO - rename 
+          target?: Target;
+          serviceData?: ServiceData<T, S>;
+          returnResponse?: boolean
+        }) {
+          const { target: _target, serviceData, returnResponse } = args || {};
+          let target = rootTarget ?? _target;
           // if rootTarget is available, use it. otherwise, use the first argument as target
-          let target = rootTarget ?? (args[0] as Target);
-          const serviceData = rootTarget ? (args[0] as ServiceData<T, S>) : args[1];
+          // let target = rootTarget ?? (args[0] as Target);
+          // const serviceData = rootTarget ? (args[0] as ServiceData<T, S>) : args[1];
           /// cast as false here as this is never used directly and the overloads handle return types correctly.
-          const returnResponse = ((rootTarget ? (args[1] as boolean) : args[2]) || false) as false;
+          // const returnResponse = ((rootTarget ? (args[1] as boolean) : args[2]) || false) as false;
           if (Array.isArray(target)) {
             // ensure the target values are a unique array of ids
             target = [...uniq(target)];
           }
-
+          console.info('args', args);
           console.info(
             `${localize("perform_action_name", {
               search: "{name}",
@@ -38,6 +45,7 @@ export function createService<T extends SnakeOrCamelDomains>(
             {
               target,
               serviceData,
+              returnResponse,
             },
           );
           return callService(
@@ -46,7 +54,8 @@ export function createService<T extends SnakeOrCamelDomains>(
               service,
               serviceData,
               target,
-              returnResponse,
+              // necessary cast here as the overloads expect true | false | undefined not a boolean
+              returnResponse: returnResponse as true,
             },
           );
         };
