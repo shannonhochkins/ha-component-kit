@@ -29,7 +29,9 @@ export function PlaybackControls({ entity: _entity, size = 20, feature, disabled
         rippleProps={{
           preventPropagation: true,
         }}
-        onClick={() => mp.mediaPreviousTrack(allEntityIds)}
+        onClick={() => mp.mediaPreviousTrack({
+          target: allEntityIds
+        })}
       />
       <Fab
         className="play-pause"
@@ -44,9 +46,13 @@ export function PlaybackControls({ entity: _entity, size = 20, feature, disabled
         icon={playing ? "mdi:pause" : "mdi:play"}
         onClick={() => {
           if (playing) {
-            mp.mediaPause(allEntityIds);
+            mp.mediaPause({
+              target: allEntityIds
+            });
           } else {
-            mp.mediaPlay(allEntityIds);
+            mp.mediaPlay({
+              target: allEntityIds
+            });
           }
         }}
       />
@@ -61,7 +67,9 @@ export function PlaybackControls({ entity: _entity, size = 20, feature, disabled
         disabled={disabled || isOff || !supportsNextTrack}
         size={size}
         icon="mdi:skip-next"
-        onClick={() => mp.mediaNextTrack(allEntityIds)}
+        onClick={() => mp.mediaNextTrack({
+          target: allEntityIds
+        })}
       />
     </>
   );

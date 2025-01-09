@@ -31,8 +31,6 @@ export const computeDomainTitle = <E extends EntityName | "unknown">(entityId: E
       return localize("lawn_mower_commands");
     case "rest_command":
       return localize("restful_command");
-    case "history_stats":
-      return localize("history");
     case "persistent_notification":
       return localize("persistent_notification");
     case "binary_sensor":

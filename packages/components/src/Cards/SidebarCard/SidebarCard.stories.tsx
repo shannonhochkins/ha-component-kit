@@ -83,8 +83,10 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
                   onClick={(event) => {
                     event.stopPropagation();
                     ac.service.setTemperature({
-                      hvac_mode: "cool",
-                      temperature: ac.attributes.temperature + 1,
+                      serviceData: {
+                        hvac_mode: "cool",
+                        temperature: ac.attributes.temperature + 1,
+                      }
                     });
                   }}
                 />
@@ -93,8 +95,10 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
                   onClick={(event) => {
                     event.stopPropagation();
                     ac.service.setTemperature({
-                      hvac_mode: "cool",
-                      temperature: ac.attributes.temperature - 1,
+                      serviceData: {
+                        hvac_mode: "cool",
+                        temperature: ac.attributes.temperature - 1,
+                      }
                     });
                   }}
                 />

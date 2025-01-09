@@ -99,11 +99,11 @@ export const MediaPlayerControls = ({
       // no speakers are playing -> play media
       if (playingSpeakers.length === 0) {
         mediaPlayerService.playMedia({
-          entity_id: entity.attributes?.group_members ?? entity.entity_id,
+          target: entity.attributes?.group_members ?? entity.entity_id,
           serviceData: { ...lastPlayedMedia, enqueue: "play" },
         });
         return mediaPlayerService.mediaPlay({
-          entity_id: entity.attributes?.group_members ?? entity.entity_id,
+          target: entity.attributes?.group_members ?? entity.entity_id,
         });
       }
 
@@ -114,21 +114,21 @@ export const MediaPlayerControls = ({
           media_content_type: entity.attributes.media_content_type ?? "",
         });
         return mediaPlayerService.mediaPause({
-          entity_id: entity.attributes?.group_members ?? entity.entity_id,
+          target: entity.attributes?.group_members ?? entity.entity_id,
         });
       }
 
       // the target speaker is playing and has more than one member in the group -> unjoin
       if ((entity.attributes?.group_members?.length || 0) > 1 && entity.state === "playing") {
         return mediaPlayerService.unjoin({
-          entity_id: entityId
+          target: entityId
         });
       }
 
       // the target speaker is not playing, and we have at least one speaker playing -> join
       if (entity.state !== "playing" && playingSpeakers.length > 0) {
         return mediaPlayerService.join({
-          entity_id: playingSpeakers[0].entity_id,
+          target: playingSpeakers[0].entity_id,
           serviceData: { group_members: [entityId] },
         });
       }
@@ -227,11 +227,11 @@ export const MediaPlayerControls = ({
                             onClick={() => {
                               if (isOff) {
                                 mediaPlayerService.turnOn({
-                                  entity_id: entity.entity_id
+                                  target: entity.entity_id
                                 });
                               } else {
                                 mediaPlayerService.turnOff({
-                                  entity_id: entity.entity_id
+                                  target: entity.entity_id
                                 });
                               }
                             }}

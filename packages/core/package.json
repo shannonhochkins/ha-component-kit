@@ -64,7 +64,7 @@
     "dev": "vite",
     "prebuild": "rm -rf ./dist",
     "postbuild": "npm run prettier",
-    "build": "npm run sync-locales && npm run sync-local-types && npm run build:sync-script-cli && npm run build:sync-ha-types && npm run build:core",
+    "build": "npm run sync-locales && npm run sync-ha-user-types && npm run build:sync-script-cli && npm run build:sync-ha-types && npm run build:core",
     "build:core": "NODE_ENV=production vite build",
     "build:sync-script": "NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build",
     "build:sync-script-cli": "tsup",
@@ -76,7 +76,7 @@
     "test": "NODE_ENV=test jest --rootDir=src",
     "prerelease": "npm run build",
     "release": "npm publish --access public",
-    "sync-local-types": "npm run build:sync-script && node ./sync-local-types.cjs",
+    "sync-ha-user-types": "npm run build:sync-script && node ./sync-ha-user-types.cjs",
     "sync-locales": "npx tsx ./scripts/sync-locales/index.ts",
     "clean": "rm -rf node_modules dist ./scripts/sync-ha-types/.ha-repo-cache",
     "type-check": "tsc --noEmit"

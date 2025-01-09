@@ -70,9 +70,13 @@ export function AlternateControls({
         }}
         onClick={() => {
           if (isOff) {
-            mp.turnOn(allEntityIds);
+            mp.turnOn({
+              target: allEntityIds
+            });
           } else {
-            mp.turnOff(allEntityIds);
+            mp.turnOff({
+              target: allEntityIds
+            });
           }
         }}
       />

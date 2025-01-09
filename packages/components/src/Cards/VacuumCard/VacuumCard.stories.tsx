@@ -45,7 +45,9 @@ export const CustomShortcuts: VacuumStory = {
         icon: "mdi:fan",
         onClick(entity) {
           entity.service.setFanSpeed({
-            fan_speed: "high",
+            serviceData: {
+              fan_speed: "high",
+            }
           });
         },
       },

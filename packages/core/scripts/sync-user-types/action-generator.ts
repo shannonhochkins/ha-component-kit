@@ -1,4 +1,4 @@
-import { HassServices } from 'home-assistant-js-websocket';
+import { HassService, HassServices } from 'home-assistant-js-websocket';
 import _ from 'lodash';
 import { REMAPPED_TYPES } from './constants';
 
@@ -51,20 +51,25 @@ export const generateActionTypes = (input: HassServices, {
       const camelAction = _.camelCase(action);
       if (serviceBlacklist.length > 0 && (serviceBlacklist.includes(camelAction) || serviceBlacklist.includes(action))) return '';
       if (serviceWhitelist.length > 0 && (!serviceWhitelist.includes(camelAction) || !serviceWhitelist.includes(action))) return '';
+      function processFields(fields: HassService['fields']): string[] {
+        return Object.entries(fields).map(([field, { selector, example, description, ...rest }]) => {
+          const required = rest.required ?? false;
+          const remapByDomainActionField = `${domain}.${action}.${field}`;
+          const remapByActionField = `${action}.${field}`;
+          const remapByField = field;
+          const domainActionFieldOverride = remapByDomainActionField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByDomainActionField] : undefined;
+          const actionFieldOverride = remapByActionField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByActionField] : undefined;
+          const fieldOverride = remapByField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByField] : undefined;
+          // some fields come back as an incorrect type but we know these should be something specific, these are hard coded in the REMAPPED_TYPES constant
+          const type = domainActionFieldOverride || actionFieldOverride || fieldOverride || resolveSelectorType(selector as Selector);
+          const exampleUsage = example ? ` @example ${example}` : '';
+          const isAdvancedFields = field === 'advanced_fields';
+          const comment = `${description ?? ''}${exampleUsage ?? ''}`;
+          return isAdvancedFields && 'fields' in rest ? processFields(rest.fields as HassService['fields']).join('\n') : `//${comment ? sanitizeString(` ${comment}`) : ''}\n${field}${required ? '' : '?'}: ${type};`;
+        });
+      }     
       // the data passed to the ServiceFunction<object>
-      const data = Object.entries(fields).map(([field, { selector, example, description, ...rest }]) => {
-        const required = rest.required ?? false;
-        const remapByDomainActionField = `${domain}.${action}.${field}`;
-        const remapByActionField = `${action}.${field}`;
-        const remapByField = field;
-        const domainActionFieldOverride = remapByDomainActionField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByDomainActionField] : undefined;
-        const actionFieldOverride = remapByActionField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByActionField] : undefined;
-        const fieldOverride = remapByField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByField] : undefined;
-        // some fields come back as an incorrect type but we know these should be something specific, these are hard coded in the REMAPPED_TYPES constant
-        const type = domainActionFieldOverride || actionFieldOverride || fieldOverride || resolveSelectorType(selector as Selector);
-        const exampleUsage = example ? ` @example ${example}` : '';
-        return `// ${sanitizeString(`${description}${exampleUsage}`)}\n${field}${required ? '' : '?'}: ${type};`;
-      });
+      const data = processFields(fields);
       // the data passed to the ServiceFunction<object>
       const actionData = `${Object.keys(fields).length === 0 ? 'object' : `{${data.join('\n')}}`}`;
       return `// ${sanitizeString(description)}

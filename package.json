@@ -48,7 +48,7 @@
     "release:components": "npm run type-check && npm run release --workspace=@hakit/components",
     "release:create-hakit": "npm run type-check && npm run release --workspace=create-hakit",
     "test:dashboard": " cd test-dashboard && npm start",
-    "sync-local-types": "npm run sync-local-types --workspace=@hakit/core",
+    "sync-ha-user-types": "npm run sync-ha-user-types --workspace=@hakit/core",
     "sync-locales": "npm run sync-locales --workspace=@hakit/core"
   },
   "devDependencies": {

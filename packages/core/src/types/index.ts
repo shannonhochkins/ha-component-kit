@@ -73,79 +73,68 @@ export type HassEntityWithService<T extends AllDomains> = HassEntityCustom &
     service: SnakeToCamel<T> extends keyof SupportedServices<"no-target"> ? SupportedServices<"no-target">[SnakeToCamel<T>] : never;
   };
 
-  export type ServiceFunctionWithEntity<ResponseData extends object, Data = object> = {
-    <CustomResponseData extends ResponseData = ResponseData>({
-        target,
-        serviceData,
-        returnResponse,
-    }: {
-      /** the entity target from home assistant, string, string[] or object */
-      target: Target,
-      /** the data to send to the service */
-      serviceData?: Data,
-      /** whether to return the response object */
-      returnResponse: true
-    }): Promise<ServiceResponse<CustomResponseData>>;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    <CustomResponseData extends ResponseData = ResponseData>({
-      target,
-      serviceData
-    }: {
-    /** the entity target from home assistant, string, string[] or object */
-      target: Target,
-      /** the data to send to the service */
-      serviceData?: Data
-    }): void;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    <CustomResponseData extends ResponseData = ResponseData>({
-      target,
-        serviceData
-      }: {
-      /** the entity target from home assistant, string, string[] or object */
-      target: Target,
-        /** the data to send to the service */
-        serviceData?: Data,
-        /** whether to return the response object */
-        returnResponse: false
-    }): void;
-  };
-  
-  export type ServiceFunctionWithoutEntity<ResponseData extends object, Data = object> = {
-    <CustomResponseData extends ResponseData = ResponseData>({
-      serviceData,
-      returnResponse
+export type ServiceFunctionWithEntity<ResponseData extends object, Data = object> = {
+  <CustomResponseData extends ResponseData = ResponseData>({
+    target,
+    serviceData,
+    returnResponse,
   }: {
+    /** the entity target from home assistant, string, string[] or object */
+    target: Target;
     /** the data to send to the service */
     serviceData?: Data;
     /** whether to return the response object */
     returnResponse: true;
   }): Promise<ServiceResponse<CustomResponseData>>;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    <CustomResponseData extends ResponseData = ResponseData>({
-      serviceData,
-    }: {
-      /** the data to send to the service */
-      serviceData?: Data
+  <CustomResponseData extends ResponseData = ResponseData>({
+    target,
+    serviceData,
+  }: {
+    /** the entity target from home assistant, string, string[] or object */
+    target: Target;
+    /** the data to send to the service */
+    serviceData?: Data;
+  }): void;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  <CustomResponseData extends ResponseData = ResponseData>({
+    target,
+    serviceData,
+  }: {
+    /** the entity target from home assistant, string, string[] or object */
+    target: Target;
+    /** the data to send to the service */
+    serviceData?: Data;
+    /** whether to return the response object */
+    returnResponse: false;
+  }): void;
+};
+
+export type ServiceFunctionWithoutEntity<ResponseData extends object, Data = object> = {
+  <CustomResponseData extends ResponseData = ResponseData>(args?: {
+    /** the data to send to the service */
+    serviceData?: Data;
+    /** whether to return the response object */
+    returnResponse: true;
+  }): Promise<ServiceResponse<CustomResponseData>>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  <CustomResponseData extends ResponseData = ResponseData>(args?: {
+    /** the data to send to the service */
+    serviceData?: Data;
   }): void;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    <CustomResponseData extends ResponseData = ResponseData>({
-        serviceData,
-    }: {
-        /** the data to send to the service */
-        serviceData?: Data,
-        /** whether to return the response object */
-        returnResponse: false,
-    }): void;
-  };
-  
-  export type ServiceFunction<
-    ResponseData extends object,
-    T extends ServiceFunctionTypes = "target",
-    Data = object
-  > = T extends "target"
-    ? ServiceFunctionWithEntity<ResponseData, Data>
-    : ServiceFunctionWithoutEntity<ResponseData, Data>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  <CustomResponseData extends ResponseData = ResponseData>(args?: {
+    /** the data to send to the service */
+    serviceData?: Data;
+    /** whether to return the response object */
+    returnResponse: false;
+  }): void;
+};
+
+export type ServiceFunction<ResponseData extends object, T extends ServiceFunctionTypes = "target", Data = object> = T extends "target"
+  ? ServiceFunctionWithEntity<ResponseData, Data>
+  : ServiceFunctionWithoutEntity<ResponseData, Data>;
 export type StaticDomains = "sun" | "sensor" | "stt" | "binarySensor" | "weather" | "alert" | "plant" | "datetime" | "water_heater";
 export type SnakeOrCamelStaticDomains = CamelToSnake<StaticDomains> | SnakeToCamel<StaticDomains>;
 /** the key names on the interface object all as camel case */

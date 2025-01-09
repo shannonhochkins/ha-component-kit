@@ -202,19 +202,17 @@ export interface HassContextProps {
   /** function to call a service through web sockets */
   callService: {
     <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
-      args: CallServiceArgs<T, M, true>
+      args: CallServiceArgs<T, M, true>,
     ): Promise<ServiceResponse<ResponseType>>;
 
     /** Overload for when `returnResponse` is false */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
-      args: CallServiceArgs<T, M, false>
-    ): void;
+    <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(args: CallServiceArgs<T, M, false>): void;
 
     /** Overload for when `returnResponse` is omitted (defaults to false) */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
-      args: Omit<CallServiceArgs<T, M, false>, "returnResponse">
+    <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+      args: Omit<CallServiceArgs<T, M, false>, "returnResponse">,
     ): void;
   };
   /** add a new route to the provider */

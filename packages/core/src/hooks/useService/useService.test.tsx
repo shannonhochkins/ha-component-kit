@@ -17,7 +17,9 @@ describe("useService", () => {
     });
     act(() => {
       result.current.turnOn({
-        color_name: "red",
+        serviceData: {
+          color_name: "red",
+        }
       });
     });
 
@@ -40,8 +42,11 @@ describe("useService", () => {
     });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     act(() => {
-      result.current.toggle("light.kitchen", {
-        transition: 10,
+      result.current.toggle({
+        target: "light.kitchen",
+        serviceData: {
+          transition: 10,
+        }
       });
     });
 
@@ -64,8 +69,11 @@ describe("useService", () => {
     });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
     act(() => {
-      result.current("light").turnOff("light.kitchen", {
-        flash: "long",
+      result.current("light").turnOff({
+        target: "light.kitchen",
+        serviceData: {
+          flash: 'long',
+        }
       });
     });
 

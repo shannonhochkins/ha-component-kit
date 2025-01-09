@@ -435,9 +435,13 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
   const getAllEntities = useCallback(() => entities, [entities]);
 
   const callService = useCallback(
-    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean>(
-      { domain, service, serviceData, target: _target, returnResponse }: CallServiceArgs<T, M, R>,
-    ): Promise<R extends true ? ServiceResponse<ResponseType> : void> => {
+    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean>({
+      domain,
+      service,
+      serviceData,
+      target: _target,
+      returnResponse,
+    }: CallServiceArgs<T, M, R>): Promise<R extends true ? ServiceResponse<ResponseType> : void> => {
       const target =
         typeof _target === "string" || isArray(_target)
           ? {
@@ -538,7 +542,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
         callApi,
         getAllEntities,
         // cast here we don't have to redefine all the overloads, might fix later
-        callService: callService as HassContextProps['callService'],
+        callService: callService as HassContextProps["callService"],
         joinHassUrl,
       }}
     >

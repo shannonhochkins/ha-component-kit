@@ -10,6 +10,31 @@ config({
 
 const CACHE_PATH = './.cache';
 
+function asyncWriteFile(path: string, contents: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(path, contents, (error) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+function asyncReadDir(path: string): Promise<string[]> {
+  return new Promise((resolve, reject) => {
+    fs.readdir(path, (error, files) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(files);
+      }
+    });
+  });
+}
+
+
 const intercept = async () => {
 
   // Create directory if it doesn't exist
@@ -17,18 +42,19 @@ const intercept = async () => {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
     const [filename, contents] = await scrapeHomeAssistant();
-    // Save the JavaScript file
-    fs.writeFileSync(path.join(dirPath, filename), contents);
+    // Save the JavaScript file asynchronously
+    await asyncWriteFile(path.join(dirPath, filename), contents);
     console.log(`Saved: ${filename}`);
   } else {
     // already have the file, continue onto next steps
     console.log('retrieved js file from cache');
   }
   // list the file starting with app. in the .cache directory
-  const [filename] = fs.readdirSync(dirPath).filter(file => file.startsWith('app.'));
+  const files = await asyncReadDir(dirPath);
+  const [filename] = files.filter(file => file.startsWith('app.'));
+  console.log('Using file:', filename);
   const translations = await extractTranslations(path.join(dirPath, filename));
   await downloadTranslations(translations);
-
 
   process.exit(0);
 };
@@ -88,7 +114,12 @@ async function scrapeHomeAssistant(): Promise<[fileName: string, contents: strin
   })
 }
 
-intercept().catch(error => {
-  console.error('Error:', error);
-  process.exit(0);
-});
+try {
+  intercept().catch(error => {
+    console.error('Error:', error);
+    process.exit(1);
+  });
+} catch (e) {
+  console.error('Error:', e);
+  process.exit(1);
+}

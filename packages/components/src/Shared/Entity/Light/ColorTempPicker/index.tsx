@@ -302,7 +302,9 @@ function InternalColorTempPicker({
           onChangeApplied(updatedValue, colors);
         }
         entity.service.turnOn({
-          kelvin: updatedValue,
+          serviceData: {
+            kelvin: updatedValue,
+          }
         });
       }, 100);
     },

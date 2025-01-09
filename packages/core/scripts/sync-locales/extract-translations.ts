@@ -63,9 +63,21 @@ type Locale = {
   hash: string;
   name: string;
 }
+
+function asyncReadFile(filePath: string): Promise<string> {
+  return new Promise((resolve, reject) =>
+    fs.readFile(filePath, 'utf-8', (error, data) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(data);
+      }
+    })
+  );
+}
 export async function extractTranslations(filePath: string): Promise<Record<string, Translation>> {
   // Read the contents of the JavaScript file
-  const fileContents = fs.readFileSync(filePath, 'utf-8');
+  const fileContents = await asyncReadFile(filePath);
 
   // Regular expression to match the `translations` JSON string
   const translationsRegex = /"translations":(\{(?:[^{}]|\{[^{}]*\})*\})/s;
@@ -206,19 +218,15 @@ export async function downloadTranslations(translations: Record<string, Translat
     }
 
     for (const url of urls) {
-      try {
-        const response = await fetch(url);
-        if (response.ok) {
-          const jsonData = await response.json();
-          combinedTranslations[lang] = {
-            ...combinedTranslations[lang],
-            ...jsonData,
-          };
-        } else {
-          console.error(`Failed to download ${url}: ${response.statusText}`);
-        }
-      } catch (error) {
-        console.error(`Error downloading ${url}:`, error);
+      const response = await fetch(url);
+      if (response.ok) {
+        const jsonData = await response.json();
+        combinedTranslations[lang] = {
+          ...combinedTranslations[lang],
+          ...jsonData,
+        };
+      } else {
+        throw new Error(`Failed to download ${url}: ${response.statusText}, delete the sync-locales/.cache folder`);
       }
     }
     // Add locale entry

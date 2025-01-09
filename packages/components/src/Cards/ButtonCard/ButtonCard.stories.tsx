@@ -34,10 +34,14 @@ function TemplateOnclick(args?: Partial<ButtonCardProps<"climate.air_conditioner
         entity="climate.air_conditioner"
         onClick={(entity) => {
           entity.service.setHvacMode({
-            hvac_mode: entity.state === "off" ? "heat" : "off",
+            serviceData: {
+              hvac_mode: entity.state === "off" ? "heat" : "off",
+            }
           });
           entity.service.setTemperature({
-            temperature: 25,
+            serviceData: {
+              temperature: 25,
+            }
           });
         }}
       />
@@ -72,10 +76,14 @@ function ExampleDocs() {
           entity="climate.air_conditioner"
           onClick={entity => {
             entity.service.setHvacMode({
-              hvac_mode: entity.state === 'off' ? 'heat' : 'off',
+              serviceData: {
+                hvac_mode: entity.state === 'off' ? 'heat' : 'off',
+              }
             });
             entity.service.setTemperature({
-              temperature: 25,
+              serviceData: {
+                temperature: 25,
+              }
             });
           }}
         />

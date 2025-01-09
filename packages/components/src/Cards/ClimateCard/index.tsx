@@ -176,7 +176,9 @@ function InternalClimateCard({
               icon: icons[mode],
               onClick: () => {
                 entity.service.setHvacMode({
-                  hvac_mode: mode,
+                  serviceData: {
+                    hvac_mode: mode,
+                  }
                 });
               },
             } satisfies FeatureEntityProps;
@@ -243,7 +245,9 @@ function InternalClimateCard({
                 icon={"mdi:minus"}
                 onClick={() => {
                   entity.service.setTemperature({
-                    temperature: temperature - 1,
+                    serviceData: {
+                      temperature: temperature - 1,
+                    }
                   });
                 }}
               />
@@ -282,7 +286,9 @@ function InternalClimateCard({
                 icon={"mdi:plus"}
                 onClick={() => {
                   entity.service.setTemperature({
-                    temperature: temperature + 1,
+                    serviceData: {
+                      temperature: temperature + 1,
+                    }
                   });
                 }}
               />

@@ -199,7 +199,9 @@ function InternalAlarmControls({
 
   const _handleActionClick = (state: AlarmPanelCardConfigState | "disarm"): void => {
     entity.service[snakeCase(`alarm_${state}`) as AlarmServices]({
-      code: inputVal,
+      serviceData: {
+        code: inputVal,
+      }
     });
     if (!defaultCode) {
       setInputVal("");

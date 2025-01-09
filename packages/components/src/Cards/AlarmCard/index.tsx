@@ -83,7 +83,9 @@ function InternalAlarmCard<E extends FilterByDomain<EntityName, "alarm_control_p
   const _handleActionClick = (state: AlarmPanelCardConfigState | "disarm"): void => {
     if (!defaultCode) return;
     entity.service[snakeCase(`alarm_${state}`) as AlarmServices]({
-      code: defaultCode.toString(),
+      serviceData: {
+        code: defaultCode.toString(),
+      }
     });
   };
   const color = _getActionColor(entity.state, modalProps?.customActionColor);

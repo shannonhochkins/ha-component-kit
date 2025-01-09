@@ -20,10 +20,10 @@ export function createService<T extends SnakeOrCamelDomains>(
         // Skip interception for inherited properties
         if (service === "toJSON") return;
         return function (args: {
-          // TODO - rename 
+          // TODO - rename
           target?: Target;
           serviceData?: ServiceData<T, S>;
-          returnResponse?: boolean
+          returnResponse?: boolean;
         }) {
           const { target: _target, serviceData, returnResponse } = args || {};
           let target = rootTarget ?? _target;
@@ -36,7 +36,7 @@ export function createService<T extends SnakeOrCamelDomains>(
             // ensure the target values are a unique array of ids
             target = [...uniq(target)];
           }
-          console.info('args', args);
+          console.info("args", args);
           console.info(
             `${localize("perform_action_name", {
               search: "{name}",
@@ -48,16 +48,14 @@ export function createService<T extends SnakeOrCamelDomains>(
               returnResponse,
             },
           );
-          return callService(
-            {
-              domain,
-              service,
-              serviceData,
-              target,
-              // necessary cast here as the overloads expect true | false | undefined not a boolean
-              returnResponse: returnResponse as true,
-            },
-          );
+          return callService({
+            domain,
+            service,
+            serviceData,
+            target,
+            // necessary cast here as the overloads expect true | false | undefined not a boolean
+            returnResponse: returnResponse as true,
+          });
         };
       },
     },

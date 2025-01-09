@@ -326,8 +326,10 @@ function InternalColorPicker({ disabled = false, entity: _entity, onChange, onCh
       },
     ) => {
       entity.service.turnOn({
-        ...color,
-        ...params,
+        serviceData: {
+          ...color,
+          ...params,
+        }
       });
     },
     [entity],

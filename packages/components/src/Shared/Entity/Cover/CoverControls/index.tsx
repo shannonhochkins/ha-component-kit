@@ -145,7 +145,9 @@ function InternalCoverControls({
                     }}
                     onChangeApplied={(value) => {
                       entity.service.setCoverPosition({
-                        position: value,
+                        serviceData: {
+                          position: value,
+                        }
                       });
                       if (onStateChange) onStateChange(computeTitleDisplay(entity, Math.round(value)));
                     }}
@@ -170,7 +172,9 @@ function InternalCoverControls({
                     }}
                     onChangeApplied={(value) => {
                       entity.service.setCoverTiltPosition({
-                        tilt_position: value,
+                        serviceData: {
+                          tilt_position: value,
+                        }
                       });
                       if (onStateChange) onStateChange(computeTitleDisplay(entity, Math.round(value)));
                     }}

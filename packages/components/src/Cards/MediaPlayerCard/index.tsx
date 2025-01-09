@@ -266,8 +266,11 @@ function InternalMediaPlayerCard({
       const offsetX = x - rect.left;
       // Translate the click position into a percentage between 0-100
       const percentage = offsetX / rect.width;
-      mp.mediaSeek(allEntityIds, {
-        seek_position: percentage * (media_duration ?? 0),
+      mp.mediaSeek({
+        target: allEntityIds,
+        serviceData: {
+          seek_position: percentage * (media_duration ?? 0),
+        }
       });
     },
     [mp, allEntityIds, media_duration],

@@ -331,15 +331,15 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // undefined
+        //
         entity_id: string;
-        // undefined @example My name is hanna
+        //  @example My name is hanna
         message: string;
-        // undefined
+        //
         cache?: boolean;
-        // undefined @example ru
+        //  @example ru
         language?: string;
-        // undefined @example platform specific
+        //  @example platform specific
         options?: object;
       }
     >;
@@ -348,16 +348,89 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // undefined
+        //
         entity_id: string;
-        // undefined @example My name is hanna
+        //  @example My name is hanna
         message: string;
-        // undefined
+        //
         cache?: boolean;
-        // undefined @example ru
+        //  @example ru
         language?: string;
-        // undefined @example platform specific
+        //  @example platform specific
         options?: object;
+      }
+    >;
+  };
+  scene: {
+    // Activates a scene.
+    turnOn: ServiceFunction<
+      object,
+      T,
+      {
+        // Time it takes the devices to transition into the states defined in the scene.
+        transition?: number;
+      }
+    >;
+    // Reloads the scenes from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+    // Activates a scene with configuration.
+    apply: ServiceFunction<
+      object,
+      T,
+      {
+        // List of entities and their target state. @example light.kitchen: 'on' light.ceiling:   state: 'on'   brightness: 80
+        entities: object;
+        // Time it takes the devices to transition into the states defined in the scene.
+        transition?: number;
+      }
+    >;
+    // Creates a new scene.
+    create: ServiceFunction<
+      object,
+      T,
+      {
+        // The entity ID of the new scene. @example all_lights
+        scene_id: string;
+        // List of entities and their target state. If your entities are already in the target state right now, use `snapshot_entities` instead. @example light.tv_back_light: 'on' light.ceiling:   state: 'on'   brightness: 200
+        entities?: object;
+        // List of entities to be included in the snapshot. By taking a snapshot, you record the current state of those entities. If you do not want to use the current state of all your entities for this scene, you can combine the `snapshot_entities` with `entities`. @example - light.ceiling - light.kitchen
+        snapshot_entities?: string;
+      }
+    >;
+    // Deletes a dynamically created scene.
+    delete: ServiceFunction<object, T, object>;
+  };
+  group: {
+    // Reloads group configuration, entities, and notify services from YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+    // Creates/Updates a group.
+    set: ServiceFunction<
+      object,
+      T,
+      {
+        // Object ID of this group. This object ID is used as part of the entity ID. Entity ID format: [domain].[object_id]. @example test_group
+        object_id: string;
+        // Name of the group. @example My test group
+        name?: string;
+        // Name of the icon for the group. @example mdi:camera
+        icon?: object;
+        // List of all members in the group. Cannot be used in combination with `Add entities` or `Remove entities`. @example domain.entity_id1, domain.entity_id2
+        entities?: string;
+        // List of members to be added to the group. Cannot be used in combination with `Entities` or `Remove entities`. @example domain.entity_id1, domain.entity_id2
+        add_entities?: string;
+        // List of members to be removed from a group. Cannot be used in combination with `Entities` or `Add entities`. @example domain.entity_id1, domain.entity_id2
+        remove_entities?: string;
+        // Enable this option if the group should only be used when all entities are in state `on`.
+        all?: boolean;
+      }
+    >;
+    // Removes a group.
+    remove: ServiceFunction<
+      object,
+      T,
+      {
+        // Object ID of this group. This object ID is used as part of the entity ID. Entity ID format: [domain].[object_id]. @example test_group
+        object_id: object;
       }
     >;
   };
@@ -476,40 +549,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  group: {
-    // Reloads group configuration, entities, and notify services from YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-    // Creates/Updates a user group.
-    set: ServiceFunction<
-      object,
-      T,
-      {
-        // Object ID of this group. This object ID is used as part of the entity ID. Entity ID format: [domain].[object_id]. @example test_group
-        object_id: string;
-        // Name of the group. @example My test group
-        name?: string;
-        // Name of the icon for the group. @example mdi:camera
-        icon?: object;
-        // List of all members in the group. Cannot be used in combination with `Add entities` or `Remove entities`. @example domain.entity_id1, domain.entity_id2
-        entities?: string;
-        // List of members to be added to the group. Cannot be used in combination with `Entities` or `Remove entities`. @example domain.entity_id1, domain.entity_id2
-        add_entities?: string;
-        // List of members to be removed from a group. Cannot be used in combination with `Entities` or `Add entities`. @example domain.entity_id1, domain.entity_id2
-        remove_entities?: string;
-        // Enable this option if the group should only be used when all entities are in state `on`.
-        all?: boolean;
-      }
-    >;
-    // Removes a group.
-    remove: ServiceFunction<
-      object,
-      T,
-      {
-        // Object ID of this group. This object ID is used as part of the entity ID. Entity ID format: [domain].[object_id]. @example test_group
-        object_id: object;
-      }
-    >;
-  };
   light: {
     // Turn on one or more lights and adjust properties of the light, even when they are turned on already.
     turnOn: ServiceFunction<
@@ -528,8 +567,176 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         brightness_step_pct?: number;
         // Light effect.
         effect?: string;
-        // undefined
-        advanced_fields?: object;
+        //  @example [255, 100, 100, 50]
+        rgbw_color?: [number, number, number, number];
+        //  @example [255, 100, 100, 50, 70]
+        rgbww_color?: [number, number, number, number, number];
+        //
+        color_name?:
+          | "homeassistant"
+          | "aliceblue"
+          | "antiquewhite"
+          | "aqua"
+          | "aquamarine"
+          | "azure"
+          | "beige"
+          | "bisque"
+          | "blanchedalmond"
+          | "blue"
+          | "blueviolet"
+          | "brown"
+          | "burlywood"
+          | "cadetblue"
+          | "chartreuse"
+          | "chocolate"
+          | "coral"
+          | "cornflowerblue"
+          | "cornsilk"
+          | "crimson"
+          | "cyan"
+          | "darkblue"
+          | "darkcyan"
+          | "darkgoldenrod"
+          | "darkgray"
+          | "darkgreen"
+          | "darkgrey"
+          | "darkkhaki"
+          | "darkmagenta"
+          | "darkolivegreen"
+          | "darkorange"
+          | "darkorchid"
+          | "darkred"
+          | "darksalmon"
+          | "darkseagreen"
+          | "darkslateblue"
+          | "darkslategray"
+          | "darkslategrey"
+          | "darkturquoise"
+          | "darkviolet"
+          | "deeppink"
+          | "deepskyblue"
+          | "dimgray"
+          | "dimgrey"
+          | "dodgerblue"
+          | "firebrick"
+          | "floralwhite"
+          | "forestgreen"
+          | "fuchsia"
+          | "gainsboro"
+          | "ghostwhite"
+          | "gold"
+          | "goldenrod"
+          | "gray"
+          | "green"
+          | "greenyellow"
+          | "grey"
+          | "honeydew"
+          | "hotpink"
+          | "indianred"
+          | "indigo"
+          | "ivory"
+          | "khaki"
+          | "lavender"
+          | "lavenderblush"
+          | "lawngreen"
+          | "lemonchiffon"
+          | "lightblue"
+          | "lightcoral"
+          | "lightcyan"
+          | "lightgoldenrodyellow"
+          | "lightgray"
+          | "lightgreen"
+          | "lightgrey"
+          | "lightpink"
+          | "lightsalmon"
+          | "lightseagreen"
+          | "lightskyblue"
+          | "lightslategray"
+          | "lightslategrey"
+          | "lightsteelblue"
+          | "lightyellow"
+          | "lime"
+          | "limegreen"
+          | "linen"
+          | "magenta"
+          | "maroon"
+          | "mediumaquamarine"
+          | "mediumblue"
+          | "mediumorchid"
+          | "mediumpurple"
+          | "mediumseagreen"
+          | "mediumslateblue"
+          | "mediumspringgreen"
+          | "mediumturquoise"
+          | "mediumvioletred"
+          | "midnightblue"
+          | "mintcream"
+          | "mistyrose"
+          | "moccasin"
+          | "navajowhite"
+          | "navy"
+          | "navyblue"
+          | "oldlace"
+          | "olive"
+          | "olivedrab"
+          | "orange"
+          | "orangered"
+          | "orchid"
+          | "palegoldenrod"
+          | "palegreen"
+          | "paleturquoise"
+          | "palevioletred"
+          | "papayawhip"
+          | "peachpuff"
+          | "peru"
+          | "pink"
+          | "plum"
+          | "powderblue"
+          | "purple"
+          | "red"
+          | "rosybrown"
+          | "royalblue"
+          | "saddlebrown"
+          | "salmon"
+          | "sandybrown"
+          | "seagreen"
+          | "seashell"
+          | "sienna"
+          | "silver"
+          | "skyblue"
+          | "slateblue"
+          | "slategray"
+          | "slategrey"
+          | "snow"
+          | "springgreen"
+          | "steelblue"
+          | "tan"
+          | "teal"
+          | "thistle"
+          | "tomato"
+          | "turquoise"
+          | "violet"
+          | "wheat"
+          | "white"
+          | "whitesmoke"
+          | "yellow"
+          | "yellowgreen";
+        //  @example [300, 70]
+        hs_color?: [number, number];
+        //  @example [0.52, 0.43]
+        xy_color?: [number, number];
+        //
+        color_temp?: number | object;
+        //
+        brightness?: number;
+        //
+        brightness_step?: number;
+        //
+        white?: boolean;
+        //  @example relax
+        profile?: string;
+        //
+        flash?: "long" | "short";
       }
     >;
     // Turn off one or more lights.
@@ -539,8 +746,8 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       {
         // Duration it takes to get to next state.
         transition?: number;
-        // undefined
-        advanced_fields?: object;
+        //
+        flash?: "long" | "short";
       }
     >;
     // Toggles one or more lights, from on to off, or, off to on, based on their current state.
@@ -558,76 +765,198 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         brightness_pct?: number;
         // Light effect.
         effect?: string;
-        // undefined
-        advanced_fields?: object;
+        //  @example [255, 100, 100, 50]
+        rgbw_color?: [number, number, number, number];
+        //  @example [255, 100, 100, 50, 70]
+        rgbww_color?: [number, number, number, number, number];
+        //
+        color_name?:
+          | "homeassistant"
+          | "aliceblue"
+          | "antiquewhite"
+          | "aqua"
+          | "aquamarine"
+          | "azure"
+          | "beige"
+          | "bisque"
+          | "blanchedalmond"
+          | "blue"
+          | "blueviolet"
+          | "brown"
+          | "burlywood"
+          | "cadetblue"
+          | "chartreuse"
+          | "chocolate"
+          | "coral"
+          | "cornflowerblue"
+          | "cornsilk"
+          | "crimson"
+          | "cyan"
+          | "darkblue"
+          | "darkcyan"
+          | "darkgoldenrod"
+          | "darkgray"
+          | "darkgreen"
+          | "darkgrey"
+          | "darkkhaki"
+          | "darkmagenta"
+          | "darkolivegreen"
+          | "darkorange"
+          | "darkorchid"
+          | "darkred"
+          | "darksalmon"
+          | "darkseagreen"
+          | "darkslateblue"
+          | "darkslategray"
+          | "darkslategrey"
+          | "darkturquoise"
+          | "darkviolet"
+          | "deeppink"
+          | "deepskyblue"
+          | "dimgray"
+          | "dimgrey"
+          | "dodgerblue"
+          | "firebrick"
+          | "floralwhite"
+          | "forestgreen"
+          | "fuchsia"
+          | "gainsboro"
+          | "ghostwhite"
+          | "gold"
+          | "goldenrod"
+          | "gray"
+          | "green"
+          | "greenyellow"
+          | "grey"
+          | "honeydew"
+          | "hotpink"
+          | "indianred"
+          | "indigo"
+          | "ivory"
+          | "khaki"
+          | "lavender"
+          | "lavenderblush"
+          | "lawngreen"
+          | "lemonchiffon"
+          | "lightblue"
+          | "lightcoral"
+          | "lightcyan"
+          | "lightgoldenrodyellow"
+          | "lightgray"
+          | "lightgreen"
+          | "lightgrey"
+          | "lightpink"
+          | "lightsalmon"
+          | "lightseagreen"
+          | "lightskyblue"
+          | "lightslategray"
+          | "lightslategrey"
+          | "lightsteelblue"
+          | "lightyellow"
+          | "lime"
+          | "limegreen"
+          | "linen"
+          | "magenta"
+          | "maroon"
+          | "mediumaquamarine"
+          | "mediumblue"
+          | "mediumorchid"
+          | "mediumpurple"
+          | "mediumseagreen"
+          | "mediumslateblue"
+          | "mediumspringgreen"
+          | "mediumturquoise"
+          | "mediumvioletred"
+          | "midnightblue"
+          | "mintcream"
+          | "mistyrose"
+          | "moccasin"
+          | "navajowhite"
+          | "navy"
+          | "navyblue"
+          | "oldlace"
+          | "olive"
+          | "olivedrab"
+          | "orange"
+          | "orangered"
+          | "orchid"
+          | "palegoldenrod"
+          | "palegreen"
+          | "paleturquoise"
+          | "palevioletred"
+          | "papayawhip"
+          | "peachpuff"
+          | "peru"
+          | "pink"
+          | "plum"
+          | "powderblue"
+          | "purple"
+          | "red"
+          | "rosybrown"
+          | "royalblue"
+          | "saddlebrown"
+          | "salmon"
+          | "sandybrown"
+          | "seagreen"
+          | "seashell"
+          | "sienna"
+          | "silver"
+          | "skyblue"
+          | "slateblue"
+          | "slategray"
+          | "slategrey"
+          | "snow"
+          | "springgreen"
+          | "steelblue"
+          | "tan"
+          | "teal"
+          | "thistle"
+          | "tomato"
+          | "turquoise"
+          | "violet"
+          | "wheat"
+          | "white"
+          | "whitesmoke"
+          | "yellow"
+          | "yellowgreen";
+        //  @example [300, 70]
+        hs_color?: [number, number];
+        //  @example [0.52, 0.43]
+        xy_color?: [number, number];
+        //
+        color_temp?: number | object;
+        //
+        brightness?: number;
+        //
+        white?: boolean;
+        //  @example relax
+        profile?: string;
+        //
+        flash?: "long" | "short";
       }
     >;
   };
-  scene: {
-    // Activates a scene.
-    turnOn: ServiceFunction<
-      object,
-      T,
-      {
-        // Time it takes the devices to transition into the states defined in the scene.
-        transition?: number;
-      }
-    >;
-    // Reloads the scenes from the YAML-configuration.
+  script: {
+    //
+    nightlightPower: ServiceFunction<object, T, object>;
+    // Reloads all the available scripts.
     reload: ServiceFunction<object, T, object>;
-    // Activates a scene with configuration.
-    apply: ServiceFunction<
-      object,
-      T,
-      {
-        // List of entities and their target state. @example light.kitchen: 'on' light.ceiling:   state: 'on'   brightness: 80
-        entities: object;
-        // Time it takes the devices to transition into the states defined in the scene.
-        transition?: number;
-      }
-    >;
-    // Creates a new scene.
-    create: ServiceFunction<
-      object,
-      T,
-      {
-        // The entity ID of the new scene. @example all_lights
-        scene_id: string;
-        // List of entities and their target state. If your entities are already in the target state right now, use `snapshot_entities` instead. @example light.tv_back_light: 'on' light.ceiling:   state: 'on'   brightness: 200
-        entities?: object;
-        // List of entities to be included in the snapshot. By taking a snapshot, you record the current state of those entities. If you do not want to use the current state of all your entities for this scene, you can combine the `snapshot_entities` with `entities`. @example - light.ceiling - light.kitchen
-        snapshot_entities?: string;
-      }
-    >;
-    // Deletes a dynamically created scene.
-    delete: ServiceFunction<object, T, object>;
-  };
-  zone: {
-    // Reloads zones from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-  };
-  logbook: {
-    // Creates a custom entry in the logbook.
-    log: ServiceFunction<
-      object,
-      T,
-      {
-        // Custom name for an entity, can be referenced using an `entity_id`. @example Kitchen
-        name: string;
-        // Message of the logbook entry. @example is being used
-        message: string;
-        // Entity to reference in the logbook entry.
-        entity_id?: string;
-        // Determines which icon is used in the logbook entry. The icon illustrates the integration domain related to this logbook entry. @example light
-        domain?: string;
-      }
-    >;
+    // Runs the sequence of actions defined in a script.
+    turnOn: ServiceFunction<object, T, object>;
+    // Stops a running script.
+    turnOff: ServiceFunction<object, T, object>;
+    // Starts a script if it isn't running, stops it otherwise.
+    toggle: ServiceFunction<object, T, object>;
   };
   inputButton: {
     // Reloads helpers from the YAML-configuration.
     reload: ServiceFunction<object, T, object>;
     // Mimics the physical button press on the device.
     press: ServiceFunction<object, T, object>;
+  };
+  zone: {
+    // Reloads zones from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
   };
   inputNumber: {
     // Reloads helpers from the YAML-configuration.
@@ -646,17 +975,22 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Decrements the current value by 1 step.
     decrement: ServiceFunction<object, T, object>;
   };
-  script: {
-    //
-    nightlightPower: ServiceFunction<object, T, object>;
-    // Reloads all the available scripts.
-    reload: ServiceFunction<object, T, object>;
-    // Runs the sequence of actions defined in a script.
-    turnOn: ServiceFunction<object, T, object>;
-    // Stops a running script.
-    turnOff: ServiceFunction<object, T, object>;
-    // Starts a script if it isn't running, stops it otherwise.
-    toggle: ServiceFunction<object, T, object>;
+  logbook: {
+    // Creates a custom entry in the logbook.
+    log: ServiceFunction<
+      object,
+      T,
+      {
+        // Custom name for an entity, can be referenced using an `entity_id`. @example Kitchen
+        name: string;
+        // Message of the logbook entry. @example is being used
+        message: string;
+        // Entity to reference in the logbook entry.
+        entity_id?: string;
+        // Determines which icon is used in the logbook entry. The icon illustrates the integration domain related to this logbook entry. @example light
+        domain?: string;
+      }
+    >;
   };
   inputSelect: {
     // Reloads helpers from the YAML-configuration.
@@ -745,6 +1079,16 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
+  inputBoolean: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+    // Turns on the helper.
+    turnOn: ServiceFunction<object, T, object>;
+    // Turns off the helper.
+    turnOff: ServiceFunction<object, T, object>;
+    // Toggles the helper on/off.
+    toggle: ServiceFunction<object, T, object>;
+  };
   timer: {
     // Reloads timers from the YAML-configuration.
     reload: ServiceFunction<object, T, object>;
@@ -773,15 +1117,39 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  inputBoolean: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-    // Turns on the helper.
-    turnOn: ServiceFunction<object, T, object>;
-    // Turns off the helper.
-    turnOff: ServiceFunction<object, T, object>;
-    // Toggles the helper on/off.
-    toggle: ServiceFunction<object, T, object>;
+  vacuum: {
+    // Starts or resumes the cleaning task.
+    start: ServiceFunction<object, T, object>;
+    // Pauses the cleaning task.
+    pause: ServiceFunction<object, T, object>;
+    // Tells the vacuum cleaner to return to its dock.
+    returnToBase: ServiceFunction<object, T, object>;
+    // Tells the vacuum cleaner to do a spot clean-up.
+    cleanSpot: ServiceFunction<object, T, object>;
+    // Locates the vacuum cleaner robot.
+    locate: ServiceFunction<object, T, object>;
+    // Stops the current cleaning task.
+    stop: ServiceFunction<object, T, object>;
+    // Sets the fan speed of the vacuum cleaner.
+    setFanSpeed: ServiceFunction<
+      object,
+      T,
+      {
+        // Fan speed. The value depends on the integration. Some integrations have speed steps, like 'medium'. Some use a percentage, between 0 and 100. @example low
+        fan_speed: string;
+      }
+    >;
+    // Sends a command to the vacuum cleaner.
+    sendCommand: ServiceFunction<
+      object,
+      T,
+      {
+        // Command to execute. The commands are integration-specific. @example set_dnd_timer
+        command: string;
+        // Parameters for the command. The parameters are integration-specific. @example { 'key': 'value' }
+        params?: object;
+      }
+    >;
   };
   conversation: {
     // Launches a conversation from a transcribed text.
@@ -855,43 +1223,134 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Toggles a cover tilt open/closed.
     toggleCoverTilt: ServiceFunction<object, T, object>;
   };
-  vacuum: {
-    // Starts or resumes the cleaning task.
-    start: ServiceFunction<object, T, object>;
-    // Pauses the cleaning task.
-    pause: ServiceFunction<object, T, object>;
-    // Tells the vacuum cleaner to return to its dock.
-    returnToBase: ServiceFunction<object, T, object>;
-    // Tells the vacuum cleaner to do a spot clean-up.
-    cleanSpot: ServiceFunction<object, T, object>;
-    // Locates the vacuum cleaner robot.
-    locate: ServiceFunction<object, T, object>;
-    // Stops the current cleaning task.
-    stop: ServiceFunction<object, T, object>;
-    // Sets the fan speed of the vacuum cleaner.
-    setFanSpeed: ServiceFunction<
+  schedule: {
+    // Reloads schedules from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+  };
+  template: {
+    // Reloads template entities from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+  };
+  reolink: {
+    // Plays a ringtone on a Reolink Chime.
+    playChime: ServiceFunction<
       object,
       T,
       {
-        // Fan speed. The value depends on the integration. Some integrations have speed steps, like 'medium'. Some use a percentage, between 0 and 100. @example low
-        fan_speed: string;
+        // The Reolink Chime to play the ringtone on.
+        device_id: object;
+        // Ringtone to play.
+        ringtone:
+          | "citybird"
+          | "originaltune"
+          | "pianokey"
+          | "loop"
+          | "attraction"
+          | "hophop"
+          | "goodday"
+          | "operetta"
+          | "moonlight"
+          | "waybackhome";
       }
     >;
-    // Sends a command to the vacuum cleaner.
-    sendCommand: ServiceFunction<
+    // Moves the camera with a specific speed.
+    ptzMove: ServiceFunction<
       object,
       T,
       {
-        // Command to execute. The commands are integration-specific. @example set_dnd_timer
-        command: string;
-        // Parameters for the command. The parameters are integration-specific. @example { 'key': 'value' }
-        params?: object;
+        // PTZ move speed.
+        speed: number;
+      }
+    >;
+  };
+  mediaExtractor: {
+    // Extract media URL from a service.
+    extractMediaUrl: ServiceFunction<
+      object,
+      T,
+      {
+        // URL where the media can be found. @example https://www.youtube.com/watch?v=dQw4w9WgXcQ
+        url: string;
+        // Youtube-dl query to select the quality of the result. @example best
+        format_query?: string;
+      }
+    >;
+    // Downloads file from given URL.
+    playMedia: ServiceFunction<
+      object,
+      T,
+      {
+        // The ID of the content to play. Platform dependent. @example https://soundcloud.com/bruttoband/brutto-11
+        media_content_id: string | number;
+        // The type of the content to play. Must be one of MUSIC, TVSHOW, VIDEO, EPISODE, CHANNEL or PLAYLIST MUSIC.
+        media_content_type:
+          | "CHANNEL"
+          | "EPISODE"
+          | "PLAYLIST MUSIC"
+          | "MUSIC"
+          | "TVSHOW"
+          | "VIDEO";
+      }
+    >;
+  };
+  restCommand: {
+    //
+    assistantRelay: ServiceFunction<object, T, object>;
+    // Reloads RESTful commands from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+  };
+  inputDatetime: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+    // Sets the date and/or time.
+    setDatetime: ServiceFunction<
+      object,
+      T,
+      {
+        // The target date. @example '2019-04-20'
+        date?: string;
+        // The target time. @example '05:04:20'
+        time?: object;
+        // The target date & time. @example '2019-04-20 05:04:20'
+        datetime?: string;
+        // The target date & time, expressed by a UNIX timestamp.
+        timestamp?: number;
       }
     >;
   };
   commandLine: {
     // Reloads command line configuration from the YAML-configuration.
     reload: ServiceFunction<object, T, object>;
+  };
+  inputText: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+    // Sets the value.
+    setValue: ServiceFunction<
+      object,
+      T,
+      {
+        // The target value. @example This is an example text
+        value: string;
+      }
+    >;
+  };
+  counter: {
+    // Increments a counter by its step size.
+    increment: ServiceFunction<object, T, object>;
+    // Decrements a counter by its step size.
+    decrement: ServiceFunction<object, T, object>;
+    // Resets a counter to its initial value.
+    reset: ServiceFunction<object, T, object>;
+    // Sets the counter to a specific value.
+    setValue: ServiceFunction<
+      object,
+      T,
+      {
+        // The new counter value the entity should be set to.
+        value: number;
+      }
+    >;
   };
   number: {
     // Sets the value of a number.
@@ -937,95 +1396,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  schedule: {
-    // Reloads schedules from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-  };
-  mediaExtractor: {
-    // Extract media URL from a service.
-    extractMediaUrl: ServiceFunction<
-      object,
-      T,
-      {
-        // URL where the media can be found. @example https://www.youtube.com/watch?v=dQw4w9WgXcQ
-        url: string;
-        // Youtube-dl query to select the quality of the result. @example best
-        format_query?: string;
-      }
-    >;
-    // Downloads file from given URL.
-    playMedia: ServiceFunction<
-      object,
-      T,
-      {
-        // The ID of the content to play. Platform dependent. @example https://soundcloud.com/bruttoband/brutto-11
-        media_content_id: string | number;
-        // The type of the content to play. Must be one of MUSIC, TVSHOW, VIDEO, EPISODE, CHANNEL or PLAYLIST MUSIC.
-        media_content_type:
-          | "CHANNEL"
-          | "EPISODE"
-          | "PLAYLIST MUSIC"
-          | "MUSIC"
-          | "TVSHOW"
-          | "VIDEO";
-      }
-    >;
-  };
-  template: {
-    // Reloads template entities from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-  };
-  reolink: {
-    // Play a ringtone on a chime.
-    playChime: ServiceFunction<
-      object,
-      T,
-      {
-        // The chime to play the ringtone on.
-        device_id: object;
-        // Ringtone to play.
-        ringtone:
-          | "citybird"
-          | "originaltune"
-          | "pianokey"
-          | "loop"
-          | "attraction"
-          | "hophop"
-          | "goodday"
-          | "operetta"
-          | "moonlight"
-          | "waybackhome";
-      }
-    >;
-    // Move the camera with a specific speed.
-    ptzMove: ServiceFunction<
-      object,
-      T,
-      {
-        // PTZ move speed.
-        speed: number;
-      }
-    >;
-  };
-  inputDatetime: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-    // Sets the date and/or time.
-    setDatetime: ServiceFunction<
-      object,
-      T,
-      {
-        // The target date. @example '2019-04-20'
-        date?: string;
-        // The target time. @example '05:04:20'
-        time?: object;
-        // The target date & time. @example '2019-04-20 05:04:20'
-        datetime?: string;
-        // The target date & time, expressed by a UNIX timestamp.
-        timestamp?: number;
-      }
-    >;
-  };
   cast: {
     // Shows a dashboard view on a Chromecast device.
     showLovelaceView: ServiceFunction<
@@ -1041,42 +1411,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  inputText: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-    // Sets the value.
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        // The target value. @example This is an example text
-        value: string;
-      }
-    >;
-  };
-  counter: {
-    // Increments a counter by its step size.
-    increment: ServiceFunction<object, T, object>;
-    // Decrements a counter by its step size.
-    decrement: ServiceFunction<object, T, object>;
-    // Resets a counter to its initial value.
-    reset: ServiceFunction<object, T, object>;
-    // Sets the counter to a specific value.
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        // The new counter value the entity should be set to.
-        value: number;
-      }
-    >;
-  };
-  restCommand: {
-    //
-    assistantRelay: ServiceFunction<object, T, object>;
-    // Reloads RESTful commands from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-  };
   assistSatellite: {
     // Let the satellite announce a message.
     announce: ServiceFunction<
@@ -1089,6 +1423,14 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         media_id?: string;
       }
     >;
+  };
+  lawnMower: {
+    // Starts the mowing task.
+    startMowing: ServiceFunction<object, T, object>;
+    // Pauses the mowing task.
+    pause: ServiceFunction<object, T, object>;
+    // Stops the mowing task and returns to the dock.
+    dock: ServiceFunction<object, T, object>;
   };
   profiler: {
     // Starts the Profiler.
@@ -1160,88 +1502,28 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Logs all the current asyncio tasks.
     logCurrentTasks: ServiceFunction<object, T, object>;
   };
-  notify: {
-    // Sends a notification message.
-    sendMessage: ServiceFunction<
-      object,
-      T,
-      {
-        // Your notification message.
-        message: string;
-        // Title for your notification message.
-        title?: string;
-      }
-    >;
-    // Sends a notification that is visible in the notifications panel.
-    persistentNotification: ServiceFunction<
-      object,
-      T,
-      {
-        // Message body of the notification. @example The garage door has been open for 10 minutes.
-        message: string;
-        // Title of the notification. @example Your Garage Door Friend
-        title?: string;
-        // Some integrations provide extended functionality. For information on how to use _data_, refer to the integration documentation.. @example platform specific
-        data?: object;
-      }
-    >;
-    // Sends a notification message using the notify service.
-    notify: ServiceFunction<
-      object,
-      T,
-      {
-        // undefined @example The garage door has been open for 10 minutes.
-        message: string;
-        // undefined @example Your Garage Door Friend
-        title?: string;
-        // undefined @example platform specific
-        target?: object;
-        // undefined @example platform specific
-        data?: object;
-      }
-    >;
-    // Sends a notification message using the google_assistant_sdk service.
-    googleAssistantSdk: ServiceFunction<
-      object,
-      T,
-      {
-        // undefined @example The garage door has been open for 10 minutes.
-        message: string;
-        // undefined @example Your Garage Door Friend
-        title?: string;
-        // undefined @example platform specific
-        target?: object;
-        // undefined @example platform specific
-        data?: object;
-      }
-    >;
-  };
-  deviceTracker: {
-    // Manually update the records of a seen legacy device tracker in the known_devices.yaml file.
-    see: ServiceFunction<
-      object,
-      T,
-      {
-        // MAC address of the device. @example FF:FF:FF:FF:FF:FF
-        mac?: string;
-        // ID of the device (find the ID in `known_devices.yaml`). @example phonedave
-        dev_id?: string;
-        // Hostname of the device. @example Dave
-        host_name?: string;
-        // Name of the location where the device is located. The options are: `home`, `not_home`, or the name of the zone. @example home
-        location_name?: string;
-        // GPS coordinates where the device is located, specified by latitude and longitude (for example: [51.513845, -0.100539]). @example [51.509802, -0.086692]
-        gps?: object;
-        // Accuracy of the GPS coordinates.
-        gps_accuracy?: number;
-        // Battery level of the device.
-        battery?: number;
-      }
-    >;
-  };
   button: {
     // Press the button entity.
     press: ServiceFunction<object, T, object>;
+  };
+  siren: {
+    // Turns the siren on.
+    turnOn: ServiceFunction<
+      object,
+      T,
+      {
+        // The tone to emit. When `available_tones` property is a map, either the key or the value can be used. Must be supported by the integration. @example fire
+        tone?: string;
+        // The volume. 0 is inaudible, 1 is the maximum volume. Must be supported by the integration. @example 0.5
+        volume_level?: number;
+        // Number of seconds the sound is played. Must be supported by the integration. @example 15
+        duration?: string;
+      }
+    >;
+    // Turns the siren off.
+    turnOff: ServiceFunction<object, T, object>;
+    // Toggles the siren on/off.
+    toggle: ServiceFunction<object, T, object>;
   };
   climate: {
     // Turns climate device on.
@@ -1444,6 +1726,128 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
+  notify: {
+    // Sends a notification message.
+    sendMessage: ServiceFunction<
+      object,
+      T,
+      {
+        // Your notification message.
+        message: string;
+        // Title for your notification message.
+        title?: string;
+      }
+    >;
+    // Sends a notification that is visible in the notifications panel.
+    persistentNotification: ServiceFunction<
+      object,
+      T,
+      {
+        // Message body of the notification. @example The garage door has been open for 10 minutes.
+        message: string;
+        // Title of the notification. @example Your Garage Door Friend
+        title?: string;
+        // Some integrations provide extended functionality. For information on how to use _data_, refer to the integration documentation.. @example platform specific
+        data?: object;
+      }
+    >;
+    // Sends a notification message using the notify service.
+    notify: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example The garage door has been open for 10 minutes.
+        message: string;
+        //  @example Your Garage Door Friend
+        title?: string;
+        //  @example platform specific
+        target?: object;
+        //  @example platform specific
+        data?: object;
+      }
+    >;
+    // Sends a notification message using the google_assistant_sdk service.
+    googleAssistantSdk: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example The garage door has been open for 10 minutes.
+        message: string;
+        //  @example Your Garage Door Friend
+        title?: string;
+        //  @example platform specific
+        target?: object;
+        //  @example platform specific
+        data?: object;
+      }
+    >;
+  };
+  deviceTracker: {
+    // Manually update the records of a seen legacy device tracker in the known_devices.yaml file.
+    see: ServiceFunction<
+      object,
+      T,
+      {
+        // MAC address of the device. @example FF:FF:FF:FF:FF:FF
+        mac?: string;
+        // ID of the device (find the ID in `known_devices.yaml`). @example phonedave
+        dev_id?: string;
+        // Hostname of the device. @example Dave
+        host_name?: string;
+        // Name of the location where the device is located. The options are: `home`, `not_home`, or the name of the zone. @example home
+        location_name?: string;
+        // GPS coordinates where the device is located, specified by latitude and longitude (for example: [51.513845, -0.100539]). @example [51.509802, -0.086692]
+        gps?: object;
+        // Accuracy of the GPS coordinates.
+        gps_accuracy?: number;
+        // Battery level of the device.
+        battery?: number;
+      }
+    >;
+  };
+  calendar: {
+    // Adds a new calendar event.
+    createEvent: ServiceFunction<
+      object,
+      T,
+      {
+        // Defines the short summary or subject for the event. @example Department Party
+        summary: string;
+        // A more complete description of the event than the one provided by the summary. @example Meeting to provide technical review for 'Phoenix' design.
+        description?: string;
+        // The date and time the event should start. @example 2022-03-22 20:00:00
+        start_date_time?: string;
+        // The date and time the event should end. @example 2022-03-22 22:00:00
+        end_date_time?: string;
+        // The date the all-day event should start. @example 2022-03-22
+        start_date?: string;
+        // The date the all-day event should end (exclusive). @example 2022-03-23
+        end_date?: string;
+        // Days or weeks that you want to create the event in. @example {'days': 2} or {'weeks': 2}
+        in?: object;
+        // The location of the event. @example Conference Room - F123, Bldg. 002
+        location?: string;
+      }
+    >;
+    // Get events on a calendar within a time range.
+    getEvents: ServiceFunction<
+      object,
+      T,
+      {
+        // Returns active events after this time (exclusive). When not set, defaults to now. @example 2022-03-22 20:00:00
+        start_date_time?: string;
+        // Returns active events before this time (exclusive). Cannot be used with Duration. @example 2022-03-22 22:00:00
+        end_date_time?: string;
+        // Returns active events from Start time for the specified duration.
+        duration?: {
+          hours?: number;
+          days?: number;
+          minutes?: number;
+          seconds?: number;
+        };
+      }
+    >;
+  };
   alarmControlPanel: {
     // Disarms the alarm.
     alarmDisarm: ServiceFunction<
@@ -1606,68 +2010,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       {
         // Code used to open the lock. @example 1234
         code?: string;
-      }
-    >;
-  };
-  siren: {
-    // Turns the siren on.
-    turnOn: ServiceFunction<
-      object,
-      T,
-      {
-        // The tone to emit. When `available_tones` property is a map, either the key or the value can be used. Must be supported by the integration. @example fire
-        tone?: string;
-        // The volume. 0 is inaudible, 1 is the maximum volume. Must be supported by the integration. @example 0.5
-        volume_level?: number;
-        // Number of seconds the sound is played. Must be supported by the integration. @example 15
-        duration?: string;
-      }
-    >;
-    // Turns the siren off.
-    turnOff: ServiceFunction<object, T, object>;
-    // Toggles the siren on/off.
-    toggle: ServiceFunction<object, T, object>;
-  };
-  calendar: {
-    // Adds a new calendar event.
-    createEvent: ServiceFunction<
-      object,
-      T,
-      {
-        // Defines the short summary or subject for the event. @example Department Party
-        summary: string;
-        // A more complete description of the event than the one provided by the summary. @example Meeting to provide technical review for 'Phoenix' design.
-        description?: string;
-        // The date and time the event should start. @example 2022-03-22 20:00:00
-        start_date_time?: string;
-        // The date and time the event should end. @example 2022-03-22 22:00:00
-        end_date_time?: string;
-        // The date the all-day event should start. @example 2022-03-22
-        start_date?: string;
-        // The date the all-day event should end (exclusive). @example 2022-03-23
-        end_date?: string;
-        // Days or weeks that you want to create the event in. @example {'days': 2} or {'weeks': 2}
-        in?: object;
-        // The location of the event. @example Conference Room - F123, Bldg. 002
-        location?: string;
-      }
-    >;
-    // Get events on a calendar within a time range.
-    getEvents: ServiceFunction<
-      object,
-      T,
-      {
-        // Returns active events after this time (exclusive). When not set, defaults to now. @example 2022-03-22 20:00:00
-        start_date_time?: string;
-        // Returns active events before this time (exclusive). Cannot be used with Duration. @example 2022-03-22 22:00:00
-        end_date_time?: string;
-        // Returns active events from Start time for the specified duration.
-        duration?: {
-          hours?: number;
-          days?: number;
-          minutes?: number;
-          seconds?: number;
-        };
       }
     >;
   };
