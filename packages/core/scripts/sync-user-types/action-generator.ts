@@ -2,12 +2,23 @@ import { HassService, HassServices } from 'home-assistant-js-websocket';
 import _ from 'lodash';
 import { REMAPPED_TYPES } from './constants';
 
+type SelectorValues = string | number | boolean | null;
+type SelectorOption = {
+  [key: string]: SelectorValues;
+}
+
 type Selector = {
+  
   select?: {
-    options?: {
+    [key: string]: object | {
       value: string;
     }[] | string[];
   }
+  number?: SelectorOption;
+  object?: SelectorOption;
+  text?: SelectorOption;
+  entity?: SelectorOption;
+  boolean?: SelectorOption;
 };
 
 const resolveSelectorType = (selector: Selector) => {
@@ -20,7 +31,7 @@ const resolveSelectorType = (selector: Selector) => {
   if (keys.includes('boolean')) return 'boolean';
   if (keys.includes('select')) {
     const options = selector?.select?.options;
-    if (typeof options === 'undefined') return '';
+    if (!_.isArray(options)) return '';
     return options.map(option => `'${typeof option === 'string' ? option : option.value}'`).join(' | ');
   }
   return 'object';
@@ -60,8 +71,20 @@ export const generateActionTypes = (input: HassServices, {
           const domainActionFieldOverride = remapByDomainActionField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByDomainActionField] : undefined;
           const actionFieldOverride = remapByActionField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByActionField] : undefined;
           const fieldOverride = remapByField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByField] : undefined;
+          const _selector = selector as Selector;
           // some fields come back as an incorrect type but we know these should be something specific, these are hard coded in the REMAPPED_TYPES constant
-          const type = domainActionFieldOverride || actionFieldOverride || fieldOverride || resolveSelectorType(selector as Selector);
+          const type = domainActionFieldOverride || actionFieldOverride || fieldOverride || resolveSelectorType(_selector);
+          // const restrictions = field in (selector as Selector) && selector ? selector?.[field] as object : false;
+          if (_.isObject(selector)) {
+            const describedKeys = Object.entries(selector).filter(([key, value]) => key !== 'select' && value !== null);
+            if (describedKeys.length > 0) {
+              if (type in _selector) {
+                console.log(selector, `selector for ${field} in ${action} of ${domain} has keys: ${_selector[type as keyof Selector]}`);
+              } else {
+                // console.log(selector, `selector for ${field} in ${action} of ${domain} has keys: ${describedKeys.map(([key]) => key).join(', ')}`);
+              }
+            }
+          }
           const exampleUsage = example ? ` @example ${example}` : '';
           const isAdvancedFields = field === 'advanced_fields';
           const comment = `${description ?? ''}${exampleUsage ?? ''}`;
