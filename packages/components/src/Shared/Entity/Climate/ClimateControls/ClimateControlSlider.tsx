@@ -163,14 +163,14 @@ export function ClimateControlSlider({ entity: _entity, showCurrent = false }: C
           serviceData: {
             target_temp_low: _targetTemperature.low,
             target_temp_high: _targetTemperature.high,
-          }
+          },
         });
         return;
       }
       entity.service.setTemperature({
         serviceData: {
           temperature: _targetTemperature.value,
-        }
+        },
       });
     },
     [_targetTemperature, entity],

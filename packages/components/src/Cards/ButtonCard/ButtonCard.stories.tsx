@@ -36,12 +36,12 @@ function TemplateOnclick(args?: Partial<ButtonCardProps<"climate.air_conditioner
           entity.service.setHvacMode({
             serviceData: {
               hvac_mode: entity.state === "off" ? "heat" : "off",
-            }
+            },
           });
           entity.service.setTemperature({
             serviceData: {
               temperature: 25,
-            }
+            },
           });
         }}
       />

@@ -13,14 +13,4 @@ export const REMAPPED_TYPES: Record<string, string> = {
   white: 'boolean',
   color_temp: `number | object`,
   xy_color: `[number, number]`,
-  start_date_time: 'string',
-  end_date_time: 'string',
-  start_date: 'string',
-  end_date: 'string',
-  'calendar.get_events.duration': `{
-    hours?: number;
-    days?: number;
-    minutes?: number;
-    seconds?: number;
-  }`
 };

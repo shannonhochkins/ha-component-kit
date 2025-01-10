@@ -33,11 +33,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Latitude of your location. @example 32.87336
+        // Latitude of your location. @example 32.87336 @constraints  number: mode: box, min: -90, max: 90, step: any
         latitude: number;
-        // Longitude of your location. @example 117.22743
+        // Longitude of your location. @example 117.22743 @constraints  number: mode: box, min: -180, max: 180, step: any
         longitude: number;
-        // Elevation of your location above sea level. @example 120
+        // Elevation of your location above sea level. @example 120 @constraints  number: mode: box, step: any
         elevation?: number;
       }
     >;
@@ -122,7 +122,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       T,
       {
         // Name of a theme. @example default
-        name: object;
+        name: string;
         // Theme mode.
         mode?: "dark" | "light";
       }
@@ -136,7 +136,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Number of days to keep the data in the database. Starting today, counting backward. A value of `7` means that everything older than a week will be purged.
+        // Number of days to keep the data in the database. Starting today, counting backward. A value of `7` means that everything older than a week will be purged. @constraints  number: min: 0, max: 365, unit_of_measurement: days
         keep_days?: number;
         // Attempt to save disk space by rewriting the entire database file.
         repack?: boolean;
@@ -155,7 +155,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         domains?: object;
         // List of glob patterns used to select the entities for which the data is to be removed from the recorder database. @example domain*.object_id*
         entity_globs?: object;
-        // Number of days to keep the data for rows matching the filter. Starting today, counting backward. A value of `7` means that everything older than a week will be purged. The default of 0 days will remove all matching rows immediately.
+        // Number of days to keep the data for rows matching the filter. Starting today, counting backward. A value of `7` means that everything older than a week will be purged. The default of 0 days will remove all matching rows immediately. @constraints  number: min: 0, max: 365, unit_of_measurement: days
         keep_days?: number;
       }
     >;
@@ -171,7 +171,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       T,
       {
         // The add-on to start. @example core_ssh
-        addon: object;
+        addon: string;
       }
     >;
     // Stops an add-on.
@@ -180,7 +180,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       T,
       {
         // The add-on to stop. @example core_ssh
-        addon: object;
+        addon: string;
       }
     >;
     // Restarts an add-on.
@@ -189,7 +189,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       T,
       {
         // The add-on to restart. @example core_ssh
-        addon: object;
+        addon: string;
       }
     >;
     // Updates an add-on. This action should be used with caution since add-on updates can contain breaking changes. It is highly recommended that you review release notes/change logs before updating an add-on.
@@ -198,7 +198,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       T,
       {
         // The add-on to update. @example core_ssh
-        addon: object;
+        addon: string;
       }
     >;
     // Writes data to the add-on's standard input.
@@ -207,7 +207,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       T,
       {
         // The add-on to write to. @example core_ssh
-        addon: object;
+        addon: string;
       }
     >;
     // Powers off the host system.
@@ -226,7 +226,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // Compresses the backup files.
         compressed?: boolean;
         // Name of a backup network storage to host backups. @example my_backup_mount
-        location?: object;
+        location?: string;
         // Exclude the Home Assistant database file from backup
         homeassistant_exclude_database?: boolean;
       }
@@ -251,7 +251,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // Compresses the backup files.
         compressed?: boolean;
         // Name of a backup network storage to host backups. @example my_backup_mount
-        location?: object;
+        location?: string;
       }
     >;
     // Restores from full backup.
@@ -367,7 +367,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Time it takes the devices to transition into the states defined in the scene.
+        // Time it takes the devices to transition into the states defined in the scene. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
         transition?: number;
       }
     >;
@@ -380,7 +380,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       {
         // List of entities and their target state. @example light.kitchen: 'on' light.ceiling:   state: 'on'   brightness: 80
         entities: object;
-        // Time it takes the devices to transition into the states defined in the scene.
+        // Time it takes the devices to transition into the states defined in the scene. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
         transition?: number;
       }
     >;
@@ -413,7 +413,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // Name of the group. @example My test group
         name?: string;
         // Name of the icon for the group. @example mdi:camera
-        icon?: object;
+        icon?: string;
         // List of all members in the group. Cannot be used in combination with `Add entities` or `Remove entities`. @example domain.entity_id1, domain.entity_id2
         entities?: string;
         // List of members to be added to the group. Cannot be used in combination with `Entities` or `Remove entities`. @example domain.entity_id1, domain.entity_id2
@@ -464,7 +464,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // The volume. 0 is inaudible, 1 is the maximum volume.
+        // The volume. 0 is inaudible, 1 is the maximum volume. @constraints  number: min: 0, max: 1, step: 0.01
         volume_level: number;
       }
     >;
@@ -482,7 +482,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Target position in the currently playing media. The format is platform dependent.
+        // Target position in the currently playing media. The format is platform dependent. @constraints  number: min: 0, max: 9223372036854776000, step: 0.01, mode: box
         seek_position: number;
       }
     >;
@@ -555,15 +555,15 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Duration it takes to get to next state.
+        // Duration it takes to get to next state. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
         transition?: number;
         // The color in RGB format. A list of three integers between 0 and 255 representing the values of red, green, and blue. @example [255, 100, 100]
         rgb_color?: [number, number, number];
-        // Color temperature in Kelvin.
+        // Color temperature in Kelvin. @constraints  color_temp: unit: kelvin, min: 2000, max: 6500
         kelvin?: number | object;
-        // Number indicating the percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness, and 100 is the maximum brightness.
+        // Number indicating the percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness, and 100 is the maximum brightness. @constraints  number: min: 0, max: 100, unit_of_measurement: %
         brightness_pct?: number;
-        // Change brightness by a percentage.
+        // Change brightness by a percentage. @constraints  number: min: -100, max: 100, unit_of_measurement: %
         brightness_step_pct?: number;
         // Light effect.
         effect?: string;
@@ -725,11 +725,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         hs_color?: [number, number];
         //  @example [0.52, 0.43]
         xy_color?: [number, number];
-        //
+        //  @constraints  color_temp: unit: mired, min: 153, max: 500
         color_temp?: number | object;
-        //
+        //  @constraints  number: min: 0, max: 255
         brightness?: number;
-        //
+        //  @constraints  number: min: -225, max: 255
         brightness_step?: number;
         //
         white?: boolean;
@@ -744,7 +744,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Duration it takes to get to next state.
+        // Duration it takes to get to next state. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
         transition?: number;
         //
         flash?: "long" | "short";
@@ -755,13 +755,13 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Duration it takes to get to next state.
+        // Duration it takes to get to next state. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
         transition?: number;
         // The color in RGB format. A list of three integers between 0 and 255 representing the values of red, green, and blue. @example [255, 100, 100]
         rgb_color?: [number, number, number];
-        // Color temperature in Kelvin.
+        // Color temperature in Kelvin. @constraints  color_temp: unit: kelvin, min: 2000, max: 6500
         kelvin?: number | object;
-        // Number indicating the percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness, and 100 is the maximum brightness.
+        // Number indicating the percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness, and 100 is the maximum brightness. @constraints  number: min: 0, max: 100, unit_of_measurement: %
         brightness_pct?: number;
         // Light effect.
         effect?: string;
@@ -923,9 +923,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         hs_color?: [number, number];
         //  @example [0.52, 0.43]
         xy_color?: [number, number];
-        //
+        //  @constraints  color_temp: unit: mired, min: 153, max: 500
         color_temp?: number | object;
-        //
+        //  @constraints  number: min: 0, max: 255
         brightness?: number;
         //
         white?: boolean;
@@ -966,7 +966,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // The target value.
+        // The target value. @constraints  number: min: 0, max: 9223372036854776000, step: 0.001, mode: box
         value: number;
       }
     >;
@@ -1072,9 +1072,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       {
         // Full path to filename. Must be mp4. @example /tmp/snapshot_{{ entity_id.name }}.mp4
         filename: string;
-        // Planned duration of the recording. The actual duration may vary.
+        // Planned duration of the recording. The actual duration may vary. @constraints  number: min: 1, max: 3600, unit_of_measurement: seconds
         duration?: number;
-        // Planned lookback period to include in the recording (in addition to the duration). Only available if there is currently an active HLS stream. The actual length of the lookback period may vary.
+        // Planned lookback period to include in the recording (in addition to the duration). Only available if there is currently an active HLS stream. The actual length of the lookback period may vary. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
         lookback?: number;
       }
     >;
@@ -1162,7 +1162,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // Language of text. Defaults to server language. @example NL
         language?: string;
         // Conversation agent to process your request. The conversation agent is the brains of your assistant. It processes the incoming text commands. @example homeassistant
-        agent_id?: object;
+        agent_id?: string;
         // ID of the conversation, to be able to continue a previous conversation @example my_conversation_1
         conversation_id?: string;
       }
@@ -1175,7 +1175,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // Language to clear cached intents for. Defaults to server language. @example NL
         language?: string;
         // Conversation agent to reload. @example homeassistant
-        agent_id?: object;
+        agent_id?: string;
       }
     >;
   };
@@ -1197,7 +1197,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Target position.
+        // Target position. @constraints  number: min: 0, max: 100, unit_of_measurement: %
         position: number;
       }
     >;
@@ -1216,7 +1216,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Target tilt positition.
+        // Target tilt positition. @constraints  number: min: 0, max: 100, unit_of_measurement: %
         tilt_position: number;
       }
     >;
@@ -1238,7 +1238,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       T,
       {
         // The Reolink Chime to play the ringtone on.
-        device_id: object;
+        device_id: string;
         // Ringtone to play.
         ringtone:
           | "citybird"
@@ -1258,7 +1258,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // PTZ move speed.
+        // PTZ move speed. @constraints  number: min: 1, max: 64, step: 1
         speed: number;
       }
     >;
@@ -1283,13 +1283,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // The ID of the content to play. Platform dependent. @example https://soundcloud.com/bruttoband/brutto-11
         media_content_id: string | number;
         // The type of the content to play. Must be one of MUSIC, TVSHOW, VIDEO, EPISODE, CHANNEL or PLAYLIST MUSIC.
-        media_content_type:
-          | "CHANNEL"
-          | "EPISODE"
-          | "PLAYLIST MUSIC"
-          | "MUSIC"
-          | "TVSHOW"
-          | "VIDEO";
+        media_content_type: "CHANNEL" | "EPISODE" | "PLAYLIST MUSIC" | "MUSIC" | "TVSHOW" | "VIDEO";
       }
     >;
   };
@@ -1310,10 +1304,10 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // The target date. @example '2019-04-20'
         date?: string;
         // The target time. @example '05:04:20'
-        time?: object;
+        time?: string;
         // The target date & time. @example '2019-04-20 05:04:20'
         datetime?: string;
-        // The target date & time, expressed by a UNIX timestamp.
+        // The target date & time, expressed by a UNIX timestamp. @constraints  number: min: 0, max: 9223372036854776000, mode: box
         timestamp?: number;
       }
     >;
@@ -1347,7 +1341,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // The new counter value the entity should be set to.
+        // The new counter value the entity should be set to. @constraints  number: min: 0, max: 9223372036854776000, mode: box
         value: number;
       }
     >;
@@ -1438,7 +1432,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // The number of seconds to run the profiler.
+        // The number of seconds to run the profiler. @constraints  number: min: 1, max: 3600, unit_of_measurement: seconds
         seconds?: number;
       }
     >;
@@ -1447,7 +1441,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // The number of seconds to run the memory profiler.
+        // The number of seconds to run the memory profiler. @constraints  number: min: 1, max: 3600, unit_of_measurement: seconds
         seconds?: number;
       }
     >;
@@ -1456,7 +1450,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // The number of seconds between logging objects.
+        // The number of seconds between logging objects. @constraints  number: min: 1, max: 3600, unit_of_measurement: seconds
         scan_interval?: number;
       }
     >;
@@ -1467,9 +1461,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // The number of seconds between logging objects.
+        // The number of seconds between logging objects. @constraints  number: min: 1, max: 3600, unit_of_measurement: seconds
         scan_interval?: number;
-        // The maximum number of objects to log.
+        // The maximum number of objects to log. @constraints  number: min: 1, max: 30, unit_of_measurement: objects
         max_objects?: number;
       }
     >;
@@ -1514,7 +1508,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       {
         // The tone to emit. When `available_tones` property is a map, either the key or the value can be used. Must be supported by the integration. @example fire
         tone?: string;
-        // The volume. 0 is inaudible, 1 is the maximum volume. Must be supported by the integration. @example 0.5
+        // The volume. 0 is inaudible, 1 is the maximum volume. Must be supported by the integration. @example 0.5 @constraints  number: min: 0, max: 1, step: 0.05
         volume_level?: number;
         // Number of seconds the sound is played. Must be supported by the integration. @example 15
         duration?: string;
@@ -1538,14 +1532,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       T,
       {
         // HVAC operation mode.
-        hvac_mode?:
-          | "off"
-          | "auto"
-          | "cool"
-          | "dry"
-          | "fan_only"
-          | "heat_cool"
-          | "heat";
+        hvac_mode?: "off" | "auto" | "cool" | "dry" | "fan_only" | "heat_cool" | "heat";
       }
     >;
     // Sets preset mode.
@@ -1571,21 +1558,14 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // The temperature setpoint.
+        // The temperature setpoint. @constraints  number: min: 0, max: 250, step: 0.1, mode: box
         temperature?: number;
-        // The max temperature setpoint.
+        // The max temperature setpoint. @constraints  number: min: 0, max: 250, step: 0.1, mode: box
         target_temp_high?: number;
-        // The min temperature setpoint.
+        // The min temperature setpoint. @constraints  number: min: 0, max: 250, step: 0.1, mode: box
         target_temp_low?: number;
         // HVAC operation mode.
-        hvac_mode?:
-          | "off"
-          | "auto"
-          | "cool"
-          | "dry"
-          | "fan_only"
-          | "heat_cool"
-          | "heat";
+        hvac_mode?: "off" | "auto" | "cool" | "dry" | "fan_only" | "heat_cool" | "heat";
       }
     >;
     // Sets target humidity.
@@ -1593,7 +1573,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Target humidity.
+        // Target humidity. @constraints  number: min: 30, max: 99, unit_of_measurement: %
         humidity: number;
       }
     >;
@@ -1646,7 +1626,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Target position.
+        // Target position. @constraints  number: min: 0, max: 100, unit_of_measurement: %
         position: number;
       }
     >;
@@ -1678,11 +1658,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         device?: string;
         // A single command or a list of commands to send. @example Play
         command: object;
-        // The number of times you want to repeat the commands.
+        // The number of times you want to repeat the commands. @constraints  number: min: 0, max: 255
         num_repeats?: number;
-        // The time you want to wait in between repeated commands.
+        // The time you want to wait in between repeated commands. @constraints  number: min: 0, max: 60, step: 0.1, unit_of_measurement: seconds
         delay_secs?: number;
-        // The time you want to have it held before the release is send.
+        // The time you want to have it held before the release is send. @constraints  number: min: 0, max: 60, step: 0.1, unit_of_measurement: seconds
         hold_secs?: number;
       }
     >;
@@ -1699,7 +1679,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         command_type?: "ir" | "rf";
         // If code must be stored as an alternative. This is useful for discrete codes. Discrete codes are used for toggles that only perform one function. For example, a code to only turn a device on. If it is on already, sending the code won't change the state.
         alternative?: boolean;
-        // Timeout for the command to be learned.
+        // Timeout for the command to be learned. @constraints  number: min: 0, max: 60, step: 5, unit_of_measurement: seconds
         timeout?: number;
       }
     >;
@@ -1798,9 +1778,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         location_name?: string;
         // GPS coordinates where the device is located, specified by latitude and longitude (for example: [51.513845, -0.100539]). @example [51.509802, -0.086692]
         gps?: object;
-        // Accuracy of the GPS coordinates.
+        // Accuracy of the GPS coordinates. @constraints  number: min: 0, mode: box, unit_of_measurement: m
         gps_accuracy?: number;
-        // Battery level of the device.
+        // Battery level of the device. @constraints  number: min: 0, max: 100, unit_of_measurement: %
         battery?: number;
       }
     >;
@@ -1919,7 +1899,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Speed of the fan.
+        // Speed of the fan. @constraints  number: min: 0, max: 100, unit_of_measurement: %
         percentage?: number;
         // Preset fan mode. @example auto
         preset_mode?: string;
@@ -1934,7 +1914,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Percentage step by which the speed should be increased.
+        // Percentage step by which the speed should be increased. @constraints  number: min: 0, max: 100, unit_of_measurement: %
         percentage_step?: number;
       }
     >;
@@ -1943,7 +1923,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Percentage step by which the speed should be decreased.
+        // Percentage step by which the speed should be decreased. @constraints  number: min: 0, max: 100, unit_of_measurement: %
         percentage_step?: number;
       }
     >;
@@ -1970,7 +1950,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // Speed of the fan.
+        // Speed of the fan. @constraints  number: min: 0, max: 100, unit_of_measurement: %
         percentage: number;
       }
     >;

@@ -71,11 +71,11 @@ export function AlternateControls({
         onClick={() => {
           if (isOff) {
             mp.turnOn({
-              target: allEntityIds
+              target: allEntityIds,
             });
           } else {
             mp.turnOff({
-              target: allEntityIds
+              target: allEntityIds,
             });
           }
         }}

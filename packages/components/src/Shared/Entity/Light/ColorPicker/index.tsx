@@ -329,7 +329,7 @@ function InternalColorPicker({ disabled = false, entity: _entity, onChange, onCh
         serviceData: {
           ...color,
           ...params,
-        }
+        },
       });
     },
     [entity],

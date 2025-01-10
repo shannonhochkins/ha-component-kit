@@ -121,7 +121,7 @@ export const MediaPlayerControls = ({
       // the target speaker is playing and has more than one member in the group -> unjoin
       if ((entity.attributes?.group_members?.length || 0) > 1 && entity.state === "playing") {
         return mediaPlayerService.unjoin({
-          target: entityId
+          target: entityId,
         });
       }
 
@@ -227,11 +227,11 @@ export const MediaPlayerControls = ({
                             onClick={() => {
                               if (isOff) {
                                 mediaPlayerService.turnOn({
-                                  target: entity.entity_id
+                                  target: entity.entity_id,
                                 });
                               } else {
                                 mediaPlayerService.turnOff({
-                                  target: entity.entity_id
+                                  target: entity.entity_id,
                                 });
                               }
                             }}

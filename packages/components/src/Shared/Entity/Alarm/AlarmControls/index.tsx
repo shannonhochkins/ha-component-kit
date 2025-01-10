@@ -201,7 +201,7 @@ function InternalAlarmControls({
     entity.service[snakeCase(`alarm_${state}`) as AlarmServices]({
       serviceData: {
         code: inputVal,
-      }
+      },
     });
     if (!defaultCode) {
       setInputVal("");

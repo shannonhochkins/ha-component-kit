@@ -186,7 +186,7 @@ function InternalLightControls({ entity: _entity, onStateChange }: LightControls
                   entity.service.turnOn({
                     serviceData: {
                       brightness_pct: value,
-                    }
+                    },
                   });
                   if (onStateChange) onStateChange(`${Math.round(value)}%`);
                 }}

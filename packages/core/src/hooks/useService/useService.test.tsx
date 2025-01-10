@@ -19,7 +19,7 @@ describe("useService", () => {
       result.current.turnOn({
         serviceData: {
           color_name: "red",
-        }
+        },
       });
     });
 
@@ -46,7 +46,7 @@ describe("useService", () => {
         target: "light.kitchen",
         serviceData: {
           transition: 10,
-        }
+        },
       });
     });
 
@@ -72,8 +72,8 @@ describe("useService", () => {
       result.current("light").turnOff({
         target: "light.kitchen",
         serviceData: {
-          flash: 'long',
-        }
+          flash: "long",
+        },
       });
     });
 

@@ -19,6 +19,8 @@ type Selector = {
   text?: SelectorOption;
   entity?: SelectorOption;
   boolean?: SelectorOption;
+  datetime?: SelectorOption;
+  duration?: SelectorOption;
 };
 
 const resolveSelectorType = (selector: Selector) => {
@@ -27,13 +29,22 @@ const resolveSelectorType = (selector: Selector) => {
   const keys = Object.keys(selector);
   if (keys.includes('number')) return 'number';
   if (keys.includes('object')) return 'object';
-  if (keys.includes('text') || keys.includes('entity')) return 'string';
+  if (keys.includes('duration')) return `{
+    hours?: number;
+    days?: number;
+    minutes?: number;
+    seconds?: number;
+  }`;
+  const stringTypes = ['text', 'entity', 'datetime', 'time', 'date', 'addon', 'backup_location', 'icon', 'conversation_agent', 'device', 'theme'];
+  const isStringType = stringTypes.some(type => keys.includes(type));
+  if (isStringType) return 'string';
   if (keys.includes('boolean')) return 'boolean';
   if (keys.includes('select')) {
     const options = selector?.select?.options;
     if (!_.isArray(options)) return '';
     return options.map(option => `'${typeof option === 'string' ? option : option.value}'`).join(' | ');
   }
+  console.log('keys', keys);
   return 'object';
 }
 
@@ -74,20 +85,17 @@ export const generateActionTypes = (input: HassServices, {
           const _selector = selector as Selector;
           // some fields come back as an incorrect type but we know these should be something specific, these are hard coded in the REMAPPED_TYPES constant
           const type = domainActionFieldOverride || actionFieldOverride || fieldOverride || resolveSelectorType(_selector);
-          // const restrictions = field in (selector as Selector) && selector ? selector?.[field] as object : false;
+          let constraints = '';
           if (_.isObject(selector)) {
-            const describedKeys = Object.entries(selector).filter(([key, value]) => key !== 'select' && value !== null);
-            if (describedKeys.length > 0) {
-              if (type in _selector) {
-                console.log(selector, `selector for ${field} in ${action} of ${domain} has keys: ${_selector[type as keyof Selector]}`);
-              } else {
-                // console.log(selector, `selector for ${field} in ${action} of ${domain} has keys: ${describedKeys.map(([key]) => key).join(', ')}`);
-              }
-            }
+            const ignoredKeys = ['select', 'entity', 'theme', 'constant', 'text', 'device'];
+            constraints = Object.entries(_selector || {})
+              .filter(([_key, value]) => _key && _.isObject(value) && !ignoredKeys.includes(_key))
+              .map(([key, value]) => ` ${key}: ${Object.entries(value || {} as object).map(([key, value]) => `${key}: ${value}`).join(', ')}`).join(', ');
+            constraints = constraints ? ` @constraints ${constraints}` : '';
           }
           const exampleUsage = example ? ` @example ${example}` : '';
           const isAdvancedFields = field === 'advanced_fields';
-          const comment = `${description ?? ''}${exampleUsage ?? ''}`;
+          const comment = `${description ?? ''}${exampleUsage ?? ''}${constraints}`;
           return isAdvancedFields && 'fields' in rest ? processFields(rest.fields as HassService['fields']).join('\n') : `//${comment ? sanitizeString(` ${comment}`) : ''}\n${field}${required ? '' : '?'}: ${type};`;
         });
       }     

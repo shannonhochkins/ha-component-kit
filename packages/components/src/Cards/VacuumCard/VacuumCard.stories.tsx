@@ -47,7 +47,7 @@ export const CustomShortcuts: VacuumStory = {
           entity.service.setFanSpeed({
             serviceData: {
               fan_speed: "high",
-            }
+            },
           });
         },
       },

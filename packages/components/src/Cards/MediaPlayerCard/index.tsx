@@ -270,7 +270,7 @@ function InternalMediaPlayerCard({
         target: allEntityIds,
         serviceData: {
           seek_position: percentage * (media_duration ?? 0),
-        }
+        },
       });
     },
     [mp, allEntityIds, media_duration],

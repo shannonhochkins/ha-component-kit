@@ -59,7 +59,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
           target: allEntityIds ?? _entity,
           serviceData: {
             volume_level: volume,
-          }
+          },
         });
       }, 500);
     },
@@ -107,9 +107,11 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}
             icon="mdi:volume-minus"
-            onClick={() => mp.volumeDown({
-              target: allEntityIds ?? _entity
-            })}
+            onClick={() =>
+              mp.volumeDown({
+                target: allEntityIds ?? _entity,
+              })
+            }
           />
           <Fab
             rippleProps={{
@@ -122,9 +124,11 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}
             icon="mdi:volume-plus"
-            onClick={() => mp.volumeUp({
-              target: allEntityIds ?? _entity
-            })}
+            onClick={() =>
+              mp.volumeUp({
+                target: allEntityIds ?? _entity,
+              })
+            }
           />
         </>
       )}

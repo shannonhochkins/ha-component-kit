@@ -43,7 +43,6 @@ export async function typeSync({
   `;
   
   const { services, states } = await connect(url, token);
-  writeFileSync('services.json', JSON.stringify(services));
   
   const serviceInterfaces = await generateActionTypes(services, {
     domainWhitelist,

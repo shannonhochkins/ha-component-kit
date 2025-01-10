@@ -112,7 +112,7 @@ function InternalClimateControls({
       entity.service.setFanMode({
         serviceData: {
           fan_mode: value,
-        }
+        },
       });
     },
     [entity.service],
@@ -123,7 +123,7 @@ function InternalClimateControls({
       entity.service.setHvacMode({
         serviceData: {
           hvac_mode: value,
-        }
+        },
       });
     },
     [entity.service],
@@ -134,7 +134,7 @@ function InternalClimateControls({
       entity.service.setSwingMode({
         serviceData: {
           swing_mode: value,
-        }
+        },
       });
     },
     [entity.service],
@@ -146,7 +146,7 @@ function InternalClimateControls({
         entity.service.setPresetMode({
           serviceData: {
             preset_mode: value,
-          }
+          },
         });
       }
     },

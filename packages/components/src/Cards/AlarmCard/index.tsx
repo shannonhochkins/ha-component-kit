@@ -85,7 +85,7 @@ function InternalAlarmCard<E extends FilterByDomain<EntityName, "alarm_control_p
     entity.service[snakeCase(`alarm_${state}`) as AlarmServices]({
       serviceData: {
         code: defaultCode.toString(),
-      }
+      },
     });
   };
   const color = _getActionColor(entity.state, modalProps?.customActionColor);

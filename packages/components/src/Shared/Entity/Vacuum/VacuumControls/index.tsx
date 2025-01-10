@@ -171,7 +171,7 @@ export function VacuumControls({
         entity.service.setFanSpeed({
           serviceData: {
             fan_speed: internalFanSpeed,
-          }
+          },
         });
       }
     },
@@ -211,7 +211,7 @@ export function VacuumControls({
                       entity.service.setFanSpeed({
                         serviceData: {
                           fan_speed: fanSpeed,
-                        }
+                        },
                       });
                     }}
                   />

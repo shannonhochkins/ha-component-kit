@@ -178,7 +178,7 @@ function InternalClimateCard({
                 entity.service.setHvacMode({
                   serviceData: {
                     hvac_mode: mode,
-                  }
+                  },
                 });
               },
             } satisfies FeatureEntityProps;
@@ -247,7 +247,7 @@ function InternalClimateCard({
                   entity.service.setTemperature({
                     serviceData: {
                       temperature: temperature - 1,
-                    }
+                    },
                   });
                 }}
               />
@@ -288,7 +288,7 @@ function InternalClimateCard({
                   entity.service.setTemperature({
                     serviceData: {
                       temperature: temperature + 1,
-                    }
+                    },
                   });
                 }}
               />

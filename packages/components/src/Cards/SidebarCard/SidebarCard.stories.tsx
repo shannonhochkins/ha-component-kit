@@ -86,7 +86,7 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
                       serviceData: {
                         hvac_mode: "cool",
                         temperature: ac.attributes.temperature + 1,
-                      }
+                      },
                     });
                   }}
                 />
@@ -98,7 +98,7 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
                       serviceData: {
                         hvac_mode: "cool",
                         temperature: ac.attributes.temperature - 1,
-                      }
+                      },
                     });
                   }}
                 />
