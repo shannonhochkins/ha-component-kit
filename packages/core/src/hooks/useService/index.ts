@@ -20,23 +20,18 @@ export function createService<T extends SnakeOrCamelDomains>(
         // Skip interception for inherited properties
         if (service === "toJSON") return;
         return function (args: {
-          // TODO - rename
           target?: Target;
           serviceData?: ServiceData<T, S>;
           returnResponse?: boolean;
         }) {
           const { target: _target, serviceData, returnResponse } = args || {};
+          // use the rootTarget if provided, ignore the target from the args as typescript has an overload for this
+          // flow to disallow a serviceTarget if specified at the hook level.
           let target = rootTarget ?? _target;
-          // if rootTarget is available, use it. otherwise, use the first argument as target
-          // let target = rootTarget ?? (args[0] as Target);
-          // const serviceData = rootTarget ? (args[0] as ServiceData<T, S>) : args[1];
-          /// cast as false here as this is never used directly and the overloads handle return types correctly.
-          // const returnResponse = ((rootTarget ? (args[1] as boolean) : args[2]) || false) as false;
           if (Array.isArray(target)) {
             // ensure the target values are a unique array of ids
             target = [...uniq(target)];
           }
-          console.info("args", args);
           console.info(
             `${localize("perform_action_name", {
               search: "{name}",

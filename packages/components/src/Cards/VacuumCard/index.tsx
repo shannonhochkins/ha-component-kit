@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, type JSX } from "react";
+import { useMemo, useState, useCallback } from "react";
 import styled from "@emotion/styled";
 import { type AvailableQueries, fallback } from "@components";
 import type { VacuumControlsProps } from "@components";
@@ -40,7 +40,7 @@ function InternalVacuumCard({
   customImage,
   locatingNode,
   ...rest
-}: VacuumCardProps): JSX.Element {
+}: VacuumCardProps) {
   const { useStore } = useHass();
   const [flash, setFlash] = useState(false);
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);

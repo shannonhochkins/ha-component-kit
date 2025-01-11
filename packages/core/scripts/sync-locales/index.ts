@@ -52,7 +52,6 @@ const intercept = async () => {
   // list the file starting with app. in the .cache directory
   const files = await asyncReadDir(dirPath);
   const [filename] = files.filter(file => file.startsWith('app.'));
-  console.log('Using file:', filename);
   const translations = await extractTranslations(path.join(dirPath, filename));
   await downloadTranslations(translations);
 

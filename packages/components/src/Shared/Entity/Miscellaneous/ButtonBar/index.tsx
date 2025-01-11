@@ -7,7 +7,7 @@ import { ReactElement, Children, isValidElement, cloneElement } from "react";
 type Extendable = React.ComponentPropsWithoutRef<"div">;
 
 // Define the allowed children types
-export type AllowedChild = ReactElement<typeof ButtonBarButton> | false | null;
+type AllowedChild = ReactElement<typeof ButtonBarButton> | false | null;
 type AllowedChildren = AllowedChild | AllowedChild[];
 
 export interface ButtonBarProps extends Extendable {
