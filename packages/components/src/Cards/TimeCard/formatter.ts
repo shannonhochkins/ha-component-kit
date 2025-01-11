@@ -99,7 +99,29 @@ function parseDate(date: Date, options: FormatOptions = {}): DateParts {
   return parser(date);
 }
 
-const defaultPattern = "[YMDdAaHhms]+";
+export function daySuffix(day: number) {
+  let suffix = "";
+  switch (day) {
+    case 1:
+    case 21:
+    case 31:
+      suffix = "st";
+      break;
+    case 2:
+    case 22:
+      suffix = "nd";
+      break;
+    case 3:
+    case 23:
+      suffix = "rd";
+      break;
+    default:
+      suffix = "th";
+  }
+  return suffix;
+}
+
+const defaultPattern = "[YMDxdAaHhms]+";
 
 const formatters: Formatters = {
   YYYY: (parts) => parts.year,
@@ -108,6 +130,9 @@ const formatters: Formatters = {
   MMM: (parts) => parts.lmonth.slice(0, 3),
   MM: (parts) => parts.month,
   DD: (parts) => parts.day,
+  DDx: (parts) => `${parts.day}${daySuffix(parseInt(parts.day))}`,
+  dd: (parts) => `${parseInt(parts.day, 10)}`,
+  ddx: (parts) => `${parseInt(parts.day, 10)}${daySuffix(parseInt(parts.day))}`,
   dddd: (parts) => parts.weekday,
   ddd: (parts) => parts.weekday.slice(0, 3),
   A: (parts) => parts.dayPeriod,
