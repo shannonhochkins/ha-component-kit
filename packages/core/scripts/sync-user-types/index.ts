@@ -77,6 +77,6 @@ export async function typeSync({
   // now write the file
   writeFileSync(`${outDir}/${filename}`, formatted);
   console.info(`Succesfully generated types: ${outDir}/${filename}\n\n`);
-  // reminder to add the generated file to the tsconfig.json include array
-  console.info(`IMPORTANT: Don't forget to add the "${filename}" file to your tsconfig.json include array\n\n`);
+  // reminder to add the generated file to the tsconfig.app.json include array
+  console.info(`IMPORTANT: Don't forget to add the "${filename}" file to your tsconfig.app.json include array\n\n`);
 }

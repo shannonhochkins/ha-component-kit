@@ -26,9 +26,9 @@ light.getEvents({
 
 ```ts
 // v4
-const events = ServiceType<Target, ActionData>;
+const events = ServiceFunction<Target, ActionData>;
 // v5
-const events ServiceType<ReturnData, Target, ActionData>;
+const events ServiceFunction<ReturnData, Target, ActionData>;
 ```
 
 ### @hakit/core
