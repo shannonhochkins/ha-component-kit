@@ -7,7 +7,6 @@ import minimist from 'minimist';
 import { execSync } from 'child_process';
 import {
   red,
-  blue,
   yellow,
   green,
   cyan,
@@ -57,7 +56,7 @@ const createProject = async () => {
     // const argTemplate = argv.template || argv.t
     let targetDir = argTargetDir || defaultTargetDir;
     let result: prompts.Answers<
-      'projectName' | 'haUrl'
+      'projectName' | 'haUrl' | 'haToken'
     >;
     let abort = false;
     try {
@@ -78,6 +77,12 @@ const createProject = async () => {
             initial: 'http://homeassistant.local:8123',
             message: reset('HA Url:'),
           },
+          {
+            type: argTargetDir ? null : 'text',
+            name: 'haToken',
+            message: reset('HA Token:'),
+            initial: '',
+          }
         ],
         {
           onCancel: () => {
@@ -140,13 +145,14 @@ const createProject = async () => {
     const envFileContent = fs.readFileSync(envFile, 'utf-8');
     write('.env', root, templateDir, envFileContent
       .replace('{FOLDER_NAME}', cdProjectName)
-      .replace('VITE_HA_URL=', `VITE_HA_URL=${(haUrl ?? '').replace(/\/$/, '')}`));
+      .replace('VITE_HA_URL=', `VITE_HA_URL=${(haUrl ?? '').replace(/\/$/, '')}`)
+      .replace('VITE_HA_TOKEN=', `VITE_HA_TOKEN=${result.haToken}`));
+
 
     if (haUrl.startsWith('https')) {
-      console.info(blue(`\nNEXT STEPS: SYNC: Ensure you update ${cdProjectName}/.env with your VITE_HA_TOKEN`));
       console.info(green(`\nNEXT STEPS: SYNC: Once you've updated the .env file, run "npm run sync" to generate your types!`));
     } else {
-      console.info(yellow(`\nWARN: You're using an insecure connection and the \`npm run sync\` functionality will not work unless used with https protocol. Update the ./sync-types "url" value to use a secure connection to use the typescript sync feature.`));
+      console.info(yellow(`\nWARN: You're using an insecure connection and the \`npm run sync\` functionality will not work unless used with https protocol. Update the VITE_HA_URL value in the .env file to use a secure connection to use the typescript sync feature.`));
     }
     console.info(cyan(`\nNEXT STEPS: DEPLOY: Add in the optional SSH values to ensure that "npm run deploy" will work correctly.`));
     console.info(cyan(`\nNEXT STEPS: DEPLOY: To retrieve the SSH information, follow the instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-deploying--docs`));
@@ -229,6 +235,11 @@ function updatePackageJson({
   root: string;
   templateDir: string;
 }) {
+  const reactVersion = getLatestNpmVersion('react');
+  const reactDomVersion = getLatestNpmVersion('react-dom');
+  // now the types
+  const typesReactVersion = getLatestNpmVersion('@types/react');
+  const typesReactDomVersion = getLatestNpmVersion('@types/react-dom');
   const coreVersion = getLatestNpmVersion('@hakit/core');
   const componentsVersion = getLatestNpmVersion('@hakit/components');
   const prettierVersion = getLatestNpmVersion('prettier');
@@ -240,6 +251,8 @@ function updatePackageJson({
   const pkg = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
   pkg.dependencies = {
     ...pkg.dependencies,
+    react: `^${reactVersion}`,
+    'react-dom': `^${reactDomVersion}`,
     '@hakit/core': `^${coreVersion}`,
     '@hakit/components': `^${componentsVersion}`,
   };
@@ -250,6 +263,8 @@ function updatePackageJson({
     "@types/node": `^${nodeTypesVersion}`,
     "node-scp": `^${nodeScpVersion}`,
     "chalk": `^${chalk}`,
+    "@types/react": `^${typesReactVersion}`,
+    "@types/react-dom": `^${typesReactDomVersion}`,
   };
   pkg.scripts = {
     ...pkg.scripts,
