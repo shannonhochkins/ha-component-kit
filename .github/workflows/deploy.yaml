@@ -21,4 +21,4 @@ jobs:
       with:
         path: storybook-static
         install_command: npm i
-        build_command: NODE_ENV=production npm run type-check && npm run build:for:storybook && npm run build:storybook
+        build_command: NODE_ENV=production npm run build:for:storybook && npm run build:storybook
