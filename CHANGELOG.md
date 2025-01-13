@@ -34,7 +34,7 @@ const events ServiceType<ReturnData, Target, ActionData>;
 ### @hakit/core
 - IMPROVEMENT - locales updated to match changes with latest home assistant
 - IMPROVEMENT - supported-types.ts have been updated to fix a lot of incorrect types, it's also included more descriptions above parameters in the generated types file, if you're using the `ServiceFunction `type directly you will have to add `object` or a defined response type  in the first generic input as mentioned above in mgration notes.
-- IMPROVEMENT - authentication flow has been cleaned up a bit, there's now also an additional flow that will automatically re-use the connection exposed by home assistant if running within an iframe within home assistant which should speed up authentication.
+- IMPROVEMENT - authentication flow has been cleaned up a bit, there's now also an additional flow that will automatically re-use the connection exposed by home assistant if running within an iframe within home assistant which should speed up authentication - solves [issue](https://github.com/shannonhochkins/ha-component-kit/issues/176)
 
 - BREAKING - useService - now accepts a "returnResponse" option, if a service does indeed return a response, enabling this flag will send back the response over the sockets.
 
@@ -64,10 +64,10 @@ const { response, context } = await calendar.getEvents<{
 });
 console.log(context, response['calendar.some_calendar'].events);
 ```
-Thanks to @kdkavanagh for the base work for this and the idea!
+Thanks to @kdkavanagh for the base work for this and the [idea](https://github.com/shannonhochkins/ha-component-kit/pull/172)!
 
 ### @hakit/components
-- TimeCard - Improvements to formatting function thanks to @kdkavanagh - can now add `th,nd,rd,st` suffix using format string patterns.
+- TimeCard - Improvements to formatting function thanks to @kdkavanagh - can now add `th,nd,rd,st` suffix using format string patterns. [see](https://github.com/shannonhochkins/ha-component-kit/pull/174)
 - Updating some types to align with React 19 changes.
 
 ### Contributor improvements
@@ -164,7 +164,7 @@ BREAKING - ButtonCard - swapped title and description on ButtonCard, it's always
 - BUGFIX - ThemeProvider - There is new hsla variables exposed, and some of the colours didn't expose these values - this has been fixed, additionally an [issue](https://github.com/shannonhochkins/ha-component-kit/issues/154) as been fixed that was causing a flashing effect with the controls.
 
 ## @hakit/core
-- BUGFIX - Fixed a bug where the hassUrl provided may have contained a trailing slash and was stored without it, it will now sanitize the input url to ensure it's stored correctly. [issue](https://github.com/shannonhochkins/,ha-component-kit/issues/146#issuecomment-2138352567), the `useTranslations` hook has also been removed.
+- BUGFIX - Fixed a bug where the hassUrl provided may have contained a trailing slash and was stored without it, it will now sanitize the input url to ensure it's stored correctly. [issue](https://github.com/shannonhochkins/ha-component-kit/issues/146#issuecomment-2138352567), the `useTranslations` hook has also been removed.
 - NEW - `useLocale`, `useLocales` - a hook to retrieve the locales, useLocale is similar in nature to the `locale` function, useLocales will return all available locales from home assistant.
 - DEPRECATED/BREAKING - Removed `fetchTranslations` and replaced with multilingual support, this was previously used to fetch translations from home assistant, now this is done automatically through the `localize` method.
 - DEPRECATED/BREAKING - Removed `useTranslations` as this is now handled with the `localize` method.
