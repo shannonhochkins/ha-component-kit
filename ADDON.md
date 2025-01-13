@@ -22,8 +22,16 @@ You should now see the "HAKIT Dashboard" option in the sidebar menu which should
 
 **NOTE**: You may have to change the `html_file_path` in the configuration tab of the addon.
 
+### Configuring the Addon
 
-#### Local Development
+Under /hassio/dashboard within home assistant, find the HAKIT addon and click on it. 
+
+- `html_file_path`: The path to the index.html file of your custom dashboard. This should be the path from the config directory of your home assistant instance. For example, if your dashboard is located at `/config/www/ha-dashboard/index.html`, you would set this to `www/ha-dashboard/index.html`.
+- `spa_mode`: If your dashboard is a single page application, set this to true. This will ensure that the dashboard is loaded correctly.
+- `custom_dashboard` - This option is currently something that should always be enabled, this is something that's under development and will potentially be used later on for uploadable pre-built templates.
+
+
+#### Local Addon Development
 Set your directory to the hakit folder, After `npm install`, Simply run `npm run dev` and it will spin up a server and client under port 2022.
 
 #### Options
