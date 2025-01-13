@@ -49,7 +49,7 @@ function Template() {
       </li>
       <li style={{
         marginTop: 24
-      }}>Create a <a href="https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token" target="_blank">Long Lived Access Token</a> for your home assistant instance. You can create one in your home assistant instance at the bottom of your profile page.</li>
+      }}>Create a <a href="https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token" target="_blank" rel="noreferrer">Long Lived Access Token</a> for your home assistant instance. You can create one in your home assistant instance at the bottom of your profile page.</li>
     </ol>
     <Divider />
 
@@ -146,11 +146,11 @@ runner();
     `} />
 
     <h2>Result</h2>
-    <p>If successful, when you import a hook of say "useEntity" you should get complete intellisense for services and entities!</p>
+    <p>If successful, when you import a hook of say &quot;useEntity&quot; you should get complete intellisense for services and entities!</p>
 
     <h1>Extending Entities</h1>
-    <p>By default, @hakit/core will support all defined entities that the home assistant repository also supports, there may be cases for you to extend or add your own types for domains that aren't pre-processed.</p>
-    <p>For example, if the base types for the calendar domain aren't up to scratch, you can create your own extension of the types.</p>
+    <p>By default, @hakit/core will support all defined entities that the home assistant repository also supports, there may be cases for you to extend or add your own types for domains that aren&apos;t pre-processed.</p>
+    <p>For example, if the base types for the calendar domain aren&apos;t up to scratch, you can create your own extension of the types.</p>
     <p>First, create a file called <mark>custom-entities.d.ts</mark> in the root of your project.</p>
     <p>Then, add the following code:</p>
     <Source dark code={`

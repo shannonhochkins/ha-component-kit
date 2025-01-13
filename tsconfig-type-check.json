@@ -4,6 +4,6 @@
     "noEmit": true,
     "skipLibCheck": true,
   },
-  "include": [".d.ts", "hass-connect-fake", "stories", "hakit"],
-  "exclude": ["node_modules", "dist", "hakit/config", "packages"]
+  "include": [".d.ts", "hass-connect-fake", "stories", "hakit", "packages"],
+  "exclude": ["node_modules", "dist", "hakit/config"]
 }

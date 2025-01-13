@@ -78,8 +78,7 @@
     "release": "npm publish --access public",
     "sync-ha-user-types": "npm run build:sync-script && node ./sync-ha-user-types.cjs",
     "sync-locales": "npx tsx ./scripts/sync-locales/index.ts",
-    "clean": "rm -rf node_modules dist ./scripts/sync-ha-types/.ha-repo-cache",
-    "type-check": "tsc --noEmit"
+    "clean": "rm -rf node_modules dist ./scripts/sync-ha-types/.ha-repo-cache"
   },
   "tsup": {
     "entry": [

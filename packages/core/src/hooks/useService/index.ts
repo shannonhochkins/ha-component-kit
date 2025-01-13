@@ -19,11 +19,7 @@ export function createService<T extends SnakeOrCamelDomains>(
         const service = serviceInput as S;
         // Skip interception for inherited properties
         if (service === "toJSON") return;
-        return function (args: {
-          target?: Target;
-          serviceData?: ServiceData<T, S>;
-          returnResponse?: boolean;
-        }) {
+        return function (args: { target?: Target; serviceData?: ServiceData<T, S>; returnResponse?: boolean }) {
           const { target: _target, serviceData, returnResponse } = args || {};
           // use the rootTarget if provided, ignore the target from the args as typescript has an overload for this
           // flow to disallow a serviceTarget if specified at the hook level.

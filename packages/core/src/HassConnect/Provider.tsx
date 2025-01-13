@@ -39,11 +39,11 @@ export interface HassProviderProps {
   portalRoot?: HTMLElement;
 }
 
-function handleError(err: number | string | Error | unknown): string {
+function handleError(err: number | string | Error | unknown, hassToken?: string): string {
   const getMessage = () => {
     switch (err) {
       case ERR_INVALID_AUTH:
-        return "ERR_INVALID_AUTH: Invalid authentication.";
+        return `ERR_INVALID_AUTH: Invalid authentication. ${hassToken ? 'Check your "Long-Lived Access Token".' : ""}`;
       case ERR_CANNOT_CONNECT:
         return "ERR_CANNOT_CONNECT: Unable to connect";
       case ERR_CONNECTION_LOST:
@@ -96,10 +96,12 @@ function getInheritedConnection(): typeof window.hassConnection | undefined {
 
 function determineConnectionType(hassUrl: string, hassToken?: string): ConnectionType {
   const isAuthCallback = location && location.search.includes("auth_callback=1");
-  const hasHassConnection = getInheritedConnection() !== undefined;
-  const providedToken = hassToken !== undefined;
-  const savedTokens = loadTokens(hassUrl) !== null;
-  
+  const hasHassConnection = !!getInheritedConnection();
+  const providedToken = !!hassToken;
+  // when we have a hass connection, we don't need to validate the tokens
+  // so removing the tokens if values are different and we have a connection are not needed.
+  const savedTokens = !!loadTokens(hassUrl, false);
+
   switch (true) {
     case isAuthCallback:
       return "auth-callback";
@@ -115,26 +117,41 @@ function determineConnectionType(hassUrl: string, hassToken?: string): Connectio
 }
 
 const tryConnection = async (hassUrl: string, hassToken?: string): Promise<ConnectionResponse> => {
-  const connectionType = determineConnectionType(hassUrl);
+  const connectionType = determineConnectionType(hassUrl, hassToken);
 
-  if (connectionType === 'inherited-auth') {
-    const connection = await getInheritedConnection();
-    if (connection) {
+  if (connectionType === "inherited-auth") {
+    try {
+      // if we've hit this connect type, the connection will be available
+      const { auth, conn } = (await getInheritedConnection()) as { conn: Connection; auth: Auth };
       return {
         type: "success",
-        connection: connection.conn,
-        auth: connection.auth,
+        connection: conn,
+        auth: auth,
+      };
+    } catch (e) {
+      const message = handleError(e, hassToken);
+      return {
+        type: "error",
+        error: message,
       };
     }
   }
-  if (connectionType === 'provided-token' && hassToken) {
-    const auth = await createLongLivedTokenAuth(hassUrl, hassToken);
-    const connection = await createConnection({ auth });
-    return {
-      type: "success",
-      connection,
-      auth,
-    };
+  if (connectionType === "provided-token" && hassToken) {
+    try {
+      const auth = await createLongLivedTokenAuth(hassUrl, hassToken);
+      const connection = await createConnection({ auth });
+      return {
+        type: "success",
+        connection,
+        auth,
+      };
+    } catch (e) {
+      const message = handleError(e, hassToken);
+      return {
+        type: "error",
+        error: message,
+      };
+    }
   }
 
   const options: AuthOptions = {
@@ -148,13 +165,13 @@ const tryConnection = async (hassUrl: string, hassToken?: string): Promise<Conne
       return {
         type: "error",
         error: "Please enter a Home Assistant URL.",
-      }
+      };
     }
     if (options.hassUrl.indexOf("://") === -1) {
       return {
         type: "error",
         error: "Please enter your full URL, including the protocol part (https://).",
-      }
+      };
     }
     try {
       new URL(options.hassUrl);
@@ -163,7 +180,7 @@ const tryConnection = async (hassUrl: string, hassToken?: string): Promise<Conne
       return {
         type: "error",
         error: "Invalid URL",
-      }
+      };
     }
   }
   let auth: Auth;
@@ -190,7 +207,7 @@ const tryConnection = async (hassUrl: string, hassToken?: string): Promise<Conne
     }
     return {
       type: "error",
-      error: handleError(err),
+      error: handleError(err, hassToken),
     };
   } finally {
     // Clear url if we have a auth callback in url.
@@ -216,7 +233,7 @@ const tryConnection = async (hassUrl: string, hassToken?: string): Promise<Conne
     }
     return {
       type: "error",
-      error: handleError(err),
+      error: handleError(err, hassToken),
     };
   }
   return {
@@ -236,6 +253,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
   const setRoutes = useStore((store) => store.setRoutes);
   const connection = useStore((store) => store.connection);
   const setConnection = useStore((store) => store.setConnection);
+  const _connectionRef = useRef<Connection | null>(null);
   const entities = useStore((store) => store.entities);
   const setEntities = useStore((store) => store.setEntities);
   const error = useStore((store) => store.error);
@@ -259,6 +277,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
     // when the hassUrl changes, reset some properties and re-authenticate
     setAuth(null);
     setConnection(null);
+    _connectionRef.current = null;
     setEntities({});
     setConfig(null);
     setError(null);
@@ -297,6 +316,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
       setAuth(connectionResponse.auth);
       // store the connection to pass to the provider
       setConnection(connectionResponse.connection);
+      _connectionRef.current = connectionResponse.connection;
       authenticated.current = true;
     }
   }, [hassUrl, hassToken, setError, setAuth, setConnection, setCannotConnect]);
@@ -533,11 +553,22 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
 
   const debounceConnect = useDebouncedCallback(async () => {
     try {
+      if (_connectionRef.current && !connection) {
+        setConnection(_connectionRef.current);
+        authenticated.current = true;
+        return;
+      }
+      if (!_connectionRef.current && connection) {
+        _connectionRef.current = connection;
+        authenticated.current = true;
+        return;
+      }
       if (authenticated.current) return;
       authenticated.current = true;
       await handleConnect();
     } catch (e) {
-      setError(`Unable to connect to Home Assistant, please check the URL: "${(e as Error)?.message ?? e}"`);
+      const message = handleError(e);
+      setError(`Unable to connect to Home Assistant, please check the URL: "${message}"`);
     }
   }, 100);
 

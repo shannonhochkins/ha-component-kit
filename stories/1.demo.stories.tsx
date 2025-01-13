@@ -70,7 +70,7 @@ function Template() {
           lg={6}
           xlg={6}
           title="ButtonCard"
-          description={<span>With layoutType="slim" we can change the layout of the ButtonCard</span>}
+          description={<span>With layoutType=&quot;slim&quot; we can change the layout of the ButtonCard</span>}
           justifyContent="flex-start"
           alignItems="stretch">
           <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_1" service="toggle" md={6} lg={4} xlg={4} />
@@ -80,7 +80,7 @@ function Template() {
           <ButtonCard id="slim" layoutType="slim" entity="cover.cover_with_tilt" service="toggle" md={6} lg={4} xlg={4} />
         </Group>
       </Row>
-      <Group title="ButtonCard"  description={<span>With layoutType="slim-vertical" we can change the layout of the ButtonCard</span>} justifyContent="flex-start" alignItems="stretch">
+      <Group title="ButtonCard"  description={<span>With layoutType=&quot;slim-vertical&quot; we can change the layout of the ButtonCard</span>} justifyContent="flex-start" alignItems="stretch">
         <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_1" service="toggle" />
         <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_2" service="toggle" icon="mdi:power" />
         <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_3" service="toggle" />
@@ -178,8 +178,8 @@ function Template() {
             entity="camera.demo_camera"
             name="Only poster available in demo"
             headerSensors={[
-            <ButtonBarButton entity="binary_sensor.vehicle" />,
-            <ButtonBarButton entity="switch.record" />
+            <ButtonBarButton key="a" entity="binary_sensor.vehicle" />,
+            <ButtonBarButton key="b" entity="switch.record" />
           ]}
           />
           <SensorCard entity="sensor.air_conditioner_inside_temperature" />     

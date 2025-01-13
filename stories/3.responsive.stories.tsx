@@ -64,7 +64,7 @@ function Template() {
     }}>
       <h2>Responsive Layouts</h2>
       <p>You can specify individual card sizes by providing the breakpoint props to any card!</p>
-      <p>Every card has default properties assigned and should flow nicely by default, however they're designed in a way expecting the parent container to be full width of the screen, so if you want a panel that should have half of the screen width for desktop, and full sized for mobile, here's how you can achieve that!</p>
+      <p>Every card has default properties assigned and should flow nicely by default, however they&apos;re designed in a way expecting the parent container to be full width of the screen, so if you want a panel that should have half of the screen width for desktop, and full sized for mobile, here&apos;s how you can achieve that!</p>
       <p>NOTE: If you want to know what breakpoints are currently active, you can inspect the body of the document, and you should see a `bp-md, or bp-sm` etc class added to the element.</p>
       <p>The default breakpoint values are also configurable from the `ThemeProvider` under the property `breakpoints`.</p>
       <ResponsiveGroupsExample />

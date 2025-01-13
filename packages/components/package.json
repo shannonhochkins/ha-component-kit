@@ -62,8 +62,7 @@
     "prerelease": "npm run build",
     "release": "npm publish --access public",
     "test": "NODE_ENV=test jest --rootDir=src",
-    "clean": "rm -rf node_modules dist",
-    "type-check": "tsc --noEmit"
+    "clean": "rm -rf node_modules dist"
   },
   "peerDependencies": {
     "@emotion/is-prop-valid": ">=1.3.x",

@@ -1,3 +1,81 @@
+# 5.0.0
+
+### Migration from v4 to v5
+
+1. Update react/react-dom to v19 and any other required dependencies.
+2. As mentioned below under @hakit/core, any calls to services will need their arguments updated.
+```ts
+// v4
+const light = useService('light');
+// notice the argument order
+light.getEvents('light.some_light', {
+  color_name: 'aliceblue',
+});
+
+// v5
+const light = useService('light');
+// arguments now part of an object as first argument
+light.getEvents({
+  target: 'light.some_light',
+  serviceData: {
+    color_name: 'aliceblue',
+  },
+});
+```
+3. If you're using the `ServiceFunction` type directly you'll now need to add `object` or a defined return type as the first generic argument
+
+```ts
+// v4
+const events = ServiceType<Target, ActionData>;
+// v5
+const events ServiceType<ReturnData, Target, ActionData>;
+```
+
+### @hakit/core
+- IMPROVEMENT - locales updated to match changes with latest home assistant
+- IMPROVEMENT - supported-types.ts have been updated to fix a lot of incorrect types, it's also included more descriptions above parameters in the generated types file, if you're using the `ServiceFunction `type directly you will have to add `object` or a defined response type  in the first generic input as mentioned above in mgration notes.
+- IMPROVEMENT - authentication flow has been cleaned up a bit, there's now also an additional flow that will automatically re-use the connection exposed by home assistant if running within an iframe within home assistant which should speed up authentication.
+
+- BREAKING - useService - now accepts a "returnResponse" option, if a service does indeed return a response, enabling this flag will send back the response over the sockets.
+
+The arguments for services have changed to a single object argument for consistency with the `callService` method, see changes above in the migration steps, all changes are documented in all three ways of triggering a service (useEntity, useService, and callService).
+
+Examples of returning a response from a service:
+
+```ts
+interface CalendarEvent {
+  start: string;
+  end: string;
+  description: string;
+  summary: string;
+}
+const calendar = useService('calendar');
+const { response, context } = await calendar.getEvents<{
+  ['calendar.some_calendar']: {
+    events: CalendarEvent[];
+  }
+}>({
+  target: 'calendar.some_calendar',
+  serviceData: {
+    start: '2021-01-01',
+    end: '2021-01-31',
+  },
+  returnResponse: true,
+});
+console.log(context, response['calendar.some_calendar'].events);
+```
+Thanks to @kdkavanagh for the base work for this and the idea!
+
+### @hakit/components
+- TimeCard - Improvements to formatting function thanks to @kdkavanagh - can now add `th,nd,rd,st` suffix using format string patterns.
+- Updating some types to align with React 19 changes.
+
+### Contributor improvements
+- Added new eslint configuration & rules
+- Improved speed of build by updating most of the dependencies used
+- Github action now validates types before deploying
+- Added notes on how to pack the packages locally for testing
+
 # 4.0.4
 
 ## @hakit/components

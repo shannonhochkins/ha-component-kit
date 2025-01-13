@@ -96,6 +96,7 @@ export type ServiceFunctionWithEntity<ResponseData extends object, Data = object
     /** the data to send to the service */
     serviceData?: Data;
   }): void;
+  // @ts-expect-error - It's needed for the overloads
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   <CustomResponseData extends ResponseData = ResponseData>({
     target,
@@ -122,7 +123,7 @@ export type ServiceFunctionWithoutEntity<ResponseData extends object, Data = obj
     /** the data to send to the service */
     serviceData?: Data;
   }): void;
-
+  // @ts-expect-error - It's needed for the overloads
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   <CustomResponseData extends ResponseData = ResponseData>(args?: {
     /** the data to send to the service */

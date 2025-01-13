@@ -14,7 +14,7 @@
     }
   },
   "rootDir": "./src",
-  "include": ["src", "scripts",  "src/.d.ts", "bin", "mocks", "../../.d.ts"],
+  "include": ["src", "scripts", "bin", "mocks", "../../.d.ts"],
   "exclude": [
     "node_modules"
   ],

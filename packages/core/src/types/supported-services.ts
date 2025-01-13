@@ -936,45 +936,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  script: {
-    //
-    nightlightPower: ServiceFunction<object, T, object>;
-    // Reloads all the available scripts.
-    reload: ServiceFunction<object, T, object>;
-    // Runs the sequence of actions defined in a script.
-    turnOn: ServiceFunction<object, T, object>;
-    // Stops a running script.
-    turnOff: ServiceFunction<object, T, object>;
-    // Starts a script if it isn't running, stops it otherwise.
-    toggle: ServiceFunction<object, T, object>;
-  };
-  inputButton: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-    // Mimics the physical button press on the device.
-    press: ServiceFunction<object, T, object>;
-  };
-  zone: {
-    // Reloads zones from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-  };
-  inputNumber: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-    // Sets the value.
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        // The target value. @constraints  number: min: 0, max: 9223372036854776000, step: 0.001, mode: box
-        value: number;
-      }
-    >;
-    // Increments the current value by 1 step.
-    increment: ServiceFunction<object, T, object>;
-    // Decrements the current value by 1 step.
-    decrement: ServiceFunction<object, T, object>;
-  };
   logbook: {
     // Creates a custom entry in the logbook.
     log: ServiceFunction<
@@ -991,6 +952,10 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         domain?: string;
       }
     >;
+  };
+  zone: {
+    // Reloads zones from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
   };
   inputSelect: {
     // Reloads helpers from the YAML-configuration.
@@ -1036,6 +1001,41 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
+  inputNumber: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+    // Sets the value.
+    setValue: ServiceFunction<
+      object,
+      T,
+      {
+        // The target value. @constraints  number: min: 0, max: 9223372036854776000, step: 0.001, mode: box
+        value: number;
+      }
+    >;
+    // Increments the current value by 1 step.
+    increment: ServiceFunction<object, T, object>;
+    // Decrements the current value by 1 step.
+    decrement: ServiceFunction<object, T, object>;
+  };
+  inputButton: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+    // Mimics the physical button press on the device.
+    press: ServiceFunction<object, T, object>;
+  };
+  script: {
+    //
+    nightlightPower: ServiceFunction<object, T, object>;
+    // Reloads all the available scripts.
+    reload: ServiceFunction<object, T, object>;
+    // Runs the sequence of actions defined in a script.
+    turnOn: ServiceFunction<object, T, object>;
+    // Stops a running script.
+    turnOff: ServiceFunction<object, T, object>;
+    // Starts a script if it isn't running, stops it otherwise.
+    toggle: ServiceFunction<object, T, object>;
+  };
   camera: {
     // Enables the motion detection.
     enableMotionDetection: ServiceFunction<object, T, object>;
@@ -1079,16 +1079,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  inputBoolean: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-    // Turns on the helper.
-    turnOn: ServiceFunction<object, T, object>;
-    // Turns off the helper.
-    turnOff: ServiceFunction<object, T, object>;
-    // Toggles the helper on/off.
-    toggle: ServiceFunction<object, T, object>;
-  };
   timer: {
     // Reloads timers from the YAML-configuration.
     reload: ServiceFunction<object, T, object>;
@@ -1117,39 +1107,15 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  vacuum: {
-    // Starts or resumes the cleaning task.
-    start: ServiceFunction<object, T, object>;
-    // Pauses the cleaning task.
-    pause: ServiceFunction<object, T, object>;
-    // Tells the vacuum cleaner to return to its dock.
-    returnToBase: ServiceFunction<object, T, object>;
-    // Tells the vacuum cleaner to do a spot clean-up.
-    cleanSpot: ServiceFunction<object, T, object>;
-    // Locates the vacuum cleaner robot.
-    locate: ServiceFunction<object, T, object>;
-    // Stops the current cleaning task.
-    stop: ServiceFunction<object, T, object>;
-    // Sets the fan speed of the vacuum cleaner.
-    setFanSpeed: ServiceFunction<
-      object,
-      T,
-      {
-        // Fan speed. The value depends on the integration. Some integrations have speed steps, like 'medium'. Some use a percentage, between 0 and 100. @example low
-        fan_speed: string;
-      }
-    >;
-    // Sends a command to the vacuum cleaner.
-    sendCommand: ServiceFunction<
-      object,
-      T,
-      {
-        // Command to execute. The commands are integration-specific. @example set_dnd_timer
-        command: string;
-        // Parameters for the command. The parameters are integration-specific. @example { 'key': 'value' }
-        params?: object;
-      }
-    >;
+  inputBoolean: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+    // Turns on the helper.
+    turnOn: ServiceFunction<object, T, object>;
+    // Turns off the helper.
+    turnOff: ServiceFunction<object, T, object>;
+    // Toggles the helper on/off.
+    toggle: ServiceFunction<object, T, object>;
   };
   conversation: {
     // Launches a conversation from a transcribed text.
@@ -1179,12 +1145,52 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  switch: {
-    // Turns a switch off.
-    turnOff: ServiceFunction<object, T, object>;
-    // Turns a switch on.
-    turnOn: ServiceFunction<object, T, object>;
-    // Toggles a switch on/off.
+  lock: {
+    // Unlocks a lock.
+    unlock: ServiceFunction<
+      object,
+      T,
+      {
+        // Code used to unlock the lock. @example 1234
+        code?: string;
+      }
+    >;
+    // Locks a lock.
+    lock: ServiceFunction<
+      object,
+      T,
+      {
+        // Code used to lock the lock. @example 1234
+        code?: string;
+      }
+    >;
+    // Opens a lock.
+    open: ServiceFunction<
+      object,
+      T,
+      {
+        // Code used to open the lock. @example 1234
+        code?: string;
+      }
+    >;
+  };
+  valve: {
+    // Opens a valve.
+    openValve: ServiceFunction<object, T, object>;
+    // Closes a valve.
+    closeValve: ServiceFunction<object, T, object>;
+    // Moves a valve to a specific position.
+    setValvePosition: ServiceFunction<
+      object,
+      T,
+      {
+        // Target position. @constraints  number: min: 0, max: 100, unit_of_measurement: %
+        position: number;
+      }
+    >;
+    // Stops the valve movement.
+    stopValve: ServiceFunction<object, T, object>;
+    // Toggles a valve open/closed.
     toggle: ServiceFunction<object, T, object>;
   };
   cover: {
@@ -1223,75 +1229,112 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Toggles a cover tilt open/closed.
     toggleCoverTilt: ServiceFunction<object, T, object>;
   };
-  schedule: {
-    // Reloads schedules from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+  switch: {
+    // Turns a switch off.
+    turnOff: ServiceFunction<object, T, object>;
+    // Turns a switch on.
+    turnOn: ServiceFunction<object, T, object>;
+    // Toggles a switch on/off.
+    toggle: ServiceFunction<object, T, object>;
   };
-  template: {
-    // Reloads template entities from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-  };
-  reolink: {
-    // Plays a ringtone on a Reolink Chime.
-    playChime: ServiceFunction<
+  alarmControlPanel: {
+    // Disarms the alarm.
+    alarmDisarm: ServiceFunction<
       object,
       T,
       {
-        // The Reolink Chime to play the ringtone on.
-        device_id: string;
-        // Ringtone to play.
-        ringtone:
-          | "citybird"
-          | "originaltune"
-          | "pianokey"
-          | "loop"
-          | "attraction"
-          | "hophop"
-          | "goodday"
-          | "operetta"
-          | "moonlight"
-          | "waybackhome";
+        // Code to disarm the alarm. @example 1234
+        code?: string;
       }
     >;
-    // Moves the camera with a specific speed.
-    ptzMove: ServiceFunction<
+    // Sets the alarm to: _armed, but someone is home_.
+    alarmArmHome: ServiceFunction<
       object,
       T,
       {
-        // PTZ move speed. @constraints  number: min: 1, max: 64, step: 1
-        speed: number;
+        // Code to arm the alarm. @example 1234
+        code?: string;
+      }
+    >;
+    // Sets the alarm to: _armed, no one home_.
+    alarmArmAway: ServiceFunction<
+      object,
+      T,
+      {
+        // Code to arm the alarm. @example 1234
+        code?: string;
+      }
+    >;
+    // Sets the alarm to: _armed for the night_.
+    alarmArmNight: ServiceFunction<
+      object,
+      T,
+      {
+        // Code to arm the alarm. @example 1234
+        code?: string;
+      }
+    >;
+    // Sets the alarm to: _armed for vacation_.
+    alarmArmVacation: ServiceFunction<
+      object,
+      T,
+      {
+        // Code to arm the alarm. @example 1234
+        code?: string;
+      }
+    >;
+    // Arms the alarm while allowing to bypass a custom area.
+    alarmArmCustomBypass: ServiceFunction<
+      object,
+      T,
+      {
+        // Code to arm the alarm. @example 1234
+        code?: string;
+      }
+    >;
+    // Trigger the alarm manually.
+    alarmTrigger: ServiceFunction<
+      object,
+      T,
+      {
+        // Code to arm the alarm. @example 1234
+        code?: string;
       }
     >;
   };
-  mediaExtractor: {
-    // Extract media URL from a service.
-    extractMediaUrl: ServiceFunction<
+  vacuum: {
+    // Starts or resumes the cleaning task.
+    start: ServiceFunction<object, T, object>;
+    // Pauses the cleaning task.
+    pause: ServiceFunction<object, T, object>;
+    // Tells the vacuum cleaner to return to its dock.
+    returnToBase: ServiceFunction<object, T, object>;
+    // Tells the vacuum cleaner to do a spot clean-up.
+    cleanSpot: ServiceFunction<object, T, object>;
+    // Locates the vacuum cleaner robot.
+    locate: ServiceFunction<object, T, object>;
+    // Stops the current cleaning task.
+    stop: ServiceFunction<object, T, object>;
+    // Sets the fan speed of the vacuum cleaner.
+    setFanSpeed: ServiceFunction<
       object,
       T,
       {
-        // URL where the media can be found. @example https://www.youtube.com/watch?v=dQw4w9WgXcQ
-        url: string;
-        // Youtube-dl query to select the quality of the result. @example best
-        format_query?: string;
+        // Fan speed. The value depends on the integration. Some integrations have speed steps, like 'medium'. Some use a percentage, between 0 and 100. @example low
+        fan_speed: string;
       }
     >;
-    // Downloads file from given URL.
-    playMedia: ServiceFunction<
+    // Sends a command to the vacuum cleaner.
+    sendCommand: ServiceFunction<
       object,
       T,
       {
-        // The ID of the content to play. Platform dependent. @example https://soundcloud.com/bruttoband/brutto-11
-        media_content_id: string | number;
-        // The type of the content to play. Must be one of MUSIC, TVSHOW, VIDEO, EPISODE, CHANNEL or PLAYLIST MUSIC.
-        media_content_type: "CHANNEL" | "EPISODE" | "PLAYLIST MUSIC" | "MUSIC" | "TVSHOW" | "VIDEO";
+        // Command to execute. The commands are integration-specific. @example set_dnd_timer
+        command: string;
+        // Parameters for the command. The parameters are integration-specific. @example { 'key': 'value' }
+        params?: object;
       }
     >;
-  };
-  restCommand: {
-    //
-    assistantRelay: ServiceFunction<object, T, object>;
-    // Reloads RESTful commands from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
   };
   inputDatetime: {
     // Reloads helpers from the YAML-configuration.
@@ -1312,8 +1355,22 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
+  restCommand: {
+    //
+    assistantRelay: ServiceFunction<object, T, object>;
+    // Reloads RESTful commands from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+  };
   commandLine: {
     // Reloads command line configuration from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+  };
+  template: {
+    // Reloads template entities from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+  };
+  schedule: {
+    // Reloads schedules from the YAML-configuration.
     reload: ServiceFunction<object, T, object>;
   };
   inputText: {
@@ -1346,47 +1403,27 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  number: {
-    // Sets the value of a number.
-    setValue: ServiceFunction<
+  mediaExtractor: {
+    // Extract media URL from a service.
+    extractMediaUrl: ServiceFunction<
       object,
       T,
       {
-        // The target value to set. @example 42
-        value?: string;
+        // URL where the media can be found. @example https://www.youtube.com/watch?v=dQw4w9WgXcQ
+        url: string;
+        // Youtube-dl query to select the quality of the result. @example best
+        format_query?: string;
       }
     >;
-  };
-  select: {
-    // Selects the first option.
-    selectFirst: ServiceFunction<object, T, object>;
-    // Selects the last option.
-    selectLast: ServiceFunction<object, T, object>;
-    // Selects the next option.
-    selectNext: ServiceFunction<
+    // Downloads file from given URL.
+    playMedia: ServiceFunction<
       object,
       T,
       {
-        // If the option should cycle from the last to the first.
-        cycle?: boolean;
-      }
-    >;
-    // Selects an option.
-    selectOption: ServiceFunction<
-      object,
-      T,
-      {
-        // Option to be selected. @example 'Item A'
-        option: string;
-      }
-    >;
-    // Selects the previous option.
-    selectPrevious: ServiceFunction<
-      object,
-      T,
-      {
-        // If the option should cycle from the first to the last.
-        cycle?: boolean;
+        // The ID of the content to play. Platform dependent. @example https://soundcloud.com/bruttoband/brutto-11
+        media_content_id: string | number;
+        // The type of the content to play. Must be one of MUSIC, TVSHOW, VIDEO, EPISODE, CHANNEL or PLAYLIST MUSIC.
+        media_content_type: "CHANNEL" | "EPISODE" | "PLAYLIST MUSIC" | "MUSIC" | "TVSHOW" | "VIDEO";
       }
     >;
   };
@@ -1402,6 +1439,38 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         dashboard_path: string;
         // The URL path of the dashboard view to show. @example downstairs
         view_path?: string;
+      }
+    >;
+  };
+  reolink: {
+    // Plays a ringtone on a Reolink Chime.
+    playChime: ServiceFunction<
+      object,
+      T,
+      {
+        // The Reolink Chime to play the ringtone on.
+        device_id: string;
+        // Ringtone to play.
+        ringtone:
+          | "citybird"
+          | "originaltune"
+          | "pianokey"
+          | "loop"
+          | "attraction"
+          | "hophop"
+          | "goodday"
+          | "operetta"
+          | "moonlight"
+          | "waybackhome";
+      }
+    >;
+    // Moves the camera with a specific speed.
+    ptzMove: ServiceFunction<
+      object,
+      T,
+      {
+        // PTZ move speed. @constraints  number: min: 1, max: 64, step: 1
+        speed: number;
       }
     >;
   };
@@ -1496,28 +1565,242 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Logs all the current asyncio tasks.
     logCurrentTasks: ServiceFunction<object, T, object>;
   };
-  button: {
-    // Press the button entity.
-    press: ServiceFunction<object, T, object>;
+  notify: {
+    // Sends a notification message.
+    sendMessage: ServiceFunction<
+      object,
+      T,
+      {
+        // Your notification message.
+        message: string;
+        // Title for your notification message.
+        title?: string;
+      }
+    >;
+    // Sends a notification that is visible in the notifications panel.
+    persistentNotification: ServiceFunction<
+      object,
+      T,
+      {
+        // Message body of the notification. @example The garage door has been open for 10 minutes.
+        message: string;
+        // Title of the notification. @example Your Garage Door Friend
+        title?: string;
+        // Some integrations provide extended functionality. For information on how to use _data_, refer to the integration documentation.. @example platform specific
+        data?: object;
+      }
+    >;
+    // Sends a notification message using the notify service.
+    notify: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example The garage door has been open for 10 minutes.
+        message: string;
+        //  @example Your Garage Door Friend
+        title?: string;
+        //  @example platform specific
+        target?: object;
+        //  @example platform specific
+        data?: object;
+      }
+    >;
+    // Sends a notification message using the google_assistant_sdk service.
+    googleAssistantSdk: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example The garage door has been open for 10 minutes.
+        message: string;
+        //  @example Your Garage Door Friend
+        title?: string;
+        //  @example platform specific
+        target?: object;
+        //  @example platform specific
+        data?: object;
+      }
+    >;
   };
-  siren: {
-    // Turns the siren on.
+  deviceTracker: {
+    // Manually update the records of a seen legacy device tracker in the known_devices.yaml file.
+    see: ServiceFunction<
+      object,
+      T,
+      {
+        // MAC address of the device. @example FF:FF:FF:FF:FF:FF
+        mac?: string;
+        // ID of the device (find the ID in `known_devices.yaml`). @example phonedave
+        dev_id?: string;
+        // Hostname of the device. @example Dave
+        host_name?: string;
+        // Name of the location where the device is located. The options are: `home`, `not_home`, or the name of the zone. @example home
+        location_name?: string;
+        // GPS coordinates where the device is located, specified by latitude and longitude (for example: [51.513845, -0.100539]). @example [51.509802, -0.086692]
+        gps?: object;
+        // Accuracy of the GPS coordinates. @constraints  number: min: 0, mode: box, unit_of_measurement: m
+        gps_accuracy?: number;
+        // Battery level of the device. @constraints  number: min: 0, max: 100, unit_of_measurement: %
+        battery?: number;
+      }
+    >;
+  };
+  number: {
+    // Sets the value of a number.
+    setValue: ServiceFunction<
+      object,
+      T,
+      {
+        // The target value to set. @example 42
+        value?: string;
+      }
+    >;
+  };
+  select: {
+    // Selects the first option.
+    selectFirst: ServiceFunction<object, T, object>;
+    // Selects the last option.
+    selectLast: ServiceFunction<object, T, object>;
+    // Selects the next option.
+    selectNext: ServiceFunction<
+      object,
+      T,
+      {
+        // If the option should cycle from the last to the first.
+        cycle?: boolean;
+      }
+    >;
+    // Selects an option.
+    selectOption: ServiceFunction<
+      object,
+      T,
+      {
+        // Option to be selected. @example 'Item A'
+        option: string;
+      }
+    >;
+    // Selects the previous option.
+    selectPrevious: ServiceFunction<
+      object,
+      T,
+      {
+        // If the option should cycle from the first to the last.
+        cycle?: boolean;
+      }
+    >;
+  };
+  calendar: {
+    // Adds a new calendar event.
+    createEvent: ServiceFunction<
+      object,
+      T,
+      {
+        // Defines the short summary or subject for the event. @example Department Party
+        summary: string;
+        // A more complete description of the event than the one provided by the summary. @example Meeting to provide technical review for 'Phoenix' design.
+        description?: string;
+        // The date and time the event should start. @example 2022-03-22 20:00:00
+        start_date_time?: string;
+        // The date and time the event should end. @example 2022-03-22 22:00:00
+        end_date_time?: string;
+        // The date the all-day event should start. @example 2022-03-22
+        start_date?: string;
+        // The date the all-day event should end (exclusive). @example 2022-03-23
+        end_date?: string;
+        // Days or weeks that you want to create the event in. @example {'days': 2} or {'weeks': 2}
+        in?: object;
+        // The location of the event. @example Conference Room - F123, Bldg. 002
+        location?: string;
+      }
+    >;
+    // Get events on a calendar within a time range.
+    getEvents: ServiceFunction<
+      object,
+      T,
+      {
+        // Returns active events after this time (exclusive). When not set, defaults to now. @example 2022-03-22 20:00:00
+        start_date_time?: string;
+        // Returns active events before this time (exclusive). Cannot be used with Duration. @example 2022-03-22 22:00:00
+        end_date_time?: string;
+        // Returns active events from Start time for the specified duration.
+        duration?: {
+          hours?: number;
+          days?: number;
+          minutes?: number;
+          seconds?: number;
+        };
+      }
+    >;
+  };
+  remote: {
+    // Sends the turn off command.
+    turnOff: ServiceFunction<object, T, object>;
+    // Sends the turn on command.
     turnOn: ServiceFunction<
       object,
       T,
       {
-        // The tone to emit. When `available_tones` property is a map, either the key or the value can be used. Must be supported by the integration. @example fire
-        tone?: string;
-        // The volume. 0 is inaudible, 1 is the maximum volume. Must be supported by the integration. @example 0.5 @constraints  number: min: 0, max: 1, step: 0.05
-        volume_level?: number;
-        // Number of seconds the sound is played. Must be supported by the integration. @example 15
-        duration?: string;
+        // Activity ID or activity name to be started. @example BedroomTV
+        activity?: string;
       }
     >;
-    // Turns the siren off.
-    turnOff: ServiceFunction<object, T, object>;
-    // Toggles the siren on/off.
+    // Sends the toggle command.
     toggle: ServiceFunction<object, T, object>;
+    // Sends a command or a list of commands to a device.
+    sendCommand: ServiceFunction<
+      object,
+      T,
+      {
+        // Device ID to send command to. @example 32756745
+        device?: string;
+        // A single command or a list of commands to send. @example Play
+        command: object;
+        // The number of times you want to repeat the commands. @constraints  number: min: 0, max: 255
+        num_repeats?: number;
+        // The time you want to wait in between repeated commands. @constraints  number: min: 0, max: 60, step: 0.1, unit_of_measurement: seconds
+        delay_secs?: number;
+        // The time you want to have it held before the release is send. @constraints  number: min: 0, max: 60, step: 0.1, unit_of_measurement: seconds
+        hold_secs?: number;
+      }
+    >;
+    // Learns a command or a list of commands from a device.
+    learnCommand: ServiceFunction<
+      object,
+      T,
+      {
+        // Device ID to learn command from. @example television
+        device?: string;
+        // A single command or a list of commands to learn. @example Turn on
+        command?: object;
+        // The type of command to be learned.
+        command_type?: "ir" | "rf";
+        // If code must be stored as an alternative. This is useful for discrete codes. Discrete codes are used for toggles that only perform one function. For example, a code to only turn a device on. If it is on already, sending the code won't change the state.
+        alternative?: boolean;
+        // Timeout for the command to be learned. @constraints  number: min: 0, max: 60, step: 5, unit_of_measurement: seconds
+        timeout?: number;
+      }
+    >;
+    // Deletes a command or a list of commands from the database.
+    deleteCommand: ServiceFunction<
+      object,
+      T,
+      {
+        // Device from which commands will be deleted. @example television
+        device?: string;
+        // The single command or the list of commands to be deleted. @example Mute
+        command: object;
+      }
+    >;
+  };
+  weather: {
+    // Get weather forecasts.
+    getForecasts: ServiceFunction<
+      object,
+      T,
+      {
+        // Forecast type: daily, hourly or twice daily.
+        type: "daily" | "hourly" | "twice_daily";
+      }
+    >;
   };
   climate: {
     // Turns climate device on.
@@ -1605,293 +1888,28 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  text: {
-    // Sets the value.
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        // Enter your text. @example Hello world!
-        value: string;
-      }
-    >;
+  button: {
+    // Press the button entity.
+    press: ServiceFunction<object, T, object>;
   };
-  valve: {
-    // Opens a valve.
-    openValve: ServiceFunction<object, T, object>;
-    // Closes a valve.
-    closeValve: ServiceFunction<object, T, object>;
-    // Moves a valve to a specific position.
-    setValvePosition: ServiceFunction<
-      object,
-      T,
-      {
-        // Target position. @constraints  number: min: 0, max: 100, unit_of_measurement: %
-        position: number;
-      }
-    >;
-    // Stops the valve movement.
-    stopValve: ServiceFunction<object, T, object>;
-    // Toggles a valve open/closed.
-    toggle: ServiceFunction<object, T, object>;
-  };
-  remote: {
-    // Sends the turn off command.
-    turnOff: ServiceFunction<object, T, object>;
-    // Sends the turn on command.
+  siren: {
+    // Turns the siren on.
     turnOn: ServiceFunction<
       object,
       T,
       {
-        // Activity ID or activity name to be started. @example BedroomTV
-        activity?: string;
+        // The tone to emit. When `available_tones` property is a map, either the key or the value can be used. Must be supported by the integration. @example fire
+        tone?: string;
+        // The volume. 0 is inaudible, 1 is the maximum volume. Must be supported by the integration. @example 0.5 @constraints  number: min: 0, max: 1, step: 0.05
+        volume_level?: number;
+        // Number of seconds the sound is played. Must be supported by the integration. @example 15
+        duration?: string;
       }
     >;
-    // Sends the toggle command.
+    // Turns the siren off.
+    turnOff: ServiceFunction<object, T, object>;
+    // Toggles the siren on/off.
     toggle: ServiceFunction<object, T, object>;
-    // Sends a command or a list of commands to a device.
-    sendCommand: ServiceFunction<
-      object,
-      T,
-      {
-        // Device ID to send command to. @example 32756745
-        device?: string;
-        // A single command or a list of commands to send. @example Play
-        command: object;
-        // The number of times you want to repeat the commands. @constraints  number: min: 0, max: 255
-        num_repeats?: number;
-        // The time you want to wait in between repeated commands. @constraints  number: min: 0, max: 60, step: 0.1, unit_of_measurement: seconds
-        delay_secs?: number;
-        // The time you want to have it held before the release is send. @constraints  number: min: 0, max: 60, step: 0.1, unit_of_measurement: seconds
-        hold_secs?: number;
-      }
-    >;
-    // Learns a command or a list of commands from a device.
-    learnCommand: ServiceFunction<
-      object,
-      T,
-      {
-        // Device ID to learn command from. @example television
-        device?: string;
-        // A single command or a list of commands to learn. @example Turn on
-        command?: object;
-        // The type of command to be learned.
-        command_type?: "ir" | "rf";
-        // If code must be stored as an alternative. This is useful for discrete codes. Discrete codes are used for toggles that only perform one function. For example, a code to only turn a device on. If it is on already, sending the code won't change the state.
-        alternative?: boolean;
-        // Timeout for the command to be learned. @constraints  number: min: 0, max: 60, step: 5, unit_of_measurement: seconds
-        timeout?: number;
-      }
-    >;
-    // Deletes a command or a list of commands from the database.
-    deleteCommand: ServiceFunction<
-      object,
-      T,
-      {
-        // Device from which commands will be deleted. @example television
-        device?: string;
-        // The single command or the list of commands to be deleted. @example Mute
-        command: object;
-      }
-    >;
-  };
-  weather: {
-    // Get weather forecasts.
-    getForecasts: ServiceFunction<
-      object,
-      T,
-      {
-        // Forecast type: daily, hourly or twice daily.
-        type: "daily" | "hourly" | "twice_daily";
-      }
-    >;
-  };
-  notify: {
-    // Sends a notification message.
-    sendMessage: ServiceFunction<
-      object,
-      T,
-      {
-        // Your notification message.
-        message: string;
-        // Title for your notification message.
-        title?: string;
-      }
-    >;
-    // Sends a notification that is visible in the notifications panel.
-    persistentNotification: ServiceFunction<
-      object,
-      T,
-      {
-        // Message body of the notification. @example The garage door has been open for 10 minutes.
-        message: string;
-        // Title of the notification. @example Your Garage Door Friend
-        title?: string;
-        // Some integrations provide extended functionality. For information on how to use _data_, refer to the integration documentation.. @example platform specific
-        data?: object;
-      }
-    >;
-    // Sends a notification message using the notify service.
-    notify: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example The garage door has been open for 10 minutes.
-        message: string;
-        //  @example Your Garage Door Friend
-        title?: string;
-        //  @example platform specific
-        target?: object;
-        //  @example platform specific
-        data?: object;
-      }
-    >;
-    // Sends a notification message using the google_assistant_sdk service.
-    googleAssistantSdk: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example The garage door has been open for 10 minutes.
-        message: string;
-        //  @example Your Garage Door Friend
-        title?: string;
-        //  @example platform specific
-        target?: object;
-        //  @example platform specific
-        data?: object;
-      }
-    >;
-  };
-  deviceTracker: {
-    // Manually update the records of a seen legacy device tracker in the known_devices.yaml file.
-    see: ServiceFunction<
-      object,
-      T,
-      {
-        // MAC address of the device. @example FF:FF:FF:FF:FF:FF
-        mac?: string;
-        // ID of the device (find the ID in `known_devices.yaml`). @example phonedave
-        dev_id?: string;
-        // Hostname of the device. @example Dave
-        host_name?: string;
-        // Name of the location where the device is located. The options are: `home`, `not_home`, or the name of the zone. @example home
-        location_name?: string;
-        // GPS coordinates where the device is located, specified by latitude and longitude (for example: [51.513845, -0.100539]). @example [51.509802, -0.086692]
-        gps?: object;
-        // Accuracy of the GPS coordinates. @constraints  number: min: 0, mode: box, unit_of_measurement: m
-        gps_accuracy?: number;
-        // Battery level of the device. @constraints  number: min: 0, max: 100, unit_of_measurement: %
-        battery?: number;
-      }
-    >;
-  };
-  calendar: {
-    // Adds a new calendar event.
-    createEvent: ServiceFunction<
-      object,
-      T,
-      {
-        // Defines the short summary or subject for the event. @example Department Party
-        summary: string;
-        // A more complete description of the event than the one provided by the summary. @example Meeting to provide technical review for 'Phoenix' design.
-        description?: string;
-        // The date and time the event should start. @example 2022-03-22 20:00:00
-        start_date_time?: string;
-        // The date and time the event should end. @example 2022-03-22 22:00:00
-        end_date_time?: string;
-        // The date the all-day event should start. @example 2022-03-22
-        start_date?: string;
-        // The date the all-day event should end (exclusive). @example 2022-03-23
-        end_date?: string;
-        // Days or weeks that you want to create the event in. @example {'days': 2} or {'weeks': 2}
-        in?: object;
-        // The location of the event. @example Conference Room - F123, Bldg. 002
-        location?: string;
-      }
-    >;
-    // Get events on a calendar within a time range.
-    getEvents: ServiceFunction<
-      object,
-      T,
-      {
-        // Returns active events after this time (exclusive). When not set, defaults to now. @example 2022-03-22 20:00:00
-        start_date_time?: string;
-        // Returns active events before this time (exclusive). Cannot be used with Duration. @example 2022-03-22 22:00:00
-        end_date_time?: string;
-        // Returns active events from Start time for the specified duration.
-        duration?: {
-          hours?: number;
-          days?: number;
-          minutes?: number;
-          seconds?: number;
-        };
-      }
-    >;
-  };
-  alarmControlPanel: {
-    // Disarms the alarm.
-    alarmDisarm: ServiceFunction<
-      object,
-      T,
-      {
-        // Code to disarm the alarm. @example 1234
-        code?: string;
-      }
-    >;
-    // Sets the alarm to: _armed, but someone is home_.
-    alarmArmHome: ServiceFunction<
-      object,
-      T,
-      {
-        // Code to arm the alarm. @example 1234
-        code?: string;
-      }
-    >;
-    // Sets the alarm to: _armed, no one home_.
-    alarmArmAway: ServiceFunction<
-      object,
-      T,
-      {
-        // Code to arm the alarm. @example 1234
-        code?: string;
-      }
-    >;
-    // Sets the alarm to: _armed for the night_.
-    alarmArmNight: ServiceFunction<
-      object,
-      T,
-      {
-        // Code to arm the alarm. @example 1234
-        code?: string;
-      }
-    >;
-    // Sets the alarm to: _armed for vacation_.
-    alarmArmVacation: ServiceFunction<
-      object,
-      T,
-      {
-        // Code to arm the alarm. @example 1234
-        code?: string;
-      }
-    >;
-    // Arms the alarm while allowing to bypass a custom area.
-    alarmArmCustomBypass: ServiceFunction<
-      object,
-      T,
-      {
-        // Code to arm the alarm. @example 1234
-        code?: string;
-      }
-    >;
-    // Trigger the alarm manually.
-    alarmTrigger: ServiceFunction<
-      object,
-      T,
-      {
-        // Code to arm the alarm. @example 1234
-        code?: string;
-      }
-    >;
   };
   fan: {
     // Turns fan on.
@@ -1961,35 +1979,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       {
         // Preset fan mode. @example auto
         preset_mode: string;
-      }
-    >;
-  };
-  lock: {
-    // Unlocks a lock.
-    unlock: ServiceFunction<
-      object,
-      T,
-      {
-        // Code used to unlock the lock. @example 1234
-        code?: string;
-      }
-    >;
-    // Locks a lock.
-    lock: ServiceFunction<
-      object,
-      T,
-      {
-        // Code used to lock the lock. @example 1234
-        code?: string;
-      }
-    >;
-    // Opens a lock.
-    open: ServiceFunction<
-      object,
-      T,
-      {
-        // Code used to open the lock. @example 1234
-        code?: string;
       }
     >;
   };
@@ -2066,5 +2055,16 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     >;
     // Reloads the automation configuration.
     reload: ServiceFunction<object, T, object>;
+  };
+  text: {
+    // Sets the value.
+    setValue: ServiceFunction<
+      object,
+      T,
+      {
+        // Enter your text. @example Hello world!
+        value: string;
+      }
+    >;
   };
 }

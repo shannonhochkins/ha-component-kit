@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import { fallback, Row, Column, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
+// @ts-expect-error - this is a custom svg loader
 import GarbageBin from "./garbage-bin.svg?react";
 
 const ASPECT_RATIO = 77.41 / 123.36;
