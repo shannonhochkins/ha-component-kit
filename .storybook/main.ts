@@ -34,18 +34,21 @@ export default ({
     check: true,
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
-      propFilter: (prop: any) => {
+      propFilter: (prop) => {
         // Exclude the 'css' prop
-        if (prop.name === 'css') {
+        if (prop.name === 'css' || prop.name === 'style') {
           return false;
         }
-        if (prop.name === 'cssStyles' || prop.name === 'style') {
+        if (prop.name === 'cssStyles') {
           return true;
         }
-        const res = !/node_modules/.test(prop.parent?.fileName);
+        const res = !/node_modules/.test(prop.parent?.fileName ?? '');
         return prop.parent ? res : true;
       },
-      shouldExtractLiteralValuesFromEnum: true,
+      shouldRemoveUndefinedFromOptional: true,
+      shouldIncludeExpression: false,
+      shouldExtractValuesFromUnion: false,
+      shouldExtractLiteralValuesFromEnum: false,
       compilerOptions: {
         allowSyntheticDefaultImports: false,
         esModuleInterop: false,
@@ -74,7 +77,7 @@ export default ({
         // "You should stop using "vite:react-jsx" since this plugin conflicts with it."
         // Implementation suggestion from: https://github.com/storybookjs/builder-vite/issues/113#issuecomment-940190931
         ...(config.plugins || []).filter(
-          // @ts-ignore - `name` is not in the type definition
+          // @ts-expect-error - `name` is not in the type definition
           (plugin) => !(Array.isArray(plugin) && plugin.some((p) => (p && p.name === "vite:react-jsx"))),
         ),
         /** @see https://github.com/aleclarson/vite-tsconfig-paths */
@@ -92,6 +95,6 @@ export default ({
   },
 } satisfies StorybookConfig);
 
-function getAbsolutePath(value: string): any {
+function getAbsolutePath(value: string): string {
   return dirname(require.resolve(join(value, "package.json")));
 }

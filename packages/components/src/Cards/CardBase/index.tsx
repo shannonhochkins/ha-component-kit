@@ -261,13 +261,8 @@ const DEFAULT_SIZES: Required<AvailableQueries> = {
   lg: 4,
   xlg: 3,
 };
-/**
- * This is the base card component that every other card component should extend, it comes with everything we need to be able to replicate functionality
- * like the modal popup, ripples and more.
- *
- * You can use this if you want an empty shell of a component that you can build on top of.
- * */
-export const CardBase = memo(function CardBase<T extends ElementType, E extends EntityName>({
+
+const CardBaseInternal = function CardBase<T extends ElementType, E extends EntityName>({
   as = "div" as T,
   entity: _entity,
   title: _title,
@@ -440,7 +435,7 @@ export const CardBase = memo(function CardBase<T extends ElementType, E extends 
   }, [active, className, columnClassNames, disableColumns, disabled, graphEntity, hasFeatures, isUnavailable]);
 
   return (
-    <ErrorBoundary {...fallback({ prefix: "CardBase" })}>
+    <>
       <StyledElement
         key={key}
         ref={elRef ?? internalRef}
@@ -511,6 +506,21 @@ export const CardBase = memo(function CardBase<T extends ElementType, E extends 
           id={_id}
         />
       )}
+    </>
+  );
+};
+
+/**
+ * This is the base card component that every other card component should extend, it comes with everything we need to be able to replicate functionality
+ * like the modal popup, ripples and more.
+ *
+ * You can use this if you want an empty shell of a component that you can build on top of.
+ * */
+export const CardBase = memo(function CardBase<T extends ElementType, E extends EntityName>(props: CardBaseProps<T, E>) {
+  return (
+    <ErrorBoundary {...fallback({ prefix: "CardBase" })}>
+      {/* @ts-expect-error - there is nothing wrong here, i suspect react 19 type issue with emotion */}
+      <CardBaseInternal {...props} />
     </ErrorBoundary>
   );
 });

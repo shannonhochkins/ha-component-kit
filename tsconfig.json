@@ -4,6 +4,7 @@
     "useDefineForClassFields": true,
     "lib": ["es2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
+    "declarationMap": true,
     "moduleResolution": "bundler",
     "moduleDetection": "force",
     "allowImportingTsExtensions": true,

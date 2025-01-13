@@ -1,4 +1,5 @@
 // declare hassConnection as type of createConnection on window
+import { type CSSInterpolation } from "@emotion/serialize";
 import { type Connection, type Auth } from "home-assistant-js-websocket";
 declare module '*.png' {
   const value: string;
