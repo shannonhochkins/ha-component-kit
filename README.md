@@ -33,14 +33,14 @@
   </tr>
 </table>
 
-Take Your [Home Assistant](https://www.home-assistant.io/) Dashboards to the Next Level 🚀
+## Take Your [Home Assistant](https://www.home-assistant.io/) Dashboards to the Next Level 🚀
 
 Designed with developers in mind, this powerful package is built on [React](https://react.dev/) to create seamless, highly customizable interfaces for your Home Assistant dashboards. Whether you're coding your own unique components or taking advantage of the prebuilt library from [@hakit/components](https://www.npmjs.com/package/@hakit/components), the possibilities are endless!
 
-🏠 Ultimate Flexibility: Create stunning, personalized dashboards tailored to your needs.
-⚡ Powered by Home Assistant: The [@hakit/core](https://www.npmjs.com/package/@hakit/core) leverages the official [Home Assistant WebSocket API](https://github.com/home-assistant/home-assistant-js-websocket) to handle authentication and core functionality, enabling a dynamic, real-time experience in your React dashboards.
-🌍 Effortless Deployment: Host your dashboard on any web server or serve it directly from Home Assistant using the [Home Assistant Addon](https://github.com/shannonhochkins/ha-component-kit/blob/master/ADDON.md).
-📅 Future Goals: While the package currently focuses on empowering developers, we're working on a future release that will introduce an intuitive drag-and-drop UI editor, enabling anyone to design dashboards effortlessly through the Home Assistant Addon.
+##### 🏠 **Ultimate Flexibility**: Create stunning, personalized dashboards tailored to your needs.
+##### ⚡ **Powered by Home Assistant**: The [@hakit/core](https://www.npmjs.com/package/@hakit/core) leverages the official [Home Assistant WebSocket API](https://github.com/home-assistant/home-assistant-js-websocket) to handle authentication and core functionality, enabling a dynamic, real-time experience in your React dashboards.
+##### 🌍 **Effortless Deployment**: Host your dashboard on any web server or serve it directly from Home Assistant using the [Home Assistant Addon](https://github.com/shannonhochkins/ha-component-kit/blob/master/ADDON.md).
+##### 📅 **Future Goals**: While the package currently focuses on empowering developers, we're working on a future release that will introduce an intuitive drag-and-drop UI editor, enabling anyone to design dashboards effortlessly through the Home Assistant Addon.
 
 Ready to transform your Home Assistant experience? Dive into the [Getting Started](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-getting-started--docs) Guide and begin building today!
 
