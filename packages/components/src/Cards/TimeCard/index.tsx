@@ -117,7 +117,7 @@ const DEFAULT_DATE_FORMAT = "dddd, MMMM DD YYYY";
 
 const customFormatter = createDateFormatter({});
 
-function _TimeCard({
+function InternalTimeCard({
   timeFormat,
   dateFormat,
   throttleTime = 1000,
@@ -137,7 +137,7 @@ function _TimeCard({
 }: TimeCardProps): React.ReactNode {
   const [currentTime, setCurrentTime] = useState(new Date());
   const previousTimeRef = useRef<number>(Date.now());
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number>(undefined);
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const timeSensor = useEntity("sensor.time", {
@@ -244,7 +244,7 @@ export function TimeCard(props: TimeCardProps) {
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "TimeCard" })}>
-      <_TimeCard {...defaultColumns} {...props} />
+      <InternalTimeCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

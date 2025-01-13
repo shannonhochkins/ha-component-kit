@@ -86,9 +86,9 @@ const createProject = async () => {
           },
         },
       )
-    } catch (cancelled: any) {
+    } catch (cancelled) {
       abort = true;
-      console.info(cancelled.message);
+      console.info(cancelled);
       return;
     }
 
@@ -137,7 +137,7 @@ const createProject = async () => {
     write('src/index.css', root, templateDir, `#root { width: 100%; height: 100%; }`);
 
     const envFile = path.resolve(targetDir, '.env');
-    let envFileContent = fs.readFileSync(envFile, 'utf-8');
+    const envFileContent = fs.readFileSync(envFile, 'utf-8');
     write('.env', root, templateDir, envFileContent
       .replace('{FOLDER_NAME}', cdProjectName)
       .replace('VITE_HA_URL=', `VITE_HA_URL=${(haUrl ?? '').replace(/\/$/, '')}`));

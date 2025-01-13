@@ -9,7 +9,7 @@ function Render(args?: Args) {
       <Column gap="1rem" fullWidth>
         <CameraCard
           entity="camera.demo_camera"
-          headerSensors={[<ButtonBarButton entity="binary_sensor.vehicle" />, <ButtonBarButton entity="switch.record" />]}
+          headerSensors={[<ButtonBarButton entity="binary_sensor.vehicle" key="a" />, <ButtonBarButton entity="switch.record" key="b" />]}
           {...args}
         />
       </Column>

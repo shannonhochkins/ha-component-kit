@@ -179,17 +179,17 @@ export interface ColorPickerProps extends Omit<React.ComponentPropsWithoutRef<"d
   /** will provide the color output as it's changing but not actually finished updating, the value may also trigger initially once the color calculations have been applied */
   onChange?: (colors: ColorPickerOutputColors) => void;
 }
-function _ColorPicker({ disabled = false, entity: _entity, onChange, onChangeApplied, className, cssStyles }: ColorPickerProps) {
+function InternalColorPicker({ disabled = false, entity: _entity, onChange, onChangeApplied, className, cssStyles }: ColorPickerProps) {
   const entity = useEntity(_entity);
   const lightColors = useLightColor(entity);
   const parentRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gRef = useRef<SVGGElement>(null);
-  const hex = useRef<string>();
+  const hex = useRef<string>(undefined);
   const circleRef = useRef<SVGCircleElement>(null);
-  const _pressed = useRef<string>();
-  const _cursorPosition = useRef<[number, number]>();
-  const _localValue = useRef<[number, number]>();
+  const _pressed = useRef<string>(undefined);
+  const _cursorPosition = useRef<[number, number]>(undefined);
+  const _localValue = useRef<[number, number]>(undefined);
   const canvasSize = useMemo(() => {
     if (typeof window === "undefined") {
       return RENDER_SIZE;
@@ -326,8 +326,10 @@ function _ColorPicker({ disabled = false, entity: _entity, onChange, onChangeApp
       },
     ) => {
       entity.service.turnOn({
-        ...color,
-        ...params,
+        serviceData: {
+          ...color,
+          ...params,
+        },
       });
     },
     [entity],
@@ -480,7 +482,7 @@ function _ColorPicker({ disabled = false, entity: _entity, onChange, onChangeApp
 export function ColorPicker(props: ColorPickerProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ColorPicker" })}>
-      <_ColorPicker {...props} />
+      <InternalColorPicker {...props} />
     </ErrorBoundary>
   );
 }

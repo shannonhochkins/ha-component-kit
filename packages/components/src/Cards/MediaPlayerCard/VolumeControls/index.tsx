@@ -55,8 +55,11 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
         clearTimeout(timerRef.current);
       }
       timerRef.current = setTimeout(() => {
-        mp.volumeSet(allEntityIds ?? _entity, {
-          volume_level: volume,
+        mp.volumeSet({
+          target: allEntityIds ?? _entity,
+          serviceData: {
+            volume_level: volume,
+          },
         });
       }, 500);
     },
@@ -82,8 +85,11 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
           }}
           icon={is_volume_muted ? "mdi:volume-off" : "mdi:volume-high"}
           onClick={() => {
-            mp.volumeMute(allEntityIds ?? _entity, {
-              is_volume_muted: !is_volume_muted,
+            mp.volumeMute({
+              target: allEntityIds ?? _entity,
+              serviceData: {
+                is_volume_muted: !is_volume_muted,
+              },
             });
           }}
         />
@@ -101,7 +107,11 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}
             icon="mdi:volume-minus"
-            onClick={() => mp.volumeDown(allEntityIds ?? _entity)}
+            onClick={() =>
+              mp.volumeDown({
+                target: allEntityIds ?? _entity,
+              })
+            }
           />
           <Fab
             rippleProps={{
@@ -114,7 +124,11 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}
             icon="mdi:volume-plus"
-            onClick={() => mp.volumeUp(allEntityIds ?? _entity)}
+            onClick={() =>
+              mp.volumeUp({
+                target: allEntityIds ?? _entity,
+              })
+            }
           />
         </>
       )}

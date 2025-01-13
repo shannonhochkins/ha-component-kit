@@ -1,6 +1,6 @@
 // purposely adding js extensions here so the extensions stay in the output.
 import { connect } from './connection.js';
-import { generateServiceTypes } from './service-generator.js';
+import { generateActionTypes } from './action-generator.js';
 import { generateEntityType } from './entity-generator.js';
 import { writeFileSync } from 'fs';
 import { DEFAULT_FILENAME } from './constants.js';
@@ -43,7 +43,8 @@ export async function typeSync({
   `;
   
   const { services, states } = await connect(url, token);
-  const serviceInterfaces = await generateServiceTypes(services, {
+  
+  const serviceInterfaces = await generateActionTypes(services, {
     domainWhitelist,
     domainBlacklist,
     serviceWhitelist,

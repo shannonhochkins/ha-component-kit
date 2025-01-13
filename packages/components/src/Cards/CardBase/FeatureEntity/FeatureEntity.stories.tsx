@@ -10,12 +10,12 @@ function Render(args?: Args) {
         <CardBase
           disableActiveState
           features={[
-            <FeatureEntity entity="switch.record" service="toggle" />,
-            <FeatureEntity {...args} entity="switch.fake_switch" service="toggle" />,
-            <FeatureEntity {...args} entity="switch.unavailable" service="toggle" />,
-            <FeatureEntity {...args} entity="light.fake_light_1" service="toggle" />,
-            <FeatureEntity {...args} entity="light.fake_light_2" service="toggle" />,
-            <FeatureEntity {...args} entity="light.fake_light_3" service="toggle" />,
+            <FeatureEntity key="a" entity="switch.record" service="toggle" />,
+            <FeatureEntity key="b" {...args} entity="switch.fake_switch" service="toggle" />,
+            <FeatureEntity key="c" {...args} entity="switch.unavailable" service="toggle" />,
+            <FeatureEntity key="d" {...args} entity="light.fake_light_1" service="toggle" />,
+            <FeatureEntity key="e" {...args} entity="light.fake_light_2" service="toggle" />,
+            <FeatureEntity key="f" {...args} entity="light.fake_light_3" service="toggle" />,
           ]}
         >
           <Row
@@ -31,11 +31,12 @@ function Render(args?: Args) {
         <CardBase
           disableActiveState
           features={[
-            <FeatureEntity entity="switch.record" service="toggle">
+            <FeatureEntity key="a" entity="switch.record" service="toggle">
               RECORD
             </FeatureEntity>,
             <FeatureEntity
               {...args}
+              key="b"
               entity="switch.fake_switch"
               service="toggle"
               onClick={() => {

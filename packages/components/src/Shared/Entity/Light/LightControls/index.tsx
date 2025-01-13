@@ -114,7 +114,7 @@ export interface LightControlsProps {
   onStateChange?: (state: string) => void;
 }
 
-function _LightControls({ entity: _entity, onStateChange }: LightControlsProps) {
+function InternalLightControls({ entity: _entity, onStateChange }: LightControlsProps) {
   const [control, setControl] = useState<MainControl>("brightness");
   const entity = useEntity(_entity);
   const brightnessValue = useLightBrightness(entity);
@@ -184,7 +184,9 @@ function _LightControls({ entity: _entity, onStateChange }: LightControlsProps) 
                 }}
                 onChangeApplied={(value) => {
                   entity.service.turnOn({
-                    brightness_pct: value,
+                    serviceData: {
+                      brightness_pct: value,
+                    },
                   });
                   if (onStateChange) onStateChange(`${Math.round(value)}%`);
                 }}
@@ -218,7 +220,7 @@ function _LightControls({ entity: _entity, onStateChange }: LightControlsProps) 
 export function LightControls(props: LightControlsProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "LightControls" })}>
-      <_LightControls {...props} />
+      <InternalLightControls {...props} />
     </ErrorBoundary>
   );
 }

@@ -18,7 +18,7 @@ function Detailed() {
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" alignItems="flex-start" fullWidth>
-        <p>If you normally get your bins picked up on a weekly interval on a Thursday, and it's red one week, and green the next:</p>
+        <p>If you normally get your bins picked up on a weekly interval on a Thursday, and it&apos;s red one week, and green the next:</p>
         <Row gap="1rem" fullWidth>
           <GarbageCollectionCard
             schedules={[
@@ -99,7 +99,8 @@ function Detailed() {
           />
         </Row>
         <p>
-          If you get your bins picked up fortnightly, set the frequency to fortnightly, and set the weeks that don't have pickup to null
+          If you get your bins picked up fortnightly, set the frequency to fortnightly, and set the weeks that don&apos;t have pickup to
+          null
         </p>
         <Row gap="1rem" fullWidth>
           <GarbageCollectionCard

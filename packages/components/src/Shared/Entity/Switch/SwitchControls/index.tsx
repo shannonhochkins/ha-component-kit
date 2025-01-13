@@ -8,7 +8,7 @@ export interface SwitchControlsProps extends Omit<ControlToggleProps, "disabled"
   onChange?: (entity: HassEntityWithService<"switch">, checked: boolean) => void;
 }
 
-function _SwitchControls({ entity, onChange, reversed = true, ...props }: SwitchControlsProps) {
+function InternalSwitchControls({ entity, onChange, reversed = true, ...props }: SwitchControlsProps) {
   const _entity = useEntity(entity);
   const isUnavailable = isUnavailableState(_entity.state);
   return (
@@ -32,7 +32,7 @@ function _SwitchControls({ entity, onChange, reversed = true, ...props }: Switch
 export function SwitchControls(props: SwitchControlsProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "SwitchControls" })}>
-      <_SwitchControls {...props} />
+      <InternalSwitchControls {...props} />
     </ErrorBoundary>
   );
 }

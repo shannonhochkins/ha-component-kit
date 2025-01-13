@@ -60,7 +60,7 @@ export interface ButtonGroupProps extends RowProps {
   maintainAspectRatio?: boolean;
 }
 
-function _ButtonGroup({
+function InternalButtonGroup({
   key,
   orientation = "vertical",
   reverse = false,
@@ -119,7 +119,7 @@ function _ButtonGroup({
 export function ButtonGroup(props: ButtonGroupProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ButtonGroup" })}>
-      <_ButtonGroup {...props} />
+      <InternalButtonGroup {...props} />
     </ErrorBoundary>
   );
 }

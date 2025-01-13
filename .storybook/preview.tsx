@@ -5,7 +5,7 @@ import { withThemeFromJSXProvider } from '@storybook/addon-themes';
 import { ThemeProvider } from '@storybook/theming';
 import './global.css';
 
-const THEME = {
+const theme = {
   typography: {
     fonts: {
       base: 'Arial, sans-serif',
@@ -18,8 +18,8 @@ export default {
   decorators: [
     withThemeFromJSXProvider({
       themes: {
-        dark: THEME,
-        light: THEME,
+        dark: theme,
+        light: theme,
       },
       defaultTheme: 'dark',
       Provider: ThemeProvider,

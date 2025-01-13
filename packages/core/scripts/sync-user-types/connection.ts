@@ -24,7 +24,7 @@ export function createSocket(
 
   function connect(
     triesLeft: number,
-    promResolve: (socket: any) => void,
+    promResolve: (socket: HaWebSocket) => void,
     promReject: (err: number) => void,
   ) {
     console.info(
@@ -53,8 +53,7 @@ export function createSocket(
     };
 
     const errorMessage = (ev: {
-      error: any;
-      message: any;
+      message: string;
       type: string;
       target: WebSocket;
     }) => {
@@ -110,12 +109,8 @@ export function createSocket(
       }
     };
 
-    const handleMessage = (event: {
-      data: any;
-      type: string;
-      target: WebSocket;
-    }) => {
-      const message = JSON.parse(event.data);
+    const handleMessage = (event: WebSocket.MessageEvent) => {
+      const message = JSON.parse(event.data as string);
 
       console.info(
         `[Auth phase] Received a message of type ${message.type}`,

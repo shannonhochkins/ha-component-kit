@@ -26,7 +26,7 @@ const Entry = styled.div`
   border-bottom: 1px solid var(--ha-S400);
 `;
 
-function _EntityAttributes({ entity, title, ...rest }: EntityAttributesProps) {
+function InternalEntityAttributes({ entity, title, ...rest }: EntityAttributesProps) {
   const _entity = useEntity(entity);
   const memoizedAttributes = useMemo(() => [...Object.entries(_entity.attributes), ["state", _entity.state]], [_entity]);
 
@@ -66,7 +66,7 @@ function _EntityAttributes({ entity, title, ...rest }: EntityAttributesProps) {
 export function EntityAttributes(props: EntityAttributesProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "EntityAttributes" })}>
-      <_EntityAttributes {...props} />
+      <InternalEntityAttributes {...props} />
     </ErrorBoundary>
   );
 }

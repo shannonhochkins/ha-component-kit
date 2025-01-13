@@ -40,11 +40,13 @@ const Label = styled.span`
 function computeTitleDisplay(entity: CoverEntity, position?: number) {
   const isUnavailable = isUnavailableState(entity.state);
   const statePosition =
-    !isUnavailable && entity.state !== "closed" ? entity.attributes.current_position ?? entity.attributes.current_tilt_position : undefined;
+    !isUnavailable && entity.state !== "closed"
+      ? (entity.attributes.current_position ?? entity.attributes.current_tilt_position)
+      : undefined;
 
   const currentPosition = position ?? statePosition;
 
-  const suffix = currentPosition && currentPosition !== 100 ? currentPosition ?? entity.attributes.current_position ?? "" : "";
+  const suffix = currentPosition && currentPosition !== 100 ? (currentPosition ?? entity.attributes.current_position ?? "") : "";
   if (typeof position === "number") {
     return `${position === 0 ? "closed" : position === 100 ? "open" : entity.state}${suffix ? ` - ${suffix}%` : ""}`;
   }
@@ -64,7 +66,7 @@ export interface CoverControlsProps {
   reverse?: boolean;
 }
 
-function _CoverControls({
+function InternalCoverControls({
   entity: _entity,
   mode = "position",
   orientation = "vertical",
@@ -87,7 +89,7 @@ function _CoverControls({
   const supportsTilt =
     supports(CoverEntityFeature.OPEN_TILT) || supports(CoverEntityFeature.CLOSE_TILT) || supports(CoverEntityFeature.STOP_TILT);
 
-  const [_mode, setMode] = useState<Mode>(mode ?? supportsPosition ? "position" : "button");
+  const [_mode, setMode] = useState<Mode>((mode ?? supportsPosition) ? "position" : "button");
 
   const device = useBreakpoint();
   const titleValue = useMemo(() => {
@@ -143,7 +145,9 @@ function _CoverControls({
                     }}
                     onChangeApplied={(value) => {
                       entity.service.setCoverPosition({
-                        position: value,
+                        serviceData: {
+                          position: value,
+                        },
                       });
                       if (onStateChange) onStateChange(computeTitleDisplay(entity, Math.round(value)));
                     }}
@@ -168,7 +172,9 @@ function _CoverControls({
                     }}
                     onChangeApplied={(value) => {
                       entity.service.setCoverTiltPosition({
-                        tilt_position: value,
+                        serviceData: {
+                          tilt_position: value,
+                        },
                       });
                       if (onStateChange) onStateChange(computeTitleDisplay(entity, Math.round(value)));
                     }}
@@ -296,7 +302,7 @@ function _CoverControls({
 export function CoverControls(props: CoverControlsProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "CoverControls" })}>
-      <_CoverControls {...props} />
+      <InternalCoverControls {...props} />
     </ErrorBoundary>
   );
 }

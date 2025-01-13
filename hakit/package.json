@@ -7,7 +7,8 @@
     "dev": "npx tsx -r tsconfig-paths/register server/index.ts",
     "build": "rm -rf ./server/dist && npx tsc",
     "start": "node server/dist/server/index.js",
-    "copy-to-ha": "node scripts/copy-to-ha.js"
+    "copy-to-ha": "node scripts/copy-to-ha.js",
+    "type-check": "tsc --noEmit"
   },
   "author": "Shannon Hochkins <mail@shannonhochkins.com>",
   "repository": {

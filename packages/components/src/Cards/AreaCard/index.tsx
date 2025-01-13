@@ -108,7 +108,7 @@ const ChildContainer = styled.div`
   flex-direction: column;
 `;
 
-function _AreaCard({
+function InternalAreaCard({
   hash,
   children,
   icon,
@@ -282,7 +282,7 @@ export function AreaCard(props: AreaCardProps) {
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "AreaCard" })}>
-      <_AreaCard {...defaultColumns} {...props} />
+      <InternalAreaCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

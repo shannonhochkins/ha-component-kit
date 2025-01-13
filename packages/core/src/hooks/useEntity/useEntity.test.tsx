@@ -19,7 +19,9 @@ describe("useEntity", () => {
     });
     await act(async () => {
       result.current.service.turnOn({
-        color_name: "red",
+        serviceData: {
+          color_name: "red",
+        },
       });
     });
 

@@ -24,12 +24,13 @@ function Template(args?: Partial<WeatherCardProps>) {
           {...args}
           details={[
             <WeatherCardDetail
+              key="x"
               entity="sensor.openweathermap_uv_index"
               render={(entity: HassEntityWithService<"sensor">) => {
                 return <span>UVI - {convertUvIndexToText(Number(entity.state))}</span>;
               }}
             />,
-            <WeatherCardDetail entity="sensor.openweathermap_pressure" />,
+            <WeatherCardDetail entity="sensor.openweathermap_pressure" key="y" />,
           ]}
         />
         <p>Hourly, with 2 separate rows:</p>
@@ -47,14 +48,15 @@ function WithSensors(args?: Partial<WeatherCardProps>) {
         entity="weather.openweathermap"
         details={[
           <WeatherCardDetail
+            key="a"
             entity="sensor.openweathermap_uv_index"
             render={(entity: HassEntityWithService<"sensor">) => {
               return <span>UVI - {convertUvIndexToText(Number(entity.state))}</span>;
             }}
           />,
-          <WeatherCardDetail entity="sensor.openweathermap_pressure" />,
-          <WeatherCardDetail entity="sensor.openweathermap_humidity" icon="mdi:water-percent" />,
-          <WeatherCardDetail entity="sensor.openweathermap_wind_speed" />,
+          <WeatherCardDetail entity="sensor.openweathermap_pressure" key="b" />,
+          <WeatherCardDetail entity="sensor.openweathermap_humidity" icon="mdi:water-percent" key="c" />,
+          <WeatherCardDetail entity="sensor.openweathermap_wind_speed" key="d" />,
         ]}
         {...args}
       />

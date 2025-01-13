@@ -83,8 +83,10 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
                   onClick={(event) => {
                     event.stopPropagation();
                     ac.service.setTemperature({
-                      hvac_mode: "cool",
-                      temperature: ac.attributes.temperature + 1,
+                      serviceData: {
+                        hvac_mode: "cool",
+                        temperature: ac.attributes.temperature + 1,
+                      },
                     });
                   }}
                 />
@@ -93,8 +95,10 @@ function SidebarMenuItems(args?: Partial<SidebarCardProps>) {
                   onClick={(event) => {
                     event.stopPropagation();
                     ac.service.setTemperature({
-                      hvac_mode: "cool",
-                      temperature: ac.attributes.temperature - 1,
+                      serviceData: {
+                        hvac_mode: "cool",
+                        temperature: ac.attributes.temperature - 1,
+                      },
                     });
                   }}
                 />
@@ -187,8 +191,8 @@ function TemplateMenuItems(args?: Partial<SidebarCardProps>) {
               maxWidth: 600,
             }}
           >
-            This is just an example of the level of customization achievable, this isn't fully implemented as you will see when you collapse
-            this sidebar!
+            This is just an example of the level of customization achievable, this isn&apos;t fully implemented as you will see when you
+            collapse this sidebar!
           </p>
           <Source dark code={Replica()} />
         </Row>

@@ -136,7 +136,7 @@ export interface TriggerCardProps<E extends EntityName> extends Omit<CardBasePro
   hideArrow?: boolean;
 }
 
-function _TriggerCard<E extends EntityName>({
+function InternalTriggerCard<E extends EntityName>({
   entity: _entity,
   title,
   description,
@@ -229,12 +229,12 @@ function _TriggerCard<E extends EntityName>({
                 </ToggleState>
                 <ToggleMessage hideArrow={hideArrow} active={active} className={`toggle-message`}>
                   {active
-                    ? sliderTextActive ??
+                    ? (sliderTextActive ??
                       localize("triggered_name", {
                         search: " {name}",
                         replace: "",
-                      })
-                    : sliderTextInactive ?? `${localize("run")} ${computeDomainTitle(_entity, entity?.attributes?.device_class)}`}{" "}
+                      }))
+                    : (sliderTextInactive ?? `${localize("run")} ${computeDomainTitle(_entity, entity?.attributes?.device_class)}`)}{" "}
                   {!active && !hideArrow && arrowIcon}
                 </ToggleMessage>
               </>
@@ -257,7 +257,7 @@ export function TriggerCard<E extends EntityName>(props: TriggerCardProps<E>) {
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "TriggerCard" })}>
-      <_TriggerCard {...defaultColumns} {...props} />
+      <InternalTriggerCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

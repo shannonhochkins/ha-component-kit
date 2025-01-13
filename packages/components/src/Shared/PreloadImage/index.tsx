@@ -78,7 +78,9 @@ export const PreloadImage = ({
   const setPreloader = useCallback(() => {
     if (!src) return;
     preloader.current = new Image();
-    onLoading && onLoading();
+    if (typeof onLoading === "function") {
+      onLoading();
+    }
     if (imageDivRef.current) {
       imageDivRef.current.style.opacity = "0";
       imageDivRef.current.style.backgroundImage = `url(${src})`;
@@ -94,7 +96,9 @@ export const PreloadImage = ({
       if (loadingIconRef.current) {
         loadingIconRef.current.style.opacity = "0";
       }
-      onLoad && onLoad();
+      if (typeof onLoad === "function") {
+        onLoad();
+      }
     };
     preloader.current.onerror = () => {
       if (imageDivRef.current) {
@@ -103,7 +107,9 @@ export const PreloadImage = ({
       if (loadingIconRef.current) {
         loadingIconRef.current.style.opacity = "0";
       }
-      onError && onError();
+      if (typeof onError === "function") {
+        onError();
+      }
     };
 
     preloader.current.src = src;

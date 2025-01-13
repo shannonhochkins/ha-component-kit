@@ -35,7 +35,7 @@ export interface WeatherCardDetailProps extends Omit<RowProps, "title"> {
   render?: (value: HassEntityWithService<ExtractDomain<EntityName>>) => ReactNode;
 }
 
-function _WeatherCardDetail({ icon, iconProps, entity, title, suffix, render, ...rest }: WeatherCardDetailProps) {
+function InternalWeatherCardDetail({ icon, iconProps, entity, title, suffix, render, ...rest }: WeatherCardDetailProps) {
   const _entity = useEntity(entity);
   const _title = title ?? _entity.attributes.friendly_name ?? "";
   return (
@@ -47,7 +47,7 @@ function _WeatherCardDetail({ icon, iconProps, entity, title, suffix, render, ..
             {typeof render === "function"
               ? render(_entity)
               : `${_title ? `${_title} - ` : ""}${_entity.state ?? ""}${
-                  !suffix && _entity.attributes.unit_of_measurement ? `${_entity.attributes.unit_of_measurement}` : suffix ?? ""
+                  !suffix && _entity.attributes.unit_of_measurement ? `${_entity.attributes.unit_of_measurement}` : (suffix ?? "")
                 }`}
           </State>
         </Row>
@@ -58,8 +58,8 @@ function _WeatherCardDetail({ icon, iconProps, entity, title, suffix, render, ..
 
 export function WeatherCardDetail(props: WeatherCardDetailProps) {
   return (
-    <ErrorBoundary {...fallback({ prefix: "_WeatherCardDetail" })}>
-      <_WeatherCardDetail {...props} />
+    <ErrorBoundary {...fallback({ prefix: "WeatherCardDetail" })}>
+      <InternalWeatherCardDetail {...props} />
     </ErrorBoundary>
   );
 }

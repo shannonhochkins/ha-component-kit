@@ -72,3 +72,56 @@ function App() {
   </HassConnect>
 }
 `} />
+
+### Using services from entity
+The `useEntity()` hook is integrated with the `useService` hook so you can use it directly from the entity object.
+Everything is typed so it makes it very easy to use and develop with.
+<Source dark code={`
+import { HassConnect, useEntity } from '@hakit/core';
+function UseServiceExample() {
+  const entity = useEntity('light.some_light_entity');
+  return <button onClick={() => entity.service.toggle()} >TOGGLE LIGHT</button>
+}
+`} />
+
+
+### Getting a response back from a service
+Some services return a response, like the calendar `getEvents` service, you can access this response value by adding `returnResponse` to the service call.
+The response object type is able to be defined by passing a generic type to the service call itself, see example below:
+<Source dark code={`
+import { useEntity } from '@hakit/core';
+import { useState, useCallback } from 'react';
+interface CalendarEvent {
+  description: string;
+  end: string;
+  start: string;
+  summary: string;
+}
+interface CalendarResponse {
+  "calendar.some_calendar": {
+    events: CalendarEvent[];
+  }
+}
+function CallServiceExample() {
+  const entity = useEntity('calendar.some_calendar');
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const getEvents = useCallback(() => {
+    entity.service.getEvents<CalendarResponse>({
+      returnResponse: true,
+      target: 'calendar.some_calendar',
+      serviceData: {
+        start_date_time: '2024-12-22 20:00:00',
+        duration: {
+          days: 24
+        }
+      }
+    }).then((response) => {
+      setEvents(response.events);
+    });
+  }, [entity]);
+  return <>
+    <p>Events: {events.length}</p>
+   <button onClick={getEvents}>GET EVENTS</button>
+  </>
+}
+`} />

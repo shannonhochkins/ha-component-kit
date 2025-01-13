@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, UserConfig } from 'vite';
 import { EsLinter, linterPlugin } from 'vite-plugin-linter';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
@@ -58,5 +58,5 @@ export default defineConfig(configEnv => {
         },
       })
     ],
-  }
+  } satisfies UserConfig
 });

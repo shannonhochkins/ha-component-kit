@@ -170,7 +170,7 @@ export interface AlarmControlsProps extends Extendable {
   slots?: Slot[];
 }
 
-function _AlarmControls({
+function InternalAlarmControls({
   entity: _entity,
   states: _states,
   className,
@@ -199,7 +199,9 @@ function _AlarmControls({
 
   const _handleActionClick = (state: AlarmPanelCardConfigState | "disarm"): void => {
     entity.service[snakeCase(`alarm_${state}`) as AlarmServices]({
-      code: inputVal,
+      serviceData: {
+        code: inputVal,
+      },
     });
     if (!defaultCode) {
       setInputVal("");
@@ -334,7 +336,7 @@ function _AlarmControls({
 export function AlarmControls(props: AlarmControlsProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "AlarmControls" })}>
-      <_AlarmControls {...props} />
+      <InternalAlarmControls {...props} />
     </ErrorBoundary>
   );
 }

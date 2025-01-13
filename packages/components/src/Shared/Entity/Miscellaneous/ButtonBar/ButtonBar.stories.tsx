@@ -28,7 +28,7 @@ function Template(args?: Partial<ButtonBarProps>) {
       <Alert type="info" style={{ marginTop: `1rem` }}>
         <p>
           The background color above is not part of the component, was only set as these buttons have a similar colour to the main
-          background color as they're typically used within other cards which have a lighter background.
+          background color as they&apos;re typically used within other cards which have a lighter background.
         </p>
       </Alert>
     </HassConnect>

@@ -13,7 +13,7 @@ import type { EntityName, ExtractDomain, AllDomains, HassEntityWithService } fro
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, fallback, ModalByEntityDomain, type ModalPropsHelper } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import React, { ReactNode, useId, useMemo, useCallback, lazy, Suspense } from "react";
+import { useState, ReactNode, useId, useMemo, useCallback, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { useLongPress } from "use-long-press";
 import styled from "@emotion/styled";
@@ -113,14 +113,14 @@ export interface EntitiesCardRowProps<E extends EntityName> extends Omit<React.C
   /** the function to call when the row is clicked @default undefined */
   onClick?: (entity: HassEntityWithService<ExtractDomain<E>>) => void;
   /** the function to render the state @default undefined */
-  renderState?: (entity: HassEntityWithService<ExtractDomain<E>>) => React.ReactElement;
+  renderState?: (entity: HassEntityWithService<ExtractDomain<E>>) => React.ReactElement<HTMLElement>;
   /** include last updated time @default false */
   includeLastUpdated?: boolean;
   /** props to pass to the modal for each row */
   modalProps?: Partial<ModalPropsHelper<ExtractDomain<E>>>;
 }
 
-function _EntitiesCardRow<E extends EntityName>({
+function InternalEntitiesCardRow<E extends EntityName>({
   entity: _entity,
   icon: _icon,
   iconProps,
@@ -132,7 +132,7 @@ function _EntitiesCardRow<E extends EntityName>({
   includeLastUpdated = false,
 }: EntitiesCardRowProps<E>) {
   const _id = useId();
-  const [openModal, setOpenModal] = React.useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const { useStore } = useHass();
   const config = useStore((state) => state.config);
   const entities = useStore((store) => store.entities);
@@ -183,7 +183,7 @@ function _EntitiesCardRow<E extends EntityName>({
               filter: (on && entity?.custom.brightness) || "brightness(100%)",
             }}
           >
-            {_icon ? <Icon className={`icon`} icon={_icon} {...(iconProps ?? {})} /> : entityIcon ?? domainIcon}
+            {_icon ? <Icon className={`icon`} icon={_icon} {...(iconProps ?? {})} /> : (entityIcon ?? domainIcon)}
           </IconWrapper>
           <Name className={`name`}>
             {title}
@@ -222,7 +222,7 @@ function _EntitiesCardRow<E extends EntityName>({
 export function EntitiesCardRow<E extends EntityName>(props: EntitiesCardRowProps<E>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "EntitiesCardRow" })}>
-      <_EntitiesCardRow {...props} />
+      <InternalEntitiesCardRow {...props} />
     </ErrorBoundary>
   );
 }

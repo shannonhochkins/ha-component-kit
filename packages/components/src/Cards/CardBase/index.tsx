@@ -42,6 +42,7 @@ import {
   Alert,
   SvgGraph,
   ButtonBar,
+  ButtonBarButton,
   ButtonBarProps,
   SvgGraphProps,
   type RelatedEntity,
@@ -261,7 +262,7 @@ const DEFAULT_SIZES: Required<AvailableQueries> = {
   xlg: 3,
 };
 
-const _CardBase = function _CardBase<T extends ElementType, E extends EntityName>({
+const CardBaseInternal = function CardBase<T extends ElementType, E extends EntityName>({
   as = "div" as T,
   entity: _entity,
   title: _title,
@@ -295,7 +296,7 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
   resizeDetectorProps,
   triggerClass,
   ...rest
-}: CardBaseProps<T, E>) {
+}: CardBaseProps<T, E>): ReactElement<T> {
   const _id = useId();
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
@@ -388,8 +389,12 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rest.xxs, rest.xs, rest.sm, rest.md, rest.lg, rest.xlg]);
 
-  const filteredRelatedEntities = Children.toArray(relatedEntities).filter((child): child is ReactElement => isValidElement(child));
-  const filteredFeaturedEntities = Children.toArray(features).filter((child): child is ReactElement => isValidElement(child));
+  const filteredRelatedEntities = Children.toArray(relatedEntities).filter((child): child is ReactElement<typeof ButtonBarButton> =>
+    isValidElement(child),
+  );
+  const filteredFeaturedEntities = Children.toArray(features).filter((child): child is ReactElement<typeof ButtonBarButton> =>
+    isValidElement(child),
+  );
 
   const featuredElements = Children.map(filteredFeaturedEntities, (child, index) => {
     if (isValidElement<FeatureEntityProps<EntityName>>(child)) {
@@ -514,7 +519,8 @@ const _CardBase = function _CardBase<T extends ElementType, E extends EntityName
 export const CardBase = memo(function CardBase<T extends ElementType, E extends EntityName>(props: CardBaseProps<T, E>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "CardBase" })}>
-      <_CardBase {...props} />
+      {/* @ts-expect-error - there is nothing wrong here, i suspect react 19 type issue with emotion */}
+      <CardBaseInternal {...props} />
     </ErrorBoundary>
   );
 });

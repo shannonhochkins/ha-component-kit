@@ -1,5 +1,23 @@
-import { CSSInterpolation } from "@emotion/serialize";
+// declare hassConnection as type of createConnection on window
+import { type CSSInterpolation } from "@emotion/serialize";
+import { type Connection, type Auth } from "home-assistant-js-websocket";
+declare module "*.png" {
+  const value: string;
+  export = value;
+}
 
+declare module "*.css" {
+  const value: string;
+  export = value;
+}
+
+declare module "*.jpg" {
+  const value: string;
+  export = value;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import React from "react";
 declare module "react" {
   interface Attributes {
     css?: CSSInterpolation;
@@ -14,9 +32,9 @@ declare module "*.svg?react" {
 
   export default ReactComponent;
 }
-
 declare global {
   interface Window {
-    __TRANSLATIONS__: Record<string, string>;
+    hassConnection: Promise<{ auth: Auth; conn: Connection }>;
+    hassConnectionReady?: (hassConnection: Window["hassConnection"]) => void;
   }
 }

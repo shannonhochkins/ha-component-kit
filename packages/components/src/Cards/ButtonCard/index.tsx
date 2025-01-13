@@ -1,4 +1,4 @@
-import { useMemo, Children, isValidElement, ReactNode, ReactElement } from "react";
+import { useMemo, Children, isValidElement, ReactNode } from "react";
 import styled from "@emotion/styled";
 import {
   localize,
@@ -213,7 +213,7 @@ export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProp
   /** The children to render at the bottom of the card */
   children?: React.ReactNode;
 }
-function _ButtonCard<E extends EntityName>({
+function InternalButtonCard<E extends EntityName>({
   entity: _entity,
   service,
   serviceData,
@@ -292,7 +292,7 @@ function _ButtonCard<E extends EntityName>({
     }
     return null;
   }
-  const hasFeatures = Children.toArray(rest?.features).filter((child): child is ReactElement => isValidElement(child)).length > 0;
+  const hasFeatures = Children.toArray(rest?.features).filter((child) => isValidElement(child)).length > 0;
   return (
     <StyledButtonCard
       key={key}
@@ -325,7 +325,7 @@ function _ButtonCard<E extends EntityName>({
                 ...fabProps?.style,
                 backgroundColor:
                   fabProps?.style?.backgroundColor ??
-                  (on ? (domain === "light" ? entity?.custom?.rgbaColor ?? "var(--ha-A400)" : "var(--ha-A400)") : "var(--ha-S400)"),
+                  (on ? (domain === "light" ? (entity?.custom?.rgbaColor ?? "var(--ha-A400)") : "var(--ha-A400)") : "var(--ha-S400)"),
                 color:
                   fabProps?.style?.color ??
                   (entity ? (on ? entity.custom.rgbColor : "var(--ha-S500-contrast)") : on ? "var(--ha-A400)" : "var(--ha-S500-contrast)"),
@@ -391,7 +391,7 @@ export function ButtonCard<E extends EntityName>(props: ButtonCardProps<E>) {
   };
   return (
     <ErrorBoundary {...fallback({ prefix: "ButtonCard" })}>
-      <_ButtonCard {...defaultColumns} {...props} />
+      <InternalButtonCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

@@ -159,7 +159,7 @@ function drawColorWheel(ctx: CanvasRenderingContext2D, minTemp: number, maxTemp:
   }
 }
 
-function _ColorTempPicker({
+function InternalColorTempPicker({
   disabled = false,
   entity: _entity,
   onChangeApplied,
@@ -174,7 +174,7 @@ function _ColorTempPicker({
   const parentRef = useRef<HTMLDivElement>(null);
   const gRef = useRef<SVGGElement>(null);
   const circleRef = useRef<SVGCircleElement>(null);
-  const timerRef = useRef<NodeJS.Timeout | undefined>();
+  const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const _cursorPosition = useRef<[number, number]>([0, 0]);
   const min = entity.attributes.min_color_temp_kelvin || 2000;
   const max = entity.attributes.max_color_temp_kelvin || 10000;
@@ -302,7 +302,9 @@ function _ColorTempPicker({
           onChangeApplied(updatedValue, colors);
         }
         entity.service.turnOn({
-          kelvin: updatedValue,
+          serviceData: {
+            kelvin: updatedValue,
+          },
         });
       }, 100);
     },
@@ -391,7 +393,7 @@ function _ColorTempPicker({
 export function ColorTempPicker(props: ColorTempPickerProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ColorTempPicker" })}>
-      <_ColorTempPicker {...props} />
+      <InternalColorTempPicker {...props} />
     </ErrorBoundary>
   );
 }

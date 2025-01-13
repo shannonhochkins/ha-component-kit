@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import {
@@ -169,7 +169,9 @@ export function VacuumControls({
     () => {
       if (typeof internalFanSpeed === "string") {
         entity.service.setFanSpeed({
-          fan_speed: internalFanSpeed,
+          serviceData: {
+            fan_speed: internalFanSpeed,
+          },
         });
       }
     },
@@ -207,7 +209,9 @@ export function VacuumControls({
                       const fanSpeed = fanSpeedList[currentIndex + 1] ? fanSpeedList[currentIndex + 1] : fanSpeedList[0];
                       setInternalFanSpeed(fanSpeed);
                       entity.service.setFanSpeed({
-                        fan_speed: fanSpeed,
+                        serviceData: {
+                          fan_speed: fanSpeed,
+                        },
                       });
                     }}
                   />

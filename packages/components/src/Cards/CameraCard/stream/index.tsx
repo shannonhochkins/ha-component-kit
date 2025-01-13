@@ -2,7 +2,6 @@ import { STREAM_TYPE_WEB_RTC, STREAM_TYPE_HLS, useCamera, localize } from "@haki
 import type { FilterByDomain, EntityName } from "@hakit/core";
 import { HlsPlayer } from "../players/hls";
 import { WebRTCPlayer } from "../players/webrtc";
-
 import type { VideoState } from "../players";
 export interface CameraStreamProps {
   /** The name of your entity */

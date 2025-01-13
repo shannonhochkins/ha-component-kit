@@ -71,6 +71,7 @@ export const computeStateDisplayFromEntityAttributes = (
     ) {
       try {
         return formatDuration(state, key);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_err) {
         // fallback to default
       }
@@ -84,6 +85,7 @@ export const computeStateDisplayFromEntityAttributes = (
           // Override monetary options with number format
           ...getNumberFormatOptions({ state, attributes } as HassEntity, entity),
         });
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_err) {
         // fallback to default
       }
@@ -128,6 +130,7 @@ export const computeStateDisplayFromEntityAttributes = (
         }
       }
       return state;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_e) {
       // Formatting methods may throw error if date parsing doesn't go well,
       // just return the state string in that case.
@@ -148,6 +151,7 @@ export const computeStateDisplayFromEntityAttributes = (
   ) {
     try {
       return formatDateTime(new Date(state), config);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_err) {
       return state;
     }

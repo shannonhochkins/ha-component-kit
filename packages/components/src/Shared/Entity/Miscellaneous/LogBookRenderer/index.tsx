@@ -141,7 +141,7 @@ const Header = styled.div`
   gap: 0.5rem;
 `;
 
-function _LogBookRenderer({
+function InternalLogBookRenderer({
   entity,
   hideIndicator = false,
   hideHeader = false,
@@ -492,7 +492,7 @@ function _LogBookRenderer({
 export function LogBookRenderer(props: LogBookRendererProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "LogBookRenderer" })}>
-      <_LogBookRenderer {...props} />
+      <InternalLogBookRenderer {...props} />
     </ErrorBoundary>
   );
 }

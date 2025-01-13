@@ -28,7 +28,9 @@ export function ClimateHumiditySlider({ entity: _entity, showCurrent = false }: 
     (targetHumidity: number) => {
       if (targetHumidity) {
         entity.service.setHumidity({
-          humidity: targetHumidity,
+          serviceData: {
+            humidity: targetHumidity,
+          },
         });
       }
     },

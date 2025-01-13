@@ -160,13 +160,17 @@ export function ClimateControlSlider({ entity: _entity, showCurrent = false }: C
     (type: string) => {
       if (type === "high" || type === "low") {
         entity.service.setTemperature({
-          target_temp_low: _targetTemperature.low,
-          target_temp_high: _targetTemperature.high,
+          serviceData: {
+            target_temp_low: _targetTemperature.low,
+            target_temp_high: _targetTemperature.high,
+          },
         });
         return;
       }
       entity.service.setTemperature({
-        temperature: _targetTemperature.value,
+        serviceData: {
+          temperature: _targetTemperature.value,
+        },
       });
     },
     [_targetTemperature, entity],

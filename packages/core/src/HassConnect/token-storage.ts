@@ -17,14 +17,14 @@ export function saveTokens(tokens: AuthData | null) {
       storage.setItem("hassTokens", JSON.stringify(tokens));
     } catch (err: unknown) {
       // write failed, ignore it. Happens if storage is full or private mode.
-      console.error("Failed to save tokens, probably due to private mode or storage full");
+      console.error("Failed to save tokens, probably due to private mode or storage full", err);
     }
   } else {
     console.error("Local storage not supported on this device.");
   }
 }
 
-export function loadTokens(hassUrl: string): AuthData | null {
+export function loadTokens(hassUrl: string, removeIfInvalid: boolean = true): AuthData | null {
   if (!supportsStorage) {
     console.error("Local storage not supported on this device.");
     return null;
@@ -37,7 +37,7 @@ export function loadTokens(hassUrl: string): AuthData | null {
       if (storedTokens.hassUrl === hassUrl) {
         // return the saved tokens
         return storedTokens;
-      } else {
+      } else if (removeIfInvalid) {
         // Delete the old token cache.
         clearTokens();
         // will force the auth method to retry

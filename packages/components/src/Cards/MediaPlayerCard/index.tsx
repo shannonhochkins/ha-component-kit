@@ -137,7 +137,7 @@ export interface MediaPlayerCardProps extends Omit<CardBaseProps<"div", FilterBy
   /** show the artwork as the background of the card @default true */
   showArtworkBackground?: boolean;
 }
-function _MediaPlayerCard({
+function InternalMediaPlayerCard({
   entity: _entity,
   groupMembers = [],
   volumeLayout = "slider",
@@ -266,8 +266,11 @@ function _MediaPlayerCard({
       const offsetX = x - rect.left;
       // Translate the click position into a percentage between 0-100
       const percentage = offsetX / rect.width;
-      mp.mediaSeek(allEntityIds, {
-        seek_position: percentage * (media_duration ?? 0),
+      mp.mediaSeek({
+        target: allEntityIds,
+        serviceData: {
+          seek_position: percentage * (media_duration ?? 0),
+        },
       });
     },
     [mp, allEntityIds, media_duration],
@@ -454,7 +457,7 @@ export function MediaPlayerCard(props: MediaPlayerCardProps) {
 
   return (
     <ErrorBoundary {...fallback({ prefix: "MediaPlayerCard" })}>
-      <_MediaPlayerCard {...defaultColumns} {...props} />
+      <InternalMediaPlayerCard {...defaultColumns} {...props} />
     </ErrorBoundary>
   );
 }

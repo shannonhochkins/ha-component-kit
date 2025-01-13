@@ -66,7 +66,7 @@ export interface ClimateControlsProps extends Extendable {
   mainControl?: MainControl;
 }
 
-function _ClimateControls({
+function InternalClimateControls({
   entity: _entity,
   hvacModes,
   hvacModeLabels,
@@ -110,7 +110,9 @@ function _ClimateControls({
   const _handleFanModeChanged = useCallback(
     (value: ClimateBuiltInFanMode) => {
       entity.service.setFanMode({
-        fan_mode: value,
+        serviceData: {
+          fan_mode: value,
+        },
       });
     },
     [entity.service],
@@ -119,7 +121,9 @@ function _ClimateControls({
   const _handleOperationModeChanged = useCallback(
     (value: HvacMode) => {
       entity.service.setHvacMode({
-        hvac_mode: value,
+        serviceData: {
+          hvac_mode: value,
+        },
       });
     },
     [entity.service],
@@ -128,7 +132,9 @@ function _ClimateControls({
   const _handleSwingmodeChanged = useCallback(
     (value: ClimateBuiltInSwingMode) => {
       entity.service.setSwingMode({
-        swing_mode: value,
+        serviceData: {
+          swing_mode: value,
+        },
       });
     },
     [entity.service],
@@ -138,7 +144,9 @@ function _ClimateControls({
     (value: ClimateBuiltInPresetMode) => {
       if (value) {
         entity.service.setPresetMode({
-          preset_mode: value,
+          serviceData: {
+            preset_mode: value,
+          },
         });
       }
     },
@@ -276,7 +284,7 @@ function _ClimateControls({
 export function ClimateControls(props: ClimateControlsProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ClimateControls" })}>
-      <_ClimateControls {...props} />
+      <InternalClimateControls {...props} />
     </ErrorBoundary>
   );
 }

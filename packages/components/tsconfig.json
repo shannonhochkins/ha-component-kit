@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig",
   "compilerOptions": {
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
   "rootDir": "./src",
   "include": ["src", "./src/.d.ts", "../../.d.ts", "./vite-env.d.ts"],

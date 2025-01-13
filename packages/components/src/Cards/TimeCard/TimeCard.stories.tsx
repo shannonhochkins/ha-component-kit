@@ -29,12 +29,12 @@ function Template(args?: Partial<TimeCardProps>) {
           instance.
         </p>
         <p>
-          If you want to use sensors from home assistant you can follow the guide below, the difference being there's no need to perform
-          formatting or updates as updates are emitted from home assistant instead of tracking the time differences with react.
+          If you want to use sensors from home assistant you can follow the guide below, the difference being there&apos;s no need to
+          perform formatting or updates as updates are emitted from home assistant instead of tracking the time differences with react.
         </p>
         <p>
           To add custom entities, you can follow the guide{" "}
-          <a href="https://www.home-assistant.io/integrations/time_date/" target="_blank">
+          <a href="https://www.home-assistant.io/integrations/time_date/" target="_blank" rel="noreferrer">
             here
           </a>
           .

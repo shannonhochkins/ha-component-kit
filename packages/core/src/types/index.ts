@@ -1,9 +1,10 @@
-import type { HassEntity, HassServiceTarget } from "home-assistant-js-websocket";
+import type { HassEntity, HassServiceTarget, Context } from "home-assistant-js-websocket";
 import type { DefaultServices } from "./supported-services";
 import type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 export type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 import type { TimelineState, EntityHistoryState } from "../hooks/useHistory/history";
-
+export type { Locales, LocaleKeys } from "../hooks/useLocale/locales/types";
+export type { Route, CallServiceArgs, HassContextProps } from "../HassConnect/HassContext";
 export type { HistoryStreamMessage, TimelineState, HistoryResult, EntityHistoryState } from "../hooks/useHistory/history";
 
 export interface CustomSupportedServices<T extends ServiceFunctionTypes = "target"> {
@@ -23,6 +24,7 @@ export type FilterByDomain<
 > = T extends `${Prefix}${infer _Rest}` ? T : never;
 
 export type DefaultEntityName = `${AllDomains}.${string}`;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface CustomEntityNameContainer {}
 
 export type EntityName =
@@ -56,7 +58,10 @@ export type HassEntityCustom = HassEntity & {
 };
 export type HassEntityHelper<T extends AllDomains> =
   CamelToSnake<T> extends keyof DefinedPropertiesByDomain ? DefinedPropertiesByDomain[CamelToSnake<T>] : HassEntity;
-
+export interface ServiceResponse<Response = object> {
+  context: Context;
+  response: Response;
+}
 export type HassEntityWithService<T extends AllDomains> = HassEntityCustom &
   HassEntityHelper<SnakeToCamel<T>> & {
     history: {
@@ -68,24 +73,69 @@ export type HassEntityWithService<T extends AllDomains> = HassEntityCustom &
     service: SnakeToCamel<T> extends keyof SupportedServices<"no-target"> ? SupportedServices<"no-target">[SnakeToCamel<T>] : never;
   };
 
-export type ServiceFunctionWithEntity<Data = object> = (
-  /** the entity target from home assistant, string, string[] or object */
-  entity: Target,
-  /** the data to send to the service */
-  data?: Data,
-) => void;
-
-export type ServiceFunctionWithoutEntity<Data = object> = {
-  /** the data to send to the service */
-  (data?: Data): void;
+export type ServiceFunctionWithEntity<ResponseData extends object, Data = object> = {
+  <CustomResponseData extends ResponseData = ResponseData>({
+    target,
+    serviceData,
+    returnResponse,
+  }: {
+    /** the entity target from home assistant, string, string[] or object */
+    target: Target;
+    /** the data to send to the service */
+    serviceData?: Data;
+    /** whether to return the response object */
+    returnResponse: true;
+  }): Promise<ServiceResponse<CustomResponseData>>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  <CustomResponseData extends ResponseData = ResponseData>({
+    target,
+    serviceData,
+  }: {
+    /** the entity target from home assistant, string, string[] or object */
+    target: Target;
+    /** the data to send to the service */
+    serviceData?: Data;
+  }): void;
+  // @ts-expect-error - It's needed for the overloads
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  <CustomResponseData extends ResponseData = ResponseData>({
+    target,
+    serviceData,
+  }: {
+    /** the entity target from home assistant, string, string[] or object */
+    target: Target;
+    /** the data to send to the service */
+    serviceData?: Data;
+    /** whether to return the response object */
+    returnResponse: false;
+  }): void;
 };
 
-export type ServiceFunction<T extends ServiceFunctionTypes = "target", Data = object> = {
-  /** with target, the service method expects a Target value as the first argument */
-  target: ServiceFunctionWithEntity<Data>;
-  /** without target, the service method does not expect a Target value as the first argument */
-  "no-target": ServiceFunctionWithoutEntity<Data>;
-}[T];
+export type ServiceFunctionWithoutEntity<ResponseData extends object, Data = object> = {
+  <CustomResponseData extends ResponseData = ResponseData>(args?: {
+    /** the data to send to the service */
+    serviceData?: Data;
+    /** whether to return the response object */
+    returnResponse: true;
+  }): Promise<ServiceResponse<CustomResponseData>>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  <CustomResponseData extends ResponseData = ResponseData>(args?: {
+    /** the data to send to the service */
+    serviceData?: Data;
+  }): void;
+  // @ts-expect-error - It's needed for the overloads
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  <CustomResponseData extends ResponseData = ResponseData>(args?: {
+    /** the data to send to the service */
+    serviceData?: Data;
+    /** whether to return the response object */
+    returnResponse: false;
+  }): void;
+};
+
+export type ServiceFunction<ResponseData extends object, T extends ServiceFunctionTypes = "target", Data = object> = T extends "target"
+  ? ServiceFunctionWithEntity<ResponseData, Data>
+  : ServiceFunctionWithoutEntity<ResponseData, Data>;
 export type StaticDomains = "sun" | "sensor" | "stt" | "binarySensor" | "weather" | "alert" | "plant" | "datetime" | "water_heater";
 export type SnakeOrCamelStaticDomains = CamelToSnake<StaticDomains> | SnakeToCamel<StaticDomains>;
 /** the key names on the interface object all as camel case */
@@ -118,11 +168,11 @@ export type DomainService<D extends SnakeOrCamelDomains> =
 
 /** returns the supported data to be used with the ServiceFunction */
 export type ServiceData<D extends SnakeOrCamelDomains, S extends DomainService<D>> = S extends keyof SupportedServices[SnakeToCamel<D>]
-  ? SupportedServices[SnakeToCamel<D>][S] extends ServiceFunction<"target", infer Params>
+  ? SupportedServices[SnakeToCamel<D>][S] extends ServiceFunction<object, "target", infer Params>
     ? Params
     : never
   : SnakeToCamel<S> extends keyof SupportedServices[SnakeToCamel<D>]
-    ? SupportedServices[SnakeToCamel<D>][SnakeToCamel<S>] extends ServiceFunction<"target", infer Params>
+    ? SupportedServices[SnakeToCamel<D>][SnakeToCamel<S>] extends ServiceFunction<object, "target", infer Params>
       ? Params
       : never
     : never;

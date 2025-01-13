@@ -235,7 +235,7 @@ const SliderHolder = styled.div``;
 const SliderTrackBackground = styled.div``;
 const SliderTrackBar = styled.div``;
 
-function _ControlSlider({
+function InternalControlSlider({
   vertical = true,
   disabled = false,
   showHandle = true,
@@ -257,7 +257,7 @@ function _ControlSlider({
   const sliderRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
   const inlineValue = useRef(value);
-  const timerRef = useRef<NodeJS.Timeout | undefined>();
+  const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const boundedValue = useCallback(
     (value: number) => {
       return Math.min(Math.max(value, min), max);
@@ -416,7 +416,7 @@ function _ControlSlider({
 export function ControlSlider(props: ControlSliderProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ControlSlider" })}>
-      <_ControlSlider {...props} />
+      <InternalControlSlider {...props} />
     </ErrorBoundary>
   );
 }

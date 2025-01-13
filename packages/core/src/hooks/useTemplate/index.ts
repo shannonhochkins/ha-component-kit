@@ -43,6 +43,7 @@ export const useTemplate = (params: TemplateParams) => {
         unsubscribeRef.current?.();
         unsubscribeRef.current = null;
       } catch (e) {
+        console.log("Error:", e);
         // may have already unsubscribed
         unsubscribeRef.current = null;
       }

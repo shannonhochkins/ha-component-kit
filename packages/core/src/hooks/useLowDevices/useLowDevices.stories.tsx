@@ -56,11 +56,11 @@ export default {
             <mark>{`useLowDevices({ min = 0, max = 20, blacklist = [], whitelist = [] })`}</mark>
           </h5>
           <Description />
-          <p>The following is the use of the hook in it's default form:</p>
+          <p>The following is the use of the hook in it&apos;s default form:</p>
           <Source dark code={`const lowDevices = useLowDevices();`} />
           <ArgTypes />
           <Template />
-          <p>Here's the source code for the above EntitiesCard:</p>
+          <p>Here&apos;s the source code for the above EntitiesCard:</p>
           <Source
             dark
             code={`

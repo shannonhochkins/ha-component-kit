@@ -5,6 +5,8 @@ import { useDebouncedCallback } from "use-debounce";
 import { fallback, mq } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
+const RangeSliderParent = styled.div``;
+
 const StyledRange = styled.div<{
   handleSize: number;
 }>`
@@ -174,7 +176,7 @@ export interface RangeSliderProps extends Omit<React.ComponentPropsWithoutRef<"i
   tooltipSize?: number;
 }
 
-function _RangeSlider({
+function InternalRangeSlider({
   value: _value,
   onChange,
   formatTooltipValue,
@@ -226,7 +228,7 @@ function _RangeSlider({
   }, 300);
 
   return (
-    <div
+    <RangeSliderParent
       className={`${className ?? ""} ${active ? "active" : ""} range-slider`}
       style={{ position: "relative", ...(style ?? {}) }}
       css={css`
@@ -267,7 +269,7 @@ function _RangeSlider({
           </div>
         )}
       </StyledRange>
-    </div>
+    </RangeSliderParent>
   );
 }
 
@@ -275,7 +277,7 @@ function _RangeSlider({
 export function RangeSlider(props: RangeSliderProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "RangeSlider" })}>
-      <_RangeSlider {...props} />
+      <InternalRangeSlider {...props} />
     </ErrorBoundary>
   );
 }

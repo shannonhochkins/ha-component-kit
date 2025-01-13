@@ -87,7 +87,7 @@ export interface ButtonGroupButtonProps<E extends EntityName> extends Omit<Toolt
   disableScaleEffect?: boolean;
 }
 
-function _ButtonGroupButton<E extends EntityName>({
+function InternalButtonGroupButton<E extends EntityName>({
   entity,
   onClick,
   icon,
@@ -156,7 +156,7 @@ function _ButtonGroupButton<E extends EntityName>({
 export function ButtonGroupButton<E extends EntityName>(props: ButtonGroupButtonProps<E>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ButtonGroupButton" })}>
-      <_ButtonGroupButton {...props} />
+      <InternalButtonGroupButton {...props} />
     </ErrorBoundary>
   );
 }

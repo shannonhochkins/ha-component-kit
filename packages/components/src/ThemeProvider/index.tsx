@@ -225,7 +225,7 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
   `;
 };
 
-const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
+const InternalThemeProvider = memo(function InternalThemeProvider<T extends object>({
   theme,
   darkMode = DEFAULT_THEME_OPTIONS.darkMode,
   tint: t = DEFAULT_THEME_OPTIONS.tint,
@@ -447,7 +447,7 @@ const _ThemeProvider = memo(function _ThemeProvider<T extends object>({
 export function ThemeProvider<T extends object>(props: ThemeProviderProps<T>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ThemeProvider" })}>
-      <_ThemeProvider {...props} />
+      <InternalThemeProvider {...props} />
     </ErrorBoundary>
   );
 }

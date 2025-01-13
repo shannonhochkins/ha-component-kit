@@ -123,8 +123,8 @@ function Render(args: Story["args"]) {
       <p>Available CSS Variables:</p>
       <Source dark code={`${convertToCssVars(theme).replace(/^\s+/gm, "")}`} language="tsx" />
       <p>
-        The ThemeProvider can be used as is with no props and you'll have access to all available css variables defined under the importable
-        type `ThemeParams` from `@hakit/components`;
+        The ThemeProvider can be used as is with no props and you&apos;ll have access to all available css variables defined under the
+        importable type `ThemeParams` from `@hakit/components`;
       </p>
       <p>
         The css variables take the input theme object (which is of type `ThemeParams`) and converts the keys & nested keys to kebab case to
@@ -138,8 +138,9 @@ function Render(args: Story["args"]) {
         and your custom properties / overrides:
       </p>
       <p>
-        <b>Note: </b>Strings are converted to raw values so if you're expecting a "string" as the css value make sure you wrap in double
-        quotes `'"Arial"'`, additionally, any camelCase strings will be converted to kebab case for the css variables
+        <b>Note: </b>Strings are converted to raw values so if you&apos;re expecting a &quot;string&quot; as the css value make sure you
+        wrap in double quotes `&apos;&quot;Arial&quot;`, additionally, any camelCase strings will be converted to kebab case for the css
+        variables
       </p>
 
       <Source dark code={convertToCssVars(merge(theme, customTheme) as object).replace(/^\s+/gm, "")} />

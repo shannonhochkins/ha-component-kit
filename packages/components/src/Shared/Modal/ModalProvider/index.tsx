@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useEffect, useRef } from "react";
+import { createContext, useEffect, useRef } from "react";
 import { type CustomModalAnimation } from "@components";
 import { create } from "zustand";
 import { MotionConfig, type MotionConfigProps } from "framer-motion";

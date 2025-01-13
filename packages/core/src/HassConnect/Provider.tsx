@@ -1,17 +1,6 @@
-import React, { createContext, useEffect, useCallback, useRef } from "react";
+import { useEffect, useCallback, useRef } from "react";
 // types
-import type {
-  Connection,
-  HassEntities,
-  HassEntity,
-  HassConfig,
-  HassUser,
-  HassServices,
-  getAuthOptions as AuthOptions,
-  Auth,
-  UnsubscribeFunc,
-} from "home-assistant-js-websocket";
-import { type CSSInterpolation } from "@emotion/serialize";
+import type { Connection, HassConfig, getAuthOptions as AuthOptions, Auth, UnsubscribeFunc } from "home-assistant-js-websocket";
 // methods
 import {
   getAuth,
@@ -29,219 +18,13 @@ import {
   ERR_INVALID_AUTH,
   ERR_INVALID_HTTPS_TO_HTTP,
 } from "home-assistant-js-websocket";
-import { isArray, snakeCase, isEmpty } from "lodash";
-import { ServiceData, SnakeOrCamelDomains, DomainService, Target } from "@typings";
+import { isArray, snakeCase } from "lodash";
+import { SnakeOrCamelDomains, DomainService, Locales, CallServiceArgs, Route, ServiceResponse } from "@typings";
 import { saveTokens, loadTokens, clearTokens } from "./token-storage";
-import { diff } from "deep-object-diff";
-import { create } from "zustand";
 import { useDebouncedCallback } from "use-debounce";
-import { Locales } from "../hooks/useLocale/locales/types";
 import locales from "../hooks/useLocale/locales";
 import { updateLocales } from "../hooks/useLocale";
-import { LocaleKeys } from "packages/core/dist/types";
-
-export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>> {
-  domain: T;
-  service: M;
-  serviceData?: ServiceData<T, M>;
-  target?: Target;
-}
-
-export interface Route {
-  hash: string;
-  name: string;
-  icon: string;
-  active: boolean;
-}
-
-export type SupportedComponentOverrides =
-  | "buttonCard"
-  | "modal"
-  | "areaCard"
-  | "calendarCard"
-  | "climateCard"
-  | "cameraCard"
-  | "entitiesCard"
-  | "fabCard"
-  | "cardBase"
-  | "garbageCollectionCard"
-  | "mediaPlayerCard"
-  | "pictureCard"
-  | "sensorCard"
-  | "timeCard"
-  | "triggerCard"
-  | "weatherCard"
-  | "menu"
-  | "personCard"
-  | "familyCard"
-  | "vacuumCard"
-  | "alarmCard";
-export interface Store {
-  entities: HassEntities;
-  setEntities: (entities: HassEntities) => void;
-  /** The connection object from home-assistant-js-websocket */
-  connection: Connection | null;
-  setConnection: (connection: Connection | null) => void;
-  /** any errors caught during core authentication */
-  error: null | string;
-  setError: (error: string | null) => void;
-  /** if there was an issue connecting to HA */
-  cannotConnect: boolean;
-  setCannotConnect: (cannotConnect: boolean) => void;
-  /** This is an internal value, no need to use this */
-  ready: boolean;
-  setReady: (ready: boolean) => void;
-  /** The last time the context object was updated */
-  lastUpdated: Date;
-  setLastUpdated: (lastUpdated: Date) => void;
-  /** the current hash in the url */
-  hash: string;
-  /** set the current hash */
-  setHash: (hash: string) => void;
-  /** returns available routes */
-  routes: Route[];
-  setRoutes: (routes: Route[]) => void;
-  /** the home assistant authentication object */
-  auth: Auth | null;
-  setAuth: (auth: Auth | null) => void;
-  /** the home assistant configuration */
-  config: HassConfig | null;
-  setConfig: (config: HassConfig | null) => void;
-  /** the hassUrl provided to the HassConnect component */
-  hassUrl: string | null;
-  /** set the hassUrl */
-  setHassUrl: (hassUrl: string | null) => void;
-  /** getter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
-  breakpoints: Record<"xxs" | "xs" | "sm" | "md" | "lg" | "xlg", number>;
-  /** setter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
-  setBreakpoints: (breakpoints: Record<"xxs" | "xs" | "sm" | "md" | "lg", number>) => void;
-  /** a way to provide or overwrite default styles for any particular component */
-  setGlobalComponentStyles: (styles: Partial<Record<SupportedComponentOverrides, CSSInterpolation>>) => void;
-  globalComponentStyles: Partial<Record<SupportedComponentOverrides, CSSInterpolation>>;
-  portalRoot?: HTMLElement;
-  setPortalRoot: (portalRoot: HTMLElement) => void;
-  locales: Record<LocaleKeys, string> | null;
-  setLocales: (locales: Record<LocaleKeys, string>) => void;
-}
-
-const useStore = create<Store>((set) => ({
-  routes: [],
-  setRoutes: (routes) => set(() => ({ routes })),
-  entities: {},
-  setHassUrl: (hassUrl) => set({ hassUrl }),
-  hassUrl: null,
-  hash: "",
-  locales: null,
-  setLocales: (locales) => set({ locales }),
-  setHash: (hash) => set({ hash }),
-  setPortalRoot: (portalRoot) => set({ portalRoot }),
-  setEntities: (newEntities) =>
-    set((state) => {
-      const entitiesDiffChanged = diff(ignoreForDiffCheck(state.entities), ignoreForDiffCheck(newEntities)) as HassEntities;
-      if (!isEmpty(entitiesDiffChanged)) {
-        // purposely not making this throttle configurable
-        // because lights can animate etc, which doesn't need to reflect in the UI
-        // if a user want's to control individual entities this can be done with useEntity by passing a throttle to it's options.
-        const updatedEntities = Object.keys(entitiesDiffChanged).reduce<HassEntities>(
-          (acc, entityId) => ({
-            ...acc,
-            [entityId]: newEntities[entityId],
-          }),
-          {},
-        );
-        // update the stateEntities with the newEntities with the keys that have changed
-        Object.keys(updatedEntities).forEach((entityId) => {
-          state.entities[entityId] = {
-            ...state.entities[entityId],
-            ...newEntities[entityId],
-          };
-        });
-        if (!state.ready) {
-          return {
-            ready: true,
-            lastUpdated: new Date(),
-            entities: state.entities,
-          };
-        }
-        return {
-          lastUpdated: new Date(),
-          entities: state.entities,
-        };
-      }
-      return state;
-    }),
-  connection: null,
-  setConnection: (connection) => set({ connection }),
-  cannotConnect: false,
-  setCannotConnect: (cannotConnect) => set({ cannotConnect }),
-  ready: false,
-  setReady: (ready) => set({ ready }),
-  lastUpdated: new Date(),
-  setLastUpdated: (lastUpdated) => set({ lastUpdated }),
-  auth: null,
-  setAuth: (auth) => set({ auth }),
-  config: null,
-  setConfig: (config) => set({ config }),
-  error: null,
-  setError: (error) => set({ error }),
-  breakpoints: {
-    xxs: 0,
-    xs: 0,
-    sm: 0,
-    md: 0,
-    lg: 0,
-    xlg: 0,
-  },
-  setBreakpoints: (breakpoints) =>
-    set({
-      breakpoints: {
-        ...breakpoints,
-        xlg: breakpoints.lg + 1,
-      },
-    }),
-  globalComponentStyles: {},
-  setGlobalComponentStyles: (styles) => set(() => ({ globalComponentStyles: styles })),
-}));
-
-export interface HassContextProps {
-  useStore: typeof useStore;
-  /** logout of HA */
-  logout: () => void;
-  /** will retrieve all the HassEntities states */
-  getStates: () => Promise<HassEntity[] | null>;
-  /** will retrieve all the HassServices */
-  getServices: () => Promise<HassServices | null>;
-  /** will retrieve HassConfig */
-  getConfig: () => Promise<HassConfig | null>;
-  /** will retrieve HassUser */
-  getUser: () => Promise<HassUser | null>;
-  /** function to call a service through web sockets */
-  callService: <T extends SnakeOrCamelDomains, M extends DomainService<T>>(args: CallServiceArgs<T, M>) => void;
-  /** add a new route to the provider */
-  addRoute(route: Omit<Route, "active">): void;
-  /** retrieve a route by name */
-  getRoute(hash: string): Route | null;
-  /** will retrieve all HassEntities from the context */
-  getAllEntities: () => HassEntities;
-  /** join a path to the hassUrl */
-  joinHassUrl: (path: string) => string;
-  /** call the home assistant api */
-  callApi: <T>(
-    endpoint: string,
-    options?: RequestInit,
-  ) => Promise<
-    | {
-        data: T;
-        status: "success";
-      }
-    | {
-        data: string;
-        status: "error";
-      }
-  >;
-}
-
-export const HassContext = createContext<HassContextProps>({} as HassContextProps);
+import { HassContext, type HassContextProps, useStore } from "./HassContext";
 
 export interface HassProviderProps {
   /** components to render once authenticated, this accepts a child function which will pass if it is ready or not */
@@ -256,11 +39,11 @@ export interface HassProviderProps {
   portalRoot?: HTMLElement;
 }
 
-function handleError(err: number | string | Error | unknown): string {
+function handleError(err: number | string | Error | unknown, hassToken?: string): string {
   const getMessage = () => {
     switch (err) {
       case ERR_INVALID_AUTH:
-        return "ERR_INVALID_AUTH: Invalid authentication.";
+        return `ERR_INVALID_AUTH: Invalid authentication. ${hassToken ? 'Check your "Long-Lived Access Token".' : ""}`;
       case ERR_CANNOT_CONNECT:
         return "ERR_CANNOT_CONNECT: Unable to connect";
       case ERR_CONNECTION_LOST:
@@ -300,14 +83,105 @@ type ConnectionResponse =
       cannotConnect: true;
     };
 
-const tryConnection = async (init: "auth-callback" | "user-request" | "saved-tokens", hassUrl: string): Promise<ConnectionResponse> => {
+type ConnectionType = "auth-callback" | "user-request" | "saved-tokens" | "inherited-auth" | "provided-token";
+
+function getInheritedConnection(): typeof window.hassConnection | undefined {
+  try {
+    return window.top?.hassConnection;
+  } catch (e) {
+    console.error("Error getting inherited connection", e);
+    return undefined;
+  }
+}
+
+function determineConnectionType(hassUrl: string, hassToken?: string): ConnectionType {
+  const isAuthCallback = location && location.search.includes("auth_callback=1");
+  const hasHassConnection = !!getInheritedConnection();
+  const providedToken = !!hassToken;
+  // when we have a hass connection, we don't need to validate the tokens
+  // so removing the tokens if values are different and we have a connection are not needed.
+  const savedTokens = !!loadTokens(hassUrl, false);
+
+  switch (true) {
+    case isAuthCallback:
+      return "auth-callback";
+    case hasHassConnection:
+      return "inherited-auth";
+    case providedToken:
+      return "provided-token";
+    case savedTokens:
+      return "saved-tokens";
+    default:
+      return "user-request";
+  }
+}
+
+const tryConnection = async (hassUrl: string, hassToken?: string): Promise<ConnectionResponse> => {
+  const connectionType = determineConnectionType(hassUrl, hassToken);
+
+  if (connectionType === "inherited-auth") {
+    try {
+      // if we've hit this connect type, the connection will be available
+      const { auth, conn } = (await getInheritedConnection()) as { conn: Connection; auth: Auth };
+      return {
+        type: "success",
+        connection: conn,
+        auth: auth,
+      };
+    } catch (e) {
+      const message = handleError(e, hassToken);
+      return {
+        type: "error",
+        error: message,
+      };
+    }
+  }
+  if (connectionType === "provided-token" && hassToken) {
+    try {
+      const auth = await createLongLivedTokenAuth(hassUrl, hassToken);
+      const connection = await createConnection({ auth });
+      return {
+        type: "success",
+        connection,
+        auth,
+      };
+    } catch (e) {
+      const message = handleError(e, hassToken);
+      return {
+        type: "error",
+        error: message,
+      };
+    }
+  }
+
   const options: AuthOptions = {
     saveTokens,
     loadTokens: () => Promise.resolve(loadTokens(hassUrl)),
   };
 
-  if (hassUrl && init === "user-request") {
+  if (hassUrl && connectionType === "user-request") {
     options.hassUrl = hassUrl;
+    if (options.hassUrl === "") {
+      return {
+        type: "error",
+        error: "Please enter a Home Assistant URL.",
+      };
+    }
+    if (options.hassUrl.indexOf("://") === -1) {
+      return {
+        type: "error",
+        error: "Please enter your full URL, including the protocol part (https://).",
+      };
+    }
+    try {
+      new URL(options.hassUrl);
+    } catch (err: unknown) {
+      console.log("Error:", err);
+      return {
+        type: "error",
+        error: "Invalid URL",
+      };
+    }
   }
   let auth: Auth;
 
@@ -323,9 +197,9 @@ const tryConnection = async (init: "auth-callback" | "user-request" | "saved-tok
     ) {
       // the refresh token is incorrect and most likely from another browser / instance
       clearTokens();
-      return tryConnection(init, hassUrl);
+      return tryConnection(hassUrl, hassToken);
     }
-    if (init === "saved-tokens" && err === ERR_CANNOT_CONNECT) {
+    if (connectionType === "saved-tokens" && err === ERR_CANNOT_CONNECT) {
       return {
         type: "failed",
         cannotConnect: true,
@@ -333,7 +207,7 @@ const tryConnection = async (init: "auth-callback" | "user-request" | "saved-tok
     }
     return {
       type: "error",
-      error: handleError(err),
+      error: handleError(err, hassToken),
     };
   } finally {
     // Clear url if we have a auth callback in url.
@@ -347,7 +221,7 @@ const tryConnection = async (init: "auth-callback" | "user-request" | "saved-tok
     connection = await createConnection({ auth });
   } catch (err) {
     // In case of saved tokens, silently solve problems.
-    if (init === "saved-tokens") {
+    if (connectionType === "saved-tokens") {
       if (err === ERR_CANNOT_CONNECT) {
         return {
           type: "failed",
@@ -359,29 +233,13 @@ const tryConnection = async (init: "auth-callback" | "user-request" | "saved-tok
     }
     return {
       type: "error",
-      error: handleError(err),
+      error: handleError(err, hassToken),
     };
   }
   return {
     type: "success",
     connection,
     auth,
-  };
-};
-const IGNORE_KEYS_FOR_DIFF = ["last_changed", "last_updated", "context"];
-const ignoreForDiffCheck = (
-  obj: HassEntities,
-  keys: string[] = IGNORE_KEYS_FOR_DIFF,
-): {
-  [key: string]: Omit<HassEntity, "last_changed" | "last_updated" | "context">;
-} => {
-  return Object.fromEntries(
-    Object.entries(obj).map(([entityId, entityData]) => [
-      entityId,
-      Object.fromEntries(Object.entries(entityData).filter(([key]) => !keys.includes(key))),
-    ]),
-  ) as {
-    [key: string]: Omit<HassEntity, "last_changed" | "last_updated" | "context">;
   };
 };
 
@@ -418,8 +276,8 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
   const reset = useCallback(() => {
     // when the hassUrl changes, reset some properties and re-authenticate
     setAuth(null);
-    _connectionRef.current = null;
     setConnection(null);
+    _connectionRef.current = null;
     setEntities({});
     setConfig(null);
     setError(null);
@@ -439,52 +297,19 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
       clearTokens();
       if (location) location.reload();
     } catch (err: unknown) {
+      console.log("Error:", err);
       setError("Unable to log out!");
     }
   }, [reset, setError]);
 
   const handleConnect = useCallback(async () => {
-    if (hassToken) {
-      const auth = await createLongLivedTokenAuth(hassUrl, hassToken);
-      const connection = await createConnection({ auth });
-      setAuth(auth);
-      setConnection(connection);
-      _connectionRef.current = connection;
-      return;
-    }
-    let connectionResponse: ConnectionResponse;
     // this will trigger on first mount
-    if (location && location.search.indexOf("auth_callback=1") !== -1) {
-      connectionResponse = await tryConnection("auth-callback", hassUrl);
-    } else if (loadTokens(hassUrl)) {
-      connectionResponse = await tryConnection("saved-tokens", hassUrl);
-    } else {
-      const value = hassUrl || "";
-
-      if (value === "") {
-        setError("Please enter a Home Assistant URL.");
-        authenticated.current = false;
-        return;
-      }
-      if (value.indexOf("://") === -1) {
-        setError("Please enter your full URL, including the protocol part (https://).");
-        authenticated.current = false;
-        return;
-      }
-
-      try {
-        new URL(value);
-      } catch (err: unknown) {
-        setError("Invalid URL");
-        authenticated.current = false;
-        return;
-      }
-
-      connectionResponse = await tryConnection("user-request", value);
-    }
+    const connectionResponse = await tryConnection(hassUrl, hassToken);
     if (connectionResponse.type === "error") {
+      authenticated.current = false;
       setError(connectionResponse.error);
     } else if (connectionResponse.type === "failed") {
+      authenticated.current = false;
       setCannotConnect(true);
     } else if (connectionResponse.type === "success") {
       // store a reference to the authentication object
@@ -492,9 +317,8 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
       // store the connection to pass to the provider
       setConnection(connectionResponse.connection);
       _connectionRef.current = connectionResponse.connection;
-      return;
+      authenticated.current = true;
     }
-    authenticated.current = false;
   }, [hassUrl, hassToken, setError, setAuth, setConnection, setCannotConnect]);
 
   useEffect(() => {
@@ -548,6 +372,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
         data: response.statusText,
       };
     } catch (e) {
+      console.log("Error:", e);
       return {
         status: "error",
         data: `API Request failed for endpoint "${endpoint}", follow instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/hooks-usehass-callapi--docs.`,
@@ -647,7 +472,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
           {
             ...route,
             active,
-          },
+          } satisfies Route,
         ]);
       }
     },
@@ -665,12 +490,13 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
   const getAllEntities = useCallback(() => entities, [entities]);
 
   const callService = useCallback(
-    async <T extends SnakeOrCamelDomains, M extends DomainService<T>>({
+    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean>({
       domain,
       service,
       serviceData,
       target: _target,
-    }: CallServiceArgs<T, M>) => {
+      returnResponse,
+    }: CallServiceArgs<T, M, R>): Promise<R extends true ? ServiceResponse<ResponseType> : void> => {
       const target =
         typeof _target === "string" || isArray(_target)
           ? {
@@ -682,19 +508,27 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
       }
       if (connection && ready) {
         try {
-          return await _callService(
+          const result = await _callService(
             connection,
             snakeCase(domain),
             snakeCase(service),
             // purposely cast here as we know it's correct
             serviceData as object,
             target,
+            returnResponse,
           );
+          if (returnResponse) {
+            // Return the result if returnResponse is true
+            return result as R extends true ? ServiceResponse<ResponseType> : never;
+          }
+          // Otherwise, return void
+          return undefined as R extends true ? never : void;
         } catch (e) {
           // TODO - raise error to client here
+          console.log("Error:", e);
         }
       }
-      return false;
+      return undefined as R extends true ? never : void;
     },
     [connection, ready],
   );
@@ -733,7 +567,8 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
       authenticated.current = true;
       await handleConnect();
     } catch (e) {
-      setError(`Unable to connect to Home Assistant, please check the URL: "${(e as Error)?.message ?? e}"`);
+      const message = handleError(e);
+      setError(`Unable to connect to Home Assistant, please check the URL: "${message}"`);
     }
   }, 100);
 
@@ -762,7 +597,8 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
         getUser,
         callApi,
         getAllEntities,
-        callService,
+        // cast here we don't have to redefine all the overloads, might fix later
+        callService: callService as HassContextProps["callService"],
         joinHassUrl,
       }}
     >

@@ -127,7 +127,7 @@ export interface ControlToggleProps extends Omit<React.ComponentPropsWithoutRef<
   color?: string;
 }
 
-const _ControlToggle = ({
+const InternalControlToggle = ({
   disabled = false,
   vertical = true,
   reversed = false,
@@ -211,7 +211,7 @@ const _ControlToggle = ({
 export function ControlToggle(props: ControlToggleProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ControlToggle" })}>
-      <_ControlToggle {...props} />
+      <InternalControlToggle {...props} />
     </ErrorBoundary>
   );
 }

@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 import DEFAULT_IMAGE from "./vacuum.png";
@@ -101,6 +100,6 @@ export const StyledVacuumImage = styled.img`
 `;
 
 // React component that applies default props
-export const VacuumImage = ({ src = DEFAULT_IMAGE, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) => {
+export function VacuumImage({ src = DEFAULT_IMAGE, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) {
   return <StyledVacuumImage src={src} {...props} />;
-};
+}
