@@ -33,7 +33,12 @@
   </tr>
 </table>
 
-Unlock the ultimate customization for your Home Assistant dashboards with this package, leveraging React for seamless, personalized interfaces.
+Take your Home Assistant dashboards to the next level with this powerful package, built on React for creating seamless, highly customizable interfaces. Whether you want to design your own unique components or leverage the prebuilt library from [@hakit/components](https://www.npmjs.com/package/@hakit/components), the choice is yours!
+
+🏠 Ultimate Flexibility: Create stunning, personalized dashboards tailored to your needs.
+🌍 Effortless Deployment: Host your dashboard on any web server or serve it directly from Home Assistant using the Home Assistant Addon.
+
+Ready to transform your Home Assistant experience? Dive into the Getting Started Guide and begin building today!
 
 
 ## Demo
