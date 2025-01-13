@@ -32,7 +32,7 @@ export default {
               <b>Note: </b>You will have to login on each device as HassConnect will store tokens per device.
             </i>
           </p>
-          <iframe
+          {/* <iframe
             style={{
               margin: "auto",
               display: "block",
@@ -45,7 +45,7 @@ export default {
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
           ></iframe>
-          <br />
+          <br /> */}
           <h2>Example</h2>
           <Primary />
           <h2>Component Props</h2>
