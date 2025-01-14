@@ -2,7 +2,7 @@
 
 This package is designed to be a template for creating custom dashboards for Home Assistant using react.
 
-This [package](https://www.npmjs.com/package/@hakit/core) provides all the core functionality to authenticate with Home Assistant to create a dynamic dashboard with React! There's also reusable components for creating custom dashboards for Home Assistant using react, this is a separate package to [@hakit/components](https://www.npmjs.com/package/@hakit/components).
+The [@hakit/core](https://www.npmjs.com/package/@hakit/core) package provides all the core functionality to authenticate with Home Assistant to create a dynamic dashboard with React! The [@hakit/components](https://www.npmjs.com/package/@hakit/components) package houses reusable components for creating custom dashboards for Home Assistant using react.
 
 [![npm version](https://badge.fury.io/js/@hakit%2Fcore.svg)](https://www.npmjs.com/package/@hakit/core)
 
@@ -11,7 +11,7 @@ If you like anything here, be sure to 🌟 [my repo!](https://github.com/shannon
 ![DEMO](https://github.com/shannonhochkins/ha-component-kit/blob/master/stories/hakit-demo.gif?raw=true)
 
 ## Get Started
-There's an npm create command which will setup react, typescript, vite & hakit automatically for you with a terminal wizard!
+There's an npm create command which will setup react, Typescript, Vite & Hakit automatically for you with a terminal wizard!
 
 ```
 npm create hakit@latest

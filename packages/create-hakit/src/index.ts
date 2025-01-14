@@ -3,8 +3,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import spawn from 'cross-spawn';
 import prompts from 'prompts';
-import minimist from 'minimist';
 import { execSync } from 'child_process';
+import axios from 'axios';
+import { createLongLivedTokenAuth } from 'home-assistant-js-websocket';
 import {
   red,
   yellow,
@@ -12,6 +13,8 @@ import {
   cyan,
   reset,
 } from 'kolorist';
+import { validateConnection } from './socket';
+// methods
 
 const FILES_TO_REMOVE = [
   'public',
@@ -28,12 +31,6 @@ const mergeFiles: Record<string, string> = {
   "README.md": "README.md",
 }
 
-// Avoids autoconversion to number of the project name by defining that the args
-// non associated with an option ( _ ) needs to be parsed as a string. See #4606
-const argv = minimist<{
-  t?: string
-  template?: string
-}>(process.argv.slice(2), { string: ['_'] });
 const cwd = process.cwd();
 
 const defaultTargetDir = 'ha-dashboard';
@@ -48,13 +45,24 @@ const getLatestNpmVersion = (packageName: string): string => {
   }
 };
 
+async function validateHaUrl(haUrl: string): Promise<void> {
+  try {
+    const response = await axios.get(haUrl);
+    if (response.status === 200) {
+      console.log(green(`\n✔ Validated that HA URL "${haUrl}" is reachable.`));
+    } else {
+      throw new Error(`Unexpected response status: ${response.status}`);
+    }
+  } catch (e) {
+    const message = e instanceof Error ? e.message : JSON.stringify(e);
+    throw new Error(`Failed to reach HA URL "${haUrl}": ${message}`);
+  }
+}
+
 
 // A functional approach to creating the project
 const createProject = async () => {
   try {
-    const argTargetDir = formatTargetDir(argv._[0]);
-    // const argTemplate = argv.template || argv.t
-    let targetDir = argTargetDir || defaultTargetDir;
     let result: prompts.Answers<
       'projectName' | 'haUrl' | 'haToken'
     >;
@@ -63,24 +71,23 @@ const createProject = async () => {
       result = await prompts(
         [
           {
-            type: argTargetDir ? null : 'text',
+            type: 'text',
             name: 'projectName',
             message: reset('Project name:'),
             initial: defaultTargetDir,
-            onState: (state) => {
-              targetDir = formatTargetDir(state.value) || defaultTargetDir
-            },
+            format: value => formatTargetDir(value)
           },
           {
-            type: argTargetDir ? null : 'text',
+            type: 'text',
             name: 'haUrl',
-            initial: 'http://homeassistant.local:8123',
-            message: reset('HA Url:'),
+            message: reset('HA Url (Recommended to use https):'),
+            validate: value => /^https?:\/\//.test(value) ? true : 'The URL must start with http:// or https://',
+            format: value => value.replace(/\/$/, '')
           },
           {
-            type: argTargetDir ? null : 'text',
+            type: 'password',
             name: 'haToken',
-            message: reset('HA Token:'),
+            message: reset('(optional) HA Token:'),
             initial: '',
           }
         ],
@@ -88,7 +95,7 @@ const createProject = async () => {
           onCancel: () => {
             abort = true;
             throw new Error(red('✖') + ' Operation cancelled')
-          },
+          }
         },
       )
     } catch (cancelled) {
@@ -102,7 +109,25 @@ const createProject = async () => {
     }
 
     // user choice associated with prompts
-    const { projectName, haUrl } = result;
+    const { projectName, haUrl, haToken } = result;
+
+    if (haUrl && haToken) {
+      try {
+        const auth = await createLongLivedTokenAuth(haUrl, haToken);
+        const response = await validateConnection(auth.wsUrl, auth.accessToken);
+        console.log(green(`\n✔ ${response}`));
+      } catch (e) {
+        console.error(red(`✖ Failed to connect to Home Assistant: ${e}`));
+        process.exit(1);
+      }
+    } else if (haUrl) {
+      try {
+        await validateHaUrl(haUrl);
+      } catch (e) {
+        console.error(red(`✖ ${e}`));
+        process.exit(1);
+      }
+    }
 
     const viteCommand = `npm create vite@latest ${projectName} -- --template react-ts`;
 
@@ -111,8 +136,8 @@ const createProject = async () => {
       stdio: 'inherit',
     });
 
-    FILES_TO_REMOVE.forEach((file) => removeFileOrDirectory(path.resolve(targetDir, file)));
-    const root = path.join(cwd, targetDir)
+    FILES_TO_REMOVE.forEach((file) => removeFileOrDirectory(path.resolve(projectName, file)));
+    const root = path.join(cwd, projectName)
     const cdProjectName = path.relative(cwd, root);
     const templateDir = path.resolve(
       fileURLToPath(import.meta.url),
@@ -126,27 +151,27 @@ const createProject = async () => {
       write(file, root, templateDir);
     }
 
-    updateTsconfig(targetDir, root, templateDir);
+    updateTsconfig(projectName, root, templateDir);
     updatePackageJson({
-      targetDir,
+      targetDir: projectName,
       root,
       templateDir,
     });
     updateViteFile({
-      targetDir,
+      targetDir: projectName,
       root,
       templateDir,
     })
-    updateReadme(targetDir, root, templateDir);
+    updateReadme(projectName, root, templateDir);
 
     write('src/index.css', root, templateDir, `#root { width: 100%; height: 100%; }`);
 
-    const envFile = path.resolve(targetDir, '.env');
+    const envFile = path.resolve(projectName, '.env');
     const envFileContent = fs.readFileSync(envFile, 'utf-8');
     write('.env', root, templateDir, envFileContent
       .replace('{FOLDER_NAME}', cdProjectName)
       .replace('VITE_HA_URL=', `VITE_HA_URL=${(haUrl ?? '').replace(/\/$/, '')}`)
-      .replace('VITE_HA_TOKEN=', `VITE_HA_TOKEN=${result.haToken}`));
+      .replace('VITE_HA_TOKEN=', `VITE_HA_TOKEN=${haToken}`));
 
 
     if (haUrl.startsWith('https')) {
