@@ -3,20 +3,18 @@ import { Meta, Source } from '@storybook/blocks';
 <Meta title="INTRODUCTION/Getting Started" />
 
 # Overview
-The [@hakit/core](https://www.npmjs.com/package/@hakit/core) uses the official [Home Assistant Web Socket](https://github.com/home-assistant/home-assistant-js-websocket) to provide all the core functionality to authenticate with Home Assistant to create a dynamic dashboard with React!
-
-There's also reusable components for creating custom dashboards for Home Assistant using react, this is a separate package to [@hakit/components](https://www.npmjs.com/package/@hakit/components).
+The [@hakit/core](https://www.npmjs.com/package/@hakit/core) package uses the official [Home Assistant Web Socket](https://github.com/home-assistant/home-assistant-js-websocket) package to provide all the core functionality to authenticate with Home Assistant to create a dynamic dashboard with React! The [@hakit/components](https://www.npmjs.com/package/@hakit/components) package houses reusable components for creating custom dashboards for Home Assistant using react.
 
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
 - **Node.js** version 18 or higher. If you do not have Node.js installed, you can download it from the [official Node.js website](https://nodejs.org/).
 - **npm** version 7 or higher. npm is distributed with Node.js - when you download Node.js, you automatically get npm installed on your computer.
-- **hassToken** technically not required, but recommended you create a <a href="https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token" target="_blank">Long Lived Access Token</a> to provide to `HassConnect`. You can create one in your home assistant instance at the bottom of your profile page.
+- **hassToken** technically not required, but recommended you create a <a href="https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token" target="_blank">Long Lived Access Token</a> to provide to `HassConnect`. Long-lived access tokens can be created using the "Long-Lived Access Tokens" section at the bottom of your [Home Assistant profile](https://my.home-assistant.io/redirect/profile/) page under the "security" tab.
 
 
 ## Automated Setup Steps
-There's an npm create command which will setup react, typescript, vite & hakit automatically for you with a terminal wizard!
+There's an npm create command which will setup React, Typescript, Vite & Hakit automatically for you with a terminal wizard!
 
 <Source dark code={`npm create hakit@latest`} />
 
