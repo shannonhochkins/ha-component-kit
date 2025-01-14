@@ -19,7 +19,6 @@ export async function validateConnection(wsUrl: string, accessToken: string): Pr
           } else if (message.type === 'result' && message.id === 1) {
               // Extract user info from the response
               const userName = message.result.name || 'Unknown User';
-              console.log('message.result', message.result);
               ws.close(); // Close the connection
               resolve(`${userName}, We've validated the connection to Home Assistant!`);
           } else if (message.type === 'auth_invalid') {

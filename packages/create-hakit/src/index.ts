@@ -12,6 +12,8 @@ import {
   green,
   cyan,
   reset,
+  white,
+  gray,
 } from 'kolorist';
 import { validateConnection } from './socket';
 // methods
@@ -61,7 +63,7 @@ async function validateHaUrl(haUrl: string): Promise<void> {
 
 
 // A functional approach to creating the project
-const createProject = async () => {
+const createProject = async () => {  
   try {
     let result: prompts.Answers<
       'projectName' | 'haUrl' | 'haToken'
@@ -80,9 +82,26 @@ const createProject = async () => {
           {
             type: 'text',
             name: 'haUrl',
-            message: reset('HA Url (Recommended to use https):'),
-            validate: value => /^https?:\/\//.test(value) ? true : 'The URL must start with http:// or https://',
-            format: value => value.replace(/\/$/, '')
+            message: reset('HA Url (Recommended to use a public https url):'),
+            validate: value => {
+              try {
+                const url = new URL(value);
+                if (!['http:', 'https:'].includes(url.protocol)) {
+                  return 'The URL must start with http:// or https://';
+                }
+                return true;
+              } catch {
+                return 'The URL is not valid';
+              }
+            },
+            format: value => {
+              try {
+                const url = new URL(value);
+                return `${url.protocol}//${url.host}`;
+              } catch {
+                return value; // Shouldn't hit this because of validation
+              }
+            }
           },
           {
             type: 'password',
@@ -128,13 +147,17 @@ const createProject = async () => {
         process.exit(1);
       }
     }
-
+    console.log(cyan(`Scaffolding Hakit in ${cyan(projectName)}...`));
     const viteCommand = `npm create vite@latest ${projectName} -- --template react-ts`;
 
     const [command, ...args] = viteCommand.split(' ')
     const { status } = spawn.sync(command, args, {
       stdio: 'inherit',
     });
+    // now clear the terminal and print out the next steps
+    process.stdout.write('\x1Bc');
+
+    console.log(cyan('Post creation tasks...'));
 
     FILES_TO_REMOVE.forEach((file) => removeFileOrDirectory(path.resolve(projectName, file)));
     const root = path.join(cwd, projectName)
@@ -173,14 +196,35 @@ const createProject = async () => {
       .replace('VITE_HA_URL=', `VITE_HA_URL=${(haUrl ?? '').replace(/\/$/, '')}`)
       .replace('VITE_HA_TOKEN=', `VITE_HA_TOKEN=${haToken}`));
 
+    console.info(green(`\n✔ Success! Next steps:`));
+    // now let's print out the steps in one log
+    const steps = [
+      `cd ${projectName}`,
+      `npm install`,
+      `## Optional: Will generate typescript types for your Home Assistant instance`,
+      haToken ? `npm run sync` : '',
+      `npm run dev`,
+    ].filter(x => !!x);
 
-    if (haUrl.startsWith('https')) {
-      console.info(green(`\nNEXT STEPS: SYNC: Once you've updated the .env file, run "npm run sync" to generate your types!`));
-    } else {
-      console.info(yellow(`\nWARN: You're using an insecure connection and the \`npm run sync\` functionality will not work unless used with https protocol. Update the VITE_HA_URL value in the .env file to use a secure connection to use the typescript sync feature.`));
+    // now, print out the steps, if there's a step with ## in the name, do not prefix with  a number
+    let stepTracker = 0;
+    const generatedSteps = steps.map((step) => {
+      if (step.startsWith('##')) {
+        return gray(`  ${step}`);
+      }
+      stepTracker++;
+      return white(`  ${stepTracker}. ${step}`);
+    });
+
+    console.info(`\n${generatedSteps.join('\n')}`);
+
+    if (!haToken) {
+      console.info(yellow(`\nWARN: You didn't provide a token and the \`npm run sync\` functionality will not work without one. Update the VITE_HA_TOKEN value in the .env file.`));
     }
-    console.info(cyan(`\nNEXT STEPS: DEPLOY: Add in the optional SSH values to ensure that "npm run deploy" will work correctly.`));
-    console.info(cyan(`\nNEXT STEPS: DEPLOY: To retrieve the SSH information, follow the instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-deploying--docs`));
+    console.info(cyan(`\nDEPLOYING`));
+
+    console.info(white(`\nAdd in the optional SSH values to your .env file to ensure that "npm run deploy" will work correctly.`));
+    console.info(white(`\nTo retrieve the SSH information, follow the instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-deploying--docs`));
     console.info();
     process.exit(status ?? 0)
 
