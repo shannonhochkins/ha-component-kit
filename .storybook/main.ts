@@ -70,6 +70,8 @@ export default ({
   async viteFinal(config) {
     return {
       ...config,
+      // make vite produce no output during the build in the terminal
+      logLevel: 'silent',
       plugins: [
         // Filter out `vite:react-jsx` per suggestion in `plugin-react`...
         // "You should stop using "vite:react-jsx" since this plugin conflicts with it."
