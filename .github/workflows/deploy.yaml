@@ -19,6 +19,11 @@ jobs:
       # Step to checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
+      # Step to set up Node.js 20
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
       # Step to install dependencies
       - name: Install dependencies
@@ -30,7 +35,7 @@ jobs:
 
       # Step to build Storybook
       - name: Build Storybook
-        run: NODE_ENV=production npm run build:storybook
+        run: NODE_ENV=production npm run build:storybook && echo "Build completed."
 
       # Step to deploy to GitHub Pages
       - name: Deploy Storybook to GitHub Pages
