@@ -36,6 +36,9 @@ jobs:
       # Step to build Storybook
       - name: Build Storybook
         run: NODE_ENV=production npm run build:storybook && echo "Build completed."
+      
+      - name: Testing
+        run: echo "Deploying to GHP"
 
       # Step to deploy to GitHub Pages
       - name: Deploy Storybook to GitHub Pages
