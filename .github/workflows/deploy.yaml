@@ -27,7 +27,7 @@ jobs:
 
       # Step to install dependencies
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       # Step to build for Storybook
       - name: Build for Storybook
@@ -35,13 +35,13 @@ jobs:
 
       # Step to build Storybook
       - name: Build Storybook
-        run: timeout 3m npm run build:storybook && echo "Build completed."
-      
-      - name: Testing
-        run: echo "Deploying to GHP"
+        run: npm run build:storybook && echo "Build completed."
 
       # Step to deploy to GitHub Pages
       - name: Deploy Storybook to GitHub Pages
         uses: bitovi/github-actions-react-to-ghp@v1.2.4
         with:
-          path: storybook-static
+          checkout: false            # Skip checkout since it’s already done
+          install_command: ''        # Skip installation since it's already done
+          build_command: ''          # Skip build since it's already done
+          path: storybook-static     # Specify the output directory for deployment
