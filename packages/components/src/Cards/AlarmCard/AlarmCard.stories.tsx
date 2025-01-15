@@ -34,6 +34,8 @@ export default {
     fullWidth: true,
   },
 } satisfies Meta<typeof AlarmCard>;
+
+
 export type AlarmControlPanelStory = StoryObj<typeof AlarmCard>;
 export const AlarmCardExample: AlarmControlPanelStory = {
   render: Render,

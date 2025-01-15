@@ -49,7 +49,7 @@ function Template() {
       </li>
       <li style={{
         marginTop: 24
-      }}>Create a <a href="https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token" target="_blank" rel="noreferrer">Long Lived Access Token</a> for your home assistant instance. You can create one in your home assistant instance at the bottom of your profile page.</li>
+      }}>Create a <a href="https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token" target="_blank" rel="noreferrer">Long Lived Access Token</a> for your home assistant instance. You can create one in your home assistant instance at the bottom of your profile page under the &quot;security&quot; tab.</li>
     </ol>
     <Divider />
 
@@ -166,7 +166,7 @@ declare module "@hakit/core" {
   }
 }
     `} />
-    <p>Then link this to the includes array of your tsconfig.json</p>
+    <p>Then link this to the includes array of your tsconfig.json/tsconfig.app.json:</p>
     <Source dark code={`
 // tsconfig.json
 {

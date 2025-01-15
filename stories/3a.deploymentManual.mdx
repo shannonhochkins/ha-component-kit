@@ -1,17 +1,22 @@
 import { Meta, Source } from '@storybook/blocks';
+import LinkTo from '@storybook/addon-links/react';
 
-<Meta title="INTRODUCTION/Deploying" />
 
-## Deploying to Home Assistant
+<Meta title="INTRODUCTION/Deploying/Manual Setup" />
+
+## Manual Deployment to Home Assistant
 
 Home Assistant is bundled with a http server, specifically under `config/www` you can provide anything into this section and access via the `/local` pathname, which we can utilize to host our new dashboard, we do need to gather/setup some credentials to get going:
 
 ## Prerequisites
 
-1. Setup project using the [getting started guide](/?path=/docs/introduction-getting-started--docs)
+1. Create a deployment script, you can copy [deploy.ts](https://github.com/shannonhochkins/ha-component-kit/blob/master/packages/create-hakit/template/scripts/deploy.ts) script to your project and manipulate as needed to change paths/names.
 2. SSH Credentials setup - [Instructions](/docs/introduction-deploying-ssh-credentials--docs)
+3. Ensure you have a `.env` file in the root of your project with the necessary environment variables.
+4. Add a deploy script to your package.json `"deploy": "npx tsc deploy.ts"`
 
-You should be able to run `npm run build && npm run deploy` and your dashboard should be available, a link will be logged in the terminal.
+
+You should be able build your application and run `npm run deploy` and your dashboard should be available at a link printed in the terminal!
 
 Now you should be able to access your dashboard (assuming you haven't changed the `VITE_FOLDER_NAME` in the environment variables):
 

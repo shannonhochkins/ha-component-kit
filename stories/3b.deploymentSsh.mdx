@@ -1,0 +1,25 @@
+import { Meta, Source } from '@storybook/blocks';
+
+<Meta title="INTRODUCTION/Deploying/SSH Credentials" />
+
+## Retrieving SSH Credentials
+
+1. In Home Assistant: Install and setup the [Advanced SSH & Web Terminal](https://github.com/hassio-addons/addon-ssh) addon, this is very easy!
+  - Click on your "Profile name" in your HA dashboard
+  - Scroll down and enable "Advanced mode"
+  - Go to Settings -> Addons -> ADD-ON STORE for "SSH & Web Terminal" -> Install
+  - Once installed, Go to the configuration tab, enter a password into the field and save
+  - Change default password
+  - The username has to be set to `root` (default is `hassio`).
+  - The sftp flag has to be set to true (default is false, and true requires the username to be root).
+  - Ensure the PORT is 22, save
+2. Finally, update the .env file, or add it to your project manually:
+
+```bash
+...
+VITE_SSH_USERNAME=root # the default username is root, if you changed this, change this value
+VITE_SSH_PASSWORD=yourpassword # the password you set in the addon
+VITE_SSH_HOSTNAME=yourhostname # your home assistant hostname or IP address, if you get EHOSTUNREACH when connecting, try your IP address `ping homeassistant.local` to get your IP address
+```
+
+Continue setting up deployment script [here](/docs/introduction-deploying--docs)

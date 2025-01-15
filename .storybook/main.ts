@@ -16,8 +16,6 @@ export default ({
     "@storybook/addon-themes",
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@storybook/addon-interactions",
-    "@storybook/addon-controls",
     "@storybook/addon-docs",
   ],
   core: {},

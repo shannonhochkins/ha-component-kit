@@ -105,9 +105,6 @@ export default {
   title: "INTRODUCTION/Responsive Layouts",
   parameters: {
     standalone: true,
-    addons: {
-      showPanel: false,
-    },
     docs: {
       description: {
         component: `@hakit provides a series of tools to easily authenticate and communicate with your home assistant instance from React!`

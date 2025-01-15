@@ -31,38 +31,6 @@ export default {
         justifyContent: 'center',
         padding: '1rem',
       } : {};
-      if (window.parent) {
-        const parentDocument = window.parent.document;
-        const logo = parentDocument.querySelector('.sidebar-header div img') as HTMLElement;
-        if (logo) {
-          logo.style.maxWidth = '100%';
-        }
-        const panel = parentDocument.getElementById('storybook-panel-root');
-        const shouldHidePanel = args.parameters?.addons?.showPanel === false;
-        if (shouldHidePanel && panel !== null && panel.parentElement !== null) {
-          panel.parentElement.style.display = 'none';
-        } else if (panel !== null && panel.parentElement !== null) {
-          panel.parentElement.style.display = 'flex';
-        }
-        const previewer = parentDocument.querySelector('#root div div:has(main)') as HTMLElement;
-        if (previewer !== null && shouldHidePanel) {
-          const rootDiv = parentDocument.querySelector('#root > div') as HTMLElement;
-          if (rootDiv !== null) {
-            rootDiv.style.display = 'flex';  
-            rootDiv.style.flexDirection = 'row-reverse';
-            rootDiv.style.flexWrap = 'nowrap';
-            const sidebarContainer = parentDocument.querySelector('#root > div > div:has(.sidebar-container)') as HTMLElement;
-            if (sidebarContainer) {
-              sidebarContainer.style.width = '300px';
-            }
-          }
-          previewer.style.height = '100dvh';
-          previewer.style.width = '100%';
-        } else {
-          // remove the width/height inline styles
-          previewer?.removeAttribute('style');
-        }
-      }
       if (args.parameters.standalone) {
         return <Story />;
       }
@@ -87,7 +55,11 @@ export default {
         color: /(background|color)$/i,
         date: /Date$/,
       },
-    },    
+    },
+    addons: {
+      showPanel: false,
+      showTabs: false,
+    },
     options: {
       storySort: (a, b) => {
         const splitAndTakeFirst = (str, delimiter) => str.split(delimiter)[0];
@@ -119,6 +91,9 @@ export default {
       },
     },
     docs: {
+      canvas: {
+        sourceState: 'shown',
+      },
       page: () => (<>
         <Title />
         <Description />
