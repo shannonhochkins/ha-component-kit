@@ -15,7 +15,7 @@ jobs:
       name: github-pages
       url: ${{ steps.build-publish.outputs.page_url }}
     runs-on: ubuntu-latest
-        steps:
+    steps:
       # Step to checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
