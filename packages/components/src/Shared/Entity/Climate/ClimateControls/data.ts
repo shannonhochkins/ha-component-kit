@@ -102,8 +102,8 @@ export const computeFanModeIcon = (mode: ClimateBuiltInFanMode) =>
 export type ClimateBuiltInSwingMode = "off" | "on" | "vertical" | "horizontal" | "both";
 
 export const CLIMATE_SWING_MODE_ICONS: Record<ClimateBuiltInSwingMode, string> = {
-  on: "ha:oscillating",
-  off: "ha:oscillating-off",
+  on: "mdi:arrow-oscillating",
+  off: "mdi:arrow-oscillating-off",
   vertical: "mdi:arrow-up-down",
   horizontal: "mdi:arrow-left-right",
   both: "mdi:arrow-all",

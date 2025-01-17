@@ -12,12 +12,19 @@ const defaults = {
       max_temp: 35,
       target_temp_step: 1,
       fan_modes: ["Low", "Mid", "High"],
+      swing_modes: [
+            "off",
+            "both",
+            "vertical",
+            "horizontal"
+      ],
+      "swing_mode": "off",
       current_temperature: 24,
       temperature: 25,
       fan_mode: "High",
       hvac_action: "heat",
       friendly_name: "Air Conditioner",
-      supported_features: 9,
+      supported_features: 425,
     },
     context: {
       id: "01H4J3SQV4JJX4KF6G28K2AADY",
