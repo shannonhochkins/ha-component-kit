@@ -23,6 +23,7 @@ function TempRender(args?: Args) {
         <ClimateCard showTemperatureControls entity={"climate.air_conditioner"} {...args} />
         <ClimateCard
           showTemperatureControls
+          targetTempStep={0.5}
           layoutType="slim-vertical"
           hvacModes={["cool", "heat"]}
           entity={"climate.air_conditioner"}
