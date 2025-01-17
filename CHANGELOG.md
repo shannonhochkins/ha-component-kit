@@ -1,3 +1,11 @@
+# 5.0.1
+
+### @hakit/components
+- FEATURE/BUGFIX - ClimateCard and related components previously had hard coded "step" values when incrementing temperature, now it will use the step value provided by the entity by default, allow you to override the step value or fallback to 0.5 for Celsius and 1 for Fahrenheit
+
+### @hakit/core
+- No changes, bumping version to align with components package.
+
 # 5.0.0
 
 ### Migration from v4 to v5

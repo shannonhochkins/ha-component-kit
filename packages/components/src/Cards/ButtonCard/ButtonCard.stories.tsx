@@ -103,7 +103,7 @@ function Render(args?: Args) {
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" fullWidth>
-        <ButtonCard {...args} />
+        <ButtonCard {...args} description="asdf" />
         <ButtonCard {...args} entity="light.fake_light_1" service="toggle" layoutType="slim" />
         <ButtonCard {...args} entity="cover.cover_position_only" service="toggle" layoutType="slim-vertical" />
         <ButtonCard service="toggle" entity="light.fake_light_1" />
