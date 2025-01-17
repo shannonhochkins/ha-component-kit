@@ -125,9 +125,10 @@ const Wrapper = styled.div`
 export interface ClimateControlSliderProps {
   entity: FilterByDomain<EntityName, "climate">;
   showCurrent?: boolean;
+  targetTempStep?: number;
 }
 
-export function ClimateControlSlider({ entity: _entity, showCurrent = false }: ClimateControlSliderProps) {
+export function ClimateControlSlider({ entity: _entity, targetTempStep, showCurrent = false }: ClimateControlSliderProps) {
   const [_targetTemperature, setTargetTemperature] = useState<Partial<Record<Target, number>>>({});
   const [_selectTargetTemperature, setSelectTargetTemperature] = useState<Target>("low");
   const entity = useEntity(_entity);
@@ -137,8 +138,8 @@ export function ClimateControlSlider({ entity: _entity, showCurrent = false }: C
   const { min_temp: _min, max_temp: _max, target_temp_step, hvac_modes } = entity.attributes;
 
   const _step = useMemo(() => {
-    return target_temp_step || (config?.unit_system.temperature === UNIT_F ? 1 : 0.5);
-  }, [config?.unit_system.temperature, target_temp_step]);
+    return targetTempStep ?? target_temp_step ?? (config?.unit_system.temperature === UNIT_F ? 1 : 0.5);
+  }, [config?.unit_system.temperature, targetTempStep, target_temp_step]);
 
   useEffect(() => {
     setTargetTemperature({

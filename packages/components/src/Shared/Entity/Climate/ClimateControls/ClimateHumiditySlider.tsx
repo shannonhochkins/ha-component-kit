@@ -1,24 +1,42 @@
-import { ClimateEntityFeature } from "./data";
-import { useState, useEffect, useCallback } from "react";
-import { type FilterByDomain, type EntityName, UNAVAILABLE, useEntity, supportsFeatureFromAttributes, stateActive } from "@hakit/core";
+import { ClimateEntityFeature, UNIT_F } from "./data";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import {
+  type FilterByDomain,
+  type EntityName,
+  useHass,
+  UNAVAILABLE,
+  useEntity,
+  supportsFeatureFromAttributes,
+  stateActive,
+} from "@hakit/core";
 import { useDebouncedCallback } from "use-debounce";
 import { clamp } from "lodash";
 import { FabCard, ControlSliderCircular } from "@components";
 import { colors } from "./shared";
+import { HassConfig } from "home-assistant-js-websocket";
 import { BigNumber } from "./BigNumber";
 import { Icon } from "@iconify/react";
 
 export interface ClimateHumiditySliderProps {
   entity: FilterByDomain<EntityName, "climate">;
   showCurrent?: boolean;
+  targetTempStep?: number;
 }
 
-export function ClimateHumiditySlider({ entity: _entity, showCurrent = false }: ClimateHumiditySliderProps) {
+export function ClimateHumiditySlider({ entity: _entity, targetTempStep, showCurrent = false }: ClimateHumiditySliderProps) {
   const entity = useEntity(_entity);
   const [_targetHumidity, setTargetHumidity] = useState<number | null>(entity.attributes.humidity ?? null);
-  const _step = 1;
-  const _min = entity.attributes.min_humidity ?? 0;
-  const _max = entity.attributes.max_humidity ?? 100;
+  const [config, setConfig] = useState<HassConfig | null>(null);
+  const { getConfig } = useHass();
+  const { target_temp_step, min_humidity = 0, max_humidity = 100 } = entity.attributes;
+
+  const _step = useMemo(() => {
+    return targetTempStep ?? target_temp_step ?? (config?.unit_system.temperature === UNIT_F ? 1 : 0.5);
+  }, [config?.unit_system.temperature, targetTempStep, target_temp_step]);
+
+  useEffect(() => {
+    getConfig().then(setConfig);
+  }, [getConfig]);
 
   useEffect(() => {
     setTargetHumidity(entity.attributes.humidity ?? null);
@@ -55,13 +73,13 @@ export function ClimateHumiditySlider({ entity: _entity, showCurrent = false }: 
 
   const _handleButton = useCallback(
     (step: number) => {
-      let humidity = _targetHumidity ?? _min;
+      let humidity = _targetHumidity ?? min_humidity;
       humidity += step;
-      humidity = clamp(humidity, _min, _max);
+      humidity = clamp(humidity, min_humidity, max_humidity);
       setTargetHumidity(humidity);
       _debouncedCallService(humidity);
     },
-    [_debouncedCallService, _max, _min, _targetHumidity],
+    [_debouncedCallService, max_humidity, min_humidity, _targetHumidity],
   );
 
   const _renderLabel = useCallback(() => {
@@ -78,7 +96,7 @@ export function ClimateHumiditySlider({ entity: _entity, showCurrent = false }: 
         <FabCard icon="mdi:plus" onClick={() => _handleButton(_step)} />
       </div>
     );
-  }, [_handleButton]);
+  }, [_handleButton, _step]);
 
   const _renderTarget = useCallback((humidity: number) => {
     const formatOptions = {
@@ -118,8 +136,8 @@ export function ClimateHumiditySlider({ entity: _entity, showCurrent = false }: 
         <ControlSliderCircular
           inactive={!active}
           value={_targetHumidity ?? 0}
-          min={_min}
-          max={_max}
+          min={min_humidity}
+          max={max_humidity}
           step={_step}
           current={currentHumidity}
           onChangeApplied={_valueChanged}
@@ -139,7 +157,7 @@ export function ClimateHumiditySlider({ entity: _entity, showCurrent = false }: 
 
   return (
     <div className="container${containerSizeClass}">
-      <ControlSliderCircular current={entity.attributes.current_humidity} min={_min} max={_max} step={_step} disabled />
+      <ControlSliderCircular current={entity.attributes.current_humidity} min={min_humidity} max={max_humidity} step={_step} disabled />
       <div className="info">
         {_renderLabel()}
         {_renderCurrentHumidity(entity.attributes.current_humidity)}

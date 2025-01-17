@@ -6,6 +6,7 @@ import { useEntity, OFF, isUnavailableState, useHass, localize } from "@hakit/co
 import { fallback, Row, ButtonBar, Column } from "@components";
 import { capitalize } from "lodash";
 import { icons, activeColors, colors } from "../../Shared/Entity/Climate/ClimateControls/shared";
+import { UNIT_F } from "../../Shared/Entity/Climate/ClimateControls/data";
 import { ErrorBoundary } from "react-error-boundary";
 import type { HassConfig } from "home-assistant-js-websocket";
 import { LocaleKeys } from "@hooks";
@@ -92,6 +93,7 @@ function InternalClimateCard({
   layoutType,
   key,
   title,
+  targetTempStep,
   ...rest
 }: ClimateCardProps): React.ReactNode {
   const { getConfig, useStore } = useHass();
@@ -109,6 +111,7 @@ function InternalClimateCard({
     max_temp = 40,
     unit_of_measurement,
     temperature = 20,
+    target_temp_step,
   } = entity.attributes || {};
   const isOff = entity.state === OFF;
   const titleValue = useMemo(() => {
@@ -120,6 +123,10 @@ function InternalClimateCard({
     }
     return hvac_action ? localize(hvac_action) : localize("unknown");
   }, [hvac_action, isUnavailable, isOff]);
+
+  const _step = useMemo(() => {
+    return targetTempStep ?? target_temp_step ?? (config?.unit_system.temperature === UNIT_F ? 1 : 0.5);
+  }, [config?.unit_system.temperature, targetTempStep, target_temp_step]);
 
   useEffect(() => {
     getConfig().then(setConfig);
@@ -147,6 +154,7 @@ function InternalClimateCard({
           hideCurrentTemperature,
           hideHvacModes,
           hvacModeLabels,
+          targetTempStep: _step,
           ...modalProps,
         }}
         onClick={() => {
@@ -246,7 +254,7 @@ function InternalClimateCard({
                 onClick={() => {
                   entity.service.setTemperature({
                     serviceData: {
-                      temperature: temperature - 1,
+                      temperature: temperature - _step,
                     },
                   });
                 }}
@@ -287,7 +295,7 @@ function InternalClimateCard({
                 onClick={() => {
                   entity.service.setTemperature({
                     serviceData: {
-                      temperature: temperature + 1,
+                      temperature: temperature + _step,
                     },
                   });
                 }}
