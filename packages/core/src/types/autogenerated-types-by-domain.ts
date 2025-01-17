@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // auto generated, do not manipulate, instead run the sync-ha-types script
 import { HassEntityBase, HassEntityAttributeBase } from "home-assistant-js-websocket";
+export const MJPEG_STREAM = "mjpeg";
+
 export type HvacAction = "cooling" | "defrosting" | "drying" | "fan" | "heating" | "idle" | "off" | "preheating";
 
 export type HvacMode = (typeof HVAC_MODES)[number];
@@ -127,9 +129,7 @@ export interface LawnMowerEntity extends HassEntityBase {
   attributes: LawnMowerEntityAttributes;
 }
 
-export interface LawnMowerEntityAttributes extends HassEntityAttributeBase {
-  [key: string]: any;
-}
+export interface LawnMowerEntityAttributes extends HassEntityAttributeBase, Record<string, any> {}
 export type LightColor =
   | {
       color_temp_kelvin: number;

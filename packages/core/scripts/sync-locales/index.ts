@@ -113,11 +113,19 @@ async function scrapeHomeAssistant(): Promise<[fileName: string, contents: strin
   })
 }
 
+
+const yellow = "\x1b[33m";
+const reset = "\x1b[0m";
+
 try {
-  intercept().catch(error => {
-    console.error('Error:', error);
-    process.exit(1);
-  });
+  if (!process.env.VITE_HA_URL || !process.env.VITE_HA_TOKEN) {
+    console.log(`\n\n${yellow}VITE_HA_URL and VITE_HA_TOKEN environment variables are required to run sync-locales.${reset}\n\n`);
+  } else {
+    intercept().catch(error => {
+      console.error('Error:', error);
+      process.exit(1);
+    });
+  }
 } catch (e) {
   console.error('Error:', e);
   process.exit(1);
