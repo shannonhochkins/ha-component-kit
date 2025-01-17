@@ -154,6 +154,7 @@ function InternalClimateCard({
           hideCurrentTemperature,
           hideHvacModes,
           hvacModeLabels,
+          targetTempStep: _step,
           ...modalProps,
         }}
         onClick={() => {
