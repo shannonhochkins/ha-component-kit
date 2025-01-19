@@ -1,14 +1,14 @@
-import type { ServiceArgs } from './types';
+import type { ActionArgs } from './types';
 
 let returningTimeout: NodeJS.Timeout;
 
 export function vacuumUpdates({
   now,
   target,
-  service,
-  serviceData,
+  action,
+  actionData,
   setEntities,
-}: ServiceArgs<'vacuum'>) {
+}: ActionArgs<'vacuum'>) {
   const dates = {
     last_changed: now,
     last_updated: now,
@@ -18,7 +18,7 @@ export function vacuumUpdates({
   if (returningTimeout) {
     clearTimeout(returningTimeout);
   }
-  switch (service) {
+  switch (action) {
     case 'returnToBase':
       returningTimeout = setTimeout(() => {
         setEntities(entities => ({
@@ -53,7 +53,7 @@ export function vacuumUpdates({
           ...entities[target],
           attributes: {
             ...entities[target].attributes,
-            ...serviceData,
+            ...actionData,
           },
           ...dates,
         }
@@ -67,7 +67,7 @@ export function vacuumUpdates({
           ...dates,
           attributes: {
             ...entities[target].attributes,
-            status: service === 'start' ? 'Cleaning' : 'Cleaning spot'
+            status: action === 'start' ? 'Cleaning' : 'Cleaning spot'
           },
           state: 'cleaning'
         }
@@ -81,7 +81,7 @@ export function vacuumUpdates({
           ...dates,
           attributes: {
             ...entities[target].attributes,
-            status: service === 'pause' ? 'Paused' : 'Stopped'
+            status: action === 'pause' ? 'Paused' : 'Stopped'
           },
           state: 'paused'
         }

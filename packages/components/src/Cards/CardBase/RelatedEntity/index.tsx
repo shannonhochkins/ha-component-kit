@@ -3,9 +3,9 @@ import { memo, useCallback, useMemo, type ReactNode, type CSSProperties } from "
 import {
   type EntityName,
   type ExtractDomain,
-  type HassEntityWithService,
-  type DomainService,
-  type ServiceData,
+  type HassEntityWithAction,
+  type DomainAction,
+  type ActionData,
   isUnavailableState,
   computeDomain,
   useEntity,
@@ -32,9 +32,9 @@ export interface RelatedEntityProps<E extends EntityName = EntityName> extends O
   /** The name of the entity */
   entity: E;
   /** The service name to call */
-  service?: DomainService<ExtractDomain<E>>;
+  service?: DomainAction<ExtractDomain<E>>;
   /** The data to pass to the service */
-  serviceData?: ServiceData<ExtractDomain<E>, DomainService<ExtractDomain<E>>>;
+  serviceData?: ActionData<ExtractDomain<E>, DomainAction<ExtractDomain<E>>>;
   /** overwrite the default for the entity */
   icon?: string;
   /** properties for the icon */
@@ -44,13 +44,13 @@ export interface RelatedEntityProps<E extends EntityName = EntityName> extends O
   /** should the element be disabled or not which will block the click events @default false */
   disabled?: boolean;
   /** custom render method for the element, this will replace any default children of this component */
-  render?: (entity: HassEntityWithService<ExtractDomain<E>>, icon: ReactNode | null) => ReactNode;
+  render?: (entity: HassEntityWithAction<ExtractDomain<E>>, icon: ReactNode | null) => ReactNode;
   /** margin for the custom element @default 1rem */
   margin?: CSSProperties["margin"];
   /** padding for the custom element @default 0 */
   padding?: CSSProperties["padding"];
   /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
-  onClick?: (entity: HassEntityWithService<ExtractDomain<E>>, event: React.MouseEvent<HTMLElement>) => void;
+  onClick?: (entity: HassEntityWithAction<ExtractDomain<E>>, event: React.MouseEvent<HTMLElement>) => void;
 }
 
 type PartialStyleProps = Pick<RelatedEntityProps<EntityName>, "position" | "padding" | "margin">;

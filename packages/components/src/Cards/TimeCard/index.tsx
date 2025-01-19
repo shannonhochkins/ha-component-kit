@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useMemo, useRef, useCallback, useEffect, useState } from "react";
-import { type HassEntityWithService, useHass, useEntity } from "@hakit/core";
+import { type HassEntityWithAction, useHass, useEntity } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, Column, fallback, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { createDateFormatter, daySuffix } from "./formatter";
@@ -109,7 +109,7 @@ export interface TimeCardProps extends Omit<CardBaseProps<"div">, OmitProperties
   /** center everything instead of left aligned @default false */
   center?: boolean;
   /** callback when the card is pressed, it will return the time sensor entity */
-  onClick?: (entity: HassEntityWithService<"sensor">, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+  onClick?: (entity: HassEntityWithAction<"sensor">, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
 }
 
 const DEFAULT_TIME_FORMAT = "hh:mm a";

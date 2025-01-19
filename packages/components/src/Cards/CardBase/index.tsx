@@ -19,10 +19,10 @@ import {
 } from "react";
 import {
   type EntityName,
-  type DomainService,
+  type DomainAction,
   type ExtractDomain,
-  type ServiceData,
-  type HassEntityWithService,
+  type ActionData,
+  type HassEntityWithAction,
   type HistoryOptions,
   computeDomain,
   isUnavailableState,
@@ -182,9 +182,9 @@ export type CardBaseProps<T extends ElementType = "div", E extends EntityName = 
     /** The name of your entity */
     entity?: E;
     /** The service name to call */
-    service?: DomainService<ExtractDomain<E>>;
+    service?: DomainAction<ExtractDomain<E>>;
     /** The data to pass to the service */
-    serviceData?: ServiceData<ExtractDomain<E>, DomainService<ExtractDomain<E>>>;
+    serviceData?: ActionData<ExtractDomain<E>, DomainAction<ExtractDomain<E>>>;
     /** allows you to place a fully functional and interactive element at predefined zones of the card, like displaying an icon in the top left which might be a sensor indicating battery level */
     relatedEntities?: AllowedRelatedEntities;
     /** provide a FeatureEntity component as a list or individual components to render a bar at the bottom of the card */
@@ -194,12 +194,12 @@ export type CardBaseProps<T extends ElementType = "div", E extends EntityName = 
     /** callback to fire after a long press event */
     longPressCallback?: E extends undefined
       ? (entity: null, event: LongPressReactEvents) => void
-      : (entity: HassEntityWithService<ExtractDomain<E>>, event: LongPressReactEvents) => void;
+      : (entity: HassEntityWithAction<ExtractDomain<E>>, event: LongPressReactEvents) => void;
     /** The onClick handler is called when the card is pressed, the first argument will be entity object with api methods if entity is provided  */
     /** The onClick handler is called when the button is pressed, the first argument will be entity object with api methods if entity is provided  */
     onClick?: E extends undefined
       ? (entity: null, event: React.MouseEvent<HTMLElement>) => void
-      : (entity: HassEntityWithService<ExtractDomain<E>>, event: React.MouseEvent<HTMLElement>) => void;
+      : (entity: HassEntityWithAction<ExtractDomain<E>>, event: React.MouseEvent<HTMLElement>) => void;
     /** props to pass to the modal */
     modalProps?: Partial<ModalByEntityDomainProps<E>>;
     /** include ripples or not */

@@ -6,8 +6,8 @@ describe("useHass", () => {
   beforeEach(() => {
     onReady.mockClear();
   });
-  describe("callService", () => {
-    it("should allow a user to call a service with camel case values", async () => {
+  describe("callAction", () => {
+    it("should allow a user to call a action with camel case values", async () => {
       renderHook(() => useHass(), {
         wrapper: TestWrapper,
       });
@@ -16,17 +16,17 @@ describe("useHass", () => {
         wrapper: TestWrapper,
       });
       act(() => {
-        result.current.callService({
+        result.current.callAction({
           domain: "mediaPlayer",
-          service: "volumeSet",
-          serviceData: {
+          action: "volumeSet",
+          actionData: {
             volume_level: 10,
           },
           target: "media_player.fake_player",
         });
       });
 
-      expect(mocked.callService).toHaveBeenCalledWith(
+      expect(mocked.callAction).toHaveBeenCalledWith(
         connection,
         "media_player",
         "volume_set",
@@ -45,9 +45,9 @@ describe("useHass", () => {
       });
       await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
       act(() => {
-        result.current.callService({
+        result.current.callAction({
           domain: "media_player",
-          service: "volume_set",
+          action: "volume_set",
           serviceData: {
             volume_level: 10,
           },
@@ -55,7 +55,7 @@ describe("useHass", () => {
         });
       });
 
-      expect(mocked.callService).toHaveBeenCalledWith(
+      expect(mocked.callAction).toHaveBeenCalledWith(
         connection,
         "media_player",
         "volume_set",

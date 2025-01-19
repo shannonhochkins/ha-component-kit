@@ -34,7 +34,7 @@ function RenderAreas() {
         </>
       ),
       description: {
-        component: `A hook that will retrieve all the areas configured in home assistant and the related entities, services and devices, this will return all information about the area like the name, picture and the area id.`,
+        component: `A hook that will retrieve all the areas configured in home assistant and the related entities, actions and devices, this will return all information about the area like the name, picture and the area id.`,
       },
     },
   },

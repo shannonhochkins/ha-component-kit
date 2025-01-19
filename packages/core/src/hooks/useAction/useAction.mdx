@@ -1,43 +1,43 @@
 import { Source, Meta } from '@storybook/blocks';
 
-<Meta title="HOOKS/useService" />
+<Meta title="HOOKS/useAction" />
 
-# useService()
-###### `useService(domain?: SnakeOrCamelDomain, rootTarget?: Target)`
-This hook is designed to make it easy to make service calls programmatically.
+# useAction()
+###### `useAction(domain?: SnakeOrCamelDomain, rootTarget?: Target)`
+This hook is designed to make it easy to make action calls programmatically.
 
-This is a memoized wrapper for the [callService()](/docs/hooks-usehass-callservice--docs) helper from [useHass()](/docs/hooks-usehass--docs) to make it
-easier to call services.
+This is a memoized wrapper for the [callAction()](/docs/hooks-usehass-callaction--docs) helper from [useHass()](/docs/hooks-usehass--docs) to make it
+easier to call actions.
 
 **Note:** There's extensive types available for typescript developers to make it very easy to develop and call actions with the available types for different
-services, if a service isn't available in the types or the params are different / incorrect to what you're expecting you can extend these [here](/docs/advanced-extend-api--docs).
+actions, if a action isn't available in the types or the params are different / incorrect to what you're expecting you can extend these [here](/docs/advanced-extend-api--docs).
 
 This hook should be used inside the context of `<HassConnect />` and not outside of it otherwise it will not have access to
 the authenticated home assistant API.
 
 ### Preferred usage
-The `useService()` hook is integrated with the `useEntity` hook so you can use it directly from the entity object.
+The `useAction()` hook is integrated with the `useEntity` hook so you can use it directly from the entity object.
 Everything is typed so it makes it very easy to use and develop with.
 
 <Source dark code={`
-import { HassConnect, useService } from '@hakit/core';
-function UseServiceExample() {
+import { HassConnect, useAction } from '@hakit/core';
+function useActionExample() {
   const entity = useEntity('light.some_light_entity');
   return <button onClick={() => entity.service.toggle()} >TOGGLE LIGHT</button>
 }
 function App() {
   return <HassConnect hassUrl="http://localhost:1234">
-    <UseServiceExample />
+    <useActionExample />
   </HassConnect>
 }
 `} />
 
 ### Service level usage
-We can use the hook to retrieve all the available services for a specific domain, eg "light, mediaPlayer etc...".
+We can use the hook to retrieve all the available actions for a specific domain, eg "light, mediaPlayer etc...".
 <Source dark code={`
-import { HassConnect, useService } from '@hakit/core';
-function UseServiceExample() {
-  const lightService = useService('light');
+import { HassConnect, useAction } from '@hakit/core';
+function useActionExample() {
+  const lightService = useAction('light');
   return (
     <button onClick={() => lightService.toggle({
       target: 'light.some_light_entity'
@@ -46,17 +46,17 @@ function UseServiceExample() {
 }
 function App() {
   return <HassConnect hassUrl="http://localhost:1234">
-    <UseServiceExample />
+    <useActionExample />
   </HassConnect>
 }
 `} />
 
 ## Root level usage
-We can also use the hook to retrieve all the available services and use them as needed.
+We can also use the hook to retrieve all the available actions and use them as needed.
 <Source dark code={`
-import { HassConnect, useService } from '@hakit/core';
-function UseServiceExample() {
-  const api = useService();
+import { HassConnect, useAction } from '@hakit/core';
+function useActionExample() {
+  const api = useAction();
   return (
     <button onClick={() => api('light').toggle({
       target: 'light.some_light_entity',
@@ -70,26 +70,26 @@ function UseServiceExample() {
 ## Attach entity to root hook
 We can use the `rootTarget` param to tell the hook that every call will be bound to one particular entity.
 <Source dark code={`
-import { HassConnect, useService } from '@hakit/core';
-function UseServiceExample() {
-  const lightService = useService('light', 'light.some_light_entity');
+import { HassConnect, useAction } from '@hakit/core';
+function useActionExample() {
+  const lightService = useAction('light', 'light.some_light_entity');
   return (
     <button onClick={() => lightService.toggle()}>TOGGLE LIGHT</button>
   );
 }
 function App() {
   return <HassConnect hassUrl="http://localhost:1234">
-    <UseServiceExample />
+    <useActionExample />
   </HassConnect>
 }
 `} />
 
 ## Returning a response
-Some services return a response, like the calendar `getEvents` service, you can access this response value by adding `returnResponse` to the service call.
+Some actions return a response, like the calendar `getEvents` action, you can access this response value by adding `returnResponse` to the service call.
 The response object type is able to be defined by passing a generic type to the service call itself, see example below:
 
 <Source dark code={`
-import { HassConnect, useService } from '@hakit/core';
+import { HassConnect, useAction } from '@hakit/core';
 import { useState, useCallback } from 'react';
 interface CalendarEvent {
   description: string;
@@ -102,7 +102,7 @@ interface CalendarResponse {
     events: CalendarEvent[];
   }
 }
-function UseServiceExample() {
+function useActionExample() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const getEvents = useCallback(async() => {
     const events = await service.getEvents<CalendarResponse>({
@@ -124,7 +124,7 @@ function UseServiceExample() {
 }
 function App() {
   return <HassConnect hassUrl="http://localhost:1234">
-    <UseServiceExample />
+    <useActionExample />
   </HassConnect>
 }
 `} />

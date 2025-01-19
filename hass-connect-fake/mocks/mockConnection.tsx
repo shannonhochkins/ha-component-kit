@@ -23,7 +23,7 @@ export const connection = {
 }
 // eslint-disable-next-line react-refresh/only-export-components
 export const mocked = {
-  callService: jest.fn(),
+  callAction: jest.fn(), 
   getAllEntities: jest.fn().mockImplementation(() => ENTITIES),
   async getAuth() {
     return {

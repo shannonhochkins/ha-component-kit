@@ -1,4 +1,4 @@
-import { createConnection, createLongLivedTokenAuth, Auth, getServices, getStates, HassEntity, HassServices } from 'home-assistant-js-websocket';
+import { createConnection, createLongLivedTokenAuth, Auth, getServices as getActions, getStates, HassEntity, HassServices } from 'home-assistant-js-websocket';
 import WebSocket from 'ws';
 
 interface HaWebSocket extends WebSocket {
@@ -151,7 +151,7 @@ export function createSocket(
 
 
 export async function connect(url: string, token: string): Promise<{
-  services: HassServices,
+  actions: HassServices,
   states: HassEntity[],
 }> {
   try {
@@ -162,11 +162,11 @@ export async function connect(url: string, token: string): Promise<{
       // as the websocket definition is different
       createSocket: () => createSocket(auth),
     });
-    const services = await getServices(connection);
+    const actions = await getActions(connection);
     const states = await getStates(connection);
     connection.close();
     return {
-      services,
+      actions,
       states,
     }
   } catch (err) {

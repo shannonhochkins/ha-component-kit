@@ -25,7 +25,7 @@ describe("useEntity", () => {
       });
     });
 
-    expect(mocked.callService).toHaveBeenCalledWith(
+    expect(mocked.callAction).toHaveBeenCalledWith(
       connection,
       "light",
       "turn_on",

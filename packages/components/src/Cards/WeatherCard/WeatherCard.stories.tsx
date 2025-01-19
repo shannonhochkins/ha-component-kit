@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, Column, WeatherCard, WeatherCardDetail } from "@components";
 import type { WeatherCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
-import { HassEntityWithService } from "@hakit/core";
+import { HassEntityWithAction } from "@hakit/core";
 
 function convertUvIndexToText(uvi: number | null): string | null {
   if (!uvi) return null;
@@ -26,7 +26,7 @@ function Template(args?: Partial<WeatherCardProps>) {
             <WeatherCardDetail
               key="x"
               entity="sensor.openweathermap_uv_index"
-              render={(entity: HassEntityWithService<"sensor">) => {
+              render={(entity: HassEntityWithAction<"sensor">) => {
                 return <span>UVI - {convertUvIndexToText(Number(entity.state))}</span>;
               }}
             />,
@@ -50,7 +50,7 @@ function WithSensors(args?: Partial<WeatherCardProps>) {
           <WeatherCardDetail
             key="a"
             entity="sensor.openweathermap_uv_index"
-            render={(entity: HassEntityWithService<"sensor">) => {
+            render={(entity: HassEntityWithAction<"sensor">) => {
               return <span>UVI - {convertUvIndexToText(Number(entity.state))}</span>;
             }}
           />,

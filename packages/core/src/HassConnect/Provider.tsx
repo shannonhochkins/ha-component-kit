@@ -7,9 +7,9 @@ import {
   createLongLivedTokenAuth,
   createConnection,
   subscribeEntities,
-  callService as _callService,
+  callService as _callAction,
   getStates as _getStates,
-  getServices as _getServices,
+  getServices as _getActions,
   getConfig as _getConfig,
   getUser as _getUser,
   ERR_HASS_HOST_REQUIRED,
@@ -19,7 +19,7 @@ import {
   ERR_INVALID_HTTPS_TO_HTTP,
 } from "home-assistant-js-websocket";
 import { isArray, snakeCase } from "lodash";
-import { SnakeOrCamelDomains, DomainService, Locales, CallServiceArgs, Route, ServiceResponse } from "@typings";
+import { SnakeOrCamelDomains, DomainAction, Locales, CallActionArgs, CallServiceArgs, Route, ActionResponse } from "@typings";
 import { saveTokens, loadTokens, clearTokens } from "./token-storage";
 import { useDebouncedCallback } from "use-debounce";
 import locales from "../hooks/useLocale/locales";
@@ -326,7 +326,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
   }, [hassUrl, setHassUrl]);
 
   const getStates = useCallback(async () => (connection === null ? null : await _getStates(connection)), [connection]);
-  const getServices = useCallback(async () => (connection === null ? null : await _getServices(connection)), [connection]);
+  const getActions = useCallback(async () => (connection === null ? null : await _getActions(connection)), [connection]);
   const getConfig = useCallback(async () => (connection === null ? null : await _getConfig(connection)), [connection]);
   const getUser = useCallback(async () => (connection === null ? null : await _getUser(connection)), [connection]);
 
@@ -489,37 +489,38 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
 
   const getAllEntities = useCallback(() => entities, [entities]);
 
-  const callService = useCallback(
-    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean>({
+  const callAction = useCallback(
+    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainAction<T>, R extends boolean>({
       domain,
-      service,
-      serviceData,
+      action,
+      actionData,
       target: _target,
       returnResponse,
-    }: CallServiceArgs<T, M, R>): Promise<R extends true ? ServiceResponse<ResponseType> : void> => {
+    }: CallActionArgs<T, M, R>): Promise<R extends true ? ActionResponse<ResponseType> : void> => {
       const target =
         typeof _target === "string" || isArray(_target)
           ? {
               entity_id: _target,
             }
           : _target;
-      if (typeof service !== "string") {
-        throw new Error("service must be a string");
+
+      if (typeof action !== "string") {
+        throw new Error("action must be a string");
       }
       if (connection && ready) {
         try {
-          const result = await _callService(
+          const result = await _callAction(
             connection,
             snakeCase(domain),
-            snakeCase(service),
+            snakeCase(action),
             // purposely cast here as we know it's correct
-            serviceData as object,
+            actionData as object,
             target,
             returnResponse,
           );
           if (returnResponse) {
             // Return the result if returnResponse is true
-            return result as R extends true ? ServiceResponse<ResponseType> : never;
+            return result as R extends true ? ActionResponse<ResponseType> : never;
           }
           // Otherwise, return void
           return undefined as R extends true ? never : void;
@@ -531,6 +532,25 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
       return undefined as R extends true ? never : void;
     },
     [connection, ready],
+  );
+
+  const callService = useCallback(
+    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainAction<T>, R extends boolean>({
+      domain,
+      service,
+      serviceData,
+      target: _target,
+      returnResponse,
+    }: CallServiceArgs<T, M, R>): Promise<R extends true ? ActionResponse<ResponseType> : void> => {
+      return callAction({
+        domain,
+        action: service,
+        actionData: serviceData,
+        target: _target,
+        returnResponse,
+      });
+    },
+    [callAction],
   );
 
   useEffect(() => {
@@ -592,11 +612,13 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
         addRoute,
         getRoute,
         getStates,
-        getServices,
+        getServices: getActions,
+        getActions,
         getConfig,
         getUser,
         callApi,
         getAllEntities,
+        callAction: callAction as HassContextProps["callAction"],
         // cast here we don't have to redefine all the overloads, might fix later
         callService: callService as HassContextProps["callService"],
         joinHassUrl,

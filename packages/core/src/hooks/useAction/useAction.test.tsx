@@ -1,18 +1,18 @@
 import { TestWrapper, onReady, mocked, connection } from "@mocks/mockConnection";
 import { renderHook, act, waitFor } from "@testing-library/react";
-import { useService } from "@core";
+import { useAction } from "@core";
 
-describe("useService", () => {
+describe("useAction", () => {
   beforeEach(() => {
     onReady.mockClear();
   });
   it("should return service object with passed entity id and call the service", async () => {
     // because of strict mode, we need to call this twice...
-    renderHook(() => useService("light", { entity_id: "light.kitchen" }), {
+    renderHook(() => useAction("light", { entity_id: "light.kitchen" }), {
       wrapper: TestWrapper,
     });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
-    const { result } = renderHook(() => useService("light", { entity_id: "light.kitchen" }), {
+    const { result } = renderHook(() => useAction("light", { entity_id: "light.kitchen" }), {
       wrapper: TestWrapper,
     });
     act(() => {
@@ -23,7 +23,7 @@ describe("useService", () => {
       });
     });
 
-    expect(mocked.callService).toHaveBeenCalledWith(
+    expect(mocked.callAction).toHaveBeenCalledWith(
       connection,
       "light",
       "turn_on",
@@ -37,7 +37,7 @@ describe("useService", () => {
   });
 
   it("should return api domain object and then call the service with the matching entity & data", async () => {
-    const { result } = renderHook(() => useService("light"), {
+    const { result } = renderHook(() => useAction("light"), {
       wrapper: TestWrapper,
     });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
@@ -50,7 +50,7 @@ describe("useService", () => {
       });
     });
 
-    expect(mocked.callService).toHaveBeenCalledWith(
+    expect(mocked.callAction).toHaveBeenCalledWith(
       connection,
       "light",
       "toggle",
@@ -64,7 +64,7 @@ describe("useService", () => {
   });
 
   it("should return api function and then call the service with the matching entity & data", async () => {
-    const { result } = renderHook(() => useService(), {
+    const { result } = renderHook(() => useAction(), {
       wrapper: TestWrapper,
     });
     await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
@@ -77,7 +77,7 @@ describe("useService", () => {
       });
     });
 
-    expect(mocked.callService).toHaveBeenCalledWith(
+    expect(mocked.callAction).toHaveBeenCalledWith(
       connection,
       "light",
       "turn_off",

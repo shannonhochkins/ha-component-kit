@@ -3,7 +3,7 @@ import { Source, Meta } from '@storybook/blocks';
 <Meta title="HOOKS/useEntity" />
 # useEntity()
 ###### `useEntity(entity: string, options?: UseEntityOptions)`
-This hook is designed to retrieve an entity and return all it's information including history (if not disabled) and the services for the entity.
+This hook is designed to retrieve an entity and return all it's information including history (if not disabled) and the actions for the entity.
 
 This is a memoized wrapper for the getEntity helper from `useHass()` allowing your component to only update
 when the entity actually changes.
@@ -73,12 +73,12 @@ function App() {
 }
 `} />
 
-### Using services from entity
-The `useEntity()` hook is integrated with the `useService` hook so you can use it directly from the entity object.
+### Using actions from entity
+The `useEntity()` hook is integrated with the `useAction` hook so you can use it directly from the entity object.
 Everything is typed so it makes it very easy to use and develop with.
 <Source dark code={`
 import { HassConnect, useEntity } from '@hakit/core';
-function UseServiceExample() {
+function useActionExample() {
   const entity = useEntity('light.some_light_entity');
   return <button onClick={() => entity.service.toggle()} >TOGGLE LIGHT</button>
 }
@@ -86,7 +86,7 @@ function UseServiceExample() {
 
 
 ### Getting a response back from a service
-Some services return a response, like the calendar `getEvents` service, you can access this response value by adding `returnResponse` to the service call.
+Some actions return a response, like the calendar `getEvents` service, you can access this response value by adding `returnResponse` to the service call.
 The response object type is able to be defined by passing a generic type to the service call itself, see example below:
 <Source dark code={`
 import { useEntity } from '@hakit/core';

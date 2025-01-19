@@ -55,15 +55,15 @@ function sanitizeString(str: string | boolean | number): string {
 interface ActionTypeOptions {
   domainWhitelist?: string[];
   domainBlacklist?: string[];
-  serviceWhitelist?: string[];
-  serviceBlacklist?: string[];
+  actionWhitelist?: string[];
+  actionBlacklist?: string[];
 }
 
 export const generateActionTypes = (input: HassServices, {
   domainWhitelist = [],
   domainBlacklist = [],
-  serviceWhitelist = [],
-  serviceBlacklist = [],
+  actionWhitelist = [],
+  actionBlacklist = [],
 }: ActionTypeOptions) => {
   const interfaces = Object.entries(input).map(([domain, actions]) => {
     const camelDomain = _.camelCase(domain);
@@ -71,8 +71,8 @@ export const generateActionTypes = (input: HassServices, {
     if (domainWhitelist.length > 0 && (!domainWhitelist.includes(camelDomain) || !domainWhitelist.includes(domain))) return '';
     const domainActions = Object.entries(actions).map(([action, { fields, description }]) => {
       const camelAction = _.camelCase(action);
-      if (serviceBlacklist.length > 0 && (serviceBlacklist.includes(camelAction) || serviceBlacklist.includes(action))) return '';
-      if (serviceWhitelist.length > 0 && (!serviceWhitelist.includes(camelAction) || !serviceWhitelist.includes(action))) return '';
+      if (actionBlacklist.length > 0 && (actionBlacklist.includes(camelAction) || actionBlacklist.includes(action))) return '';
+      if (actionWhitelist.length > 0 && (!actionWhitelist.includes(camelAction) || !actionWhitelist.includes(action))) return '';
       function processFields(fields: HassService['fields']): string[] {
         return Object.entries(fields).map(([field, { selector, example, description, ...rest }]) => {
           const required = rest.required ?? false;
@@ -99,12 +99,12 @@ export const generateActionTypes = (input: HassServices, {
           return isAdvancedFields && 'fields' in rest ? processFields(rest.fields as HassService['fields']).join('\n') : `//${comment ? sanitizeString(` ${comment}`) : ''}\n${field}${required ? '' : '?'}: ${type};`;
         });
       }     
-      // the data passed to the ServiceFunction<object>
+      // the data passed to the ActionFunction<object>
       const data = processFields(fields);
-      // the data passed to the ServiceFunction<object>
+      // the data passed to the ActionFunction<object>
       const actionData = `${Object.keys(fields).length === 0 ? 'object' : `{${data.join('\n')}}`}`;
       return `// ${sanitizeString(description)}
-        ${camelAction}: ServiceFunction<object, T, ${actionData}>;
+        ${camelAction}: ActionFunction<object, T, ${actionData}>;
       `;
     }).join('')
     const result = `${camelDomain}: {

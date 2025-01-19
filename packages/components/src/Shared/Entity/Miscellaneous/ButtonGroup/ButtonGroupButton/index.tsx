@@ -4,10 +4,10 @@ import {
   useIcon,
   ON,
   useEntity,
-  type DomainService,
-  type ServiceData,
+  type DomainAction,
+  type ActionData,
   type ExtractDomain,
-  type HassEntityWithService,
+  type HassEntityWithAction,
   type EntityName,
 } from "@hakit/core";
 import { ReactNode, useMemo } from "react";
@@ -62,17 +62,17 @@ export interface ButtonGroupButtonProps<E extends EntityName> extends Omit<Toolt
   /** the entity name to render */
   entity?: E;
   /** The service name to call" */
-  service?: DomainService<ExtractDomain<E>>;
+  service?: DomainAction<ExtractDomain<E>>;
   /** The data to pass to the service */
-  serviceData?: ServiceData<ExtractDomain<E>, DomainService<ExtractDomain<E>>>;
+  serviceData?: ActionData<ExtractDomain<E>, DomainAction<ExtractDomain<E>>>;
   /** an optional override for the title for the tooltip */
   title?: React.ReactNode;
   /** an optional override for the icon */
   icon?: string;
   /** the props for the icon, which includes styles for the icon */
   iconProps?: Omit<IconProps, "icon">;
-  /** a callback when the button is clicked, this will receive the entity with the available services if entity was provided */
-  onClick?: (entity: HassEntityWithService<ExtractDomain<E>> | null) => void;
+  /** a callback when the button is clicked, this will receive the entity with the available actions if entity was provided */
+  onClick?: (entity: HassEntityWithAction<ExtractDomain<E>> | null) => void;
   /** optional override to determine if the button should render in an active state */
   active?: boolean;
   /** optional override to the button color when active */

@@ -21,12 +21,12 @@ describe("<FabCard />", () => {
 
   // Tests for all valid combinations of entity and service props
   const entities = ["light.fake_light_1", "switch.fake_switch"] as const;
-  const services = ["turnOn", "toggle", "turnOff"] as const;
+  const actions = ["turnOn", "toggle", "turnOff"] as const;
 
   entities.forEach((entity) => {
-    services.forEach((service) => {
-      it(`renders correctly with entity ${entity} and service ${service}`, async () => {
-        const { getByTestId } = render(<FabCard entity={entity} service={service} data-testid="fab-card" />, {
+    actions.forEach((action) => {
+      it(`renders correctly with entity ${entity} and action ${action}`, async () => {
+        const { getByTestId } = render(<FabCard entity={entity} service={action} data-testid="fab-card" />, {
           wrapper: TestWrapper,
         });
         await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
@@ -34,15 +34,15 @@ describe("<FabCard />", () => {
         expect(buttonElement).toBeInTheDocument();
       });
 
-      it(`triggers service ${service} when clicked with entity ${entity}`, async () => {
+      it(`triggers service ${action} when clicked with entity ${entity}`, async () => {
         const mockFunction = jest.fn();
-        const { getByTestId } = render(<FabCard entity={entity} service={service} onClick={mockFunction} data-testid="fab-card" />, {
+        const { getByTestId } = render(<FabCard entity={entity} service={action} onClick={mockFunction} data-testid="fab-card" />, {
           wrapper: TestWrapper,
         });
         await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
         const buttonElement = getByTestId("fab-card");
         fireEvent.click(buttonElement);
-        expect(mocked.callService).toHaveBeenLastCalledWith(connection, computeDomain(entity), snakeCase(service), undefined, {
+        expect(mocked.callAction).toHaveBeenLastCalledWith(connection, computeDomain(entity), snakeCase(action), undefined, {
           entity_id: entity,
         });
         expect(mockFunction).toHaveBeenCalled();

@@ -12,7 +12,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
     url: process.env.VITE_HA_URL,
     token: process.env.VITE_HA_TOKEN,
     outDir: './src/types',
-    filename: 'supported-services.ts',
+    filename: 'ha-instance-types.ts',
     custom: false,
     // filter out domains that may not be relevant to users
     domainBlacklist: ['localtuya', 'nodered', 'wakeOnLan', 'ring', 'mqtt', 'ffmpeg', 'tplink', 'samsungtvSmart', 'deconz', "fullyKiosk", "googleAssistantSdk"],

@@ -13,7 +13,7 @@ import {
   computeDomainTitle,
   computeDomain,
   type LocaleKeys,
-  type HassEntityWithService,
+  type HassEntityWithAction,
   type ExtractDomain,
   type EntityName,
 } from "@hakit/core";
@@ -199,7 +199,7 @@ export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProp
   /** The layout of the button card, mimics the style of HA mushroom cards in slim/slim-vertical @default "default" */
   layoutType?: "default" | "slim" | "slim-vertical";
   /** custom method to render the state however you choose, this will just change how the "suffix" of the title will appear */
-  customRenderState?: (entity: HassEntityWithService<ExtractDomain<E>>) => ReactNode;
+  customRenderState?: (entity: HassEntityWithAction<ExtractDomain<E>>) => ReactNode;
   /** hide the icon shown in the component @default false */
   hideIcon?: boolean;
   /** Hide the state value @default false */

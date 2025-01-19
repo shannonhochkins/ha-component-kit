@@ -1,15 +1,15 @@
 import type { HassEntities } from "home-assistant-js-websocket";
 
 import type {
-  DomainService,
+  DomainAction,
   SnakeOrCamelDomains,
-  ServiceData,
+  ActionData,
 } from "@hakit/core";
 
-export interface ServiceArgs<D extends SnakeOrCamelDomains> {
+export interface ActionArgs<D extends SnakeOrCamelDomains> {
   setEntities: (cb: (entities: HassEntities) => HassEntities) => void;
   now: string;
   target: string | string[];
-  service: DomainService<D>;
-  serviceData: ServiceData<D, DomainService<D>>, 
+  action: DomainAction<D>;
+  actionData: ActionData<D, DomainAction<D>>, 
 }

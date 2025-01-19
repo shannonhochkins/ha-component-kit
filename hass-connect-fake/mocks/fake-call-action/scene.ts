@@ -1,10 +1,10 @@
-import type { ServiceArgs } from './types';
+import type { ActionArgs } from './types';
 
 export function sceneUpdates({
   now,
   target,
   setEntities,
-}: ServiceArgs<'scene'>) {
+}: ActionArgs<'scene'>) {
   const dates = {
     last_changed: now,
     last_updated: now,

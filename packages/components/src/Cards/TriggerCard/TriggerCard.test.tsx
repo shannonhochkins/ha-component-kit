@@ -34,7 +34,7 @@ describe("<TriggerCard />", () => {
     expect(mockFunction).toHaveBeenCalled();
     expect(buttonElement).toBeInTheDocument();
     expect(buttonElement).toMatchSnapshot();
-    expect(mocked.callService).toHaveBeenLastCalledWith(connection, "scene", "turn_on", undefined, {
+    expect(mocked.callAction).toHaveBeenLastCalledWith(connection, "scene", "turn_on", undefined, {
       entity_id: "scene.good_morning",
     });
     expect(mockFunction).toHaveBeenCalled();

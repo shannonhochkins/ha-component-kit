@@ -7,7 +7,7 @@ import {
   type AlarmMode,
   type AlarmPanelCardConfigState,
   type EntityName,
-  type HassEntityWithService,
+  type HassEntityWithAction,
   type FilterByDomain,
   useEntity,
   LocaleKeys,
@@ -145,7 +145,7 @@ interface Slot {
   children: React.ReactNode;
 }
 
-type AlarmServices = keyof HassEntityWithService<"alarm_control_panel">["service"];
+type AlarmServices = keyof HassEntityWithAction<"alarm_control_panel">["service"];
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 export interface AlarmControlsProps extends Extendable {
   /** The alarm entity to control */

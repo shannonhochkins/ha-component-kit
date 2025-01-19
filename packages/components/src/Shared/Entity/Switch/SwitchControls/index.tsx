@@ -1,11 +1,11 @@
 import { ControlToggle, fallback, type ControlToggleProps } from "@components";
 import { isUnavailableState, ON, useEntity } from "@hakit/core";
-import type { EntityName, HassEntityWithService, FilterByDomain } from "@hakit/core";
+import type { EntityName, HassEntityWithAction, FilterByDomain } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 
 export interface SwitchControlsProps extends Omit<ControlToggleProps, "disabled" | "checked" | "onChange"> {
   entity: FilterByDomain<EntityName, "switch">;
-  onChange?: (entity: HassEntityWithService<"switch">, checked: boolean) => void;
+  onChange?: (entity: HassEntityWithAction<"switch">, checked: boolean) => void;
 }
 
 function InternalSwitchControls({ entity, onChange, reversed = true, ...props }: SwitchControlsProps) {

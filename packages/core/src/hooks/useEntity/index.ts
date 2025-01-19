@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { cloneDeep, isEmpty, omit } from "lodash";
-import type { HassEntityWithService, HassEntityCustom, ExtractDomain, EntityName } from "@typings";
+import type { HassEntityWithAction, HassEntityCustom, ExtractDomain, EntityName } from "@typings";
 import type { HassEntity } from "home-assistant-js-websocket";
 import { useSubscribeEntity } from "../useSubscribeEntity";
-import { useService } from "../useService";
+import { useAction } from "../useAction";
 import { useHistory } from "../useHistory";
 import { getIconByEntity } from "../useIcon";
 import { useDebouncedCallback } from "use-debounce";
@@ -33,8 +33,8 @@ const DEFAULT_OPTIONS: UseEntityOptions = {
 };
 
 type UseEntityReturnType<E, O extends UseEntityOptions> = O["returnNullIfNotFound"] extends true
-  ? HassEntityWithService<ExtractDomain<E>> | null
-  : HassEntityWithService<ExtractDomain<E>>;
+  ? HassEntityWithAction<ExtractDomain<E>> | null
+  : HassEntityWithAction<ExtractDomain<E>>;
 
 export function useEntity<E extends EntityName, O extends UseEntityOptions = UseEntityOptions>(
   entity: E,
@@ -51,7 +51,7 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
   const getEntity = useSubscribeEntity(entity);
   const matchedEntity = getEntity(returnNullIfNotFound);
   const domain = computeDomain(entity) as ExtractDomain<E>;
-  const service = useService(domain, entity);
+  const action = useAction(domain, entity);
   const history = useHistory(entity, historyOptions);
   const { useStore } = useHass();
   const language = useStore((state) => state.config?.language);
@@ -132,7 +132,8 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
     return {
       ...$entity,
       history,
-      service,
+      action,
+      service: action,
     } as unknown as UseEntityReturnType<E, O>;
-  }, [$entity, history, service]);
+  }, [$entity, history, action]);
 }

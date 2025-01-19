@@ -115,6 +115,7 @@ const categories = [
   // 'issues',
   'selector',
   'services',
+  'actions',
   'conversation',
 ];
 

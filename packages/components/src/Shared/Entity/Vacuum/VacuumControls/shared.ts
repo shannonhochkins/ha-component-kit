@@ -1,8 +1,8 @@
-import { localize, type EntityName, type DomainService, type HassEntityWithService, type VacuumEntityState } from "@hakit/core";
+import { localize, type EntityName, type DomainAction, type HassEntityWithAction, type VacuumEntityState } from "@hakit/core";
 import { ButtonBarButtonProps, VacuumControlsProps } from "@components";
 
 type VacuumData<T> = {
-  [key in VacuumEntityState | DomainService<"vacuum">]: T;
+  [key in VacuumEntityState | DomainAction<"vacuum">]: T;
 };
 export const icons: VacuumData<string> = {
   start: "mdi:play",
@@ -27,7 +27,7 @@ export const getToolbarActions = ({
   shortcuts = [],
   onLocate,
 }: {
-  entity: HassEntityWithService<"vacuum">;
+  entity: HassEntityWithAction<"vacuum">;
   shortcuts: VacuumControlsProps["shortcuts"];
   onLocate?: () => void;
 }): Partial<ButtonBarButtonProps<EntityName>>[] => {

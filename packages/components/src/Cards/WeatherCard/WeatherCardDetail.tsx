@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { ReactNode } from "react";
 import { localize, useEntity } from "@hakit/core";
-import type { EntityName, HassEntityWithService, ExtractDomain } from "@hakit/core";
+import type { EntityName, HassEntityWithAction, ExtractDomain } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, fallback, Tooltip, mq } from "@components";
 import type { RowProps } from "@components";
@@ -32,7 +32,7 @@ export interface WeatherCardDetailProps extends Omit<RowProps, "title"> {
   entity: EntityName;
   title?: ReactNode;
   suffix?: ReactNode;
-  render?: (value: HassEntityWithService<ExtractDomain<EntityName>>) => ReactNode;
+  render?: (value: HassEntityWithAction<ExtractDomain<EntityName>>) => ReactNode;
 }
 
 function InternalWeatherCardDetail({ icon, iconProps, entity, title, suffix, render, ...rest }: WeatherCardDetailProps) {

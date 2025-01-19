@@ -146,7 +146,7 @@ runner();
     `} />
 
     <h2>Result</h2>
-    <p>If successful, when you import a hook of say &quot;useEntity&quot; you should get complete intellisense for services and entities!</p>
+    <p>If successful, when you import a hook of say &quot;useEntity&quot; you should get complete intellisense for actions and entities!</p>
 
     <h1>Extending Entities</h1>
     <p>By default, @hakit/core will support all defined entities that the home assistant repository also supports, there may be cases for you to extend or add your own types for domains that aren&apos;t pre-processed.</p>
@@ -198,7 +198,7 @@ export default {
         </>
       ),
       description: {
-        component: `Extends the typescript types for @hakit/core & @hakit/components on the consumer side so that you have full intellisense of your entities/services available on your home assistant instance. There's a cli script and a node script available to generate/sync the types.\n If your home assistant instance adds new entities or new services, simply re-run the script!`
+        component: `Extends the typescript types for @hakit/core & @hakit/components on the consumer side so that you have full intellisense of your entities/actions available on your home assistant instance. There's a cli script and a node script available to generate/sync the types.\n If your home assistant instance adds new entities or new actions, simply re-run the script!`
       }
     }
   },

@@ -13,21 +13,22 @@ import type {
 } from "home-assistant-js-websocket";
 import { Connection, HassEntity } from "home-assistant-js-websocket";
 import type {
-  DomainService,
+  DomainAction,
   SnakeOrCamelDomains,
   Route,
   Store,
+  CallActionArgs,
   CallServiceArgs,
   HassContextProps,
-  ServiceResponse,
+  ActionResponse,
 } from "@hakit/core";
 import { isArray, isEmpty } from "lodash";
 import { HassContext, updateLocales, locales } from '@hakit/core';
 import { entities as ENTITIES } from './mocks/mockEntities';
-import fakeApi from './mocks/fake-call-service';
+import fakeApi from './mocks/fake-call-action';
 import { create } from "zustand";
 import { diff } from "deep-object-diff";
-import type { ServiceArgs } from './mocks/fake-call-service/types';
+import type { ActionArgs } from './mocks/fake-call-action/types';
 import mockHistory from './mock-history';
 import { mockCallApi } from './mocks/fake-call-api';
 import reolinkSnapshot from './assets/reolink-snapshot.jpg';
@@ -244,7 +245,7 @@ const useStore = create<Store>((set) => ({
           ...newEntities[entityId],
         };
       });
-      // used to mock out the render_template service
+      // used to mock out the render_template action
       if (state.entities['light.fake_light_1']) {
         renderTemplatePrevious = state.entities['light.fake_light_1'].state;
       }
@@ -319,29 +320,29 @@ function HassProvider({
   const setLocales = useStore(store => store.setLocales);
   const clock = useRef<NodeJS.Timeout | null>(null);
   const getStates = async () => null;
-  const getServices = async () => null;
+  const getActions = async () => null;
   const getConfig = async () => fakeConfig;
   const getUser = async () => null;
   const getAllEntities = useMemo(() => () => entities, [entities]);
 
-  const callService = useCallback(
-    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean>(
-      { domain, service, serviceData, target }: CallServiceArgs<T, M, R>,
-    ): Promise<R extends true ? ServiceResponse<ResponseType> : void> => {
+  const callAction = useCallback(
+    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainAction<T>, R extends boolean>(
+      { domain, action, actionData, target }: CallActionArgs<T, M, R>,
+    ): Promise<R extends true ? ActionResponse<ResponseType> : void> => {
       if (typeof target !== 'string' && !isArray(target)) return undefined as R extends true ? never : void;
       const now = new Date().toISOString();
       if (domain in fakeApi) {
-        const api = fakeApi[domain as 'scene'] as (params: ServiceArgs<'scene'>) => boolean;
+        const api = fakeApi[domain as 'scene'] as (params: ActionArgs<'scene'>) => boolean;
         const skip = api({
           setEntities(cb: (entities: HassEntities) => HassEntities) {
             setEntities(cb(entities));
           },
           now,
           target,
-          // @ts-expect-error - don't know domain
-          service,
-          // @ts-expect-error - don't know domain
-          serviceData,
+          // @ts-expect-error - no way to type this
+          action,
+          // @ts-expect-error - no way to type this
+          actionData,
         });
         if (!skip) return undefined as R extends true ? never : void;
       }
@@ -350,12 +351,12 @@ function HassProvider({
         last_changed: now,
         last_updated: now,
       }
-      switch(service) {
+      switch(action) {
         case 'turn_on':
         case 'turnOn': {
           const attributes = {
             ...entities[target].attributes,
-            ...serviceData || {},
+            ...actionData || {},
           }
           setEntities({
             ...entities,
@@ -378,7 +379,7 @@ function HassProvider({
               ...entities[target],
               attributes: {
                 ...entities[target].attributes,
-                ...serviceData || {},
+                ...actionData || {},
               },
               ...dates,
               state: 'off'
@@ -392,7 +393,7 @@ function HassProvider({
               ...entities[target],
               attributes: {
                 ...entities[target].attributes,
-                ...serviceData || {},
+                ...actionData || {},
                 brightness: entities[target].state === 'on' ? entities[target].attributes.brightness : 0,
               },
               ...dates,
@@ -413,6 +414,20 @@ function HassProvider({
       return undefined as R extends true ? never : void;
     },
     [entities, setEntities]
+  );
+
+  const callService = useCallback(
+    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainAction<T>, R extends boolean>(
+      { domain, service, serviceData, target }: CallServiceArgs<T, M, R>,
+    ): Promise<R extends true ? ActionResponse<ResponseType> : void> => {
+      return callAction({
+        domain,
+        action: service,
+        actionData: serviceData,
+        target,
+      })
+    },
+    [callAction]
   );
 
 
@@ -532,11 +547,13 @@ function HassProvider({
         addRoute,
         getRoute,
         getStates,
-        getServices,
+        getServices: getActions,
+        getActions,
         getConfig,
         getUser,
         getAllEntities,
-        callService : callService as HassContextProps['callService'],
+        callAction: callAction as HassContextProps['callAction'],
+        callService: callService as HassContextProps['callService'],
         callApi,
         joinHassUrl,
       }}

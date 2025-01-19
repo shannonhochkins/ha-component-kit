@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { HassEntityWithService, ON, lightSupportsColorMode, getLightCurrentModeRgbColor, rgb2hs, LIGHT_COLOR_MODES } from "@core";
+import { HassEntityWithAction, ON, lightSupportsColorMode, getLightCurrentModeRgbColor, rgb2hs, LIGHT_COLOR_MODES } from "@core";
 
-export const useLightColor = (entity: HassEntityWithService<"light">) => {
+export const useLightColor = (entity: HassEntityWithAction<"light">) => {
   const brightnessAdjusted = useMemo<number | undefined>(() => {
     if (entity.state === ON) {
       if (

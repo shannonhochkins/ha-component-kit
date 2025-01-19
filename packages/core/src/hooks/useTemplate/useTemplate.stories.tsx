@@ -44,7 +44,7 @@ function SubscribeTemplateExample() {
     >
       <Row gap="1rem">
         <Alert type="warning" title={`Current entity state: "${entity.state}", toggle the button to trigger the change`} />
-        <FabCard entity={"light.fake_light_1"} service="toggle" />
+        <FabCard entity={"light.fake_light_1"} action="toggle" />
       </Row>
       <Source dark code={`// templateCodeToProcess\r${templateCodeToProcess}`} />
       <Alert type="info" title={`Template result: ${template ?? "loading"}`} />

@@ -22,9 +22,9 @@ function ResponsiveGroupsExample() {
       title="Button Card"
       justifyContent="flex-start"
       alignItems="stretch">
-      <ButtonCard id="default" entity="light.fake_light_1" service="toggle" sm={6} md={4} lg={4} xlg={3} />
-      <ButtonCard id="default" entity="light.fake_light_2" service="toggle" icon="mdi:power" sm={6} md={4} lg={4} xlg={3} />
-      <ButtonCard id="default" entity="light.fake_light_3" service="toggle" sm={6} md={4} lg={4} xlg={3}/>
+      <ButtonCard id="default" entity="light.fake_light_1" action="toggle" sm={6} md={4} lg={4} xlg={3} />
+      <ButtonCard id="default" entity="light.fake_light_2" action="toggle" icon="mdi:power" sm={6} md={4} lg={4} xlg={3} />
+      <ButtonCard id="default" entity="light.fake_light_3" action="toggle" sm={6} md={4} lg={4} xlg={3}/>
     </Group>
     <Group
       sm={6}
@@ -34,9 +34,9 @@ function ResponsiveGroupsExample() {
       title="ButtonCard"
       justifyContent="flex-start"
       alignItems="stretch">
-      <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_1" service="toggle" sm={6} md={6} lg={4} xlg={4} />
-      <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_2" service="toggle" sm={6} icon="mdi:power" md={6} lg={4} xlg={4} />
-      <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_3" service="toggle" sm={6} md={6} lg={4} xlg={4} />
+      <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_1" action="toggle" sm={6} md={6} lg={4} xlg={4} />
+      <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_2" action="toggle" sm={6} icon="mdi:power" md={6} lg={4} xlg={4} />
+      <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_3" action="toggle" sm={6} md={6} lg={4} xlg={4} />
     </Group>
   </Row>;
 }
@@ -47,9 +47,9 @@ function ButtonsDifferentSizes() {
       title="Button Card"
       justifyContent="flex-start"
       alignItems="stretch">
-      <ButtonCard id="default" entity="light.fake_light_1" service="toggle" sm={3} md={6} lg={6} xlg={6} />
-      <ButtonCard id="default" entity="light.fake_light_2" service="toggle" icon="mdi:power" sm={6} md={3} lg={3} xlg={4} />
-      <ButtonCard id="default" entity="light.fake_light_3" service="toggle" sm={3} md={3} lg={5} xlg={2}/>
+      <ButtonCard id="default" entity="light.fake_light_1" action="toggle" sm={3} md={6} lg={6} xlg={6} />
+      <ButtonCard id="default" entity="light.fake_light_2" action="toggle" icon="mdi:power" sm={6} md={3} lg={3} xlg={4} />
+      <ButtonCard id="default" entity="light.fake_light_3" action="toggle" sm={3} md={3} lg={5} xlg={2}/>
     </Group>
   </Row>;
 }

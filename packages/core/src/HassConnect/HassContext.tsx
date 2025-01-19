@@ -3,13 +3,24 @@ import { createContext } from "react";
 import type { Connection, HassEntities, HassEntity, HassConfig, HassUser, HassServices, Auth } from "home-assistant-js-websocket";
 import { type CSSInterpolation } from "@emotion/serialize";
 import { isEmpty } from "lodash";
-import { ServiceData, SnakeOrCamelDomains, DomainService, Target, LocaleKeys, ServiceResponse } from "@typings";
+import { ActionData, SnakeOrCamelDomains, DomainAction, Target, LocaleKeys, ActionResponse } from "@typings";
 import { diff } from "deep-object-diff";
 import { create } from "zustand";
-export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean> {
+/**
+ * @deprecated use `CallActionArgs` instead - this will be removed in a future version
+ */
+export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainAction<T>, R extends boolean> {
   domain: T;
   service: M;
-  serviceData?: ServiceData<T, M>;
+  serviceData?: ActionData<T, M>;
+  target?: Target;
+  returnResponse?: R;
+}
+
+export interface CallActionArgs<T extends SnakeOrCamelDomains, M extends DomainAction<T>, R extends boolean> {
+  domain: T;
+  action: M;
+  actionData?: ActionData<T, M>;
   target?: Target;
   returnResponse?: R;
 }
@@ -193,26 +204,50 @@ export interface HassContextProps {
   logout: () => void;
   /** will retrieve all the HassEntities states */
   getStates: () => Promise<HassEntity[] | null>;
-  /** will retrieve all the HassServices */
+  /**
+   * will retrieve all the HassServices
+   * @deprecated use `getActions` instead - this will be removed in a future version
+   * */
   getServices: () => Promise<HassServices | null>;
+  /** will retrieve all the HassServices */
+  getActions: () => Promise<HassServices | null>;
   /** will retrieve HassConfig */
   getConfig: () => Promise<HassConfig | null>;
   /** will retrieve HassUser */
   getUser: () => Promise<HassUser | null>;
-  /** function to call a service through web sockets */
+  /**
+   * function to call a service through web sockets
+   * @deprecated use `callAction` instead - this will be removed in a future version
+   * */
   callService: {
-    <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+    <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainAction<T>>(
       args: CallServiceArgs<T, M, true>,
-    ): Promise<ServiceResponse<ResponseType>>;
+    ): Promise<ActionResponse<ResponseType>>;
 
     /** Overload for when `returnResponse` is false */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(args: CallServiceArgs<T, M, false>): void;
+    <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainAction<T>>(args: CallServiceArgs<T, M, false>): void;
 
     /** Overload for when `returnResponse` is omitted (defaults to false) */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+    <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainAction<T>>(
       args: Omit<CallServiceArgs<T, M, false>, "returnResponse">,
+    ): void;
+  };
+  /** function to call a service through web sockets */
+  callAction: {
+    <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainAction<T>>(
+      args: CallActionArgs<T, M, true>,
+    ): Promise<ActionResponse<ResponseType>>;
+
+    /** Overload for when `returnResponse` is false */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainAction<T>>(args: CallActionArgs<T, M, false>): void;
+
+    /** Overload for when `returnResponse` is omitted (defaults to false) */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainAction<T>>(
+      args: Omit<CallActionArgs<T, M, false>, "returnResponse">,
     ): void;
   };
   /** add a new route to the provider */

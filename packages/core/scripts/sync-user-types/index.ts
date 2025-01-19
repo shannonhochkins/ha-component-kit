@@ -11,12 +11,20 @@ export interface TypeSyncOptions {
   token: string;
   outDir?: string;
   filename?: string;
-  /** this is used internally to generate the default supported services, you will most definitely need to leave this as true */
+  /** this is used internally to generate the default supported actions, you will most definitely need to leave this as true */
   custom?: boolean;
   domainWhitelist?: string[];
   domainBlacklist?: string[];
+  /**
+   * @deprecated use actionWhitelist instead
+   */
   serviceWhitelist?: string[];
+  /**
+   * @deprecated use actionBlacklist instead
+   */
   serviceBlacklist?: string[];
+  actionWhitelist?: string[];
+  actionBlacklist?: string[];
   prettier?: {
     options: Options;
     disable: boolean;
@@ -32,6 +40,8 @@ export async function typeSync({
   domainBlacklist = [],
   serviceWhitelist = [],
   serviceBlacklist = [],
+  actionBlacklist = [],
+  actionWhitelist = [],
   custom = true,
   prettier,
 }: TypeSyncOptions) {
@@ -42,31 +52,39 @@ export async function typeSync({
   // this is an auto generated file, do not change this manually
   `;
   
-  const { services, states } = await connect(url, token);
+  const { actions, states } = await connect(url, token);
   
-  const serviceInterfaces = await generateActionTypes(services, {
+  const actionInterfaces = await generateActionTypes(actions, {
     domainWhitelist,
     domainBlacklist,
-    serviceWhitelist,
-    serviceBlacklist,
+    actionWhitelist: [...serviceWhitelist, ...actionWhitelist],
+    actionBlacklist: [...serviceBlacklist, ...actionBlacklist],
   });
   const output = custom ? `
     ${warning}
-    import { ServiceFunction, ServiceFunctionTypes, VacuumEntityState } from "@hakit/core";
+    import { ActionFunction, ActionFunctionTypes, VacuumEntityState } from "@hakit/core";
     declare module '@hakit/core' {
-      export interface CustomSupportedServices<T extends ServiceFunctionTypes = "target"> {
-        ${serviceInterfaces}
+      export interface CustomSupportedActions<T extends ActionFunctionTypes = "target"> {
+        ${actionInterfaces}
       }
+      /**
+       * @deprecated use the CustomSupportedActions interface instead
+       * */
+      export type CustomSupportedServices<T extends ActionFunctionTypes = "target"> = CustomSupportedActions<T>;
       export interface CustomEntityNameContainer {
         names: ${generateEntityType(states)};
       }
     }
   ` : `
     ${warning}
-    import type { ServiceFunctionTypes, ServiceFunction } from "./";
-    export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
-      ${serviceInterfaces}
+    import type { ActionFunctionTypes, ActionFunction } from "./";
+    export interface DefaultActions<T extends ActionFunctionTypes = "target"> {
+      ${actionInterfaces}
     }
+    /**
+     * @deprecated use the DefaultActions interface instead
+     * */
+    export type DefaultServices<T extends ActionFunctionTypes = "target"> = DefaultActions<T>;
   `;
   const outDir = _outDir || process.cwd();
 

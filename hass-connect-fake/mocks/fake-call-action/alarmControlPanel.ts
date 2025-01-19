@@ -1,11 +1,11 @@
-import type { ServiceArgs } from './types';
+import type { ActionArgs } from './types';
 
 export function alarmControlPanelUpdates({
   now,
   target: _target,
-  service,
+  action,
   setEntities,
-}: ServiceArgs<'alarmControlPanel'>) {
+}: ActionArgs<'alarmControlPanel'>) {
   const dates = {
     last_changed: now,
     last_updated: now,
@@ -34,7 +34,7 @@ export function alarmControlPanelUpdates({
       })
     });
   }
-  switch (service) {
+  switch (action) {
     case 'alarmArmHome':
     case 'alarm_arm_home':
       return updatePendingState(_target, 'armed_home');

@@ -1,5 +1,5 @@
 import { useEntity, isUnavailableState, useHass, supportsFeatureFromAttributes } from "@core";
-import type { HassEntityWithService, FilterByDomain, EntityName } from "@core";
+import type { HassEntityWithAction, FilterByDomain, EntityName } from "@core";
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import { fetchThumbnailUrlWithCache, fetchStreamUrl, computeMJPEGStreamUrl } from "./camera";
 import { ASPECT_RATIO_DEFAULT, MAX_IMAGE_WIDTH, CAMERA_SUPPORT_STREAM, STREAM_TYPE_WEB_RTC } from "./constants";
@@ -15,7 +15,7 @@ export interface UseCameraOptions {
   stream?: boolean;
 }
 
-export interface CameraEntityExtended extends HassEntityWithService<"camera"> {
+export interface CameraEntityExtended extends HassEntityWithAction<"camera"> {
   stream: {
     url: string | undefined;
     loading: boolean;

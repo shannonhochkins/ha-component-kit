@@ -1,7 +1,18 @@
 // hooks
 export { useHass } from "./useHass";
 export { useEntity } from "./useEntity";
-export { useService, createService } from "./useService";
+import { useAction, createAction } from "./useAction";
+/**
+ * @deprecated useService will be deprecated in a future version. Use useAction instead.
+ */
+export const useService = useAction;
+
+/**
+ * @deprecated createService will be deprecated in a future version. Use createAction instead.
+ */
+export const createService = createAction;
+
+export { useAction, createAction };
 export { useIconByDomain, useIcon, useIconByEntity, getIconByEntity, batteryIconByLevel } from "./useIcon";
 export { useLightBrightness } from "./useLightBrightness";
 export { useLightTemperature } from "./useLightTemperature";

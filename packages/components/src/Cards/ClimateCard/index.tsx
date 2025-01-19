@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
-import type { HassEntityWithService, HvacMode } from "@hakit/core";
+import type { HassEntityWithAction, HvacMode } from "@hakit/core";
 import type { ClimateControlsProps, AvailableQueries } from "@components";
 import { useEntity, OFF, isUnavailableState, useHass, localize } from "@hakit/core";
 import { fallback, Row, ButtonBar, Column } from "@components";
@@ -67,7 +67,7 @@ type OmitProperties = "onClick" | "children" | "active" | "as" | "ref" | "disabl
 type Extendable = Omit<ClimateControlsProps, "onClick"> & Omit<ButtonCardProps<ClimateControlsProps["entity"]>, OmitProperties>;
 export interface ClimateCardProps extends Extendable {
   /** the onClick handler is called when the card is pressed  */
-  onClick?: (entity: HassEntityWithService<"climate">) => void;
+  onClick?: (entity: HassEntityWithAction<"climate">) => void;
   /** show the labels in the button bar for the hvac modes @default false */
   showHvacModeLabels?: boolean;
   /** show the temperature controls within the main card, does not change the popup @default false */

@@ -1,0 +1,90 @@
+import { Source, Meta } from '@storybook/blocks';
+
+<Meta title="HOOKS/useHass/callAction" />
+
+# callAction()
+###### `callAction(args: CallActionArgs<ResponseType, SnakeOrCamelDomain, DomainAction<SnakeOrCamelDomain>>)`
+The call action helper will allow you to trigger any action in home assistant.
+
+> Note: We recommend you use the [useEntity()](/docs/hooks-useentity--docs) hook or the [useAction()](/docs/hooks-useAction--docs) hook as these are more user friendly and don't require you to type out all generic inputs for typescript.
+
+If you have typescript, there's full intellisense on a large range of domains/action/data, if not, you can use developer tools enabled in home assistant,
+navigate to this inside your instance, here you'll see a dropdown list and if you open this you'll see there's a "sub title" under each dropdown option, eg "climate.turn_on", in this particular example, "climate" is the domain and "turn_on" is the action.
+
+This is an easy way to visualize all the available domains/action for your home assistant instance.
+
+Additionally you could also use the [Playground](/story/introduction-testconnection--playground) to show you what's available.
+
+### Definition
+<Source dark language="ts" code={`callAction({
+  domain: SnakeOrCamelDomains; // "climate", "light" etc
+  action: DomainAction<SnakeOrCamelDomains>; // "turn_on", "turnOn",  "toggle" etc
+  actionData?: CallActionArgs<SnakeOrCamelDomains, DomainAction<SnakeOrCamelDomains>>; // any data to pass to the request
+  target?: {
+    entity_id?: string | string[];
+    device_id?: string | string[];
+    area_id?: string | string[];
+  } | string | string[] // if a string or string[] is passed it's automatically mapped back to entity_id
+  returnResponse?: boolean; // if the action is expected to return a response, enable this flag
+})`} />
+
+### Example Usage
+
+<Source dark language="ts" code={`
+function CallActionExample() {
+  const { callAction } = useHass();
+  const turnOnAC = useCallback(() => {
+    callAction({
+      domain: 'climate',
+      action: 'turn_on',
+      target: {
+        entity_id: 'climate.air_conditioner'
+      }
+    })
+  }, [callAction]);
+  // can now access all properties relating to the light
+  return <Button onClick={toggleClimate}>
+    TURN ON CONDITIONER
+  </Button>
+}
+`} />
+
+### Returning a response
+Some actions return a response, like the calendar `get_events` action, you can access this response value by adding `returnResponse` to the action call.
+The response object type is able to be defined by passing a generic type to the action call itself, see example below:
+
+<Source dark language="ts" code={`
+interface CalendarEvent {
+  description: string;
+  end: string;
+  start: string;
+  summary: string;
+}
+interface CalendarResponse {
+  "calendar.some_calendar": {
+    events: CalendarEvent[];
+  }
+}
+function CallActionExample() {
+  const { callAction } = useHass();
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const getEvents = useCallback(() => {
+    callAction<CalendarResponse[], 'calendar', 'get_events'>({
+      domain: 'calendar',
+      action: 'get_events',
+      returnResponse: true,
+      target: {
+        entity_id: 'calendar.my_calendar'
+      }
+    }).then((response) => {
+      setEvents(response);
+    })
+  }, [callAction]);
+  return<>
+    <p>Events: {events.length}</p>
+    <Button onClick={getEvents}>
+      GET EVENTS
+    </Button>
+  </>
+}
+`} />

@@ -1,0 +1,29 @@
+import { Source, Meta } from '@storybook/blocks';
+
+<Meta title="HOOKS/useHass/getActions" />
+
+# getActions()
+This will return all information about your actions of your home assistant instance, this is all typed with typescript
+so you'll have access to what's available on the object with the `HassServices` type.
+
+This is useful to know which domains/actions you have available to use with `callAction`.
+
+### Definition
+<Source dark language="ts" code={`await getActions()`} />
+
+
+### Example Usage
+
+```ts
+function getActionsExample() {
+  const { getActions } = useHass();
+  const [actions, setActions] = useState<HassServices | null>(null);
+  useEffect(() => {
+    async function fetchActions() {
+      const actions = await getActions();
+      setActions(actions);
+    }
+    fetchActions();
+  }, [])
+  return <p>{JSON.stringify(actions, null, 2)}</p>
+}

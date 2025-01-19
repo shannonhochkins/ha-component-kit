@@ -1,4 +1,4 @@
-import { EntityName, FilterByDomain, OFF, supportsFeatureFromAttributes, useEntity, useService } from "@hakit/core";
+import { EntityName, FilterByDomain, OFF, supportsFeatureFromAttributes, useEntity, useAction } from "@hakit/core";
 import { Fab } from "../Fab";
 
 export interface PlaybackControlsProps {
@@ -10,7 +10,7 @@ export interface PlaybackControlsProps {
 }
 export function PlaybackControls({ entity: _entity, size = 20, feature, disabled, allEntityIds }: PlaybackControlsProps) {
   const entity = useEntity(_entity);
-  const mp = useService("mediaPlayer");
+  const mp = useAction("mediaPlayer");
   const playing = entity.state === "playing";
   const isOff = entity.state === OFF;
   const supportsPreviousTrack = supportsFeatureFromAttributes(entity.attributes, 16);

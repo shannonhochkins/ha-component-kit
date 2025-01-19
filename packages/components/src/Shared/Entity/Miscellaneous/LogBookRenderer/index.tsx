@@ -153,18 +153,18 @@ function InternalLogBookRenderer({
   ...rest
 }: LogBookRendererProps): React.ReactNode {
   const logs = useLogs(entity, options);
-  const { useStore, getServices, joinHassUrl } = useHass();
+  const { useStore, getActions, joinHassUrl } = useHass();
   const entities = useStore((state) => state.entities);
   const requestedServices = useRef(false);
-  const [services, setServices] = useState<HassServices | null>(null);
+  const [actions, setActions] = useState<HassServices | null>(null);
   const language = useStore((state) => state.config?.language);
   const device = useDevice(entity);
 
   useEffect(() => {
     if (requestedServices.current) return;
     requestedServices.current = true;
-    getServices().then((services) => setServices(services));
-  }, [services, getServices]);
+    getActions().then((actions) => setActions(actions));
+  }, [actions, getActions]);
 
   const _entityClicked = useCallback(
     async (entityId: string | undefined) => {
@@ -330,7 +330,7 @@ function InternalLogBookRenderer({
             {item.context_domain && item.context_service ? (
               <span className="service-trigger-details">
                 {item.context_domain}:{" "}
-                {services ? services[item.context_domain]?.[item.context_service]?.name || item.context_service : item.context_service}
+                {actions ? actions[item.context_domain]?.[item.context_service]?.name || item.context_service : item.context_service}
               </span>
             ) : null}
           </>
@@ -365,7 +365,7 @@ function InternalLogBookRenderer({
         </>
       );
     },
-    [_formatMessageWithPossibleEntity, _renderEntity, _renderUnseenContextSourceEntity, entities, services],
+    [_formatMessageWithPossibleEntity, _renderEntity, _renderUnseenContextSourceEntity, entities, actions],
   );
 
   const _renderMessage = useCallback(

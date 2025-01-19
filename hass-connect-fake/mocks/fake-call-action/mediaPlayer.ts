@@ -1,4 +1,4 @@
-import type { ServiceArgs } from './types';
+import type { ActionArgs } from './types';
 import { defaults } from '../createMediaPlayer';
 
 const tracks = (now: string) => ({
@@ -50,17 +50,17 @@ const tracks = (now: string) => ({
 export function mediaPlayerUpdates({
   now,
   target: _target,
-  service,
-  serviceData,
+  action,
+  actionData,
   setEntities,
-}: ServiceArgs<'mediaPlayer'>) {
+}: ActionArgs<'mediaPlayer'>) {
   const dates = {
     last_changed: now,
     last_updated: now,
   }
   if (typeof _target === 'string') return true;
   const [target] = _target;
-  switch (service) {
+  switch (action) {
     case 'mediaPlay':
       return setEntities(entities => ({
         ...entities,
@@ -130,7 +130,7 @@ export function mediaPlayerUpdates({
           attributes: {
             ...entities[target].attributes,
             // @ts-ignore - TODO - type later
-            media_position: serviceData?.seek_position,
+            media_position: actionData?.seek_position,
             media_position_updated_at: now,
           }
         }
@@ -144,7 +144,7 @@ export function mediaPlayerUpdates({
           ...dates,
           attributes: {
             ...entities[target].attributes,
-            ...serviceData ?? {},            
+            ...actionData ?? {},            
           }
         }
       }));
@@ -157,7 +157,7 @@ export function mediaPlayerUpdates({
           ...dates,
           attributes: {
             ...entities[target].attributes,
-            volume_level: entities[target].attributes.volume_level + (service === 'volumeUp' ? 0.1 : -0.1),
+            volume_level: entities[target].attributes.volume_level + (action === 'volumeUp' ? 0.1 : -0.1),
           }
         }
       }));

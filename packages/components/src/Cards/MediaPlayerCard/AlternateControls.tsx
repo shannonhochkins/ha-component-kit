@@ -1,5 +1,5 @@
 import { Row, RowProps } from "@components";
-import { EntityName, FilterByDomain, isUnavailableState, OFF, supportsFeatureFromAttributes, useEntity, useService } from "@hakit/core";
+import { EntityName, FilterByDomain, isUnavailableState, OFF, supportsFeatureFromAttributes, useEntity, useAction } from "@hakit/core";
 import { Fab } from "./Fab";
 import { DEFAULT_FAB_SIZE } from "./constants";
 import styled from "@emotion/styled";
@@ -27,7 +27,7 @@ export function AlternateControls({
   hideGrouping = false,
 }: AlternateControlsProps) {
   const entity = useEntity(_entity);
-  const mp = useService("mediaPlayer");
+  const mp = useAction("mediaPlayer");
   const groups = entity.attributes.group_members ?? [];
   const isOff = entity.state === OFF;
   const isUnavailable = isUnavailableState(entity.state);

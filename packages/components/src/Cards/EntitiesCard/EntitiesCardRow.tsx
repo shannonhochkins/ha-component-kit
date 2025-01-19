@@ -9,7 +9,7 @@ import {
   ON,
   localize,
 } from "@hakit/core";
-import type { EntityName, ExtractDomain, AllDomains, HassEntityWithService } from "@hakit/core";
+import type { EntityName, ExtractDomain, AllDomains, HassEntityWithAction } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, fallback, ModalByEntityDomain, type ModalPropsHelper } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -111,9 +111,9 @@ export interface EntitiesCardRowProps<E extends EntityName> extends Omit<React.C
   /** the name of the entity @default friendly_name */
   name?: ReactNode;
   /** the function to call when the row is clicked @default undefined */
-  onClick?: (entity: HassEntityWithService<ExtractDomain<E>>) => void;
+  onClick?: (entity: HassEntityWithAction<ExtractDomain<E>>) => void;
   /** the function to render the state @default undefined */
-  renderState?: (entity: HassEntityWithService<ExtractDomain<E>>) => React.ReactElement<HTMLElement>;
+  renderState?: (entity: HassEntityWithAction<ExtractDomain<E>>) => React.ReactElement<HTMLElement>;
   /** include last updated time @default false */
   includeLastUpdated?: boolean;
   /** props to pass to the modal for each row */
@@ -195,7 +195,7 @@ function InternalEntitiesCardRow<E extends EntityName>({
             ) : isUnavailable ? (
               localize("unavailable")
             ) : LazyComponent ? (
-              <Suspense fallback={<div>Loading...</div>}>{<LazyComponent entity={entity as HassEntityWithService<AllDomains>} />}</Suspense>
+              <Suspense fallback={<div>Loading...</div>}>{<LazyComponent entity={entity as HassEntityWithAction<AllDomains>} />}</Suspense>
             ) : (
               <>{computeState()}</>
             )}

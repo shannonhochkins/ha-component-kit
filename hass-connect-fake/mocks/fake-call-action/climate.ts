@@ -1,4 +1,4 @@
-import type { ServiceArgs } from './types';
+import type { ActionArgs } from './types';
 import type { HvacMode, HvacAction } from '@hakit/core';
 
 const MODE_TO_HVAC_ACTION: {
@@ -17,8 +17,8 @@ export function climateUpdates({
   now,
   target,
   setEntities,
-  serviceData,
-}: ServiceArgs<'climate'>) {
+  actionData,
+}: ActionArgs<'climate'>) {
   const dates = {
     last_changed: now,
     last_updated: now,
@@ -29,13 +29,13 @@ export function climateUpdates({
       ...entities[target],
       attributes: {
         ...entities[target].attributes,
-        ...serviceData || {},
+        ...actionData || {},
         // @ts-ignore - purposely casting here so i don't have to setup manual types for fake data
-        hvac_action: MODE_TO_HVAC_ACTION[serviceData?.hvac_mode] || entities[target].attributes.hvac_action
+        hvac_action: MODE_TO_HVAC_ACTION[actionData?.hvac_mode] || entities[target].attributes.hvac_action
       },
       ...dates,
       // @ts-ignore - purposely casting here so i don't have to setup manual types for fake data
-      state: serviceData?.hvac_mode || entities[target].state
+      state: actionData?.hvac_mode || entities[target].state
     }
   }));
 }

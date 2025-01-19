@@ -17,8 +17,16 @@ export interface Area {
   picture: string | null;
   /** the devices linked to the area */
   devices: DeviceRegistryEntry[];
-  /** the services linked to the area */
+  /**
+   * the actions linked to the area
+   * @deprecated use actions instead - this will be removed in a future version
+   * */
   services: DeviceRegistryEntry[];
+  /**
+   * the actions linked to the area
+   * @deprecated use actions instead - this will be removed in a future version
+   * */
+  actions: DeviceRegistryEntry[];
   /** the entities linked to the area */
   entities: HassEntity[];
 }
@@ -54,12 +62,12 @@ export function useAreas(): Area[] {
     return areas.map((area) => {
       const matchedEntities: HassEntity[] = [];
       const matchedDevices: DeviceRegistryEntry[] = [];
-      const matchedServices: DeviceRegistryEntry[] = [];
+      const matchedActions: DeviceRegistryEntry[] = [];
 
       for (const device of devices) {
         if (device.area_id === area.area_id) {
-          if (device.entry_type === "service") {
-            matchedServices.push(device);
+          if (device.entry_type === "service" || device.entry_type === "action") {
+            matchedActions.push(device);
           } else {
             matchedDevices.push(device);
           }
@@ -90,7 +98,8 @@ export function useAreas(): Area[] {
         ...area,
         picture: area.picture ? joinHassUrl(area.picture) : area.picture,
         devices: matchedDevices,
-        services: matchedServices,
+        services: matchedActions,
+        actions: matchedActions,
         entities: matchedEntities,
       };
     });

@@ -11,7 +11,7 @@ import {
   type ButtonGroupButtonProps,
   useBreakpoint,
 } from "@components";
-import { useEntity, type HassEntityWithService, type EntityName, batteryIconByLevel, localize } from "@hakit/core";
+import { useEntity, type HassEntityWithAction, type EntityName, batteryIconByLevel, localize } from "@hakit/core";
 import { useDebounce } from "react-use";
 import type { MotionProps } from "framer-motion";
 import { getToolbarActions } from "./shared";
@@ -20,7 +20,7 @@ import { VacuumImage } from "./VacuumImage";
 type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 
 interface Shortcut extends Partial<Omit<ButtonGroupButtonProps<EntityName>, "onClick">> {
-  onClick: (entity: HassEntityWithService<"vacuum">) => void;
+  onClick: (entity: HassEntityWithAction<"vacuum">) => void;
 }
 export interface VacuumControlsProps extends Extendable {
   entity: `${"vacuum"}.${string}`;

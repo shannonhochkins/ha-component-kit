@@ -2,7 +2,7 @@ import {
   EntityName,
   FilterByDomain,
   useEntity,
-  useService,
+  useAction,
   isUnavailableState,
   OFF,
   supportsFeatureFromAttributes,
@@ -81,7 +81,7 @@ export const MediaPlayerControls = ({
     () => flatten(Object.values(groupBy(groupedEntities, (entity) => entity.attributes?.group_members))),
     [groupedEntities],
   );
-  const mediaPlayerService = useService("media_player");
+  const mediaPlayerService = useAction("media_player");
   const [lastPlayedMedia, setLastPlayedMedia] = useState<{ media_content_id: string; media_content_type: string }>({
     media_content_id: "",
     media_content_type: "",

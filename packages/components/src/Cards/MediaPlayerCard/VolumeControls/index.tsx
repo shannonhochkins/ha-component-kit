@@ -1,4 +1,4 @@
-import { EntityName, FilterByDomain, supportsFeatureFromAttributes, useEntity, useService } from "@hakit/core";
+import { EntityName, FilterByDomain, supportsFeatureFromAttributes, useEntity, useAction } from "@hakit/core";
 import { useCallback, useRef, useEffect, useState } from "react";
 import { mq, Row, RangeSlider } from "@components";
 import styled from "@emotion/styled";
@@ -44,7 +44,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
   const entity = useEntity(_entity);
   const { volume_level, is_volume_muted } = entity.attributes;
   const [volume, _setVolume] = useState(volume_level);
-  const mp = useService("mediaPlayer");
+  const mp = useAction("mediaPlayer");
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const supportsVolumeSet = supportsFeatureFromAttributes(entity.attributes, 4);
   const supportsVolumeMute = supportsFeatureFromAttributes(entity.attributes, 8);

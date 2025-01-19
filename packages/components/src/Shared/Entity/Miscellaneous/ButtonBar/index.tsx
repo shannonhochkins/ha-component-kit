@@ -162,7 +162,7 @@ function InternalButtonBar({
 /**
  * This is a very simple function that turns FabCards into a button bar, you can use this with entities or just normal button elements
  *
- * There's a known problem with the types when you provide an entity name, typescript will complain about the available services, this is something i'll address later * */
+ * There's a known problem with the types when you provide an entity name, typescript will complain about the available actions, this is something i'll address later * */
 export function ButtonBar(props: ButtonBarProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "ButtonBar" })}>

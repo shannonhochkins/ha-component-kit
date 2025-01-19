@@ -59,11 +59,11 @@ function Template() {
           description="This is how the ButtonCards appear in the default layout"
           justifyContent="flex-start"
           alignItems="stretch">
-          <ButtonCard id="default" entity="light.fake_light_1" service="toggle" md={6} lg={4} xlg={3} />
-          <ButtonCard id="default" entity="cover.cover_with_tilt" service="toggle" md={6} lg={4} xlg={3} />
-          <ButtonCard id="default" entity="light.fake_light_3" service="toggle"  md={6} lg={4} xlg={3}/>
-          <ButtonCard id="default" entity="switch.fake_switch" service="toggle"  md={6} lg={4} xlg={3}/>
-          <ButtonCard id="default" entity="vacuum.robot_vacuum" service="start"  md={6} lg={4} xlg={3} />
+          <ButtonCard id="default" entity="light.fake_light_1" action="toggle" md={6} lg={4} xlg={3} />
+          <ButtonCard id="default" entity="cover.cover_with_tilt" action="toggle" md={6} lg={4} xlg={3} />
+          <ButtonCard id="default" entity="light.fake_light_3" action="toggle"  md={6} lg={4} xlg={3}/>
+          <ButtonCard id="default" entity="switch.fake_switch" action="toggle"  md={6} lg={4} xlg={3}/>
+          <ButtonCard id="default" entity="vacuum.robot_vacuum" action="start"  md={6} lg={4} xlg={3} />
         </Group>
         <Group
           md={6}
@@ -73,27 +73,27 @@ function Template() {
           description={<span>With layoutType=&quot;slim&quot; we can change the layout of the ButtonCard</span>}
           justifyContent="flex-start"
           alignItems="stretch">
-          <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_1" service="toggle" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" layoutType="slim" entity="light.fake_light_1" action="toggle" md={6} lg={4} xlg={4} />
           <ButtonCard id="slim" layoutType="slim" entity="weather.entity" md={6} lg={4} xlg={4} />
           <ButtonCard id="slim" layoutType="slim" entity="climate.air_conditioner" md={6} lg={4} xlg={4} />
-          <ButtonCard id="slim" layoutType="slim" entity="switch.fake_switch" service="toggle" md={6} lg={4} xlg={4} />
-          <ButtonCard id="slim" layoutType="slim" entity="cover.cover_with_tilt" service="toggle" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" layoutType="slim" entity="switch.fake_switch" action="toggle" md={6} lg={4} xlg={4} />
+          <ButtonCard id="slim" layoutType="slim" entity="cover.cover_with_tilt" action="toggle" md={6} lg={4} xlg={4} />
         </Group>
       </Row>
       <Group title="ButtonCard"  description={<span>With layoutType=&quot;slim-vertical&quot; we can change the layout of the ButtonCard</span>} justifyContent="flex-start" alignItems="stretch">
-        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_1" service="toggle" />
-        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_2" service="toggle" icon="mdi:power" />
-        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_3" service="toggle" />
-        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="switch.fake_switch" service="toggle" />
-        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="vacuum.robot_vacuum" service="start" />
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_1" action="toggle" />
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_2" action="toggle" icon="mdi:power" />
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="light.fake_light_3" action="toggle" />
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="switch.fake_switch" action="toggle" />
+        <ButtonCard id="slim-vertical" layoutType="slim-vertical" entity="vacuum.robot_vacuum" action="start" />
       </Group>
       <Group title="FabCard & ButtonBar & ButtonGroup" justifyContent="flex-start" alignItems="stretch" description="FabCard is a great way to show simple entities you just want to perform a simple action and don't care about the name / data, there's a bunch of different ways to render and control entities" gap="1rem">
-        <FabCard entity="light.fake_light_1" service="toggle" />
-        <FabCard entity="light.fake_light_2" service="toggle" icon="mdi:power" />
-        <FabCard entity="light.fake_light_3" service="toggle" />
-        <FabCard entity="switch.fake_switch" service="toggle" />
-        <FabCard entity="vacuum.robot_vacuum" service="start" />
-        <FabCard entity="vacuum.robot_vacuum" service="start">
+        <FabCard entity="light.fake_light_1" action="toggle" />
+        <FabCard entity="light.fake_light_2" action="toggle" icon="mdi:power" />
+        <FabCard entity="light.fake_light_3" action="toggle" />
+        <FabCard entity="switch.fake_switch" action="toggle" />
+        <FabCard entity="vacuum.robot_vacuum" action="start" />
+        <FabCard entity="vacuum.robot_vacuum" action="start">
           <span>Custom Content</span>
         </FabCard>
         <Row gap="1rem">
@@ -111,7 +111,7 @@ function Template() {
         <ButtonGroup orientation="horizontal" thickness={40}>
           <ButtonGroupButton
             entity="light.fake_light_1"
-            service="toggle"
+            action="toggle"
             serviceData={{
               brightness_pct: 50
             }}
@@ -119,7 +119,7 @@ function Template() {
           <ButtonGroupButton entity="binary_sensor.vehicle" />
           <ButtonGroupButton
             entity="switch.record"
-            service="toggle"
+            action="toggle"
           />
         </ButtonGroup>
       </Group>
@@ -188,11 +188,11 @@ function Template() {
               padding: '1rem',
             }}>
               <Group title="Lights & Switches">
-                <ButtonCard entity="light.fake_light_1" service="toggle" />
-                <ButtonCard entity="light.fake_light_2" service="toggle" />
-                <ButtonCard entity="light.fake_light_3" service="toggle" />
-                <ButtonCard entity="switch.fake_switch" service="toggle" />
-                <ButtonCard entity="vacuum.robot_vacuum" service="start" />
+                <ButtonCard entity="light.fake_light_1" action="toggle" />
+                <ButtonCard entity="light.fake_light_2" action="toggle" />
+                <ButtonCard entity="light.fake_light_3" action="toggle" />
+                <ButtonCard entity="switch.fake_switch" action="toggle" />
+                <ButtonCard entity="vacuum.robot_vacuum" action="start" />
               </Group>
               <Group title="Random Stuff">
                 <EntitiesCard includeLastUpdated>
@@ -208,11 +208,11 @@ function Template() {
                 <TriggerCard entity="scene.good_morning" />
               </Group>
               <Group title="Lights & Switches Fabs">
-                <FabCard entity="light.fake_light_1" service="toggle" />
-                <FabCard entity="light.fake_light_2" service="toggle" icon="mdi:power" />
-                <FabCard entity="light.fake_light_3" service="toggle" />
-                <FabCard entity="switch.fake_switch" service="toggle" />
-                <FabCard entity="vacuum.robot_vacuum" service="start" />
+                <FabCard entity="light.fake_light_1" action="toggle" />
+                <FabCard entity="light.fake_light_2" action="toggle" icon="mdi:power" />
+                <FabCard entity="light.fake_light_3" action="toggle" />
+                <FabCard entity="switch.fake_switch" action="toggle" />
+                <FabCard entity="vacuum.robot_vacuum" action="start" />
               </Group>
             </Column>
           </AreaCard>
@@ -221,18 +221,18 @@ function Template() {
               padding: '1rem',
             }}>
               <Row gap="1rem" fullWidth>
-                <ButtonCard entity="light.fake_light_1" service="toggle" />
-                <ButtonCard entity="switch.fake_switch" service="toggle" />
-                <ButtonCard entity="media_player.fake_speaker" service="toggle" />
+                <ButtonCard entity="light.fake_light_1" action="toggle" />
+                <ButtonCard entity="switch.fake_switch" action="toggle" />
+                <ButtonCard entity="media_player.fake_speaker" action="toggle" />
               </Row>
               <Row gap="1rem" fullWidth>
-                <FabCard entity="switch.fake_switch" service="toggle" />
-                <FabCard entity="vacuum.robot_vacuum" service="start" />
+                <FabCard entity="switch.fake_switch" action="toggle" />
+                <FabCard entity="vacuum.robot_vacuum" action="start" />
               </Row>
               <Group title="Living Entities">
-                <ButtonCard entity="light.fake_light_2" service="toggle" />
-                <ButtonCard entity="light.fake_light_3" service="toggle" />
-                <ButtonCard entity="vacuum.robot_vacuum" service="start" />
+                <ButtonCard entity="light.fake_light_2" action="toggle" />
+                <ButtonCard entity="light.fake_light_3" action="toggle" />
+                <ButtonCard entity="vacuum.robot_vacuum" action="start" />
               </Group>
             </Column>
           </AreaCard>
@@ -241,9 +241,9 @@ function Template() {
               padding: '1rem',
             }}>
               <Group title="Dining Entities">
-                <ButtonCard entity="light.fake_light_1" service="toggle" />
-                <ButtonCard entity="light.fake_light_2" service="toggle" />
-                <ButtonCard entity="light.fake_light_3" service="toggle" />
+                <ButtonCard entity="light.fake_light_1" action="toggle" />
+                <ButtonCard entity="light.fake_light_2" action="toggle" />
+                <ButtonCard entity="light.fake_light_3" action="toggle" />
               </Group>
             </Column>
           </AreaCard>

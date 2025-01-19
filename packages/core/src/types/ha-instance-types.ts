@@ -1,24 +1,24 @@
 // this is an auto generated file, do not change this manually
 
-import type { ServiceFunctionTypes, ServiceFunction } from "./";
-export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
+import type { ActionFunctionTypes, ActionFunction } from "./";
+export interface DefaultActions<T extends ActionFunctionTypes = "target"> {
   homeassistant: {
     // Saves the persistent states immediately. Maintains the normal periodic saving interval.
-    savePersistentStates: ServiceFunction<object, T, object>;
+    savePersistentStates: ActionFunction<object, T, object>;
     // Generic action to turn devices off under any domain.
-    turnOff: ServiceFunction<object, T, object>;
+    turnOff: ActionFunction<object, T, object>;
     // Generic action to turn devices on under any domain.
-    turnOn: ServiceFunction<object, T, object>;
+    turnOn: ActionFunction<object, T, object>;
     // Generic action to toggle devices on/off under any domain.
-    toggle: ServiceFunction<object, T, object>;
+    toggle: ActionFunction<object, T, object>;
     // Stops Home Assistant.
-    stop: ServiceFunction<object, T, object>;
+    stop: ActionFunction<object, T, object>;
     // Restarts Home Assistant.
-    restart: ServiceFunction<object, T, object>;
+    restart: ActionFunction<object, T, object>;
     // Checks the Home Assistant YAML-configuration files for errors. Errors will be shown in the Home Assistant logs.
-    checkConfig: ServiceFunction<object, T, object>;
+    checkConfig: ActionFunction<object, T, object>;
     // Forces one or more entities to update its data.
-    updateEntity: ServiceFunction<
+    updateEntity: ActionFunction<
       object,
       T,
       {
@@ -27,9 +27,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Reloads the core configuration from the YAML-configuration.
-    reloadCoreConfig: ServiceFunction<object, T, object>;
+    reloadCoreConfig: ActionFunction<object, T, object>;
     // Updates the Home Assistant location.
-    setLocation: ServiceFunction<
+    setLocation: ActionFunction<
       object,
       T,
       {
@@ -42,9 +42,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Reloads Jinja2 templates found in the `custom_templates` folder in your config. New values will be applied on the next render of the template.
-    reloadCustomTemplates: ServiceFunction<object, T, object>;
+    reloadCustomTemplates: ActionFunction<object, T, object>;
     // Reloads the specified config entry.
-    reloadConfigEntry: ServiceFunction<
+    reloadConfigEntry: ActionFunction<
       object,
       T,
       {
@@ -53,11 +53,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Reload all YAML configuration that can be reloaded without restarting Home Assistant.
-    reloadAll: ServiceFunction<object, T, object>;
+    reloadAll: ActionFunction<object, T, object>;
   };
   persistentNotification: {
     // Shows a notification on the notifications panel.
-    create: ServiceFunction<
+    create: ActionFunction<
       object,
       T,
       {
@@ -70,7 +70,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Deletes a notification from the notifications panel.
-    dismiss: ServiceFunction<
+    dismiss: ActionFunction<
       object,
       T,
       {
@@ -79,13 +79,13 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Deletes all notifications from the notifications panel.
-    dismissAll: ServiceFunction<object, T, object>;
+    dismissAll: ActionFunction<object, T, object>;
   };
   systemLog: {
     // Deletes all log entries.
-    clear: ServiceFunction<object, T, object>;
+    clear: ActionFunction<object, T, object>;
     // Write log entry.
-    write: ServiceFunction<
+    write: ActionFunction<
       object,
       T,
       {
@@ -100,7 +100,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   logger: {
     // Sets the default log level for integrations.
-    setDefaultLevel: ServiceFunction<
+    setDefaultLevel: ActionFunction<
       object,
       T,
       {
@@ -109,15 +109,15 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets the log level for one or more integrations.
-    setLevel: ServiceFunction<object, T, object>;
+    setLevel: ActionFunction<object, T, object>;
   };
   person: {
     // Reloads persons from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
   };
   frontend: {
     // Sets the default theme Home Assistant uses. Can be overridden by a user.
-    setTheme: ServiceFunction<
+    setTheme: ActionFunction<
       object,
       T,
       {
@@ -128,11 +128,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Reloads themes from the YAML-configuration.
-    reloadThemes: ServiceFunction<object, T, object>;
+    reloadThemes: ActionFunction<object, T, object>;
   };
   recorder: {
     // Starts purge task - to clean up old data from your database.
-    purge: ServiceFunction<
+    purge: ActionFunction<
       object,
       T,
       {
@@ -145,7 +145,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Starts a purge task to remove the data related to specific entities from your database.
-    purgeEntities: ServiceFunction<
+    purgeEntities: ActionFunction<
       object,
       T,
       {
@@ -160,13 +160,13 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Starts the recording of events and state changes.
-    enable: ServiceFunction<object, T, object>;
+    enable: ActionFunction<object, T, object>;
     // Stops the recording of events and state changes.
-    disable: ServiceFunction<object, T, object>;
+    disable: ActionFunction<object, T, object>;
   };
   hassio: {
     // Starts an add-on.
-    addonStart: ServiceFunction<
+    addonStart: ActionFunction<
       object,
       T,
       {
@@ -175,7 +175,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Stops an add-on.
-    addonStop: ServiceFunction<
+    addonStop: ActionFunction<
       object,
       T,
       {
@@ -184,7 +184,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Restarts an add-on.
-    addonRestart: ServiceFunction<
+    addonRestart: ActionFunction<
       object,
       T,
       {
@@ -193,7 +193,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Updates an add-on. This action should be used with caution since add-on updates can contain breaking changes. It is highly recommended that you review release notes/change logs before updating an add-on.
-    addonUpdate: ServiceFunction<
+    addonUpdate: ActionFunction<
       object,
       T,
       {
@@ -202,7 +202,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Writes data to the add-on's standard input.
-    addonStdin: ServiceFunction<
+    addonStdin: ActionFunction<
       object,
       T,
       {
@@ -211,11 +211,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Powers off the host system.
-    hostShutdown: ServiceFunction<object, T, object>;
+    hostShutdown: ActionFunction<object, T, object>;
     // Reboots the host system.
-    hostReboot: ServiceFunction<object, T, object>;
+    hostReboot: ActionFunction<object, T, object>;
     // Creates a full backup.
-    backupFull: ServiceFunction<
+    backupFull: ActionFunction<
       object,
       T,
       {
@@ -232,7 +232,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Creates a partial backup.
-    backupPartial: ServiceFunction<
+    backupPartial: ActionFunction<
       object,
       T,
       {
@@ -255,7 +255,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Restores from full backup.
-    restoreFull: ServiceFunction<
+    restoreFull: ActionFunction<
       object,
       T,
       {
@@ -266,7 +266,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Restores from a partial backup.
-    restorePartial: ServiceFunction<
+    restorePartial: ActionFunction<
       object,
       T,
       {
@@ -285,7 +285,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   update: {
     // Installs an update for a device or service.
-    install: ServiceFunction<
+    install: ActionFunction<
       object,
       T,
       {
@@ -296,19 +296,19 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Marks currently available update as skipped.
-    skip: ServiceFunction<object, T, object>;
+    skip: ActionFunction<object, T, object>;
     // Removes the skipped version marker from an update.
-    clearSkipped: ServiceFunction<object, T, object>;
+    clearSkipped: ActionFunction<object, T, object>;
   };
   cloud: {
     // Makes the instance UI accessible from outside of the local network by enabling your Home Assistant Cloud connection.
-    remoteConnect: ServiceFunction<object, T, object>;
+    remoteConnect: ActionFunction<object, T, object>;
     // Disconnects the instance UI from Home Assistant Cloud. This disables access to it from outside your local network.
-    remoteDisconnect: ServiceFunction<object, T, object>;
+    remoteDisconnect: ActionFunction<object, T, object>;
   };
   tts: {
     // Speaks something using text-to-speech on a media player.
-    speak: ServiceFunction<
+    speak: ActionFunction<
       object,
       T,
       {
@@ -325,9 +325,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Removes all cached text-to-speech files and purges the memory.
-    clearCache: ServiceFunction<object, T, object>;
+    clearCache: ActionFunction<object, T, object>;
     // Say something using text-to-speech on a media player with cloud.
-    cloudSay: ServiceFunction<
+    cloudSay: ActionFunction<
       object,
       T,
       {
@@ -344,7 +344,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Say something using text-to-speech on a media player with google_translate.
-    googleTranslateSay: ServiceFunction<
+    googleTranslateSay: ActionFunction<
       object,
       T,
       {
@@ -363,7 +363,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   scene: {
     // Activates a scene.
-    turnOn: ServiceFunction<
+    turnOn: ActionFunction<
       object,
       T,
       {
@@ -372,9 +372,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Reloads the scenes from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
     // Activates a scene with configuration.
-    apply: ServiceFunction<
+    apply: ActionFunction<
       object,
       T,
       {
@@ -385,7 +385,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Creates a new scene.
-    create: ServiceFunction<
+    create: ActionFunction<
       object,
       T,
       {
@@ -398,13 +398,13 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Deletes a dynamically created scene.
-    delete: ServiceFunction<object, T, object>;
+    delete: ActionFunction<object, T, object>;
   };
   group: {
     // Reloads group configuration, entities, and notify services from YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
     // Creates/Updates a group.
-    set: ServiceFunction<
+    set: ActionFunction<
       object,
       T,
       {
@@ -425,7 +425,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Removes a group.
-    remove: ServiceFunction<
+    remove: ActionFunction<
       object,
       T,
       {
@@ -436,31 +436,31 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   mediaPlayer: {
     // Turns on the power of the media player.
-    turnOn: ServiceFunction<object, T, object>;
+    turnOn: ActionFunction<object, T, object>;
     // Turns off the power of the media player.
-    turnOff: ServiceFunction<object, T, object>;
+    turnOff: ActionFunction<object, T, object>;
     // Toggles a media player on/off.
-    toggle: ServiceFunction<object, T, object>;
+    toggle: ActionFunction<object, T, object>;
     // Turns up the volume.
-    volumeUp: ServiceFunction<object, T, object>;
+    volumeUp: ActionFunction<object, T, object>;
     // Turns down the volume.
-    volumeDown: ServiceFunction<object, T, object>;
+    volumeDown: ActionFunction<object, T, object>;
     // Toggles play/pause.
-    mediaPlayPause: ServiceFunction<object, T, object>;
+    mediaPlayPause: ActionFunction<object, T, object>;
     // Starts playing.
-    mediaPlay: ServiceFunction<object, T, object>;
+    mediaPlay: ActionFunction<object, T, object>;
     // Pauses.
-    mediaPause: ServiceFunction<object, T, object>;
+    mediaPause: ActionFunction<object, T, object>;
     // Stops playing.
-    mediaStop: ServiceFunction<object, T, object>;
+    mediaStop: ActionFunction<object, T, object>;
     // Selects the next track.
-    mediaNextTrack: ServiceFunction<object, T, object>;
+    mediaNextTrack: ActionFunction<object, T, object>;
     // Selects the previous track.
-    mediaPreviousTrack: ServiceFunction<object, T, object>;
+    mediaPreviousTrack: ActionFunction<object, T, object>;
     // Removes all items from the playlist.
-    clearPlaylist: ServiceFunction<object, T, object>;
+    clearPlaylist: ActionFunction<object, T, object>;
     // Sets the volume level.
-    volumeSet: ServiceFunction<
+    volumeSet: ActionFunction<
       object,
       T,
       {
@@ -469,7 +469,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Mutes or unmutes the media player.
-    volumeMute: ServiceFunction<
+    volumeMute: ActionFunction<
       object,
       T,
       {
@@ -478,7 +478,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Allows you to go to a different part of the media that is currently playing.
-    mediaSeek: ServiceFunction<
+    mediaSeek: ActionFunction<
       object,
       T,
       {
@@ -487,7 +487,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Groups media players together for synchronous playback. Only works on supported multiroom audio systems.
-    join: ServiceFunction<
+    join: ActionFunction<
       object,
       T,
       {
@@ -496,7 +496,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sends the media player the command to change input source.
-    selectSource: ServiceFunction<
+    selectSource: ActionFunction<
       object,
       T,
       {
@@ -505,7 +505,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Selects a specific sound mode.
-    selectSoundMode: ServiceFunction<
+    selectSoundMode: ActionFunction<
       object,
       T,
       {
@@ -514,7 +514,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Starts playing specified media.
-    playMedia: ServiceFunction<
+    playMedia: ActionFunction<
       object,
       T,
       {
@@ -529,7 +529,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Playback mode that selects the media in randomized order.
-    shuffleSet: ServiceFunction<
+    shuffleSet: ActionFunction<
       object,
       T,
       {
@@ -538,9 +538,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Removes the player from a group. Only works on platforms which support player groups.
-    unjoin: ServiceFunction<object, T, object>;
+    unjoin: ActionFunction<object, T, object>;
     // Playback mode that plays the media in a loop.
-    repeatSet: ServiceFunction<
+    repeatSet: ActionFunction<
       object,
       T,
       {
@@ -551,7 +551,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   light: {
     // Turn on one or more lights and adjust properties of the light, even when they are turned on already.
-    turnOn: ServiceFunction<
+    turnOn: ActionFunction<
       object,
       T,
       {
@@ -740,7 +740,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Turn off one or more lights.
-    turnOff: ServiceFunction<
+    turnOff: ActionFunction<
       object,
       T,
       {
@@ -751,7 +751,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Toggles one or more lights, from on to off, or, off to on, based on their current state.
-    toggle: ServiceFunction<
+    toggle: ActionFunction<
       object,
       T,
       {
@@ -938,7 +938,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   logbook: {
     // Creates a custom entry in the logbook.
-    log: ServiceFunction<
+    log: ActionFunction<
       object,
       T,
       {
@@ -955,17 +955,17 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   zone: {
     // Reloads zones from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
   };
   inputSelect: {
     // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
     // Selects the first option.
-    selectFirst: ServiceFunction<object, T, object>;
+    selectFirst: ActionFunction<object, T, object>;
     // Selects the last option.
-    selectLast: ServiceFunction<object, T, object>;
+    selectLast: ActionFunction<object, T, object>;
     // Select the next option.
-    selectNext: ServiceFunction<
+    selectNext: ActionFunction<
       object,
       T,
       {
@@ -974,7 +974,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Selects an option.
-    selectOption: ServiceFunction<
+    selectOption: ActionFunction<
       object,
       T,
       {
@@ -983,7 +983,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Selects the previous option.
-    selectPrevious: ServiceFunction<
+    selectPrevious: ActionFunction<
       object,
       T,
       {
@@ -992,7 +992,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets the options.
-    setOptions: ServiceFunction<
+    setOptions: ActionFunction<
       object,
       T,
       {
@@ -1003,9 +1003,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   inputNumber: {
     // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
     // Sets the value.
-    setValue: ServiceFunction<
+    setValue: ActionFunction<
       object,
       T,
       {
@@ -1014,39 +1014,39 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Increments the current value by 1 step.
-    increment: ServiceFunction<object, T, object>;
+    increment: ActionFunction<object, T, object>;
     // Decrements the current value by 1 step.
-    decrement: ServiceFunction<object, T, object>;
+    decrement: ActionFunction<object, T, object>;
   };
   inputButton: {
     // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
     // Mimics the physical button press on the device.
-    press: ServiceFunction<object, T, object>;
+    press: ActionFunction<object, T, object>;
   };
   script: {
     //
-    nightlightPower: ServiceFunction<object, T, object>;
+    nightlightPower: ActionFunction<object, T, object>;
     // Reloads all the available scripts.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
     // Runs the sequence of actions defined in a script.
-    turnOn: ServiceFunction<object, T, object>;
+    turnOn: ActionFunction<object, T, object>;
     // Stops a running script.
-    turnOff: ServiceFunction<object, T, object>;
+    turnOff: ActionFunction<object, T, object>;
     // Starts a script if it isn't running, stops it otherwise.
-    toggle: ServiceFunction<object, T, object>;
+    toggle: ActionFunction<object, T, object>;
   };
   camera: {
     // Enables the motion detection.
-    enableMotionDetection: ServiceFunction<object, T, object>;
+    enableMotionDetection: ActionFunction<object, T, object>;
     // Disables the motion detection.
-    disableMotionDetection: ServiceFunction<object, T, object>;
+    disableMotionDetection: ActionFunction<object, T, object>;
     // Turns off the camera.
-    turnOff: ServiceFunction<object, T, object>;
+    turnOff: ActionFunction<object, T, object>;
     // Turns on the camera.
-    turnOn: ServiceFunction<object, T, object>;
+    turnOn: ActionFunction<object, T, object>;
     // Takes a snapshot from a camera.
-    snapshot: ServiceFunction<
+    snapshot: ActionFunction<
       object,
       T,
       {
@@ -1055,7 +1055,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Plays the camera stream on a supported media player.
-    playStream: ServiceFunction<
+    playStream: ActionFunction<
       object,
       T,
       {
@@ -1066,7 +1066,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Creates a recording of a live camera feed.
-    record: ServiceFunction<
+    record: ActionFunction<
       object,
       T,
       {
@@ -1081,9 +1081,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   timer: {
     // Reloads timers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
     // Starts a timer or restarts it with a provided duration.
-    start: ServiceFunction<
+    start: ActionFunction<
       object,
       T,
       {
@@ -1092,13 +1092,13 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Pauses a running timer, retaining the remaining duration for later continuation.
-    pause: ServiceFunction<object, T, object>;
+    pause: ActionFunction<object, T, object>;
     // Resets a timer's duration to the last known initial value without firing the timer finished event.
-    cancel: ServiceFunction<object, T, object>;
+    cancel: ActionFunction<object, T, object>;
     // Finishes a running timer earlier than scheduled.
-    finish: ServiceFunction<object, T, object>;
+    finish: ActionFunction<object, T, object>;
     // Changes a timer by adding or subtracting a given duration.
-    change: ServiceFunction<
+    change: ActionFunction<
       object,
       T,
       {
@@ -1109,17 +1109,17 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   inputBoolean: {
     // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
     // Turns on the helper.
-    turnOn: ServiceFunction<object, T, object>;
+    turnOn: ActionFunction<object, T, object>;
     // Turns off the helper.
-    turnOff: ServiceFunction<object, T, object>;
+    turnOff: ActionFunction<object, T, object>;
     // Toggles the helper on/off.
-    toggle: ServiceFunction<object, T, object>;
+    toggle: ActionFunction<object, T, object>;
   };
   conversation: {
     // Launches a conversation from a transcribed text.
-    process: ServiceFunction<
+    process: ActionFunction<
       object,
       T,
       {
@@ -1134,7 +1134,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Reloads the intent configuration.
-    reload: ServiceFunction<
+    reload: ActionFunction<
       object,
       T,
       {
@@ -1147,7 +1147,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   lock: {
     // Unlocks a lock.
-    unlock: ServiceFunction<
+    unlock: ActionFunction<
       object,
       T,
       {
@@ -1156,7 +1156,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Locks a lock.
-    lock: ServiceFunction<
+    lock: ActionFunction<
       object,
       T,
       {
@@ -1165,7 +1165,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Opens a lock.
-    open: ServiceFunction<
+    open: ActionFunction<
       object,
       T,
       {
@@ -1176,11 +1176,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   valve: {
     // Opens a valve.
-    openValve: ServiceFunction<object, T, object>;
+    openValve: ActionFunction<object, T, object>;
     // Closes a valve.
-    closeValve: ServiceFunction<object, T, object>;
+    closeValve: ActionFunction<object, T, object>;
     // Moves a valve to a specific position.
-    setValvePosition: ServiceFunction<
+    setValvePosition: ActionFunction<
       object,
       T,
       {
@@ -1189,17 +1189,17 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Stops the valve movement.
-    stopValve: ServiceFunction<object, T, object>;
+    stopValve: ActionFunction<object, T, object>;
     // Toggles a valve open/closed.
-    toggle: ServiceFunction<object, T, object>;
+    toggle: ActionFunction<object, T, object>;
   };
   cover: {
     // Opens a cover.
-    openCover: ServiceFunction<object, T, object>;
+    openCover: ActionFunction<object, T, object>;
     // Closes a cover.
-    closeCover: ServiceFunction<object, T, object>;
+    closeCover: ActionFunction<object, T, object>;
     // Moves a cover to a specific position.
-    setCoverPosition: ServiceFunction<
+    setCoverPosition: ActionFunction<
       object,
       T,
       {
@@ -1208,17 +1208,17 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Stops the cover movement.
-    stopCover: ServiceFunction<object, T, object>;
+    stopCover: ActionFunction<object, T, object>;
     // Toggles a cover open/closed.
-    toggle: ServiceFunction<object, T, object>;
+    toggle: ActionFunction<object, T, object>;
     // Tilts a cover open.
-    openCoverTilt: ServiceFunction<object, T, object>;
+    openCoverTilt: ActionFunction<object, T, object>;
     // Tilts a cover to close.
-    closeCoverTilt: ServiceFunction<object, T, object>;
+    closeCoverTilt: ActionFunction<object, T, object>;
     // Stops a tilting cover movement.
-    stopCoverTilt: ServiceFunction<object, T, object>;
+    stopCoverTilt: ActionFunction<object, T, object>;
     // Moves a cover tilt to a specific position.
-    setCoverTiltPosition: ServiceFunction<
+    setCoverTiltPosition: ActionFunction<
       object,
       T,
       {
@@ -1227,19 +1227,19 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Toggles a cover tilt open/closed.
-    toggleCoverTilt: ServiceFunction<object, T, object>;
+    toggleCoverTilt: ActionFunction<object, T, object>;
   };
   switch: {
     // Turns a switch off.
-    turnOff: ServiceFunction<object, T, object>;
+    turnOff: ActionFunction<object, T, object>;
     // Turns a switch on.
-    turnOn: ServiceFunction<object, T, object>;
+    turnOn: ActionFunction<object, T, object>;
     // Toggles a switch on/off.
-    toggle: ServiceFunction<object, T, object>;
+    toggle: ActionFunction<object, T, object>;
   };
   alarmControlPanel: {
     // Disarms the alarm.
-    alarmDisarm: ServiceFunction<
+    alarmDisarm: ActionFunction<
       object,
       T,
       {
@@ -1248,7 +1248,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets the alarm to: _armed, but someone is home_.
-    alarmArmHome: ServiceFunction<
+    alarmArmHome: ActionFunction<
       object,
       T,
       {
@@ -1257,7 +1257,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets the alarm to: _armed, no one home_.
-    alarmArmAway: ServiceFunction<
+    alarmArmAway: ActionFunction<
       object,
       T,
       {
@@ -1266,7 +1266,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets the alarm to: _armed for the night_.
-    alarmArmNight: ServiceFunction<
+    alarmArmNight: ActionFunction<
       object,
       T,
       {
@@ -1275,7 +1275,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets the alarm to: _armed for vacation_.
-    alarmArmVacation: ServiceFunction<
+    alarmArmVacation: ActionFunction<
       object,
       T,
       {
@@ -1284,7 +1284,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Arms the alarm while allowing to bypass a custom area.
-    alarmArmCustomBypass: ServiceFunction<
+    alarmArmCustomBypass: ActionFunction<
       object,
       T,
       {
@@ -1293,7 +1293,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Trigger the alarm manually.
-    alarmTrigger: ServiceFunction<
+    alarmTrigger: ActionFunction<
       object,
       T,
       {
@@ -1304,19 +1304,19 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   vacuum: {
     // Starts or resumes the cleaning task.
-    start: ServiceFunction<object, T, object>;
+    start: ActionFunction<object, T, object>;
     // Pauses the cleaning task.
-    pause: ServiceFunction<object, T, object>;
+    pause: ActionFunction<object, T, object>;
     // Tells the vacuum cleaner to return to its dock.
-    returnToBase: ServiceFunction<object, T, object>;
+    returnToBase: ActionFunction<object, T, object>;
     // Tells the vacuum cleaner to do a spot clean-up.
-    cleanSpot: ServiceFunction<object, T, object>;
+    cleanSpot: ActionFunction<object, T, object>;
     // Locates the vacuum cleaner robot.
-    locate: ServiceFunction<object, T, object>;
+    locate: ActionFunction<object, T, object>;
     // Stops the current cleaning task.
-    stop: ServiceFunction<object, T, object>;
+    stop: ActionFunction<object, T, object>;
     // Sets the fan speed of the vacuum cleaner.
-    setFanSpeed: ServiceFunction<
+    setFanSpeed: ActionFunction<
       object,
       T,
       {
@@ -1325,7 +1325,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sends a command to the vacuum cleaner.
-    sendCommand: ServiceFunction<
+    sendCommand: ActionFunction<
       object,
       T,
       {
@@ -1338,9 +1338,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   inputDatetime: {
     // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
     // Sets the date and/or time.
-    setDatetime: ServiceFunction<
+    setDatetime: ActionFunction<
       object,
       T,
       {
@@ -1357,27 +1357,27 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   restCommand: {
     //
-    assistantRelay: ServiceFunction<object, T, object>;
+    assistantRelay: ActionFunction<object, T, object>;
     // Reloads RESTful commands from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
   };
   commandLine: {
     // Reloads command line configuration from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
   };
   template: {
     // Reloads template entities from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
   };
   schedule: {
     // Reloads schedules from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
   };
   inputText: {
     // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
     // Sets the value.
-    setValue: ServiceFunction<
+    setValue: ActionFunction<
       object,
       T,
       {
@@ -1388,13 +1388,13 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   counter: {
     // Increments a counter by its step size.
-    increment: ServiceFunction<object, T, object>;
+    increment: ActionFunction<object, T, object>;
     // Decrements a counter by its step size.
-    decrement: ServiceFunction<object, T, object>;
+    decrement: ActionFunction<object, T, object>;
     // Resets a counter to its initial value.
-    reset: ServiceFunction<object, T, object>;
+    reset: ActionFunction<object, T, object>;
     // Sets the counter to a specific value.
-    setValue: ServiceFunction<
+    setValue: ActionFunction<
       object,
       T,
       {
@@ -1405,7 +1405,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   mediaExtractor: {
     // Extract media URL from a service.
-    extractMediaUrl: ServiceFunction<
+    extractMediaUrl: ActionFunction<
       object,
       T,
       {
@@ -1416,7 +1416,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Downloads file from given URL.
-    playMedia: ServiceFunction<
+    playMedia: ActionFunction<
       object,
       T,
       {
@@ -1429,7 +1429,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   cast: {
     // Shows a dashboard view on a Chromecast device.
-    showLovelaceView: ServiceFunction<
+    showLovelaceView: ActionFunction<
       object,
       T,
       {
@@ -1444,7 +1444,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   reolink: {
     // Plays a ringtone on a Reolink Chime.
-    playChime: ServiceFunction<
+    playChime: ActionFunction<
       object,
       T,
       {
@@ -1465,7 +1465,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Moves the camera with a specific speed.
-    ptzMove: ServiceFunction<
+    ptzMove: ActionFunction<
       object,
       T,
       {
@@ -1476,7 +1476,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   assistSatellite: {
     // Let the satellite announce a message.
-    announce: ServiceFunction<
+    announce: ActionFunction<
       object,
       T,
       {
@@ -1489,15 +1489,15 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   lawnMower: {
     // Starts the mowing task.
-    startMowing: ServiceFunction<object, T, object>;
+    startMowing: ActionFunction<object, T, object>;
     // Pauses the mowing task.
-    pause: ServiceFunction<object, T, object>;
+    pause: ActionFunction<object, T, object>;
     // Stops the mowing task and returns to the dock.
-    dock: ServiceFunction<object, T, object>;
+    dock: ActionFunction<object, T, object>;
   };
   profiler: {
     // Starts the Profiler.
-    start: ServiceFunction<
+    start: ActionFunction<
       object,
       T,
       {
@@ -1506,7 +1506,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Starts the Memory Profiler.
-    memory: ServiceFunction<
+    memory: ActionFunction<
       object,
       T,
       {
@@ -1515,7 +1515,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Starts logging growth of objects in memory.
-    startLogObjects: ServiceFunction<
+    startLogObjects: ActionFunction<
       object,
       T,
       {
@@ -1524,9 +1524,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Stops logging growth of objects in memory.
-    stopLogObjects: ServiceFunction<object, T, object>;
+    stopLogObjects: ActionFunction<object, T, object>;
     // Starts logging sources of new objects in memory.
-    startLogObjectSources: ServiceFunction<
+    startLogObjectSources: ActionFunction<
       object,
       T,
       {
@@ -1537,9 +1537,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Stops logging sources of new objects in memory.
-    stopLogObjectSources: ServiceFunction<object, T, object>;
+    stopLogObjectSources: ActionFunction<object, T, object>;
     // Dumps the repr of all matching objects to the log.
-    dumpLogObjects: ServiceFunction<
+    dumpLogObjects: ActionFunction<
       object,
       T,
       {
@@ -1548,13 +1548,13 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Logs the stats of all lru caches.
-    lruStats: ServiceFunction<object, T, object>;
+    lruStats: ActionFunction<object, T, object>;
     // Logs the current frames for all threads.
-    logThreadFrames: ServiceFunction<object, T, object>;
+    logThreadFrames: ActionFunction<object, T, object>;
     // Logs what is scheduled in the event loop.
-    logEventLoopScheduled: ServiceFunction<object, T, object>;
+    logEventLoopScheduled: ActionFunction<object, T, object>;
     // Enable or disable asyncio debug.
-    setAsyncioDebug: ServiceFunction<
+    setAsyncioDebug: ActionFunction<
       object,
       T,
       {
@@ -1563,11 +1563,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Logs all the current asyncio tasks.
-    logCurrentTasks: ServiceFunction<object, T, object>;
+    logCurrentTasks: ActionFunction<object, T, object>;
   };
   notify: {
     // Sends a notification message.
-    sendMessage: ServiceFunction<
+    sendMessage: ActionFunction<
       object,
       T,
       {
@@ -1578,7 +1578,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sends a notification that is visible in the notifications panel.
-    persistentNotification: ServiceFunction<
+    persistentNotification: ActionFunction<
       object,
       T,
       {
@@ -1591,7 +1591,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sends a notification message using the notify service.
-    notify: ServiceFunction<
+    notify: ActionFunction<
       object,
       T,
       {
@@ -1606,7 +1606,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sends a notification message using the google_assistant_sdk service.
-    googleAssistantSdk: ServiceFunction<
+    googleAssistantSdk: ActionFunction<
       object,
       T,
       {
@@ -1623,7 +1623,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   deviceTracker: {
     // Manually update the records of a seen legacy device tracker in the known_devices.yaml file.
-    see: ServiceFunction<
+    see: ActionFunction<
       object,
       T,
       {
@@ -1646,7 +1646,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   number: {
     // Sets the value of a number.
-    setValue: ServiceFunction<
+    setValue: ActionFunction<
       object,
       T,
       {
@@ -1657,11 +1657,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   select: {
     // Selects the first option.
-    selectFirst: ServiceFunction<object, T, object>;
+    selectFirst: ActionFunction<object, T, object>;
     // Selects the last option.
-    selectLast: ServiceFunction<object, T, object>;
+    selectLast: ActionFunction<object, T, object>;
     // Selects the next option.
-    selectNext: ServiceFunction<
+    selectNext: ActionFunction<
       object,
       T,
       {
@@ -1670,7 +1670,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Selects an option.
-    selectOption: ServiceFunction<
+    selectOption: ActionFunction<
       object,
       T,
       {
@@ -1679,7 +1679,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Selects the previous option.
-    selectPrevious: ServiceFunction<
+    selectPrevious: ActionFunction<
       object,
       T,
       {
@@ -1690,7 +1690,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   calendar: {
     // Adds a new calendar event.
-    createEvent: ServiceFunction<
+    createEvent: ActionFunction<
       object,
       T,
       {
@@ -1713,7 +1713,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Get events on a calendar within a time range.
-    getEvents: ServiceFunction<
+    getEvents: ActionFunction<
       object,
       T,
       {
@@ -1733,9 +1733,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   remote: {
     // Sends the turn off command.
-    turnOff: ServiceFunction<object, T, object>;
+    turnOff: ActionFunction<object, T, object>;
     // Sends the turn on command.
-    turnOn: ServiceFunction<
+    turnOn: ActionFunction<
       object,
       T,
       {
@@ -1744,9 +1744,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sends the toggle command.
-    toggle: ServiceFunction<object, T, object>;
+    toggle: ActionFunction<object, T, object>;
     // Sends a command or a list of commands to a device.
-    sendCommand: ServiceFunction<
+    sendCommand: ActionFunction<
       object,
       T,
       {
@@ -1763,7 +1763,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Learns a command or a list of commands from a device.
-    learnCommand: ServiceFunction<
+    learnCommand: ActionFunction<
       object,
       T,
       {
@@ -1780,7 +1780,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Deletes a command or a list of commands from the database.
-    deleteCommand: ServiceFunction<
+    deleteCommand: ActionFunction<
       object,
       T,
       {
@@ -1793,7 +1793,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   weather: {
     // Get weather forecasts.
-    getForecasts: ServiceFunction<
+    getForecasts: ActionFunction<
       object,
       T,
       {
@@ -1804,13 +1804,13 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   climate: {
     // Turns climate device on.
-    turnOn: ServiceFunction<object, T, object>;
+    turnOn: ActionFunction<object, T, object>;
     // Turns climate device off.
-    turnOff: ServiceFunction<object, T, object>;
+    turnOff: ActionFunction<object, T, object>;
     // Toggles climate device, from on to off, or off to on.
-    toggle: ServiceFunction<object, T, object>;
+    toggle: ActionFunction<object, T, object>;
     // Sets HVAC operation mode.
-    setHvacMode: ServiceFunction<
+    setHvacMode: ActionFunction<
       object,
       T,
       {
@@ -1819,7 +1819,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets preset mode.
-    setPresetMode: ServiceFunction<
+    setPresetMode: ActionFunction<
       object,
       T,
       {
@@ -1828,7 +1828,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Turns auxiliary heater on/off.
-    setAuxHeat: ServiceFunction<
+    setAuxHeat: ActionFunction<
       object,
       T,
       {
@@ -1837,7 +1837,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets the temperature setpoint.
-    setTemperature: ServiceFunction<
+    setTemperature: ActionFunction<
       object,
       T,
       {
@@ -1852,7 +1852,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets target humidity.
-    setHumidity: ServiceFunction<
+    setHumidity: ActionFunction<
       object,
       T,
       {
@@ -1861,7 +1861,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets fan operation mode.
-    setFanMode: ServiceFunction<
+    setFanMode: ActionFunction<
       object,
       T,
       {
@@ -1870,7 +1870,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets swing operation mode.
-    setSwingMode: ServiceFunction<
+    setSwingMode: ActionFunction<
       object,
       T,
       {
@@ -1879,7 +1879,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets horizontal swing operation mode.
-    setSwingHorizontalMode: ServiceFunction<
+    setSwingHorizontalMode: ActionFunction<
       object,
       T,
       {
@@ -1890,11 +1890,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   button: {
     // Press the button entity.
-    press: ServiceFunction<object, T, object>;
+    press: ActionFunction<object, T, object>;
   };
   siren: {
     // Turns the siren on.
-    turnOn: ServiceFunction<
+    turnOn: ActionFunction<
       object,
       T,
       {
@@ -1907,13 +1907,13 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Turns the siren off.
-    turnOff: ServiceFunction<object, T, object>;
+    turnOff: ActionFunction<object, T, object>;
     // Toggles the siren on/off.
-    toggle: ServiceFunction<object, T, object>;
+    toggle: ActionFunction<object, T, object>;
   };
   fan: {
     // Turns fan on.
-    turnOn: ServiceFunction<
+    turnOn: ActionFunction<
       object,
       T,
       {
@@ -1924,11 +1924,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Turns fan off.
-    turnOff: ServiceFunction<object, T, object>;
+    turnOff: ActionFunction<object, T, object>;
     // Toggles a fan on/off.
-    toggle: ServiceFunction<object, T, object>;
+    toggle: ActionFunction<object, T, object>;
     // Increases the speed of a fan.
-    increaseSpeed: ServiceFunction<
+    increaseSpeed: ActionFunction<
       object,
       T,
       {
@@ -1937,7 +1937,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Decreases the speed of a fan.
-    decreaseSpeed: ServiceFunction<
+    decreaseSpeed: ActionFunction<
       object,
       T,
       {
@@ -1946,7 +1946,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Controls the oscillation of a fan.
-    oscillate: ServiceFunction<
+    oscillate: ActionFunction<
       object,
       T,
       {
@@ -1955,7 +1955,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets a fan's rotation direction.
-    setDirection: ServiceFunction<
+    setDirection: ActionFunction<
       object,
       T,
       {
@@ -1964,7 +1964,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets the speed of a fan.
-    setPercentage: ServiceFunction<
+    setPercentage: ActionFunction<
       object,
       T,
       {
@@ -1973,7 +1973,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Sets preset fan mode.
-    setPresetMode: ServiceFunction<
+    setPresetMode: ActionFunction<
       object,
       T,
       {
@@ -1984,7 +1984,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   google: {
     // Adds a new calendar event.
-    addEvent: ServiceFunction<
+    addEvent: ActionFunction<
       object,
       T,
       {
@@ -2007,7 +2007,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Adds a new calendar event.
-    createEvent: ServiceFunction<
+    createEvent: ActionFunction<
       object,
       T,
       {
@@ -2032,7 +2032,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
   };
   automation: {
     // Triggers the actions of an automation.
-    trigger: ServiceFunction<
+    trigger: ActionFunction<
       object,
       T,
       {
@@ -2041,11 +2041,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Toggles (enable / disable) an automation.
-    toggle: ServiceFunction<object, T, object>;
+    toggle: ActionFunction<object, T, object>;
     // Enables an automation.
-    turnOn: ServiceFunction<object, T, object>;
+    turnOn: ActionFunction<object, T, object>;
     // Disables an automation.
-    turnOff: ServiceFunction<
+    turnOff: ActionFunction<
       object,
       T,
       {
@@ -2054,11 +2054,11 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
     // Reloads the automation configuration.
-    reload: ServiceFunction<object, T, object>;
+    reload: ActionFunction<object, T, object>;
   };
   text: {
     // Sets the value.
-    setValue: ServiceFunction<
+    setValue: ActionFunction<
       object,
       T,
       {
@@ -2068,3 +2068,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     >;
   };
 }
+/**
+ * @deprecated use the DefaultActions interface instead
+ * */
+export type DefaultServices<T extends ActionFunctionTypes = "target"> = DefaultActions<T>;

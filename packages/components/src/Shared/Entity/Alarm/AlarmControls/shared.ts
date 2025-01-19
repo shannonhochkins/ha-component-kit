@@ -1,4 +1,4 @@
-import { localize, HassEntityWithService, AlarmMode, AlarmPanelCardConfigState, supportsFeatureFromAttributes } from "@hakit/core";
+import { localize, HassEntityWithAction, AlarmMode, AlarmPanelCardConfigState, supportsFeatureFromAttributes } from "@hakit/core";
 import { AlarmControlPanelEntityFeature, AlarmConfig } from "./types";
 
 export const ALARM_MODES: Record<AlarmMode, AlarmConfig> = {
@@ -91,7 +91,7 @@ export const _getActionLabel = (
 };
 
 export const filterSupportedAlarmStates = (
-  entity: HassEntityWithService<"alarm_control_panel"> | undefined,
+  entity: HassEntityWithAction<"alarm_control_panel"> | undefined,
   states: AlarmPanelCardConfigState[],
 ): AlarmPanelCardConfigState[] =>
   states.filter((s) => entity && supportsFeatureFromAttributes(entity.attributes, ALARM_MODES[ALARM_MODE_STATE_MAP[s]].feature || 0));

@@ -5,7 +5,7 @@ import {
   useHass,
   type LocaleKeys,
   type AlarmMode,
-  type HassEntityWithService,
+  type HassEntityWithAction,
   UNAVAILABLE,
   type EntityName,
   type FilterByDomain,
@@ -40,7 +40,7 @@ export interface AlarmCardProps<E extends FilterByDomain<EntityName, "alarm_cont
   defaultCode?: number;
 }
 
-type AlarmServices = keyof HassEntityWithService<"alarm_control_panel">["service"];
+type AlarmServices = keyof HassEntityWithAction<"alarm_control_panel">["service"];
 
 const Wrapper = styled(ButtonCard)``;
 
@@ -70,7 +70,7 @@ function InternalAlarmCard<E extends FilterByDomain<EntityName, "alarm_control_p
   icon: _icon,
   ...rest
 }: AlarmCardProps<E>) {
-  const entity = useEntity<E>(_entity) as HassEntityWithService<"alarm_control_panel">;
+  const entity = useEntity<E>(_entity) as HassEntityWithAction<"alarm_control_panel">;
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const stateLabel = useCallback((state: AlarmMode | "unavailable") => {
