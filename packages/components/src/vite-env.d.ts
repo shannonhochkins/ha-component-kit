@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-declare module '*?raw' {
+declare module "*?raw" {
   const value: string;
   export = value;
 }

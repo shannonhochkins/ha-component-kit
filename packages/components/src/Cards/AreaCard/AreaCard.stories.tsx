@@ -91,11 +91,18 @@ export default {
   component: AreaCard,
   tags: ["autodocs"],
   parameters: {
-    afterDescription: <p>When the area is clicked, the URL hash will be set, so you can refresh the page and the area will become active again.</p>,
-    afterPrimary: <>
-      <p>You can set the hash programmatically from anywhere and the area will activate! There&apos;s a helper hook designed to help with this!</p>
-      <Source dark code={hashExample} />
-    </>,
+    afterDescription: (
+      <p>When the area is clicked, the URL hash will be set, so you can refresh the page and the area will become active again.</p>
+    ),
+    afterPrimary: (
+      <>
+        <p>
+          You can set the hash programmatically from anywhere and the area will activate! There&apos;s a helper hook designed to help with
+          this!
+        </p>
+        <Source dark code={hashExample} />
+      </>
+    ),
   },
   argTypes: {
     hash: { control: "text" },

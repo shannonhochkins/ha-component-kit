@@ -27,9 +27,9 @@ export default {
       Provider: ThemeProvider,
     }),
     (Story, args) => {
+      // sometimes, you might want to have one story listed in two places, storybook doesn't handle this
+      // so we redirect from one story to another
       if (args.parameters.redirectTo) {
-        // replace the history and redirect to this story
-        // window.top?.history.replaceState(null, '', args.parameters.redirectTo);
         if (window.top) {
           window.top.location.href = args.parameters.redirectTo;
         }
@@ -105,7 +105,6 @@ export default {
       canvas: {
         sourceState: 'shown',
       },
-      toc: true,
       page: Page
     }
   },

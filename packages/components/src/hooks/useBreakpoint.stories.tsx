@@ -5,10 +5,12 @@ import { HassConnect } from "@hass-connect-fake";
 import jsxToString from "react-element-to-jsx-string";
 
 function Wrapper() {
-  return <HassConnect hassUrl="http://localhost:8123">
-    <ThemeProvider />
-    <ExampleUsage />
-  </HassConnect>
+  return (
+    <HassConnect hassUrl="http://localhost:8123">
+      <ThemeProvider />
+      <ExampleUsage />
+    </HassConnect>
+  );
 }
 
 function ExampleUsage() {
@@ -37,7 +39,7 @@ function ExampleUsage() {
     </div>
   );
 }  
-`
+`;
 function Component() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
@@ -49,15 +51,17 @@ function Component() {
 }
 
 function Render() {
-  return <HassConnect hassUrl="http://localhost:8123">
-    <ThemeProvider />
-    <Wrapper />
-  </HassConnect>
+  return (
+    <HassConnect hassUrl="http://localhost:8123">
+      <ThemeProvider />
+      <Wrapper />
+    </HassConnect>
+  );
 }
 
 export default {
   title: "components/hooks/useBreakpoint",
-  
+
   tags: ["autodocs"],
   component: Component,
   parameters: {
@@ -83,9 +87,6 @@ export default {
     },
   },
 } satisfies Meta<typeof Render>;
-// export const Example: Story = {
-//   render: Render,
-// };
 export type Story = StoryObj;
 export const Docs: Story = {
   args: {},

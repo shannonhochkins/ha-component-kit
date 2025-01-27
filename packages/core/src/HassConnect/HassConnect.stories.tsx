@@ -17,17 +17,19 @@ export default {
   tags: ["autodocs"],
   parameters: {
     centered: true,
-    afterDescription: <>
-      <p>
-        This is a top level component that takes care of the Authentication logic for you and all you have to do is login like you
-        normally would.
-      </p>
-      <p>
-        <i>
-          <b>Note: </b>You will have to login on each device as HassConnect will store tokens per device.
-        </i>
-      </p>
-    </>,
+    afterDescription: (
+      <>
+        <p>
+          This is a top level component that takes care of the Authentication logic for you and all you have to do is login like you
+          normally would.
+        </p>
+        <p>
+          <i>
+            <b>Note: </b>You will have to login on each device as HassConnect will store tokens per device.
+          </i>
+        </p>
+      </>
+    ),
   },
 } satisfies Meta<typeof HassConnect>;
 export type Story = StoryObj<typeof HassConnect>;

@@ -2,44 +2,44 @@ import { Story, Source } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Column, Row } from "@components";
 import { ReactNode } from "react";
-import {
-  Divider,
-} from "@mui/material";
+import { Divider } from "@mui/material";
 
 const helpers: {
-  name: string,
-  description: ReactNode,
-  exampleUsage: string,
-  comment?: string,
-  autoImport?: boolean,
+  name: string;
+  description: ReactNode;
+  exampleUsage: string;
+  comment?: string;
+  autoImport?: boolean;
 }[] = [
   {
-    name: 'isUnavailableState',
+    name: "isUnavailableState",
     description: 'Returns true if the state of the entity is unavailable is "unavailable" or "unknown"',
     exampleUsage: `const isUnavailable = isUnavailableState(entity.state);`,
-    comment: '// use within component context and with available entity'
-  }, {
-    name: 'isOffState',
-    description: 'Returns true if the state of the entity is "off", "unknown" or "unavailable"',
-    exampleUsage: `const isOff = isOffState(entity.state);`,
-    comment: '// use within component context and with available entity'
+    comment: "// use within component context and with available entity",
   },
   {
-    name: 'supportsFeatureFromAttributes',
-    description: 'Returns true if the entity supports the feature provided',
-    comment: '// use within component context and with available entity, the feature number is the bitwise value of the feature',
+    name: "isOffState",
+    description: 'Returns true if the state of the entity is "off", "unknown" or "unavailable"',
+    exampleUsage: `const isOff = isOffState(entity.state);`,
+    comment: "// use within component context and with available entity",
+  },
+  {
+    name: "supportsFeatureFromAttributes",
+    description: "Returns true if the entity supports the feature provided",
+    comment: "// use within component context and with available entity, the feature number is the bitwise value of the feature",
     exampleUsage: `const supportsTurnOff = supportsFeatureFromAttributes(entity.attributes, 256);`,
   },
   {
-    name: 'stateActive',
-    comment: '// use within component context and with available entity',
-    description: 'Returns true if the state of the entity is determined active, this works for all supported entity types, for example a alarm_control_panel will return true if the state is not "disarmed", or a light is "on"',
+    name: "stateActive",
+    comment: "// use within component context and with available entity",
+    description:
+      'Returns true if the state of the entity is determined active, this works for all supported entity types, for example a alarm_control_panel will return true if the state is not "disarmed", or a light is "on"',
     exampleUsage: `const isActive = stateActive(entity.state);`,
   },
   {
-    name: 'computeStateDisplay',
-    comment: '// use within component context and with available entity',
-    description: 'Returns the state of the entity in a human readable format',
+    name: "computeStateDisplay",
+    comment: "// use within component context and with available entity",
+    description: "Returns the state of the entity in a human readable format",
     autoImport: false,
     exampleUsage: `
 import { computeStateDisplay, useHass } from '@hakit/core';
@@ -62,9 +62,10 @@ export default function EntityState({ entity }: {
     `,
   },
   {
-    name: 'computeAttributeValueDisplay',
-    description: 'Returns the value of the attribute in a human readable format, automatically adding suffix like °C for temperature or kWh for energy',
-    comment: '// use within component context and with available entity',
+    name: "computeAttributeValueDisplay",
+    description:
+      "Returns the value of the attribute in a human readable format, automatically adding suffix like °C for temperature or kWh for energy",
+    comment: "// use within component context and with available entity",
     autoImport: false,
     exampleUsage: `
 import { computeAttributeValueDisplay, useHass } from '@hakit/core';
@@ -89,60 +90,60 @@ export default function EntityAttribute({ entity, attribute }: {
     `,
   },
   {
-    name: 'computeDomainTitle',
-    description: 'Returns a readable title for the domain of the entity in a localized language',
-    comment: '// use within component context and with available entity',
+    name: "computeDomainTitle",
+    description: "Returns a readable title for the domain of the entity in a localized language",
+    comment: "// use within component context and with available entity",
     exampleUsage: `const title = computeDomainTitle('light.some_entity'); // Light`,
   },
   {
-    name: 'computeDomain',
-    description: 'Returns the domain of the entity',
-    comment: '// use within component context and with available entity',
+    name: "computeDomain",
+    description: "Returns the domain of the entity",
+    comment: "// use within component context and with available entity",
     exampleUsage: `const domain = computeDomain('light.some_entity'); // light`,
   },
   {
-    name: 'getCssColorValue',
-    description: 'Returns the color value of the entity in various formats',
-    comment: '// use within component context and with available entity',
+    name: "getCssColorValue",
+    description: "Returns the color value of the entity in various formats",
+    comment: "// use within component context and with available entity",
     exampleUsage: `const color = getCssColorValue(entity); // color.hexColor, color.rgbaColor etc`,
   },
   {
-    name: 'timeAgo',
-    description: 'Returns a human readable time ago string from a date',
+    name: "timeAgo",
+    description: "Returns a human readable time ago string from a date",
     exampleUsage: `const timeAgoString = timeAgo(new Date());`,
   },
   {
-    name: 'lightSupportsColorMode',
-    description: 'Returns true if the light supports the expected color mode',
-    comment: '// use within component context and with available entity',
+    name: "lightSupportsColorMode",
+    description: "Returns true if the light supports the expected color mode",
+    comment: "// use within component context and with available entity",
     exampleUsage: `const supportsRgb = lightSupportsColorMode(entity, 'hs');`,
   },
   {
-    name: 'lightIsInColorMode',
+    name: "lightIsInColorMode",
     description: 'Returns true if the light is in the "color_mode" type.',
-    comment: '// use within component context and with available entity',
+    comment: "// use within component context and with available entity",
     exampleUsage: `const isInRgb = lightIsInColorMode(entity);`,
   },
   {
-    name: 'lightSupportsColor',
-    description: 'Returns true if the light supports color',
-    comment: '// use within component context and with available entity',
+    name: "lightSupportsColor",
+    description: "Returns true if the light supports color",
+    comment: "// use within component context and with available entity",
     exampleUsage: `const supportsColor = lightSupportsColor(entity);`,
   },
   {
-    name: 'lightSupportsBrightness',
-    description: 'Returns true if the light supports brightness',
-    comment: '// use within component context and with available entity',
+    name: "lightSupportsBrightness",
+    description: "Returns true if the light supports brightness",
+    comment: "// use within component context and with available entity",
     exampleUsage: `const supportsBrightness = lightSupportsBrightness(entity);`,
   },
   {
-    name: 'getLightCurrentModeRgbColor',
+    name: "getLightCurrentModeRgbColor",
     description: 'Returns the current color of the light in either "rgbww_color", "rgbw_color" or "rgb_color"',
-    comment: '// use within component context and with available entity',
+    comment: "// use within component context and with available entity",
     exampleUsage: `const color = getLightCurrentModeRgbColor(entity);`,
   },
   {
-    name: 'getColorByIndex',
+    name: "getColorByIndex",
     description: <>Returns the color of the index in the color list, 50+ colors are supported, you can also COLORS from @hakit/core.</>,
     autoImport: false,
     exampleUsage: `
@@ -151,9 +152,9 @@ const color = getColorByIndex(0); // this equals COLORS[0]
 `,
   },
   {
-    name: 'stateColorBrightness',
-    description: 'Returns the brightness of the color of the entity as a css value `brightness(43%)` for example',
-    comment: '// use within component context and with available entity',
+    name: "stateColorBrightness",
+    description: "Returns the brightness of the color of the entity as a css value `brightness(43%)` for example",
+    comment: "// use within component context and with available entity",
     autoImport: false,
     exampleUsage: `
 import { stateColorBrightness, useEntity } from '@hakit/core';
@@ -169,9 +170,10 @@ function Component() {
     `,
   },
   {
-    name: 'Color Conversion',
+    name: "Color Conversion",
     autoImport: false,
-    description: 'There are a series of color conversion functions available for you to use, for example converting RGB to HEX or HEX to RGB, blending colors, darken colors',
+    description:
+      "There are a series of color conversion functions available for you to use, for example converting RGB to HEX or HEX to RGB, blending colors, darken colors",
     exampleUsage: `
 import {
   hex2rgb, // convert hex to rgb
@@ -190,7 +192,7 @@ import {
   rgbContrast, // Get the contrast of 2 rgb colors
   getRGBContrastRatio, // Get the contrast ratio of 2 rgb colors
 } from '@hakit/core';`,
-  }
+  },
 ];
 
 export default {
@@ -202,28 +204,40 @@ export default {
     hideComponentProps: true,
     centered: true,
     height: "auto",
-    afterDescription: <>
-      <p>There&apos;s a series of available helpers for you to use from @hakit/core</p>
-      <Row fullWidth alignItems="flex-start" justifyContent="flex-start">
-        {helpers.map(({ name, autoImport = true, comment = '', description, exampleUsage }) => (
-          <Row key={name} fullWidth alignItems="flex-start" justifyContent="flex-start">
-            <Column fullWidth alignItems="flex-start" justifyContent="flex-start">
-              <h3 style={{
-                marginTop: 24,
-              }}>{name}</h3>
-              <p style={{
-                margin: 0,
-                padding: 0,
-              }}>{description}.</p>
-              <Source dark code={`${autoImport ? `import { ${name} } from '@hakit/core';\n` : ''}${comment ?? ''}\n${exampleUsage}`} />
-              <Divider style={{
-                width: '100%',
-              }} />
-            </Column>
-          </Row>
-        ))}
-      </Row>
-    </>
+    afterDescription: (
+      <>
+        <p>There&apos;s a series of available helpers for you to use from @hakit/core</p>
+        <Row fullWidth alignItems="flex-start" justifyContent="flex-start">
+          {helpers.map(({ name, autoImport = true, comment = "", description, exampleUsage }) => (
+            <Row key={name} fullWidth alignItems="flex-start" justifyContent="flex-start">
+              <Column fullWidth alignItems="flex-start" justifyContent="flex-start">
+                <h3
+                  style={{
+                    marginTop: 24,
+                  }}
+                >
+                  {name}
+                </h3>
+                <p
+                  style={{
+                    margin: 0,
+                    padding: 0,
+                  }}
+                >
+                  {description}.
+                </p>
+                <Source dark code={`${autoImport ? `import { ${name} } from '@hakit/core';\n` : ""}${comment ?? ""}\n${exampleUsage}`} />
+                <Divider
+                  style={{
+                    width: "100%",
+                  }}
+                />
+              </Column>
+            </Row>
+          ))}
+        </Row>
+      </>
+    ),
   },
 } satisfies Meta;
 

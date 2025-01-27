@@ -1,4 +1,4 @@
-import { memo, useMemo, type ReactElement } from "react";
+import { memo, useMemo, type ReactNode } from "react";
 import { useRef } from "react";
 import { HassProvider } from "./Provider";
 import type { HassProviderProps } from "./Provider";
@@ -8,13 +8,13 @@ import { keyframes } from "@emotion/react";
 
 export type HassConnectProps = {
   /** Any react node to render when authenticated */
-  children: ReactElement;
+  children: ReactNode;
   /** The url to your home assistant instance, can be local, nabucasa or any hosted url with home-assistant.  */
   hassUrl: string;
   /** if you provide a hassToken you will bypass the login screen altogether - @see https://developers.home-assistant.io/docs/auth_api/#long-lived-access-token */
   hassToken?: string;
   /** Any react node to render when not authenticated or loading */
-  loading?: ReactElement;
+  loading?: ReactNode;
   /** called once the entity subscription is successful, and only once */
   onReady?: () => void;
   /** options for the provider */
@@ -90,7 +90,7 @@ export const HassConnect = memo(function HassConnect({
   loading = <Loader />,
   onReady,
   options = {},
-}: HassConnectProps): ReactElement {
+}: HassConnectProps): ReactNode {
   const onReadyCalled = useRef(false);
 
   const sanitizedUrl = useMemo(() => {

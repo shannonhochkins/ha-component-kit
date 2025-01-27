@@ -1,8 +1,6 @@
 import { Story, Source } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
-// @ts-expect-error - Ignore this, project structure screws vite environnement from here.
 import mqHelperInput from './codeExamples/mqHelperInput.code?raw';
-// @ts-expect-error - Ignore this, project structure screws vite environnement from here.
 import mqHelperOutput from './codeExamples/mqHelperOutput.code?raw';
 
 export default {

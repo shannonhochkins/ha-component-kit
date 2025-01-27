@@ -139,7 +139,10 @@ function Render(args: Story["args"]) {
     }`.replace(/^[ ]+/gm, "")}
       />
       <h3>Breakpoints</h3>
-      <p>You can also customize the breakpoints used for your dashboard if you wish and the defaults aren&quot;t working for you, see more <a href="/?path=/docs/introduction-responsive-layouts-breakpoints--docs">here</a>.</p>
+      <p>
+        You can also customize the breakpoints used for your dashboard if you wish and the defaults aren&quot;t working for you, see more{" "}
+        <a href="/?path=/docs/introduction-responsive-layouts-breakpoints--docs">here</a>.
+      </p>
     </HassConnect>
   );
 }
@@ -152,9 +155,9 @@ export default {
     padding: "2rem",
     docs: {
       canvas: {
-        sourceState: 'none',
+        sourceState: "none",
       },
-    }
+    },
   },
 } satisfies Meta<typeof ThemeProvider>;
 export type Story = StoryObj<typeof ThemeProvider>;
