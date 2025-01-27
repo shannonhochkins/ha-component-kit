@@ -204,7 +204,7 @@ function InternalLightControls({ entity: _entity, onStateChange }: LightControls
           }}
         />
         {supportsColorTemp || supportsColor || (supportsBrightness && <Separator />)}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {supportsBrightness && <FabCard key={`${_entity}-brightness`} icon="mdi:brightness-6" onClick={() => setControl("brightness")} />}
           {supportsColor && <FabCardColor key={`${_entity}-color`} active={control === "color"} onClick={() => setControl("color")} />}
           {supportsColorTemp && (

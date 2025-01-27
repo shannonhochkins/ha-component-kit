@@ -14,7 +14,6 @@ import { Icon, type IconProps } from "@iconify/react";
 import { Row, fallback, ModalByEntityDomain, type ModalPropsHelper } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { useState, ReactNode, useId, useMemo, useCallback, lazy, Suspense } from "react";
-import { motion } from "framer-motion";
 import { useLongPress } from "use-long-press";
 import styled from "@emotion/styled";
 import { Connection, HassConfig } from "home-assistant-js-websocket";
@@ -46,7 +45,7 @@ const State = styled.div`
   color: var(--ha-S300-contrast);
 `;
 
-const EntityRowInner = styled(motion.div)`
+const EntityRowInner = styled.div`
   width: 100%;
   padding: 1rem;
   transition: background-color var(--ha-transition-duration) var(--ha-easing);
@@ -130,6 +129,7 @@ function InternalEntitiesCardRow<E extends EntityName>({
   modalProps,
   key,
   includeLastUpdated = false,
+  ...rest
 }: EntitiesCardRowProps<E>) {
   const _id = useId();
   const [openModal, setOpenModal] = useState(false);
@@ -173,7 +173,7 @@ function InternalEntitiesCardRow<E extends EntityName>({
 
   return (
     <>
-      <EntityRowInner key={key} className={`entities-card-row`} layoutId={_id} {...bind()}>
+      <EntityRowInner key={key} className={`entities-card-row`} {...bind()} {...rest}>
         <Row className={`row`} wrap="nowrap" gap="1rem" fullWidth onClick={() => onClick && onClick(entity)}>
           <IconWrapper
             className={`icon-wrapper`}

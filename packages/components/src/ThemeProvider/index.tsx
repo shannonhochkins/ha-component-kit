@@ -409,7 +409,6 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
             onClick={() => setOpen(true)}
             tooltipPlacement="left"
             title={localize("theme")}
-            layoutId="theme-controls"
             icon="mdi:color"
           />
         </ThemeControlsBox>
@@ -417,7 +416,6 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
       {includeThemeControls && (
         <Modal
           description="This interface showcases how the colors will behave and provides easy to access css variables"
-          id="theme-controls"
           open={open}
           title={localize("theme")}
           onClose={() => {

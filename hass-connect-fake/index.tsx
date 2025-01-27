@@ -4,7 +4,6 @@ import {
   useRef,
   useEffect,
   type ReactNode,
-  type ReactElement,
 } from "react";
 import type {
   HassEntities,
@@ -37,7 +36,7 @@ import { logs } from './mocks/mockLogs';
 import {dailyForecast, hourlyForecast} from './mocks/mockWeather';
 
 interface HassProviderProps {
-  children: (ready: boolean) => ReactElement<HTMLElement | ReactNode> | ReactNode;
+  children: (ready: boolean) => ReactNode;
   hassUrl: string;
   throttle?: number;
 }
@@ -561,7 +560,7 @@ export const HassConnect = ({
   children,
   hassUrl,
   fallback,
-}: HassConnectProps): ReactElement<HTMLElement | ReactNode> => {
+}: HassConnectProps): ReactNode => {
   return (
     <HassProvider hassUrl={hassUrl}>
       {(ready) => (ready ? children : (fallback ?? null))}

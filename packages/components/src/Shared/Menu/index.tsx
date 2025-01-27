@@ -208,7 +208,7 @@ export function Menu({ children, placement = "bottom", items = [], cssStyles, ..
           }
           return child;
         })}
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {open && (
             <MenuPopup
               ref={menuRef}

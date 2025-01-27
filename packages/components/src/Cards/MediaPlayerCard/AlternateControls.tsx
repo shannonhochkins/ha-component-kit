@@ -14,7 +14,6 @@ interface AlternateControlsProps extends RowProps {
   disabled: boolean;
   allEntityIds: string[];
   onSpeakerGroupClick: () => void;
-  layoutId: string;
   hideGrouping?: boolean;
 }
 
@@ -23,7 +22,6 @@ export function AlternateControls({
   disabled,
   allEntityIds,
   onSpeakerGroupClick,
-  layoutId,
   hideGrouping = false,
 }: AlternateControlsProps) {
   const entity = useEntity(_entity);
@@ -38,7 +36,6 @@ export function AlternateControls({
     <Row gap="0.5rem" wrap="nowrap" className="row">
       {!hideGrouping && (allEntityIds.length > 1 || groups.length > 0) && (
         <Fab
-          layoutId={layoutId}
           className="speaker-group"
           iconProps={{
             color: `var(--ha-S200-contrast)`,
