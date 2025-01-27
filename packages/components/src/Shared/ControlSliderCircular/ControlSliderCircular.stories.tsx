@@ -32,7 +32,7 @@ function Template(args?: Partial<ControlSliderCircularProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/ControlSliderCircular",
+  title: "components/Shared/ControlSliderCircular",
   component: ControlSliderCircular,
   tags: ["autodocs"],
   parameters: {

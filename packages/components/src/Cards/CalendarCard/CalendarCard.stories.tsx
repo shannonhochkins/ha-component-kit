@@ -14,7 +14,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/CalendarCard",
+  title: "components/Cards/CalendarCard",
   component: CalendarCard,
   tags: ["autodocs"],
   parameters: {

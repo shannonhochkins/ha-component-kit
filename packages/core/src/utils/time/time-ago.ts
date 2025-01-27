@@ -2,7 +2,7 @@
  * Converts an ISO formatted timestamp
  * into a relative time string
  */
-export function timeAgo(date: Date, languageCode: string | undefined): string {
+export function timeAgo(date: Date, languageCode?: string): string {
   const dateTime = date.getTime();
 
   if (isNaN(dateTime)) {

@@ -14,7 +14,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Entity/Climate/ClimateControls",
+  title: "components/Shared/Entity/Climate/ClimateControls",
   component: ClimateControls,
   tags: ["autodocs"],
   parameters: {

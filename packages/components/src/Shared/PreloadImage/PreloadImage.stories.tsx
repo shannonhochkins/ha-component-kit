@@ -22,7 +22,7 @@ function Template(args?: Partial<PreloadImageProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/PreloadImage",
+  title: "components/Shared/PreloadImage",
   component: PreloadImage,
   tags: ["autodocs"],
   parameters: {

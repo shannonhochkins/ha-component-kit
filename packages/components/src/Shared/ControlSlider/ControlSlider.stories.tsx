@@ -69,7 +69,7 @@ function Template(args?: Partial<ControlSliderProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/ControlSlider",
+  title: "components/Shared/ControlSlider",
   component: ControlSlider,
   tags: ["autodocs"],
   parameters: {

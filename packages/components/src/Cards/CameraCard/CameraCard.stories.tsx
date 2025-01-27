@@ -18,7 +18,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/CameraCard",
+  title: "components/Cards/CameraCard",
   component: CameraCard,
   tags: ["autodocs"],
   parameters: {

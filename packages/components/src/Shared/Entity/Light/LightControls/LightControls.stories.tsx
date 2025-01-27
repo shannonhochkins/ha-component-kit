@@ -13,7 +13,7 @@ function Template(args?: Partial<LightControlsProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Entity/Light/LightControls",
+  title: "components/Shared/Entity/Light/LightControls",
   component: LightControls,
   tags: ["autodocs"],
   parameters: {

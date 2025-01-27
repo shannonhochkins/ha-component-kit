@@ -17,7 +17,7 @@ import Popper from "@mui/material/Popper";
 import { styled } from "@mui/material/styles";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { VariableSizeList, ListChildComponentProps } from "react-window";
-import { Column, Row } from "@hakit/components";
+import { Column, Row } from "@components";
 
 const ITEM_HEIGHT = 48;
 
@@ -283,7 +283,7 @@ export function MyComponent() {
 }
 
 export default {
-  title: "HOOKS/useLocales",
+  title: "core/hooks/useLocales",
   tags: ["autodocs"],
   parameters: {
     centered: true,

@@ -1,5 +1,6 @@
 import { Story, Source } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
+
 import { HassConnect } from '@hass-connect-fake';
 import {
   ThemeProvider,
@@ -7,10 +8,11 @@ import {
   Column,
   ButtonCard,
   Group,
-  useBreakpoint,
+  useBreakpoint as useBreakpointHook,
 } from '@components';
 import { css, Global } from "@emotion/react";
 import jsxToString from "react-element-to-jsx-string";
+
 
 function ResponsiveGroupsExample() {
   return <Row fullWidth  justifyContent="flex-start" alignItems="stretch" gap="1rem">
@@ -56,7 +58,7 @@ function ButtonsDifferentSizes() {
 
 
 function Template() {
-  const device = useBreakpoint();
+  const device = useBreakpointHook();
   return <Row fullWidth wrap="nowrap" fullHeight alignItems="stretch">
     <Column fullWidth gap="1rem" wrap="nowrap" alignItems="flex-start" justifyContent="flex-start" style={{
       padding: device.xxs || device.xs ? '1rem' : '2rem',
@@ -116,3 +118,15 @@ export default {
 export type Story = StoryObj<typeof Connector>;
 
 export const Default = Connector.bind({});
+
+const Empty = () => <></>;
+
+export type UseBreakpoint = StoryObj<typeof Empty>;
+export const UseBreakpoint: Story = {
+  render: Empty,
+  parameters: {
+    redirectTo: '/?path=/docs/components-hooks-usebreakpoint--docs',
+  }
+};
+
+UseBreakpoint.storyName = 'useBreakpoint';

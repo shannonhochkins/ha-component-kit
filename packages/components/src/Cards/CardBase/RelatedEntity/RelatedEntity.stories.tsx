@@ -35,7 +35,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/CardBase/RelatedEntity",
+  title: "components/Cards/CardBase/RelatedEntity",
   component: RelatedEntity,
   tags: ["autodocs"],
   parameters: {

@@ -39,7 +39,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/TriggerCard",
+  title: "components/Cards/TriggerCard",
   component: TriggerCard,
   tags: ["autodocs"],
   parameters: {

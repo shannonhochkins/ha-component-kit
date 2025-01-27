@@ -1,4 +1,6 @@
 import { Meta, Source } from '@storybook/blocks';
+import LinkTo from '@storybook/addon-links/react';
+
 
 <Meta title="INTRODUCTION/Getting Started/Manual Setup" />
 
@@ -14,7 +16,7 @@ There's an awesome sub-feature of this package that will generate types specific
 
 ### Authenticate
 
-**In** your root component of your react application (usually App.tsx) wrap everything with the [HassConnect](/docs/components-hassconnect--docs) component, don't forget to include the `ThemeProvider` to get the default theme if you're using [@hakit/components](https://www.npmjs.com/package/@hakit/components).
+**In** your root component of your react application (usually App.tsx) wrap everything with the [HassConnect](/docs/core-hassconnect--docs) component, don't forget to include the `ThemeProvider` to get the default theme if you're using [@hakit/components](https://www.npmjs.com/package/@hakit/components).
 
 <Source dark code={`
 import React from 'react';
@@ -38,4 +40,4 @@ root.render(<App />);
 
 
 ### Deploying to Home Assistant
-Once you're happy with your new dashboard, you can follow the steps to [deploy here](/?path=/docs/introduction-deploying--docs) which will guide you through the process of deploying your dashboard to Home Assistant!
+Once you're happy with your new dashboard, you can follow the steps to [deploy here](/docs/introduction-deploying--docs) which will guide you through the process of deploying your dashboard to Home Assistant!

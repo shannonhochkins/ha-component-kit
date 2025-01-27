@@ -1,9 +1,10 @@
 import type { Preview } from "@storybook/react";
-import { Title, Description, Primary, ArgTypes } from "@storybook/blocks";
 import React from "react";
 import { withThemeFromJSXProvider } from '@storybook/addon-themes';
 import { ThemeProvider } from '@storybook/theming';
+import { Page } from "./page";
 import './global.css';
+
 
 const theme = {
   typography: {
@@ -13,6 +14,7 @@ const theme = {
     }
   }
 };
+
 
 export default {
   decorators: [
@@ -25,6 +27,13 @@ export default {
       Provider: ThemeProvider,
     }),
     (Story, args) => {
+      if (args.parameters.redirectTo) {
+        // replace the history and redirect to this story
+        // window.top?.history.replaceState(null, '', args.parameters.redirectTo);
+        if (window.top) {
+          window.top.location.href = args.parameters.redirectTo;
+        }
+      }
       const centered = args.parameters.centered ? {
         width: '100%',
         display: 'flex',
@@ -43,7 +52,9 @@ export default {
         }}><div style={{
           width: args.parameters.fillWidth || args.parameters.fullWidth ? '100%' : undefined,
           height: args.parameters.fillHeight ? '100%' : undefined,
-        }}><Story /></div></div>
+        }}>
+          <Story />
+        </div></div>
       </div>
     },
   ],
@@ -94,14 +105,8 @@ export default {
       canvas: {
         sourceState: 'shown',
       },
-      page: () => (<>
-        <Title />
-        <Description />
-        <Primary />
-        <h2>Component Props</h2>
-        <ArgTypes />
-      </>),
+      toc: true,
+      page: Page
     }
   },
 } satisfies Preview;
-

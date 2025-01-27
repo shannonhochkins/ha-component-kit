@@ -28,7 +28,7 @@ function Template(args?: Partial<ColorTempPickerProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Entity/Light/ColorTempPicker",
+  title: "components/Shared/Entity/Light/ColorTempPicker",
   component: ColorTempPicker,
   tags: ["autodocs"],
   parameters: {

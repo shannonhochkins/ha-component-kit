@@ -15,7 +15,7 @@ function Template(args?: Partial<EntityAttributesProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Entity/Miscellaneous/EntityAttributes",
+  title: "components/Shared/Entity/Miscellaneous/EntityAttributes",
   component: EntityAttributes,
   tags: ["autodocs"],
   parameters: {

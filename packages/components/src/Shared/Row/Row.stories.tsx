@@ -17,7 +17,7 @@ function Template(args?: Partial<RowProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Row",
+  title: "components/Shared/Row",
   component: Row,
   tags: ["autodocs"],
   parameters: {

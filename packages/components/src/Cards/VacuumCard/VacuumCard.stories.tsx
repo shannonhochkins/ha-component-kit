@@ -16,7 +16,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/VacuumCard",
+  title: "components/Cards/VacuumCard",
   component: VacuumCard,
   tags: ["autodocs"],
   parameters: {

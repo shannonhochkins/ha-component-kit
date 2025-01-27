@@ -113,7 +113,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/ButtonCard",
+  title: "components/Cards/ButtonCard",
   component: ButtonCard,
   tags: ["autodocs"],
   parameters: {

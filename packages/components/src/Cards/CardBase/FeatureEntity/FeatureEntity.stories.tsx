@@ -63,7 +63,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/CardBase/FeatureEntity",
+  title: "components/Cards/CardBase/FeatureEntity",
   component: FeatureEntity,
   tags: ["autodocs"],
   parameters: {

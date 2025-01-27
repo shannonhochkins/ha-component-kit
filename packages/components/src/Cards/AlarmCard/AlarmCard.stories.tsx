@@ -27,7 +27,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/AlarmCard",
+  title: "components/Cards/AlarmCard",
   component: AlarmCard,
   tags: ["autodocs"],
   parameters: {

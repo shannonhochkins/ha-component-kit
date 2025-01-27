@@ -30,7 +30,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/FamilyCard",
+  title: "components/Cards/FamilyCard",
   component: FamilyCard,
   tags: ["autodocs"],
   parameters: {

@@ -60,7 +60,6 @@ export interface ThemeProviderProps<T extends object> {
    * sm: 1200,
    * md: 1536,
    * lg: 1700,
-   *
    */
   breakpoints?: BreakPoints;
   /** styles to provide for a specific component type to override every instance */

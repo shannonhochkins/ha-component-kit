@@ -74,7 +74,7 @@ function Template(args?: Partial<MenuProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Menu",
+  title: "components/Shared/Menu",
   component: Menu,
   tags: ["autodocs"],
   parameters: {

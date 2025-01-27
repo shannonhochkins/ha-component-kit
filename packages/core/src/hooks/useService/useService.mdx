@@ -1,16 +1,16 @@
 import { Source, Meta } from '@storybook/blocks';
 
-<Meta title="HOOKS/useService" />
+<Meta title="core/hooks/useService" />
 
 # useService()
 ###### `useService(domain?: SnakeOrCamelDomain, rootTarget?: Target)`
 This hook is designed to make it easy to make service calls programmatically.
 
-This is a memoized wrapper for the [callService()](/docs/hooks-usehass-callservice--docs) helper from [useHass()](/docs/hooks-usehass--docs) to make it
+This is a memoized wrapper for the [callService()](/docs/core-hooks-usehass-callservice--docs) helper from [useHass()](/docs/core-hooks-usehass--docs) to make it
 easier to call services.
 
 **Note:** There's extensive types available for typescript developers to make it very easy to develop and call actions with the available types for different
-services, if a service isn't available in the types or the params are different / incorrect to what you're expecting you can extend these [here](/docs/advanced-extend-api--docs).
+services, if a service isn't available in the types or the params are different / incorrect to what you're expecting you can extend these [here](/docs/introduction-typescriptsync--docs).
 
 This hook should be used inside the context of `<HassConnect />` and not outside of it otherwise it will not have access to
 the authenticated home assistant API.

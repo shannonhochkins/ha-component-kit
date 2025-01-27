@@ -24,7 +24,7 @@ function Template(args?: Partial<FabCardProps<"light.fake_light_1" | "light.unav
 }
 
 export default {
-  title: "COMPONENTS/Cards/FabCard",
+  title: "components/Cards/FabCard",
   component: FabCard,
   tags: ["autodocs"],
   parameters: {

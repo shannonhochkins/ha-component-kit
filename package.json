@@ -66,6 +66,7 @@
     "@storybook/addon-interactions": "^8.4.7",
     "@storybook/addon-links": "^8.4.7",
     "@storybook/addon-themes": "^8.4.7",
+    "@storybook/api": "^7.6.17",
     "@storybook/blocks": "^8.4.7",
     "@storybook/react": "^8.4.7",
     "@storybook/react-vite": "^8.4.7",
@@ -97,7 +98,7 @@
     "prettier": "^3.4.2",
     "react": ">=19.x",
     "react-dom": ">=19.x",
-    "react-element-to-jsx-string": "^15.0.0",
+    "react-element-to-jsx-string": "^17.0.0",
     "react-window": "^1.8.11",
     "storybook": "^8.4.7",
     "ts-jest": "^29.1.2",
@@ -111,10 +112,6 @@
     "vite-tsconfig-paths": "^5.1.4"
   },
   "overrides": {
-    "react-element-to-jsx-string": {
-      "react": ">=19.x",
-      "react-dom": ">=19.x"
-    },
     "vite": "^6.0.7",
     "vite-plugin-dts": "^4.4.0",
     "typescript": "^5.7.2"

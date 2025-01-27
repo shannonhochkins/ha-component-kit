@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Title, Description, Primary, ArgTypes, Source } from "@storybook/blocks";
+import { Source } from "@storybook/blocks";
 import { ThemeProvider, AreaCard, Row, ButtonCard } from "@components";
 import type { AreaCardProps } from "@components";
 import jsxToString from "react-element-to-jsx-string";
@@ -87,27 +87,15 @@ const hashExample = `function UseHashExample() {
 }`;
 
 export default {
-  title: "COMPONENTS/Cards/AreaCard",
+  title: "components/Cards/AreaCard",
   component: AreaCard,
   tags: ["autodocs"],
   parameters: {
-    docs: {
-      page: () => (
-        <>
-          <Title />
-          <Description />
-          <p>When the area is clicked, the URL hash will be set, so you can refresh the page and the area will become active again.</p>
-          <Primary />
-          <p>
-            You can set the hash programmatically from anywhere and the area will activate! There&apos;s a helper hook designed to help with
-            this!
-          </p>
-          <Source dark code={hashExample} />
-          <h2>Component Props</h2>
-          <ArgTypes />
-        </>
-      ),
-    },
+    afterDescription: <p>When the area is clicked, the URL hash will be set, so you can refresh the page and the area will become active again.</p>,
+    afterPrimary: <>
+      <p>You can set the hash programmatically from anywhere and the area will activate! There&apos;s a helper hook designed to help with this!</p>
+      <Source dark code={hashExample} />
+    </>,
   },
   argTypes: {
     hash: { control: "text" },

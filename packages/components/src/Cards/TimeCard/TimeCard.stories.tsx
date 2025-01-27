@@ -54,7 +54,7 @@ function WithoutDate(args?: Partial<TimeCardProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/TimeCard",
+  title: "components/Cards/TimeCard",
   component: TimeCard,
   tags: ["autodocs"],
   parameters: {

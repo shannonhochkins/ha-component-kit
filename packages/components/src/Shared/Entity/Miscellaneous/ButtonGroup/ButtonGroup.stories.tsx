@@ -23,8 +23,9 @@ function Template(args?: Partial<ButtonGroupProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Entity/Miscellaneous/ButtonGroup",
+  title: "components/Shared/Entity/Miscellaneous/ButtonGroup",
   component: ButtonGroup,
+  subcomponents: { ButtonGroupButton },
   tags: ["autodocs"],
   parameters: {
     fullWidth: true,

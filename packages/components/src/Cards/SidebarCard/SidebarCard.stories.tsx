@@ -249,7 +249,7 @@ function TemplateCustomWidth(args?: Partial<SidebarCardProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/SidebarCard",
+  title: "components/Cards/SidebarCard",
   component: SidebarCard,
   tags: ["autodocs"],
   parameters: {

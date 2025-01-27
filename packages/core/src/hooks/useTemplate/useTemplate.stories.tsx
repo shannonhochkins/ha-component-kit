@@ -13,7 +13,7 @@ const templateCodeToProcess = `
 `;
 
 const exampleUsage = `
-import { useTemplate } from "@hakit/core";
+import { useTemplate, HassConnect } from "@hakit/core";
 function RenderCustomTemplate() {
   const template = useTemplate({
     template: templateCodeToProcess,
@@ -22,6 +22,13 @@ function RenderCustomTemplate() {
   return <>
     Template result: {template ?? 'loading'}
   </>
+}\n
+function App() {
+  return (
+    <HassConnect hassUrl="http://homeassistant.local:8123">
+      <RenderCustomTemplate />
+    </HassConnect>
+  );
 }
 `;
 
@@ -66,7 +73,7 @@ function Template() {
 }
 
 export default {
-  title: "HOOKS/useTemplate",
+  title: "core/hooks/useTemplate",
   component: Template,
   tags: ["autodocs"],
   parameters: {
@@ -84,7 +91,7 @@ export default {
           <p>The following is the use of the hook in it&apos;s default form:</p>
           <Source
             dark
-            code={`const template = useTemplate({
+            code={`// use within HassConnect context!\nconst template = useTemplate({
   template: '{{ is_state_attr("climate.air_conditioner", "state", "heat") }}',
 });`}
           />

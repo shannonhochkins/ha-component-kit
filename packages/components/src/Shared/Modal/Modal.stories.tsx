@@ -405,7 +405,7 @@ function RenderModalAnimationExample() {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Modal",
+  title: "components/Shared/Modal",
   component: Modal,
   tags: ["autodocs"],
   parameters: {
