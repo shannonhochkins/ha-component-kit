@@ -16,7 +16,7 @@ function Template(args?: Partial<SwitchControlsProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Entity/Switch/SwitchControls",
+  title: "components/Shared/Entity/Switch/SwitchControls",
   component: SwitchControls,
   tags: ["autodocs"],
   parameters: {

@@ -34,8 +34,9 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/EntitiesCard",
+  title: "components/Cards/EntitiesCard",
   component: EntitiesCard,
+  subcomponents: { EntitiesCardRow },
   tags: ["autodocs"],
   parameters: {
     fullWidth: true,

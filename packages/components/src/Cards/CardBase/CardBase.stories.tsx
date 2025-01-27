@@ -22,7 +22,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/CardBase",
+  title: "components/Cards/CardBase",
   component: CardBase,
   tags: ["autodocs"],
   parameters: {

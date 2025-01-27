@@ -1,5 +1,5 @@
 {
   "extends": "../tsconfig",
-  "include": ["./*", "../.d.ts"],
+  "include": ["./*", "../.d.ts", "../vite-env.d.ts"],
   "exclude": ["node_modules"]
 }

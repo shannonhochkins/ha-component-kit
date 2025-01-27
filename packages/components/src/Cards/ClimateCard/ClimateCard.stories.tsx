@@ -37,7 +37,7 @@ function TempRender(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/ClimateCard",
+  title: "components/Cards/ClimateCard",
   component: ClimateCard,
   tags: ["autodocs"],
   parameters: {

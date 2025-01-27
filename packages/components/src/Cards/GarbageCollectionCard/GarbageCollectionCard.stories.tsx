@@ -147,7 +147,7 @@ function Detailed() {
 }
 
 export default {
-  title: "COMPONENTS/Cards/GarbageCollectionCard",
+  title: "components/Cards/GarbageCollectionCard",
   component: GarbageCollectionCard,
   tags: ["autodocs"],
   parameters: {

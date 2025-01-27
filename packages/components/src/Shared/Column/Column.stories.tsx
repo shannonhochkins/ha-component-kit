@@ -17,7 +17,7 @@ function Template(args?: Partial<ColumnProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Column",
+  title: "components/Shared/Column",
   component: Column,
   tags: ["autodocs"],
   parameters: {

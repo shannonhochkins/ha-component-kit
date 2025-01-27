@@ -13,7 +13,7 @@ function Template(args?: Partial<LogBookRendererProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Entity/Miscellaneous/LogBookRenderer",
+  title: "components/Shared/Entity/Miscellaneous/LogBookRenderer",
   component: LogBookRenderer,
   tags: ["autodocs"],
   parameters: {

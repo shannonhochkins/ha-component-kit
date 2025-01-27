@@ -14,7 +14,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Entity/Alarm/AlarmControls",
+  title: "components/Shared/Entity/Alarm/AlarmControls",
   component: AlarmControls,
   tags: ["autodocs"],
   parameters: {

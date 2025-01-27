@@ -2,7 +2,7 @@ import { Story, Source, Title, Description, ArgTypes } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 
 export default {
-  title: "HOOKS/useCamera",
+  title: "core/hooks/useCamera",
   tags: ["autodocs"],
   parameters: {
     centered: true,

@@ -17,7 +17,7 @@ function Template(args?: Partial<CoverControlsProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Entity/Cover/CoverControls",
+  title: "components/Shared/Entity/Cover/CoverControls",
   component: CoverControls,
   tags: ["autodocs"],
   parameters: {

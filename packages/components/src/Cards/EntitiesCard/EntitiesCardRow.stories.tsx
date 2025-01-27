@@ -17,7 +17,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/EntitiesCard/EntitiesCardRow",
+  title: "components/Cards/EntitiesCard/EntitiesCardRow",
   component: EntitiesCardRow,
   tags: ["autodocs"],
   parameters: {

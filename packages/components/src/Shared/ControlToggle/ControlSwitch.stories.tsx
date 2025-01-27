@@ -41,7 +41,7 @@ function Template(args?: Partial<ControlToggleProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/ControlToggle",
+  title: "components/Shared/ControlToggle",
   component: ControlToggle,
   tags: ["autodocs"],
   parameters: {

@@ -12,7 +12,19 @@ const theme = create({
 addons.setConfig({
     bottomPanelHeight: 0,
     rightPanelWidth: 0,
-    theme
+    theme,
+    sidebar: {
+      renderLabel(item) {
+        if (item.type === 'root' && item.name === 'core') {
+          return '@hakit/core';
+        }
+        if (item.type === 'root' && item.name === 'components') {
+          return '@hakit/components';
+        }
+        return item.name;
+      }
+    }
+    
 });
 
 

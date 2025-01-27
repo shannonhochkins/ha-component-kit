@@ -19,7 +19,7 @@ function Template(props: RangeSliderProps) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/RangeSlider",
+  title: "components/Shared/RangeSlider",
   component: RangeSlider,
   tags: ["autodocs"],
   parameters: {

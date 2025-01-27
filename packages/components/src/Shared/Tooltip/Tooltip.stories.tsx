@@ -26,7 +26,7 @@ function Template(props: TooltipProps) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Tooltip",
+  title: "components/Shared/Tooltip",
   component: Tooltip,
   tags: ["autodocs"],
   parameters: {

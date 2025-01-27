@@ -83,7 +83,7 @@ function WithoutCurrent(args?: Partial<WeatherCardProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/WeatherCard",
+  title: "components/Cards/WeatherCard",
   component: WeatherCard,
   tags: ["autodocs"],
   parameters: {

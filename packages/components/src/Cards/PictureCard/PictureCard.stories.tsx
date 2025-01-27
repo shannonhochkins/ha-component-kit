@@ -14,7 +14,7 @@ function Template(args: PictureCardProps) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/PictureCard",
+  title: "components/Cards/PictureCard",
   component: PictureCard,
   tags: ["autodocs"],
   parameters: {

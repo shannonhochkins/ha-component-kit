@@ -1,19 +1,17 @@
 import { Source, Meta } from '@storybook/blocks';
 
-<Meta title="HOOKS/useHass/callService" />
+<Meta title="core/hooks/useHass/callService" />
 
 # callService()
 ###### `callService(args: CallServiceArgs<ResponseType, SnakeOrCamelDomain, DomainService<SnakeOrCamelDomain>>)`
 The call service helper will allow you to trigger any action in home assistant.
 
-> Note: We recommend you use the [useEntity()](/docs/hooks-useentity--docs) hook or the [useService()](/docs/hooks-useservice--docs) hook as these are more user friendly and don't require you to type out all generic inputs for typescript.
+> Note: We recommend you use the [useEntity()](/docs/core-hooks-useentity--docs) hook or the [useService()](/docs/core-hooks-useservice--docs) hook as these are more user friendly and don't require you to type out all generic inputs for typescript.
 
 If you have typescript, there's full intellisense on a large range of domains/service/data, if not, you can use developer tools enabled in home assistant,
 navigate to this inside your instance, here you'll see a dropdown list and if you open this you'll see there's a "sub title" under each dropdown option, eg "climate.turn_on", in this particular example, "climate" is the domain and "turn_on" is the service.
 
 This is an easy way to visualize all the available domains/service for your home assistant instance.
-
-Additionally you could also use the [Playground](/story/introduction-testconnection--playground) to show you what's available.
 
 ### Definition
 <Source dark language="ts" code={`callService({

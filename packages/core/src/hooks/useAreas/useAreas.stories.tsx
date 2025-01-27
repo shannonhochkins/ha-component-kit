@@ -2,7 +2,7 @@ import { Story, Source, Title, Description } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 
 export default {
-  title: "HOOKS/useAreas",
+  title: "core/hooks/useAreas",
   tags: ["autodocs"],
   parameters: {
     centered: true,

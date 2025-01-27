@@ -42,7 +42,7 @@ function Template() {
 }
 
 export default {
-  title: "HOOKS/useLowDevices",
+  title: "core/hooks/useLowDevices",
   component: Template,
   tags: ["autodocs"],
   parameters: {
@@ -64,6 +64,7 @@ export default {
           <Source
             dark
             code={`
+import { useLowDevices } from "@hakit/core";
 function RenderDevices() {
   const devices = useLowDevices();
   return (

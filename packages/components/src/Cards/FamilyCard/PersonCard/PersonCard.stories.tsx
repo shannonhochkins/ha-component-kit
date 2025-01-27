@@ -15,7 +15,7 @@ function Render(args?: Args) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/FamilyCard/PersonCard",
+  title: "components/Cards/FamilyCard/PersonCard",
   component: PersonCard,
   tags: ["autodocs"],
   parameters: {

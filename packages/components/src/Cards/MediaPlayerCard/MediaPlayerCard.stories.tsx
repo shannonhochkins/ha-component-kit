@@ -52,7 +52,7 @@ function TemplateWithGroups(args?: Partial<MediaPlayerCardProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Cards/MediaPlayerCard",
+  title: "components/Cards/MediaPlayerCard",
   component: MediaPlayerCard,
   tags: ["autodocs"],
   parameters: {

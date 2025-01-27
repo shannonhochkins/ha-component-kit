@@ -18,7 +18,7 @@ function Template(args?: Partial<AlertProps>) {
 }
 
 export default {
-  title: "COMPONENTS/Shared/Alert",
+  title: "components/Shared/Alert",
   component: Alert,
   tags: ["autodocs"],
   parameters: {

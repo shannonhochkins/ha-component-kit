@@ -33,7 +33,7 @@ function Template({ duration, color, onClick, borderRadius, className }: Ripples
 }
 
 export default {
-  title: "COMPONENTS/Shared/Ripples",
+  title: "components/Shared/Ripples",
   component: Ripples,
   tags: ["autodocs"],
   parameters: {
