@@ -1,6 +1,7 @@
 import { Source, Meta } from '@storybook/blocks';
+import getStatesExample from './examples/getStates.code?raw';
 
-<Meta title="core/hooks/useHass/getStates" />
+<Meta title="core/hooks/useHass/hass/getStates" />
 
 # getStates()
 This will return all information about your entities with state values of your home assistant instance, this is all typed with typescript
@@ -12,16 +13,4 @@ so you'll have access to what's available on the object with the `HassEntity[]` 
 
 ### Example Usage
 
-```ts
-function GetStatesExample() {
-  const { getStates } = useHass();
-  const [states, setStates] = useState<HassEntity[] | null>(null);
-  useEffect(() => {
-    async function fetchStates() {
-      const states = await getStates();
-      setStates(states);
-    }
-    fetchStates();
-  }, [])
-  return <p>{JSON.stringify(states, null, 2)}</p>
-}
+<Source dark language="ts" code={getStatesExample} />

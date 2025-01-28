@@ -1,5 +1,6 @@
 import { Story, Source } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
+import { redirectToStory } from '../.storybook/redirect';
 import breakpointExample from './codeExamples/breakpointExample.code?raw';
 
 export default {
@@ -17,7 +18,10 @@ export default {
       <Source dark code={breakpointExample} />
       <p>The values provided above are the defaults, they should range from smallest to largest and they represent the screen width not the container size.</p>
       <p>If you screen size is 1600px wide, by default the `md` breakpoint will be active, and all cards with an `md` prop provided (or the default values) will be activated and used to determine the size of the cards.</p>
-      <p>Also, with the hook <a href="/?path=/docs/components-hooks-usebreakpoint--docs">useBreakpoint</a>, the .md property will be true.</p>
+      <p>Also, with the hook <a href="" onClick={(e) => {
+          e.preventDefault();
+          redirectToStory('/docs/components-hooks-usebreakpoint--docs');
+        }}>useBreakpoint</a>, the .md property will be true.</p>
       <p>The breakpoint settings above, translate to the following auto generated media queries:</p>
       <Source dark code={`
 export const getBreakpoints = (breakpoints: BreakPoints): Record<BreakPoint, string> => {

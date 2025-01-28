@@ -1,5 +1,6 @@
 import { Story, Source } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
+import { redirectToStory } from '../.storybook/redirect';
 
 export default {
   title: "INTRODUCTION/Responsive Layouts/CSS Classes",
@@ -13,7 +14,10 @@ export default {
     hidePrimary: true,
     hideComponentProps: true,
     afterPrimary: <>
-      <p>For every available breakpoint (see <a href="/?path=/docs/introduction-responsive-layouts-breakpoints--docs">breakpoints</a> for more info) a css class is available to use to conditionally style your components.</p>
+      <p>For every available breakpoint (see <a href="#" onClick={(e) => {
+              e.preventDefault();
+              redirectToStory('/docs/introduction-responsive-layouts-breakpoints--docs');
+            }}>breakpoints</a> for more info) a css class is available to use to conditionally style your components.</p>
       <p>When a breakpoint is active, the current breakpoint class will be added to the body of the document, for example if we&quot;re in the range for a `lg` breakpoint, the following will apply to the body:</p>
       <Source dark code={`<body class="bp-lg">...</body>`} />
 

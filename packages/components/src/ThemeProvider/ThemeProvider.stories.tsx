@@ -9,6 +9,7 @@ import type { ThemeProviderProps } from "@components";
 import jsxToString from "react-element-to-jsx-string";
 import { ThemeControlsProps } from "./ThemeControls";
 import { DEFAULT_THEME_OPTIONS } from "./constants";
+import { redirectToStory } from '../../../../.storybook/redirect';
 
 const customTheme: ThemeProviderProps<{
   anything: {
@@ -141,7 +142,10 @@ function Render(args: Story["args"]) {
       <h3>Breakpoints</h3>
       <p>
         You can also customize the breakpoints used for your dashboard if you wish and the defaults aren&quot;t working for you, see more{" "}
-        <a href="/?path=/docs/introduction-responsive-layouts-breakpoints--docs">here</a>.
+        <a href="#" onClick={(e) => {
+          e.preventDefault();
+          redirectToStory('/docs/introduction-responsive-layouts-breakpoints--docs');
+        }}>here</a>.
       </p>
     </HassConnect>
   );

@@ -1,5 +1,7 @@
 import { Meta, Source } from '@storybook/blocks';
 import { useIconByDomain } from './';
+import basic from './examples/byDomain.basic.code?raw';
+import customProps from './examples/byDomain.customProps.code?raw';
 
 <Meta title="core/hooks/useIconByDomain" />
 
@@ -9,13 +11,7 @@ This hook will retrieve an icon by domain from a predefined list of icons.
 
 ### Example Usage
 
-<Source dark code={`
-import { useIconByDomain } from '@hakit/core';
-function IconExample() {
-  const icon = useIconByDomain('light');
-  return <div>{icon}</div>
-}
-`} />
+<Source dark code={basic} />
 
 ## Outputs
 
@@ -25,18 +21,7 @@ function IconExample() {
 
 If you want to provide props that the Icon component that [@iconify/react](https://iconify.design/docs/icon-components/react/) supports, pass it as the second parameter.
 This example will change the color to red and the size to 40px.
-<Source dark code={`
-import { useIconByDomain } from '@hakit/core';
-function IconExample() {
-  const icon = useIconByDomain('mediaPlayer', {
-    color: 'red',
-    style: {
-      fontSize: 40
-    }
-  });
-  return <div>{icon}</div>
-}
-`} />
+<Source dark code={customProps} />
 
 ## Outputs
 

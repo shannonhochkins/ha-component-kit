@@ -1,4 +1,5 @@
 import { Source, Meta } from '@storybook/blocks';
+import responseExample from './examples/response.code?raw';
 
 <Meta title="core/hooks/useService" />
 
@@ -6,13 +7,13 @@ import { Source, Meta } from '@storybook/blocks';
 ###### `useService(domain?: SnakeOrCamelDomain, rootTarget?: Target)`
 This hook is designed to make it easy to make service calls programmatically.
 
-This is a memoized wrapper for the [callService()](/docs/core-hooks-usehass-callservice--docs) helper from [useHass()](/docs/core-hooks-usehass--docs) to make it
+This is a memoized wrapper for the [callService()](/docs/core-hooks-usehass-hass-callservice--docs) helper from [useHass()](/docs/core-hooks-usehass--docs) to make it
 easier to call services.
 
 **Note:** There's extensive types available for typescript developers to make it very easy to develop and call actions with the available types for different
 services, if a service isn't available in the types or the params are different / incorrect to what you're expecting you can extend these [here](/docs/introduction-typescriptsync--docs).
 
-This hook should be used inside the context of `<HassConnect />` and not outside of it otherwise it will not have access to
+This hook should be used inside the context of [`<HassConnect />`](/docs/core-hassconnect--docs) and not outside of it otherwise it will not have access to
 the authenticated home assistant API.
 
 ### Preferred usage
@@ -88,43 +89,4 @@ function App() {
 Some services return a response, like the calendar `getEvents` service, you can access this response value by adding `returnResponse` to the service call.
 The response object type is able to be defined by passing a generic type to the service call itself, see example below:
 
-<Source dark code={`
-import { HassConnect, useService } from '@hakit/core';
-import { useState, useCallback } from 'react';
-interface CalendarEvent {
-  description: string;
-  end: string;
-  start: string;
-  summary: string;
-}
-interface CalendarResponse {
-  "calendar.some_calendar": {
-    events: CalendarEvent[];
-  }
-}
-function UseServiceExample() {
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const getEvents = useCallback(async() => {
-    const events = await service.getEvents<CalendarResponse>({
-      target: 'calendar.some_calendar',
-      serviceData: {
-        start_date_time: '2024-12-22 20:00:00',
-        duration: {
-          days: 24
-        }
-      },
-      returnResponse: true,
-    });
-    setEvents(events.response["calendar.some_calendar"].events);
-  }, [service]);
-  return (
-    <p>There are {events.length} events</p>
-    <button onClick={getEvents}>GET CALENDAR EVENTS</button>
-  );
-}
-function App() {
-  return <HassConnect hassUrl="http://localhost:1234">
-    <UseServiceExample />
-  </HassConnect>
-}
-`} />
+<Source dark code={responseExample} />

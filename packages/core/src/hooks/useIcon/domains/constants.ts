@@ -81,6 +81,7 @@ export const FIXED_DOMAIN_ICONS = {
   proximity: "mdi:apple-safari",
   remote: "mdi:remote",
   scene: "mdi:palette",
+  media_player: 'mdi:music-box',
   schedule: "mdi:calendar-clock",
   script: "mdi:script-text",
   select: "mdi:format-list-bulleted",
