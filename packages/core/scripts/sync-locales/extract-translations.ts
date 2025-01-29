@@ -149,9 +149,6 @@ export const fetchTranslations =  async (langs: string[], combinedTranslations: 
             category,
             language: lang,
           });
-          // if (lang === 'en') {
-          //   fs.writeFileSync(path.join(OUTPUT_PATH, 'en', `${category}-debug.json`), JSON.stringify(response.resources, null, 2));
-          // }
           combinedTranslations[lang] = {
             ...combinedTranslations[lang],
             ...response.resources,

@@ -45,7 +45,7 @@ export const computeDomainTitle = <E extends EntityName | "unknown">(entityId: E
     case "google":
     case "reolink":
     case "notify":
-    case 'zha':
+    case "zha":
     case "vacuum":
       return startCase(lowerCase(domain));
     default: {

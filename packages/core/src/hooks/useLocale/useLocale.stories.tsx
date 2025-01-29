@@ -234,8 +234,8 @@ function Page() {
         assets and cache locally
       </p>
       <blockquote>
-        <b>NOTE:</b> This is an example, you do NOT need to do this, it&apos;s automatically handled through HassConnect and retrieved from your
-        home assistant instance.
+        <b>NOTE:</b> This is an example, you do NOT need to do this, it&apos;s automatically handled through HassConnect and retrieved from
+        your home assistant instance.
       </blockquote>
       <Source dark code={localesConstantExample} />
       <p>
