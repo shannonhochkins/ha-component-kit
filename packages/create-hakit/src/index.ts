@@ -186,6 +186,7 @@ const createProject = async () => {
       templateDir,
     })
     updateReadme(projectName, root, templateDir);
+    updateNvmRC(root, templateDir);
 
     write('src/index.css', root, templateDir, `#root { width: 100%; height: 100%; }`);
 
@@ -407,6 +408,12 @@ function updateReadme(targetDir: string, root: string, templateDir: string) {
   const readmeFileTemplateContents = fs.readFileSync(readmeFileTemplate, 'utf-8');
 
   write('README.md', root, templateDir, `${readmeFileTemplateContents}${readmeFileContents}`);
+}
+
+function updateNvmRC(root: string, templateDir: string) {
+  // get the current node version from the user
+  const nodeVersion = process.version;
+  write('.nvmrc', root, templateDir, nodeVersion);
 }
 
 createProject().catch((e) => {
