@@ -107,6 +107,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}
             icon="mdi:volume-minus"
+            title={`${Number(volume_level) * 100}%`}
             onClick={() =>
               mp.volumeDown({
                 target: allEntityIds ?? _entity,
@@ -124,6 +125,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
             disabled={disabled}
             size={DEFAULT_FAB_SIZE}
             icon="mdi:volume-plus"
+            title={`${Number(volume_level) * 100}%`}
             onClick={() =>
               mp.volumeUp({
                 target: allEntityIds ?? _entity,

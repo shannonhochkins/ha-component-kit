@@ -18,6 +18,11 @@ import { styled } from "@mui/material/styles";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { VariableSizeList, ListChildComponentProps } from "react-window";
 import { Column, Row } from "@components";
+import useLocaleExample from "./examples/useLocale.code?raw";
+import findReplaceExample from "./examples/findReplace.code?raw";
+import localesConstantExample from "./examples/localesConstant.code?raw";
+import localizeFunctionExample from "./examples/localizeFunction.code?raw";
+import useLocalesExample from "./examples/useLocales.code?raw";
 
 const ITEM_HEIGHT = 48;
 
@@ -195,84 +200,44 @@ function Page() {
           </p>
           <Source
             dark
-            code={`
-// usage with the localize function
-import { localize } from '@hakit/core';
-export function MyComponent() {
-  const value = localize('${selectedKey}');
-  return <>{value}</>; // should translate to "${data?.[selectedKey as LocaleKeys]}"
-}
-      `}
+            code={localizeFunctionExample
+              .replace(" as LocaleKeys", "")
+              .replace(/{{selectedKey}}/g, selectedKey)
+              .replace(/{{value}}/g, data?.[selectedKey as LocaleKeys] || "")}
           />
           <p>You can also use the useLocale hook which is less likely to be something you&apos;ll use but it is available.</p>
           <Source
             dark
-            code={`
-// usage with the localize function
-import { useLocale } from '@hakit/core';
-export function MyComponent() {
-  const value = useLocale('${selectedKey}');
-  return <>{value}</>; // should translate to "${data?.[selectedKey as LocaleKeys]}"
-}
-      `}
+            code={useLocaleExample
+              .replace(" as LocaleKeys", "")
+              .replace(/{{selectedKey}}/g, selectedKey)
+              .replace(/{{value}}/g, data?.[selectedKey as LocaleKeys] || "")}
           />
         </>
       )}
 
-      <h2>Examples</h2>
+      <h2>useLocales hook</h2>
       <p>
         This hook will simply return all available locales retrieved from Home Assistant, you don&apos;t need to use this hook at all unless
         you want to transform the value or inspect all values available. You can use the `localize` method directly anywhere in your
         application.
       </p>
-      <Source
-        dark
-        code={`
-  import { useLocales } from '@hakit/core';
-  export function MyComponent() {
-  const locales = useLocales();
-  return <>{Object.keys(locales).join(', ')}</>;
-  }
-      `}
-      />
+      <Source dark code={useLocalesExample} />
+
+      <h3>Find and replace</h3>
 
       <p>If you want to find/replace a value that&apos;s expected to be dynamic as it might contain a value wrapped in curly braces:</p>
-      <Source
-        dark
-        code={`
-  import { localize, useCalendar } from '@hakit/core';
-  export function MyComponent() {
-  const calendar = useCalendar('calendar.mycal');
-  return <>{localize('panel.calendar', {
-  search: '{state}',
-  replace: calendar.state,
-  fallback: 'Calendar is not available' // this will be used if \`panel.calendar\` is not available in the locales
-  })}</>;
-  }
-      `}
-      />
-
+      <Source dark code={findReplaceExample} />
+      <h3>Fetch Locales</h3>
       <p>
         This is a list of all the available locales, including their hash names, but also including a fetch method which will download the
         assets and cache locally
       </p>
-      <p>
-        Note: This is an example, you do NOT need to do this, it&apos;s automatically handled through HassConnect and retrieved from your
-        home assistant instance.
-      </p>
-      <Source
-        dark
-        code={`
-  import { locales } from '@hakit/core';
-  const locale = locales.find(({ code }) => code === 'en');
-
-  async function fetchEnLocale() {
-  const data = await locale.fetch();
-  console.log(data)
-  return data;
-  }
-    `}
-      />
+      <blockquote>
+        <b>NOTE:</b> This is an example, you do NOT need to do this, it&apos;s automatically handled through HassConnect and retrieved from
+        your home assistant instance.
+      </blockquote>
+      <Source dark code={localesConstantExample} />
       <p>
         Most of the time, what&apos;s available may work just fine for you, however if you want to replace the locales that the localize
         function uses across the board, you can call `updateLocales` manually, however this will not update the types for LocaleKeys so

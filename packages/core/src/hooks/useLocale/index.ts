@@ -18,7 +18,8 @@ interface Options {
   replace?: string;
 }
 
-export function localize(key: LocaleKeys, { search, replace, fallback }: Options = {}): string {
+export function localize(key: LocaleKeys, options?: Options): string {
+  const { search, replace, fallback } = options ?? {};
   if (!LOCALES[key]) {
     if (fallback) {
       return fallback;
@@ -36,8 +37,8 @@ export function useLocales(): Record<LocaleKeys, string> {
   return LOCALES;
 }
 
-export const useLocale = (key: LocaleKeys, options: Options) => {
-  const { fallback = localize("unknown") } = options;
+export const useLocale = (key: LocaleKeys, options?: Options) => {
+  const { fallback = localize("unknown") } = options ?? {};
   const [value, setValue] = useState<string>(fallback);
   const { getConfig } = useHass();
 

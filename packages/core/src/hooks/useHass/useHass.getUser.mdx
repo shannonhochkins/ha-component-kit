@@ -1,9 +1,10 @@
 import { Source, Meta } from '@storybook/blocks';
+import getUserExample from './examples/getUser.code?raw';
 
-<Meta title="core/hooks/useHass/getUser" />
+<Meta title="core/hooks/useHass/hass/getUser" />
 
 # getUser()
-This will return all information about your current user of your home assistant instance, this is all typed with typescript
+This will return all information about the current user from the authenticated instance from your Home Assistant instance, this is all typed with typescript
 so you'll have access to what's available on the object with the `HassUser` type.
 
 This may be useful if you want to extract the name or perform different UI updates based on the role of the logged in user.
@@ -14,16 +15,4 @@ This may be useful if you want to extract the name or perform different UI updat
 
 ### Example Usage
 
-```ts
-function GetUserExample() {
-  const { getUser } = useHass();
-  const [user, setUser] = useState<HassUser | null>(null);
-  useEffect(() => {
-    async function fetchUser() {
-      const user = await getUser();
-      setUser(user);
-    }
-    fetchUser();
-  }, [])
-  return <p>{JSON.stringify(user, null, 2)}</p>
-}
+<Source dark language="ts" code={getUserExample} />

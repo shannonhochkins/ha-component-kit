@@ -375,7 +375,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
       console.log("Error:", e);
       return {
         status: "error",
-        data: `API Request failed for endpoint "${endpoint}", follow instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/hooks-usehass-callapi--docs.`,
+        data: `API Request failed for endpoint "${endpoint}", follow instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/core-hooks-usehass-hass-callapi--docs.`,
       };
     }
   }

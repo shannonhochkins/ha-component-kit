@@ -83,8 +83,9 @@ export const generateActionTypes = (input: HassServices, {
           const actionFieldOverride = remapByActionField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByActionField] : undefined;
           const fieldOverride = remapByField in REMAPPED_TYPES ? REMAPPED_TYPES[remapByField] : undefined;
           const _selector = selector as Selector;
+          const overrides = domainActionFieldOverride || actionFieldOverride || fieldOverride;
           // some fields come back as an incorrect type but we know these should be something specific, these are hard coded in the REMAPPED_TYPES constant
-          const type = domainActionFieldOverride || actionFieldOverride || fieldOverride || resolveSelectorType(_selector);
+          const type = typeof overrides === 'string' ? overrides : resolveSelectorType(_selector);
           let constraints = '';
           if (_.isObject(selector)) {
             const ignoredKeys = ['select', 'entity', 'theme', 'constant', 'text', 'device'];

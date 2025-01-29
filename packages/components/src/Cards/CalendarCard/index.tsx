@@ -755,7 +755,7 @@ function InternalCalendarCard({
 /**
  * The CalendarCard is very similar to the home assistant calendar card, with the exception of not having delete/edit event functionality, the preview here contains only a month (the current month) of fake events to preview the functionality
  *
- * This component uses the REST API to retrieve events from home assistant, ensure you've followed the instructions [here](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/hooks-usehass-callapi--docs)
+ * This component uses the REST API to retrieve events from home assistant, ensure you've followed the instructions [here](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/core-hooks-usehass-hass-callapi--docs)
  * */
 export function CalendarCard(props: CalendarCardProps) {
   const defaultColumns: AvailableQueries = {

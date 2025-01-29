@@ -1,6 +1,7 @@
 import { Source, Meta } from '@storybook/blocks';
+import getServicesExample from './examples/getServices.code?raw';
 
-<Meta title="core/hooks/useHass/getServices" />
+<Meta title="core/hooks/useHass/hass/getServices" />
 
 # getServices()
 This will return all information about your services of your home assistant instance, this is all typed with typescript
@@ -9,21 +10,9 @@ so you'll have access to what's available on the object with the `HassServices` 
 This is useful to know which domains/services you have available to use with `callService`.
 
 ### Definition
-<Source dark language="ts" code={`await getServices()`} />
+<Source dark language="ts" code={`const services = await getServices();`} />
 
 
 ### Example Usage
 
-```ts
-function GetServicesExample() {
-  const { getServices } = useHass();
-  const [services, setServices] = useState<HassServices | null>(null);
-  useEffect(() => {
-    async function fetchServices() {
-      const services = await getServices();
-      setServices(services);
-    }
-    fetchServices();
-  }, [])
-  return <p>{JSON.stringify(services, null, 2)}</p>
-}
+<Source dark language="ts" code={getServicesExample} />

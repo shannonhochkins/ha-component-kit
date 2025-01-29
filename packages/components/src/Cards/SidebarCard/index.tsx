@@ -392,7 +392,7 @@ function InternalSidebarCard({
             </Row>
             <Divider className="divider" />
             <Menu open={open} className="menu">
-              <AnimatePresence>
+              <AnimatePresence initial={false}>
                 {concatenatedMenuItems.map((item, index) => {
                   return (
                     <motion.li
@@ -419,7 +419,7 @@ function InternalSidebarCard({
             </Menu>
             {children && open && <Filler className="filler">{children}</Filler>}
           </Filler>
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             {weatherCardProps && (
               <motion.div
                 className="weather-wrapper"

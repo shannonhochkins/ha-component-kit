@@ -1,7 +1,8 @@
 import { Source, Meta } from '@storybook/blocks';
+import getConfigExample from './examples/getConfig.code?raw';
 
 
-<Meta title="core/hooks/useHass/getConfig" />
+<Meta title="core/hooks/useHass/hass/getConfig" />
 
 # getConfig()
 This will return all information about your configuration of your home assistant instance, this is all typed with typescript
@@ -13,16 +14,4 @@ so you'll have access to what's available on the object with the `HassConfig` ty
 
 ### Example Usage
 
-```ts
-function GetConfigExample() {
-  const { getConfig } = useHass();
-  const [state, setState] = useState<string>('UNKNOWN');
-  useEffect(() => {
-    async function fetchConfig() {
-      const config = await getConfig();
-      setState(config.state);
-    }
-    fetchConfig();
-  }, [])
-  return <p>Your home assistant instance is {state}</p>
-}
+<Source dark language="typescript" code={getConfigExample} />

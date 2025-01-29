@@ -202,6 +202,12 @@ export const MediaPlayerControls = ({
                   disableRipples
                   disableScale
                   disableActiveState
+                  xxs={12}
+                  xs={12}
+                  sm={12}
+                  md={12}
+                  lg={12}
+                  xlg={12}
                   className={`entities-card entities-card-media-controls`}
                 >
                   <ErrorBoundary {...fallback({ prefix: "EntityRow" })}>
@@ -240,7 +246,7 @@ export const MediaPlayerControls = ({
                         {!isOff && (
                           <VolumeControls
                             entity={entity.entity_id as FilterByDomain<EntityName, "media_player">}
-                            volumeLayout={"slider"}
+                            volumeLayout={"buttons"}
                             hideMute={false}
                             disabled={false}
                             layout={"slim"}

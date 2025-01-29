@@ -1,0 +1,17 @@
+import { Source, Meta } from '@storybook/blocks';
+import joinHassUrlExample from './examples/joinHassUrl.code?raw';
+
+<Meta title="core/hooks/useHass/hass/joinHassUrl" />
+
+# joinHassUrl(path: string)
+This will essentially suffix the hassUrl provided to `HassConnect` with the string provided to the first param.
+
+This may be useful if you want to extract the name or perform different UI updates based on the role of the logged in user.
+
+### Definition
+<Source dark language="ts" code={`const url = joinHassUrl('/something')`} />
+
+
+### Example Usage
+
+<Source dark language="ts" code={joinHassUrlExample} />

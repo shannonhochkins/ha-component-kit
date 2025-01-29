@@ -17,7 +17,6 @@ import {
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { getAdditionalWeatherInformation } from "./helpers";
-import { motion } from "framer-motion";
 
 const Card = styled(CardBase)``;
 
@@ -90,7 +89,7 @@ function splitForecastsIntoRows<T>(arr: T[], rowCount: number, maxItemsPerRow: n
   return result;
 }
 
-const Forecast = styled(motion.div)`
+const Forecast = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -151,7 +150,7 @@ export interface WeatherCardProps extends Omit<CardBaseProps<"div", FilterByDoma
   allowForecastToggle?: boolean;
 }
 
-const FORECAST_ITEM_PROJECTED_WIDTH = 40;
+const FORECAST_ITEM_PROJECTED_WIDTH = 50;
 
 function InternalWeatherCard({
   entity,
@@ -239,7 +238,7 @@ function InternalWeatherCard({
             const dateFormatted = convertDateTime(forecast.datetime, timeZone);
             const [day, , hour] = dateFormatted.split(",");
             return (
-              <Forecast key={index} className="forecast" layoutId={forecast.datetime}>
+              <Forecast key={index} className="forecast">
                 {includeDay && <Day className="day">{day}</Day>}
                 {includeTime && <Time className="time">{hour}</Time>}
                 <ForecastIcon
@@ -281,7 +280,8 @@ function InternalWeatherCard({
       serviceData={serviceData}
       className={`${className ?? ""} weather-card`}
       resizeDetectorProps={{
-        refreshRate: 500,
+        refreshRate: 50,
+        refreshMode: "throttle",
         onResize({ width: _width }) {
           if (_width) {
             setWidth(_width);
@@ -350,7 +350,7 @@ function InternalWeatherCard({
             })}
           </Row>
         )}
-        {includeForecast && !isUnavailable && genForecastRows()}
+        {includeForecast && !isUnavailable && width > 0 && genForecastRows()}
         {isUnavailable && weather.state}
       </Contents>
     </Card>

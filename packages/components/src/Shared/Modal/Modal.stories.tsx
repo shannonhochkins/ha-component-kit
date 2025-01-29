@@ -1,7 +1,7 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
 import styled from "@emotion/styled";
 import { Source } from "@storybook/blocks";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { ThemeProvider, ButtonCard, Modal, FabCard, Column, Row, ModalProvider } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import jsxToString from "react-element-to-jsx-string";
@@ -25,15 +25,14 @@ const P = styled.p`
 
 const exampleSetup = `
 import { Modal } from '@hakit/components';
-import { useState, useId } from 'react';
+import { useState } from 'react';
 function CustomButton() {
-  const _id = useId();
   const [open, setOpen] = useState(false);
   return (
     <>
       <-- The trigger element can be any motion element, in this case we use a FabCard which is a motion.button element -->
-      <FabCard layoutId={_id} onClick={() => setOpen(true)} icon="mdi:cog" />
-      <Modal id={_id} open={open} title="Settings" onClose={() => {
+      <FabCard onClick={() => setOpen(true)} icon="mdi:cog" />
+      <Modal open={open} title="Settings" onClose={() => {
         setOpen(false);
       }}>
         Add your settings here!
@@ -81,9 +80,8 @@ function RenderCustom() {
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" fullWidth>
         <Source dark code={exampleSetup} />
-        <FabCard onClick={() => setOpen(true)} layoutId="custom-modal" icon="mdi:cog" />
+        <FabCard onClick={() => setOpen(true)} icon="mdi:cog" />
         <Modal
-          id="custom-modal"
           open={open}
           title="Settings"
           onClose={() => {
@@ -102,14 +100,12 @@ const exampleRenderByDomain = `
   import { useId } from 'react';
   function CustomButton() {
     const [open, setOpen] = useState(false);
-    const _id = useId();
     return (
       <>
         <-- The trigger element can be any motion element, 
         in this case we use a FabCard which is a motion.button element -->
-        <FabCard layoutId={_id} onClick={() => setOpen(true)} icon="mdi:cog" />
+        <FabCard onClick={() => setOpen(true)} icon="mdi:cog" />
         <ModalByEntityDomain
-          id={_id}
           entity="light.fake_light_1"
           open={open}
           title="Settings"
@@ -141,11 +137,10 @@ function TestingModalStore() {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <FabCard onClick={() => setOpen(true)} layoutId="custom-modal" icon="mdi:cog" cssStyles={`width: 250px`}>
+      <FabCard onClick={() => setOpen(true)} icon="mdi:cog" cssStyles={`width: 250px`}>
         CLICK ME
       </FabCard>
       <Modal
-        id="custom-modal"
         open={open}
         title="Settings"
         onClose={() => {
@@ -218,6 +213,48 @@ function RenderModalProvider() {
           <Source dark code={example} />
         </Column>
       </ModalProvider>
+    </HassConnect>
+  );
+}
+
+function Inner() {
+  const [open, setOpen] = useState(false);
+  const _id = useId();
+  return (
+    <>
+      <FabCard layoutId={_id} onClick={() => setOpen(true)} icon="mdi:cog" cssStyles={`width: 250px`}>
+        CLICK ME
+      </FabCard>
+      <Modal
+        id={_id}
+        open={open}
+        title="Settings"
+        onClose={() => {
+          setOpen(false);
+        }}
+      >
+        Add your settings here!
+      </Modal>
+    </>
+  );
+}
+
+function RenderAutoScaleFromSource() {
+  return (
+    <HassConnect hassUrl="http://localhost:8123">
+      <ThemeProvider includeThemeControls />
+      <Column gap="1rem" fullWidth>
+        <Inner />
+        <p>
+          As shown before, from the trigger motion element or any card, if you add `layoutId` with a uniq id name, and then provide the `id`
+          attribute to the modal of the same value, the modal will open as if it was expanding from the originating source, and will
+          collapse when closing back to the original element too.
+        </p>
+        <p>
+          <b>Note: </b>This has a side effect of initial layout animations where the card will animate to a default position initially
+        </p>
+        <Source dark code={jsxToString(Inner())} />
+      </Column>
     </HassConnect>
   );
 }
@@ -381,10 +418,6 @@ function RenderModalAnimationExample() {
             have a preset of animate, exit and initial animation properties available and supports all properties that framer motion allows
             you to animate.
           </P>
-          <P>
-            You can also simply provide a `layoutId` which is what&apos;s used by default within the modal component to create the default
-            animation.
-          </P>
           <P>You can animate the modal, content and header separately!</P>
           <P>
             Here&apos;s some example references for animations with{" "}
@@ -451,5 +484,10 @@ export const ReplaceModalAnimation: ModalStory = {
 
 export const DisableComplexAnimations: ModalStory = {
   render: RenderModalProviderDisableAnimation,
+  args: {},
+};
+
+export const AutoScaleFromSource: ModalStory = {
+  render: RenderAutoScaleFromSource,
   args: {},
 };

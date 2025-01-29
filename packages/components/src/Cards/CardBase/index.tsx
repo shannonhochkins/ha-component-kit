@@ -286,7 +286,6 @@ const CardBaseInternal = function CardBase<T extends ElementType, E extends Enti
   rippleProps,
   disableColumns,
   whileTap,
-  layoutId,
   elRef,
   key,
   relatedEntities,
@@ -451,7 +450,6 @@ const CardBaseInternal = function CardBase<T extends ElementType, E extends Enti
           borderRadius: _borderRadius,
         }}
         whileTap={whileTap ?? { scale: disableScale || disabled || isUnavailable ? 1 : 0.9 }}
-        layoutId={layoutId ?? _id}
         disableActiveState={disableActiveState}
         disabled={isUnavailable || disabled}
         {...bind()}
