@@ -42,7 +42,7 @@ export async function typeSync({
   // this is an auto generated file, do not change this manually
   `;
   
-  const { services, states } = await connect(url, token);
+  const { states, services } = await connect(url, token);
   
   const serviceInterfaces = await generateActionTypes(services, {
     domainWhitelist,
@@ -69,7 +69,6 @@ export async function typeSync({
     }
   `;
   const outDir = _outDir || process.cwd();
-
   const formatted = prettier?.disable ? output: await format(output, {
     parser: 'typescript',
     ...prettier?.options
