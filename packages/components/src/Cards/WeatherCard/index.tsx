@@ -281,7 +281,7 @@ function InternalWeatherCard({
       className={`${className ?? ""} weather-card`}
       resizeDetectorProps={{
         refreshRate: 50,
-        refreshMode: 'throttle',
+        refreshMode: "throttle",
         onResize({ width: _width }) {
           if (_width) {
             setWidth(_width);

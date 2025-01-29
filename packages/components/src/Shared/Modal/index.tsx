@@ -157,7 +157,7 @@ const LAYOUT_MODAL_ANIMATION: CustomModalAnimation = (duration, id) => {
     modal: {
       layoutId: id,
       variants: {
-        initial: { y: "100%", opacity: 0, scaleY: 0, }, // Slide up from the bottom
+        initial: { y: "100%", opacity: 0, scaleY: 0 }, // Slide up from the bottom
         animate: {
           y: 0,
           opacity: 1,
@@ -179,14 +179,12 @@ const LAYOUT_MODAL_ANIMATION: CustomModalAnimation = (duration, id) => {
           y: 0,
           opacity: 1,
           scale: 1,
-          transition: fadeSlideTransition
+          transition: fadeSlideTransition,
         },
         exit: { y: "10%", opacity: 0, scale: 0.9, transition: fadeSlideTransition },
       },
     },
-    content: {
-      
-    },
+    content: {},
   };
 };
 
@@ -352,12 +350,10 @@ function InternalModal({
                 {...content}
                 className={"modal-inner"}
                 style={{
-                  transformOrigin: 'top'
+                  transformOrigin: "top",
                 }}
               >
-                <AnimatePresence>
-                  {(ready || hasCustomAnimation) && children}
-                </AnimatePresence>
+                <AnimatePresence>{(ready || hasCustomAnimation) && children}</AnimatePresence>
               </ModalInner>
             </ModalOverflow>
           </ModalContainer>

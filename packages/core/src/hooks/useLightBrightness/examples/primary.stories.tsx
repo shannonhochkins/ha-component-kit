@@ -1,14 +1,16 @@
-import { HassConnect } from 'hass-connect-fake';
-import { ThemeProvider } from '@hakit/components';
+import { HassConnect } from "hass-connect-fake";
+import { ThemeProvider } from "@hakit/components";
 import { Story } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
-import { Dashboard } from './basic.code';
+import { Dashboard } from "./basic.code";
 
 function Primary() {
-  return <HassConnect hassUrl="http://homeassistant.local:8123">
-    <ThemeProvider />
-    <Dashboard />
-  </HassConnect>
+  return (
+    <HassConnect hassUrl="http://homeassistant.local:8123">
+      <ThemeProvider />
+      <Dashboard />
+    </HassConnect>
+  );
 }
 
 const meta: Meta<typeof Primary> = {
@@ -17,16 +19,16 @@ const meta: Meta<typeof Primary> = {
 
 export default meta;
 type Story = StoryObj<typeof Primary>;
- 
+
 export const PrimaryExample: Story = {
   args: {
-    label: 'PrimaryExample',
+    label: "PrimaryExample",
   },
   parameters: {
     docs: {
       canvas: {
         sourceState: "none",
-      }
-    }
-  }
+      },
+    },
+  },
 };

@@ -1,5 +1,5 @@
-import { HassConnect, useService } from '@hakit/core';
-import { useState, useCallback } from 'react';
+import { HassConnect, useService } from "@hakit/core";
+import { useState, useCallback } from "react";
 
 interface CalendarEvent {
   description: string;
@@ -10,19 +10,19 @@ interface CalendarEvent {
 interface CalendarResponse {
   "calendar.some_calendar": {
     events: CalendarEvent[];
-  }
+  };
 }
 function UseServiceExample() {
-  const service = useService('calendar');
+  const service = useService("calendar");
   const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const getEvents = useCallback(async() => {
+  const getEvents = useCallback(async () => {
     const events = await service.getEvents<CalendarResponse>({
-      target: 'calendar.some_calendar',
+      target: "calendar.some_calendar",
       serviceData: {
-        start_date_time: '2024-12-22 20:00:00',
+        start_date_time: "2024-12-22 20:00:00",
         duration: {
-          days: 24
-        }
+          days: 24,
+        },
       },
       returnResponse: true,
     });
@@ -36,7 +36,9 @@ function UseServiceExample() {
   );
 }
 export function App() {
-  return <HassConnect hassUrl="http://homeassistant.local:8123">
-    <UseServiceExample />
-  </HassConnect>
+  return (
+    <HassConnect hassUrl="http://homeassistant.local:8123">
+      <UseServiceExample />
+    </HassConnect>
+  );
 }

@@ -194,15 +194,15 @@ import {
 } from '@hakit/core';`,
   },
   {
-    name: 'temperature2rgb',
-    description: 'Converts a temperature in Kelvin to an RGB color',
-    comment: '',
+    name: "temperature2rgb",
+    description: "Converts a temperature in Kelvin to an RGB color",
+    comment: "",
     exampleUsage: `
 const rgb = temperature2rgb(3000);
 const div = document.createElement('div');
 div.style.background = \`rgb(\${rgb.join(',')})\`;    
 `,
-  }
+  },
 ];
 
 export default {

@@ -50,7 +50,7 @@ export default defineConfig(configEnv => {
             'src/**/**/*.{ts,tsx}',
             'src/**/locales/**/*.json',
           ], {
-            ignore: ['**/*stories.ts', '**/*stories.tsx', "**/*.test.{ts,tsx}"]
+            ignore: ['**/*stories.ts', '**/*stories.tsx', "**/*.test.{ts,tsx}", "**/*.code.{ts,tsx}"]
           }).map(file => {
             return [
             // The name of the entry point

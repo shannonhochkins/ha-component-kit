@@ -1,31 +1,9 @@
 import { Story, Source, Title, Description, ArgTypes } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
-import { useLowDevices } from "@hakit/core";
-import type { EntityName } from "@hakit/core";
-import { EntitiesCard, EntitiesCardRow, ThemeProvider, Row, Column } from "@components";
+import { ThemeProvider, Row, Column } from "@components";
 import { HassConnect } from "@hass-connect-fake";
-
-function RenderDevices() {
-  const devices = useLowDevices();
-  return (
-    <EntitiesCard includeLastUpdated>
-      {devices.map((device) => (
-        <EntitiesCardRow
-          key={device.entity_id}
-          entity={device.entity_id as EntityName}
-          renderState={(entity) => {
-            return (
-              <div>
-                {entity.state}
-                {entity.attributes.unit_of_measurement}
-              </div>
-            );
-          }}
-        />
-      ))}
-    </EntitiesCard>
-  );
-}
+import basicExample from "./examples/basic.code?raw";
+import { RenderDevices } from "./examples/basic.code";
 
 function Template() {
   return (
@@ -61,29 +39,7 @@ export default {
           <ArgTypes />
           <Template />
           <p>Here&apos;s the source code for the above EntitiesCard:</p>
-          <Source
-            dark
-            code={`
-import { useLowDevices } from "@hakit/core";
-function RenderDevices() {
-  const devices = useLowDevices();
-  return (
-    <EntitiesCard
-      includeLastUpdated
-    >
-      {devices.map(device => <EntitiesCardRow key={device.entity_id} entity={device.entity_id as EntityName} renderState={(entity) => {
-        return (
-          <div>
-            {entity.state}
-            {entity.attributes.unit_of_measurement}
-          </div>
-        );
-      }} />)}
-    </EntitiesCard>
-  );
-}
-          `}
-          />
+          <Source dark code={basicExample} />
         </>
       ),
       description: {

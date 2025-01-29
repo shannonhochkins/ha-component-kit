@@ -1,6 +1,6 @@
-import { useIcon } from '@hakit/core';
+import { useIcon } from "@hakit/core";
 
 export function IconExample() {
-  const icon = useIcon('mdi:home');
-  return <div>{icon}</div>
+  const icon = useIcon("mdi:home");
+  return <div>{icon}</div>;
 }

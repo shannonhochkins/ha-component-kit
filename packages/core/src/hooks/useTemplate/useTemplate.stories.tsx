@@ -3,10 +3,9 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useTemplate, useEntity } from "@hakit/core";
 import { ThemeProvider, Column, Alert, Row, FabCard } from "@components";
 import { HassConnect } from "@hass-connect-fake";
-import { templateCodeToProcess } from './examples/constants';
-import basicExample from './examples/basic.code?raw';
-import simpleExample from './examples/simple.code?raw';
-
+import { templateCodeToProcess } from "./examples/constants";
+import basicExample from "./examples/basic.code?raw";
+import simpleExample from "./examples/simple.code?raw";
 
 function SubscribeTemplateExample() {
   const entity = useEntity("light.fake_light_1");
@@ -65,10 +64,7 @@ export default {
           <Description />
           <ArgTypes />
           <p>The following is the use of the hook in it&apos;s default form:</p>
-          <Source
-            dark
-            code={simpleExample}
-          />
+          <Source dark code={simpleExample} />
           <p>Here&apos;s a working example of how this hook functions when connected to entities:</p>
           <Template />
         </>

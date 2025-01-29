@@ -405,12 +405,7 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
             ...(themeControlStyles ?? {}),
           }}
         >
-          <FabCard
-            onClick={() => setOpen(true)}
-            tooltipPlacement="left"
-            title={localize("theme")}
-            icon="mdi:color"
-          />
+          <FabCard onClick={() => setOpen(true)} tooltipPlacement="left" title={localize("theme")} icon="mdi:color" />
         </ThemeControlsBox>
       )}
       {includeThemeControls && (

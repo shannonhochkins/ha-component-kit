@@ -217,7 +217,6 @@ function RenderModalProvider() {
   );
 }
 
-
 function Inner() {
   const [open, setOpen] = useState(false);
   const _id = useId();
@@ -246,8 +245,14 @@ function RenderAutoScaleFromSource() {
       <ThemeProvider includeThemeControls />
       <Column gap="1rem" fullWidth>
         <Inner />
-        <p>As shown before, from the trigger motion element or any card, if you add `layoutId` with a uniq id name, and then provide the `id` attribute to the modal of the same value, the modal will open as if it was expanding from the originating source, and will collapse when closing back to the original element too.</p>
-        <p><b>Note: </b>This has a side effect of initial layout animations where the card will animate to a default position initially</p>
+        <p>
+          As shown before, from the trigger motion element or any card, if you add `layoutId` with a uniq id name, and then provide the `id`
+          attribute to the modal of the same value, the modal will open as if it was expanding from the originating source, and will
+          collapse when closing back to the original element too.
+        </p>
+        <p>
+          <b>Note: </b>This has a side effect of initial layout animations where the card will animate to a default position initially
+        </p>
         <Source dark code={jsxToString(Inner())} />
       </Column>
     </HassConnect>

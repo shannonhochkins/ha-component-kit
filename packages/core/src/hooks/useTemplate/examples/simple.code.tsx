@@ -1,4 +1,4 @@
-import { useTemplate } from '@hakit/core';
+import { useTemplate } from "@hakit/core";
 
 export function Component() {
   // use within HassConnect context!

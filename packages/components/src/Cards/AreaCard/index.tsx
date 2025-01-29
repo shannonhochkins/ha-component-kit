@@ -108,7 +108,6 @@ const ChildContainer = styled.div`
   flex-direction: column;
 `;
 
-
 function InternalAreaCard({
   hash,
   children,
@@ -178,7 +177,7 @@ function InternalAreaCard({
                 className={"full-screen"}
                 initial={{ opacity: 0 }}
                 transition={{
-                  ...transition
+                  ...transition,
                 }}
                 exit={{
                   opacity: 0,

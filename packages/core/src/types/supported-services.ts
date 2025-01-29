@@ -2,32 +2,6 @@
 
 import type { ServiceFunctionTypes, ServiceFunction } from "./";
 export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
-  persistentNotification: {
-    // Shows a notification on the notifications panel.
-    create: ServiceFunction<
-      object,
-      T,
-      {
-        // Message body of the notification. @example Please check your configuration.yaml.
-        message: string;
-        // Optional title of the notification. @example Test notification
-        title?: string;
-        // ID of the notification. This new notification will overwrite an existing notification with the same ID. @example 1234
-        notification_id?: string;
-      }
-    >;
-    // Deletes a notification from the notifications panel.
-    dismiss: ServiceFunction<
-      object,
-      T,
-      {
-        // ID of the notification to be deleted. @example 1234
-        notification_id: string;
-      }
-    >;
-    // Deletes all notifications from the notifications panel.
-    dismissAll: ServiceFunction<object, T, object>;
-  };
   homeassistant: {
     // Saves the persistent states immediately. Maintains the normal periodic saving interval.
     savePersistentStates: ServiceFunction<object, T, object>;
@@ -80,6 +54,32 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     >;
     // Reload all YAML configuration that can be reloaded without restarting Home Assistant.
     reloadAll: ServiceFunction<object, T, object>;
+  };
+  persistentNotification: {
+    // Shows a notification on the notifications panel.
+    create: ServiceFunction<
+      object,
+      T,
+      {
+        // Message body of the notification. @example Please check your configuration.yaml.
+        message: string;
+        // Optional title of the notification. @example Test notification
+        title?: string;
+        // ID of the notification. This new notification will overwrite an existing notification with the same ID. @example 1234
+        notification_id?: string;
+      }
+    >;
+    // Deletes a notification from the notifications panel.
+    dismiss: ServiceFunction<
+      object,
+      T,
+      {
+        // ID of the notification to be deleted. @example 1234
+        notification_id: string;
+      }
+    >;
+    // Deletes all notifications from the notifications panel.
+    dismissAll: ServiceFunction<object, T, object>;
   };
   systemLog: {
     // Deletes all log entries.
@@ -452,7 +452,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        // The players which will be synced with the playback specified in `target`. @example - media_player.multiroom_player2 - media_player.multiroom_player3
+        // The players which will be synced with the playback specified in 'Targets'. @example - media_player.multiroom_player2 - media_player.multiroom_player3
         group_members: string[];
       }
     >;
@@ -927,29 +927,55 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       {
         // The entity ID of the new scene. @example all_lights
         scene_id: string;
-        // List of entities and their target state. If your entities are already in the target state right now, use `snapshot_entities` instead. @example light.tv_back_light: 'on' light.ceiling:   state: 'on'   brightness: 200
+        // List of entities and their target state. If your entities are already in the target state right now, use 'Entities snapshot' instead. @example light.tv_back_light: 'on' light.ceiling:   state: 'on'   brightness: 200
         entities?: object;
-        // List of entities to be included in the snapshot. By taking a snapshot, you record the current state of those entities. If you do not want to use the current state of all your entities for this scene, you can combine the `snapshot_entities` with `entities`. @example - light.ceiling - light.kitchen
+        // List of entities to be included in the snapshot. By taking a snapshot, you record the current state of those entities. If you do not want to use the current state of all your entities for this scene, you can combine 'Entities snapshot' with 'Entity states'. @example - light.ceiling - light.kitchen
         snapshot_entities?: string;
       }
     >;
     // Deletes a dynamically created scene.
     delete: ServiceFunction<object, T, object>;
   };
-  logbook: {
-    // Creates a custom entry in the logbook.
-    log: ServiceFunction<
+  camera: {
+    // Enables the motion detection.
+    enableMotionDetection: ServiceFunction<object, T, object>;
+    // Disables the motion detection.
+    disableMotionDetection: ServiceFunction<object, T, object>;
+    // Turns off the camera.
+    turnOff: ServiceFunction<object, T, object>;
+    // Turns on the camera.
+    turnOn: ServiceFunction<object, T, object>;
+    // Takes a snapshot from a camera.
+    snapshot: ServiceFunction<
       object,
       T,
       {
-        // Custom name for an entity, can be referenced using an `entity_id`. @example Kitchen
-        name: string;
-        // Message of the logbook entry. @example is being used
-        message: string;
-        // Entity to reference in the logbook entry.
-        entity_id?: string;
-        // Determines which icon is used in the logbook entry. The icon illustrates the integration domain related to this logbook entry. @example light
-        domain?: string;
+        // Full path to filename. @example /tmp/snapshot_{{ entity_id.name }}.jpg
+        filename: string;
+      }
+    >;
+    // Plays the camera stream on a supported media player.
+    playStream: ServiceFunction<
+      object,
+      T,
+      {
+        // Media players to stream to.
+        media_player: string;
+        // Stream format supported by the media player.
+        format?: "hls";
+      }
+    >;
+    // Creates a recording of a live camera feed.
+    record: ServiceFunction<
+      object,
+      T,
+      {
+        // Full path to filename. Must be mp4. @example /tmp/snapshot_{{ entity_id.name }}.mp4
+        filename: string;
+        // Planned duration of the recording. The actual duration may vary. @constraints  number: min: 1, max: 3600, unit_of_measurement: seconds
+        duration?: number;
+        // Planned lookback period to include in the recording (in addition to the duration). Only available if there is currently an active HLS stream. The actual length of the lookback period may vary. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
+        lookback?: number;
       }
     >;
   };
@@ -1015,6 +1041,23 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Starts a script if it isn't running, stops it otherwise.
     toggle: ServiceFunction<object, T, object>;
   };
+  logbook: {
+    // Creates a custom entry in the logbook.
+    log: ServiceFunction<
+      object,
+      T,
+      {
+        // Custom name for an entity, can be referenced using an `entity_id`. @example Kitchen
+        name: string;
+        // Message of the logbook entry. @example is being used
+        message: string;
+        // Entity to reference in the logbook entry.
+        entity_id?: string;
+        // Determines which icon is used in the logbook entry. The icon illustrates the integration domain related to this logbook entry. @example light
+        domain?: string;
+      }
+    >;
+  };
   inputNumber: {
     // Reloads helpers from the YAML-configuration.
     reload: ServiceFunction<object, T, object>;
@@ -1036,48 +1079,15 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Reloads zones from the YAML-configuration.
     reload: ServiceFunction<object, T, object>;
   };
-  camera: {
-    // Enables the motion detection.
-    enableMotionDetection: ServiceFunction<object, T, object>;
-    // Disables the motion detection.
-    disableMotionDetection: ServiceFunction<object, T, object>;
-    // Turns off the camera.
-    turnOff: ServiceFunction<object, T, object>;
-    // Turns on the camera.
+  inputBoolean: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+    // Turns on the helper.
     turnOn: ServiceFunction<object, T, object>;
-    // Takes a snapshot from a camera.
-    snapshot: ServiceFunction<
-      object,
-      T,
-      {
-        // Full path to filename. @example /tmp/snapshot_{{ entity_id.name }}.jpg
-        filename: string;
-      }
-    >;
-    // Plays the camera stream on a supported media player.
-    playStream: ServiceFunction<
-      object,
-      T,
-      {
-        // Media players to stream to.
-        media_player: string;
-        // Stream format supported by the media player.
-        format?: "hls";
-      }
-    >;
-    // Creates a recording of a live camera feed.
-    record: ServiceFunction<
-      object,
-      T,
-      {
-        // Full path to filename. Must be mp4. @example /tmp/snapshot_{{ entity_id.name }}.mp4
-        filename: string;
-        // Planned duration of the recording. The actual duration may vary. @constraints  number: min: 1, max: 3600, unit_of_measurement: seconds
-        duration?: number;
-        // Planned lookback period to include in the recording (in addition to the duration). Only available if there is currently an active HLS stream. The actual length of the lookback period may vary. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
-        lookback?: number;
-      }
-    >;
+    // Turns off the helper.
+    turnOff: ServiceFunction<object, T, object>;
+    // Toggles the helper on/off.
+    toggle: ServiceFunction<object, T, object>;
   };
   timer: {
     // Reloads timers from the YAML-configuration.
@@ -1106,16 +1116,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         duration: string;
       }
     >;
-  };
-  inputBoolean: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-    // Turns on the helper.
-    turnOn: ServiceFunction<object, T, object>;
-    // Turns off the helper.
-    turnOff: ServiceFunction<object, T, object>;
-    // Toggles the helper on/off.
-    toggle: ServiceFunction<object, T, object>;
   };
   lock: {
     // Unlocks a lock.
@@ -1146,23 +1146,12 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  valve: {
-    // Opens a valve.
-    openValve: ServiceFunction<object, T, object>;
-    // Closes a valve.
-    closeValve: ServiceFunction<object, T, object>;
-    // Moves a valve to a specific position.
-    setValvePosition: ServiceFunction<
-      object,
-      T,
-      {
-        // Target position. @constraints  number: min: 0, max: 100, unit_of_measurement: %
-        position: number;
-      }
-    >;
-    // Stops the valve movement.
-    stopValve: ServiceFunction<object, T, object>;
-    // Toggles a valve open/closed.
+  switch: {
+    // Turns a switch off.
+    turnOff: ServiceFunction<object, T, object>;
+    // Turns a switch on.
+    turnOn: ServiceFunction<object, T, object>;
+    // Toggles a switch on/off.
     toggle: ServiceFunction<object, T, object>;
   };
   cover: {
@@ -1201,14 +1190,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Toggles a cover tilt open/closed.
     toggleCoverTilt: ServiceFunction<object, T, object>;
   };
-  switch: {
-    // Turns a switch off.
-    turnOff: ServiceFunction<object, T, object>;
-    // Turns a switch on.
-    turnOn: ServiceFunction<object, T, object>;
-    // Toggles a switch on/off.
-    toggle: ServiceFunction<object, T, object>;
-  };
   conversation: {
     // Launches a conversation from a transcribed text.
     process: ServiceFunction<
@@ -1234,6 +1215,59 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         language?: string;
         // Conversation agent to reload. @example homeassistant
         agent_id?: string;
+      }
+    >;
+  };
+  valve: {
+    // Opens a valve.
+    openValve: ServiceFunction<object, T, object>;
+    // Closes a valve.
+    closeValve: ServiceFunction<object, T, object>;
+    // Moves a valve to a specific position.
+    setValvePosition: ServiceFunction<
+      object,
+      T,
+      {
+        // Target position. @constraints  number: min: 0, max: 100, unit_of_measurement: %
+        position: number;
+      }
+    >;
+    // Stops the valve movement.
+    stopValve: ServiceFunction<object, T, object>;
+    // Toggles a valve open/closed.
+    toggle: ServiceFunction<object, T, object>;
+  };
+  vacuum: {
+    // Starts or resumes the cleaning task.
+    start: ServiceFunction<object, T, object>;
+    // Pauses the cleaning task.
+    pause: ServiceFunction<object, T, object>;
+    // Tells the vacuum cleaner to return to its dock.
+    returnToBase: ServiceFunction<object, T, object>;
+    // Tells the vacuum cleaner to do a spot clean-up.
+    cleanSpot: ServiceFunction<object, T, object>;
+    // Locates the vacuum cleaner robot.
+    locate: ServiceFunction<object, T, object>;
+    // Stops the current cleaning task.
+    stop: ServiceFunction<object, T, object>;
+    // Sets the fan speed of the vacuum cleaner.
+    setFanSpeed: ServiceFunction<
+      object,
+      T,
+      {
+        // Fan speed. The value depends on the integration. Some integrations have speed steps, like 'medium'. Some use a percentage, between 0 and 100. @example low
+        fan_speed: string;
+      }
+    >;
+    // Sends a command to the vacuum cleaner.
+    sendCommand: ServiceFunction<
+      object,
+      T,
+      {
+        // Command to execute. The commands are integration-specific. @example set_dnd_timer
+        command: string;
+        // Parameters for the command. The parameters are integration-specific. @example { 'key': 'value' }
+        params?: object;
       }
     >;
   };
@@ -1302,39 +1336,17 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  vacuum: {
-    // Starts or resumes the cleaning task.
-    start: ServiceFunction<object, T, object>;
-    // Pauses the cleaning task.
-    pause: ServiceFunction<object, T, object>;
-    // Tells the vacuum cleaner to return to its dock.
-    returnToBase: ServiceFunction<object, T, object>;
-    // Tells the vacuum cleaner to do a spot clean-up.
-    cleanSpot: ServiceFunction<object, T, object>;
-    // Locates the vacuum cleaner robot.
-    locate: ServiceFunction<object, T, object>;
-    // Stops the current cleaning task.
-    stop: ServiceFunction<object, T, object>;
-    // Sets the fan speed of the vacuum cleaner.
-    setFanSpeed: ServiceFunction<
-      object,
-      T,
-      {
-        // Fan speed. The value depends on the integration. Some integrations have speed steps, like 'medium'. Some use a percentage, between 0 and 100. @example low
-        fan_speed: string;
-      }
-    >;
-    // Sends a command to the vacuum cleaner.
-    sendCommand: ServiceFunction<
-      object,
-      T,
-      {
-        // Command to execute. The commands are integration-specific. @example set_dnd_timer
-        command: string;
-        // Parameters for the command. The parameters are integration-specific. @example { 'key': 'value' }
-        params?: object;
-      }
-    >;
+  schedule: {
+    // Reloads schedules from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+  };
+  commandLine: {
+    // Reloads command line configuration from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+  };
+  template: {
+    // Reloads template entities from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
   };
   reolink: {
     // Plays a ringtone on a Reolink Chime.
@@ -1368,46 +1380,18 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  mediaExtractor: {
-    // Extract media URL from a service.
-    extractMediaUrl: ServiceFunction<
+  cast: {
+    // Shows a dashboard view on a Chromecast device.
+    showLovelaceView: ServiceFunction<
       object,
       T,
       {
-        // URL where the media can be found. @example https://www.youtube.com/watch?v=dQw4w9WgXcQ
-        url: string;
-        // Youtube-dl query to select the quality of the result. @example best
-        format_query?: string;
-      }
-    >;
-    // Downloads file from given URL.
-    playMedia: ServiceFunction<
-      object,
-      T,
-      {
-        // The ID of the content to play. Platform dependent. @example https://soundcloud.com/bruttoband/brutto-11
-        media_content_id: string | number;
-        // The type of the content to play. Must be one of MUSIC, TVSHOW, VIDEO, EPISODE, CHANNEL or PLAYLIST MUSIC.
-        media_content_type: "CHANNEL" | "EPISODE" | "PLAYLIST MUSIC" | "MUSIC" | "TVSHOW" | "VIDEO";
-      }
-    >;
-  };
-  restCommand: {
-    //
-    assistantRelay: ServiceFunction<object, T, object>;
-    // Reloads RESTful commands from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-  };
-  inputText: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-    // Sets the value.
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        // The target value. @example This is an example text
-        value: string;
+        // Media player entity to show the dashboard view on.
+        entity_id: string;
+        // The URL path of the dashboard to show. @example lovelace-cast
+        dashboard_path: string;
+        // The URL path of the dashboard view to show. @example downstairs
+        view_path?: string;
       }
     >;
   };
@@ -1447,32 +1431,61 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  template: {
-    // Reloads template entities from the YAML-configuration.
+  restCommand: {
+    //
+    assistantRelay: ServiceFunction<object, T, object>;
+    // Reloads RESTful commands from the YAML-configuration.
     reload: ServiceFunction<object, T, object>;
   };
-  cast: {
-    // Shows a dashboard view on a Chromecast device.
-    showLovelaceView: ServiceFunction<
+  mediaExtractor: {
+    // Extract media URL from a service.
+    extractMediaUrl: ServiceFunction<
       object,
       T,
       {
-        // Media player entity to show the dashboard view on.
-        entity_id: string;
-        // The URL path of the dashboard to show. @example lovelace-cast
-        dashboard_path: string;
-        // The URL path of the dashboard view to show. @example downstairs
-        view_path?: string;
+        // URL where the media can be found. @example https://www.youtube.com/watch?v=dQw4w9WgXcQ
+        url: string;
+        // Youtube-dl query to select the quality of the result. @example best
+        format_query?: string;
+      }
+    >;
+    // Downloads file from given URL.
+    playMedia: ServiceFunction<
+      object,
+      T,
+      {
+        // The ID of the content to play. Platform dependent. @example https://soundcloud.com/bruttoband/brutto-11
+        media_content_id: string | number;
+        // The type of the content to play. Must be one of MUSIC, TVSHOW, VIDEO, EPISODE, CHANNEL or PLAYLIST MUSIC.
+        media_content_type: "CHANNEL" | "EPISODE" | "PLAYLIST MUSIC" | "MUSIC" | "TVSHOW" | "VIDEO";
       }
     >;
   };
-  schedule: {
-    // Reloads schedules from the YAML-configuration.
+  inputText: {
+    // Reloads helpers from the YAML-configuration.
     reload: ServiceFunction<object, T, object>;
+    // Sets the value.
+    setValue: ServiceFunction<
+      object,
+      T,
+      {
+        // The target value. @example This is an example text
+        value: string;
+      }
+    >;
   };
-  commandLine: {
-    // Reloads command line configuration from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
+  assistSatellite: {
+    // Let the satellite announce a message.
+    announce: ServiceFunction<
+      object,
+      T,
+      {
+        // The message to announce. @example Time to wake up!
+        message?: string;
+        // The media ID to announce instead of using text-to-speech.
+        media_id?: string;
+      }
+    >;
   };
   lawnMower: {
     // Starts the mowing task.
@@ -1552,30 +1565,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Logs all the current asyncio tasks.
     logCurrentTasks: ServiceFunction<object, T, object>;
   };
-  assistSatellite: {
-    // Let the satellite announce a message.
-    announce: ServiceFunction<
-      object,
-      T,
-      {
-        // The message to announce. @example Time to wake up!
-        message?: string;
-        // The media ID to announce instead of using text-to-speech.
-        media_id?: string;
-      }
-    >;
-  };
-  number: {
-    // Sets the value of a number.
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        // The target value to set. @example 42
-        value?: string;
-      }
-    >;
-  };
   select: {
     // Selects the first option.
     selectFirst: ServiceFunction<object, T, object>;
@@ -1606,6 +1595,17 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       {
         // If the option should cycle from the first to the last.
         cycle?: boolean;
+      }
+    >;
+  };
+  number: {
+    // Sets the value of a number.
+    setValue: ServiceFunction<
+      object,
+      T,
+      {
+        // The target value to set. @example 42
+        value?: string;
       }
     >;
   };
@@ -1666,17 +1666,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         device?: string;
         // The single command or the list of commands to be deleted. @example Mute
         command: object;
-      }
-    >;
-  };
-  weather: {
-    // Get weather forecasts.
-    getForecasts: ServiceFunction<
-      object,
-      T,
-      {
-        // Forecast type: daily, hourly or twice daily.
-        type: "daily" | "hourly" | "twice_daily";
       }
     >;
   };
@@ -1849,79 +1838,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  text: {
-    // Sets the value.
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        // Enter your text. @example Hello world!
-        value: string;
-      }
-    >;
-  };
-  siren: {
-    // Turns the siren on.
-    turnOn: ServiceFunction<
-      object,
-      T,
-      {
-        // The tone to emit. When `available_tones` property is a map, either the key or the value can be used. Must be supported by the integration. @example fire
-        tone?: string;
-        // The volume. 0 is inaudible, 1 is the maximum volume. Must be supported by the integration. @example 0.5 @constraints  number: min: 0, max: 1, step: 0.05
-        volume_level?: number;
-        // Number of seconds the sound is played. Must be supported by the integration. @example 15
-        duration?: string;
-      }
-    >;
-    // Turns the siren off.
-    turnOff: ServiceFunction<object, T, object>;
-    // Toggles the siren on/off.
-    toggle: ServiceFunction<object, T, object>;
-  };
-  calendar: {
-    // Adds a new calendar event.
-    createEvent: ServiceFunction<
-      object,
-      T,
-      {
-        // Defines the short summary or subject for the event. @example Department Party
-        summary: string;
-        // A more complete description of the event than the one provided by the summary. @example Meeting to provide technical review for 'Phoenix' design.
-        description?: string;
-        // The date and time the event should start. @example 2022-03-22 20:00:00
-        start_date_time?: string;
-        // The date and time the event should end. @example 2022-03-22 22:00:00
-        end_date_time?: string;
-        // The date the all-day event should start. @example 2022-03-22
-        start_date?: string;
-        // The date the all-day event should end (exclusive). @example 2022-03-23
-        end_date?: string;
-        // Days or weeks that you want to create the event in. @example {'days': 2} or {'weeks': 2}
-        in?: object;
-        // The location of the event. @example Conference Room - F123, Bldg. 002
-        location?: string;
-      }
-    >;
-    // Get events on a calendar within a time range.
-    getEvents: ServiceFunction<
-      object,
-      T,
-      {
-        // Returns active events after this time (exclusive). When not set, defaults to now. @example 2022-03-22 20:00:00
-        start_date_time?: string;
-        // Returns active events before this time (exclusive). Cannot be used with Duration. @example 2022-03-22 22:00:00
-        end_date_time?: string;
-        // Returns active events from Start time for the specified duration.
-        duration?: {
-          hours?: number;
-          days?: number;
-          minutes?: number;
-          seconds?: number;
-        };
-      }
-    >;
-  };
   fan: {
     // Turns fan on.
     turnOn: ServiceFunction<
@@ -1990,6 +1906,90 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       {
         // Preset fan mode. @example auto
         preset_mode: string;
+      }
+    >;
+  };
+  siren: {
+    // Turns the siren on.
+    turnOn: ServiceFunction<
+      object,
+      T,
+      {
+        // The tone to emit. When `available_tones` property is a map, either the key or the value can be used. Must be supported by the integration. @example fire
+        tone?: string;
+        // The volume. 0 is inaudible, 1 is the maximum volume. Must be supported by the integration. @example 0.5 @constraints  number: min: 0, max: 1, step: 0.05
+        volume_level?: number;
+        // Number of seconds the sound is played. Must be supported by the integration. @example 15
+        duration?: string;
+      }
+    >;
+    // Turns the siren off.
+    turnOff: ServiceFunction<object, T, object>;
+    // Toggles the siren on/off.
+    toggle: ServiceFunction<object, T, object>;
+  };
+  calendar: {
+    // Adds a new calendar event.
+    createEvent: ServiceFunction<
+      object,
+      T,
+      {
+        // Defines the short summary or subject for the event. @example Department Party
+        summary: string;
+        // A more complete description of the event than the one provided by the summary. @example Meeting to provide technical review for 'Phoenix' design.
+        description?: string;
+        // The date and time the event should start. @example 2022-03-22 20:00:00
+        start_date_time?: string;
+        // The date and time the event should end. @example 2022-03-22 22:00:00
+        end_date_time?: string;
+        // The date the all-day event should start. @example 2022-03-22
+        start_date?: string;
+        // The date the all-day event should end (exclusive). @example 2022-03-23
+        end_date?: string;
+        // Days or weeks that you want to create the event in. @example {'days': 2} or {'weeks': 2}
+        in?: object;
+        // The location of the event. @example Conference Room - F123, Bldg. 002
+        location?: string;
+      }
+    >;
+    // Get events on a calendar within a time range.
+    getEvents: ServiceFunction<
+      object,
+      T,
+      {
+        // Returns active events after this time (exclusive). When not set, defaults to now. @example 2022-03-22 20:00:00
+        start_date_time?: string;
+        // Returns active events before this time (exclusive). Cannot be used with Duration. @example 2022-03-22 22:00:00
+        end_date_time?: string;
+        // Returns active events from Start time for the specified duration.
+        duration?: {
+          hours?: number;
+          days?: number;
+          minutes?: number;
+          seconds?: number;
+        };
+      }
+    >;
+  };
+  weather: {
+    // Get weather forecasts.
+    getForecasts: ServiceFunction<
+      object,
+      T,
+      {
+        // Forecast type: daily, hourly or twice daily.
+        type: "daily" | "hourly" | "twice_daily";
+      }
+    >;
+  };
+  text: {
+    // Sets the value.
+    setValue: ServiceFunction<
+      object,
+      T,
+      {
+        // Enter your text. @example Hello world!
+        value: string;
       }
     >;
   };
@@ -2066,5 +2066,172 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     >;
     // Reloads the automation configuration.
     reload: ServiceFunction<object, T, object>;
+  };
+  zha: {
+    // Allows nodes to join the Zigbee network.
+    permit: ServiceFunction<
+      object,
+      T,
+      {
+        // Time to permit joins. @constraints  number: min: 0, max: 254, unit_of_measurement: seconds
+        duration?: number;
+        // IEEE address of the node permitting new joins. @example 00:0d:6f:00:05:7d:2d:34
+        ieee?: string;
+        // IEEE address of the joining device (must be used with the install code). @example 00:0a:bf:00:01:10:23:35
+        source_ieee?: string;
+        // Install code of the joining device (must be used with the source_ieee). @example 1234-5678-1234-5678-AABB-CCDD-AABB-CCDD-EEFF
+        install_code?: string;
+        // Value of the QR install code (different between vendors). @example Z:000D6FFFFED4163B$I:52797BF4A5084DAA8E1712B61741CA024051
+        qr_code?: string;
+      }
+    >;
+    // Removes a node from the Zigbee network.
+    remove: ServiceFunction<
+      object,
+      T,
+      {
+        // IEEE address of the node to remove. @example 00:0d:6f:00:05:7d:2d:34
+        ieee: string;
+      }
+    >;
+    // Sets an attribute value for the specified cluster on the specified entity.
+    setZigbeeClusterAttribute: ServiceFunction<
+      object,
+      T,
+      {
+        // IEEE address for the device. @example 00:0d:6f:00:05:7d:2d:34
+        ieee: string;
+        // Endpoint ID for the cluster. @constraints  number: min: 1, max: 65535, mode: box
+        endpoint_id: number;
+        // ZCL cluster to retrieve attributes for. @constraints  number: min: 1, max: 65535
+        cluster_id: number;
+        // Type of the cluster.
+        cluster_type?: "in" | "out";
+        // ID of the attribute to set. @constraints  number: min: 1, max: 65535
+        attribute: number;
+        // Value to write to the attribute. @example 1
+        value: string;
+        // Manufacturer code. Use a value of '-1' to force no code to be set. @example 252
+        manufacturer?: string;
+      }
+    >;
+    // Issues a command on the specified cluster on the specified entity.
+    issueZigbeeClusterCommand: ServiceFunction<
+      object,
+      T,
+      {
+        // IEEE address for the device. @example 00:0d:6f:00:05:7d:2d:34
+        ieee: string;
+        // Endpoint ID for the cluster. @constraints  number: min: 1, max: 65535
+        endpoint_id: number;
+        // ZCL cluster to retrieve attributes for. @constraints  number: min: 1, max: 65535
+        cluster_id: number;
+        // Type of the cluster.
+        cluster_type?: "in" | "out";
+        // ID of the command to execute. @constraints  number: min: 1, max: 65535
+        command: number;
+        // Type of the command to execute.
+        command_type: "client" | "server";
+        // Arguments to pass to the command. @example [arg1, arg2, argN]
+        args?: object;
+        // Parameters to pass to the command.
+        params?: object;
+        // Manufacturer code. Use a value of '-1' to force no code to be set. @example 252
+        manufacturer?: string;
+      }
+    >;
+    // Issue command on the specified cluster on the specified group.
+    issueZigbeeGroupCommand: ServiceFunction<
+      object,
+      T,
+      {
+        // Hexadecimal address of the group. @example 546
+        group: string;
+        // ZCL cluster to send command to. @constraints  number: min: 1, max: 65535
+        cluster_id: number;
+        // Type of the cluster.
+        cluster_type?: "in" | "out";
+        // ID of the command to execute. @constraints  number: min: 1, max: 65535
+        command: number;
+        // Arguments to pass to the command. @example [arg1, arg2, argN]
+        args?: object;
+        // Manufacturer code. Use a value of '-1' to force no code to be set. @example 252
+        manufacturer?: string;
+      }
+    >;
+    // This action uses the WD capabilities to emit a quick audible/visible pulse called a 'squawk'. The squawk command has no effect if the WD is currently active (warning in progress).
+    warningDeviceSquawk: ServiceFunction<
+      object,
+      T,
+      {
+        // IEEE address for the device. @example 00:0d:6f:00:05:7d:2d:34
+        ieee: string;
+        // The Squawk Mode field is used as a 4-bit enumeration, and can have one of the values shown in Table 8-24 of the ZCL spec - Squawk Mode Field. The exact operation of each mode (how the WD “squawks”) is implementation specific. @constraints  number: min: 0, max: 1, mode: box
+        mode?: number;
+        // The strobe field is used as a Boolean, and determines if the visual indication is also required in addition to the audible squawk, as shown in Table 8-25 of the ZCL spec - Strobe Bit. @constraints  number: min: 0, max: 1, mode: box
+        strobe?: number;
+        // The squawk level field is used as a 2-bit enumeration, and determines the intensity of audible squawk sound as shown in Table 8-26 of the ZCL spec - Squawk Level Field Values. @constraints  number: min: 0, max: 3, mode: box
+        level?: number;
+      }
+    >;
+    // This action starts the operation of the warning device. The warning device alerts the surrounding area by audible (siren) and visual (strobe) signals.
+    warningDeviceWarn: ServiceFunction<
+      object,
+      T,
+      {
+        // IEEE address for the device. @example 00:0d:6f:00:05:7d:2d:34
+        ieee: string;
+        // The Warning Mode field is used as a 4-bit enumeration, can have one of the values 0-6 defined below in table 8-20 of the ZCL spec. The exact behavior of the warning device in each mode is according to the relevant security standards. @constraints  number: min: 0, max: 6, mode: box
+        mode?: number;
+        // The Strobe field is used as a 2-bit enumeration, and determines if the visual indication is required in addition to the audible siren, as indicated in Table 8-21 of the ZCL spec. '0' means no strobe, '1' means strobe. If the strobe field is “1” and the Warning Mode is “0” (“Stop”), then only the strobe is activated. @constraints  number: min: 0, max: 1, mode: box
+        strobe?: number;
+        // The Siren Level field is used as a 2-bit enumeration, and indicates the intensity of audible squawk sound as shown in Table 8-22 of the ZCL spec. @constraints  number: min: 0, max: 3, mode: box
+        level?: number;
+        // Requested duration of warning, in seconds (16 bit). If both Strobe and Warning Mode are '0' this field is ignored. @constraints  number: min: 0, max: 65535, unit_of_measurement: seconds
+        duration?: number;
+        // Indicates the length of the flash cycle. This allows you to vary the flash duration for different alarm types (e.g., fire, police, burglar). The valid range is 0-100 in increments of 10. All other values must be rounded to the nearest valid value. Strobe calculates a duty cycle over a duration of one second. The ON state must precede the OFF state. For example, if the Strobe Duty Cycle field specifies “40,”, then the strobe flashes ON for 4/10ths of a second and then turns OFF for 6/10ths of a second. @constraints  number: min: 0, max: 100, step: 10
+        duty_cycle?: number;
+        // Indicates the intensity of the strobe as shown in Table 8-23 of the ZCL spec. This attribute is designed to vary the output of the strobe (i.e., brightness) and not its frequency, which is detailed in section 8.4.2.3.1.6 of the ZCL spec. @constraints  number: min: 0, max: 3, mode: box
+        intensity?: number;
+      }
+    >;
+    // Sets a user code on a lock.
+    setLockUserCode: ServiceFunction<
+      object,
+      T,
+      {
+        // Code slot to set the code in. @example 1
+        code_slot: string;
+        // Code to set. @example 1234
+        user_code: string;
+      }
+    >;
+    // Enables a user code on a lock.
+    enableLockUserCode: ServiceFunction<
+      object,
+      T,
+      {
+        // Code slot to enable. @example 1
+        code_slot: string;
+      }
+    >;
+    // Disables a user code on a lock.
+    disableLockUserCode: ServiceFunction<
+      object,
+      T,
+      {
+        // Code slot to disable. @example 1
+        code_slot: string;
+      }
+    >;
+    // Clears a user code from a lock.
+    clearLockUserCode: ServiceFunction<
+      object,
+      T,
+      {
+        // Code slot to clear code from. @example 1
+        code_slot: string;
+      }
+    >;
   };
 }
