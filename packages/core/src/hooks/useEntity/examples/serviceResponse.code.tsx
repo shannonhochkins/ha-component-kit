@@ -37,7 +37,7 @@ function CallServiceExample() {
 }
 
 export function App() {
-  return <HassConnect hassUrl="http://localhost:1234">
+  return <HassConnect hassUrl="http://homeassistant.local:8123">
     <CallServiceExample />
   </HassConnect>
 }

@@ -3,34 +3,10 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useTemplate, useEntity } from "@hakit/core";
 import { ThemeProvider, Column, Alert, Row, FabCard } from "@components";
 import { HassConnect } from "@hass-connect-fake";
+import { templateCodeToProcess } from './examples/constants';
+import basicExample from './examples/basic.code?raw';
+import simpleExample from './examples/simple.code?raw';
 
-const templateCodeToProcess = `
-{% if is_state(entity_id, "on") %}
-  The entity is on!!
-{% else %}
-  The entity is not on!!
-{% endif %}
-`;
-
-const exampleUsage = `
-import { useTemplate, HassConnect } from "@hakit/core";
-function RenderCustomTemplate() {
-  const template = useTemplate({
-    template: templateCodeToProcess,
-    variables: { entity_id: 'light.fake_light_1' }
-  });
-  return <>
-    Template result: {template ?? 'loading'}
-  </>
-}\n
-function App() {
-  return (
-    <HassConnect hassUrl="http://homeassistant.local:8123">
-      <RenderCustomTemplate />
-    </HassConnect>
-  );
-}
-`;
 
 function SubscribeTemplateExample() {
   const entity = useEntity("light.fake_light_1");
@@ -56,7 +32,7 @@ function SubscribeTemplateExample() {
       <Source dark code={`// templateCodeToProcess\r${templateCodeToProcess}`} />
       <Alert type="info" title={`Template result: ${template ?? "loading"}`} />
       <Alert type="warning" title="Here's the source code for the above template example:" cssStyles={`margin-top: 2rem;`} />
-      <Source dark code={exampleUsage} />
+      <Source dark code={basicExample} />
     </Column>
   );
 }
@@ -91,9 +67,7 @@ export default {
           <p>The following is the use of the hook in it&apos;s default form:</p>
           <Source
             dark
-            code={`// use within HassConnect context!\nconst template = useTemplate({
-  template: '{{ is_state_attr("climate.air_conditioner", "state", "heat") }}',
-});`}
+            code={simpleExample}
           />
           <p>Here&apos;s a working example of how this hook functions when connected to entities:</p>
           <Template />

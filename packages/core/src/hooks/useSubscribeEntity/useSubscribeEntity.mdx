@@ -1,4 +1,5 @@
 import { Meta, Source } from '@storybook/blocks';
+import basicExample from './examples//basic.code?raw';
 
 <Meta title="core/hooks/useSubscribeEntity" />
 
@@ -10,19 +11,5 @@ This will subscribe to a single entity and only return an updated getEntity func
 
 ### Example Usage
 
-<Source dark code={`
-import { HassConnect, useSubscribeEntity } from '@hakit/core';
-function Office() {
-  const getEntity = useSubscribeEntity('light.some_light');
-  const entity = getEntity();
-  return <div>
-    {entity.state}
-  </div>
-}
-function App() {
-  return <HassConnect hassUrl="http://localhost:1234">
-    <Office />
-  </HassConnect>
-}
-`} />
+<Source dark code={basicExample} />
 
