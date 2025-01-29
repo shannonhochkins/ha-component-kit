@@ -125,7 +125,7 @@ export type UseBreakpoint = StoryObj<typeof Empty>;
 export const UseBreakpoint: Story = {
   render: Empty,
   parameters: {
-    redirectTo: '/?path=/docs/components-hooks-usebreakpoint--docs',
+    redirectTo: '/docs/components-hooks-usebreakpoint--docs',
   }
 };
 

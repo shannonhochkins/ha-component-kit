@@ -2,7 +2,6 @@ import { memo, useMemo, type ReactNode } from "react";
 import { useRef } from "react";
 import { HassProvider } from "./Provider";
 import type { HassProviderProps } from "./Provider";
-import { motion, AnimatePresence } from "framer-motion";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
 
@@ -19,12 +18,6 @@ export type HassConnectProps = {
   onReady?: () => void;
   /** options for the provider */
   options?: Omit<HassProviderProps, "children" | "hassUrl">;
-};
-
-const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-  exit: { opacity: 0 },
 };
 
 const blip = keyframes`
@@ -77,7 +70,7 @@ const Loader = styled(LoaderBase)`
   }
 `;
 
-const MotionDiv = styled(motion.div)`
+const Wrapper = styled.div`
   width: 100%;
   height: 100%;
 `;
@@ -111,9 +104,9 @@ export const HassConnect = memo(function HassConnect({
   return (
     <HassProvider hassUrl={sanitizedUrl} hassToken={hassToken} {...options}>
       {(ready) => (
-        <AnimatePresence mode="wait">
+        <>
           {ready ? (
-            <MotionDiv key="children" initial="hidden" animate="visible" exit="exit" variants={fadeIn}>
+            <Wrapper>
               {onReady &&
                 !onReadyCalled.current &&
                 ((() => {
@@ -122,13 +115,11 @@ export const HassConnect = memo(function HassConnect({
                 })(),
                 null)}
               {children}
-            </MotionDiv>
+            </Wrapper>
           ) : (
-            <MotionDiv key="loading" initial="hidden" animate="visible" exit="exit" variants={fadeIn}>
-              {loading}
-            </MotionDiv>
+            <Wrapper>{loading}</Wrapper>
           )}
-        </AnimatePresence>
+        </>
       )}
     </HassProvider>
   );

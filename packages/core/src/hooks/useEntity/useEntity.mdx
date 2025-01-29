@@ -1,14 +1,16 @@
 import { Source, Meta } from '@storybook/blocks';
 
+import basicExample from './examples/basic.code?raw';
+import serviceExample from './examples/service.code?raw';
+import serviceResponseExample from './examples/serviceResponse.code?raw';
+import historyExample from './examples/withHistory.code?raw';
+
 <Meta title="core/hooks/useEntity" />
 # useEntity()
 ###### `useEntity(entity: string, options?: UseEntityOptions)`
 This hook is designed to retrieve an entity and return all it's information including history (if not disabled) and the services for the entity.
 
-This is a memoized wrapper for the getEntity helper from `useHass()` allowing your component to only update
-when the entity actually changes.
-
-This hook should be used inside the context of `<HassConnect />` and not outside of it otherwise it will not have access to
+This hook should be used inside the context of [`<HassConnect />`](/docs/core-hassconnect--docs) and not outside of it otherwise it will not have access to
 the authenticated home assistant API.
 
 <iframe
@@ -16,32 +18,19 @@ the authenticated home assistant API.
     margin: "auto",
     display: "block",
     marginTop: "20px",
+    border: 0,
   }}
   width="560"
   height="315"
-  frameBorder={0}
   src="https://www.youtube.com/embed/kmNGka8obNA"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
   allowFullScreen
 ></iframe>
 
 
-
 ### Example Usage
 
-<Source dark code={`
-import { HassConnect, useEntity } from '@hakit/core';
-function Office() {
-  const lightStrip = useEntity('light.office_striplight');
-  // can now access all properties relating to the light
-  return lightStrip.state;
-}
-function App() {
-  return <HassConnect hassUrl="http://localhost:1234">
-    <Office />
-  </HassConnect>
-}
-`} />
+<Source dark code={basicExample} />
 
 ### Options
 useEntity takes a second parameter which is an object of options.
@@ -52,76 +41,15 @@ The options are:
 
 Example:
 
-<Source dark code={`
-import { HassConnect, useEntity } from '@hakit/core';
-function Office() {
-  const lightStrip = useEntity('light.office_striplight', {
-    returnNullIfNotFound: true,
-    history: {
-      disable: false,
-      hoursToShow: 96 // defaults to 24
-    }
-  });
-  console.info('light history', lightStrip.history);
-  // can now access all properties relating to the light
-  return lightStrip?.state ?? 'unknown';
-}
-function App() {
-  return <HassConnect hassUrl="http://localhost:1234">
-    <Office />
-  </HassConnect>
-}
-`} />
+<Source dark code={historyExample} />
 
 ### Using services from entity
 The `useEntity()` hook is integrated with the `useService` hook so you can use it directly from the entity object.
 Everything is typed so it makes it very easy to use and develop with.
-<Source dark code={`
-import { HassConnect, useEntity } from '@hakit/core';
-function UseServiceExample() {
-  const entity = useEntity('light.some_light_entity');
-  return <button onClick={() => entity.service.toggle()} >TOGGLE LIGHT</button>
-}
-`} />
+<Source dark code={serviceExample} />
 
 
 ### Getting a response back from a service
 Some services return a response, like the calendar `getEvents` service, you can access this response value by adding `returnResponse` to the service call.
 The response object type is able to be defined by passing a generic type to the service call itself, see example below:
-<Source dark code={`
-import { useEntity } from '@hakit/core';
-import { useState, useCallback } from 'react';
-interface CalendarEvent {
-  description: string;
-  end: string;
-  start: string;
-  summary: string;
-}
-interface CalendarResponse {
-  "calendar.some_calendar": {
-    events: CalendarEvent[];
-  }
-}
-function CallServiceExample() {
-  const entity = useEntity('calendar.some_calendar');
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const getEvents = useCallback(() => {
-    entity.service.getEvents<CalendarResponse>({
-      returnResponse: true,
-      target: 'calendar.some_calendar',
-      serviceData: {
-        start_date_time: '2024-12-22 20:00:00',
-        duration: {
-          days: 24
-        }
-      }
-    }).then((response) => {
-      setEvents(response.events);
-    });
-  }, [entity]);
-  return <>
-    <p>Events: {events.length}</p>
-   <button onClick={getEvents}>GET EVENTS</button>
-  </>
-}
-`} />
+<Source dark code={serviceResponseExample} />

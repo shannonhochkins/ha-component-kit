@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useMemo, useState, useId } from "react";
+import { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import { useService, useHass, isUnavailableState, useEntity, OFF, supportsFeatureFromAttributes } from "@hakit/core";
 import { snakeCase, clamp } from "lodash";
 import { useGesture } from "@use-gesture/react";
@@ -198,7 +198,6 @@ function InternalMediaPlayerCard({
   const disabled = isUnavailable || _disabled;
   const seekDisabled = isIdle || isOff || isStandby || buffering || disabled;
   const [isGroupingModalOpen, setIsGroupingModalOpen] = useState(false);
-  const groupingLayoutId = useId();
 
   const updateClock = useCallback(
     (x: number) => {
@@ -371,7 +370,6 @@ function InternalMediaPlayerCard({
                       entity={_entity}
                       disabled={disabled}
                       onSpeakerGroupClick={() => setIsGroupingModalOpen(true)}
-                      layoutId={groupingLayoutId}
                       hideGrouping={hideGrouping}
                     />
                   )}
@@ -414,7 +412,6 @@ function InternalMediaPlayerCard({
                     entity={_entity}
                     disabled={disabled}
                     onSpeakerGroupClick={() => setIsGroupingModalOpen(true)}
-                    layoutId={groupingLayoutId}
                     hideGrouping={hideGrouping}
                   />
                 )}

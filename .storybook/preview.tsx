@@ -3,6 +3,7 @@ import React from "react";
 import { withThemeFromJSXProvider } from '@storybook/addon-themes';
 import { ThemeProvider } from '@storybook/theming';
 import { Page } from "./page";
+import { redirectToStory } from './redirect';
 import './global.css';
 
 
@@ -14,6 +15,7 @@ const theme = {
     }
   }
 };
+
 
 
 export default {
@@ -31,7 +33,7 @@ export default {
       // so we redirect from one story to another
       if (args.parameters.redirectTo) {
         if (window.top) {
-          window.top.location.href = args.parameters.redirectTo;
+          redirectToStory(args.parameters.redirectTo);
         }
       }
       const centered = args.parameters.centered ? {

@@ -1,6 +1,7 @@
 import { Source, Meta } from '@storybook/blocks';
+import getAllEntitiesExample from './examples/getAllEntities.code?raw';
 
-<Meta title="core/hooks/useHass/getAllEntities" />
+<Meta title="core/hooks/useHass/hass/getAllEntities" />
 
 # getAllEntities()
 
@@ -12,9 +13,4 @@ This will return every entity available in your home assistant instance as an ob
 
 ### Example Usage
 
-```ts
-function GetEntitiesExample() {
-  const { getAllEntities } = useHass();
-  const entities = getAllEntities();
-  return <p>You have {Object.keys(entities).length} entities</p>
-}
+<Source dark language="ts" code={getAllEntitiesExample} />

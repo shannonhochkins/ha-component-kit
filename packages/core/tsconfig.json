@@ -14,9 +14,9 @@
     }
   },
   "rootDir": "./src",
-  "include": ["src", "scripts", "bin", "mocks", "./src/.d.ts", "../../.d.ts"],
+  "include": ["src", "scripts", "bin", "mocks", "./src/.d.ts", "../../.d.ts", "./vite-env.d.ts"],
   "exclude": [
-    "node_modules"
+    "node_modules",
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

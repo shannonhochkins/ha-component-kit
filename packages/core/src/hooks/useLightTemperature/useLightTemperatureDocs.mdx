@@ -1,0 +1,30 @@
+import { Meta, Source, Story, Canvas } from '@storybook/blocks';
+import basicExample from './examples/basic.code?raw';
+import * as Primary from './examples/primary.stories';
+
+<Meta title="core/hooks/useLightTemperature" />
+
+# useLightTemperature()
+###### `useLightTemperature(entity: HassEntityWithService<"light">)`
+
+The `useLightTemperature` hook is a custom React hook that calculates the color temperature of a light entity in a Home Assistant environment.
+
+Here's a detailed description:
+
+- **Input**: The hook takes a single argument, `entity`, which is an object representing a Home Assistant light entity with its associated services.
+- **Output**: The hook returns the color temperature of the light in Kelvin if the light is on and in color temperature mode; otherwise, it returns `undefined`.
+- **Logic**:
+  - The hook uses `useMemo` to memoize the result, ensuring that the calculation is only performed when the relevant dependencies change.
+  - If the light's state is `ON` and its color mode is `COLOR_TEMP`, it returns the `color_temp_kelvin` attribute of the light entity.
+  - If the light is off or not in color temperature mode, it returns `undefined`.
+- **Dependencies**: The memoized value is recalculated whenever the state, `color_mode`, or `color_temp_kelvin` attributes of the entity change.
+
+This hook is useful for efficiently managing and displaying the color temperature of a light in a React component, ensuring that the calculation is only performed when necessary.
+
+### Example Usage
+
+<Source dark code={basicExample} />
+
+#### Outputs
+
+<Canvas of={Primary.PrimaryExample} />

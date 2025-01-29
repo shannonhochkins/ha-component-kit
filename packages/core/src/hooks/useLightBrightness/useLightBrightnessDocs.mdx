@@ -1,0 +1,30 @@
+import { Meta, Source, Canvas } from '@storybook/blocks';
+import basicExample from './examples/basic.code?raw';
+import * as Primary from './examples/primary.stories';
+
+<Meta title="core/hooks/useLightBrightness" />
+
+# useLightBrightness()
+###### `useLightBrightness(entity: HassEntityWithService<"light">)`
+
+The `useLightBrightness` hook is a custom React hook that calculates the brightness percentage of a light entity in a Home Assistant environment.
+
+Here's a detailed description:
+
+- **Input**: The hook takes a single argument, entity, which is an object representing a Home Assistant light entity with its associated services.
+- **Output**: The hook returns a memoized value representing the brightness percentage of the light.
+- **Logic**:
+  - If the light is in the "ON" state, it calculates the brightness percentage by converting the brightness attribute (which ranges from 0 to 255) to a percentage (0 to 100). It ensures that the minimum brightness percentage is 1%.
+  - If the light is not in the "ON" state, it returns 0, indicating that the light is off.
+- **Dependencies**: The memoized value is recalculated whenever the brightness attribute or the state of the entity changes.
+This hook is useful for efficiently managing and displaying the brightness level of a light in a React component, ensuring that the calculation is only performed when necessary.
+
+### Example Usage
+
+<Source dark code={basicExample} />
+
+#### Outputs
+
+<Canvas of={Primary.PrimaryExample} />
+
+

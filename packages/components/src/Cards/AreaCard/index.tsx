@@ -162,6 +162,10 @@ function InternalAreaCard({
     }
   }, [isPressed, open]);
 
+  const transition = {
+    duration: animationDuration,
+  };
+
   return (
     <>
       {open &&
@@ -170,22 +174,22 @@ function InternalAreaCard({
             {open === true && (
               <FullScreen
                 key={`fullscreen-layout-${idRef}`}
-                layoutId={idRef}
-                id={`${idRef}-expanded`}
                 className={"full-screen"}
                 initial={{ opacity: 0 }}
                 transition={{
-                  duration: animationDuration,
+                  ...transition,
                 }}
                 exit={{
                   opacity: 0,
                   transition: {
+                    ...transition,
                     delay: animationDuration,
                   },
                 }}
                 animate={{
                   opacity: 1,
                   transition: {
+                    ...transition,
                     delay: 0,
                   },
                 }}
@@ -225,7 +229,6 @@ function InternalAreaCard({
         disableActiveState
         disableRipples
         id={`${idRef}-area-card`}
-        layoutId={idRef}
         className={`area-card ${className ?? ""}`}
         onClick={() => {
           if (!disable) {

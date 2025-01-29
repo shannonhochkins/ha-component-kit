@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { localize, useHass } from "@hakit/core";
 import { AnimatePresence, HTMLMotionProps, MotionProps, type Variant, type Transition, motion } from "framer-motion";
-import { Fragment, ReactNode, memo, useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, ReactNode, memo, useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import { useKeyPress } from "react-use";
@@ -120,8 +120,6 @@ type Extendable = React.ComponentPropsWithoutRef<"div"> & MotionProps;
 export interface ModalProps extends Omit<Extendable, "title"> {
   /** triggers the modal opening */
   open: boolean;
-  /** the id to provide for framer-motion, this should link back to another layoutId property on the element triggering the Modal */
-  id: string;
   /** the react layout to include inside the Modal */
   children: React.ReactNode;
   /** The title of the dialog */
@@ -142,53 +140,51 @@ export interface ModalProps extends Omit<Extendable, "title"> {
   autocloseSeconds?: number;
 }
 const LAYOUT_MODAL_ANIMATION: CustomModalAnimation = (duration, id) => {
-  const transition = {
+  const springTransition = {
+    type: "spring",
+    damping: 10,
+    mass: 0.75,
+    stiffness: 100,
+    duration,
+  };
+
+  const fadeSlideTransition = {
     duration,
     ease: [0.42, 0, 0.58, 1],
   };
+
   return {
     modal: {
-      transition: {
-        duration,
-        type: "spring",
-        damping: 7.5,
-        mass: 0.55,
-        stiffness: 100,
-        layout: {
-          duration,
+      layoutId: id,
+      variants: {
+        initial: { y: "100%", opacity: 0, scaleY: 0 }, // Slide up from the bottom
+        animate: {
+          y: 0,
+          opacity: 1,
+          scaleY: 1,
+          transition: springTransition,
+        },
+        exit: {
+          y: "100%",
+          scaleY: 0,
+          opacity: 0,
+          transition: fadeSlideTransition,
         },
       },
-      layoutId: id,
     },
     header: {
       variants: {
-        exit: { y: "-10%", opacity: 0, transition, scale: 0.9 },
-        initial: { y: "-10%", opacity: 0, transition, scale: 0.9 },
+        initial: { y: "-10%", opacity: 0, scale: 0 },
         animate: {
-          scale: 1,
           y: 0,
-          x: 0,
           opacity: 1,
-          transition: {
-            ...transition,
-            delay: duration / 2,
-          },
+          scale: 1,
+          transition: fadeSlideTransition,
         },
+        exit: { y: "10%", opacity: 0, scale: 0.9, transition: fadeSlideTransition },
       },
     },
-    content: {
-      variants: {
-        exit: { y: "-10%", opacity: 0, transition, scale: 0.9 },
-        initial: { y: "-10%", opacity: 0, transition, scale: 0.9 },
-        animate: {
-          scale: 1,
-          y: 0,
-          x: 0,
-          opacity: 1,
-          transition,
-        },
-      },
-    },
+    content: {},
   };
 };
 
@@ -209,11 +205,12 @@ function InternalModal({
   autocloseSeconds = undefined,
   ...rest
 }: ModalProps) {
+  const _id = useId();
+  const prefix = id ?? _id;
   const { useStore } = useHass();
   const modalStore = useModalStore();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const portalRoot = useStore((store) => store.portalRoot);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [ready, setReady] = useState(false);
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   const duration = modalStore.animationDuration ?? animationDuration;
@@ -254,14 +251,10 @@ function InternalModal({
     // this will delay the rendering of the children until the animation
     // is complete
     if (!open) return;
-    if (timerRef.current) return;
-    timerRef.current = setTimeout(() => {
-      setReady(true);
-      timerRef.current = null;
-    }, duration);
-  }, [duration, open]);
+    setReady(true);
+  }, [open]);
 
-  const { modal = {}, content = {}, header = {} } = animation(duration, id);
+  const { modal = {}, content = {}, header = {} } = animation(duration, prefix);
 
   return createPortal(
     <AnimatePresence
@@ -272,11 +265,11 @@ function InternalModal({
       }}
     >
       {open && (
-        <Fragment key={`${id}-fragment`}>
+        <Fragment key={`${prefix}-fragment`}>
           <ModalBackdrop
-            key={`${id}-backdrop`}
+            key={`${prefix}-backdrop`}
             className="modal-backdrop"
-            id={`${id}-backdrop`}
+            id={`${prefix}-backdrop`}
             initial={{
               opacity: 0,
             }}
@@ -310,11 +303,11 @@ function InternalModal({
             initial="initial"
             animate="animate"
             exit="exit"
-            onAnimationComplete={() => {
+            onAnimationStart={() => {
               delayUpdate();
             }}
             {...modal}
-            key={`${id}-container`}
+            key={`${prefix}-container`}
             className={`modal-container ${className ?? ""}`}
           >
             <ModalHeader className={`modal-header`} initial="initial" animate="animate" exit="exit" {...header}>
@@ -352,15 +345,15 @@ function InternalModal({
             </ModalHeader>
             <ModalOverflow className={`modal-overflow`}>
               <ModalInner
-                initial="initial"
                 animate={ready || hasCustomAnimation ? "animate" : "initial"}
                 exit="exit"
                 {...content}
                 className={"modal-inner"}
+                style={{
+                  transformOrigin: "top",
+                }}
               >
-                <AnimatePresence initial={false} mode="wait">
-                  {(ready || hasCustomAnimation) && children}
-                </AnimatePresence>
+                <AnimatePresence>{(ready || hasCustomAnimation) && children}</AnimatePresence>
               </ModalInner>
             </ModalOverflow>
           </ModalContainer>
