@@ -24,6 +24,7 @@ export const PrimaryExample: Story = {
   args: {
     label: "PrimaryExample",
   },
+  tags: ["!dev"],
   parameters: {
     docs: {
       canvas: {

@@ -4,28 +4,36 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { Component } from "./basic.code";
 import { ThemeProvider, FabCard } from "@hakit/components";
 import { useHass } from "@hakit/core";
-import { Column, Row } from '@components';
+import { Column, Row } from "@components";
 
 function ShutDown() {
   const { useStore } = useHass();
   const setConfig = useStore((state) => state.setConfig);
   const config = useStore((state) => state.config);
-  
+
   if (!config) return null;
   // This example code here will not actually trigger the shutdown in a real world scenario
   // This is just to emulate the behavior of a real world scenario
   return (
     <Row gap="1rem">
-      <FabCard cssStyles={`width: 200px`} onClick={() => {
-        setConfig({ ...config, state: "STOPPING" });
-        setTimeout(() => setConfig({ ...config, state: "NOT_RUNNING" }), 1000);
-      }} icon="mdi:power">
+      <FabCard
+        cssStyles={`width: 200px`}
+        onClick={() => {
+          setConfig({ ...config, state: "STOPPING" });
+          setTimeout(() => setConfig({ ...config, state: "NOT_RUNNING" }), 1000);
+        }}
+        icon="mdi:power"
+      >
         POWER OFF
       </FabCard>
-      <FabCard cssStyles={`width: 200px`} onClick={() => {
-        setConfig({ ...config, state: "STARTING" });
-        setTimeout(() => setConfig({ ...config, state: "RUNNING" }), 1000);
-      }} icon="mdi:power">
+      <FabCard
+        cssStyles={`width: 200px`}
+        onClick={() => {
+          setConfig({ ...config, state: "STARTING" });
+          setTimeout(() => setConfig({ ...config, state: "RUNNING" }), 1000);
+        }}
+        icon="mdi:power"
+      >
         POWER UP
       </FabCard>
     </Row>
@@ -55,6 +63,7 @@ export const PrimaryExample: Story = {
   args: {
     label: "PrimaryExample",
   },
+  tags: ["!dev"],
   parameters: {
     docs: {
       canvas: {

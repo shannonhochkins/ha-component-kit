@@ -1,3 +1,31 @@
+# 5.0.2
+
+### @hakit/components
+- BUGFIX - WeatherCard - When the WeatherCard was used in the dashboard, and enabled in the sidebar, the forecast columns would animate in/out from card to card, this is no longe an issue and solves [issue](https://github.com/shannonhochkins/ha-component-kit/issues/189)
+- NEW - Massive improvements to the initial load of the dashboard, it will now loading blazingly fast, and no longer animates into position, now the dashboard will load all cards in place as they should - this solves [issue](https://github.com/shannonhochkins/ha-component-kit/issues/179)
+- NEW - Modal animations - previously this would animate and scale in from the card that triggered the action, by default this animation style has changed to a simple slide up/slide down. If you still wish to retain this functionality, you can do this by passing the `layoutId` prop to the card that triggers the modal, and add the same value to the modalProps.id for the card, or manually if you wish there's an example [here](https://shannonhochkins.github.io/ha-component-kit/?path=/story/components-shared-modal--auto-scale-from-source).
+- BUGFIX - MediaPlayerCard - The layout inside the popup for group controls was broken, this has been fixed, the default "slider" for volume controls has been changed to buttons for easier use.
+
+
+### @hakit/core
+- NEW - [useConfig](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/core-hooks-useconfig--docs) - A new hook designed to subscribe to the configuration updates from the instance, previously this would only retrieve the configuration from the store, and it would only ever load once.
+- NEW - useHaStatus - A hook that will return a STRING indicating the current status of your home assistant instance - solves [issue](https://github.com/shannonhochkins/ha-component-kit/issues/177)
+- NEW - [useLightTemperature](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/core-hooks-uselighttemperature--docs) - A previously undocumented hook to return the temperature of a light entity, this will return the temperature in Kelvin, if the light doesn't support temperature, it will return undefined, if you want to convert the kelvin value to rgb, there's a `temperature2rgb` method that's also exported from core.
+- NEW - [useLightColor](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/core-hooks-uselightcolor--docs) - A previously undocumented hook to return the color of a light entity, this will return the color in HS format, if the light doesn't support color, it will return undefined, if you want to convert to RGB you can use the `hs2rgb` method that's also exported from core.
+- NEW - [useLightBrightness](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/core-hooks-uselightbrightness--docs) - A previously undocumented hook to return the brightness of a light entity, this will return the brightness in a number format, if the light doesn't support brightness, it will return undefined.
+- BUGFIX - The typescript sync command had an obscure bug where if the field name contained a property of an object, in this case "constructor" the typescript output would be invalid, this solves [issue](https://github.com/shannonhochkins/ha-component-kit/issues/194)
+ - NEW - There's a wide range of [helpers](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/core-helpers--docs) that were previously undocumented, All the relevant/useful helpers have been documented.
+ - NEW - There's a wide range of [constants](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/core-constants--docs) available which were previously undocumented
+
+### NPM CREATE
+
+- The .nvmrc file will now have the current version of node that was used by the user, previously this was hard coded to version 20 - solves [issue](https://github.com/shannonhochkins/ha-component-kit/issues/191)
+
+### Maintenance
+- Huge amount of documentation improvements, a lot more examples and structured documentation.
+- Locales updated for core from latest HA version.
+
+
 # 5.0.1
 
 ### @hakit/components
