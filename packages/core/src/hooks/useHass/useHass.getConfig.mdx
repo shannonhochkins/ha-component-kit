@@ -8,6 +8,8 @@ import getConfigExample from './examples/getConfig.code?raw';
 This will return all information about your configuration of your home assistant instance, this is all typed with typescript
 so you'll have access to what's available on the object with the `HassConfig` type.
 
+> Note: This function will only return the current configuration, it will not subscribe to updates, use the `useConfig` hook to get live updates.
+
 ### Definition
 <Source dark language="ts" code={`await getConfig()`} />
 

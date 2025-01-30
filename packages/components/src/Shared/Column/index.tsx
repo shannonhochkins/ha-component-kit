@@ -45,7 +45,7 @@ export function Column(props: ColumnProps) {
   return (
     <_Column
       {...props}
-      cssStyles={css`
+      css={css`
         ${props.cssStyles ?? ""}
       `}
       className={`${props.className ?? ""} ${props.fullHeight ? "full-height" : ""} ${props.fullWidth ? "full-width" : ""} ${

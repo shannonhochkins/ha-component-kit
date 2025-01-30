@@ -12,6 +12,8 @@ export { useHistory, type HistoryOptions } from "./useHistory";
 export { coordinates, type NumericEntityHistoryState, type coordinatesMinimalResponseCompressedState } from "./useHistory/coordinates";
 export { useSubscribeEntity } from "./useSubscribeEntity";
 export { useLogs, type UseLogOptions } from "./useLogs";
+export { useHaStatus } from "./useHaStatus";
+export { useConfig } from "./useConfig";
 export { useWeather, type UseWeatherOptions } from "./useWeather";
 export { getSupportedForecastTypes, type ForecastType, type ModernForecastType } from "./useWeather/helpers";
 export * from "./useLogs/logbook";

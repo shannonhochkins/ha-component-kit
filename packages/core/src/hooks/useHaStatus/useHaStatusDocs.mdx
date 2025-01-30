@@ -1,0 +1,25 @@
+import { Meta, Source, Canvas } from '@storybook/blocks';
+import basicExample from './examples/basic.code?raw';
+import * as Primary from './examples/primary.stories';
+
+<Meta title="core/hooks/useHaStatus" />
+
+# useHaStatus()
+###### `useHaStatus()`
+
+A custom React hook to get the current status of the Home Assistant instance.
+
+This hook uses the `useConfig` hook to access the Home Assistant configuration and retrieves the instance state from the config.
+
+- **Output**: "NOT_RUNNING" | "STARTING" | "RUNNING" | "STOPPING" | "FINAL_WRITE" | "LOADING"
+- **Dependencies**: This hook requires you to use it within the `HassConnect` component.
+
+### Example Usage
+
+<Source dark code={basicExample} />
+
+#### Outputs
+
+<Canvas of={Primary.PrimaryExample} />
+
+

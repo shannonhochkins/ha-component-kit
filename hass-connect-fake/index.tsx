@@ -41,7 +41,7 @@ interface HassProviderProps {
   throttle?: number;
 }
 
-const fakeConfig = {
+let fakeConfig: HassConfig = {
   "latitude": -33.25779010313883,
   "longitude": 151.4821529388428,
   "elevation": 0,
@@ -54,7 +54,7 @@ const fakeConfig = {
       "volume": "L",
       "wind_speed": "m/s"
   },
-  "location_name": "Freesia",
+  "location_name": "Fake Home",
   "time_zone": "Australia/Brisbane",
   "components": [],
   "config_dir": "/config",
@@ -71,7 +71,7 @@ const fakeConfig = {
   "currency": "AUD",
   "country": "AU",
   "language": "en"
-} satisfies HassConfig;
+};
 
 const fakeAuth = {
   data: {
@@ -128,12 +128,13 @@ class MockConnection extends Connection {
     if (!(eventType in this._mockListeners)) {
       this._mockListeners[eventType] = [];
     }
+
     this._mockListeners[eventType].push(eventCallback as (ev: unknown) => void);
     return () => Promise.resolve();
   }
 
   mockEvent(event: string, data: object) {
-    this._mockListeners[event].forEach((cb) => cb(data));
+    (this._mockListeners[event] ?? []).forEach((cb) => cb(data));
   }
 
   mockResponse(type: string, data: object) {
@@ -188,6 +189,9 @@ class MockConnection extends Connection {
     return () => Promise.resolve();
   }
   async sendMessagePromise<Result>(message: MessageBase): Promise<Result> {
+    if (message.type === 'get_config') {
+      return fakeConfig as Result;
+    }
     // a mock for the proxy image for the camera
     if (message.path && message.path.includes('camera_proxy')) {
       return {
@@ -276,7 +280,17 @@ const useStore = create<Store>((set) => ({
   auth: fakeAuth,
   setAuth: (auth) => set({ auth }),
   config: fakeConfig,
-  setConfig: (config) => set({ config }),
+  setConfig: (config) => {
+    set((state) => {
+      if (state.connection && 'mockEvent' in state.connection && config) {
+        fakeConfig = config;
+        // @ts-expect-error - don't know domain
+        state.connection.mockEvent('core_config_updated', config);
+      }
+      state.config = config;
+      return state;
+    });
+  },
   error: null,
   setError: (error) => set({ error }),
   hassUrl: '',
@@ -318,6 +332,7 @@ function HassProvider({
   const ready = useStore(store => store.ready);
   const setReady = useStore(store => store.setReady);
   const setLocales = useStore(store => store.setLocales);
+  const setConfig = useStore(store => store.setConfig);
   const clock = useRef<NodeJS.Timeout | null>(null);
   const getStates = async () => null;
   const getServices = async () => null;
@@ -437,7 +452,7 @@ function HassProvider({
     return () => {
       if (clock.current) clearInterval(clock.current);
     }
-  }, []);
+  }, [entities, setEntities]);
 
   const addRoute = useCallback(
     (route: Omit<Route, "active">) => {
@@ -522,8 +537,10 @@ function HassProvider({
       setLocales(_locales);
       updateLocales(_locales);
       setReady(true);
+      setConfig(fakeConfig);
+
     });
-  }, [setLocales, setReady]);
+  }, [setLocales, setConfig, setReady]);
 
   return (
     <HassContext.Provider
