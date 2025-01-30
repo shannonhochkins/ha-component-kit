@@ -17,6 +17,7 @@ import {
   ERR_CANNOT_CONNECT,
   ERR_INVALID_AUTH,
   ERR_INVALID_HTTPS_TO_HTTP,
+  subscribeConfig,
 } from "home-assistant-js-websocket";
 import { isArray, snakeCase } from "lodash";
 import { SnakeOrCamelDomains, DomainService, Locales, CallServiceArgs, Route, ServiceResponse } from "@typings";
@@ -246,7 +247,7 @@ const tryConnection = async (hassUrl: string, hassToken?: string): Promise<Conne
 export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot }: HassProviderProps) {
   const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
   const authenticated = useRef(false);
-  const fetchedConfig = useRef(false);
+  const subscribedConfig = useRef(false);
   const setHash = useStore((store) => store.setHash);
   const _hash = useStore((store) => store.hash);
   const routes = useStore((store) => store.routes);
@@ -263,7 +264,6 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
   const setAuth = useStore((store) => store.setAuth);
   const ready = useStore((store) => store.ready);
   const setReady = useStore((store) => store.setReady);
-  const config = useStore((store) => store.config);
   const setConfig = useStore((store) => store.setConfig);
   const setHassUrl = useStore((store) => store.setHassUrl);
   const setPortalRoot = useStore((store) => store.setPortalRoot);
@@ -408,27 +408,28 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
   }, [locale, fetchLocale, setLocales, setError]);
 
   useEffect(() => {
-    if (config === null && !fetchedConfig.current && connection !== null) {
-      fetchedConfig.current = true;
-      getConfig()
-        .then((config) => {
-          fetchLocale(config)
-            .then((locales) => {
-              // purposely setting config here to delay the rendering process of the application until locales are retrieved
-              setConfig(config);
-              updateLocales(locales);
-              setLocales(locales);
-            })
-            .catch((e) => {
-              setError(`Error retrieving translations from Home Assistant: ${e?.message ?? e}`);
-            });
+    if (!connection || subscribedConfig.current) return;
+    subscribedConfig.current = true;
+    // Subscribe to config updates
+    const unsubscribe = subscribeConfig(connection, (newConfig) => {
+      console.log("config updated");
+      fetchLocale(newConfig)
+        .then((locales) => {
+          // purposely setting config here to delay the rendering process of the application until locales are retrieved
+          setConfig(newConfig);
+          updateLocales(locales);
+          setLocales(locales);
         })
         .catch((e) => {
-          fetchedConfig.current = false;
-          setError(`Error retrieving configuration from Home Assistant: ${e?.message ?? e}`);
+          setConfig(newConfig);
+          setError(`Error retrieving translations from Home Assistant: ${e?.message ?? e}`);
         });
-    }
-  }, [config, connection, setLocales, fetchLocale, getConfig, setConfig, setError]);
+    });
+    // Cleanup function to unsubscribe on unmount
+    return () => {
+      unsubscribe();
+    };
+  }, [connection, setLocales, fetchLocale, setConfig, setError]);
 
   useEffect(() => {
     if (location.hash === "") return;

@@ -1,0 +1,24 @@
+import { Meta, Source, Canvas } from '@storybook/blocks';
+import basicExample from './examples/basic.code?raw';
+import * as Primary from './examples/primary.stories';
+
+<Meta title="core/hooks/useConfig" />
+
+# useConfig()
+###### `useConfig(): HassConfig | null`
+
+A custom React hook to subscribe to the Home Assistant configuration updates, this hook will return a new value every time your instance configuration changes.
+
+This hook will return the configuration object or null if not available yet.
+
+- **Dependencies**: This hook requires you to use it within the `HassConnect` component.
+
+### Example Usage
+
+<Source dark code={basicExample} />
+
+#### Outputs
+
+<Canvas of={Primary.PrimaryExample} />
+
+
