@@ -1,14 +1,14 @@
 import { HassConnect } from "hass-connect-fake";
-import { ThemeProvider } from "@hakit/components";
 import { Story } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
-import { Dashboard } from "./basic.code";
+import { Component } from "./basic.code";
+import { ThemeProvider } from "@hakit/components";
 
 function Primary() {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider />
-      <Dashboard />
+      <Component />
     </HassConnect>
   );
 }

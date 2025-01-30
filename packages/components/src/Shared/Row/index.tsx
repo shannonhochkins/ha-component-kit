@@ -45,7 +45,7 @@ export function Row(props: RowProps) {
   return (
     <_Row
       {...props}
-      cssStyles={css`
+      css={css`
         ${props.cssStyles ?? ""}
       `}
       className={`${props.className ?? ""} ${props.fullHeight ? "full-height" : ""} ${props.fullWidth ? "full-width" : ""} ${

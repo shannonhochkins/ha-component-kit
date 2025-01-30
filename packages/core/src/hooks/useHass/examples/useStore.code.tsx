@@ -5,6 +5,7 @@ function UseStoreExample() {
   // there's more available on the store than displayed here, this is just an example
   const entities = useStore((store) => store.entities);
   const connection = useStore((store) => store.connection);
+  // A live update of the configuration
   const config = useStore((store) => store.config);
   const auth = useStore((store) => store.auth);
   console.log("data", {
