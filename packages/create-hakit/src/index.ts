@@ -63,7 +63,7 @@ async function validateHaUrl(haUrl: string): Promise<void> {
 
 
 // A functional approach to creating the project
-const createProject = async () => {  
+const createProject = async () => {
   try {
     let result: prompts.Answers<
       'projectName' | 'haUrl' | 'haToken'
@@ -227,6 +227,9 @@ const createProject = async () => {
     console.info(white(`\nAdd in the optional SSH values to your .env file to ensure that "npm run deploy" will work correctly.`));
     console.info(white(`\nTo retrieve the SSH information, follow the instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-deploying--docs`));
     console.info();
+    if (haToken) {
+      console.info(yellow(`\nWARN: While the optional access token you provided is convenient for local development (and required for the \`npm run sync\` command) it is not recommended to be used when deploying to a home assistant server that has remote access enabled. It will make your hakit dashboard as well as the token itself public (not protected by the Home Assistant login screen) and accessible for everyone who can figure out the url to your dashboard.`));
+    }
     process.exit(status ?? 0)
 
   } catch (error) {
@@ -317,6 +320,8 @@ function updatePackageJson({
   const nodeScpVersion = getLatestNpmVersion('node-scp');
   const chalk = getLatestNpmVersion('chalk');
   const nodeTypesVersion = getLatestNpmVersion('@types/node');
+  const promptsVersion = getLatestNpmVersion('prompts');
+  const promptsTypeVersion = getLatestNpmVersion('@types/prompts');
   const packageFile = path.resolve(targetDir, 'package.json');
   const pkg = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
   pkg.dependencies = {
@@ -329,6 +334,8 @@ function updatePackageJson({
   pkg.devDependencies = {
     ...pkg.devDependencies,
     "prettier": `^${prettierVersion}`,
+    "prompts": `^${promptsVersion}`,
+    "@types/prompts": `^${promptsTypeVersion}`,
     "dotenv": `^${dotenvVersion}`,
     "@types/node": `^${nodeTypesVersion}`,
     "node-scp": `^${nodeScpVersion}`,

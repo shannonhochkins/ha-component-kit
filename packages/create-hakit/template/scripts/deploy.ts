@@ -3,9 +3,11 @@ import * as dotenv from 'dotenv';
 import { join } from 'path';
 import chalk from 'chalk';
 import { access, constants } from 'fs/promises';
+import prompts from 'prompts';
 dotenv.config();
 
 const HA_URL = process.env.VITE_HA_URL;
+const HA_TOKEN = process.env.VITE_HA_TOKEN;
 const USERNAME = process.env.VITE_SSH_USERNAME;
 const PASSWORD = process.env.VITE_SSH_PASSWORD;
 const HOST_OR_IP_ADDRESS = process.env.VITE_SSH_HOSTNAME;
@@ -13,6 +15,28 @@ const PORT = 22;
 const REMOTE_FOLDER_NAME = process.env.VITE_FOLDER_NAME;
 const LOCAL_DIRECTORY = './dist';
 const REMOTE_PATH = `/www/${REMOTE_FOLDER_NAME}`;
+
+async function confirmDeploymentWithHaToken() {
+  if (!HA_TOKEN) {
+    return;
+  }
+  const response = await prompts({
+    type: 'confirm',
+    name: 'value',
+    message: chalk.yellow(
+      `
+WARN: You are about to deploy to Home Assistant with VITE_HA_TOKEN set in .env.
+
+If your Home Assistant server has remote access enabled this means your hakit dashboard and access token will be public (not protected by the Home Assistant login screen) and accessible for everyone who can figure out the url to your dashboard.
+
+Do you want to continue?`),
+    initial: false
+  }) as { value: boolean }
+
+  if (response.value !== true) {
+    process.exit();
+  }
+}
 
 async function checkDirectoryExists() {
   try {
@@ -64,7 +88,7 @@ async function deploy() {
         } catch (e) {
           // directory may not exist, ignore
         }
-        console.info(chalk.blue('Uploading', `"${LOCAL_DIRECTORY}"`, 'to', `"${remote}"`))
+        console.info(chalk.blue('Uploading', `"${LOCAL_DIRECTORY}"`, 'to', `"${remote}"`));
         // upload the folder to your home assistant server
         await client.uploadDir(LOCAL_DIRECTORY, remote);
         client.close(); // remember to close connection after you finish
@@ -82,9 +106,7 @@ async function deploy() {
       }
     }
     if (!matched) {
-      throw new Error(
-        'Could not find a config/homeassistant directory in the root of your home assistant installation.'
-      );
+      throw new Error('Could not find a config/homeassistant directory in the root of your home assistant installation.');
     }
   } catch (e: unknown) {
     if (e instanceof Error) {
@@ -93,4 +115,5 @@ async function deploy() {
   }
 }
 
+await confirmDeploymentWithHaToken();
 deploy();
