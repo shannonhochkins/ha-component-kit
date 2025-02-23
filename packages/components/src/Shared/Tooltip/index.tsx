@@ -95,6 +95,8 @@ function InternalTooltip({ placement = "top", title = null, children, ...rest }:
   const childRef = useRef<HTMLDivElement | null>(null);
   const { useStore } = useHass();
   const portalRoot = useStore((store) => store.portalRoot);
+  const windowContext = useStore((store) => store.windowContext);
+  const win = windowContext ?? window;
 
   const calculatePosition = useCallback(() => {
     const childRect = childRef.current?.getBoundingClientRect();
@@ -125,11 +127,11 @@ function InternalTooltip({ placement = "top", title = null, children, ...rest }:
 
   useEffect(() => {
     calculatePosition();
-    window.addEventListener("resize", calculatePosition);
+    win.addEventListener("resize", calculatePosition);
     return () => {
-      window.removeEventListener("resize", calculatePosition);
+      win.removeEventListener("resize", calculatePosition);
     };
-  }, [calculatePosition]);
+  }, [calculatePosition, win]);
 
   const handleMouseEnter = useCallback(() => {
     const tooltipEl = tooltipRef.current;
@@ -169,7 +171,7 @@ function InternalTooltip({ placement = "top", title = null, children, ...rest }:
           <TooltipSpan className="tooltip-inner" placement={placement} ref={tooltipRef}>
             {title}
           </TooltipSpan>,
-          portalRoot ?? document.body,
+          portalRoot ?? win.document.body,
         )}
     </div>
   );

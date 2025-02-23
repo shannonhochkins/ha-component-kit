@@ -339,7 +339,7 @@ function updatePackageJson({
   pkg.scripts = {
     ...pkg.scripts,
     "prettier": "prettier --write .",
-    "sync": "npx tsx ./sync-types.ts",
+    "sync": "npx tsx scripts/sync-types.ts",
     "prebuild": "npm run prettier",
     "deploy": "npx tsx scripts/deploy.ts"
   }

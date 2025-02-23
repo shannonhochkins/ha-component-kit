@@ -161,7 +161,6 @@ type OmitProperties =
   | "onClick"
   | "as"
   | "title"
-  | "ref"
   | "entity"
   | "children"
   | "disabled"

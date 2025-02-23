@@ -245,8 +245,6 @@ export type CardBaseProps<T extends ElementType = "div", E extends EntityName = 
      * ```
      */
     cssStyles?: CSSInterpolation;
-    /** a reference to the top level element, we can't use the "ref" prop because of the use of generics, so "elRef" it is, this answer here describes the reasoning behind this decision @see https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref */
-    elRef?: React.Ref<HTMLElement>;
     /** remove all base styles of the card and just use the inbuilt functionality */
     onlyFunctionality?: boolean;
     /** props to pass to the resize detector, this is useful if you want to trigger something whenever the card resizes */
@@ -286,7 +284,7 @@ const CardBaseInternal = function CardBase<T extends ElementType, E extends Enti
   rippleProps,
   disableColumns,
   whileTap,
-  elRef,
+  ref,
   key,
   relatedEntities,
   features,
@@ -311,7 +309,7 @@ const CardBaseInternal = function CardBase<T extends ElementType, E extends Enti
     refreshRate: 50,
     handleHeight: false,
     skipOnMount: false,
-    targetRef: (elRef as React.MutableRefObject<HTMLElement>) ?? internalRef,
+    targetRef: (ref as React.RefObject<HTMLElement>) ?? internalRef,
     ...(resizeDetectorProps ?? {}),
   });
   const graphEntity = useEntity(graph?.entity ?? "unknown", {
@@ -437,7 +435,7 @@ const CardBaseInternal = function CardBase<T extends ElementType, E extends Enti
     <>
       <StyledElement
         key={key}
-        ref={elRef ?? internalRef}
+        ref={ref ?? internalRef}
         id={id ?? ""}
         className={_classes}
         css={css`

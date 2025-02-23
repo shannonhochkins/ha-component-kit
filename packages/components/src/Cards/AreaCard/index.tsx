@@ -16,7 +16,6 @@ type OmitProperties =
   | "title"
   | "entity"
   | "modalProps"
-  | "ref"
   | "entity"
   | "serviceData"
   | "service"
@@ -129,6 +128,8 @@ function InternalAreaCard({
   const { useStore, addRoute, getRoute } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const portalRoot = useStore((store) => store.portalRoot);
+  const windowContext = useStore((store) => store.windowContext);
+  const win = windowContext ?? window;
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   const [open, setOpen] = useState(false);
   const route = useMemo(() => getRoute(hash), [hash, getRoute]);
@@ -221,7 +222,7 @@ function InternalAreaCard({
               </FullScreen>
             )}
           </AnimatePresence>,
-          portalRoot ?? document.body,
+          portalRoot ?? win.document.body,
           idRef,
         )}
       <StyledAreaCard

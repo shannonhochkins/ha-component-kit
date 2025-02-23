@@ -84,7 +84,7 @@ export function ThemeControls({
             max={1}
             step={0.05}
             value={t}
-            onChange={(value) => {
+            onChangeComplete={(value) => {
               setTint(value);
             }}
           />
@@ -97,7 +97,7 @@ export function ThemeControls({
             max={100}
             step={1}
             value={c}
-            onChange={(value) => {
+            onChangeComplete={(value) => {
               setContrastThreshold(value);
             }}
           />
@@ -111,7 +111,7 @@ export function ThemeControls({
             min={0}
             max={100}
             value={s}
-            onChange={(value) => {
+            onChangeComplete={(value) => {
               setSat(value);
             }}
           />
@@ -123,7 +123,7 @@ export function ThemeControls({
             min={0}
             max={100}
             value={l}
-            onChange={(value) => {
+            onChangeComplete={(value) => {
               setLight(value);
             }}
           />
@@ -136,7 +136,7 @@ export function ThemeControls({
           min={0}
           max={360}
           value={h}
-          onChange={(value) => {
+          onChangeComplete={(value) => {
             setHue(value);
           }}
         />

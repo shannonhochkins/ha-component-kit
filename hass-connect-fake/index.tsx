@@ -297,6 +297,8 @@ const useStore = create<Store>((set) => ({
   setHassUrl: (hassUrl) => set({ hassUrl }),
   portalRoot: undefined,
   setPortalRoot: (portalRoot) => set({ portalRoot }),
+  windowContext: window,
+  setWindowContext: (windowContext) => set({ windowContext }),
   callApi: async (): Promise<unknown> => {
     return {};
   },

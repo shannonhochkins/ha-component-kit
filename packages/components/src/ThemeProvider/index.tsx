@@ -1,8 +1,8 @@
-import { useState, useCallback, useEffect, memo } from "react";
+import { useState, useMemo, useEffect, memo } from "react";
 import { css, Global } from "@emotion/react";
 import { CSSInterpolation } from "@emotion/serialize";
 import styled from "@emotion/styled";
-import { merge } from "lodash";
+import { isEqual, merge } from "lodash";
 import { theme as defaultTheme } from "./theme";
 import type { ThemeParams } from "./theme";
 import { convertToCssVars } from "./helpers";
@@ -245,6 +245,8 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
   const setGlobalComponentStyles = useStore((store) => store.setGlobalComponentStyles);
   const _breakpoints = useStore((store) => store.breakpoints);
   const device = useBreakpoint();
+  const windowContext = useStore((store) => store.windowContext);
+  const win = windowContext ?? window;
 
   useEffect(() => {
     if (globalComponentStyles) {
@@ -252,7 +254,7 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
     }
   }, [setGlobalComponentStyles, globalComponentStyles]);
 
-  const getTheme = useCallback(() => {
+  const defaults = useMemo(() => {
     return {
       hue: h,
       lightness: l,
@@ -262,7 +264,6 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
       contrastThreshold: c,
     } satisfies Omit<ThemeControlsProps, "onChange">;
   }, [c, darkMode, h, l, s, t]);
-  const defaults = getTheme();
   const [_theme, setTheme] = useState<Omit<ThemeControlsProps, "onChange">>(defaults);
   const [open, setOpen] = useState(false);
   const colorScheme = _theme.darkMode ? "dark" : "light";
@@ -272,22 +273,35 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
   }, [setBreakpoints, breakpoints]);
 
   useEffect(() => {
+    if (isEqual(defaults, _theme)) return;
+    setTheme(defaults);
+  }, [defaults, _theme]);
+
+  useEffect(() => {
     Object.entries(device).forEach(([breakpointKey, active]) => {
       const className = `bp-${breakpointKey}`;
+      const container = emotionCache?.container ?? null;
+      let body = container ? (container.ownerDocument?.body ?? null) : win.document.body;
+      if (!body) {
+        console.error(
+          "No valid <body> element found. Falling back to document.body. Ensure that emotionCache.container is a node within a document.",
+        );
+        body = win.document.body;
+      }
       if (active) {
-        document.body.classList.add(className);
+        body.classList.add(className);
       } else {
-        document.body.classList.remove(className);
+        body.classList.remove(className);
       }
     });
-  }, [device]);
+  }, [device, win, emotionCache]);
 
   return (
     <EmotionProvider
       options={
         emotionCache ?? {
           key: "hakit",
-          container: document.head,
+          container: win.document.head,
         }
       }
     >
@@ -393,7 +407,7 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
             font-size: var(--ha-font-size);
             color: var(--ha-S100-contrast);
             overflow-x: hidden;
-            overflow-y: var(--ha-hide-body-overflow-y);
+            overflow-y: var(--ha-hide-body-overflow-y, inherit);
           }
           ${generateColumnBreakpoints(_breakpoints)}
           ${globalStyles ?? ""}

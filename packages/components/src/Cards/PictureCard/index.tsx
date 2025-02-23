@@ -8,7 +8,6 @@ type OmitProperties =
   | "title"
   | "as"
   | "active"
-  | "ref"
   | "entity"
   | "disabled"
   | "service"
