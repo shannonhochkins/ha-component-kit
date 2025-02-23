@@ -3,7 +3,7 @@ name: Bug report
 about: Create a report to help us improve
 title: ''
 labels: ''
-assignees: ''
+assignees: shannonhochkins
 
 ---
 
@@ -24,10 +24,11 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots / examples to help explain your problem.
 
 **System Info (please complete the following information):**
- - IDE
+ - IDE (e.g Visual studio code)
  - Browser [e.g. chrome, safari]
  - npm version
  - node version
+ - HA Version
 
 
 **Additional context**
