@@ -9,7 +9,6 @@ import { icons, activeColors, colors } from "../../Shared/Entity/Climate/Climate
 import { UNIT_F } from "../../Shared/Entity/Climate/ClimateControls/data";
 import { ErrorBoundary } from "react-error-boundary";
 import type { HassConfig } from "home-assistant-js-websocket";
-import { LocaleKeys } from "@hooks";
 import { FeatureEntity, type FeatureEntityProps } from "../CardBase/FeatureEntity";
 
 import { ButtonCard, type ButtonCardProps } from "../ButtonCard";
@@ -216,7 +215,7 @@ function InternalClimateCard({
             <Description className="climate-description">
               <span>{titleValue}</span>
               <span className="fan-speed">
-                {localize("speed")}: {localize(entity.attributes.fan_mode as LocaleKeys) || localize("unknown")}
+                {localize("speed")}: {localize(entity.attributes.fan_mode as "low") || localize("unknown")}
               </span>
               {!hideCurrentTemperature && (
                 <span className="current-temperature">

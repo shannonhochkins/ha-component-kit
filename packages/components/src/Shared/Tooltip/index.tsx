@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, Children, isValidElement, cloneElement } from "react";
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { fallback } from "@components";
@@ -81,7 +81,7 @@ const TooltipSpan = styled.span<Pick<TooltipProps, "placement">>`
   }
 `;
 
-export interface TooltipProps extends Omit<React.ComponentPropsWithoutRef<"div">, "title"> {
+export interface TooltipProps extends Omit<React.ComponentPropsWithRef<"div">, "title"> {
   /** the placement of the tooltip @default 'top' */
   placement?: "top" | "right" | "bottom" | "left";
   /** the title of the tooltip */
@@ -90,7 +90,7 @@ export interface TooltipProps extends Omit<React.ComponentPropsWithoutRef<"div">
   children: React.ReactNode;
 }
 
-function InternalTooltip({ placement = "top", title = null, children, ...rest }: TooltipProps) {
+function InternalTooltip({ placement = "top", title = null, children, ref, ...rest }: TooltipProps) {
   const tooltipRef = useRef<HTMLSpanElement | null>(null);
   const childRef = useRef<HTMLDivElement | null>(null);
   const { useStore } = useHass();
@@ -163,7 +163,27 @@ function InternalTooltip({ placement = "top", title = null, children, ...rest }:
       onMouseLeave={handleHide}
       {...rest}
     >
-      {children}
+      {Children.map(children, (child, index) => {
+        if (
+          isValidElement<
+            Omit<React.ComponentPropsWithRef<"div">, "onClick"> & {
+              onClick: (unknown: null, event: React.MouseEvent<HTMLDivElement>) => void;
+            }
+          >(child)
+        ) {
+          return cloneElement(child, {
+            ...child.props,
+            onClick(_unknown: null, event: React.MouseEvent<HTMLDivElement>) {
+              console.log("event", event);
+              child.props.onClick?.(_unknown, event);
+              rest?.onClick?.(event);
+            },
+            ref,
+            key: child.key ?? index,
+          });
+        }
+        return child;
+      })}
       {typeof document !== "undefined" &&
         createPortal(
           <TooltipSpan className="tooltip-inner" placement={placement} ref={tooltipRef}>

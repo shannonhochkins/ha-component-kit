@@ -1,14 +1,13 @@
-import { Children, cloneElement, isValidElement, useCallback, useEffect, useRef, useState } from "react";
-import type { MotionProps, Variants } from "framer-motion";
-import { AnimatePresence, MotionConfig, motion } from "framer-motion";
+import React, { Children, cloneElement, isValidElement, useCallback, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { useResizeDetector } from "react-resize-detector";
 import { Row } from "@components";
 import { Icon } from "@iconify/react";
 import { useHass } from "@hakit/core";
+import { useFloating, FloatingArrow, shift, limitShift, arrow, offset, autoUpdate, type Placement } from "@floating-ui/react";
 
-type Extendable = Omit<React.ComponentPropsWithoutRef<"a">, "event" | "definition"> & MotionProps;
+type Extendable = Omit<React.ComponentPropsWithoutRef<"a">, "event" | "definition">;
 
 interface Item extends Extendable {
   label: string;
@@ -17,51 +16,26 @@ interface Item extends Extendable {
   onClick?: () => void;
 }
 
-const menu = {
-  closed: {
-    scale: 0,
-    transition: {
-      delay: 0.15,
-    },
-  },
-  open: {
-    scale: 1,
-    transition: {
-      type: "spring",
-      duration: 0.4,
-      delayChildren: 0.2,
-      staggerChildren: 0.05,
-    },
-  },
-} satisfies Variants;
-
 const StyledIcon = styled(Icon)`
   font-size: 1rem;
   color: var(--ha-S400-contrast);
   margin-right: 0.5rem;
 `;
 
-const item = {
-  variants: {
-    closed: { x: -16, opacity: 0 },
-    open: { x: 0, opacity: 1 },
-  },
-  transition: { opacity: { duration: 0.2 } },
-} satisfies MotionProps;
-
 export interface MenuProps extends React.ComponentPropsWithoutRef<"div"> {
   /** the children should simply be the item to activate, it's used as a wrapped and binds the action automatically */
   children?: React.ReactNode;
   /** the placement of the popup @default 'bottom' */
-  placement?: "top" | "bottom";
+  placement?: Placement;
   /** the items for the menu to render */
   items: Item[];
+  /** if the menu/button should be disabled */
+  disabled?: boolean;
 }
 
-const MenuPopup = styled(motion.div)<{
+const MenuPopup = styled.div<{
   triggerWidth: number;
 }>`
-  position: absolute;
   z-index: 50;
   display: flex;
   min-width: 180px;
@@ -79,73 +53,57 @@ const MenuPopup = styled(motion.div)<{
     0 4px 6px -4px rgb(0 0 0 / 0.1);
   outline: none !important;
   max-height: max-content;
-  max-height: max-content;
-  overflow: visible;
-  --menu-origin-inline: calc(${(props) => `${props.triggerWidth}px`} / 2);
-  left: 0;
-
-  &[data-placement^="bottom"] {
-    top: calc(100% + 1em);
-    transform-origin: var(--menu-origin-inline) -11px;
-  }
-
-  &[data-placement^="top"] {
-    bottom: calc(100% + 1em);
-    transform-origin: var(--menu-origin-inline) calc(100% + 11px);
-  }
+  max-height: 300px;
+  overflow-y: scroll;
 `;
 
 const Parent = styled.div`
   position: relative;
 `;
 
-const MenuItem = styled(motion.a)`
+const MenuItem = styled.a`
   display: flex;
   scroll-margin: 0.5rem;
   align-items: center;
   gap: 0.5rem;
   border-radius: 0.25rem;
-  padding: 0.5rem;
+  padding: 0.8rem 0.5rem;
   outline: none !important;
-  background-color: rgba(255, 255, 255, 0);
+  background-color: transparent;
   cursor: pointer;
   transition: background-color var(--ha-transition-duration) var(--ha-easing);
   &:active,
   &:focus,
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--ha-S600);
   }
   &.active {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-`;
-const MenuPopupArrow = styled.div`
-  position: absolute;
-  font-size: 30px;
-  width: 1em;
-  height: 1em;
-  pointer-events: none;
-  left: var(--menu-origin-inline);
-  transform: translateX(-50%);
-  &[data-placement^="bottom"] {
-    bottom: 100%;
-  }
-  &[data-placement^="top"] {
-    top: 100%;
-    transform: translateX(-50%) scaleY(-1);
-  }
-  > svg {
-    display: block;
-    fill: var(--ha-S400);
-    stroke-width: 1px;
-    stroke: var(--ha-S500);
+    background-color: var(--ha-S700);
   }
 `;
 
-export function Menu({ children, placement = "bottom", items = [], cssStyles, ...props }: MenuProps) {
+export function Menu({ children, placement = "bottom", items = [], disabled = false, cssStyles, ...props }: MenuProps) {
   const [open, setOpen] = useState(false);
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const arrowRef = useRef(null);
+  const { refs, floatingStyles, context } = useFloating({
+    whileElementsMounted: autoUpdate,
+    placement,
+    middleware: [
+      shift({
+        limiter: limitShift({
+          // Start limiting 5px earlier
+          offset: 10,
+        }),
+      }),
+      offset(20),
+      arrow({
+        element: arrowRef,
+      }),
+    ],
+  });
+
   const { width, ref } = useResizeDetector({
     refreshMode: "debounce",
     handleHeight: false,
@@ -181,83 +139,73 @@ export function Menu({ children, placement = "bottom", items = [], cssStyles, ..
   }, [handleClickOutside, open]); // Only re-run if 'open' state changes
 
   return (
-    <MotionConfig reducedMotion="user">
-      <Parent
-        {...props}
-        ref={ref}
-        css={css`
-          ${globalComponentStyle.menu ?? ""}
-          ${cssStyles ?? ""}
-        `}
-      >
-        {Children.map(children, (child) => {
-          if (
-            isValidElement<
-              HTMLDivElement & {
-                onClick: () => void;
-              }
-            >(child)
-          ) {
-            return cloneElement(child, {
-              ...child.props,
-              onClick: () => {
-                setOpen(!open);
-                child.props.onClick?.();
-              },
-            });
-          }
-          return child;
-        })}
-        <AnimatePresence initial={false}>
-          {open && (
-            <MenuPopup
-              ref={menuRef}
-              triggerWidth={width ?? 0}
-              className="menu"
-              data-placement={placement ?? "bottom"}
-              animate={open ? "open" : "closed"}
-              initial="closed"
-              exit="closed"
-              variants={menu}
-            >
-              <MenuPopupArrow className="menu-arrow" data-placement={placement ?? "bottom"}>
-                <svg display="block" viewBox="0 0 30 30">
-                  <g transform="rotate(0 15 15)">
-                    <path
-                      fill="none"
-                      d="M23,27.8c1.1,1.2,3.4,2.2,5,2.2h2H0h2c1.7,0,3.9-1,5-2.2l6.6-7.2c0.7-0.8,2-0.8,2.7,0L23,27.8L23,27.8z"
-                    ></path>
-                    <path
-                      stroke="none"
-                      d="M23,27.8c1.1,1.2,3.4,2.2,5,2.2h2H0h2c1.7,0,3.9-1,5-2.2l6.6-7.2c0.7-0.8,2-0.8,2.7,0L23,27.8L23,27.8z"
-                    ></path>
-                  </g>
-                </svg>
-              </MenuPopupArrow>
-              {items.map(({ onClick, active, label, icon, ...rest }, index) => {
-                return (
-                  <MenuItem
-                    {...rest}
-                    key={index}
-                    variants={item.variants}
-                    transition={item.transition}
-                    onClick={() => {
-                      onClick?.();
-                      setOpen(false);
-                    }}
-                    className={`menu-item ${active ? "active" : ""}`}
-                  >
-                    <Row fullWidth justifyContent="flex-start">
-                      {icon && <StyledIcon icon={icon} />}
-                      {label}
-                    </Row>
-                  </MenuItem>
-                );
-              })}
-            </MenuPopup>
-          )}
-        </AnimatePresence>
-      </Parent>
-    </MotionConfig>
+    <Parent
+      {...props}
+      ref={ref}
+      aria-disabled={disabled}
+      aria-controls="listbox"
+      aria-expanded={open}
+      role="combobox"
+      css={css`
+        ${globalComponentStyle.menu ?? ""}
+        ${cssStyles ?? ""}
+      `}
+    >
+      {Children.map(children, (child) => {
+        if (
+          isValidElement<
+            HTMLDivElement & {
+              onClick: () => void;
+              ref: (node: HTMLDivElement | null) => void;
+            }
+          >(child)
+        ) {
+          return cloneElement(child, {
+            ...child.props,
+            role: "option",
+            ref: refs.setReference,
+            onClick: () => {
+              if (disabled) return;
+              setOpen(!open);
+              child.props.onClick?.();
+            },
+          });
+        }
+        return child;
+      })}
+      {open && (
+        <div ref={refs.setFloating} style={floatingStyles} role="listbox">
+          <FloatingArrow
+            ref={arrowRef}
+            context={context}
+            style={{
+              fill: "var(--ha-S400)",
+            }}
+          />
+          <MenuPopup triggerWidth={width ?? 0} className="menu">
+            {items.map(({ onClick, active, label, icon, ...rest }, index) => {
+              return (
+                <MenuItem
+                  {...rest}
+                  key={index}
+                  aria-disabled={disabled}
+                  role="option"
+                  onClick={() => {
+                    onClick?.();
+                    setOpen(false);
+                  }}
+                  className={`menu-item ${active ? "active" : ""}`}
+                >
+                  <Row fullWidth justifyContent="flex-start">
+                    {icon && <StyledIcon icon={icon} />}
+                    {label}
+                  </Row>
+                </MenuItem>
+              );
+            })}
+          </MenuPopup>
+        </div>
+      )}
+    </Parent>
   );
 }

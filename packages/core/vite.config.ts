@@ -25,6 +25,7 @@ const globals = {
   '@emotion/utils': '@emotion/utils',
   'zustand': 'zustand',
   'deep-object-diff': 'deep-object-diff',
+  '@floating-ui/react': '@floating-ui/react',
 };
 // https://vitejs.dev/config/
 export default defineConfig(configEnv => {
