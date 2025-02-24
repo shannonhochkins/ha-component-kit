@@ -118,7 +118,7 @@ const TemperatureLow = styled.div`
   font-size: 0.75rem;
 `;
 
-type OmitProperties = "as" | "ref" | "entity";
+type OmitProperties = "as" | "entity";
 export interface WeatherCardProps extends Omit<CardBaseProps<"div", FilterByDomain<EntityName, "weather">>, OmitProperties> {
   /** The name of your entity */
   entity: FilterByDomain<EntityName, "weather">;

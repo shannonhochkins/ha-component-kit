@@ -61,7 +61,7 @@ const Temperature = styled.span`
   }
 `;
 
-type OmitProperties = "onClick" | "children" | "active" | "as" | "ref" | "disableActiveState" | "features";
+type OmitProperties = "onClick" | "children" | "active" | "as" | "disableActiveState" | "features";
 
 type Extendable = Omit<ClimateControlsProps, "onClick"> & Omit<ButtonCardProps<ClimateControlsProps["entity"]>, OmitProperties>;
 export interface ClimateCardProps extends Extendable {

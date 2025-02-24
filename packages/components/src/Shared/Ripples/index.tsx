@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { fallback } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
+import { useHass } from "@hakit/core";
 
 export interface RipplesProps extends React.ComponentPropsWithoutRef<"div"> {
   /** the animation duration of the ripple @default 600 */
@@ -66,6 +67,9 @@ const _Ripples = memo(
   }: RipplesProps) => {
     const rippleRef = useRef<HTMLDivElement | null>(null);
     const timeoutId = useRef<NodeJS.Timeout | null>(null);
+    const { useStore } = useHass();
+    const windowContext = useStore((store) => store.windowContext);
+    const win = windowContext ?? window;
     useEffect(() => {
       return () => {
         // cleanup
@@ -84,12 +88,12 @@ const _Ripples = memo(
 
         const rect = currentTarget.getBoundingClientRect();
         let xMultiplier = 1;
-        if (typeof window !== "undefined") {
-          xMultiplier = window.scrollX;
+        if (typeof win !== "undefined") {
+          xMultiplier = win.scrollX;
         }
         let yMultiplier = 1;
-        if (typeof window !== "undefined") {
-          yMultiplier = window.scrollY;
+        if (typeof win !== "undefined") {
+          yMultiplier = win.scrollY;
         }
 
         const left = pageX - (rect.left + xMultiplier);
@@ -122,7 +126,7 @@ const _Ripples = memo(
 
         if (typeof onClick === "function") onClick(event);
       },
-      [color, duration, disabled, onClick],
+      [color, duration, disabled, onClick, win],
     );
 
     return (

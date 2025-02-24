@@ -10,7 +10,7 @@ export interface RowProps extends Extendable {
   /** standard flex css properties for justify-content, @default center */
   justifyContent?: React.CSSProperties["justifyContent"];
   /** standard flex css properties for flex-wrap property, @default wrap */
-  wrap?: React.CSSProperties["justifyContent"];
+  wrap?: React.CSSProperties["flexWrap"];
   /** standard css gap property values, @default undefined */
   gap?: React.CSSProperties["gap"];
   /** should the row stretch to the height of the parent */

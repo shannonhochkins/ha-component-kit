@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, ReactNode } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { useDebouncedCallback } from "use-debounce";
+import { useDebouncedCallback, useThrottledCallback } from "use-debounce";
 import { fallback, mq } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -164,6 +164,11 @@ export interface RangeSliderProps extends Omit<React.ComponentPropsWithoutRef<"i
   handleSize?: number;
   /** The label for the input @default undefined */
   onChange?: (value: number, event: React.ChangeEvent<HTMLInputElement>) => void;
+  /* The callback function that is called when the user has finished changing the value @default undefined */
+  onChangeComplete?: (value: number, event: React.ChangeEvent<HTMLInputElement>) => void;
+  /** Debounce/throttle value @default 300 */
+  debounceThrottleValue?: number;
+  debounceType?: "debounce" | "throttle";
   /** The label for the input @default undefined */
   label?: ReactNode;
   /** The description for the input @default undefined */
@@ -190,6 +195,9 @@ function InternalRangeSlider({
   min: _min = 0,
   max: _max = 100,
   step: _step = 1,
+  debounceThrottleValue = 300,
+  debounceType = "debounce",
+  onChangeComplete,
   cssStyles,
   ...rest
 }: RangeSliderProps) {
@@ -220,12 +228,14 @@ function InternalRangeSlider({
     }
   }, [value, _min, _max, _step, formatTooltipValue, hideTooltip]);
 
-  const debouncedOnChange = useDebouncedCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    if (typeof onChange === "function") {
-      onChange(event.target.valueAsNumber, event);
+  const callType = debounceType === "debounce" ? useDebouncedCallback : useThrottledCallback;
+
+  const debouncedOnChange = callType((event: React.ChangeEvent<HTMLInputElement>) => {
+    if (typeof onChangeComplete === "function") {
+      onChangeComplete(event.target.valueAsNumber, event);
     }
     setActive(false);
-  }, 300);
+  }, debounceThrottleValue);
 
   return (
     <RangeSliderParent
@@ -252,6 +262,9 @@ function InternalRangeSlider({
             if (!active) setActive(true);
           }}
           onChange={(event) => {
+            if (typeof onChange === "function") {
+              onChange(event.target.valueAsNumber, event);
+            }
             debouncedOnChange(event);
           }}
         />

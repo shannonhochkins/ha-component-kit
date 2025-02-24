@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
 import styled from "@emotion/styled";
+import { useHass } from "@hakit/core";
 
 export interface TextFieldProps extends React.ComponentPropsWithoutRef<"div"> {
   type?: string;
@@ -277,6 +278,9 @@ export const TextField: React.FC<TextFieldProps> = ({
   disabled,
   ...rest
 }) => {
+  const { useStore } = useHass();
+  const windowContext = useStore((store) => store.windowContext);
+  const win = windowContext ?? window;
   const [focused, setFocused] = useState(false);
   const [value, setValue] = useState<string | null>(initialValue);
   const [errorMessage, setErrorMessage] = useState<string | null>(initialErrorMessage);
@@ -297,11 +301,11 @@ export const TextField: React.FC<TextFieldProps> = ({
 
   useEffect(() => {
     setLabelWidthStyleProperty();
-    window.addEventListener("resize", setLabelWidthStyleProperty);
+    win.addEventListener("resize", setLabelWidthStyleProperty);
     return () => {
-      window.removeEventListener("resize", setLabelWidthStyleProperty);
+      win.removeEventListener("resize", setLabelWidthStyleProperty);
     };
-  }, []);
+  }, [win]);
 
   const focusField = () => {
     inputField.current?.focus();

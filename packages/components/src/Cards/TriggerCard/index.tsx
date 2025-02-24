@@ -112,7 +112,7 @@ const Title = styled.div<{
   }
 `;
 
-type OmitProperties = "as" | "ref" | "entity";
+type OmitProperties = "as" | "entity";
 export interface TriggerCardProps<E extends EntityName> extends Omit<CardBaseProps<"button", E>, OmitProperties> {
   /** The name of your entity */
   entity: E;

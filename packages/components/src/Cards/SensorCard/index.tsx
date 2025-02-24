@@ -8,7 +8,7 @@ import { fallback } from "../../Shared/ErrorBoundary";
 
 const StyledSensorCard = styled(ButtonCard)``;
 
-type OmitProperties = "as" | "active" | "ref" | "entity";
+type OmitProperties = "as" | "active" | "entity";
 export interface SensorCardProps<E extends EntityName> extends Omit<ButtonCardProps<E>, OmitProperties> {
   /** the entity to display */
   entity: E;

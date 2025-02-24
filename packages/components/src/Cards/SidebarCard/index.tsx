@@ -239,7 +239,7 @@ export interface MenuItem {
   onClick: (event: React.MouseEvent<HTMLLIElement>) => void;
 }
 
-type Extendable = Omit<React.ComponentProps<"div">, "ref"> & MotionProps;
+type Extendable = React.ComponentProps<"div"> & MotionProps;
 export interface SidebarCardProps extends Extendable {
   /** should the time card be included by default @default true */
   includeTimeCard?: boolean;

@@ -210,6 +210,8 @@ function InternalModal({
   const { useStore } = useHass();
   const modalStore = useModalStore();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const windowContext = useStore((store) => store.windowContext);
+  const win = windowContext ?? window;
   const portalRoot = useStore((store) => store.portalRoot);
   const [ready, setReady] = useState(false);
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
@@ -360,7 +362,7 @@ function InternalModal({
         </Fragment>
       )}
     </AnimatePresence>,
-    portalRoot ?? document.body,
+    portalRoot ?? win.document.body,
   );
 }
 /** The modal component was built to easily generate a popup dialog from any element by passing through an "open" value, if you pass an id value, and the same id value is used on another motion element from framer-motion the Modal will animate from this element, see the examples below. */

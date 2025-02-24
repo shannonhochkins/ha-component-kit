@@ -84,7 +84,7 @@ type PersonStateMap = {
     | undefined;
 };
 
-type OmitProperties = "as" | "active" | "disabled" | "children" | "entity" | "title" | "onClick" | "serviceData" | "service" | "ref";
+type OmitProperties = "as" | "active" | "disabled" | "children" | "entity" | "title" | "onClick" | "serviceData" | "service";
 
 export interface PersonCardProps extends Omit<CardBaseProps<"div", PersonEntity>, OmitProperties> {
   /** person entity in the form of "person.{string}" */
