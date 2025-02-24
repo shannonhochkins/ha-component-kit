@@ -21,6 +21,19 @@ or with Nabucasa:
 
 [https://YOUR_NABU_CASA_ID.ui.nabu.casa/local/ha-dashboard/index.html](https://YOUR_NABU_CASA_ID.ui.nabu.casa/local/ha-dashboard/index.html)
 
+## IMPORTANT
+
+Important Security Considerations for HA_TOKEN Usage with `HassConnect`
+
+The `hassToken` prop provided to `HassConnect` is highly convenient for local development and is required for executing the `npm run sync` command. However, it is strongly discouraged to use this token in production environments or on Home Assistant servers with remote access enabled.
+
+#### Security Risks
+- **Public Exposure**: The Home Assistant `www` directory is not protected by authentication. Any file placed in this directory will be accessible over the internet if someone knows its path, potentially exposing both your dashboard and the HA Token.
+- **Production Build Recommendations**: For production builds, especially when publishing files to the `www` folder, it is recommended to omit the token to prevent unauthorized access.
+- **User Authentication**: When the token is not used, users will be prompted to log in once per machine. This additional step serves as a valuable security measure by ensuring that only authenticated users can access your Home Assistant dashboard.
+
+For optimal security, restrict the use of the HA Token to local development environments only, and always enforce authentication for production deployments.
+
 ## Home Assistant Addon
 
 If you want to use the HAKIT addon for home assistant so you can access your custom dashboard from your home assistant sidebar, you can install and follow the [setup steps here](https://github.com/shannonhochkins/ha-component-kit/blob/master/ADDON.md)

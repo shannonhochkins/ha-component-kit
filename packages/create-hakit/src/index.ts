@@ -194,7 +194,11 @@ const createProject = async () => {
     const envFileContent = fs.readFileSync(envFile, 'utf-8');
     write('.env', root, templateDir, envFileContent
       .replace('{FOLDER_NAME}', cdProjectName)
-      .replace('VITE_HA_URL=', `VITE_HA_URL=${(haUrl ?? '').replace(/\/$/, '')}`)
+      .replace('VITE_HA_URL=', `VITE_HA_URL=${(haUrl ?? '').replace(/\/$/, '')}`));
+    // now update the .env.development file
+    const envDevFile = path.resolve(projectName, '.env.development');
+    const envDevFileContent = fs.readFileSync(envDevFile, 'utf-8');
+    write('.env.development', root, templateDir, envDevFileContent
       .replace('VITE_HA_TOKEN=', `VITE_HA_TOKEN=${haToken}`));
 
     console.info(green(`\n✔ Success! Next steps:`));
