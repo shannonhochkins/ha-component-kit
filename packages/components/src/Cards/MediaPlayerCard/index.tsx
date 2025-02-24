@@ -96,7 +96,6 @@ type OmitProperties =
   | "title"
   | "as"
   | "layout"
-  | "ref"
   | "entity"
   | "disabled"
   | "active"

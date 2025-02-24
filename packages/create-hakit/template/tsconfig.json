@@ -20,5 +20,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["sync-types.ts", ".d.ts", "scripts", "src"],
+  "include": ["scripts/sync-types.ts", ".d.ts", "scripts", "src"],
 }

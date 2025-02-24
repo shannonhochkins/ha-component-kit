@@ -84,8 +84,7 @@ type OmitProperties =
   | "rippleProps"
   | "borderRadius"
   | "disableActiveState"
-  | "onlyFunctionality"
-  | "ref";
+  | "onlyFunctionality";
 
 export interface FamilyCardProps extends Omit<CardBaseProps<"div", FilterByDomain<EntityName, "person">>, OmitProperties> {
   /** the children for the FamilyCard, it accepts Person components */

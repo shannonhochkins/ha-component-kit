@@ -37,7 +37,6 @@ type OmitProperties =
   | "serviceData"
   | "service"
   | "disableRipples"
-  | "ref"
   | "disableActiveState"
   | "disableScale";
 export interface EntitiesCardProps extends Omit<CardBaseProps<"div", EntityName>, OmitProperties> {

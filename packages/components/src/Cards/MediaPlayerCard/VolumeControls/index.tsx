@@ -151,7 +151,7 @@ export function VolumeControls({ entity: _entity, volumeLayout, hideMute, disabl
             value={is_volume_muted ? 0 : volume}
             formatTooltipValue={(value) => `${Math.round(value * 100)}%`}
             tooltipSize={2.2}
-            onChange={(value, event) => {
+            onChangeComplete={(value, event) => {
               event.preventDefault();
               setVolume(value);
             }}

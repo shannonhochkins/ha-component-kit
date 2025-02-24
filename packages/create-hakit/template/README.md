@@ -24,11 +24,14 @@ The `VITE_FOLDER_NAME` is the folder that will be created on your home assistant
 
 ## Typescript Sync
 
-1. Replace the values in the .env file provided with your own!
+1. Replace the values in the `.env` file provided with your own if the script hasn't handled this for you already
 2. The `VITE_HA_URL` should be a https url if you want to sync your types successfully.
 3. The `VITE_HA_TOKEN` instructions can be found [here](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-typescriptsync--docs) under the pre-requisites section.
 
 Once you have both the above environment variables set, you can run `npm run sync` and it will create a file for you, you then just have to add it to the tsconfig.json.
+
+### HA TOKEN
+The token by default will only be used by local development and the sync-script, if you wish to have your token bundled with your project you can move the declaration in the `.env.development` file to the `.env` file, then remove the `.env.development` file as well as update the `scripts/sync-types.ts` file to remove the `.env.development` loader.
 
 ## Further documentation
 For further documentation, please visit the [documentation website](https://shannonhochkins.github.io/ha-component-kit/) for more information.

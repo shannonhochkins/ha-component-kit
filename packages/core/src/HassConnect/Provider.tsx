@@ -38,6 +38,8 @@ export interface HassProviderProps {
   locale?: Locales;
   /** location to render portals @default document.body */
   portalRoot?: HTMLElement;
+  /** update the window reference that's used internally on some features, for example useBreakpoint will use the current window if not specified, and if running within an iframe this may not be expected behavior */
+  windowContext?: Window;
 }
 
 function handleError(err: number | string | Error | unknown, hassToken?: string): string {
@@ -244,7 +246,7 @@ const tryConnection = async (hassUrl: string, hassToken?: string): Promise<Conne
   };
 };
 
-export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot }: HassProviderProps) {
+export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot, windowContext }: HassProviderProps) {
   const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
   const authenticated = useRef(false);
   const subscribedConfig = useRef(false);
@@ -268,10 +270,15 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
   const setHassUrl = useStore((store) => store.setHassUrl);
   const setPortalRoot = useStore((store) => store.setPortalRoot);
   const setLocales = useStore((store) => store.setLocales);
+  const setWindowContext = useStore((store) => store.setWindowContext);
 
   useEffect(() => {
     if (portalRoot) setPortalRoot(portalRoot);
   }, [portalRoot, setPortalRoot]);
+
+  useEffect(() => {
+    if (windowContext) setWindowContext(windowContext);
+  }, [windowContext, setWindowContext]);
 
   const reset = useCallback(() => {
     // when the hassUrl changes, reset some properties and re-authenticate
@@ -412,7 +419,6 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot 
     subscribedConfig.current = true;
     // Subscribe to config updates
     const unsubscribe = subscribeConfig(connection, (newConfig) => {
-      console.log("config updated");
       fetchLocale(newConfig)
         .then((locales) => {
           // purposely setting config here to delay the rendering process of the application until locales are retrieved

@@ -3,9 +3,12 @@ import * as dotenv from 'dotenv';
 import { join } from 'path';
 import chalk from 'chalk';
 import { access, constants } from 'fs/promises';
+import prompts from 'prompts';
+// intentionally only loading the main .env so we're not using the token at all here.
 dotenv.config();
 
 const HA_URL = process.env.VITE_HA_URL;
+const HA_TOKEN = process.env.VITE_HA_TOKEN;
 const USERNAME = process.env.VITE_SSH_USERNAME;
 const PASSWORD = process.env.VITE_SSH_PASSWORD;
 const HOST_OR_IP_ADDRESS = process.env.VITE_SSH_HOSTNAME;
@@ -14,11 +17,33 @@ const REMOTE_FOLDER_NAME = process.env.VITE_FOLDER_NAME;
 const LOCAL_DIRECTORY = './dist';
 const REMOTE_PATH = `/www/${REMOTE_FOLDER_NAME}`;
 
+async function confirmDeploymentWithHaToken() {
+  if (!HA_TOKEN) {
+    return;
+  }
+  const response = (await prompts({
+    type: 'confirm',
+    name: 'value',
+    message: chalk.yellow(`
+WARN: You are about to deploy to Home Assistant with VITE_HA_TOKEN set in .env.
+
+READ MORE - https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-deploying--docs#important;
+
+Would you like to continue?`),
+    initial: true,
+  })) as { value: boolean };
+
+  if (response.value !== true) {
+    process.exit();
+  }
+}
+
 async function checkDirectoryExists() {
   try {
     await access(LOCAL_DIRECTORY, constants.F_OK);
     return true;
   } catch (err) {
+    console.error(err);
     return false;
   }
 }
@@ -61,10 +86,11 @@ async function deploy() {
         // empty the directory initially so we remove anything that doesn't need to be there
         try {
           await client.rmdir(remote);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
           // directory may not exist, ignore
         }
-        console.info(chalk.blue('Uploading', `"${LOCAL_DIRECTORY}"`, 'to', `"${remote}"`))
+        console.info(chalk.blue('Uploading', `"${LOCAL_DIRECTORY}"`, 'to', `"${remote}"`));
         // upload the folder to your home assistant server
         await client.uploadDir(LOCAL_DIRECTORY, remote);
         client.close(); // remember to close connection after you finish
@@ -82,9 +108,7 @@ async function deploy() {
       }
     }
     if (!matched) {
-      throw new Error(
-        'Could not find a config/homeassistant directory in the root of your home assistant installation.'
-      );
+      throw new Error('Could not find a config/homeassistant directory in the root of your home assistant installation.');
     }
   } catch (e: unknown) {
     if (e instanceof Error) {
@@ -92,5 +116,5 @@ async function deploy() {
     }
   }
 }
-
+await confirmDeploymentWithHaToken();
 deploy();

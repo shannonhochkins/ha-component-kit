@@ -89,6 +89,9 @@ export interface Store {
   setPortalRoot: (portalRoot: HTMLElement) => void;
   locales: Record<LocaleKeys, string> | null;
   setLocales: (locales: Record<LocaleKeys, string>) => void;
+  // used by some features to change which window context to use
+  setWindowContext: (windowContext: Window) => void;
+  windowContext: Window;
 }
 
 const IGNORE_KEYS_FOR_DIFF = ["last_changed", "last_updated", "context"];
@@ -119,6 +122,8 @@ export const useStore = create<Store>((set) => ({
   setLocales: (locales) => set({ locales }),
   setHash: (hash) => set({ hash }),
   setPortalRoot: (portalRoot) => set({ portalRoot }),
+  windowContext: window,
+  setWindowContext: (windowContext) => set({ windowContext }),
   setEntities: (newEntities) =>
     set((state) => {
       const entitiesDiffChanged = diff(ignoreForDiffCheck(state.entities), ignoreForDiffCheck(newEntities)) as HassEntities;
@@ -237,6 +242,8 @@ export interface HassContextProps {
         status: "error";
       }
   >;
+  /** Will tell the useBreakpoints which window to match media on, if serving within an iframe it'll potentially be running in the wrong window */
+  windowContext?: Window;
 }
 
 export const HassContext = createContext<HassContextProps>({} as HassContextProps);
