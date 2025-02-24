@@ -84,6 +84,7 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
   const debounceUpdate = useDebouncedCallback((entity: HassEntity) => {
     setEntity(formatEntity(entity));
   }, throttle);
+
   const [$entity, setEntity] = useState<HassEntityCustom | null>(matchedEntity !== null ? formatEntity(matchedEntity) : null);
 
   useEffect(() => {
@@ -123,6 +124,23 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
       }
     }
   }, [$entity, debounceUpdate, getEntity]);
+
+  useEffect(() => {
+    // when the initial ID doesn't match an entity, but it's updated dynamically through the hook
+    // we need to update the entity state
+    if (matchedEntity && !$entity) {
+      setEntity(formatEntity(matchedEntity));
+    }
+    // when the initial ID matches an entity, but it's updated dynamically through the hook and no longer matches
+    // we need to clear the entity state
+    if (!matchedEntity && $entity) {
+      setEntity(null);
+    }
+    // when the initial ID matches an entity, but it doesn't match the entity id already set, we need to update the entity
+    if (matchedEntity && $entity && matchedEntity.entity_id !== $entity.entity_id) {
+      setEntity(formatEntity(matchedEntity));
+    }
+  }, [matchedEntity, $entity, formatEntity]);
 
   return useMemo(() => {
     if ($entity === null) {
