@@ -1,3 +1,33 @@
+# 5.0.3
+
+### @hakit/components
+
+- BUGFIX - `ColumnProps` previously had an incorrect reference to the `flexWrap` types for the `wrap` prop.
+- NEW - windowContext - `HassConnect` can now change the context in which window is used for portals, emotion and more, this is useful if you're rendering your dashboard within an iframe and need to change the context of the window object.
+- NEW - RangeSlider - `onChangeComplete` and `onChange` now available, with the ability to change the throttle/debounce type and the delay which was previously not configurable
+- NEW - Tooltip - Will now pass through props propagated from parent, for example <Menu><Tooltip title="XX"></Menu> previously wouldn't activate the menu as the Menu component binds it's clicks to the child elements, if the refs aren't forwarded correctly it would never bind clicks.
+- NEW - Menu - Improvements to the Menu component used by various cards, now using a much smarter floating menu with a lot more controls around placement and positioning, it also now has overflow support for longer lists and aria attributes now added, additionally i've removed the animated effect for the menu so it's faster to get to the options, just unwanted noise (feedback taken onboard by users)
+- NEW - LightControls - Added support for light effects in popup for all light cards if supported by the entity (demo added to storybook) fixes [issue](https://github.com/shannonhochkins/ha-component-kit/issues/208)
+- NEW - Previously, all components were excluding the `ref` prop even though we forward them properly, this has been fixed and now all components will accept the `ref` prop and forward it to the correct element.
+- BUGFIX - ThemeProvider - Previously wouldn't allow you to dynamically control the theme props, they were only read once, this has been fixed.
+
+
+### @hakit/core
+- locales - updated to match latest release
+- BUGFIX - useEntity - previously if you provided an invalid entity name to useEntity dynamically from a parent component, it would never update it's internal reference to the entity, this may not have been causing issues for users as it's quite an obscure workflow unless you're building some sort of search functionality. fixes [issue](https://github.com/shannonhochkins/ha-component-kit/issues/213)
+
+### NPM CREATE v1.1.11
+
+- NEW - sync script now moved to the `scripts` directory and also updated package.json reference.
+
+1. By default, the VITE_HA_TOKEN will now be stored in a .env.development file which is only used by local development and the sync script.
+2. When building with vite, it will not bundle your token with the application code.
+3. If you wish to change this behavior, you can simply add the token back into the .env. file.
+
+If you still attempt to deploy and the deploy script detects a reference to the token, you'll be prompted to confirm this process.
+
+Fixes [issue](https://github.com/shannonhochkins/ha-component-kit/issues/211)
+
 # 5.0.2
 
 ### @hakit/components

@@ -176,7 +176,6 @@ function InternalTooltip({ placement = "top", title = null, children, ref, ...re
           return cloneElement(child, {
             ...child.props,
             onClick(_unknown: null, event: React.MouseEvent<HTMLDivElement>) {
-              console.log("event", event);
               child.props.onClick?.(_unknown, event);
               rest?.onClick?.(event);
             },
