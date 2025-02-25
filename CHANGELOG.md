@@ -1,3 +1,13 @@
+
+# 5.0.4
+
+### @hakit/components
+- No changes, alignment with core package
+
+### @hakit/core
+- Fixed bug with typescript sync where options are empty the types would generate invalid typescript definitions - fixes [issue](https://github.com/shannonhochkins/ha-component-kit/issues/221)
+
+
 # 5.0.3
 
 ### @hakit/components
