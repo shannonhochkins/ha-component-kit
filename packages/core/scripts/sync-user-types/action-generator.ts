@@ -53,8 +53,8 @@ const resolveSelectorType = (selector: Selector) => {
   if (keys.includes('boolean')) return 'boolean';
   if (keys.includes('select')) {
     const options = selector?.select?.options;
-    if (!_.isArray(options) || options.length === 0) return 'any[]';
-    return `${options.map(option => `'${typeof option === 'string' ? option : option.value}'`).join(' | ')}[]`;
+    if (!_.isArray(options) || options.length === 0) return 'any';
+    return `${options.map(option => `'${typeof option === 'string' ? option : option.value}'`).join(' | ')}`;
   }
   // unknown types
   return 'any';
