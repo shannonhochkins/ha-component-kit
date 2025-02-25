@@ -35,17 +35,29 @@ const resolveSelectorType = (selector: Selector) => {
     minutes?: number;
     seconds?: number;
   }`;
-  const stringTypes = ['text', 'entity', 'datetime', 'time', 'date', 'addon', 'backup_location', 'icon', 'conversation_agent', 'device', 'theme'];
+  const stringTypes = [
+    'text',
+    'entity',
+    'datetime',
+    'time',
+    'date',
+    'addon',
+    'backup_location',
+    'icon',
+    'conversation_agent',
+    'device',
+    'theme',
+  ];
   const isStringType = stringTypes.some(type => keys.includes(type));
   if (isStringType) return 'string';
   if (keys.includes('boolean')) return 'boolean';
   if (keys.includes('select')) {
     const options = selector?.select?.options;
-    if (!_.isArray(options)) return '';
-    return options.map(option => `'${typeof option === 'string' ? option : option.value}'`).join(' | ');
+    if (!_.isArray(options) || options.length === 0) return 'any[]';
+    return `${options.map(option => `'${typeof option === 'string' ? option : option.value}'`).join(' | ')}[]`;
   }
-  console.log('keys', keys);
-  return 'object';
+  // unknown types
+  return 'any';
 }
 
 function sanitizeString(str: string | boolean | number): string {
