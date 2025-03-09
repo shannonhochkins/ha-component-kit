@@ -47,7 +47,7 @@ Ready to transform your Home Assistant experience? Dive into the [Getting Starte
 
 ## Demo
 
-Visit the [Demo](https://shannonhochkins.github.io/ha-component-kit/iframe.html?args=&id=introduction-demo--default&viewMode=story#) to try it out!
+Visit the [Demo](https://shannonhochkins.github.io/ha-component-kit/iframe.html?args=&id=introduction-demo--demo&viewMode=story) to try it out!
 
 If you like anything here, be sure to 🌟 [the repo!](https://github.com/shannonhochkins/ha-component-kit)
 
