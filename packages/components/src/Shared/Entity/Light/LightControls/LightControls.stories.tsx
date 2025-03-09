@@ -8,7 +8,10 @@ function Template(args?: Partial<LightControlsProps>) {
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider />
       <ThemeControlsModal />
-      <LightControls {...args} entity="light.fake_light_1" />
+      <Row gap="1rem" wrap="nowrap">
+        <LightControls {...args} entity="light.fake_light_1" />
+        <LightControls entity="light.no_color" />
+      </Row>
     </HassConnect>
   );
 }

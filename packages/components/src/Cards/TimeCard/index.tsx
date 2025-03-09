@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useMemo, useRef, useCallback, useEffect, useState } from "react";
-import { type HassEntityWithService, useHass, useEntity } from "@hakit/core";
+import { type HassEntityWithService, useHass, useEntity, FilterByDomain, EntityName } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, Column, fallback, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { createDateFormatter, daySuffix } from "./formatter";
@@ -90,6 +90,10 @@ function formatDate(dateString: string): string {
 type CustomFormatter = (date: Date, formatter: FormatFunction) => string;
 type OmitProperties = "title" | "as" | "active" | "entity" | "service" | "serviceData" | "longPressCallback" | "modalProps";
 export interface TimeCardProps extends Omit<CardBaseProps<"div">, OmitProperties> {
+  /** provide a custom entity to read the time from, if not found/provided it will update from machine time @default "sensor.time" */
+  timeEntity?: FilterByDomain<EntityName, "sensor">;
+  /** provide a custom entity to read the date from, if not found/provided it will update from machine time @default "sensor.date" */
+  dateEntity?: FilterByDomain<EntityName, "sensor">;
   /** time format, by providing this it will bypass the sensor.time entity if available, for formatting options @see https://www.npmjs.com/package/intl-dateformat#formatters  @default "hh:mm a", you can also provide a custom function which will call every time the component re-renders */
   timeFormat?: string | CustomFormatter;
   /** date format, by providing this it will bypass the sensor.date entity if available, for formatting options @see https://www.npmjs.com/package/intl-dateformat#formatters  @default "dddd, MMMM DD YYYY", you can also provide a custom function which will call every time the component re-renders */
@@ -118,6 +122,8 @@ const DEFAULT_DATE_FORMAT = "dddd, MMMM DD YYYY";
 const customFormatter = createDateFormatter({});
 
 function InternalTimeCard({
+  timeEntity,
+  dateEntity,
   timeFormat,
   dateFormat,
   throttleTime = 1000,
@@ -140,10 +146,10 @@ function InternalTimeCard({
   const requestRef = useRef<number>(undefined);
   const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
-  const timeSensor = useEntity("sensor.time", {
+  const timeSensor = useEntity(timeEntity ?? "sensor.time", {
     returnNullIfNotFound: true,
   });
-  const dateSensor = useEntity("sensor.date", {
+  const dateSensor = useEntity(dateEntity ?? "sensor.date", {
     returnNullIfNotFound: true,
   });
   const [formatted, amOrPm] = useMemo(() => {
@@ -155,25 +161,43 @@ function InternalTimeCard({
   }, [timeSensor?.state]);
   const hasOnClick = typeof onClick === "function";
 
-  const timeValue =
-    timeSensor && !timeFormat ? (
-      <>
-        <Time className="time">{formatted}</Time>
-        <AmOrPm className="time-suffix">{amOrPm}</AmOrPm>
-      </>
-    ) : (
-      <Time className="time">
-        {typeof timeFormat === "function"
-          ? timeFormat(currentTime, customFormatter)
-          : customFormatter(currentTime, timeFormat ?? DEFAULT_TIME_FORMAT)}
+  const timeValue = useMemo(() => {
+    if (timeSensor && !timeFormat) {
+      return (
+        <>
+          <Time className="time">{formatted}</Time>
+          <AmOrPm className="time-suffix">{amOrPm}</AmOrPm>
+        </>
+      );
+    }
+    try {
+      return (
+        <Time className="time">
+          {typeof timeFormat === "function"
+            ? timeFormat(currentTime, customFormatter)
+            : customFormatter(currentTime, timeFormat ?? DEFAULT_TIME_FORMAT)}
+        </Time>
+      );
+    } catch (e) {
+      console.error('Time formatting error', e);
+      return <Time className="time">
+        {customFormatter(currentTime, DEFAULT_TIME_FORMAT)}
       </Time>
-    );
-  const dateValue =
-    dateSensor && !dateFormat
-      ? formatDate(dateSensor.state)
-      : typeof dateFormat === "function"
-        ? dateFormat(currentTime, customFormatter)
-        : customFormatter(currentTime, dateFormat ?? DEFAULT_DATE_FORMAT);
+    }
+  }, [amOrPm, currentTime, formatted, timeFormat, timeSensor])
+  
+    const dateValue = useMemo(() => {
+      try {
+        return dateSensor && !dateFormat
+        ? formatDate(dateSensor.state)
+        : typeof dateFormat === "function"
+          ? dateFormat(currentTime, customFormatter)
+          : customFormatter(currentTime, dateFormat ?? DEFAULT_DATE_FORMAT);
+      } catch (e) {
+        console.error('Date formatting error', e);
+        return customFormatter(currentTime, DEFAULT_DATE_FORMAT)
+      }
+    }, [currentTime, dateFormat, dateSensor])
 
   const updateClock = useCallback(() => {
     const now = Date.now();
