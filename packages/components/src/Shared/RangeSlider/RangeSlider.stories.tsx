@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, RangeSlider } from "@components";
+import { ThemeProvider, RangeSlider, ThemeControlsModal } from "@components";
 import type { RangeSliderProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(props: RangeSliderProps) {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <RangeSlider
         {...props}
         style={{

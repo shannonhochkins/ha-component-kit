@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, Ripples } from "@components";
+import { ThemeProvider, Ripples, ThemeControlsModal } from "@components";
 import type { RipplesProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
@@ -15,7 +15,8 @@ function Template({ duration, color, onClick, borderRadius, className }: Ripples
           className,
         }}
       >
-        <ThemeProvider includeThemeControls />
+        <ThemeProvider />
+        <ThemeControlsModal />
         <div
           style={{
             overflow: "hidden",

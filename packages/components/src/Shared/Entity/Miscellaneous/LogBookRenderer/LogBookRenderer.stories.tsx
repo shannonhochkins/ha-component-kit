@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, LogBookRenderer } from "@components";
+import { ThemeProvider, LogBookRenderer, ThemeControlsModal } from "@components";
 import type { LogBookRendererProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<LogBookRendererProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <LogBookRenderer {...args} entity="light.fake_light_1" />
     </HassConnect>
   );

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, PreloadImage } from "@components";
+import { ThemeProvider, PreloadImage, ThemeControlsModal } from "@components";
 import type { PreloadImageProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import image from "./living-room.jpg";
@@ -7,7 +7,8 @@ import image from "./living-room.jpg";
 function Template(args?: Partial<PreloadImageProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <PreloadImage
         {...args}
         src={image}

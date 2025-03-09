@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, Column, Alert } from "@components";
+import { ThemeProvider, Column, Alert, ThemeControlsModal } from "@components";
 import type { AlertProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<AlertProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column gap="1rem" fullWidth>
         <Alert {...args} type="error" />
         <Alert {...args} type="info" />

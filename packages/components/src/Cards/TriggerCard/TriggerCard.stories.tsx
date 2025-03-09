@@ -1,11 +1,12 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, TriggerCard, Column } from "@components";
+import { ThemeProvider, TriggerCard, Column, ThemeControlsModal } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column gap="1rem" fullWidth>
         <TriggerCard
           entity="scene.good_morning"

@@ -29,6 +29,7 @@ import {
   ButtonGroupButton,
   VacuumCard,
   AlarmCard,
+  ThemeControlsModal,
 } from '@components';
 import office from './office.jpg';
 import livingRoom from './living-room.jpg';
@@ -261,7 +262,7 @@ function Template() {
 
 function Connector() {
   return <HassConnect hassUrl="https://homeassistant.local:8123">
-    <ThemeProvider includeThemeControls darkMode={true} theme={{
+    <ThemeProvider darkMode={true} theme={{
       device: {
         sidebarCard: {
           width: {
@@ -270,6 +271,7 @@ function Connector() {
         }
       }
     }} />
+    <ThemeControlsModal />
     <Template />
   </HassConnect>
 }

@@ -1,7 +1,7 @@
 import { Story, Source, Title, Description, ArgTypes } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useTemplate, useEntity } from "@hakit/core";
-import { ThemeProvider, Column, Alert, Row, FabCard } from "@components";
+import { ThemeProvider, Column, Alert, Row, FabCard, ThemeControlsModal } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import { templateCodeToProcess } from "./examples/constants";
 import basicExample from "./examples/basic.code?raw";
@@ -39,7 +39,8 @@ function SubscribeTemplateExample() {
 function Template() {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column fullWidth gap="1rem" alignItems="flex-start" justifyContent="flex-start">
         <SubscribeTemplateExample />
       </Column>

@@ -1,11 +1,12 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, AlarmCard, Row, RelatedEntity } from "@components";
+import { ThemeProvider, ThemeControlsModal, AlarmCard, Row, RelatedEntity } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row gap="2rem">
         <AlarmCard
           entity={"alarm_control_panel.home_alarm"}

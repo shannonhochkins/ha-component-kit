@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, Tooltip, Row } from "@components";
+import { ThemeProvider, Tooltip, Row, ThemeControlsModal } from "@components";
 import type { TooltipProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(props: TooltipProps) {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row fullHeight fullWidth>
         <Tooltip {...props}>
           <div

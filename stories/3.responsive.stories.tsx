@@ -8,6 +8,7 @@ import {
   Column,
   ButtonCard,
   Group,
+  ThemeControlsModal,
   useBreakpoint as useBreakpointHook,
 } from '@components';
 import { css, Global } from "@emotion/react";
@@ -92,7 +93,8 @@ function Template() {
 
 function Connector() {
   return <HassConnect hassUrl="https://homeassistant.local:8123">
-    <ThemeProvider includeThemeControls darkMode={true} />
+    <ThemeProvider darkMode={true} />
+    <ThemeControlsModal />
     <Global styles={css`
       .docblock-source.sb-unstyled {
         width: 100%;

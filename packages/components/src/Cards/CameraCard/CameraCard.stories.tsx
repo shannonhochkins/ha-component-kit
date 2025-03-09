@@ -1,11 +1,12 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, CameraCard, ButtonBarButton, Column } from "@components";
+import { ThemeProvider, CameraCard, ButtonBarButton, ThemeControlsModal, Column } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="https://homeassistant.local:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column gap="1rem" fullWidth>
         <CameraCard
           entity="camera.demo_camera"

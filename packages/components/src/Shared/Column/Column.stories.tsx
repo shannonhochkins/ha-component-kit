@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, Column, ButtonCard } from "@components";
+import { ThemeProvider, Column, ButtonCard, ThemeControlsModal } from "@components";
 import type { ColumnProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<ColumnProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column {...args}>
         <ButtonCard entity="light.fake_light_1" />
         <ButtonCard entity="switch.fake_switch" />

@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, ButtonGroup, ButtonGroupButton } from "@components";
+import { ThemeProvider, ButtonGroup, ButtonGroupButton, ThemeControlsModal } from "@components";
 import type { ButtonGroupProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<ButtonGroupProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <ButtonGroup {...args}>
         <ButtonGroupButton
           entity="light.fake_light_1"

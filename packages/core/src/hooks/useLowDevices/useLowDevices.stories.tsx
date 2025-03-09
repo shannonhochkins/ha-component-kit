@@ -1,6 +1,6 @@
 import { Story, Source, Title, Description, ArgTypes } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, Row, Column } from "@components";
+import { ThemeProvider, Row, Column, ThemeControlsModal } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import basicExample from "./examples/basic.code?raw";
 import { RenderDevices } from "./examples/basic.code";
@@ -8,7 +8,8 @@ import { RenderDevices } from "./examples/basic.code";
 function Template() {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column fullWidth gap="1rem">
         <p>The following renders the low battery devices in an EntitiesCard component</p>
         <Row gap="1rem" fullWidth>

@@ -1,6 +1,6 @@
 import { useRef, useCallback } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, Column, ColorPicker, ButtonCard } from "@components";
+import { ThemeProvider, Column, ColorPicker, ButtonCard, ThemeControlsModal } from "@components";
 import type { ColorPickerProps, ColorPickerOutputColors } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
@@ -17,7 +17,8 @@ function Template(args?: Partial<ColorPickerProps>) {
 
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column gap={"1rem"} fullWidth>
         <ColorPicker entity="light.fake_light_1" {...args} onChangeApplied={updateText} onChange={updateText} />
         <span ref={valueRef}></span>

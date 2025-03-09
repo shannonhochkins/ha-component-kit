@@ -1,11 +1,12 @@
-import { Row, EntitiesCardRow, ThemeProvider } from "@components";
+import { Row, EntitiesCardRow, ThemeProvider, ThemeControlsModal } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import type { Args, Meta, StoryObj } from "@storybook/react";
 
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="https://homeassistant.local:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row gap="1rem" fullWidth>
         <EntitiesCardRow {...args} entity="sensor.time" />
         <EntitiesCardRow {...args} entity="sensor.date" />

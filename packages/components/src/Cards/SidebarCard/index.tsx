@@ -22,6 +22,14 @@ const StyledTimeCard = styled(TimeCard)<{
     box-shadow: none;
     background: transparent;
   }
+  &:not(.disabled):not(:disabled):not(:focus):hover {
+    box-shadow: none;
+    background: transparent;
+    color: var(--ha-S200-contrast)
+    svg {
+      color: var(--ha-S200-contrast)
+    }
+  }
   h4 {
     transition: var(--ha-transition-duration) var(--ha-easing);
     transition-property: font-size;

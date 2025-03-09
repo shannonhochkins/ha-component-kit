@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, Column, WeatherCard, WeatherCardDetail } from "@components";
+import { ThemeProvider, Column, WeatherCard, ThemeControlsModal, WeatherCardDetail } from "@components";
 import type { WeatherCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import { HassEntityWithService } from "@hakit/core";
@@ -17,7 +17,8 @@ function convertUvIndexToText(uvi: number | null): string | null {
 function Template(args?: Partial<WeatherCardProps>) {
   return (
     <HassConnect hassUrl="https://homeassistant.local:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column gap="1rem">
         <WeatherCard
           entity="weather.entity"

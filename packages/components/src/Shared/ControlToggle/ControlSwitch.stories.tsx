@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, ControlToggle, Row, Column } from "@components";
+import { ThemeProvider, ControlToggle, Row, Column, ThemeControlsModal } from "@components";
 import type { ControlToggleProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
@@ -23,7 +23,8 @@ function Template(args?: Partial<ControlToggleProps>) {
   ] satisfies ControlToggleProps[];
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <h2>Vertical Switches</h2>
       <Row gap={"1rem"} fullWidth justifyContent="flex-start">
         {controlSwitches.map((props, index) => (

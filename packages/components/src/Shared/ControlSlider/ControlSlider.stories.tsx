@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, ControlSlider, Row, Column } from "@components";
+import { ThemeProvider, ControlSlider, Row, Column, ThemeControlsModal } from "@components";
 import type { ControlSliderProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
@@ -44,7 +44,8 @@ function Template(args?: Partial<ControlSliderProps>) {
   ] satisfies SliderProps[];
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row gap={"1rem"} fullWidth>
         {sliders.map(({ value, thickness, sliderColor, ref }, index) => (
           <Column key={index} gap="0.5rem">
