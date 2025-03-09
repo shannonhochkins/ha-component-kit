@@ -5,7 +5,7 @@
 - BUGFIX - CalendarCard - Logic to swap out the view only when the view prop was undefined was a bit of a premature optimization, there's now two additional props `disableNarrow` and `disableAutoView` to disable the logic independently, fixes [issue](https://github.com/shannonhochkins/ha-component-kit/issues/231)
 
 ### @hakit/core
-- No changes, alignment with components package
+- No changes, alignment with components package so versions are aligned
 
 # 5.0.6
 
