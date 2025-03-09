@@ -323,6 +323,10 @@ export interface CalendarCardProps extends Omit<CardBaseProps<"div", EntityName>
   timeZone?: string;
   /** the default rendered view @default "dayGridMonth" */
   view?: "dayGridMonth" | "listWeek" | "dayGridDay";
+  /** based on the available size of the card, the view will automatically change based on the size @default false */
+  disableAutoView?: boolean;
+  /** disables the narrow class/styles from being added when the card is too small @default false */
+  disableNarrow?: boolean;
   /** include the header controls @default true */
   includeHeader?: boolean;
 }
@@ -398,6 +402,8 @@ function InternalCalendarCard({
   className,
   timeZone,
   view,
+  disableAutoView = false,
+  disableNarrow = false,
   includeHeader = true,
   cssStyles,
   key,
@@ -509,23 +515,23 @@ function InternalCalendarCard({
         calRef.current.requestResize();
         if (width < 400) {
           // only change the view if it's not already in listWeek, and not defined as an input prop
-          if (typeof view !== "undefined" && calendarApi.view.type !== "listWeek") {
+          if (!disableAutoView && calendarApi.view.type !== "listWeek") {
             changeView((api) => {
               api.setOption("eventDisplay", "auto");
               api.changeView("listWeek");
               setActiveView("listWeek");
             });
           }
-          if (!narrow) {
+          if (!narrow && !disableNarrow) {
             setNarrow(true);
           }
         }
-        if (width >= 400 && narrow) {
+        if (width >= 400 && narrow && !disableNarrow) {
           setNarrow(false);
         }
       }
     },
-    [narrow, view, changeView],
+    [narrow, disableAutoView, disableNarrow, changeView],
   );
   useEffect(() => {
     if (width) {
