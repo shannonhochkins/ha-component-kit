@@ -1,22 +1,20 @@
-import { useState, useMemo, useEffect, memo } from "react";
+import { useEffect, memo } from "react";
 import { css, Global } from "@emotion/react";
 import { CSSInterpolation } from "@emotion/serialize";
-import styled from "@emotion/styled";
 import { isEqual, merge } from "lodash";
 import { theme as defaultTheme } from "./theme";
 import type { ThemeParams } from "./theme";
 import { convertToCssVars } from "./helpers";
-import { useBreakpoint, fallback, FabCard, Modal, type BreakPoints } from "@components";
+import { useBreakpoint, fallback, type BreakPoints } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import { motion } from "framer-motion";
 import { LIGHT, DARK, ACCENT, DEFAULT_START_LIGHT, DEFAULT_START_DARK, DIFF, DEFAULT_THEME_OPTIONS } from "./constants";
-import { localize, useHass, type SupportedComponentOverrides } from "@hakit/core";
-import { ThemeControls } from "./ThemeControls";
-import type { ThemeControlsProps } from "./ThemeControls";
+import { useHass, type SupportedComponentOverrides } from "@hakit/core";
 import { generateColumnBreakpoints } from "./breakpoints";
 import createCache, { type Options } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import weakMemoize from "@emotion/weak-memoize";
+import { useThemeStore, type ThemeStore } from "./store";
+
 
 type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
@@ -31,23 +29,7 @@ function EmotionProvider({ children, options }: { children: React.ReactNode; opt
   return <CacheProvider value={memoizedCreateCacheWithContainer(options)}>{children}</CacheProvider>;
 }
 
-export interface ThemeProviderProps<T extends object> {
-  /** the tint factor to apply to the shade colors */
-  tint?: number;
-  /** the color hue shift value */
-  hue?: number;
-  /** the color saturation value */
-  saturation?: number;
-  /** the color lightness value */
-  lightness?: number;
-  /** the contrast threshold for text @default 65 */
-  contrastThreshold?: number;
-  /** dark mode or light mode */
-  darkMode?: boolean;
-  /** the theme controls button can be automatically included at the top right of the page @default false */
-  includeThemeControls?: boolean;
-  /** the styles for the theme controls button if you want to reposition it */
-  themeControlStyles?: React.CSSProperties;
+export type ThemeProviderProps<T extends object> = ThemeStore['theme'] & {
   /** the theme properties */
   theme?: DeepPartial<ThemeParams> & T;
   /** any global style overrides */
@@ -68,12 +50,7 @@ export interface ThemeProviderProps<T extends object> {
   children?: React.ReactNode;
 }
 
-const ThemeControlsBox = styled(motion.div)`
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 1;
-`;
+
 
 const INFO_COLORS = {
   errorColor: [219, 68, 55],
@@ -226,21 +203,21 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
 
 const InternalThemeProvider = memo(function InternalThemeProvider<T extends object>({
   theme,
-  darkMode = DEFAULT_THEME_OPTIONS.darkMode,
-  tint: t = DEFAULT_THEME_OPTIONS.tint,
-  hue: h = DEFAULT_THEME_OPTIONS.hue,
-  saturation: s = DEFAULT_THEME_OPTIONS.saturation,
-  lightness: l = DEFAULT_THEME_OPTIONS.lightness,
-  contrastThreshold: c = DEFAULT_THEME_OPTIONS.contrastThreshold,
-  breakpoints = DEFAULT_THEME_OPTIONS.breakpoints,
-  includeThemeControls = false,
-  themeControlStyles,
+  darkMode,
+  tint: t,
+  hue: h,
+  saturation: s,
+  lightness: l,
+  contrastThreshold: c,
+  breakpoints,
   globalStyles,
   globalComponentStyles,
   emotionCache,
   children,
 }: ThemeProviderProps<T>): React.ReactNode {
   const { useStore } = useHass();
+  const themeStore = useThemeStore(store => store.theme);
+  const setTheme = useThemeStore(store => store.setTheme);
   const setBreakpoints = useStore((store) => store.setBreakpoints);
   const setGlobalComponentStyles = useStore((store) => store.setGlobalComponentStyles);
   const _breakpoints = useStore((store) => store.breakpoints);
@@ -254,28 +231,26 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
     }
   }, [setGlobalComponentStyles, globalComponentStyles]);
 
-  const defaults = useMemo(() => {
-    return {
+  useEffect(() => {
+    const theme = {
       hue: h,
       lightness: l,
       tint: t,
       saturation: s,
       darkMode: darkMode,
       contrastThreshold: c,
-    } satisfies Omit<ThemeControlsProps, "onChange">;
-  }, [c, darkMode, h, l, s, t]);
-  const [_theme, setTheme] = useState<Omit<ThemeControlsProps, "onChange">>(defaults);
-  const [open, setOpen] = useState(false);
-  const colorScheme = _theme.darkMode ? "dark" : "light";
+    } satisfies ThemeStore['theme'];
+    setTheme(theme);
+  }, [c, darkMode, h, l, s, t, setTheme]);
+
+  
+  const colorScheme = themeStore.darkMode ? "dark" : "light";
 
   useEffect(() => {
-    setBreakpoints(breakpoints);
-  }, [setBreakpoints, breakpoints]);
-
-  useEffect(() => {
-    if (isEqual(defaults, _theme)) return;
-    setTheme(defaults);
-  }, [defaults, _theme]);
+    if (typeof breakpoints !== "undefined" && !isEqual(breakpoints, _breakpoints)) {
+      setBreakpoints(breakpoints);
+    }
+  }, [setBreakpoints, breakpoints, _breakpoints]);
 
   useEffect(() => {
     Object.entries(device).forEach(([breakpointKey, active]) => {
@@ -309,21 +284,21 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
         styles={css`
           :root {
             ${convertToCssVars(merge(defaultTheme, theme))}
-            --is-dark-theme: ${_theme.darkMode ? "1" : "0"};
+            --is-dark-theme: ${themeStore.darkMode ? "1" : "0"};
             color-scheme: ${colorScheme};
             --ha-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --ha-transition-duration: 0.25s;
             --ha-area-card-expanded-offset: 0;
-            --ha-background-opaque: ${_theme.darkMode
+            --ha-background-opaque: ${themeStore.darkMode
               ? `hsla(var(--ha-h), calc(var(--ha-s) * 1%), 10%, 0.9)`
               : `hsla(var(--ha-h), calc(var(--ha-s) * 1%), 20%, 0.7)`};
           }
 
           :root {
-            --ha-h: ${_theme.hue};
-            --ha-s: ${_theme.saturation};
-            --ha-l: ${_theme.lightness};
-            --ha-contrast-threshold: ${_theme.contrastThreshold}%;
+            --ha-h: ${themeStore.hue};
+            --ha-s: ${themeStore.saturation};
+            --ha-l: ${themeStore.lightness};
+            --ha-contrast-threshold: ${themeStore.contrastThreshold}%;
             --ha-so: calc(var(--ha-s) * 1%);
             --ha: hsla(var(--ha-h), calc(var(--ha-s) * 1%), calc(var(--ha-l) * 1%), 100%);
             --mtc-h-A100: 1;
@@ -360,7 +335,7 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
             --mtc-light-s: 0;
             --mtc-light-l: 100;
 
-            ${generateAllVars(_theme.tint ?? DEFAULT_THEME_OPTIONS.tint, _theme.darkMode ?? DEFAULT_THEME_OPTIONS.darkMode)}
+            ${generateAllVars(themeStore.tint ?? DEFAULT_THEME_OPTIONS.tint, themeStore.darkMode ?? DEFAULT_THEME_OPTIONS.darkMode)}
           }
 
           * {
@@ -413,34 +388,6 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
           ${globalStyles ?? ""}
         `}
       />
-      {includeThemeControls && (
-        <ThemeControlsBox
-          style={{
-            ...(themeControlStyles ?? {}),
-          }}
-        >
-          <FabCard onClick={() => setOpen(true)} tooltipPlacement="left" title={localize("theme")} icon="mdi:color" />
-        </ThemeControlsBox>
-      )}
-      {includeThemeControls && (
-        <Modal
-          description="This interface showcases how the colors will behave and provides easy to access css variables"
-          open={open}
-          title={localize("theme")}
-          onClose={() => {
-            setOpen(false);
-          }}
-        >
-          <ThemeControls
-            {...{
-              ..._theme,
-            }}
-            onChange={(theme) => {
-              setTheme(theme);
-            }}
-          />
-        </Modal>
-      )}
       {children && children}
     </EmotionProvider>
   );

@@ -1,6 +1,6 @@
 import { Source } from "@storybook/blocks";
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, Group, Column, ButtonCard } from "@components";
+import { ThemeProvider, Group, Column, ButtonCard, ThemeControlsModal } from "@components";
 import type { ButtonCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import jsxToString from "react-element-to-jsx-string";
@@ -8,7 +8,8 @@ import jsxToString from "react-element-to-jsx-string";
 function Template(args?: Partial<ButtonCardProps<"switch.fake_switch">>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Group title="Examples" alignItems="stretch">
         <ButtonCard
           {...args}
@@ -28,7 +29,8 @@ function Template(args?: Partial<ButtonCardProps<"switch.fake_switch">>) {
 function TemplateOnclick(args?: Partial<ButtonCardProps<"climate.air_conditioner">>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <ButtonCard
         {...args}
         entity="climate.air_conditioner"
@@ -71,7 +73,8 @@ function ExampleDocs() {
         dark
         code={`
       <HassConnect hassUrl="http://localhost:8123">
-        <ThemeProvider includeThemeControls />
+        <ThemeProvider />
+        <ThemeControlsModal />
         <ButtonCard
           entity="climate.air_conditioner"
           onClick={entity => {
@@ -101,7 +104,8 @@ function ExampleDocs() {
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column gap="1rem" fullWidth>
         <ButtonCard {...args} />
         <ButtonCard {...args} entity="light.fake_light_1" service="toggle" layoutType="slim" />
@@ -125,7 +129,7 @@ export default {
 } satisfies Meta<typeof ButtonCard>;
 
 export type ExamplesStory = StoryObj<typeof ButtonCard<"switch.fake_switch">>;
-export const Examples: ExamplesStory = {
+export const Docs: ExamplesStory = {
   render: Render,
   args: {
     service: "toggle",

@@ -25,9 +25,6 @@ export default ({
     options: {
     }
   },
-  docs: {
-    autodocs: 'tag'
-  },
   typescript: {
     check: true,
     reactDocgen: 'react-docgen-typescript',

@@ -8,6 +8,7 @@ import {
   Column,
   ButtonCard,
   Group,
+  ThemeControlsModal,
   useBreakpoint as useBreakpointHook,
 } from '@components';
 import { css, Global } from "@emotion/react";
@@ -92,7 +93,8 @@ function Template() {
 
 function Connector() {
   return <HassConnect hassUrl="https://homeassistant.local:8123">
-    <ThemeProvider includeThemeControls darkMode={true} />
+    <ThemeProvider darkMode={true} />
+    <ThemeControlsModal />
     <Global styles={css`
       .docblock-source.sb-unstyled {
         width: 100%;
@@ -105,9 +107,11 @@ function Connector() {
 
 export default {
   title: "INTRODUCTION/Responsive Layouts",
+  tags: ['!autodocs'],
   parameters: {
     standalone: true,
     docs: {
+      page: null,
       description: {
         component: `@hakit provides a series of tools to easily authenticate and communicate with your home assistant instance from React!`
       }
@@ -117,7 +121,7 @@ export default {
 
 export type Story = StoryObj<typeof Connector>;
 
-export const Default = Connector.bind({});
+export const Demo = Connector.bind({});
 
 const Empty = () => <></>;
 

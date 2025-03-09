@@ -19,6 +19,7 @@ const theme = {
 
 
 export default {
+  tags: ['autodocs'],
   decorators: [
     withThemeFromJSXProvider({
       themes: {
@@ -60,7 +61,6 @@ export default {
       </div>
     },
   ],
-
   parameters: {
     layout: 'centered',
     controls: {

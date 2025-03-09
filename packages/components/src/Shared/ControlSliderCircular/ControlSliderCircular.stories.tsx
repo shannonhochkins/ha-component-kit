@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, ControlSliderCircular, Row } from "@components";
+import { ThemeProvider, ControlSliderCircular, Row, ThemeControlsModal } from "@components";
 import type { ControlSliderCircularProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<ControlSliderCircularProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row gap={"1rem"} fullWidth>
         <ControlSliderCircular
           current={20}
@@ -40,7 +41,7 @@ export default {
   },
 } satisfies Meta<typeof ControlSliderCircular>;
 export type TimeStory = StoryObj<typeof ControlSliderCircular>;
-export const ControlSliderCircularExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

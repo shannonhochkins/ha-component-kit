@@ -1,11 +1,12 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, ClimateCard, Row } from "@components";
+import { ThemeProvider, ClimateCard, ThemeControlsModal, Row } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row gap="2rem">
         <ClimateCard entity={"climate.air_conditioner"} {...args} />
         <ClimateCard layoutType="slim-vertical" hvacModes={["cool", "heat"]} entity={"climate.air_conditioner"} {...args} />
@@ -18,7 +19,8 @@ function Render(args?: Args) {
 function TempRender(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row gap="2rem">
         <ClimateCard showTemperatureControls entity={"climate.air_conditioner"} {...args} />
         <ClimateCard
@@ -45,7 +47,7 @@ export default {
   },
 } satisfies Meta<typeof ClimateCard>;
 export type ClimateStory = StoryObj<typeof ClimateCard>;
-export const ClimateCardExample: ClimateStory = {
+export const Docs: ClimateStory = {
   render: Render,
   args: {
     entity: "climate.air_conditioner",

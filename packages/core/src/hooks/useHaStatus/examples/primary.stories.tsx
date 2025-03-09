@@ -63,7 +63,12 @@ export const PrimaryExample: Story = {
   args: {
     label: "PrimaryExample",
   },
-  tags: ["!dev"],
+  /*
+   * All stories in this file will:
+   * - NOT be included in the docs page
+   * - Not appear in Storybook's sidebar
+   */
+  tags: ["!dev", '!autodocs'],
   parameters: {
     docs: {
       canvas: {
