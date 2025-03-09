@@ -45,7 +45,7 @@ export default {
   },
 } satisfies Meta<typeof ButtonBar>;
 export type TimeStory = StoryObj<typeof ButtonBar>;
-export const Example: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

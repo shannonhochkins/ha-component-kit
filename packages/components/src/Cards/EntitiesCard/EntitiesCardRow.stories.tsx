@@ -25,7 +25,7 @@ export default {
   },
 } satisfies Meta<typeof EntitiesCardRow>;
 export type EntitiesCardRowStory = StoryObj<typeof EntitiesCardRow>;
-export const Example: EntitiesCardRowStory = {
+export const Docs: EntitiesCardRowStory = {
   render: Render,
   args: {},
 };

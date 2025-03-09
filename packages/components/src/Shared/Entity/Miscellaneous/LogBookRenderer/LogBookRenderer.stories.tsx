@@ -21,7 +21,7 @@ export default {
   },
 } satisfies Meta<typeof LogBookRenderer>;
 export type TimeStory = StoryObj<typeof LogBookRenderer>;
-export const LogBookRendererExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

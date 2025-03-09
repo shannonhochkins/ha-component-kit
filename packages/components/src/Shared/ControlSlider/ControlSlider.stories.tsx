@@ -77,7 +77,7 @@ export default {
   },
 } satisfies Meta<typeof ControlSlider>;
 export type TimeStory = StoryObj<typeof ControlSlider>;
-export const ControlSliderExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

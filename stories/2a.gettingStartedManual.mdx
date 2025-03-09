@@ -1,4 +1,5 @@
 import { Meta, Source } from '@storybook/blocks';
+import appExample from './codeExamples/appExample.code?raw';
 
 <Meta title="INTRODUCTION/Getting Started/Manual Setup" />
 
@@ -16,25 +17,7 @@ There's an awesome sub-feature of this package that will generate types specific
 
 **In** your root component of your react application (usually App.tsx) wrap everything with the [HassConnect](/docs/core-hassconnect--docs) component, don't forget to include the `ThemeProvider` to get the default theme if you're using [@hakit/components](https://www.npmjs.com/package/@hakit/components).
 
-<Source dark code={`
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { HassConnect } from '@hakit/core';
-import { ThemeProvider } from '@hakit/components';
-// TODO: replace this with your home assistant url & token, recommended you place these in a .env file if you're deploying to github.
-const HASS_URL = 'http://localhost:8123';
-const HASS_TOKEN = 'YOUR_TOKEN_HERE';
-function App() {
-  return <HassConnect hassUrl={HASS_URL} hassToken={HASS_TOKEN}>
-    <ThemeProvider includeThemeControls />
-    <p>This will render when connected!</p>
-  </HassConnect>
-}
-
-const root = createRoot(document.getElementById('root'));
-
-root.render(<App />);
-`} />
+<Source dark code={appExample} />
 
 
 ### Deploying to Home Assistant

@@ -22,7 +22,7 @@ export default {
   },
 } satisfies Meta<typeof CalendarCard>;
 export type LightStory = StoryObj<typeof CalendarCard>;
-export const Example: LightStory = {
+export const Docs: LightStory = {
   render: Render,
   args: {},
 };

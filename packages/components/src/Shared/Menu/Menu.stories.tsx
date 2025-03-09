@@ -82,7 +82,7 @@ export default {
   },
 } satisfies Meta<typeof Menu>;
 export type TimeStory = StoryObj<typeof Menu>;
-export const MenuExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

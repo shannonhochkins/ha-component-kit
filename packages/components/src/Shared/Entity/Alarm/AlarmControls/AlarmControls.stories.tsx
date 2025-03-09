@@ -22,7 +22,7 @@ export default {
   },
 } satisfies Meta<typeof AlarmControls>;
 export type AlarmStory = StoryObj<typeof AlarmControls>;
-export const AlarmControlsExample: AlarmStory = {
+export const Docs: AlarmStory = {
   render: Render,
   args: {
     entity: "alarm_control_panel.alarm",

@@ -97,7 +97,7 @@ export default {
   },
 } satisfies Meta<typeof WeatherCard>;
 export type WeatherStory = StoryObj<typeof WeatherCard>;
-export const WeatherExample: WeatherStory = {
+export const Docs: WeatherStory = {
   render: Template,
   args: {},
 };

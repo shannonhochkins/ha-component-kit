@@ -22,7 +22,7 @@ export default {
   },
 } satisfies Meta<typeof ClimateControls>;
 export type ClimateStory = StoryObj<typeof ClimateControls>;
-export const ClimateControlsExample: ClimateStory = {
+export const Docs: ClimateStory = {
   render: Render,
   args: {
     entity: "climate.air_conditioner",

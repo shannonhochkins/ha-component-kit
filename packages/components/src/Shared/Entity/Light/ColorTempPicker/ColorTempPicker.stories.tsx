@@ -36,7 +36,7 @@ export default {
   },
 } satisfies Meta<typeof ColorTempPicker>;
 export type TimeStory = StoryObj<typeof ColorTempPicker>;
-export const ColorTempPickerExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

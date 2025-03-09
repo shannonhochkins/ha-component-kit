@@ -30,7 +30,7 @@ export default {
   },
 } satisfies Meta<typeof PreloadImage>;
 export type TimeStory = StoryObj<typeof PreloadImage>;
-export const Example: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

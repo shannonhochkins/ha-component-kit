@@ -26,7 +26,7 @@ export default {
   },
 } satisfies Meta<typeof Alert>;
 export type TimeStory = StoryObj<typeof Alert>;
-export const AlertExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {
     type: "error",

@@ -28,7 +28,7 @@ export default {
   },
 } satisfies Meta<typeof SensorCard>;
 export type Story = StoryObj<typeof SensorCard>;
-export const Example: Story = {
+export const Docs: Story = {
   render: Render,
   args: {
     onClick: undefined,

@@ -32,7 +32,7 @@ export default {
   },
 } satisfies Meta<typeof ButtonGroup>;
 export type TimeStory = StoryObj<typeof ButtonGroup>;
-export const Example: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

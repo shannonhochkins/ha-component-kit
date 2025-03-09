@@ -30,7 +30,7 @@ export default {
   },
 } satisfies Meta<typeof CardBase>;
 export type LightStory = StoryObj<typeof CardBase>;
-export const Example: LightStory = {
+export const Docs: LightStory = {
   render: Render,
   args: {},
 };

@@ -30,7 +30,7 @@ export default {
   },
 } satisfies Meta<typeof Row>;
 export type TimeStory = StoryObj<typeof Row>;
-export const RowExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {
     gap: "0.5rem",

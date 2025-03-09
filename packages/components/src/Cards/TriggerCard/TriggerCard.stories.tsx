@@ -51,7 +51,7 @@ export default {
   },
 } satisfies Meta<typeof TriggerCard>;
 export type Story = StoryObj<typeof TriggerCard>;
-export const Example: Story = {
+export const Docs: Story = {
   render: Render,
   args: {},
 };

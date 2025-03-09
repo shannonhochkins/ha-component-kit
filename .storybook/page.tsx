@@ -9,6 +9,10 @@ export function Page() {
   const meta = useOf('meta', ['meta']);
   const hidePrimary = meta?.preparedMeta?.parameters?.hidePrimary;
   const hideComponentProps = meta?.preparedMeta?.parameters?.hideComponentProps;
+  const standalone = meta?.preparedMeta?.parameters?.standalone ?? false;
+  if (standalone) {
+    return <Primary />;
+  }
   return (<>
     <Title />
     <Description />

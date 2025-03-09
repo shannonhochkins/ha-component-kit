@@ -26,7 +26,7 @@ export default {
   },
 } satisfies Meta<typeof PictureCard>;
 export type PictureCardStory = StoryObj<typeof PictureCard>;
-export const PictureCardExample: PictureCardStory = {
+export const Docs: PictureCardStory = {
   render: Template,
   args: {
     title: "Office",

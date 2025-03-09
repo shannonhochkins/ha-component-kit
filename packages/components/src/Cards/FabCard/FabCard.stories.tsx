@@ -36,7 +36,7 @@ export default {
   },
 } satisfies Meta<typeof FabCard>;
 export type FabCardStory = StoryObj<typeof FabCard<"light.fake_light_1" | "light.unavailable">>;
-export const FabCardExample: FabCardStory = {
+export const Docs: FabCardStory = {
   render: Template,
   args: {
     title: "Office",

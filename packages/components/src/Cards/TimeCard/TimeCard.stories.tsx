@@ -62,7 +62,7 @@ export default {
   },
 } satisfies Meta<typeof TimeCard>;
 export type TimeStory = StoryObj<typeof TimeCard>;
-export const TimeExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

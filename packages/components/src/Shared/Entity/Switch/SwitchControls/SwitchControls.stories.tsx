@@ -24,7 +24,7 @@ export default {
   },
 } satisfies Meta<typeof SwitchControls>;
 export type TimeStory = StoryObj<typeof SwitchControls>;
-export const SwitchControlsExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

@@ -40,7 +40,7 @@ export default {
   },
 } satisfies Meta<typeof ControlSliderCircular>;
 export type TimeStory = StoryObj<typeof ControlSliderCircular>;
-export const ControlSliderCircularExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

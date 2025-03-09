@@ -45,7 +45,7 @@ export default {
   },
 } satisfies Meta<typeof ClimateCard>;
 export type ClimateStory = StoryObj<typeof ClimateCard>;
-export const ClimateCardExample: ClimateStory = {
+export const Docs: ClimateStory = {
   render: Render,
   args: {
     entity: "climate.air_conditioner",

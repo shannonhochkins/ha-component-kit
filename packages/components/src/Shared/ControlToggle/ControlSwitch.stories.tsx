@@ -49,7 +49,7 @@ export default {
   },
 } satisfies Meta<typeof ControlToggle>;
 export type TimeStory = StoryObj<typeof ControlToggle>;
-export const ControlToggleExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

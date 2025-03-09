@@ -23,7 +23,7 @@ export default {
   },
 } satisfies Meta<typeof EntityAttributes>;
 export type TimeStory = StoryObj<typeof EntityAttributes>;
-export const EntityAttributesExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

@@ -26,7 +26,7 @@ export default {
   },
 } satisfies Meta<typeof CameraCard>;
 export type LightStory = StoryObj<typeof CameraCard>;
-export const Example: LightStory = {
+export const Docs: LightStory = {
   render: Render,
   args: {},
 };

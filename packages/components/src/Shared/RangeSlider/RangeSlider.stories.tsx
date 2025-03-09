@@ -28,7 +28,7 @@ export default {
   argTypes: {},
 } satisfies Meta<typeof RangeSlider>;
 export type TimeStory = StoryObj<typeof RangeSlider>;
-export const RangeSliderExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {
     min: 0,

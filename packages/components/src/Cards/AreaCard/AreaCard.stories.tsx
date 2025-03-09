@@ -109,7 +109,7 @@ export default {
   },
 } satisfies Meta<typeof AreaCard>;
 export type AreaStory = StoryObj<typeof AreaCard>;
-export const AreaExample: AreaStory = {
+export const Docs: AreaStory = {
   render: Template,
   args: {
     hash: "office",

@@ -38,7 +38,7 @@ export default {
   },
 } satisfies Meta<typeof FamilyCard>;
 export type FamilyStory = StoryObj<typeof FamilyCard>;
-export const Example: FamilyStory = {
+export const Docs: FamilyStory = {
   render: Render,
   args: {},
 };

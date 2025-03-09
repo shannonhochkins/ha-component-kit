@@ -36,7 +36,7 @@ export default {
 } satisfies Meta<typeof AlarmCard>;
 
 export type AlarmControlPanelStory = StoryObj<typeof AlarmCard>;
-export const AlarmCardExample: AlarmControlPanelStory = {
+export const Docs: AlarmControlPanelStory = {
   render: Render,
   args: {
     entity: "alarm_control_panel.home_alarm",

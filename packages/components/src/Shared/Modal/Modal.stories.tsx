@@ -448,7 +448,7 @@ export default {
 
 // @ts-expect-error - fix this later
 export type ModalStory = StoryObj<typeof ButtonCard<"light.fake_light_1", "toggle">>;
-export const ModalExample: ModalStory = {
+export const Docs: ModalStory = {
   render: Render,
   args: {
     service: "toggle",

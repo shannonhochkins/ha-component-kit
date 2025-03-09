@@ -21,7 +21,7 @@ export default {
   },
 } satisfies Meta<typeof LightControls>;
 export type TimeStory = StoryObj<typeof LightControls>;
-export const LightControlsExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

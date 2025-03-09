@@ -43,7 +43,7 @@ export default {
   },
 } satisfies Meta<typeof EntitiesCard>;
 export type LightStory = StoryObj<typeof EntitiesCard>;
-export const Example: LightStory = {
+export const Docs: LightStory = {
   render: Render,
   args: {},
 };

@@ -63,7 +63,7 @@ export default {
   },
 } satisfies Meta<typeof MediaPlayerCard>;
 export type MediaPlayerCardStory = StoryObj<typeof MediaPlayerCard>;
-export const MediaPlayerCardExample: MediaPlayerCardStory = {
+export const Docs: MediaPlayerCardStory = {
   render: Template,
   args: {},
 };

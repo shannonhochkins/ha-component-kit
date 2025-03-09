@@ -156,7 +156,7 @@ export default {
   argTypes: {},
 } satisfies Meta<typeof GarbageCollectionCard>;
 export type Story = StoryObj<typeof GarbageCollectionCard>;
-export const Example: Story = {
+export const Docs: Story = {
   render: Template,
   args: {
     description: "Here's the upcoming garbage collection schedule.",

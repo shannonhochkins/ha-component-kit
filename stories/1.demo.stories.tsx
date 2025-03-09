@@ -276,16 +276,16 @@ function Connector() {
 
 export default {
   title: "INTRODUCTION/Demo",
+  tags: ['!autodocs'],
   parameters: {
     standalone: true,
+    hideComponentProps: true,
     docs: {
-      description: {
-        component: `@hakit provides a series of tools to easily authenticate and communicate with your home assistant instance from React!`
-      }
-    }
+      page: null
+    },
   },
 } satisfies Meta;
 
 export type Story = StoryObj<typeof Connector>;
 
-export const Default = Connector.bind({});
+export const Demo = Connector.bind({});

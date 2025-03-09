@@ -125,7 +125,7 @@ export default {
 } satisfies Meta<typeof ButtonCard>;
 
 export type ExamplesStory = StoryObj<typeof ButtonCard<"switch.fake_switch">>;
-export const Examples: ExamplesStory = {
+export const Docs: ExamplesStory = {
   render: Render,
   args: {
     service: "toggle",

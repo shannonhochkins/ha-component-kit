@@ -25,7 +25,7 @@ export default {
   },
 } satisfies Meta<typeof CoverControls>;
 export type TimeStory = StoryObj<typeof CoverControls>;
-export const CoverControlsExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

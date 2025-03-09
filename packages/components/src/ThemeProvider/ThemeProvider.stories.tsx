@@ -171,7 +171,7 @@ export default {
   },
 } satisfies Meta<typeof ThemeProvider>;
 export type Story = StoryObj<typeof ThemeProvider>;
-export const Example: Story = {
+export const Docs: Story = {
   render: Render,
   args: {
     theme,

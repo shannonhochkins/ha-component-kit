@@ -42,7 +42,7 @@ export default {
   argTypes: {},
 } satisfies Meta<typeof Ripples>;
 export type TimeStory = StoryObj<typeof Ripples>;
-export const RipplesExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {
     borderRadius: "20px",

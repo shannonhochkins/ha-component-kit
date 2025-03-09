@@ -37,7 +37,7 @@ export default {
   argTypes: {},
 } satisfies Meta<typeof Tooltip>;
 export type TimeStory = StoryObj<typeof Tooltip>;
-export const TooltipExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {
     title: "A tooltip!!!",

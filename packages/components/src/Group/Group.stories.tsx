@@ -30,7 +30,7 @@ export default {
   },
 } satisfies Meta<typeof Group>;
 export type Story = StoryObj<typeof Group>;
-export const Example: Story = {
+export const Docs: Story = {
   render: Render,
   args: {
     title: "Example Title",
