@@ -2,14 +2,15 @@ import type { Meta, StoryObj, Args } from "@storybook/react";
 import styled from "@emotion/styled";
 import { Source } from "@storybook/blocks";
 import { useId, useState } from "react";
-import { ThemeProvider, ButtonCard, Modal, FabCard, Column, Row, ModalProvider } from "@components";
+import { ThemeProvider, ButtonCard, Modal, FabCard, Column, Row, ModalProvider, ThemeControlsModal } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import jsxToString from "react-element-to-jsx-string";
 
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row gap="1rem" fullWidth>
         <ButtonCard {...args} />
         <FabCard entity="light.fake_light_2" service="toggle" />
@@ -62,7 +63,8 @@ function ExampleModalProps() {
 function RenderModalProps() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column fullWidth>
         <p>Modal component has a few props that you can use to customize the modal.</p>
         <Source dark code={jsxToString(ExampleModalProps())} />
@@ -77,7 +79,8 @@ function RenderCustom() {
   const [open, setOpen] = useState(false);
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column gap="1rem" fullWidth>
         <Source dark code={exampleSetup} />
         <FabCard onClick={() => setOpen(true)} icon="mdi:cog" />
@@ -202,7 +205,8 @@ const example = `
 function RenderModalProvider() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <ModalProvider
         options={{
           animationDuration: 1,
@@ -242,7 +246,7 @@ function Inner() {
 function RenderAutoScaleFromSource() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
       <Column gap="1rem" fullWidth>
         <Inner />
         <p>
@@ -261,7 +265,7 @@ function RenderAutoScaleFromSource() {
 
 const customModalAnimation = `
 <HassConnect hassUrl="http://localhost:8123">
-  <ThemeProvider includeThemeControls />
+  <ThemeProvider />
   <ModalProvider options={{
     animationDuration: .5,
     modalAnimation(duration) {
@@ -335,7 +339,8 @@ const customModalAnimation = `
 function RenderModalAnimationExample() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <ModalProvider
         options={{
           animationDuration: 0.5,
@@ -448,7 +453,7 @@ export default {
 
 // @ts-expect-error - fix this later
 export type ModalStory = StoryObj<typeof ButtonCard<"light.fake_light_1", "toggle">>;
-export const ModalExample: ModalStory = {
+export const Docs: ModalStory = {
   render: Render,
   args: {
     service: "toggle",

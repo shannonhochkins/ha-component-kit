@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Global, css } from "@emotion/react";
-import { ThemeProvider, SidebarCard, ButtonCard, Row, AreaCard, Group, Column, TriggerCard } from "@components";
+import { ThemeProvider, SidebarCard, ButtonCard, Row, AreaCard, Group, Column, TriggerCard, ThemeControlsModal } from "@components";
 import { Source } from "@storybook/blocks";
 import { useEntity } from "@hakit/core";
 import type { SidebarCardProps } from "@components";
@@ -27,7 +27,8 @@ const MakeFullScreen = () => {
 function Template(args?: Partial<SidebarCardProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <MakeFullScreen />
       <Row alignItems="stretch" justifyContent="flex-start" fullWidth fullHeight wrap="nowrap">
         <SidebarCard startOpen={false} {...args}>
@@ -181,7 +182,8 @@ function Replica() {
 function TemplateMenuItems(args?: Partial<SidebarCardProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <MakeFullScreen />
       <Row alignItems="stretch" justifyContent="flex-start" fullWidth fullHeight wrap="nowrap">
         <SidebarMenuItems {...args} />
@@ -205,7 +207,6 @@ function TemplateCustomWidth(args?: Partial<SidebarCardProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
       <ThemeProvider
-        includeThemeControls
         theme={{
           device: {
             sidebarCard: {
@@ -216,6 +217,7 @@ function TemplateCustomWidth(args?: Partial<SidebarCardProps>) {
           },
         }}
       />
+      <ThemeControlsModal />
       <MakeFullScreen />
       <Row alignItems="stretch" justifyContent="flex-start" fullWidth fullHeight wrap="nowrap">
         <SidebarCard startOpen={true} {...args}>
@@ -232,7 +234,7 @@ function TemplateCustomWidth(args?: Partial<SidebarCardProps>) {
           </p>
           <Source
             dark
-            code={`<ThemeProvider includeThemeControls theme={{
+            code={`<ThemeProvider theme={{
         device: {
           sidebarCard: {
             width: {

@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, Row, ButtonCard } from "@components";
+import { ThemeProvider, Row, ButtonCard, ThemeControlsModal } from "@components";
 import type { RowProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<RowProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row {...args}>
         <ButtonCard entity="light.fake_light_1" />
         <ButtonCard entity="switch.fake_switch" />
@@ -30,7 +31,7 @@ export default {
   },
 } satisfies Meta<typeof Row>;
 export type TimeStory = StoryObj<typeof Row>;
-export const RowExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {
     gap: "0.5rem",

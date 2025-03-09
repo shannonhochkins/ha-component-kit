@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Source } from "@storybook/blocks";
-import { ThemeProvider, AreaCard, Row, ButtonCard } from "@components";
+import { ThemeProvider, AreaCard, Row, ButtonCard, ThemeControlsModal } from "@components";
 import type { AreaCardProps } from "@components";
 import jsxToString from "react-element-to-jsx-string";
 import { HassConnect } from "@hass-connect-fake";
@@ -9,7 +9,8 @@ import livingRoom from "./living-room.jpg";
 function Template(args: AreaCardProps) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row fullHeight>
         <AreaCard {...args}>The {args.hash} area is active!</AreaCard>
       </Row>
@@ -20,7 +21,8 @@ function Template(args: AreaCardProps) {
 function MultiAreaExample() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row gap="1rem" fullWidth>
         <AreaCard
           {...{
@@ -109,7 +111,7 @@ export default {
   },
 } satisfies Meta<typeof AreaCard>;
 export type AreaStory = StoryObj<typeof AreaCard>;
-export const AreaExample: AreaStory = {
+export const Docs: AreaStory = {
   render: Template,
   args: {
     hash: "office",

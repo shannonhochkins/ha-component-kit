@@ -24,7 +24,7 @@ export default {
   },
 } satisfies Meta<typeof VacuumCard>;
 export type VacuumStory = StoryObj<typeof VacuumCard>;
-export const VacuumCardExample: VacuumStory = {
+export const Docs: VacuumStory = {
   render: Render,
   args: {},
 };

@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, Row, TimeCard, Alert } from "@components";
+import { ThemeProvider, Row, TimeCard, ThemeControlsModal, Alert } from "@components";
 import type { TimeCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<TimeCardProps>) {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row gap="1rem">
         <TimeCard {...args} />
         <TimeCard timeFormat="hh:mm:ss a" dateFormat={"MMM DD"} {...args} />
@@ -62,7 +63,7 @@ export default {
   },
 } satisfies Meta<typeof TimeCard>;
 export type TimeStory = StoryObj<typeof TimeCard>;
-export const TimeExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, ButtonBar, ButtonBarButton, Row, Alert } from "@components";
+import { ThemeProvider, ButtonBar, ButtonBarButton, ThemeControlsModal, Row, Alert } from "@components";
 import type { ButtonBarProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<ButtonBarProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row
         gap="1rem"
         style={{
@@ -45,7 +46,7 @@ export default {
   },
 } satisfies Meta<typeof ButtonBar>;
 export type TimeStory = StoryObj<typeof ButtonBar>;
-export const Example: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

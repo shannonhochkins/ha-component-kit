@@ -1,11 +1,12 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, ClimateControls, Row } from "@components";
+import { ThemeProvider, ClimateControls, Row, ThemeControlsModal } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row gap="1rem" fullHeight fullWidth>
         <ClimateControls {...args} entity="climate.air_conditioner" />
       </Row>
@@ -22,7 +23,7 @@ export default {
   },
 } satisfies Meta<typeof ClimateControls>;
 export type ClimateStory = StoryObj<typeof ClimateControls>;
-export const ClimateControlsExample: ClimateStory = {
+export const Docs: ClimateStory = {
   render: Render,
   args: {
     entity: "climate.air_conditioner",

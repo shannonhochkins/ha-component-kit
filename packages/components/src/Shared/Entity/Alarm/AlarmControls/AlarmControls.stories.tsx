@@ -1,11 +1,12 @@
 import type { Meta, StoryObj, Args } from "@storybook/react";
-import { ThemeProvider, AlarmControls, Row } from "@components";
+import { ThemeProvider, AlarmControls, Row, ThemeControlsModal } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Render(args?: Args) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row gap="2rem" fullHeight fullWidth>
         <AlarmControls {...args} entity="alarm_control_panel.home_alarm" />
       </Row>
@@ -22,7 +23,7 @@ export default {
   },
 } satisfies Meta<typeof AlarmControls>;
 export type AlarmStory = StoryObj<typeof AlarmControls>;
-export const AlarmControlsExample: AlarmStory = {
+export const Docs: AlarmStory = {
   render: Render,
   args: {
     entity: "alarm_control_panel.alarm",

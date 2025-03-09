@@ -29,6 +29,7 @@ import {
   ButtonGroupButton,
   VacuumCard,
   AlarmCard,
+  ThemeControlsModal,
 } from '@components';
 import office from './office.jpg';
 import livingRoom from './living-room.jpg';
@@ -261,7 +262,7 @@ function Template() {
 
 function Connector() {
   return <HassConnect hassUrl="https://homeassistant.local:8123">
-    <ThemeProvider includeThemeControls darkMode={true} theme={{
+    <ThemeProvider darkMode={true} theme={{
       device: {
         sidebarCard: {
           width: {
@@ -270,22 +271,23 @@ function Connector() {
         }
       }
     }} />
+    <ThemeControlsModal />
     <Template />
   </HassConnect>
 }
 
 export default {
   title: "INTRODUCTION/Demo",
+  tags: ['!autodocs'],
   parameters: {
     standalone: true,
+    hideComponentProps: true,
     docs: {
-      description: {
-        component: `@hakit provides a series of tools to easily authenticate and communicate with your home assistant instance from React!`
-      }
-    }
+      page: null
+    },
   },
 } satisfies Meta;
 
 export type Story = StoryObj<typeof Connector>;
 
-export const Default = Connector.bind({});
+export const Demo = Connector.bind({});
