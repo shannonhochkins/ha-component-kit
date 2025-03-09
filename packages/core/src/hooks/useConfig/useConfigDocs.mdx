@@ -2,7 +2,11 @@ import { Meta, Source, Canvas } from '@storybook/blocks';
 import basicExample from './examples/basic.code?raw';
 import * as Primary from './examples/primary.stories';
 
-<Meta title="core/hooks/useConfig" />
+<Meta title="core/hooks/useConfig" parameters={{
+  docs: {
+    page: null,
+  }
+}} />
 
 # useConfig()
 ###### `useConfig(): HassConfig | null`

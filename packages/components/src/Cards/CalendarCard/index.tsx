@@ -507,12 +507,15 @@ function InternalCalendarCard({
       if (calRef.current) {
         const calendarApi = calRef.current.getApi();
         calRef.current.requestResize();
-        if (width < 400 && calendarApi.view.type !== "listWeek") {
-          changeView((api) => {
-            api.setOption("eventDisplay", "auto");
-            api.changeView("listWeek");
-            setActiveView("listWeek");
-          });
+        if (width < 400) {
+          // only change the view if it's not already in listWeek, and not defined as an input prop
+          if (typeof view !== "undefined" && calendarApi.view.type !== "listWeek") {
+            changeView((api) => {
+              api.setOption("eventDisplay", "auto");
+              api.changeView("listWeek");
+              setActiveView("listWeek");
+            });
+          }
           if (!narrow) {
             setNarrow(true);
           }
@@ -522,7 +525,7 @@ function InternalCalendarCard({
         }
       }
     },
-    [narrow, changeView],
+    [narrow, view, changeView],
   );
   useEffect(() => {
     if (width) {

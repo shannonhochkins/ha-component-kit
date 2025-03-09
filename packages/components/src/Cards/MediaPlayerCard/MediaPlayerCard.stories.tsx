@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, MediaPlayerCard, MediaPlayerCardProps, Column } from "@components";
+import { ThemeProvider, MediaPlayerCard, MediaPlayerCardProps, ThemeControlsModal, Column } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<MediaPlayerCardProps>) {
   return (
     <HassConnect hassUrl={"http://homeassistant.local:8123"}>
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column gap="1rem" fullWidth>
         <Column gap="1rem" fullWidth>
           <p>Default Display</p>
@@ -31,7 +32,8 @@ function Template(args?: Partial<MediaPlayerCardProps>) {
 function TemplateWithGroups(args?: Partial<MediaPlayerCardProps>) {
   return (
     <HassConnect hassUrl={"http://homeassistant.local:8123"}>
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column gap="1rem" fullWidth>
         <p>Group button is available to configure related players</p>
         <MediaPlayerCard
@@ -63,7 +65,7 @@ export default {
   },
 } satisfies Meta<typeof MediaPlayerCard>;
 export type MediaPlayerCardStory = StoryObj<typeof MediaPlayerCard>;
-export const MediaPlayerCardExample: MediaPlayerCardStory = {
+export const Docs: MediaPlayerCardStory = {
   render: Template,
   args: {},
 };

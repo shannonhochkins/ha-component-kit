@@ -1,3 +1,25 @@
+# 5.0.6
+
+### @hakit/components
+- NEW - ThemeProvider - Overhaul on state management, now uses a store to manage the theme, this will reduce re-renders and allow you to programmatically change the theme from anywhere in your application, this is also exposed as a hook `useThemeStore` to allow you to change the theme from anywhere in your application if need be.
+- BREAKING - ThemeProvider.includeThemeControls - This prop is most likely never used for production dashboards, it's been removed as part of this release, if you still want to use the ThemeControls you can import the ThemeControlsModal component directly from the components package and include adjacent to the ThemeProvider.
+- BUGFIX - SidebarCard - The TimeCard included in the header of the timecard had a hover effect that was introduced in a previous release, this has been removed.
+- NEW - TimeCard - `timeEntity` and `dateEntity` now available as new props to specify custom date/time entities if need be.
+- BUGFIX - LightControls - When a light entity didn't support color, the slider would appear in a grey scale colour, it will now naturally appear rendering an average kelvin value. fixes [issue](https://github.com/shannonhochkins/ha-component-kit/issues/226)
+- BUGFIX - CalendarCard - When specifying a default view via the `view` prop, the internal logic (when the component was < 400px wide) would reset the view to week view, it will only do this logic now if a view prop was not specified, fixes [issue](https://github.com/shannonhochkins/ha-component-kit/issues/231)
+
+
+### @hakit/core
+- BUGFIX - useEntity will now return a kelvin value for a light that doesn't support color, previously it would return the default colour for the "off" state.
+- Locales & types updated to align with latest home assistant version
+
+### NPM CREATE v1.1.12
+- Deploy script was missing `prompts` package when creating the template, thanks for reporting @maumi, fixes [issue](https://github.com/shannonhochkins/ha-component-kit/issues/229)
+
+### Maintenance
+
+- Upgraded storybook and cleaned up sidebar to reduce redundant secondary pages with a demo
+
 
 # 5.0.5
 

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Column, RangeSlider, Row, FabCard, Tooltip, Alert } from "@components";
 import styled from "@emotion/styled";
-import { LIGHT, DARK, ACCENT, DEFAULT_THEME_OPTIONS } from "./constants";
+import { LIGHT, DARK, ACCENT } from "./constants";
 import { useDebouncedCallback } from "use-debounce";
 import { capitalize } from "lodash";
+import { useThemeStore, type ThemeStore } from "./store";
 
 const Title = styled.span`
   font-size: 0.9rem;
@@ -23,25 +24,10 @@ const RangeSliderBox = styled.div`
   border-radius: 0.5rem;
 `;
 
-export interface ThemeControlsProps {
-  hue?: number;
-  saturation?: number;
-  lightness?: number;
-  tint?: number;
-  contrastThreshold?: number;
-  darkMode?: boolean;
-  onChange: (theme: Omit<ThemeControlsProps, "onChange">) => void;
-}
-
-export function ThemeControls({
-  darkMode = DEFAULT_THEME_OPTIONS.darkMode,
-  tint = DEFAULT_THEME_OPTIONS.tint,
-  hue = DEFAULT_THEME_OPTIONS.hue,
-  saturation = DEFAULT_THEME_OPTIONS.saturation,
-  lightness = DEFAULT_THEME_OPTIONS.lightness,
-  contrastThreshold = DEFAULT_THEME_OPTIONS.contrastThreshold,
-  onChange,
-}: ThemeControlsProps) {
+export function ThemeControls() {
+  const theme = useThemeStore((state) => state.theme);
+  const setTheme = useThemeStore((state) => state.setTheme);
+  const { hue, saturation, lightness, tint, contrastThreshold, darkMode } = theme;
   const [h, setHue] = useState(hue);
   const [l, setLight] = useState(lightness);
   const [t, setTint] = useState(tint);
@@ -49,10 +35,8 @@ export function ThemeControls({
   const [dark, setDark] = useState(darkMode);
   const [c, setContrastThreshold] = useState(contrastThreshold);
 
-  const debouncedOnChange = useDebouncedCallback((_theme: Required<Omit<ThemeControlsProps, "onChange">>) => {
-    if (typeof onChange === "function") {
-      onChange(_theme);
-    }
+  const debouncedOnChange = useDebouncedCallback((_theme: ThemeStore["theme"]) => {
+    setTheme(_theme);
   }, 50);
 
   useEffect(() => {

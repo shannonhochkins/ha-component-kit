@@ -148,4 +148,6 @@ export { Alert, type AlertProps } from "./Shared/Alert";
 // ThemeProvider
 export { ThemeProvider, type ThemeProviderProps } from "./ThemeProvider";
 export * from "./ThemeProvider/constants";
+export { ThemeControlsModal } from "./ThemeProvider/ThemeControlsModal.tsx";
+export { useThemeStore, type ThemeStore } from "./ThemeProvider/store";
 export { theme } from "./ThemeProvider/theme";

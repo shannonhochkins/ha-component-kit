@@ -1,6 +1,6 @@
 import { useRef, useCallback } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, Column, ColorTempPicker, ButtonCard } from "@components";
+import { ThemeProvider, Column, ColorTempPicker, ButtonCard, ThemeControlsModal } from "@components";
 import type { ColorTempPickerProps, ColorPickerOutputColors } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
@@ -17,7 +17,8 @@ function Template(args?: Partial<ColorTempPickerProps>) {
 
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column gap={"1rem"} fullWidth>
         <ColorTempPicker entity={"light.fake_light_1"} {...args} onChangeApplied={updateText} onChange={updateText} />
         <span ref={valueRef}>3000k</span>
@@ -36,7 +37,7 @@ export default {
   },
 } satisfies Meta<typeof ColorTempPicker>;
 export type TimeStory = StoryObj<typeof ColorTempPicker>;
-export const ColorTempPickerExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

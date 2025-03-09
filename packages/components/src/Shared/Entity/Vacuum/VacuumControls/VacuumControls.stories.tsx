@@ -22,7 +22,7 @@ export default {
   },
 } satisfies Meta<typeof VacuumControls>;
 export type VacuumStory = StoryObj<typeof VacuumControls>;
-export const VacuumControlsExample: VacuumStory = {
+export const Docs: VacuumStory = {
   render: Render,
   args: {
     entity: "vacuum.robot_vacuum",

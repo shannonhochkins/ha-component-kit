@@ -1,13 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Source } from "@storybook/blocks";
-import { ThemeProvider, Column, GarbageCollectionCard, Row } from "@components";
+import { ThemeProvider, Column, GarbageCollectionCard, ThemeControlsModal, Row } from "@components";
 import type { GarbageCollectionCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: GarbageCollectionCardProps) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <GarbageCollectionCard schedules={[]} {...args} />
     </HassConnect>
   );
@@ -16,7 +17,8 @@ function Template(args?: GarbageCollectionCardProps) {
 function Detailed() {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Column gap="1rem" alignItems="flex-start" fullWidth>
         <p>If you normally get your bins picked up on a weekly interval on a Thursday, and it&apos;s red one week, and green the next:</p>
         <Row gap="1rem" fullWidth>
@@ -156,7 +158,7 @@ export default {
   argTypes: {},
 } satisfies Meta<typeof GarbageCollectionCard>;
 export type Story = StoryObj<typeof GarbageCollectionCard>;
-export const Example: Story = {
+export const Docs: Story = {
   render: Template,
   args: {
     description: "Here's the upcoming garbage collection schedule.",

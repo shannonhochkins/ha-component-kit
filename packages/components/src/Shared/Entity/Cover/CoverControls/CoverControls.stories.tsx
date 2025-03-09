@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, CoverControls, Row } from "@components";
+import { ThemeProvider, CoverControls, Row, ThemeControlsModal } from "@components";
 import type { CoverControlsProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 
 function Template(args?: Partial<CoverControlsProps>) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
-      <ThemeProvider includeThemeControls />
+      <ThemeProvider />
+      <ThemeControlsModal />
       <Row gap="5rem" fullWidth alignItems="flex-start">
         <CoverControls entity="cover.cover_with_tilt" {...args} />
         <CoverControls entity="cover.cover_position_only" {...args} />
@@ -25,7 +26,7 @@ export default {
   },
 } satisfies Meta<typeof CoverControls>;
 export type TimeStory = StoryObj<typeof CoverControls>;
-export const CoverControlsExample: TimeStory = {
+export const Docs: TimeStory = {
   render: Template,
   args: {},
 };

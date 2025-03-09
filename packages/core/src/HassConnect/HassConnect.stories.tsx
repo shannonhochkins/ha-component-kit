@@ -53,7 +53,7 @@ export default {
   },
 } satisfies Meta<typeof HassConnect>;
 export type Story = StoryObj<typeof HassConnect>;
-export const Example: Story = {
+export const Docs: Story = {
   render: Render,
   args: {
     hassUrl: "http://localhost:8123",
