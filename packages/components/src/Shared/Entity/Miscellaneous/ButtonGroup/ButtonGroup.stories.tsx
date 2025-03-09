@@ -26,6 +26,7 @@ function Template(args?: Partial<ButtonGroupProps>) {
 export default {
   title: "components/Shared/Entity/Miscellaneous/ButtonGroup",
   component: ButtonGroup,
+  // @ts-expect-error - will fix later
   subcomponents: { ButtonGroupButton },
   tags: ["autodocs"],
   parameters: {

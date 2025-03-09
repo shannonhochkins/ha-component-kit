@@ -17,8 +17,8 @@ export type ThemeStore = {
     darkMode?: boolean;
   };
   /** Will merge input theme values with the default values, undefined values passed through the setTheme function will be ignored */
-  setTheme: (partialTheme: ThemeStore['theme']) => void;
-}
+  setTheme: (partialTheme: ThemeStore["theme"]) => void;
+};
 
 export const useThemeStore = create<ThemeStore>((set) => ({
   theme: {
@@ -34,9 +34,7 @@ export const useThemeStore = create<ThemeStore>((set) => ({
       theme: {
         ...state.theme,
         // Only spread properties that are not undefined
-        ...Object.fromEntries(
-          Object.entries(partialTheme).filter(([, value]) => value !== undefined),
-        ),
+        ...Object.fromEntries(Object.entries(partialTheme).filter(([, value]) => value !== undefined)),
       },
     }));
   },

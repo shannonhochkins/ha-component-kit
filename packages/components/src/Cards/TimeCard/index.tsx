@@ -179,25 +179,23 @@ function InternalTimeCard({
         </Time>
       );
     } catch (e) {
-      console.error('Time formatting error', e);
-      return <Time className="time">
-        {customFormatter(currentTime, DEFAULT_TIME_FORMAT)}
-      </Time>
+      console.error("Time formatting error", e);
+      return <Time className="time">{customFormatter(currentTime, DEFAULT_TIME_FORMAT)}</Time>;
     }
-  }, [amOrPm, currentTime, formatted, timeFormat, timeSensor])
-  
-    const dateValue = useMemo(() => {
-      try {
-        return dateSensor && !dateFormat
+  }, [amOrPm, currentTime, formatted, timeFormat, timeSensor]);
+
+  const dateValue = useMemo(() => {
+    try {
+      return dateSensor && !dateFormat
         ? formatDate(dateSensor.state)
         : typeof dateFormat === "function"
           ? dateFormat(currentTime, customFormatter)
           : customFormatter(currentTime, dateFormat ?? DEFAULT_DATE_FORMAT);
-      } catch (e) {
-        console.error('Date formatting error', e);
-        return customFormatter(currentTime, DEFAULT_DATE_FORMAT)
-      }
-    }, [currentTime, dateFormat, dateSensor])
+    } catch (e) {
+      console.error("Date formatting error", e);
+      return customFormatter(currentTime, DEFAULT_DATE_FORMAT);
+    }
+  }, [currentTime, dateFormat, dateSensor]);
 
   const updateClock = useCallback(() => {
     const now = Date.now();

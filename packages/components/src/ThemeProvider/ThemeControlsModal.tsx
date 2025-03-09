@@ -13,19 +13,21 @@ const ThemeControlsBox = styled.div`
 
 export function ThemeControlsModal() {
   const [open, setOpen] = useState(false);
-  return <>
-    <ThemeControlsBox>
-      <FabCard onClick={() => setOpen(true)} tooltipPlacement="left" title={localize("theme")} icon="mdi:color" />
-    </ThemeControlsBox>
-    <Modal
-      description="This interface showcases how the colors will behave and provides easy to access css variables"
-      open={open}
-      title={localize("theme")}
-      onClose={() => {
-        setOpen(false);
-      }}
-    >
-      <ThemeControls />
-    </Modal>
-  </>
+  return (
+    <>
+      <ThemeControlsBox>
+        <FabCard onClick={() => setOpen(true)} tooltipPlacement="left" title={localize("theme")} icon="mdi:color" />
+      </ThemeControlsBox>
+      <Modal
+        description="This interface showcases how the colors will behave and provides easy to access css variables"
+        open={open}
+        title={localize("theme")}
+        onClose={() => {
+          setOpen(false);
+        }}
+      >
+        <ThemeControls />
+      </Modal>
+    </>
+  );
 }

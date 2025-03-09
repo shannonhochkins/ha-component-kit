@@ -509,7 +509,7 @@ function InternalCalendarCard({
         calRef.current.requestResize();
         if (width < 400) {
           // only change the view if it's not already in listWeek, and not defined as an input prop
-          if (typeof view !== 'undefined' && calendarApi.view.type !== "listWeek") {
+          if (typeof view !== "undefined" && calendarApi.view.type !== "listWeek") {
             changeView((api) => {
               api.setOption("eventDisplay", "auto");
               api.changeView("listWeek");

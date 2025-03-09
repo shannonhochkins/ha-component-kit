@@ -68,7 +68,7 @@ export const PrimaryExample: Story = {
    * - NOT be included in the docs page
    * - Not appear in Storybook's sidebar
    */
-  tags: ["!dev", '!autodocs'],
+  tags: ["!dev", "!autodocs"],
   parameters: {
     docs: {
       canvas: {

@@ -25,9 +25,8 @@ const StyledTimeCard = styled(TimeCard)<{
   &:not(.disabled):not(:disabled):not(:focus):hover {
     box-shadow: none;
     background: transparent;
-    color: var(--ha-S200-contrast)
-    svg {
-      color: var(--ha-S200-contrast)
+    color: var(--ha-S200-contrast) svg {
+      color: var(--ha-S200-contrast);
     }
   }
   h4 {

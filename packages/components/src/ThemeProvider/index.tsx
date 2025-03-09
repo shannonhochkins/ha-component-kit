@@ -15,7 +15,6 @@ import { CacheProvider } from "@emotion/react";
 import weakMemoize from "@emotion/weak-memoize";
 import { useThemeStore, type ThemeStore } from "./store";
 
-
 type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
 };
@@ -29,7 +28,7 @@ function EmotionProvider({ children, options }: { children: React.ReactNode; opt
   return <CacheProvider value={memoizedCreateCacheWithContainer(options)}>{children}</CacheProvider>;
 }
 
-export type ThemeProviderProps<T extends object> = ThemeStore['theme'] & {
+export type ThemeProviderProps<T extends object> = ThemeStore["theme"] & {
   /** the theme properties */
   theme?: DeepPartial<ThemeParams> & T;
   /** any global style overrides */
@@ -48,9 +47,7 @@ export type ThemeProviderProps<T extends object> = ThemeStore['theme'] & {
   globalComponentStyles?: Partial<Record<SupportedComponentOverrides, CSSInterpolation>>;
   /** children to render within the ThemeProvider */
   children?: React.ReactNode;
-}
-
-
+};
 
 const INFO_COLORS = {
   errorColor: [219, 68, 55],
@@ -216,8 +213,8 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
   children,
 }: ThemeProviderProps<T>): React.ReactNode {
   const { useStore } = useHass();
-  const themeStore = useThemeStore(store => store.theme);
-  const setTheme = useThemeStore(store => store.setTheme);
+  const themeStore = useThemeStore((store) => store.theme);
+  const setTheme = useThemeStore((store) => store.setTheme);
   const setBreakpoints = useStore((store) => store.setBreakpoints);
   const setGlobalComponentStyles = useStore((store) => store.setGlobalComponentStyles);
   const _breakpoints = useStore((store) => store.breakpoints);
@@ -239,11 +236,10 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
       saturation: s,
       darkMode: darkMode,
       contrastThreshold: c,
-    } satisfies ThemeStore['theme'];
+    } satisfies ThemeStore["theme"];
     setTheme(theme);
   }, [c, darkMode, h, l, s, t, setTheme]);
 
-  
   const colorScheme = themeStore.darkMode ? "dark" : "light";
 
   useEffect(() => {

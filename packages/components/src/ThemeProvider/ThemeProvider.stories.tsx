@@ -31,7 +31,7 @@ function CustomThemeProvider() {
 }
 
 function Render(args: Story["args"]) {
-  const theme = useThemeStore(store => store.theme);
+  const theme = useThemeStore((store) => store.theme);
   return (
     <HassConnect hassUrl="http://localhost:8123" {...args}>
       <h2>Theme Provider</h2>
