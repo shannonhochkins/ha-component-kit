@@ -323,7 +323,7 @@ export interface CalendarCardProps extends Omit<CardBaseProps<"div", EntityName>
   timeZone?: string;
   /** the default rendered view @default "dayGridMonth" */
   view?: "dayGridMonth" | "listWeek" | "dayGridDay";
-  /** based on the available size of the card, the view will automatically change based on the size @default false */
+  /** disables the auto view switching based on the size of the card @default false */
   disableAutoView?: boolean;
   /** disables the narrow class/styles from being added when the card is too small @default false */
   disableNarrow?: boolean;
