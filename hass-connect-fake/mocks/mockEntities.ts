@@ -52,6 +52,7 @@ export const entities: HassEntities = {
       friendly_name: "Dining room light",
     },
   }),
+
   ...createLight("light.fake_light_2", {
     attributes: {
       friendly_name: "Office Down light",
@@ -67,6 +68,29 @@ export const entities: HassEntities = {
       icon: "mdi:led-strip-variant",
       hs_color: [131, 100],
       rgb_color: [64, 255, 112],
+    },
+  }),
+  ...createLight("light.no_color", {
+    attributes: {
+      supported_color_modes: [
+        "brightness"
+      ],
+      color_mode: "brightness",
+      brightness: 250,
+      off_with_transition: false,
+      off_brightness: null,
+      supported_features: 40,
+      icon: "mdi:lightbulb",
+      friendly_name: "Light No Color",
+      min_color_temp_kelvin: undefined,
+      max_color_temp_kelvin: undefined,
+      min_mireds: undefined,
+      max_mireds: undefined,
+      effect_list: undefined,
+      hs_color: undefined,
+      rgb_color: undefined,
+      xy_color: undefined,
+      raw_state: undefined,
     },
   }),
   ...createSwitch("switch.fake_switch"),

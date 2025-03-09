@@ -2,6 +2,8 @@ import { HassEntity } from "home-assistant-js-websocket";
 import { hs2rgb, rgb2hex } from "./colors/convert-color";
 import { rgbw2rgb, rgbww2rgb, temperature2rgb } from "./colors/convert-light-color";
 import { stateColorBrightness } from "./colors/index";
+import { lightSupportsBrightness } from "./light";
+import { HassEntityWithService } from "@core";
 
 function toRGB(entity: HassEntity): [number, number, number] | null {
   if (entity.attributes) {
@@ -19,6 +21,10 @@ function toRGB(entity: HassEntity): [number, number, number] | null {
     }
     if ("rgbww_color" in entity.attributes && entity.attributes.rgbww_color !== null) {
       return rgbww2rgb(entity.attributes.rgbww_color, entity.attributes.min_color_temp_kelvin, entity.attributes.max_color_temp_kelvin);
+    }
+    // if we reach this point, and the light does support brightness, just fake a kelvin color
+    if (lightSupportsBrightness(entity as HassEntityWithService<"light">)) {
+      return temperature2rgb(2000);
     }
   }
 
