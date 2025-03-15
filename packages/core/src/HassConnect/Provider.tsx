@@ -558,29 +558,33 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
     };
   }, []);
 
-  const debounceConnect = useDebouncedCallback(async () => {
-    try {
-      if (_connectionRef.current && !connection) {
-        setConnection(_connectionRef.current);
+  const debounceConnect = useDebouncedCallback(
+    async () => {
+      try {
+        if (_connectionRef.current && !connection) {
+          setConnection(_connectionRef.current);
+          authenticated.current = true;
+          return;
+        }
+        if (!_connectionRef.current && connection) {
+          _connectionRef.current = connection;
+          authenticated.current = true;
+          return;
+        }
+        if (authenticated.current) return;
         authenticated.current = true;
-        return;
+        await handleConnect();
+      } catch (e) {
+        const message = handleError(e);
+        setError(`Unable to connect to Home Assistant, please check the URL: "${message}"`);
       }
-      if (!_connectionRef.current && connection) {
-        _connectionRef.current = connection;
-        authenticated.current = true;
-        return;
-      }
-      if (authenticated.current) return;
-      authenticated.current = true;
-      await handleConnect();
-    } catch (e) {
-      const message = handleError(e);
-      setError(`Unable to connect to Home Assistant, please check the URL: "${message}"`);
-    }
-  }, 100, {
-    leading: true,
-    trailing: false,
-  });
+    },
+    100,
+    {
+      leading: true,
+      trailing: false,
+    },
+  );
 
   useEffect(() => {
     // authenticate with ha

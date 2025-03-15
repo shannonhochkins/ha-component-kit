@@ -56,7 +56,7 @@ export function useWeather(entityId: FilterByDomain<EntityName, "weather">, opti
     {
       trailing: true,
       leading: true,
-    }
+    },
   );
 
   useEffect(() => {

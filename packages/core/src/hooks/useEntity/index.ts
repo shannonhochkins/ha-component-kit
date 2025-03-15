@@ -81,12 +81,16 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
     },
     [language],
   );
-  const debounceUpdate = useDebouncedCallback((entity: HassEntity) => {
-    setEntity(formatEntity(entity));
-  }, throttle, {
-    leading: true,
-    trailing: true,
-  });
+  const debounceUpdate = useDebouncedCallback(
+    (entity: HassEntity) => {
+      setEntity(formatEntity(entity));
+    },
+    throttle,
+    {
+      leading: true,
+      trailing: true,
+    },
+  );
 
   const [$entity, setEntity] = useState<HassEntityCustom | null>(matchedEntity !== null ? formatEntity(matchedEntity) : null);
 

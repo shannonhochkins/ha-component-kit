@@ -167,20 +167,24 @@ export function useLogs(entityId: EntityName, options?: UseLogOptions) {
     [connection, _processStreamMessage],
   );
 
-  const debounceSubscribeLogbookPeriod = useDebouncedCallback(async (entityId: EntityName, logBookPeriod: LogbookTimePeriod) => {
-    if (_unsubscribe.current) {
-      const unsubscribe = await _unsubscribe.current;
-      if (unsubscribe) {
-        await unsubscribe();
+  const debounceSubscribeLogbookPeriod = useDebouncedCallback(
+    async (entityId: EntityName, logBookPeriod: LogbookTimePeriod) => {
+      if (_unsubscribe.current) {
+        const unsubscribe = await _unsubscribe.current;
+        if (unsubscribe) {
+          await unsubscribe();
+        }
+        _unsubscribe.current = undefined;
       }
-      _unsubscribe.current = undefined;
-    }
-    _subscribed.current = true;
-    _unsubscribe.current = await subscribeLogbookPeriod(entityId, logBookPeriod);
-  }, 100, {
-    leading: true,
-    trailing: true,
-  });
+      _subscribed.current = true;
+      _unsubscribe.current = await subscribeLogbookPeriod(entityId, logBookPeriod);
+    },
+    100,
+    {
+      leading: true,
+      trailing: true,
+    },
+  );
 
   useEffect(() => {
     const logBookPeriod = _calculateLogbookPeriod();

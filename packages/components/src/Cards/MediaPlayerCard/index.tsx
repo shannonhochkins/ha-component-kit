@@ -278,12 +278,16 @@ function InternalMediaPlayerCard({
     calculatePercentageViewed(media_duration, media_position);
   }, [media_position, calculatePercentageViewed, media_duration]);
 
-  const debounceUpdateClock = useThrottledCallback((value: number) => {
-    updateClock(value);
-  }, 20, {
-    trailing: true,
-    leading: true,
-  });
+  const debounceUpdateClock = useThrottledCallback(
+    (value: number) => {
+      updateClock(value);
+    },
+    20,
+    {
+      trailing: true,
+      leading: true,
+    },
+  );
 
   // noinspection JSVoidFunctionReturnValueUsed
   const bindProgress = useGesture({

@@ -2,6 +2,18 @@
 
 ### @hakit/components
 
+- BUGFIX - Breakpoints - A previous release caused the breakpoint logic to break, there was also another related bug where if breakpoints were provided to the ThemeProvider, it would cause a recursive update as there was a mis-match between the internal and input objects - fixes [issue](https://github.com/shannonhochkins/ha-component-kit/issues/239)
+- MediaPlayerCard, ControlSliderCircular, ClimateControls, RangeSlider - all now update with the trailing edge first as these also had a similar problem to the useEntity hook mentioned below.
+
+
+### @hakit/core
+- useEntity - issue with throttle controls acting like a delay, it will now taking the trailing/leading edge and initial updates will be immediate, default throttle time dropped from 150ms to 25ms, other components will also see a speed up in updates in the UI with this change, thanks for reporting @maumi - fixes [issue](https://github.com/shannonhochkins/ha-component-kit/issues/242)
+- useWeather, useLogs - also updated with incorrect throttle options
+
+# 5.0.7
+
+### @hakit/components
+
 - BUGFIX - CalendarCard - Logic to swap out the view only when the view prop was undefined was a bit of a premature optimization, there's now two additional props `disableNarrow` and `disableAutoView` to disable the logic independently, fixes [issue](https://github.com/shannonhochkins/ha-component-kit/issues/231)
 
 ### @hakit/core

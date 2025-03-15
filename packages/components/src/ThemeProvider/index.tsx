@@ -198,7 +198,6 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
   `;
 };
 
-
 const InternalThemeProvider = memo(function InternalThemeProvider<T extends object>({
   theme,
   darkMode,
