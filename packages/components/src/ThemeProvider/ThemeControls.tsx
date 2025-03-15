@@ -35,9 +35,16 @@ export function ThemeControls() {
   const [dark, setDark] = useState(darkMode);
   const [c, setContrastThreshold] = useState(contrastThreshold);
 
-  const debouncedOnChange = useDebouncedCallback((_theme: ThemeStore["theme"]) => {
-    setTheme(_theme);
-  }, 50);
+  const debouncedOnChange = useDebouncedCallback(
+    (_theme: ThemeStore["theme"]) => {
+      setTheme(_theme);
+    },
+    50,
+    {
+      trailing: true,
+      leading: true,
+    },
+  );
 
   useEffect(() => {
     debouncedOnChange({

@@ -111,6 +111,15 @@ const ignoreForDiffCheck = (
   };
 };
 
+const DEFAULT_BREAKPOINTS = {
+  xxs: 600,
+  xs: 900,
+  sm: 1200,
+  md: 1536,
+  lg: 1700,
+  xlg: 1701,
+};
+
 export const useStore = create<Store>((set) => ({
   routes: [],
   setRoutes: (routes) => set(() => ({ routes })),
@@ -173,14 +182,7 @@ export const useStore = create<Store>((set) => ({
   setConfig: (config) => set({ config }),
   error: null,
   setError: (error) => set({ error }),
-  breakpoints: {
-    xxs: 0,
-    xs: 0,
-    sm: 0,
-    md: 0,
-    lg: 0,
-    xlg: 0,
-  },
+  breakpoints: DEFAULT_BREAKPOINTS,
   setBreakpoints: (breakpoints) =>
     set({
       breakpoints: {

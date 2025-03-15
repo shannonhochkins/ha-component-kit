@@ -55,7 +55,10 @@ export function ClimateHumiditySlider({ entity: _entity, targetTempStep, showCur
     [entity.service],
   );
 
-  const _debouncedCallService = useDebouncedCallback((target: number) => _callService(target), 1000);
+  const _debouncedCallService = useDebouncedCallback((target: number) => _callService(target), 1000, {
+    leading: true,
+    trailing: true,
+  });
 
   const _valueChanged = useCallback(
     (value: number) => {

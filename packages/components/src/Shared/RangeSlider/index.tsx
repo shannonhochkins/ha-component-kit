@@ -230,12 +230,19 @@ function InternalRangeSlider({
 
   const callType = debounceType === "debounce" ? useDebouncedCallback : useThrottledCallback;
 
-  const debouncedOnChange = callType((event: React.ChangeEvent<HTMLInputElement>) => {
-    if (typeof onChangeComplete === "function") {
-      onChangeComplete(event.target.valueAsNumber, event);
-    }
-    setActive(false);
-  }, debounceThrottleValue);
+  const debouncedOnChange = callType(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (typeof onChangeComplete === "function") {
+        onChangeComplete(event.target.valueAsNumber, event);
+      }
+      setActive(false);
+    },
+    debounceThrottleValue,
+    {
+      leading: true,
+      trailing: true,
+    },
+  );
 
   return (
     <RangeSliderParent
