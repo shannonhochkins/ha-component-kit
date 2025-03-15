@@ -177,7 +177,10 @@ export function ClimateControlSlider({ entity: _entity, targetTempStep, showCurr
     [_targetTemperature, entity],
   );
 
-  const _debouncedCallService = useDebouncedCallback((target: Target) => _callService(target), 1000);
+  const _debouncedCallService = useDebouncedCallback((target: Target) => _callService(target), 1000, {
+    trailing: true,
+    leading: true,
+  });
 
   const _handleButton = useCallback(
     (target: Target, step: number) => {

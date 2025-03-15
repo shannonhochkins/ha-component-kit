@@ -53,6 +53,10 @@ export function useWeather(entityId: FilterByDomain<EntityName, "weather">, opti
       _unsubscribe.current = await subscribeWeatherEvents(entityId, type);
     },
     100,
+    {
+      trailing: true,
+      leading: true,
+    },
   );
 
   useEffect(() => {

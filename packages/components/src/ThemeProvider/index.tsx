@@ -198,6 +198,14 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
   `;
 };
 
+function omitXlg(breakpoints: BreakPoints & {
+  xlg: number;
+}): BreakPoints {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { xlg, ...rest } = breakpoints;
+  return rest;
+}
+
 const InternalThemeProvider = memo(function InternalThemeProvider<T extends object>({
   theme,
   darkMode,
@@ -243,8 +251,10 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
   const colorScheme = themeStore.darkMode ? "dark" : "light";
 
   useEffect(() => {
-    if (typeof breakpoints !== "undefined" && !isEqual(breakpoints, _breakpoints)) {
-      setBreakpoints(breakpoints);
+    if (typeof breakpoints !== "undefined") {
+      if (!isEqual(breakpoints, omitXlg(_breakpoints))) {
+        setBreakpoints(breakpoints);
+      }
     }
   }, [setBreakpoints, breakpoints, _breakpoints]);
 

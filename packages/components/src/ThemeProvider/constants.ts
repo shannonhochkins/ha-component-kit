@@ -14,11 +14,4 @@ export const DEFAULT_THEME_OPTIONS = {
   saturation: 60,
   lightness: 54,
   contrastThreshold: 65,
-  breakpoints: {
-    xxs: 600,
-    xs: 900,
-    sm: 1200,
-    md: 1536,
-    lg: 1700,
-  },
 } as const;
