@@ -235,7 +235,10 @@ function InternalRangeSlider({
       onChangeComplete(event.target.valueAsNumber, event);
     }
     setActive(false);
-  }, debounceThrottleValue);
+  }, debounceThrottleValue, {
+    leading: true,
+    trailing: true,
+  });
 
   return (
     <RangeSliderParent

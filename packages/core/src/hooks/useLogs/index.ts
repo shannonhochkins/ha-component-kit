@@ -177,7 +177,10 @@ export function useLogs(entityId: EntityName, options?: UseLogOptions) {
     }
     _subscribed.current = true;
     _unsubscribe.current = await subscribeLogbookPeriod(entityId, logBookPeriod);
-  }, 100);
+  }, 100, {
+    leading: true,
+    trailing: true,
+  });
 
   useEffect(() => {
     const logBookPeriod = _calculateLogbookPeriod();

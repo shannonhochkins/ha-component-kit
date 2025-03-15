@@ -280,7 +280,10 @@ function InternalMediaPlayerCard({
 
   const debounceUpdateClock = useThrottledCallback((value: number) => {
     updateClock(value);
-  }, 20);
+  }, 20, {
+    trailing: true,
+    leading: true,
+  });
 
   // noinspection JSVoidFunctionReturnValueUsed
   const bindProgress = useGesture({

@@ -451,12 +451,18 @@ function InternalControlSliderCircular({
   const triggerOnChangeApplied = useDebouncedCallback((updatedValue: number, type: ActiveSlider) => {
     if (typeof onChangeApplied !== "function") return;
     onChangeApplied(updatedValue, type);
-  }, 100);
+  }, 100, {
+    trailing: true,
+    leading: true,
+  });
 
   const triggerOnChange = useThrottledCallback((updatedValue: number, type: ActiveSlider) => {
     if (typeof onChange !== "function") return;
     onChange(updatedValue, type);
-  }, 20);
+  }, 20, {
+    trailing: true,
+    leading: true,
+  });
 
   const bind = useGesture(
     {

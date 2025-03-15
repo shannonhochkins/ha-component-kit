@@ -22,7 +22,7 @@ interface UseEntityOptions {
 }
 
 const DEFAULT_OPTIONS: UseEntityOptions = {
-  throttle: 150,
+  throttle: 25,
   returnNullIfNotFound: false,
   historyOptions: {
     hoursToShow: 24,
@@ -83,7 +83,10 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
   );
   const debounceUpdate = useDebouncedCallback((entity: HassEntity) => {
     setEntity(formatEntity(entity));
-  }, throttle);
+  }, throttle, {
+    leading: true,
+    trailing: true,
+  });
 
   const [$entity, setEntity] = useState<HassEntityCustom | null>(matchedEntity !== null ? formatEntity(matchedEntity) : null);
 

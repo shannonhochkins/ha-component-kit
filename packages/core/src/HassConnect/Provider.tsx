@@ -577,7 +577,10 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
       const message = handleError(e);
       setError(`Unable to connect to Home Assistant, please check the URL: "${message}"`);
     }
-  }, 100);
+  }, 100, {
+    leading: true,
+    trailing: false,
+  });
 
   useEffect(() => {
     // authenticate with ha

@@ -37,7 +37,10 @@ export function ThemeControls() {
 
   const debouncedOnChange = useDebouncedCallback((_theme: ThemeStore["theme"]) => {
     setTheme(_theme);
-  }, 50);
+  }, 50, {
+    trailing: true,
+    leading: true,
+  });
 
   useEffect(() => {
     debouncedOnChange({

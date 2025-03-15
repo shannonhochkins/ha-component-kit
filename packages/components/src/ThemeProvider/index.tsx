@@ -198,6 +198,7 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
   `;
 };
 
+
 const InternalThemeProvider = memo(function InternalThemeProvider<T extends object>({
   theme,
   darkMode,
@@ -243,8 +244,13 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
   const colorScheme = themeStore.darkMode ? "dark" : "light";
 
   useEffect(() => {
-    if (typeof breakpoints !== "undefined" && !isEqual(breakpoints, _breakpoints)) {
-      setBreakpoints(breakpoints);
+    if (typeof breakpoints !== "undefined") {
+      const withoutXlg = { ..._breakpoints };
+      // @ts-expect-error - xlg is an auto computed breakpoint, we don't want to compare with the input object
+      delete withoutXlg.xlg;
+      if (!isEqual(breakpoints, withoutXlg)) {
+        setBreakpoints(breakpoints);
+      }
     }
   }, [setBreakpoints, breakpoints, _breakpoints]);
 
