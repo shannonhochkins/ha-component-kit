@@ -198,6 +198,14 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
   `;
 };
 
+function omitXlg(breakpoints: BreakPoints & {
+  xlg: number;
+}): BreakPoints {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { xlg, ...rest } = breakpoints;
+  return rest;
+}
+
 const InternalThemeProvider = memo(function InternalThemeProvider<T extends object>({
   theme,
   darkMode,
@@ -244,10 +252,7 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
 
   useEffect(() => {
     if (typeof breakpoints !== "undefined") {
-      const withoutXlg = { ..._breakpoints };
-      // @ts-expect-error - xlg is an auto computed breakpoint, we don't want to compare with the input object
-      delete withoutXlg.xlg;
-      if (!isEqual(breakpoints, withoutXlg)) {
+      if (!isEqual(breakpoints, omitXlg(_breakpoints))) {
         setBreakpoints(breakpoints);
       }
     }
