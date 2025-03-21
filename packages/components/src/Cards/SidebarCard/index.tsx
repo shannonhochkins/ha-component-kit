@@ -29,7 +29,8 @@ const StyledTimeCard = styled(TimeCard)<{
       color: var(--ha-S200-contrast);
     }
   }
-  .time, .time-suffix {
+  .time,
+  .time-suffix {
     transition: var(--ha-transition-duration) var(--ha-easing);
     transition-property: font-size;
   }

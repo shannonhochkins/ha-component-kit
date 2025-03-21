@@ -149,8 +149,6 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
     }
   }, [matchedEntity, $entity, formatEntity]);
 
-
-
   return useMemo(() => {
     if ($entity === null) {
       // purposely casting here so types are correct on usage side

@@ -99,38 +99,40 @@ function InternalTooltip({ placement = "top", title = null, children, ref, ...re
   const win = windowContext ?? window;
   const [show, setShow] = useState(false);
 
-  const calculatePosition = useCallback((el: HTMLSpanElement) => {
-    const childRect = childRef.current?.getBoundingClientRect();
-    if (typeof childRect === "undefined") return;
-    let top = 0;
-    let left = 0;
-    switch (placement) {
-      case "top":
-        top = childRect.top;
-        left = childRect.left + childRect.width / 2;
-        break;
-      case "right":
-        top = childRect.top + childRect.height / 2;
-        left = childRect.right;
-        break;
-      case "bottom":
-        top = childRect.bottom;
-        left = childRect.left + childRect.width / 2;
-        break;
-      case "left":
-        top = childRect.top + childRect.height / 2;
-        left = childRect.left;
-        break;
-    }
-    el.style.top = `${top}px`;
-    el.style.left = `${left}px`;
-    // to ensure animations play out, we need to update these values after the next tick
-    setTimeout(() => {
-      el.style.opacity = "1";
-      el.style.visibility = "visible";
-    }, 0);
-  }, [placement]);
-
+  const calculatePosition = useCallback(
+    (el: HTMLSpanElement) => {
+      const childRect = childRef.current?.getBoundingClientRect();
+      if (typeof childRect === "undefined") return;
+      let top = 0;
+      let left = 0;
+      switch (placement) {
+        case "top":
+          top = childRect.top;
+          left = childRect.left + childRect.width / 2;
+          break;
+        case "right":
+          top = childRect.top + childRect.height / 2;
+          left = childRect.right;
+          break;
+        case "bottom":
+          top = childRect.bottom;
+          left = childRect.left + childRect.width / 2;
+          break;
+        case "left":
+          top = childRect.top + childRect.height / 2;
+          left = childRect.left;
+          break;
+      }
+      el.style.top = `${top}px`;
+      el.style.left = `${left}px`;
+      // to ensure animations play out, we need to update these values after the next tick
+      setTimeout(() => {
+        el.style.opacity = "1";
+        el.style.visibility = "visible";
+      }, 0);
+    },
+    [placement],
+  );
 
   const handleMouseEnter = useCallback(() => {
     setShow(true);
@@ -184,14 +186,21 @@ function InternalTooltip({ placement = "top", title = null, children, ref, ...re
       })}
       {typeof document !== "undefined" &&
         createPortal(
-          show && <TooltipSpan className="tooltip-inner" placement={placement} ref={ref => {
-            if (ref) {
-              tooltipRef.current = ref
-              calculatePosition(ref);
-            }
-          }} aria-hidden="false">
-            {title}
-          </TooltipSpan>,
+          show && (
+            <TooltipSpan
+              className="tooltip-inner"
+              placement={placement}
+              ref={(ref) => {
+                if (ref) {
+                  tooltipRef.current = ref;
+                  calculatePosition(ref);
+                }
+              }}
+              aria-hidden="false"
+            >
+              {title}
+            </TooltipSpan>
+          ),
           portalRoot ?? win.document.body,
         )}
     </div>

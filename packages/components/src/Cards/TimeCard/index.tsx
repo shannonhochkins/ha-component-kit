@@ -160,7 +160,9 @@ function InternalTimeCard({
     try {
       return (
         <Time className="time">
-          {typeof timeFormat === "function" ? timeFormat(currentTime, customFormatter) : customFormatter(currentTime, timeFormat ?? DEFAULT_TIME_FORMAT)}
+          {typeof timeFormat === "function"
+            ? timeFormat(currentTime, customFormatter)
+            : customFormatter(currentTime, timeFormat ?? DEFAULT_TIME_FORMAT)}
         </Time>
       );
     } catch (e) {
@@ -223,9 +225,7 @@ function InternalTimeCard({
         <Column className="column" gap="0.5rem" alignItems={center ? "center" : "flex-start"} fullHeight wrap="nowrap">
           {(!hideIcon || !hideTime) && (
             <Row className="row" gap="0.5rem" alignItems="center" wrap="nowrap">
-              {!hideIcon && (
-                <Icon className="icon primary-icon" icon={dateIcon} {...(iconProps ?? {})} />
-              )}
+              {!hideIcon && <Icon className="icon primary-icon" icon={dateIcon} {...(iconProps ?? {})} />}
               {!hideTime && timeValue}
             </Row>
           )}
