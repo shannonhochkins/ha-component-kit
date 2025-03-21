@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, Children, isValidElement, cloneElement } from "react";
+import { useRef, useCallback, Children, isValidElement, cloneElement, useState } from "react";
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { fallback } from "@components";
@@ -97,57 +97,56 @@ function InternalTooltip({ placement = "top", title = null, children, ref, ...re
   const portalRoot = useStore((store) => store.portalRoot);
   const windowContext = useStore((store) => store.windowContext);
   const win = windowContext ?? window;
+  const [show, setShow] = useState(false);
 
-  const calculatePosition = useCallback(() => {
-    const childRect = childRef.current?.getBoundingClientRect();
-    if (typeof childRect === "undefined" || !tooltipRef.current) return;
-    let top = 0;
-    let left = 0;
-    switch (placement) {
-      case "top":
-        top = childRect.top;
-        left = childRect.left + childRect.width / 2;
-        break;
-      case "right":
-        top = childRect.top + childRect.height / 2;
-        left = childRect.right;
-        break;
-      case "bottom":
-        top = childRect.bottom;
-        left = childRect.left + childRect.width / 2;
-        break;
-      case "left":
-        top = childRect.top + childRect.height / 2;
-        left = childRect.left;
-        break;
-    }
-    tooltipRef.current.style.top = `${top}px`;
-    tooltipRef.current.style.left = `${left}px`;
-  }, [placement]);
-
-  useEffect(() => {
-    calculatePosition();
-    win.addEventListener("resize", calculatePosition);
-    return () => {
-      win.removeEventListener("resize", calculatePosition);
-    };
-  }, [calculatePosition, win]);
+  const calculatePosition = useCallback(
+    (el: HTMLSpanElement) => {
+      const childRect = childRef.current?.getBoundingClientRect();
+      if (typeof childRect === "undefined") return;
+      let top = 0;
+      let left = 0;
+      switch (placement) {
+        case "top":
+          top = childRect.top;
+          left = childRect.left + childRect.width / 2;
+          break;
+        case "right":
+          top = childRect.top + childRect.height / 2;
+          left = childRect.right;
+          break;
+        case "bottom":
+          top = childRect.bottom;
+          left = childRect.left + childRect.width / 2;
+          break;
+        case "left":
+          top = childRect.top + childRect.height / 2;
+          left = childRect.left;
+          break;
+      }
+      el.style.top = `${top}px`;
+      el.style.left = `${left}px`;
+      // to ensure animations play out, we need to update these values after the next tick
+      setTimeout(() => {
+        el.style.opacity = "1";
+        el.style.visibility = "visible";
+      }, 0);
+    },
+    [placement],
+  );
 
   const handleMouseEnter = useCallback(() => {
-    const tooltipEl = tooltipRef.current;
-    if (tooltipEl) {
-      tooltipEl.style.opacity = "1";
-      tooltipEl.style.visibility = "visible";
-      calculatePosition();
-    }
-  }, [calculatePosition]);
+    setShow(true);
+  }, []);
 
   const handleHide = useCallback(() => {
     const tooltipEl = tooltipRef.current;
-    if (tooltipEl) {
-      tooltipEl.style.opacity = "0";
-      tooltipEl.style.visibility = "hidden";
-    }
+    if (!tooltipEl) return;
+    tooltipEl.style.opacity = "0";
+    tooltipEl.style.visibility = "hidden";
+    tooltipEl.setAttribute("aria-hidden", "true");
+    setTimeout(() => {
+      setShow(false);
+    }, 250);
   }, []);
 
   if (title === null || title === "") {
@@ -187,9 +186,21 @@ function InternalTooltip({ placement = "top", title = null, children, ref, ...re
       })}
       {typeof document !== "undefined" &&
         createPortal(
-          <TooltipSpan className="tooltip-inner" placement={placement} ref={tooltipRef}>
-            {title}
-          </TooltipSpan>,
+          show && (
+            <TooltipSpan
+              className="tooltip-inner"
+              placement={placement}
+              ref={(ref) => {
+                if (ref) {
+                  tooltipRef.current = ref;
+                  calculatePosition(ref);
+                }
+              }}
+              aria-hidden="false"
+            >
+              {title}
+            </TooltipSpan>
+          ),
           portalRoot ?? win.document.body,
         )}
     </div>

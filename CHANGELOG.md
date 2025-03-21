@@ -1,3 +1,15 @@
+# 5.0.9
+
+### @hakit/components
+
+- NEW - TimeCard - when no time/date entity is provided, by default it will use the browsers time and date, this also uses a custom formatter to format the custom date string, previously the custom formatters only allowed you to specify strings per identifier, now you can return a ReactNode meaning we can have the same formatting behavior as if we have an entity (AM/PM suffix now wrapped in different styles.)
+- BREAKING - TimeCard - Unlikely breaking change for users unless you're potentially using css selectors targeting the h4 element in time cards, the h4 element is now a span to avoid nesting h4 elements after introducing the above feature.
+- IMPROVEMENT - Tooltip - A previously unknown behavior as something changed along the way, all tooltips were rendered on the page even before interacting with elements, and also continuously updating position on window resize, now tooltip elements are only created when interacting with the element with the tooltip, and removed from the dom after the interaction is complete, this should reduce the amount of elements on the page and improve performance.
+
+### @hakit/core
+- useEntity - more issues with the useEntity hook causing delays in updates, the hook behind the scenes was using a debounce not a throttle which was not intended behavior, this seems to have resolved syncing issues with storybook and the actual dashboard. [fixes](https://github.com/shannonhochkins/ha-component-kit/issues/248)
+
+
 # 5.0.8
 
 ### @hakit/components

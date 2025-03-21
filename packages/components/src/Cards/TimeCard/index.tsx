@@ -6,6 +6,7 @@ import { Row, Column, fallback, CardBase, type CardBaseProps, type AvailableQuer
 import { createDateFormatter, daySuffix } from "./formatter";
 import { ErrorBoundary } from "react-error-boundary";
 import { FormatFunction } from "./types";
+import { Time, AmOrPm } from "./shared";
 
 const Card = styled(CardBase)`
   cursor: default;
@@ -27,21 +28,6 @@ const Contents = styled.div`
       }
     }
   }
-`;
-
-const Time = styled.h4`
-  all: unset;
-  font-family: var(--ha-font-family);
-  font-size: 2rem;
-  color: var(--ha-S200-contrast);
-  font-weight: 400;
-`;
-const AmOrPm = styled.h4`
-  all: unset;
-  font-family: var(--ha-font-family);
-  font-size: 2rem;
-  color: var(--ha-S400-contrast);
-  font-weight: 300;
 `;
 
 function convertTo12Hour(time: string) {
@@ -87,7 +73,7 @@ function formatDate(dateString: string): string {
 
   return formattedDate;
 }
-type CustomFormatter = (date: Date, formatter: FormatFunction) => string;
+type CustomFormatter = (date: Date, formatter: FormatFunction) => React.ReactNode;
 type OmitProperties = "title" | "as" | "active" | "entity" | "service" | "serviceData" | "longPressCallback" | "modalProps";
 export interface TimeCardProps extends Omit<CardBaseProps<"div">, OmitProperties> {
   /** provide a custom entity to read the time from, if not found/provided it will update from machine time @default "sensor.time" */
@@ -116,7 +102,7 @@ export interface TimeCardProps extends Omit<CardBaseProps<"div">, OmitProperties
   onClick?: (entity: HassEntityWithService<"sensor">, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
 }
 
-const DEFAULT_TIME_FORMAT = "hh:mm a";
+const DEFAULT_TIME_FORMAT = "hh:mm A";
 const DEFAULT_DATE_FORMAT = "dddd, MMMM DD YYYY";
 
 const customFormatter = createDateFormatter({});
@@ -152,6 +138,7 @@ function InternalTimeCard({
   const dateSensor = useEntity(dateEntity ?? "sensor.date", {
     returnNullIfNotFound: true,
   });
+  const dateIcon = useMemo(() => icon || dateSensor?.attributes?.icon || "mdi:calendar", [icon, dateSensor]);
   const [formatted, amOrPm] = useMemo(() => {
     const parts = convertTo12Hour(timeSensor?.state ?? "00:00");
     const hour = parts.find((part) => part.type === "hour");
@@ -209,10 +196,12 @@ function InternalTimeCard({
   }, [throttleTime]);
 
   useEffect(() => {
-    if (!timeFormat && !dateFormat) return; // let home assistant trigger updates
+    const hasEntities = timeSensor || dateSensor;
+    const hasFormatters = timeFormat || dateFormat;
+    if (hasEntities && !hasFormatters) return; // let home assistant trigger updates
     requestRef.current = requestAnimationFrame(updateClock);
     return () => cancelAnimationFrame(requestRef.current!);
-  }, [updateClock, timeFormat, dateFormat]);
+  }, [updateClock, timeFormat, dateFormat, timeSensor, dateSensor]);
 
   return (
     <Card
@@ -236,9 +225,7 @@ function InternalTimeCard({
         <Column className="column" gap="0.5rem" alignItems={center ? "center" : "flex-start"} fullHeight wrap="nowrap">
           {(!hideIcon || !hideTime) && (
             <Row className="row" gap="0.5rem" alignItems="center" wrap="nowrap">
-              {!hideIcon && (
-                <Icon className="icon primary-icon" icon={icon || dateSensor?.attributes?.icon || "mdi:calendar"} {...(iconProps ?? {})} />
-              )}
+              {!hideIcon && <Icon className="icon primary-icon" icon={dateIcon} {...(iconProps ?? {})} />}
               {!hideTime && timeValue}
             </Row>
           )}
