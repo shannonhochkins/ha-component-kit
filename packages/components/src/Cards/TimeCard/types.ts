@@ -25,13 +25,13 @@ export type FormatterMask =
   | "mm"
   | "ss";
 
-export type Formatter = (tokens: DateParts, date: Date) => string;
+export type Formatter = (tokens: DateParts, date: Date) => React.ReactNode;;
 
 export type Formatters = { [k in FormatterMask]: Formatter };
 
 export type CustomFormatters = { [k: string]: Formatter };
 
-export type FormatFunction = (date: Date, format: string, options?: FormatOptions) => string;
+export type FormatFunction = (date: Date, format: string, options?: FormatOptions) => React.ReactNode;
 
 export type FormatOptions = {
   locale?: string;

@@ -6,6 +6,7 @@ import { Row, Column, fallback, CardBase, type CardBaseProps, type AvailableQuer
 import { createDateFormatter, daySuffix } from "./formatter";
 import { ErrorBoundary } from "react-error-boundary";
 import { FormatFunction } from "./types";
+import { Time, AmOrPm } from "./shared";
 
 const Card = styled(CardBase)`
   cursor: default;
@@ -29,20 +30,6 @@ const Contents = styled.div`
   }
 `;
 
-const Time = styled.h4`
-  all: unset;
-  font-family: var(--ha-font-family);
-  font-size: 2rem;
-  color: var(--ha-S200-contrast);
-  font-weight: 400;
-`;
-const AmOrPm = styled.h4`
-  all: unset;
-  font-family: var(--ha-font-family);
-  font-size: 2rem;
-  color: var(--ha-S400-contrast);
-  font-weight: 300;
-`;
 
 function convertTo12Hour(time: string) {
   // Create a new Date object
@@ -87,7 +74,7 @@ function formatDate(dateString: string): string {
 
   return formattedDate;
 }
-type CustomFormatter = (date: Date, formatter: FormatFunction) => string;
+type CustomFormatter = (date: Date, formatter: FormatFunction) => React.ReactNode;
 type OmitProperties = "title" | "as" | "active" | "entity" | "service" | "serviceData" | "longPressCallback" | "modalProps";
 export interface TimeCardProps extends Omit<CardBaseProps<"div">, OmitProperties> {
   /** provide a custom entity to read the time from, if not found/provided it will update from machine time @default "sensor.time" */

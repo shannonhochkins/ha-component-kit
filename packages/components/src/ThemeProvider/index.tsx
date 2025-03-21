@@ -33,7 +33,14 @@ export type ThemeProviderProps<T extends object> = ThemeStore["theme"] & {
   theme?: DeepPartial<ThemeParams> & T;
   /** any global style overrides */
   globalStyles?: CSSInterpolation;
-  /** options to pass to the emotion cache provider */
+  /** options to pass to the emotion cache provider, if an emotion cache is provided, or a different window context via HassConnect, you'll need to wrap your dashboard in the ThemeProvider
+   * otherwise the styles will not be applied correctly to child components.
+   * @example
+   * ```tsx
+   * <ThemeProvider emotionCache={{ key: "my-key", container: myContainer }}>
+   *  <App />
+   * </ThemeProvider>
+   */
   emotionCache?: Options;
   /** default breakpoint media query overrides @default {
    * xxs: 600,

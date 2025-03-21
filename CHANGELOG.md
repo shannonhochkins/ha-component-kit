@@ -1,3 +1,14 @@
+# 5.0.9
+
+### @hakit/components
+
+- NEW - TimeCard - when no time/date entity is provided, by default it will use the browsers time and date, this also uses a custom formatter to format the custom date string, previously the custom formatters only allowed you to specify strings per identifier, now you can return a ReactNode meaning we can have the same formatting behavior as if we have an entity (AM/PM suffix now wrapped in different styles.)
+
+
+### @hakit/core
+- useEntity - more issues with the useEntity hook causing delays in updates, the hook behind the scenes was using a debounce not a throttle which was not intended behavior, this seems to have resolved syncing issues with storybook and the actual dashboard.
+
+
 # 5.0.8
 
 ### @hakit/components

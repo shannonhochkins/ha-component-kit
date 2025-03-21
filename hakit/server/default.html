@@ -110,7 +110,6 @@
       .catch(error => console.error('Error:', error));
     }
     function runApplication() {
-      console.log('xx', `${baseUrl}run-application`);
       fetch(`${baseUrl}api/v1/run-application`, {
         method: 'POST'
       })

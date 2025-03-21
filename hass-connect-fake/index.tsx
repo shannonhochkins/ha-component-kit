@@ -450,7 +450,7 @@ function HassProvider({
           state: formatted
         }
       });
-    }, 60000);
+    }, 125);
     return () => {
       if (clock.current) clearInterval(clock.current);
     }

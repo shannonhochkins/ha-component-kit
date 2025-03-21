@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, Row, TimeCard, ThemeControlsModal, Alert } from "@components";
 import type { TimeCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
+import { Source } from "@storybook/blocks";
 
 function Template(args?: Partial<TimeCardProps>) {
   return (
@@ -10,14 +11,7 @@ function Template(args?: Partial<TimeCardProps>) {
       <ThemeControlsModal />
       <Row gap="1rem">
         <TimeCard {...args} />
-        <TimeCard timeFormat="hh:mm:ss a" dateFormat={"MMM DD"} {...args} />
-        <TimeCard
-          timeFormat={(date) => {
-            return "WHAT? " + date.toLocaleTimeString().replace(/:/g, "-");
-          }}
-          hideDate
-          {...args}
-        />
+        <TimeCard timeFormat="hh:mm:ss A" dateFormat={"MMM DD"} {...args} />
       </Row>
       <Alert
         type="warning"
@@ -41,6 +35,22 @@ function Template(args?: Partial<TimeCardProps>) {
           .
         </p>
       </Alert>
+      <p>You can provide your own custom formatters:</p>
+      <TimeCard
+        timeFormat={(date) => {
+          return "Time: " + date.toLocaleTimeString().replace(/:/g, "-");
+        }}
+        hideDate
+        {...args}
+      />
+      <Source code={
+`<TimeCard
+  timeFormat={(date) => {
+    return "Time: " + date.toLocaleTimeString().replace(/:/g, "-");
+  }}
+  hideDate
+/>`
+      } dark language="tsx" />
     </HassConnect>
   );
 }
