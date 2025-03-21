@@ -2,13 +2,14 @@ import {
   CustomFormatters,
   DateParts,
   Formatters,
-  FormatFunction,
   FormatterMask,
   DatePartName,
   FormatOptions,
+  FormatFunction,
   Parser,
   Token,
 } from "./types";
+import { AmOrPm } from "./shared";
 
 const parsers: Map<string, Parser> = new Map();
 
@@ -30,7 +31,7 @@ const intlFormattersOptions = [
 ] satisfies Partial<Intl.DateTimeFormatOptions>[];
 
 export function createDateFormatter(customFormatters: CustomFormatters): FormatFunction {
-  return function intlFormatDate(date: Date, format: string, options?: FormatOptions): string {
+  return function intlFormatDate(date: Date, format: string, options?: FormatOptions): React.ReactNode {
     const tokens = parseDate(date, options);
     const output = formatDate(customFormatters, format, tokens, date);
     return output;
@@ -135,8 +136,8 @@ const formatters: Formatters = {
   ddx: (parts) => `${parseInt(parts.day, 10)}${daySuffix(parseInt(parts.day))}`,
   dddd: (parts) => parts.weekday,
   ddd: (parts) => parts.weekday.slice(0, 3),
-  A: (parts) => parts.dayPeriod,
-  a: (parts) => parts.dayPeriod.toLowerCase(),
+  A: (parts) => <AmOrPm className="time-suffix">{parts.dayPeriod}</AmOrPm>,
+  a: (parts) => <AmOrPm className="time-suffix">{parts.dayPeriod.toLowerCase()}</AmOrPm>,
   // XXX: fix Chrome 80+ bug going over 24h
   HH: (parts) => ("0" + (Number(parts.lhour) % 24)).slice(-2),
   hh: (parts) => parts.hour,
@@ -146,14 +147,46 @@ const formatters: Formatters = {
 
 const createCustomPattern = (customFormatters: CustomFormatters) => Object.keys(customFormatters).reduce((_, key) => `|${key}`, "");
 
-function formatDate(customFormatters: CustomFormatters, format: string, parts: DateParts, date: Date): string {
+function formatDate(customFormatters: CustomFormatters, format: string, parts: DateParts, date: Date): React.ReactNode {
   const literalPattern = "\\[([^\\]]+)\\]|";
   const customPattern = createCustomPattern(customFormatters);
   const patternRegexp = new RegExp(`${literalPattern}${defaultPattern}${customPattern}`, "g");
 
   const allFormatters = { ...formatters, ...customFormatters };
-  // @ts-expect-error - fix later
-  return format.replace(patternRegexp, (mask: FormatterMask, literal: string) => {
-    return literal || allFormatters[mask](parts, date);
+  // We'll accumulate text/JSX in an array
+  const tokens: React.ReactNode[] = [];
+  let lastIndex = 0;
+  // @ts-expect-error - will fix later
+  format.replace(patternRegexp, (mask: FormatterMask, literal: string, offset: number) => {
+    // 'offset' is the index of this match within the full format string
+
+    // Push any text that occurs before this match
+    if (offset > lastIndex) {
+      const val = format.slice(lastIndex, offset);
+      if (val.length > 0 && val.trim().length === 0) {
+        // whitespace char
+        tokens.push(<span className="whitespace">&nbsp;</span>);
+      } else {
+        tokens.push(val);
+      }
+    }
+    lastIndex = offset + mask.length;
+
+    if (literal) {
+      // If we matched [literal text], just push that as plain text
+      tokens.push(literal);
+    } else {
+      // Everything else just push normally
+      tokens.push(allFormatters[mask](parts, date));
+    }
+    // Return an empty string to discard the normal replace output
+    return "";
   });
+  // If there's still text remaining after the last match, push it
+  if (lastIndex < format.length) {
+    tokens.push(format.slice(lastIndex));
+  }
+  // Finally, render the HTML string inside React. We must do dangerouslySetInnerHTML
+  // so that <div> ... </div> is recognized as HTML, not plain text:
+  return <>{tokens}</>;
 }

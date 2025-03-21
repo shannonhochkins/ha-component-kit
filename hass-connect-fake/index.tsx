@@ -437,14 +437,13 @@ function HassProvider({
         last_changed: now.toISOString(),
         last_updated: now.toISOString(),
       }
-      setEntities({
-        ['sensor.time']: {
-          ...entities['sensor.time'],
-          ...dates,
-          state: formatted
-        }
-      });
-    }, 60000);
+      entities['sensor.time'] = {
+        ...entities['sensor.time'],
+        ...dates,
+        state: formatted
+      }
+      setEntities(entities);
+    }, 125);
     return () => {
       if (clock.current) clearInterval(clock.current);
     }

@@ -6,7 +6,7 @@ import { useSubscribeEntity } from "../useSubscribeEntity";
 import { useService } from "../useService";
 import { useHistory } from "../useHistory";
 import { getIconByEntity } from "../useIcon";
-import { useDebouncedCallback } from "use-debounce";
+import { useThrottledCallback } from "use-debounce";
 import { getCssColorValue } from "@utils/colors";
 import { computeDomain } from "@utils/computeDomain";
 import { diff } from "deep-object-diff";
@@ -21,7 +21,7 @@ interface UseEntityOptions {
   historyOptions?: HistoryOptions;
 }
 
-const DEFAULT_OPTIONS: UseEntityOptions = {
+const DEFAULT_OPTIONS: Required<UseEntityOptions> = {
   throttle: 25,
   returnNullIfNotFound: false,
   historyOptions: {
@@ -81,7 +81,7 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
     },
     [language],
   );
-  const debounceUpdate = useDebouncedCallback(
+  const debounceUpdate = useThrottledCallback(
     (entity: HassEntity) => {
       setEntity(formatEntity(entity));
     },
@@ -148,6 +148,8 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
       setEntity(formatEntity(matchedEntity));
     }
   }, [matchedEntity, $entity, formatEntity]);
+
+
 
   return useMemo(() => {
     if ($entity === null) {

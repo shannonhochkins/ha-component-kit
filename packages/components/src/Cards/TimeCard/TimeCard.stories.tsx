@@ -10,13 +10,12 @@ function Template(args?: Partial<TimeCardProps>) {
       <ThemeControlsModal />
       <Row gap="1rem">
         <TimeCard {...args} />
-        <TimeCard timeFormat="hh:mm:ss a" dateFormat={"MMM DD"} {...args} />
+        <TimeCard timeFormat="hh:mm:ss A" dateFormat={"MMM DD"} {...args} />
         <TimeCard
           timeFormat={(date) => {
-            return "WHAT? " + date.toLocaleTimeString().replace(/:/g, "-");
+            return "Time: " + date.toLocaleTimeString().replace(/:/g, "-");
           }}
           hideDate
-          {...args}
         />
       </Row>
       <Alert
@@ -66,6 +65,15 @@ export type TimeStory = StoryObj<typeof TimeCard>;
 export const Docs: TimeStory = {
   render: Template,
   args: {},
+  parameters: {
+    docs: {
+      source: {
+        // language: 'graphql',
+        dark: false,
+        excludeDecorators: false,
+      },
+    },
+  },
 };
 
 export const WithoutDateExample: TimeStory = {
