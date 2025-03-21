@@ -111,7 +111,7 @@ const ignoreForDiffCheck = (
   };
 };
 
-const DEFAULT_BREAKPOINTS = {
+export const DEFAULT_BREAKPOINTS = {
   xxs: 600,
   xs: 900,
   sm: 1200,
