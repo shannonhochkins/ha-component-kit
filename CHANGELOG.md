@@ -7,7 +7,7 @@
 - IMPROVEMENT - Tooltip - A previously unknown behavior as something changed along the way, all tooltips were rendered on the page even before interacting with elements, and also continuously updating position on window resize, now tooltip elements are only created when interacting with the element with the tooltip, and removed from the dom after the interaction is complete, this should reduce the amount of elements on the page and improve performance.
 
 ### @hakit/core
-- useEntity - more issues with the useEntity hook causing delays in updates, the hook behind the scenes was using a debounce not a throttle which was not intended behavior, this seems to have resolved syncing issues with storybook and the actual dashboard.
+- useEntity - more issues with the useEntity hook causing delays in updates, the hook behind the scenes was using a debounce not a throttle which was not intended behavior, this seems to have resolved syncing issues with storybook and the actual dashboard. [fixes](https://github.com/shannonhochkins/ha-component-kit/issues/248)
 
 
 # 5.0.8
