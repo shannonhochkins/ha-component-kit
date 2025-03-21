@@ -16,7 +16,7 @@ const TooltipSpan = styled.span<Pick<TooltipProps, "placement">>`
   box-shadow: 0px 2px 4px var(--ha-S100);
   font-size: 0.9rem;
   z-index: 1000;
-  visibility: hidde;
+  visibility: hidden;
   opacity: 0;
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: opacity, visibility;
