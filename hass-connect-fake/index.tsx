@@ -34,6 +34,7 @@ import { mockCallApi } from './mocks/fake-call-api';
 import reolinkSnapshot from './assets/reolink-snapshot.jpg';
 import { logs } from './mocks/mockLogs';
 import {dailyForecast, hourlyForecast} from './mocks/mockWeather';
+import { DEFAULT_BREAKPOINTS } from '../packages/core/src/HassConnect/HassContext'
 
 interface HassProviderProps {
   children: (ready: boolean) => ReactNode;
@@ -303,14 +304,7 @@ const useStore = create<Store>((set) => ({
     return {};
   },
   /** getter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
-  breakpoints: {
-    xxs: 0,
-    xs: 0,
-    sm: 0,
-    md: 0,
-    lg: 0,
-    xlg: 0,
-  },
+  breakpoints: DEFAULT_BREAKPOINTS,
   /** setter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
   setBreakpoints: (breakpoints) => set({ breakpoints: {
     ...breakpoints,
