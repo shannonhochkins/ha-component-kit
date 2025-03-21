@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-export const Time = styled.h4`
+export const Time = styled.span`
   all: unset;
   font-family: var(--ha-font-family);
   font-size: 2rem;
@@ -10,7 +10,7 @@ export const Time = styled.h4`
   flex-direction: row;
 `;
 
-export const AmOrPm = styled.h4`
+export const AmOrPm = styled.span`
   all: unset;
   font-family: var(--ha-font-family);
   font-size: 2rem;

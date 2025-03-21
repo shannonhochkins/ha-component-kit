@@ -25,7 +25,7 @@ export type FormatterMask =
   | "mm"
   | "ss";
 
-export type Formatter = (tokens: DateParts, date: Date) => React.ReactNode;;
+export type Formatter = (tokens: DateParts, date: Date) => React.ReactNode;
 
 export type Formatters = { [k in FormatterMask]: Formatter };
 

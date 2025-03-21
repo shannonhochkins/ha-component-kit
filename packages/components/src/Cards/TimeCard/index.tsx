@@ -30,7 +30,6 @@ const Contents = styled.div`
   }
 `;
 
-
 function convertTo12Hour(time: string) {
   // Create a new Date object
   const [hour, minute] = time.split(":");
@@ -103,7 +102,7 @@ export interface TimeCardProps extends Omit<CardBaseProps<"div">, OmitProperties
   onClick?: (entity: HassEntityWithService<"sensor">, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
 }
 
-const DEFAULT_TIME_FORMAT = "hh:mm a";
+const DEFAULT_TIME_FORMAT = "hh:mm A";
 const DEFAULT_DATE_FORMAT = "dddd, MMMM DD YYYY";
 
 const customFormatter = createDateFormatter({});
@@ -160,9 +159,7 @@ function InternalTimeCard({
     try {
       return (
         <Time className="time">
-          {typeof timeFormat === "function"
-            ? timeFormat(currentTime, customFormatter)
-            : customFormatter(currentTime, timeFormat ?? DEFAULT_TIME_FORMAT)}
+          {typeof timeFormat === "function" ? timeFormat(currentTime, customFormatter) : customFormatter(currentTime, timeFormat)}
         </Time>
       );
     } catch (e) {
@@ -196,10 +193,12 @@ function InternalTimeCard({
   }, [throttleTime]);
 
   useEffect(() => {
-    if (!timeFormat && !dateFormat) return; // let home assistant trigger updates
+    const hasEntities = timeSensor || dateSensor;
+    const hasFormatters = timeFormat || dateFormat;
+    if (hasEntities && !hasFormatters) return; // let home assistant trigger updates
     requestRef.current = requestAnimationFrame(updateClock);
     return () => cancelAnimationFrame(requestRef.current!);
-  }, [updateClock, timeFormat, dateFormat]);
+  }, [updateClock, timeFormat, dateFormat, timeSensor, dateSensor]);
 
   return (
     <Card

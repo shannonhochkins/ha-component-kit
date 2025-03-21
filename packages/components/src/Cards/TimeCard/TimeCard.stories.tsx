@@ -43,14 +43,16 @@ function Template(args?: Partial<TimeCardProps>) {
         hideDate
         {...args}
       />
-      <Source code={
-`<TimeCard
+      <Source
+        code={`<TimeCard
   timeFormat={(date) => {
     return "Time: " + date.toLocaleTimeString().replace(/:/g, "-");
   }}
   hideDate
-/>`
-      } dark language="tsx" />
+/>`}
+        dark
+        language="tsx"
+      />
     </HassConnect>
   );
 }

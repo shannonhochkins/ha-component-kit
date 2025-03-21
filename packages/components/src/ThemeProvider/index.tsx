@@ -205,9 +205,11 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
   `;
 };
 
-function omitXlg(breakpoints: BreakPoints & {
-  xlg: number;
-}): BreakPoints {
+function omitXlg(
+  breakpoints: BreakPoints & {
+    xlg: number;
+  },
+): BreakPoints {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { xlg, ...rest } = breakpoints;
   return rest;

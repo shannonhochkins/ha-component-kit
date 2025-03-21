@@ -3,6 +3,7 @@
 ### @hakit/components
 
 - NEW - TimeCard - when no time/date entity is provided, by default it will use the browsers time and date, this also uses a custom formatter to format the custom date string, previously the custom formatters only allowed you to specify strings per identifier, now you can return a ReactNode meaning we can have the same formatting behavior as if we have an entity (AM/PM suffix now wrapped in different styles.)
+- BREAKING - TimeCard - Unlikely breaking change for users unless you're potentially using css selectors targeting the h4 element in time cards, the h4 element is now a span to avoid nesting h4 elements after introducing the above feature.
 
 
 ### @hakit/core

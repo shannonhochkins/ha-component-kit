@@ -165,13 +165,13 @@ function formatDate(customFormatters: CustomFormatters, format: string, parts: D
       const val = format.slice(lastIndex, offset);
       if (val.length > 0 && val.trim().length === 0) {
         // whitespace char
-        tokens.push(<span className="whitespace">&nbsp;</span>)
+        tokens.push(<span className="whitespace">&nbsp;</span>);
       } else {
         tokens.push(val);
       }
     }
     lastIndex = offset + mask.length;
-    
+
     if (literal) {
       // If we matched [literal text], just push that as plain text
       tokens.push(literal);
@@ -182,8 +182,8 @@ function formatDate(customFormatters: CustomFormatters, format: string, parts: D
     // Return an empty string to discard the normal replace output
     return "";
   });
-   // If there's still text remaining after the last match, push it
-   if (lastIndex < format.length) {
+  // If there's still text remaining after the last match, push it
+  if (lastIndex < format.length) {
     tokens.push(format.slice(lastIndex));
   }
   // Finally, render the HTML string inside React. We must do dangerouslySetInnerHTML
