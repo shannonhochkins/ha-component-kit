@@ -107,6 +107,12 @@ export default {
       canvas: {
         sourceState: 'shown',
       },
+      source: {
+        dark: true,
+        language: 'tsx',
+        excludeDecorators: false,
+        format: 'dedent',
+      },
       page: Page
     }
   },
