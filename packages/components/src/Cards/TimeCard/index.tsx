@@ -138,6 +138,7 @@ function InternalTimeCard({
   const dateSensor = useEntity(dateEntity ?? "sensor.date", {
     returnNullIfNotFound: true,
   });
+  const dateIcon = useMemo(() => icon || dateSensor?.attributes?.icon || "mdi:calendar", [icon, dateSensor]);
   const [formatted, amOrPm] = useMemo(() => {
     const parts = convertTo12Hour(timeSensor?.state ?? "00:00");
     const hour = parts.find((part) => part.type === "hour");
@@ -159,7 +160,7 @@ function InternalTimeCard({
     try {
       return (
         <Time className="time">
-          {typeof timeFormat === "function" ? timeFormat(currentTime, customFormatter) : customFormatter(currentTime, timeFormat)}
+          {typeof timeFormat === "function" ? timeFormat(currentTime, customFormatter) : customFormatter(currentTime, timeFormat ?? DEFAULT_TIME_FORMAT)}
         </Time>
       );
     } catch (e) {
@@ -223,7 +224,7 @@ function InternalTimeCard({
           {(!hideIcon || !hideTime) && (
             <Row className="row" gap="0.5rem" alignItems="center" wrap="nowrap">
               {!hideIcon && (
-                <Icon className="icon primary-icon" icon={icon || dateSensor?.attributes?.icon || "mdi:calendar"} {...(iconProps ?? {})} />
+                <Icon className="icon primary-icon" icon={dateIcon} {...(iconProps ?? {})} />
               )}
               {!hideTime && timeValue}
             </Row>

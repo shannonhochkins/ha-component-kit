@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, Children, isValidElement, cloneElement } from "react";
+import { useRef, useCallback, Children, isValidElement, cloneElement, useState } from "react";
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { fallback } from "@components";
@@ -16,7 +16,7 @@ const TooltipSpan = styled.span<Pick<TooltipProps, "placement">>`
   box-shadow: 0px 2px 4px var(--ha-S100);
   font-size: 0.9rem;
   z-index: 1000;
-  visibility: hidden;
+  visibility: hidde;
   opacity: 0;
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: opacity, visibility;
@@ -97,10 +97,11 @@ function InternalTooltip({ placement = "top", title = null, children, ref, ...re
   const portalRoot = useStore((store) => store.portalRoot);
   const windowContext = useStore((store) => store.windowContext);
   const win = windowContext ?? window;
+  const [show, setShow] = useState(false);
 
-  const calculatePosition = useCallback(() => {
+  const calculatePosition = useCallback((el: HTMLSpanElement) => {
     const childRect = childRef.current?.getBoundingClientRect();
-    if (typeof childRect === "undefined" || !tooltipRef.current) return;
+    if (typeof childRect === "undefined") return;
     let top = 0;
     let left = 0;
     switch (placement) {
@@ -121,33 +122,29 @@ function InternalTooltip({ placement = "top", title = null, children, ref, ...re
         left = childRect.left;
         break;
     }
-    tooltipRef.current.style.top = `${top}px`;
-    tooltipRef.current.style.left = `${left}px`;
+    el.style.top = `${top}px`;
+    el.style.left = `${left}px`;
+    // to ensure animations play out, we need to update these values after the next tick
+    setTimeout(() => {
+      el.style.opacity = "1";
+      el.style.visibility = "visible";
+    }, 0);
   }, [placement]);
 
-  useEffect(() => {
-    calculatePosition();
-    win.addEventListener("resize", calculatePosition);
-    return () => {
-      win.removeEventListener("resize", calculatePosition);
-    };
-  }, [calculatePosition, win]);
 
   const handleMouseEnter = useCallback(() => {
-    const tooltipEl = tooltipRef.current;
-    if (tooltipEl) {
-      tooltipEl.style.opacity = "1";
-      tooltipEl.style.visibility = "visible";
-      calculatePosition();
-    }
-  }, [calculatePosition]);
+    setShow(true);
+  }, []);
 
   const handleHide = useCallback(() => {
     const tooltipEl = tooltipRef.current;
-    if (tooltipEl) {
-      tooltipEl.style.opacity = "0";
-      tooltipEl.style.visibility = "hidden";
-    }
+    if (!tooltipEl) return;
+    tooltipEl.style.opacity = "0";
+    tooltipEl.style.visibility = "hidden";
+    tooltipEl.setAttribute("aria-hidden", "true");
+    setTimeout(() => {
+      setShow(false);
+    }, 250);
   }, []);
 
   if (title === null || title === "") {
@@ -187,7 +184,12 @@ function InternalTooltip({ placement = "top", title = null, children, ref, ...re
       })}
       {typeof document !== "undefined" &&
         createPortal(
-          <TooltipSpan className="tooltip-inner" placement={placement} ref={tooltipRef}>
+          show && <TooltipSpan className="tooltip-inner" placement={placement} ref={ref => {
+            if (ref) {
+              tooltipRef.current = ref
+              calculatePosition(ref);
+            }
+          }} aria-hidden="false">
             {title}
           </TooltipSpan>,
           portalRoot ?? win.document.body,
