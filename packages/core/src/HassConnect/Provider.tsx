@@ -265,12 +265,18 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
   const setCannotConnect = useStore((store) => store.setCannotConnect);
   const setAuth = useStore((store) => store.setAuth);
   const ready = useStore((store) => store.ready);
+  const setUser = useStore((store) => store.setUser);
   const setReady = useStore((store) => store.setReady);
   const setConfig = useStore((store) => store.setConfig);
   const setHassUrl = useStore((store) => store.setHassUrl);
   const setPortalRoot = useStore((store) => store.setPortalRoot);
   const setLocales = useStore((store) => store.setLocales);
   const setWindowContext = useStore((store) => store.setWindowContext);
+
+  const getStates = useCallback(async () => (connection === null ? null : await _getStates(connection)), [connection]);
+  const getServices = useCallback(async () => (connection === null ? null : await _getServices(connection)), [connection]);
+  const getConfig = useCallback(async () => (connection === null ? null : await _getConfig(connection)), [connection]);
+  const getUser = useCallback(async () => (connection === null ? null : await _getUser(connection)), [connection]);
 
   useEffect(() => {
     if (portalRoot) setPortalRoot(portalRoot);
@@ -291,12 +297,13 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
     setCannotConnect(false);
     setReady(false);
     setRoutes([]);
+    setUser(null);
     authenticated.current = false;
     if (entityUnsubscribe.current) {
       entityUnsubscribe.current();
       entityUnsubscribe.current = null;
     }
-  }, [setAuth, setCannotConnect, setConfig, setConnection, setEntities, setError, setReady, setRoutes]);
+  }, [setAuth, setUser, setCannotConnect, setConfig, setConnection, setEntities, setError, setReady, setRoutes]);
 
   const logout = useCallback(async () => {
     try {
@@ -323,19 +330,19 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
       setAuth(connectionResponse.auth);
       // store the connection to pass to the provider
       setConnection(connectionResponse.connection);
+      _getUser(connectionResponse.connection).then((user) => {
+        setUser(user);
+      });
       _connectionRef.current = connectionResponse.connection;
       authenticated.current = true;
     }
-  }, [hassUrl, hassToken, setError, setAuth, setConnection, setCannotConnect]);
+  }, [hassUrl, hassToken, setError, setUser, setAuth, setConnection, setCannotConnect]);
 
   useEffect(() => {
     setHassUrl(hassUrl);
   }, [hassUrl, setHassUrl]);
 
-  const getStates = useCallback(async () => (connection === null ? null : await _getStates(connection)), [connection]);
-  const getServices = useCallback(async () => (connection === null ? null : await _getServices(connection)), [connection]);
-  const getConfig = useCallback(async () => (connection === null ? null : await _getConfig(connection)), [connection]);
-  const getUser = useCallback(async () => (connection === null ? null : await _getUser(connection)), [connection]);
+
 
   const joinHassUrl = useCallback(
     (path: string) => {

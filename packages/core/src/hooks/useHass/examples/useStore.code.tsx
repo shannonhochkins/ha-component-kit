@@ -8,13 +8,14 @@ function UseStoreExample() {
   // A live update of the configuration
   const config = useStore((store) => store.config);
   const auth = useStore((store) => store.auth);
+  const user = useStore((store) => store.user);
   console.log("data", {
     entities,
     connection,
     config,
     auth,
   });
-  return <p>{JSON.stringify(entities, null, 2)}</p>;
+  return <p>{JSON.stringify(user, null, 2)}</p>;
 }
 
 export function App() {

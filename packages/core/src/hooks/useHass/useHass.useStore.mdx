@@ -1,5 +1,6 @@
-import { Source, Meta } from '@storybook/blocks';
+import { Source, Meta, ArgTypes } from '@storybook/blocks';
 import useStoreExample from './examples/useStore.code?raw';
+import { DummyComponent } from './examples/DummyUseStoreComponent';
 
 <Meta title="core/hooks/useHass/hass/useStore" />
 
@@ -11,3 +12,20 @@ subscribe to updates for that particular value.
 ### Example Usage
 
 <Source dark language="ts" code={useStoreExample} />
+
+### Returned object from `useStore`
+
+> There's a lot more returned by the useStore method, these are intentionally undocumented as they're not intended to be used directly and there's hooks already exposing pretty much all this information.
+
+<ArgTypes of={DummyComponent} include={[
+  'lastUpdated',
+  'hassUrl',
+  'locales',
+  'windowContext',
+  'config',
+  'user',
+  'connection',
+  'auth',
+  'breakpoints',
+  'portalRoot',
+]} />

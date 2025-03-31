@@ -1,5 +1,6 @@
-import { Meta, Source } from '@storybook/blocks';
+import { Meta, Source, ArgTypes } from '@storybook/blocks';
 import useHassExample from './examples/useHass.code?raw';
+import { DummyComponent } from './examples/DummyComponent';
 
 <Meta title="core/hooks/useHass" />
 
@@ -9,6 +10,12 @@ This hook will return you a set of functions that you can use to interact with y
 This hook should be used inside the context of [`<HassConnect />`](/docs/core-hassconnect--docs) and not outside of it otherwise it will not have access to
 the authenticated home assistant API.
 
+> Typically, most of the functionality is available as individual hooks, you should only have to use functions from useHass if you're absolutely certain you need them! For example, getAllEntities will return all entities, but most of the time you'll just want information about a single entity, in which case you should use `useEntity`
+
 ### Example Usage
 
 <Source dark language="ts" code={useHassExample} />
+
+### Returned object from `useHass`
+
+<ArgTypes of={DummyComponent} />
