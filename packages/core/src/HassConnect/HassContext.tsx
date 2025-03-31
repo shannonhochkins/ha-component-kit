@@ -204,8 +204,7 @@ export const useStore = create<Store>((set) => ({
     set((state) => {
       state.disconnectCallbacks.forEach((cb) => cb());
       return { disconnectCallbacks: [] };
-    }
-  ),
+    }),
 }));
 
 export interface HassContextProps {

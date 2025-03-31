@@ -263,7 +263,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
   const cannotConnect = useStore((store) => store.cannotConnect);
   const setCannotConnect = useStore((store) => store.setCannotConnect);
   const setAuth = useStore((store) => store.setAuth);
-  const triggerOnDisconnect = useStore(store => store.triggerOnDisconnect);
+  const triggerOnDisconnect = useStore((store) => store.triggerOnDisconnect);
   // ready is set internally in the store when we have entities (setEntities does this)
   const ready = useStore((store) => store.ready);
   const setReady = useStore((store) => store.setReady);
@@ -313,7 +313,6 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
     }
   }, [reset, setError]);
 
-
   const handleConnect = useCallback(async () => {
     // this will trigger on first mount
     const connectionResponse = await tryConnection(hassUrl, hassToken);
@@ -334,16 +333,16 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
       configUnsubscribe.current = subscribeConfig(connectionResponse.connection, (newConfig) => {
         setConfig(newConfig);
       });
-      connectionResponse.connection.addEventListener('disconnected', () => {
-        console.error('Disconnected from Home Assistant, reconnecting...');
+      connectionResponse.connection.addEventListener("disconnected", () => {
+        console.error("Disconnected from Home Assistant, reconnecting...");
         triggerOnDisconnect();
         // on disconnection, reset local state
         reset();
         // try to reconnect
         handleConnect();
       });
-      connectionResponse.connection.addEventListener('reconnect-error', (_, eventData) => {
-        console.error('Reconnection error:', eventData)
+      connectionResponse.connection.addEventListener("reconnect-error", (_, eventData) => {
+        console.error("Reconnection error:", eventData);
         // on connection error, reset local state
         reset();
       });
@@ -569,9 +568,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
         joinHassUrl,
       }}
     >
-      <FetchLocale locale={locale}>
-        {error === null ? children(ready) : error}
-      </FetchLocale>
+      <FetchLocale locale={locale}>{error === null ? children(ready) : error}</FetchLocale>
     </HassContext.Provider>
   );
 }
