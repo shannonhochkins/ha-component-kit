@@ -25,6 +25,7 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
+      "@redirect": [".storybook/redirect.ts"],
       "@hakit/core": ["packages/core/dist"],
       "@hakit/components": ["packages/components/dist"],
       "@core": ["packages/core/src"],
