@@ -25,7 +25,6 @@ export type BreakPoints = Partial<Record<Exclude<BreakPoint, "xlg">, number>>;
 export type BreakPointsWithXlg = Partial<Record<BreakPoint, number>>;
 
 export const getBreakpoints = (breakpoints: BreakPoints) => {
-  console.log("breakpoints", breakpoints);
   const definedEntries = orderedBreakpoints
     .filter((key) => breakpoints[key] !== undefined)
     .map((key) => [key, breakpoints[key]!] as [Exclude<BreakPoint, "xlg">, number]);

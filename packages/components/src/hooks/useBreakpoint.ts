@@ -32,7 +32,6 @@ export function useBreakpoint(): { [key in BreakPoint]: boolean } {
   const windowContext = useStore((store) => store.windowContext);
   const win = windowContext ?? window;
   const queries = useMemo(() => getBreakpoints(breakpoints), [breakpoints]);
-  const initialMatches: { [key in BreakPoint]: boolean } = {
   const [matches, setMatches] = useState(() => Object.fromEntries(allBreakpoints.map((bp) => [bp, false])) as Record<BreakPoint, boolean>);
 
   useEffect(() => {

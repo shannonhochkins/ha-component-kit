@@ -102,19 +102,21 @@ function LimitedBreakpoints() {
   const queries = getBreakpoints(breakpoints);
   return (
     <>
-    <div style={{
-      padding: 20,
-      backgroundColor: " var(--ha-S500)",
-    }}>
-      {bp.xxs && <p>xxs active</p>}
-      {bp.xs && <p>xs active</p>}
-      {bp.sm && <p>sm active</p>}
-      {bp.md && <p>md active</p>}
-      {bp.lg && <p>lg active</p>}
-      {bp.xlg && <p>xlg active</p>}
-    </div>
-    <p>Media queries will be derived by the input breakpoints like so:</p>
-    <Source code={JSON.stringify(queries, null, 2)} dark />
+      <div
+        style={{
+          padding: 20,
+          backgroundColor: " var(--ha-S500)",
+        }}
+      >
+        {bp.xxs && <p>xxs active</p>}
+        {bp.xs && <p>xs active</p>}
+        {bp.sm && <p>sm active</p>}
+        {bp.md && <p>md active</p>}
+        {bp.lg && <p>lg active</p>}
+        {bp.xlg && <p>xlg active</p>}
+      </div>
+      <p>Media queries will be derived by the input breakpoints like so:</p>
+      <Source code={JSON.stringify(queries, null, 2)} dark />
     </>
   );
 }
@@ -142,16 +144,21 @@ export const CustomBreakpoints: Story = {
       <h4>Disabling some breakpoints</h4>
       <p>
         By default, there&apos;s a wide range of breakpoints set, this may not be ideal for users, so you can opt-in or opt-out of certain
-        breakpoints by passing custom breakpoints to the <a href="#" onClick={(e) => {
-          e.preventDefault();
-          redirectToStory('/docs/components-themeprovider--docs');
-        }}>ThemeProvider</a>
+        breakpoints by passing custom breakpoints to the{" "}
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            redirectToStory("/docs/components-themeprovider--docs");
+          }}
+        >
+          ThemeProvider
+        </a>
       </p>
       <Source dark code={customBreakpointsExample} />
       <h4>Example Output</h4>
       <p>Below, is the output from the above examples, resize your page to see the component update!</p>
       <RenderCustomBreakpoints />
-      
     </>
   ),
 };
