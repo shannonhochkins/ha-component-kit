@@ -534,7 +534,7 @@ function HassProvider({
   useEffect(() => {
     locales.find(locale => locale.code === 'en')?.fetch().then(_locales => {
       setLocales(_locales);
-      updateLocales(_locales);
+      updateLocales('en', _locales);
       setReady(true);
       setConfig(fakeConfig);
 

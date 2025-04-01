@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { LocaleKeys } from "./locales/types";
 import locales from "./locales";
 import { useHass } from "../useHass";
+import { useLocalStorage, dispatchStorageEvent } from "../useLocalStorage";
 
 const LOCALES: Record<string, string> = {};
 
-export function updateLocales(translations: Record<string, string>): void {
+export function updateLocales(key: string, translations: Record<string, string>): void {
   Object.assign(LOCALES, translations);
+  dispatchStorageEvent("locales", key);
 }
 
 interface Options {
