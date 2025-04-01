@@ -143,9 +143,6 @@ function Page() {
         <Column alignItems="start" justifyContent="start" gap="0.5rem">
           <mark>{`useLocales(): Record<LocaleKeys, string>`}</mark>
           <mark>{`useLocale(key: LocaleKeys, options: Options)`}</mark>
-          <mark>{`localize(key: LocaleKeys, options: Options)`}</mark>
-          <mark>{`locales: Locale[]`}</mark>
-          <mark>{`updateLocales(locales: Record<string, string>): void`}</mark>
         </Column>
       </h5>
       <Description />
