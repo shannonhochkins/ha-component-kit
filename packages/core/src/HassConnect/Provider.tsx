@@ -24,7 +24,6 @@ import { SnakeOrCamelDomains, DomainService, Locales, CallServiceArgs, Route, Se
 import { saveTokens, loadTokens, clearTokens } from "./token-storage";
 import { useDebouncedCallback } from "use-debounce";
 import { HassContext, type HassContextProps, useStore } from "./HassContext";
-import { FetchLocale } from "./FetchLocale";
 
 export interface HassProviderProps {
   /** components to render once authenticated, this accepts a child function which will pass if it is ready or not */
@@ -245,7 +244,7 @@ const tryConnection = async (hassUrl: string, hassToken?: string): Promise<Conne
   };
 };
 
-export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot, windowContext }: HassProviderProps) {
+export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowContext }: HassProviderProps) {
   const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
   const authenticated = useRef(false);
   const configUnsubscribe = useRef<UnsubscribeFunc | null>(null);
@@ -568,7 +567,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
         joinHassUrl,
       }}
     >
-      <FetchLocale locale={locale}>{error === null ? children(ready) : error}</FetchLocale>
+      {error === null ? children(ready) : error}
     </HassContext.Provider>
   );
 }

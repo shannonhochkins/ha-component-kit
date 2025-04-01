@@ -1,6 +1,6 @@
 import { useConfig } from "@hooks";
 import { Locales } from "@typings";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { updateLocales } from "../../hooks/useLocale";
 import locales from "../../hooks/useLocale/locales";
 import { useStore } from "../HassContext";
@@ -11,37 +11,49 @@ interface FetchLocaleProps {
 }
 export function FetchLocale({ locale, children }: FetchLocaleProps) {
   const config = useConfig();
-  const fetched = useRef(false);
+  const [fetched, setFetched] = useState(false);
   const fetchPending = useRef(false);
+  const previousLocale = useRef<Locales | null>(null);
   const setError = useStore((store) => store.setError);
   const setLocales = useStore((store) => store.setLocales);
 
   useEffect(() => {
+    const _locale = (locale ?? config?.language);
+    if (!_locale) {
+      // may just be waiting for the users config to resolve
+      return;
+    }
     const match = locales.find(({ code }) => code === (locale ?? config?.language));
+    if (previousLocale.current !== match?.code) {
+      setFetched(false);
+      fetchPending.current = false;
+      setError(null);
+    }
+ 
     if (!match) {
-      fetched.current = false;
       fetchPending.current = false;
       setError(
         `Locale "${locale ?? config?.language}" not found, available options are "${locales.map(({ code }) => `${code}`).join(", ")}"`,
       );
-    } else if (!fetchPending.current) {
-      fetched.current = false;
+    } else {
+      if (fetchPending.current) return
       fetchPending.current = true;
+      previousLocale.current = match.code;
       match
         .fetch()
         .then((response) => {
           fetchPending.current = false;
-          fetched.current = true;
+          setFetched(true);
           updateLocales(response);
           setLocales(response);
         })
         .catch((e) => {
           fetchPending.current = false;
-          fetched.current = false;
+          setFetched(true);
           setError(`Error retrieving translations from Home Assistant: ${e?.message ?? e}`);
         });
     }
-  }, [config, setLocales, setError, locale]);
+  }, [config, fetched, setLocales, setError, locale]);
 
-  return fetched.current ? children : null;
+  return fetched ? children : null;
 }
