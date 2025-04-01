@@ -2,11 +2,14 @@ import "./.d.ts";
 /// <reference path=".d.ts" />
 export {
   getBreakpoints,
+  allBreakpoints,
+  orderedBreakpoints,
   mq,
   getColumnSizeCSS,
   generateColumnBreakpoints,
   type AvailableQueries,
   type BreakPoint,
+  type BreakPointsWithXlg,
   type BreakPoints,
   type GridSpan,
 } from "./ThemeProvider/breakpoints";

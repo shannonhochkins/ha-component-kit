@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { DEFAULT_THEME_OPTIONS } from "./constants";
+import { DEFAULT_THEME_OPTIONS, DEFAULT_BREAKPOINTS } from "./constants";
+import { BreakPoints, BreakPointsWithXlg } from "@components";
 
 export type ThemeStore = {
   theme: {
@@ -18,6 +19,10 @@ export type ThemeStore = {
   };
   /** Will merge input theme values with the default values, undefined values passed through the setTheme function will be ignored */
   setTheme: (partialTheme: ThemeStore["theme"]) => void;
+  /** getter for breakpoints, if using @hakit/components, the breakpoints are stored here to retrieve in different locations */
+  breakpoints: BreakPointsWithXlg;
+  /** setter for breakpoints, intended for internal use only */
+  setBreakpoints: (breakpoints: BreakPoints) => void;
 };
 
 export const useThemeStore = create<ThemeStore>((set) => ({
@@ -37,5 +42,23 @@ export const useThemeStore = create<ThemeStore>((set) => ({
         ...Object.fromEntries(Object.entries(partialTheme).filter(([, value]) => value !== undefined)),
       },
     }));
+  },
+  breakpoints: DEFAULT_BREAKPOINTS,
+  setBreakpoints: (breakpoints) => {
+    // there should at least be ONE breakpoint defined, get the largest value from the breakpoints object
+    // if the object is empty or no values with numbers, it should throw an error
+    if (Object.keys(breakpoints).length === 0) {
+      throw new Error("No breakpoints provided");
+    }
+    const largestValue = Math.max(...Object.values(breakpoints).filter((value) => typeof value === "number"));
+    if (largestValue === -Infinity) {
+      throw new Error("No valid breakpoints provided");
+    }
+    set({
+      breakpoints: {
+        ...breakpoints,
+        xlg: largestValue + 1,
+      },
+    });
   },
 }));

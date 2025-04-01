@@ -5,7 +5,7 @@ import { isEqual, merge } from "lodash";
 import { theme as defaultTheme } from "./theme";
 import type { ThemeParams } from "./theme";
 import { convertToCssVars } from "./helpers";
-import { useBreakpoint, fallback, type BreakPoints } from "@components";
+import { useBreakpoint, fallback, type BreakPoints, type BreakPointsWithXlg } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { LIGHT, DARK, ACCENT, DEFAULT_START_LIGHT, DEFAULT_START_DARK, DIFF, DEFAULT_THEME_OPTIONS } from "./constants";
 import { useHass, type SupportedComponentOverrides } from "@hakit/core";
@@ -205,11 +205,7 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
   `;
 };
 
-function omitXlg(
-  breakpoints: BreakPoints & {
-    xlg: number;
-  },
-): BreakPoints {
+function omitXlg(breakpoints: BreakPointsWithXlg): BreakPoints {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { xlg, ...rest } = breakpoints;
   return rest;
@@ -232,9 +228,9 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
   const { useStore } = useHass();
   const themeStore = useThemeStore((store) => store.theme);
   const setTheme = useThemeStore((store) => store.setTheme);
-  const setBreakpoints = useStore((store) => store.setBreakpoints);
+  const setBreakpoints = useThemeStore((store) => store.setBreakpoints);
   const setGlobalComponentStyles = useStore((store) => store.setGlobalComponentStyles);
-  const _breakpoints = useStore((store) => store.breakpoints);
+  const _breakpoints = useThemeStore((store) => store.breakpoints);
   const device = useBreakpoint();
   const windowContext = useStore((store) => store.windowContext);
   const win = windowContext ?? window;

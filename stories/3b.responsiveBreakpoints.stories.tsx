@@ -2,6 +2,7 @@ import { Story, Source } from "@storybook/blocks";
 import type { Meta, StoryObj } from "@storybook/react";
 import { redirectToStory } from '../.storybook/redirect';
 import breakpointExample from './codeExamples/breakpointExample.code?raw';
+import { DEFAULT_BREAKPOINTS, getBreakpoints } from "@components";
 
 export default {
   title: "INTRODUCTION/Responsive Layouts/Breakpoints",
@@ -23,19 +24,12 @@ export default {
           redirectToStory('/docs/components-hooks-usebreakpoint--docs');
         }}>useBreakpoint</a>, the .md property will be true.</p>
       <p>The breakpoint settings above, translate to the following auto generated media queries:</p>
-      <Source dark code={`
-export const getBreakpoints = (breakpoints: BreakPoints): Record<BreakPoint, string> => {
-  const { xxs, xs, sm, md, lg } = breakpoints;
-  return {
-    xxs: \`(max-width: $\{xxs}px)\`,
-    xs: \`(min-width: $\{xxs + 1}px) and (max-width: $\{xs}px)\`,
-    sm: \`(min-width: $\{xs + 1}px) and (max-width: $\{sm}px)\`,
-    md: \`(min-width: $\{sm + 1}px) and (max-width: $\{md}px)\`,
-    lg: \`(min-width: $\{md + 1}px) and (max-width: $\{lg}px)\`,
-    xlg: \`(min-width: $\{lg + 1}px)\`,
-  };
-};
-`} />
+      <Source dark code={JSON.stringify(getBreakpoints(DEFAULT_BREAKPOINTS), null, 2)} />
+      <h2>Custom Breakpoints</h2>
+      <p>You can also omit certain breakpoints from the ThemeProvider, meaning you can disable some of the more granular breakpoints if need be, see <a href="#" onClick={(e) => {
+          e.preventDefault();
+          redirectToStory('/story/components-hooks-usebreakpoint--custom-breakpoints');
+        }}>Custom Breakpoints</a> for more information</p>
     </>
   },
 } satisfies Meta;

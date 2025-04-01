@@ -38,7 +38,7 @@ export interface HassProviderProps {
   locale?: Locales;
   /** location to render portals @default document.body */
   portalRoot?: HTMLElement;
-  /** update the window reference that's used internally on some features, for example useBreakpoint will use the current window if not specified, and if running within an iframe this may not be expected behavior */
+  /** Will tell the various features like breakpoints, modals and resize events which window to match media on, if serving within an iframe it'll potentially be running in the wrong window */
   windowContext?: Window;
 }
 

@@ -17,19 +17,43 @@ export interface AvailableQueries {
   xlg?: GridSpan;
 }
 
-export type BreakPoint = keyof AvailableQueries;
-export type BreakPoints = Record<Exclude<BreakPoint, "xlg">, number>;
+export const orderedBreakpoints: Exclude<BreakPoint, "xlg">[] = ["xxs", "xs", "sm", "md", "lg"];
+export const allBreakpoints: BreakPoint[] = [...orderedBreakpoints, "xlg"];
 
-export const getBreakpoints = (breakpoints: BreakPoints): Record<BreakPoint, string> => {
-  const { xxs, xs, sm, md, lg } = breakpoints;
-  return {
-    xxs: `(max-width: ${xxs}px)`,
-    xs: `(min-width: ${xxs + 1}px) and (max-width: ${xs}px)`,
-    sm: `(min-width: ${xs + 1}px) and (max-width: ${sm}px)`,
-    md: `(min-width: ${sm + 1}px) and (max-width: ${md}px)`,
-    lg: `(min-width: ${md + 1}px) and (max-width: ${lg}px)`,
-    xlg: `(min-width: ${lg + 1}px)`,
-  };
+export type BreakPoint = keyof AvailableQueries;
+export type BreakPoints = Partial<Record<Exclude<BreakPoint, "xlg">, number>>;
+export type BreakPointsWithXlg = Partial<Record<BreakPoint, number>>;
+
+export const getBreakpoints = (breakpoints: BreakPoints) => {
+  console.log("breakpoints", breakpoints);
+  const definedEntries = orderedBreakpoints
+    .filter((key) => breakpoints[key] !== undefined)
+    .map((key) => [key, breakpoints[key]!] as [Exclude<BreakPoint, "xlg">, number]);
+
+  if (definedEntries.length === 0) {
+    throw new Error("At least one breakpoint must be defined.");
+  }
+  const result: Partial<Record<BreakPoint, string>> = {};
+
+  for (let i = 0; i < definedEntries.length; i++) {
+    const [key, value] = definedEntries[i];
+    if (i > 0) {
+      const prevValue = definedEntries[i - 1][1];
+      if (value <= prevValue) {
+        throw new Error(`Breakpoint "${key}" must be greater than "${definedEntries[i - 1][0]}". Got ${value} <= ${prevValue}.`);
+      }
+
+      result[key] = `(min-width: ${prevValue + 1}px) and (max-width: ${value}px)`;
+    } else {
+      result[key] = `(max-width: ${value}px)`;
+    }
+  }
+
+  const lastValue = definedEntries[definedEntries.length - 1][1];
+
+  result["xlg"] = `(min-width: ${lastValue + 1}px)`;
+
+  return result;
 };
 
 export const mq = (names: BreakPoint[], cssValues: string) => {
@@ -53,7 +77,11 @@ export const getColumnSizeCSS = (column: GridSpan): string => {
 
 export const generateColumnBreakpoints = (breakpoints: BreakPoints) => {
   // for every breakpoint, generate the css for each column, it should be a string like this:
-  return Object.entries(breakpoints).reduce((acc, [breakpoint]) => {
+  return Object.entries(breakpoints).reduce((acc, [breakpoint, value]) => {
+    // if the current breakpoint is not defined, skip it
+    if (value === undefined) {
+      return acc;
+    }
     const breakpointColumns = columns.map((column) => {
       return `
         .bp-${breakpoint} {
