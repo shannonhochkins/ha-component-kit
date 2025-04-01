@@ -60,6 +60,9 @@ export function useBreakpoint(): { [key in BreakPoint]: boolean } {
       const query = queries[bp];
       if (typeof query === "string") {
         const mql = context.matchMedia(query);
+        // when dynamically switch context (windows) the mql will be null
+        // let the next iteration handle the mql
+        if (!mql) continue;
         mqlMap.set(bp, mql);
         mql.addEventListener("change", updateMatches);
       }
@@ -70,6 +73,7 @@ export function useBreakpoint(): { [key in BreakPoint]: boolean } {
 
     return () => {
       for (const mql of mqlMap.values()) {
+        if (!mql) continue;
         mql.removeEventListener("change", updateMatches);
       }
     };
