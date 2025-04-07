@@ -36,7 +36,7 @@
     "build": "VITE_CJS_TRACE=true npm run build:core && npm run build:components && npm run build:create",
     "postbuild": "npm run type-check",
     "type-check": "tsc --noEmit --project tsconfig-type-check.json && npm run type-check --workspaces --if-present",
-    "build:core": "npm run build --workspace=@hakit/core",
+    "build:core": "npm run build:core --workspace=@hakit/core",
     "build:create": "npm run build --workspace=create-hakit",
     "build:for:storybook": "npm run build:core --workspace=@hakit/core && npm run build --workspace=@hakit/components",
     "build:components": "npm run build --workspace=@hakit/components",

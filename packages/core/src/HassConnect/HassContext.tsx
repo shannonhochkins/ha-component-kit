@@ -92,6 +92,12 @@ export interface Store {
   // used by some features to change which window context to use
   setWindowContext: (windowContext: Window) => void;
   windowContext: Window;
+  /** internal - callbacks that will fire when the connection disconnects with home assistant */
+  disconnectCallbacks: (() => void)[];
+  /** use this to trigger certain functionality when the web socket connection disconnects */
+  onDisconnect?: (cb: () => void) => void;
+  /** internal function which will trigger when the connection disconnects */
+  triggerOnDisconnect: () => void;
 }
 
 const IGNORE_KEYS_FOR_DIFF = ["last_changed", "last_updated", "context"];
@@ -192,6 +198,13 @@ export const useStore = create<Store>((set) => ({
     }),
   globalComponentStyles: {},
   setGlobalComponentStyles: (styles) => set(() => ({ globalComponentStyles: styles })),
+  disconnectCallbacks: [],
+  onDisconnect: (cb) => set((state) => ({ disconnectCallbacks: [...state.disconnectCallbacks, cb] })),
+  triggerOnDisconnect: () =>
+    set((state) => {
+      state.disconnectCallbacks.forEach((cb) => cb());
+      return { disconnectCallbacks: [] };
+    }),
 }));
 
 export interface HassContextProps {
