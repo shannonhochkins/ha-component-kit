@@ -39,7 +39,6 @@ function Template(args?: Partial<ButtonBarProps>) {
 export default {
   title: "components/Shared/Entity/Miscellaneous/ButtonBar",
   component: ButtonBar,
-  // @ts-expect-error - will fix later
   subcomponents: { ButtonBarButton },
   tags: ["autodocs"],
   parameters: {

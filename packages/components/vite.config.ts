@@ -104,7 +104,7 @@ ${content}`
         'src/**/*.{ts,tsx}',
         'src/**/**/*.{ts,tsx}',
       ], {
-        ignore: ['**/*stories.ts', '**/*stories.tsx', "**/*.test.{ts,tsx}"]
+        ignore: ['**/*stories.ts', '**/*stories.tsx', "**/*.test.{ts,tsx}", "**/*.code.{ts,tsx}"]
       }).map(file => [
          // The name of the entry point
          // src/nested/foo.ts becomes nested/foo
