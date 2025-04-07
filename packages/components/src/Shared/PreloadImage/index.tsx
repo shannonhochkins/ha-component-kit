@@ -3,7 +3,6 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 
 import { Icon } from "@iconify/react";
-import { MotionProps } from "framer-motion";
 
 const Preloader = styled.div`
   position: relative;
@@ -26,9 +25,7 @@ const StyledIcon = styled(Icon)`
   transform: translate(-50%, -50%);
   font-size: 2rem;
 `;
-
-type Extendable = Omit<React.ComponentPropsWithoutRef<"div"> & MotionProps, "onLoad" | "onError">;
-export interface PreloadImageProps extends Extendable {
+export interface PreloadImageProps extends Omit<React.ComponentPropsWithoutRef<"div">, "onLoad" | "onError"> {
   lazy?: boolean;
   src: string;
   style?: React.CSSProperties;

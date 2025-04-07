@@ -1,21 +1,21 @@
-import { Column, FabCard, Row, fallback, mq, useModalStore } from "@components";
+import { Column, FabCard, Row, fallback, mq } from "@components";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { localize, useHass } from "@hakit/core";
-import { AnimatePresence, HTMLMotionProps, MotionProps, type Variant, type Transition, motion } from "framer-motion";
-import { Fragment, ReactNode, memo, useCallback, useEffect, useId, useRef, useState } from "react";
+import { Fragment, ReactNode, memo, useCallback, useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import { useKeyPress } from "react-use";
 
-const ModalContainer = styled(motion.div)`
+const ModalContainer = styled.div`
   position: absolute;
   z-index: 1;
-  top: 2rem;
+  top: 50%;
   left: 50%;
   display: flex;
   width: var(--ha-modal-width);
   margin-left: calc(var(--ha-modal-width) / -2);
+  transform: translateY(-50%);
   color: var(--ha-S50-contrast);
   max-height: calc(100% - 4rem);
   overflow: hidden;
@@ -25,6 +25,8 @@ const ModalContainer = styled(motion.div)`
   justify-content: space-between;
   background-color: var(--ha-S200);
   z-index: var(--ha-modal-z-index);
+  opacity: 0;
+  transition: opacity var(--ha-transition-duration) var(--ha-easing);
   box-shadow: 0px 0px 10px hsla(var(--ha-h), calc(var(--ha-50-s) * 0.8), 3%, 0.6);
   ${mq(
     ["xxs", "xs"],
@@ -34,7 +36,7 @@ const ModalContainer = styled(motion.div)`
   `,
   )}
 `;
-const ModalInner = styled(motion.div)`
+const ModalInner = styled.div`
   display: flex;
   padding: 0rem 1rem 2rem;
   align-items: flex-start;
@@ -50,7 +52,7 @@ const ModalOverflow = styled.div`
   align-items: stretch;
   width: 100%;
 `;
-const ModalHeader = styled(motion.div)`
+const ModalHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -83,7 +85,7 @@ const Description = styled.h4`
   color: var(--ha-S500-contrast);
 `;
 
-const ModalBackdrop = styled(motion.div)`
+const ModalBackdrop = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -93,30 +95,11 @@ const ModalBackdrop = styled(motion.div)`
   background: hsla(var(--ha-h), calc(var(--ha-s) * 1%), 10%, 0.3);
   z-index: var(--ha-modal-z-index);
   backdrop-filter: blur(2em) brightness(0.75);
+  opacity: 0;
+  transition: opacity var(--ha-transition-duration) var(--ha-easing);
 `;
-interface Animation {
-  variants?: {
-    animate?: Variant;
-    initial?: Variant;
-    exit?: Variant;
-  };
-  layoutId?: string;
-  transition?: Transition;
-}
-/** animation variant controls for the modal container */
-export type CustomModalAnimation = (
-  duration: number,
-  id: string,
-) => {
-  /** animation variant controls for main modal element */
-  modal?: Animation;
-  /** animation variant controls for the modal header element */
-  header?: Animation;
-  /** animation variant controls for the modal content element */
-  content?: Animation;
-};
 
-type Extendable = React.ComponentPropsWithoutRef<"div"> & MotionProps;
+type Extendable = React.ComponentPropsWithoutRef<"div">;
 export interface ModalProps extends Omit<Extendable, "title"> {
   /** triggers the modal opening */
   open: boolean;
@@ -129,64 +112,14 @@ export interface ModalProps extends Omit<Extendable, "title"> {
   /** triggered when the users pressed the close button, this is also triggered when the escape key is pressed */
   onClose: () => void;
   /** any prop to pass to the backdrop element */
-  backdropProps?: HTMLMotionProps<"div">;
+  backdropProps?: React.ComponentProps<"div">;
   /** react elements to render next to the close button */
   headerActions?: () => ReactNode;
   /** the animation duration modal animation in seconds @default 0.25 */
   animationDuration?: number;
-  /** controls for the modalAnimations, by default the modal will animate expanding from the originating element */
-  modalAnimation?: CustomModalAnimation;
   /** Automatically close the modal after the provided number of seconds */
   autocloseSeconds?: number;
 }
-const LAYOUT_MODAL_ANIMATION: CustomModalAnimation = (duration, id) => {
-  const springTransition = {
-    type: "spring",
-    damping: 10,
-    mass: 0.75,
-    stiffness: 100,
-    duration,
-  };
-
-  const fadeSlideTransition = {
-    duration,
-    ease: [0.42, 0, 0.58, 1],
-  };
-
-  return {
-    modal: {
-      layoutId: id,
-      variants: {
-        initial: { y: "100%", opacity: 0, scaleY: 0 }, // Slide up from the bottom
-        animate: {
-          y: 0,
-          opacity: 1,
-          scaleY: 1,
-          transition: springTransition,
-        },
-        exit: {
-          y: "100%",
-          scaleY: 0,
-          opacity: 0,
-          transition: fadeSlideTransition,
-        },
-      },
-    },
-    header: {
-      variants: {
-        initial: { y: "-10%", opacity: 0, scale: 0 },
-        animate: {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          transition: fadeSlideTransition,
-        },
-        exit: { y: "10%", opacity: 0, scale: 0.9, transition: fadeSlideTransition },
-      },
-    },
-    content: {},
-  };
-};
 
 function InternalModal({
   open,
@@ -200,26 +133,21 @@ function InternalModal({
   className,
   cssStyles,
   headerActions,
-  modalAnimation,
-  animationDuration = 0.25,
   autocloseSeconds = undefined,
+  animationDuration = 0.25,
   ...rest
 }: ModalProps) {
   const _id = useId();
   const prefix = id ?? _id;
   const { useStore } = useHass();
-  const modalStore = useModalStore();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const windowContext = useStore((store) => store.windowContext);
   const win = windowContext ?? window;
   const portalRoot = useStore((store) => store.portalRoot);
-  const [ready, setReady] = useState(false);
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
-  const duration = modalStore.animationDuration ?? animationDuration;
-  const customAnimation = modalStore.modalAnimation ?? modalAnimation;
-  const hasCustomAnimation = customAnimation !== undefined;
-  const animation = customAnimation ?? LAYOUT_MODAL_ANIMATION;
   const autocloseRef = useRef<NodeJS.Timeout | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
 
   const doClose = useCallback(() => {
     if (autocloseRef.current) {
@@ -249,51 +177,40 @@ function InternalModal({
     }
   }, [isPressed, doClose, open]);
 
-  const delayUpdate = useCallback(() => {
-    // this will delay the rendering of the children until the animation
-    // is complete
-    if (!open) return;
-    setReady(true);
-  }, [open]);
-
-  const { modal = {}, content = {}, header = {} } = animation(duration, prefix);
+  useEffect(() => {
+    setTimeout(() => {
+      if (containerRef.current) {
+        containerRef.current.style.opacity = open ? "1" : "0";
+      }
+      if (backdropRef.current) {
+        backdropRef.current.style.opacity = open ? "1" : "0";
+      }
+    }, 25);
+  }, [open, animationDuration]);
 
   return createPortal(
-    <AnimatePresence
-      initial={false}
-      mode="wait"
-      onExitComplete={() => {
-        setReady(false);
-      }}
-    >
+    <>
       {open && (
         <Fragment key={`${prefix}-fragment`}>
           <ModalBackdrop
+            ref={backdropRef}
             key={`${prefix}-backdrop`}
             className="modal-backdrop"
             id={`${prefix}-backdrop`}
-            initial={{
-              opacity: 0,
-            }}
-            transition={{
-              duration,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            exit={{
-              opacity: 0,
-            }}
             onClick={() => {
               // stops double tapping the backdrop whilst animating
-              if (open && ready) {
+              if (open) {
                 onClose();
               }
             }}
+            css={css`
+              transition-duration: ${animationDuration}s;
+            `}
             {...backdropProps}
           />
           <ModalContainer
             {...rest}
+            ref={containerRef}
             style={{
               borderRadius: "16px",
               ...style,
@@ -301,18 +218,12 @@ function InternalModal({
             css={css`
               ${globalComponentStyle.modal ?? ""}
               ${cssStyles ?? ""}
+            transition-duration: ${animationDuration}s;
             `}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            onAnimationStart={() => {
-              delayUpdate();
-            }}
-            {...modal}
             key={`${prefix}-container`}
             className={`modal-container ${className ?? ""}`}
           >
-            <ModalHeader className={`modal-header`} initial="initial" animate="animate" exit="exit" {...header}>
+            <ModalHeader className={`modal-header`}>
               <Column
                 alignItems="flex-start"
                 className={`modal-column`}
@@ -347,25 +258,22 @@ function InternalModal({
             </ModalHeader>
             <ModalOverflow className={`modal-overflow`}>
               <ModalInner
-                animate={ready || hasCustomAnimation ? "animate" : "initial"}
-                exit="exit"
-                {...content}
                 className={"modal-inner"}
                 style={{
                   transformOrigin: "top",
                 }}
               >
-                <AnimatePresence>{(ready || hasCustomAnimation) && children}</AnimatePresence>
+                {children}
               </ModalInner>
             </ModalOverflow>
           </ModalContainer>
         </Fragment>
       )}
-    </AnimatePresence>,
+    </>,
     portalRoot ?? win.document.body,
   );
 }
-/** The modal component was built to easily generate a popup dialog from any element by passing through an "open" value, if you pass an id value, and the same id value is used on another motion element from framer-motion the Modal will animate from this element, see the examples below. */
+/** The modal component was built to easily generate a popup dialog from any element by passing through an "open" value */
 export const Modal = memo(function Modal(props: ModalProps) {
   return (
     <ErrorBoundary {...fallback({ prefix: "Modal" })}>

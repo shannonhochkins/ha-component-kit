@@ -6,7 +6,6 @@ import { localize, useHass, type EntityName } from "@hakit/core";
 import { Row, FabCard, fallback, mq, PreloadImage, CardBase } from "@components";
 import type { PictureCardProps, CardBaseProps, AvailableQueries } from "@components";
 import { Icon } from "@iconify/react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useKeyPress } from "react-use";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -35,8 +34,6 @@ export interface AreaCardProps extends Extendable {
   hash: string;
   /** The children to render when the area is activated */
   children: React.ReactNode;
-  /** the animation duration of the area expanding @default 0.25 */
-  animationDuration?: number;
   /** called when the card is pressed */
   onClick?: () => void;
   /** disable the click events on the card, useful if you want to disable the area card for certain situations like drag or panning */
@@ -75,7 +72,7 @@ const NavBar = styled(PictureCardFooter)`
   border-bottom: 1px solid var(--ha-S200);
 `;
 
-const FullScreen = styled(motion.div)`
+const FullScreen = styled.div`
   position: fixed;
   inset: 0;
   left: var(--ha-area-card-expanded-offset);
@@ -113,7 +110,6 @@ function InternalAreaCard({
   icon,
   title,
   image,
-  animationDuration = 0.25,
   className,
   preloadProps,
   onClick,
@@ -163,65 +159,38 @@ function InternalAreaCard({
     }
   }, [isPressed, open]);
 
-  const transition = {
-    duration: animationDuration,
-  };
-
   return (
     <>
       {open &&
         createPortal(
-          <AnimatePresence key={`${idRef}-area-card-parent`} mode="wait" initial={false}>
-            {open === true && (
-              <FullScreen
-                key={`fullscreen-layout-${idRef}`}
-                className={"full-screen"}
-                initial={{ opacity: 0 }}
-                transition={{
-                  ...transition,
-                }}
-                exit={{
-                  opacity: 0,
-                  transition: {
-                    ...transition,
-                    delay: animationDuration,
-                  },
-                }}
-                animate={{
-                  opacity: 1,
-                  transition: {
-                    ...transition,
-                    delay: 0,
-                  },
-                }}
-              >
-                <Global
-                  styles={css`
-                    :root {
-                      --ha-hide-body-overflow-y: hidden;
-                    }
-                  `}
-                />
-                <NavBar className={"nav-bar"}>
-                  <Row gap="0.5rem" justifyContent="space-between" className={"row"}>
-                    <Row gap="0.5rem" className={"row"}>
-                      {icon && <Icon className={"icon"} icon={icon} />}
-                      {title}
-                    </Row>
-                    <FabCard
-                      title={localize("close")}
-                      tooltipPlacement="left"
-                      icon="mdi:close"
-                      onClick={() => {
-                        location.hash = "";
-                      }}
-                    />
+          open === true && (
+            <FullScreen key={`fullscreen-layout-${idRef}`} className={"full-screen"}>
+              <Global
+                styles={css`
+                  :root {
+                    --ha-hide-body-overflow-y: hidden;
+                  }
+                `}
+              />
+              <NavBar className={"nav-bar"}>
+                <Row gap="0.5rem" justifyContent="space-between" className={"row"}>
+                  <Row gap="0.5rem" className={"row"}>
+                    {icon && <Icon className={"icon"} icon={icon} />}
+                    {title}
                   </Row>
-                </NavBar>
-                <ChildContainer className={"child-container"}>{children}</ChildContainer>
-              </FullScreen>
-            )}
-          </AnimatePresence>,
+                  <FabCard
+                    title={localize("close")}
+                    tooltipPlacement="left"
+                    icon="mdi:close"
+                    onClick={() => {
+                      location.hash = "";
+                    }}
+                  />
+                </Row>
+              </NavBar>
+              <ChildContainer className={"child-container"}>{children}</ChildContainer>
+            </FullScreen>
+          ),
           portalRoot ?? win.document.body,
           idRef,
         )}

@@ -13,16 +13,13 @@ import {
 } from "@components";
 import { useEntity, type HassEntityWithService, type EntityName, batteryIconByLevel, localize } from "@hakit/core";
 import { useDebounce } from "react-use";
-import type { MotionProps } from "framer-motion";
 import { getToolbarActions } from "./shared";
 import { VacuumImage } from "./VacuumImage";
-
-type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
 
 interface Shortcut extends Partial<Omit<ButtonGroupButtonProps<EntityName>, "onClick">> {
   onClick: (entity: HassEntityWithService<"vacuum">) => void;
 }
-export interface VacuumControlsProps extends Extendable {
+export interface VacuumControlsProps extends React.ComponentPropsWithoutRef<"div"> {
   entity: `${"vacuum"}.${string}`;
   /** provide a list of shorts you want to support/display in the UI, you can call your own service if need be! */
   shortcuts?: Shortcut[];

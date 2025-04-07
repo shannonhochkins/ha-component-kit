@@ -1,4 +1,3 @@
-import { motion, type MotionProps, type HTMLMotionProps, type ForwardRefComponent } from "framer-motion";
 import { css } from "@emotion/react";
 import { useLongPress, type LongPressReactEvents } from "use-long-press";
 import { lowerCase, startCase } from "lodash";
@@ -13,7 +12,6 @@ import {
   cloneElement,
   type ReactElement,
   type ReactNode,
-  type ElementType,
   CSSProperties,
   useRef,
 } from "react";
@@ -56,17 +54,11 @@ import { useResizeDetector } from "react-resize-detector";
 import { useResizeDetectorProps } from "react-resize-detector";
 import { SVG_HEIGHT, SVG_WIDTH } from "../../Shared/SvgGraph/constants";
 
-const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
-  // dodgey hack to get typescript to play nicely here
-  // @ts-expect-error - not possible to get the correct types as framer-motion doesn't export them
-  const MotionElement = motion[as] as ForwardRefComponent<HTMLElement, HTMLMotionProps<"div">>;
-  if (!MotionElement) {
-    throw new Error(`Failed to create a motion component for element type: ${as}`);
-  }
+const getBaseElement = <C extends keyof React.JSX.IntrinsicElements = "div">(as: C, onlyFunctionality?: boolean) => {
   if (onlyFunctionality) {
-    return styled(MotionElement)``;
+    return styled(as)``;
   }
-  return styled(MotionElement, {
+  return styled(as, {
     shouldForwardProp: (prop) => isValidProp(prop),
   })<{
     disableActiveState: boolean;
@@ -84,7 +76,7 @@ const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
     box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
     transform: scale(1) translate3d(0, 0, 0);
     transition: var(--ha-transition-duration) var(--ha-easing);
-    transition-property: background-color, background-image;
+    transition-property: transform, background-color, background-image;
     color: var(--ha-S200-contrast);
     flex-shrink: 1;
     user-select: none;
@@ -109,6 +101,9 @@ const getMotionElement = (as: ElementType, onlyFunctionality?: boolean) => {
     &.disabled {
       cursor: not-allowed;
       opacity: 0.8;
+    }
+    &:active:not(.disable-scale-effect):not(.disabled):not(.unavailable) {
+      transform: scale(0.9) translate3d(0, 0, 0);
     }
     ${(props) =>
       !props.disableActiveState &&
@@ -154,8 +149,8 @@ const Trigger = styled.div`
   }
 `;
 
-type Extendable<T extends ElementType> = Omit<
-  React.ComponentPropsWithRef<T> & MotionProps,
+type Extendable<T extends keyof React.JSX.IntrinsicElements> = Omit<
+  React.ComponentPropsWithRef<T>,
   "onClick" | "disabled" | "title" | "children" | "active"
 >;
 
@@ -167,7 +162,7 @@ type AllowedFeaturedEntities = AllowedFeaturedEntity | AllowedFeaturedEntity[];
 type AllowedRelatedEntity = ReactElement<typeof RelatedEntity> | false | null | undefined;
 type AllowedRelatedEntities = AllowedRelatedEntity | AllowedRelatedEntity[];
 
-export type CardBaseProps<T extends ElementType = "div", E extends EntityName = EntityName> = Extendable<T> &
+export type CardBaseProps<T extends keyof React.JSX.IntrinsicElements = "div", E extends EntityName = EntityName> = Extendable<T> &
   AvailableQueries & {
     /** convert the component type to something else @default "div" */
     as?: T;
@@ -260,7 +255,7 @@ const DEFAULT_SIZES: Required<AvailableQueries> = {
   xlg: 3,
 };
 
-const CardBaseInternal = function CardBase<T extends ElementType, E extends EntityName>({
+const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicElements = "div", E extends EntityName = EntityName>({
   as = "div" as T,
   entity: _entity,
   title: _title,
@@ -283,7 +278,6 @@ const CardBaseInternal = function CardBase<T extends ElementType, E extends Enti
   borderRadius = "16px",
   rippleProps,
   disableColumns,
-  whileTap,
   ref,
   key,
   relatedEntities,
@@ -302,7 +296,7 @@ const CardBaseInternal = function CardBase<T extends ElementType, E extends Enti
   const entity = useEntity(_entity ?? "unknown", {
     returnNullIfNotFound: true,
   });
-  const internalRef = useRef<HTMLElement | null>(null);
+  const internalRef = useRef<HTMLDivElement | null>(null);
   // useful so users can subscribe to the resize event
   const { width = 0 } = useResizeDetector({
     refreshMode: "debounce",
@@ -321,8 +315,8 @@ const CardBaseInternal = function CardBase<T extends ElementType, E extends Enti
   });
   const isUnavailable = useMemo(() => (typeof entity?.state === "string" ? isUnavailableState(entity.state) : false), [entity?.state]);
   const _borderRadius = borderRadius;
-  const StyledElement = useMemo(() => getMotionElement(as, onlyFunctionality), [as, onlyFunctionality]);
-  const bind = useLongPress(
+  const StyledElement = useMemo(() => getBaseElement(as, onlyFunctionality) as unknown as ReactElement<T>, [as, onlyFunctionality]);
+  const bind = useLongPress<HTMLDivElement>(
     (e) => {
       if (typeof longPressCallback === "function") {
         if (entity !== null) {
@@ -421,6 +415,7 @@ const CardBaseInternal = function CardBase<T extends ElementType, E extends Enti
       "card-base",
       className ?? "",
       disableColumns ? "" : columnClassNames,
+      disableScale ? "disable-scale-effect" : "",
       active ? "active" : "",
       isUnavailable ? "unavailable" : "",
       disabled || isUnavailable ? "disabled" : "",
@@ -429,10 +424,11 @@ const CardBaseInternal = function CardBase<T extends ElementType, E extends Enti
     ]
       .filter((x) => !!x)
       .join(" ");
-  }, [active, className, columnClassNames, disableColumns, disabled, graphEntity, hasFeatures, isUnavailable]);
+  }, [active, className, columnClassNames, disableScale, disableColumns, disabled, graphEntity, hasFeatures, isUnavailable]);
 
   return (
     <>
+      {/* @ts-expect-error - fix later */}
       <StyledElement
         key={key}
         ref={ref ?? internalRef}
@@ -447,7 +443,6 @@ const CardBaseInternal = function CardBase<T extends ElementType, E extends Enti
           ...(style ?? {}),
           borderRadius: _borderRadius,
         }}
-        whileTap={whileTap ?? { scale: disableScale || disabled || isUnavailable ? 1 : 0.9 }}
         disableActiveState={disableActiveState}
         disabled={isUnavailable || disabled}
         {...bind()}
@@ -512,10 +507,12 @@ const CardBaseInternal = function CardBase<T extends ElementType, E extends Enti
  *
  * You can use this if you want an empty shell of a component that you can build on top of.
  * */
-export const CardBase = memo(function CardBase<T extends ElementType, E extends EntityName>(props: CardBaseProps<T, E>) {
+export const CardBase = memo(function CardBase<T extends keyof React.JSX.IntrinsicElements = "div", E extends EntityName = EntityName>(
+  props: CardBaseProps<T, E>,
+) {
   return (
     <ErrorBoundary {...fallback({ prefix: "CardBase" })}>
-      {/* @ts-expect-error - there is nothing wrong here, i suspect react 19 type issue with emotion */}
+      {/* @ts-expect-error - This is fine, can't determine internal types */}
       <CardBaseInternal {...props} />
     </ErrorBoundary>
   );

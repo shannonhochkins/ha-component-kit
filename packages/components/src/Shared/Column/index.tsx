@@ -1,11 +1,8 @@
-import { m } from "framer-motion";
 import { css } from "@emotion/react";
-import type { MotionProps } from "framer-motion";
 import styled from "@emotion/styled";
 import isValidProp from "@emotion/is-prop-valid";
 
-type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
-export interface ColumnProps extends Extendable {
+export interface ColumnProps extends React.ComponentPropsWithoutRef<"div"> {
   /** standard flex css properties for align-items, @default center */
   alignItems?: React.CSSProperties["alignItems"];
   /** standard flex css properties for justify-content, @default center */
@@ -19,7 +16,7 @@ export interface ColumnProps extends Extendable {
   /** should the column stretch to the width of the parent */
   fullWidth?: boolean;
 }
-const _Column = styled(m.div, {
+const _Column = styled("div", {
   shouldForwardProp: (prop) => isValidProp(prop),
 })<ColumnProps>`
   display: flex;
