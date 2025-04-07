@@ -224,6 +224,14 @@ const ignoreForDiffCheck = (
 };
 
 const useStore = create<Store>((set) => ({
+  disconnectCallbacks: [],
+  onDisconnect: (cb) => set((state) => ({ disconnectCallbacks: [...state.disconnectCallbacks, cb] })),
+  triggerOnDisconnect: () => {
+    set((state) => {
+      state.disconnectCallbacks.forEach((callback) => callback());
+      return { disconnectCallbacks: [] };
+    });
+  },
   routes: [],
   setRoutes: (routes) => set(() => ({ routes })),
   hash: '',
