@@ -363,8 +363,6 @@ export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowC
     setHassUrl(hassUrl);
   }, [hassUrl, setHassUrl]);
 
-
-
   const joinHassUrl = useCallback(
     (path: string) => {
       return new URL(path, connection?.options.auth?.data.hassUrl).toString();

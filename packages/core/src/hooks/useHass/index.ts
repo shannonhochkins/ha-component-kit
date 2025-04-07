@@ -10,4 +10,3 @@ export function useHass(): HassContextProps {
   }
   return context;
 }
-

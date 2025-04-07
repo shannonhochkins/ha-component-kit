@@ -10,7 +10,6 @@ import {
   FC,
   forwardRef,
   Children,
-  MutableRefObject,
   RefAttributes,
   RefObject,
 } from "react";

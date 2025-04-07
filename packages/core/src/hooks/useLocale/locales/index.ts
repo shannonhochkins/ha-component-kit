@@ -15,7 +15,7 @@ const locales = [
   },
   {
     code: "bg",
-    hash: "6b09fa419179a42b3b6e28e05ab6fbd6",
+    hash: "ef80bacc146a4173c829b0346ba6e879",
     name: "Български",
   },
   {
@@ -50,12 +50,12 @@ const locales = [
   },
   {
     code: "de",
-    hash: "ae13a971749701e45cf0768d9f31ee85",
+    hash: "436f74a7edefba7b4868978a4c2bbb8c",
     name: "Deutsch",
   },
   {
     code: "el",
-    hash: "aedf8a61790d24d44eef7b4d9eb52a8c",
+    hash: "cfed4b862b3fc22c04cb909748c35d13",
     name: "Ελληνικά",
   },
   {
@@ -65,7 +65,7 @@ const locales = [
   },
   {
     code: "en-GB",
-    hash: "b180108c6ba3246ebd8cb11ed15cd52c",
+    hash: "6e1615d89bfc9ac371263b6fc0b6b0ae",
     name: "English (GB)",
   },
   {
@@ -100,17 +100,17 @@ const locales = [
   },
   {
     code: "fi",
-    hash: "770ee464bbd0125ca70c68f9fd42353e",
+    hash: "5def7755fa42a45d7ae2c0dff1861e71",
     name: "Suomi",
   },
   {
     code: "fy",
-    hash: "8c4200852ea22718dcfd18d181c3e731",
+    hash: "200bd47c2b3d3662dcc673452a9183a6",
     name: "Frysk",
   },
   {
     code: "fr",
-    hash: "ca3b7b2e2f54b5dc832a914eea65f264",
+    hash: "a6b99e732fc1bc5b75900cca9e7e55d8",
     name: "Français",
   },
   {
@@ -130,7 +130,7 @@ const locales = [
   },
   {
     code: "he",
-    hash: "3830b1206fb408a8bc1285958765e04b",
+    hash: "ea8592985636cef0569cfb6ae827b5ca",
     name: "עברית",
   },
   {
@@ -145,7 +145,7 @@ const locales = [
   },
   {
     code: "hu",
-    hash: "d247c7090c4bc254922dfd57f1fb09b4",
+    hash: "56c04106a68c71fc7810151e8b2bbb9e",
     name: "Magyar",
   },
   {
@@ -170,7 +170,7 @@ const locales = [
   },
   {
     code: "ja",
-    hash: "b20ee6a24662d61ad788174f59768ef9",
+    hash: "9ffec6f030e6834060c11c071c8893aa",
     name: "日本語",
   },
   {
@@ -210,7 +210,7 @@ const locales = [
   },
   {
     code: "nl",
-    hash: "7dc6a0a9ee073f5a200fd77d74e91273",
+    hash: "951d3507239b0e1d51786ea28abe3a66",
     name: "Nederlands",
   },
   {
@@ -255,7 +255,7 @@ const locales = [
   },
   {
     code: "sl",
-    hash: "538f4f6d83a7c05aa6872dda2d587563",
+    hash: "314bbb277e45c366a4c891568550817e",
     name: "Slovenščina",
   },
   {
@@ -270,7 +270,7 @@ const locales = [
   },
   {
     code: "sv",
-    hash: "401d57686d2311d59e7d6bdd416443a6",
+    hash: "a5e13b6f5f2574c78a29a526f263c790",
     name: "Svenska",
   },
   {
@@ -295,7 +295,7 @@ const locales = [
   },
   {
     code: "uk",
-    hash: "f5bd354d9528c0dd60066347d0a32a14",
+    hash: "2d6e9256038c98675ca1c0c4ead0165b",
     name: "Українська",
   },
   {
