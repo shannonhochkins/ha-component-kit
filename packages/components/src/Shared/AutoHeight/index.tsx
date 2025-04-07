@@ -13,7 +13,6 @@ export const AutoHeight = ({ isOpen, children, duration = 300, className, style,
   const containerRef = useRef<HTMLDivElement>(null);
   const [renderChildren, setRenderChildren] = useState(isOpen);
   const [shouldAnimate, setShouldAnimate] = useState(true);
-  const [initialRenderDone, setInitialRenderDone] = useState(true);
   const hasMountedRef = useRef(false);
 
   // Ensure children are present before measuring during expand
@@ -33,7 +32,6 @@ export const AutoHeight = ({ isOpen, children, duration = 300, className, style,
         // Start collapsed: do nothing, wait for open to trigger animation
         setRenderChildren(false);
       }
-      setInitialRenderDone(true);
       return;
     }
 
@@ -71,7 +69,7 @@ export const AutoHeight = ({ isOpen, children, duration = 300, className, style,
         return () => clearTimeout(timeout);
       });
     }
-  }, [isOpen, duration, initialRenderDone, onCollapseComplete]);
+  }, [isOpen, duration, onCollapseComplete]);
 
   return (
     <div
