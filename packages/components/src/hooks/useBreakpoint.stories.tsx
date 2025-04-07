@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Story, Source, Title, Description } from "@storybook/blocks";
-import { ThemeProvider, useBreakpoint } from "@components";
+import { getBreakpoints, ThemeProvider, useBreakpoint, useThemeStore } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import jsxToString from "react-element-to-jsx-string";
+import customBreakpointsExample from "./examples/some-breakpoints.code?raw";
+import { redirectToStory } from ".storybook/redirect";
 
 function Wrapper() {
   return (
@@ -90,4 +92,73 @@ export default {
 export type Story = StoryObj;
 export const Docs: Story = {
   args: {},
+};
+
+function LimitedBreakpoints() {
+  // the bp object will still contain all breakpoints, but only the ones you provided will be active
+  // the rest will be false
+  const bp = useBreakpoint();
+  const breakpoints = useThemeStore((store) => store.breakpoints);
+  const queries = getBreakpoints(breakpoints);
+  return (
+    <>
+      <div
+        style={{
+          padding: 20,
+          backgroundColor: " var(--ha-S500)",
+        }}
+      >
+        {bp.xxs && <p>xxs active</p>}
+        {bp.xs && <p>xs active</p>}
+        {bp.sm && <p>sm active</p>}
+        {bp.md && <p>md active</p>}
+        {bp.lg && <p>lg active</p>}
+        {bp.xlg && <p>xlg active</p>}
+      </div>
+      <p>Media queries will be derived by the input breakpoints like so:</p>
+      <Source code={JSON.stringify(queries, null, 2)} dark />
+    </>
+  );
+}
+
+function RenderCustomBreakpoints() {
+  return (
+    <HassConnect hassUrl="http://homeassistant.local:8123">
+      <ThemeProvider
+        breakpoints={{
+          xs: 576,
+          lg: 1200,
+        }}
+      />
+      <LimitedBreakpoints />
+    </HassConnect>
+  );
+}
+
+export const CustomBreakpoints: Story = {
+  args: {
+    label: "CustomBreakpoints",
+  },
+  render: () => (
+    <>
+      <h4>Disabling some breakpoints</h4>
+      <p>
+        By default, there&apos;s a wide range of breakpoints set, this may not be ideal for users, so you can opt-in or opt-out of certain
+        breakpoints by passing custom breakpoints to the{" "}
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            redirectToStory("/docs/components-themeprovider--docs");
+          }}
+        >
+          ThemeProvider
+        </a>
+      </p>
+      <Source dark code={customBreakpointsExample} />
+      <h4>Example Output</h4>
+      <p>Below, is the output from the above examples, resize your page to see the component update!</p>
+      <RenderCustomBreakpoints />
+    </>
+  ),
 };

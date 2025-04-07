@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useRef } from "react";
 // types
-import type { Connection, HassConfig, getAuthOptions as AuthOptions, Auth, UnsubscribeFunc } from "home-assistant-js-websocket";
+import type { Connection, getAuthOptions as AuthOptions, Auth, UnsubscribeFunc } from "home-assistant-js-websocket";
 // methods
 import {
   getAuth,
@@ -23,8 +23,6 @@ import { isArray, snakeCase } from "lodash";
 import { SnakeOrCamelDomains, DomainService, Locales, CallServiceArgs, Route, ServiceResponse } from "@typings";
 import { saveTokens, loadTokens, clearTokens } from "./token-storage";
 import { useDebouncedCallback } from "use-debounce";
-import locales from "../hooks/useLocale/locales";
-import { updateLocales } from "../hooks/useLocale";
 import { HassContext, type HassContextProps, useStore } from "./HassContext";
 
 export interface HassProviderProps {
@@ -38,7 +36,7 @@ export interface HassProviderProps {
   locale?: Locales;
   /** location to render portals @default document.body */
   portalRoot?: HTMLElement;
-  /** update the window reference that's used internally on some features, for example useBreakpoint will use the current window if not specified, and if running within an iframe this may not be expected behavior */
+  /** Will tell the various features like breakpoints, modals and resize events which window to match media on, if serving within an iframe it'll potentially be running in the wrong window */
   windowContext?: Window;
 }
 
@@ -179,7 +177,7 @@ const tryConnection = async (hassUrl: string, hassToken?: string): Promise<Conne
     try {
       new URL(options.hassUrl);
     } catch (err: unknown) {
-      console.log("Error:", err);
+      console.error("Error:", err);
       return {
         type: "error",
         error: "Invalid URL",
@@ -246,10 +244,10 @@ const tryConnection = async (hassUrl: string, hassToken?: string): Promise<Conne
   };
 };
 
-export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot, windowContext }: HassProviderProps) {
+export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowContext }: HassProviderProps) {
   const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
   const authenticated = useRef(false);
-  const subscribedConfig = useRef(false);
+  const configUnsubscribe = useRef<UnsubscribeFunc | null>(null);
   const setHash = useStore((store) => store.setHash);
   const _hash = useStore((store) => store.hash);
   const routes = useStore((store) => store.routes);
@@ -264,13 +262,14 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
   const cannotConnect = useStore((store) => store.cannotConnect);
   const setCannotConnect = useStore((store) => store.setCannotConnect);
   const setAuth = useStore((store) => store.setAuth);
+  const triggerOnDisconnect = useStore((store) => store.triggerOnDisconnect);
+  // ready is set internally in the store when we have entities (setEntities does this)
   const ready = useStore((store) => store.ready);
   const setUser = useStore((store) => store.setUser);
   const setReady = useStore((store) => store.setReady);
   const setConfig = useStore((store) => store.setConfig);
   const setHassUrl = useStore((store) => store.setHassUrl);
   const setPortalRoot = useStore((store) => store.setPortalRoot);
-  const setLocales = useStore((store) => store.setLocales);
   const setWindowContext = useStore((store) => store.setWindowContext);
 
   const getStates = useCallback(async () => (connection === null ? null : await _getStates(connection)), [connection]);
@@ -299,6 +298,10 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
     setRoutes([]);
     setUser(null);
     authenticated.current = false;
+    if (configUnsubscribe.current) {
+      configUnsubscribe.current();
+      configUnsubscribe.current = null;
+    }
     if (entityUnsubscribe.current) {
       entityUnsubscribe.current();
       entityUnsubscribe.current = null;
@@ -311,7 +314,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
       clearTokens();
       if (location) location.reload();
     } catch (err: unknown) {
-      console.log("Error:", err);
+      console.error("Error:", err);
       setError("Unable to log out!");
     }
   }, [reset, setError]);
@@ -330,13 +333,31 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
       setAuth(connectionResponse.auth);
       // store the connection to pass to the provider
       setConnection(connectionResponse.connection);
+      entityUnsubscribe.current = subscribeEntities(connectionResponse.connection, ($entities) => {
+        setEntities($entities);
+      });
+      configUnsubscribe.current = subscribeConfig(connectionResponse.connection, (newConfig) => {
+        setConfig(newConfig);
+      });
+      connectionResponse.connection.addEventListener("disconnected", () => {
+        console.error("Disconnected from Home Assistant, reconnecting...");
+        triggerOnDisconnect();
+        // on disconnection, reset local state
+        reset();
+        // try to reconnect
+        handleConnect();
+      });
+      connectionResponse.connection.addEventListener("reconnect-error", (_, eventData) => {
+        console.error("Reconnection error:", eventData);
+        // on connection error, reset local state
+        reset();
+      });
+      _connectionRef.current = connectionResponse.connection;
       _getUser(connectionResponse.connection).then((user) => {
         setUser(user);
       });
-      _connectionRef.current = connectionResponse.connection;
-      authenticated.current = true;
     }
-  }, [hassUrl, hassToken, setError, setUser, setAuth, setConnection, setCannotConnect]);
+  }, [hassUrl, hassToken, triggerOnDisconnect, setError, setUser, setCannotConnect, setAuth, setConnection, setEntities, setConfig, reset]);
 
   useEffect(() => {
     setHassUrl(hassUrl);
@@ -386,63 +407,13 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
         data: response.statusText,
       };
     } catch (e) {
-      console.log("Error:", e);
+      console.error("API Error:", e);
       return {
         status: "error",
         data: `API Request failed for endpoint "${endpoint}", follow instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/core-hooks-usehass-hass-callapi--docs.`,
       };
     }
   }
-
-  const fetchLocale = useCallback(
-    async (config: HassConfig | null): Promise<Record<string, string>> => {
-      const match = locales.find(({ code }) => code === (locale ?? config?.language));
-      if (!match) {
-        throw new Error(
-          `Locale "${locale ?? config?.language}" not found, available options are "${locales.map(({ code }) => `${code}`).join(", ")}"`,
-        );
-      } else {
-        return await match.fetch();
-      }
-    },
-    [locale],
-  );
-
-  useEffect(() => {
-    if (!locale) return;
-    // purposely sending null for the config object as we're fetching a different language specified by the user
-    fetchLocale(null)
-      .then((locales) => {
-        updateLocales(locales);
-        setLocales(locales);
-      })
-      .catch((e) => {
-        setError(`Error retrieving translations from Home Assistant: ${e?.message ?? e}`);
-      });
-  }, [locale, fetchLocale, setLocales, setError]);
-
-  useEffect(() => {
-    if (!connection || subscribedConfig.current) return;
-    subscribedConfig.current = true;
-    // Subscribe to config updates
-    const unsubscribe = subscribeConfig(connection, (newConfig) => {
-      fetchLocale(newConfig)
-        .then((locales) => {
-          // purposely setting config here to delay the rendering process of the application until locales are retrieved
-          setConfig(newConfig);
-          updateLocales(locales);
-          setLocales(locales);
-        })
-        .catch((e) => {
-          setConfig(newConfig);
-          setError(`Error retrieving translations from Home Assistant: ${e?.message ?? e}`);
-        });
-    });
-    // Cleanup function to unsubscribe on unmount
-    return () => {
-      unsubscribe();
-    };
-  }, [connection, setLocales, fetchLocale, setConfig, setError]);
 
   useEffect(() => {
     if (location.hash === "") return;
@@ -548,37 +519,17 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
   );
 
   useEffect(() => {
-    if (connection && entityUnsubscribe.current === null) {
-      entityUnsubscribe.current = subscribeEntities(connection, ($entities) => {
-        setEntities($entities);
-      });
-    }
-  }, [connection, setEntities]);
-
-  useEffect(() => {
     return () => {
-      authenticated.current = false;
-      if (entityUnsubscribe.current) {
-        entityUnsubscribe.current();
-        entityUnsubscribe.current = null;
-      }
+      reset();
     };
-  }, []);
+  }, [reset]);
 
   const debounceConnect = useDebouncedCallback(
     async () => {
       try {
-        if (_connectionRef.current && !connection) {
-          setConnection(_connectionRef.current);
-          authenticated.current = true;
-          return;
+        if (authenticated.current) {
+          reset();
         }
-        if (!_connectionRef.current && connection) {
-          _connectionRef.current = connection;
-          authenticated.current = true;
-          return;
-        }
-        if (authenticated.current) return;
         authenticated.current = true;
         await handleConnect();
       } catch (e) {
@@ -586,7 +537,7 @@ export function HassProvider({ children, hassUrl, hassToken, locale, portalRoot,
         setError(`Unable to connect to Home Assistant, please check the URL: "${message}"`);
       }
     },
-    100,
+    25,
     {
       leading: true,
       trailing: false,

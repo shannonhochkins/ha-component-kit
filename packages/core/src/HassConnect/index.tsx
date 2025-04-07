@@ -4,6 +4,7 @@ import { HassProvider } from "./Provider";
 import type { HassProviderProps } from "./Provider";
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
+import { FetchLocale } from "./FetchLocale";
 
 export type HassConnectProps = {
   /** Any react node to render when authenticated */
@@ -107,14 +108,16 @@ export const HassConnect = memo(function HassConnect({
         <>
           {ready ? (
             <Wrapper>
-              {onReady &&
-                !onReadyCalled.current &&
-                ((() => {
-                  onReady();
-                  onReadyCalled.current = true;
-                })(),
-                null)}
-              {children}
+              <FetchLocale locale={options.locale}>
+                {onReady &&
+                  !onReadyCalled.current &&
+                  ((() => {
+                    onReady();
+                    onReadyCalled.current = true;
+                  })(),
+                  null)}
+                {children}
+              </FetchLocale>
             </Wrapper>
           ) : (
             <Wrapper>{loading}</Wrapper>

@@ -37,7 +37,6 @@ function Render(args?: Args) {
 export default {
   title: "components/Cards/EntitiesCard",
   component: EntitiesCard,
-  // @ts-expect-error - will fix later
   subcomponents: { EntitiesCardRow },
   tags: ["autodocs"],
   parameters: {
