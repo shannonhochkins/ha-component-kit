@@ -287,6 +287,13 @@ const useStore = create<Store>((set) => ({
   auth: fakeAuth,
   setAuth: (auth) => set({ auth }),
   config: fakeConfig,
+  user: {
+    id: '',
+    is_admin: false,
+    is_owner: false,
+    name: 'Joe Bloggs',
+  },
+  setUser: (user) => set({ user }),
   setConfig: (config) => {
     set((state) => {
       if (state.connection && 'mockEvent' in state.connection && config) {

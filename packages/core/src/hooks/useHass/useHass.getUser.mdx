@@ -1,5 +1,6 @@
 import { Source, Meta } from '@storybook/blocks';
 import getUserExample from './examples/getUser.code?raw';
+import { redirectToStory } from '../../../../../.storybook/redirect';
 
 <Meta title="core/hooks/useHass/hass/getUser" />
 
@@ -8,6 +9,11 @@ This will return all information about the current user from the authenticated i
 so you'll have access to what's available on the object with the `HassUser` type.
 
 This may be useful if you want to extract the name or perform different UI updates based on the role of the logged in user.
+
+> It's preferred to use the {<a onClick={(e) => {
+  e.preventDefault();
+  redirectToStory('/docs/core-hooks-useuser--docs')
+}}>useUser</a>} hook to get the user object, but if you need to get the user object outside of a hook, you can use this method.
 
 ### Definition
 <Source dark language="ts" code={`await getUser()`} />

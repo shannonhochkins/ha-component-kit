@@ -71,6 +71,8 @@ export interface Store {
   /** the home assistant authentication object */
   auth: Auth | null;
   setAuth: (auth: Auth | null) => void;
+  user: HassUser | null;
+  setUser: (user: HassUser | null) => void;
   /** the home assistant configuration */
   config: HassConfig | null;
   setConfig: (config: HassConfig | null) => void;
@@ -173,6 +175,8 @@ export const useStore = create<Store>((set) => ({
   setAuth: (auth) => set({ auth }),
   config: null,
   setConfig: (config) => set({ config }),
+  user: null,
+  setUser: (user) => set({ user }),
   error: null,
   setError: (error) => set({ error }),
   globalComponentStyles: {},

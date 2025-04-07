@@ -1,0 +1,34 @@
+import { Meta, Source, Canvas } from '@storybook/blocks';
+import basicExample from './examples/basic.code?raw';
+import * as Primary from './examples/primary.stories';
+import { redirectToStory } from '../../../../../.storybook/redirect';
+
+<Meta title="core/hooks/useUser" parameters={{
+  docs: {
+    page: null,
+  }
+}} />
+
+# useUser()
+###### `useUser(): HassUser | null`
+
+A custom React hook to retrieve the current authenticated user, this hook will not refresh unless you refresh the page or log back in, as the user typically does not change unless the user logs in or out.
+
+This hook will return the current user object or null if not available yet.
+
+- **Dependencies**: This hook requires you to use it within the `HassConnect` component.
+
+### Example Usage
+
+<Source dark code={basicExample} />
+
+#### Outputs
+
+<Canvas of={Primary.PrimaryExample} />
+
+#### Refetching user
+If you do need to fetch the user programmatically rather than from a hook, you can achieve this from the {<a onClick={(e) => {
+  e.preventDefault();
+  redirectToStory('/docs/core-hooks-usehass-hass-getuser--docs')
+}}>getUser</a>} method exposed via useHass.
+
