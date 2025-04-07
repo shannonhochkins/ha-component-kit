@@ -2,7 +2,7 @@ import { useState } from "react";
 import styled from "@emotion/styled";
 import { Row, Column, fallback, CardBase, CardBaseProps, mq, type AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import AutoHeight from "./AutoHeight";
+import { AutoHeight } from "../Shared/AutoHeight";
 
 const StyledGroup = styled(CardBase)<{
   collapsed: boolean;

@@ -9,11 +9,11 @@ type AutoHeightProps = {
   onCollapseComplete?: () => void;
 };
 
-const AutoHeight = ({ isOpen, children, duration = 300, className, style, onCollapseComplete }: AutoHeightProps) => {
+export const AutoHeight = ({ isOpen, children, duration = 300, className, style, onCollapseComplete }: AutoHeightProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [renderChildren, setRenderChildren] = useState(isOpen);
-  const [shouldAnimate, setShouldAnimate] = useState(false);
-  const [initialRenderDone, setInitialRenderDone] = useState(false);
+  const [shouldAnimate, setShouldAnimate] = useState(true);
+  const [initialRenderDone, setInitialRenderDone] = useState(true);
   const hasMountedRef = useRef(false);
 
   // Ensure children are present before measuring during expand
@@ -87,5 +87,3 @@ const AutoHeight = ({ isOpen, children, duration = 300, className, style, onColl
     </div>
   );
 };
-
-export default AutoHeight;
