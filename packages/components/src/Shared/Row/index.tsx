@@ -1,10 +1,7 @@
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import type { MotionProps } from "framer-motion";
-import { m } from "framer-motion";
 import { isValidProp } from "../../utils/isValidProp";
-type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
-export interface RowProps extends Extendable {
+export interface RowProps extends React.ComponentPropsWithoutRef<"div"> {
   /** standard flex css properties for align-items, @default center */
   alignItems?: React.CSSProperties["alignItems"];
   /** standard flex css properties for justify-content, @default center */
@@ -18,7 +15,7 @@ export interface RowProps extends Extendable {
   /** should the row stretch to the width of the parent */
   fullWidth?: boolean;
 }
-const _Row = styled(m.div, {
+const _Row = styled("div", {
   shouldForwardProp: (prop) => isValidProp(prop),
 })<RowProps>`
   display: flex;

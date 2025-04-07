@@ -14,7 +14,6 @@ const globals = {
   '@iconify/react': '@iconify/react',
   'use-debounce': 'use-debounce',
   'lodash': 'lodash',
-  'framer-motion': 'framer-motion',
   'react/jsx-runtime': 'react/jsx-runtime',
   'home-assistant-js-websocket': 'home-assistant-js-websocket',
   '@emotion/styled': '@emotion/styled',

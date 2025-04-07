@@ -2,7 +2,6 @@ import { Menu, FabCard, ButtonBar, ButtonBarButton, fallback } from "@components
 import type { EntityName, FilterByDomain } from "@hakit/core";
 import { useEntity, useHass, HvacMode, toReadableString, OFF, localize, supportsFeatureFromAttributes, UNAVAILABLE } from "@hakit/core";
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { motion, type MotionProps } from "framer-motion";
 import styled from "@emotion/styled";
 import { ErrorBoundary } from "react-error-boundary";
 import { css } from "@emotion/react";
@@ -24,7 +23,7 @@ import { ClimateHumiditySlider } from "./ClimateHumiditySlider";
 
 type MainControl = "temperature" | "humidity";
 
-const Wrapper = styled(motion.div)`
+const Wrapper = styled.div`
   color: var(--ha-500-contrast);
   width: 100%;
   .controls {
@@ -42,9 +41,7 @@ const Wrapper = styled(motion.div)`
   }
 `;
 
-type Extendable = Omit<MotionProps & React.ComponentPropsWithoutRef<"div">, "title">;
-
-export interface ClimateControlsProps extends Extendable {
+export interface ClimateControlsProps extends Omit<React.ComponentPropsWithoutRef<"div">, "title"> {
   /** the name of your climate entity */
   entity: FilterByDomain<EntityName, "climate">;
   /** provide a list of hvacModes you want to support/display in the UI, will use all by default */

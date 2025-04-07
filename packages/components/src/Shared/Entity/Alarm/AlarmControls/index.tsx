@@ -13,7 +13,6 @@ import {
   LocaleKeys,
 } from "@hakit/core";
 import { fallback, ButtonGroup, ButtonGroupButton } from "@components";
-import { motion, type MotionProps } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
 import { TextField } from "../../../Form/TextField";
 import { snakeCase } from "lodash";
@@ -43,7 +42,7 @@ const pulse = keyframes`
   }
 `;
 
-const Wrapper = styled(motion.div)`
+const Wrapper = styled.div`
   width: 100%;
   position: relative;
   height: 100%;
@@ -146,8 +145,7 @@ interface Slot {
 }
 
 type AlarmServices = keyof HassEntityWithService<"alarm_control_panel">["service"];
-type Extendable = MotionProps & React.ComponentPropsWithoutRef<"div">;
-export interface AlarmControlsProps extends Extendable {
+export interface AlarmControlsProps extends React.ComponentPropsWithoutRef<"div"> {
   /** The alarm entity to control */
   entity: FilterByDomain<EntityName, "alarm_control_panel">;
   /** overwrite the default actions that are displayed, by default it will show what's supported by the entity */

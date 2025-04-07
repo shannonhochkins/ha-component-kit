@@ -15,7 +15,6 @@ import { MediaPlayerCard, CardBase, Row, Column, Group, VolumeControls, fallback
 import { Fab } from "../../../../Cards/MediaPlayerCard/Fab";
 import { capitalize, flatten, groupBy } from "lodash";
 import { useCallback, useMemo, useState, useEffect } from "react";
-import { spring } from "framer-motion";
 
 const StyledMediaPlayerCard = styled(CardBase)`
   transform: none;
@@ -197,8 +196,6 @@ export const MediaPlayerControls = ({
               return (
                 <StyledMediaPlayerCard
                   key={entity.entity_id}
-                  layout
-                  transition={spring}
                   disableRipples
                   disableScale
                   disableActiveState

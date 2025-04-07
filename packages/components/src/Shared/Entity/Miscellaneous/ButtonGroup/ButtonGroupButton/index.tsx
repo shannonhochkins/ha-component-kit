@@ -12,10 +12,9 @@ import {
 } from "@hakit/core";
 import { ReactNode, useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { motion } from "framer-motion";
 import { IconProps } from "@iconify/react";
 
-const Button = styled(motion.button)<{
+const Button = styled.button<{
   borderRadius?: number;
   activeColor?: string;
 }>`
@@ -32,7 +31,7 @@ const Button = styled(motion.button)<{
   align-items: center;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-color, color, box-shadow, opacity;
+  transition-property: transform, background-color, color, box-shadow, opacity;
   font-size: calc(var(--ha-control-button-group-thickness) / 4);
   width: 100%;
   height: 100%;
@@ -55,6 +54,9 @@ const Button = styled(motion.button)<{
     &:hover {
       background-color: ${(props) => props.activeColor ?? "var(--ha-A700)"};
     }
+  }
+  &:active:not(:disabled):not(.disable-scale-effect) {
+    transform: scale(0.9);
   }
 `;
 
@@ -118,10 +120,9 @@ function InternalButtonGroupButton<E extends EntityName>({
   return (
     <Tooltip placement="left" title={titleValue} key={key} {...rest}>
       <Button
-        className={`button-group-button ${showTitle ? "has-title" : ""} ${_active ? "active" : ""}`}
+        className={`button-group-button ${showTitle ? "has-title" : ""} ${_active ? "active" : ""} ${disableScaleEffect ? "disable-scale-effect" : ""}`}
         activeColor={activeColor}
         disabled={disabled}
-        whileTap={{ scale: disabled || disableScaleEffect ? 1 : 0.9 }}
         onClick={() => {
           // @ts-expect-error - this is fine, entity name, service etc aren't known here
           if (onClick) onClick(_entity);

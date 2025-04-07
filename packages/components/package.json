@@ -73,7 +73,6 @@
     "@mui/material": "^6.3.0",
     "@use-gesture/react": ">=10.x",
     "autolinker": ">=4.x",
-    "framer-motion": ">=10.x",
     "fullcalendar": ">=6.x.x",
     "hls.js": ">=1.x.x",
     "leaflet": ">=1.x.x",
@@ -83,11 +82,11 @@
     "react-error-boundary": "^5.x",
     "react-leaflet": ">=5.x",
     "react-resize-detector": ">=12.x.x",
+    "react-switch": "^7.1.0",
     "react-use": ">=17.x",
     "use-debounce": ">=9.x",
     "use-long-press": ">=3.x.x",
-    "zustand": "^4.x.x",
-    "react-switch": "^7.1.0"
+    "zustand": "^4.x.x"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.12",
