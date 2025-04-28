@@ -29,9 +29,6 @@ export const getBreakpoints = (breakpoints: BreakPoints) => {
     .filter((key) => breakpoints[key] !== undefined)
     .map((key) => [key, breakpoints[key]!] as [Exclude<BreakPoint, "xlg">, number]);
 
-  if (definedEntries.length === 0) {
-    throw new Error("At least one breakpoint must be defined.");
-  }
   const result: Partial<Record<BreakPoint, string>> = {};
 
   for (let i = 0; i < definedEntries.length; i++) {
@@ -47,8 +44,8 @@ export const getBreakpoints = (breakpoints: BreakPoints) => {
       result[key] = `(max-width: ${value}px)`;
     }
   }
-
-  const lastValue = definedEntries[definedEntries.length - 1][1];
+  // if no breakpoints available, set to -1 so we only get xlg >= 0
+  const lastValue = definedEntries.length === 0 ? -1 : definedEntries[definedEntries.length - 1][1];
 
   result["xlg"] = `(min-width: ${lastValue + 1}px)`;
 

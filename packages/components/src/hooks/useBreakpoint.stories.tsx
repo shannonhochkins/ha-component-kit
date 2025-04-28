@@ -84,6 +84,11 @@ export default {
           <Component />
           <p>Below, is the output from the above examples, resize your page to see the component update!</p>
           <Render />
+          <p>
+            Or we can omit breakpoints all together and only the `xlg` class will be applied to the body, meaning all attributes and styles
+            will be disabled for other breakpoints
+          </p>
+          <Source dark code={`<ThemeProvider breakpoints={{}} />`} />
         </>
       ),
     },
