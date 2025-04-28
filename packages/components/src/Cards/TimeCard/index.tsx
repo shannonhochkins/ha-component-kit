@@ -211,7 +211,7 @@ function InternalTimeCard({
         ${cssStyles ?? ""}
       `}
       className={`${className ?? ""} time-card`}
-      whileTap={{ scale: disabled || !hasOnClick ? 1 : 0.9 }}
+      disableScale={disabled || !hasOnClick}
       disableActiveState={rest.disableActiveState ?? !hasOnClick}
       disableRipples={rest.disableRipples ?? !hasOnClick}
       onClick={(_: unknown, event: React.MouseEvent<HTMLElement, MouseEvent>) => {

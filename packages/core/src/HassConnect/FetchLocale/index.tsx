@@ -18,7 +18,7 @@ export function FetchLocale({ locale, children }: FetchLocaleProps) {
   const setLocales = useStore((store) => store.setLocales);
 
   useEffect(() => {
-    const _locale = (locale ?? config?.language);
+    const _locale = locale ?? config?.language;
     if (!_locale) {
       // may just be waiting for the users config to resolve
       return;
@@ -29,14 +29,14 @@ export function FetchLocale({ locale, children }: FetchLocaleProps) {
       fetchPending.current = false;
       setError(null);
     }
- 
+
     if (!match) {
       fetchPending.current = false;
       setError(
         `Locale "${locale ?? config?.language}" not found, available options are "${locales.map(({ code }) => `${code}`).join(", ")}"`,
       );
     } else {
-      if (fetchPending.current) return
+      if (fetchPending.current) return;
       fetchPending.current = true;
       previousLocale.current = match.code;
       match

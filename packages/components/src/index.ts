@@ -2,11 +2,14 @@ import "./.d.ts";
 /// <reference path=".d.ts" />
 export {
   getBreakpoints,
+  allBreakpoints,
+  orderedBreakpoints,
   mq,
   getColumnSizeCSS,
   generateColumnBreakpoints,
   type AvailableQueries,
   type BreakPoint,
+  type BreakPointsWithXlg,
   type BreakPoints,
   type GridSpan,
 } from "./ThemeProvider/breakpoints";
@@ -111,8 +114,7 @@ export type { VideoState } from "./Cards/CameraCard/players";
 export { CameraStream, type CameraStreamProps } from "./Cards/CameraCard/stream";
 // Modal
 export { LogBookRenderer, type LogBookRendererProps } from "./Shared/Entity/Miscellaneous/LogBookRenderer";
-export { Modal, type ModalProps, type CustomModalAnimation } from "./Shared/Modal";
-export { ModalProvider, useModalStore, type ModalOptions, type ModalProviderProps } from "./Shared/Modal/ModalProvider";
+export { Modal, type ModalProps } from "./Shared/Modal";
 export { ModalByEntityDomain, type ModalByEntityDomainProps, type ModalPropsHelper } from "./Shared/Modal/ModalByEntityDomain";
 export { ModalCameraControls, type ModalCameraControlsProps } from "./Shared/Modal/ModalByEntityDomain/Camera";
 export { ModalAlarmControls, type ModalAlarmControlsProps } from "./Shared/Modal/ModalByEntityDomain/AlarmControlPanel";

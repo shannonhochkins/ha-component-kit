@@ -10,8 +10,8 @@ import {
   FC,
   forwardRef,
   Children,
-  MutableRefObject,
   RefAttributes,
+  RefObject,
 } from "react";
 import styled from "@emotion/styled";
 
@@ -228,9 +228,10 @@ export const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
   const [multiplier, setMultiplier] = useState(1);
   const [isMounted, setIsMounted] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const containerRef = (ref as MutableRefObject<HTMLDivElement>) || rootRef;
+  const containerRef = (ref as RefObject<HTMLDivElement>) || rootRef;
   const marqueeRef = useRef<HTMLDivElement>(null);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const calculateWidthRef = useRef<() => void>(() => {});
 
   // Calculate width of container and marquee and set multiplier
   const calculateWidth = useCallback(() => {
@@ -257,22 +258,30 @@ export const Marquee: FC<MarqueeProps> = forwardRef(function Marquee(
     }
   }, [autoFill, containerRef, direction]);
 
+  useEffect(() => {
+    calculateWidthRef.current = calculateWidth;
+  }, [calculateWidth]);
+
   // Calculate width and multiplier on mount and on window resize
   useEffect(() => {
     if (!isMounted) return;
 
-    calculateWidth();
+    // Create the observer exactly once
+    if (!resizeObserverRef.current) {
+      resizeObserverRef.current = new ResizeObserver(() => {
+        calculateWidthRef.current();
+      });
+    }
+    // If refs are available, observe them
     if (marqueeRef.current && containerRef.current) {
-      resizeObserverRef.current = new ResizeObserver(() => calculateWidth());
       resizeObserverRef.current.observe(containerRef.current);
       resizeObserverRef.current.observe(marqueeRef.current);
     }
-  }, [calculateWidth, containerRef, isMounted]);
-
-  // Recalculate width when children change
-  useEffect(() => {
-    calculateWidth();
-  }, [calculateWidth, children]);
+    return () => {
+      // Cleanup observer on unmount
+      resizeObserverRef.current?.disconnect();
+    };
+  }, [isMounted, containerRef]);
 
   useEffect(() => {
     setIsMounted(true);

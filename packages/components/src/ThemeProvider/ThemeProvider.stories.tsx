@@ -176,3 +176,15 @@ export const Docs: Story = {
     theme,
   },
 };
+
+const Empty = () => <></>;
+
+export type CustomBreakpoints = StoryObj<typeof Empty>;
+export const CustomBreakpoints: Story = {
+  render: Empty,
+  parameters: {
+    redirectTo: "/story/components-hooks-usebreakpoint--custom-breakpoints",
+  },
+};
+
+CustomBreakpoints.storyName = "Custom Breakpoints";

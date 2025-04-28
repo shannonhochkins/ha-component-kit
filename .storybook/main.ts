@@ -54,6 +54,7 @@ export default ({
           "@hooks": ["packages/core/src/hooks"],
           "@utils/*": ["packages/core/src/utils/*"],
           "@typings": ["packages/core/src/types"],
+          '@stories/*': ['stories/*'],
         }
       },
     }

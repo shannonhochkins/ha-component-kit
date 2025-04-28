@@ -17,7 +17,6 @@ const globals = {
   'lodash': 'lodash',
   'react-is': 'react-is',
   '@iconify/react': '@iconify/react',
-  'framer-motion': 'framer-motion',
   'react-use': 'react-use',
   '@emotion/styled': '@emotion/styled',
   '@emotion/react': '@emotion/react',
@@ -74,7 +73,7 @@ export default defineConfig(configEnv => {
       root: resolve(__dirname, './'),
       outDir: resolve(__dirname, './dist/types'),
       include: [resolve(__dirname, './src')],
-      exclude: ['node_modules/**', 'framer-motion'],
+      exclude: ['node_modules/**'],
       clearPureImport: true,
       copyDtsFiles: true,
       insertTypesEntry: true,
@@ -104,7 +103,7 @@ ${content}`
         'src/**/*.{ts,tsx}',
         'src/**/**/*.{ts,tsx}',
       ], {
-        ignore: ['**/*stories.ts', '**/*stories.tsx', "**/*.test.{ts,tsx}"]
+        ignore: ['**/*stories.ts', '**/*stories.tsx', "**/*.test.{ts,tsx}", "**/*.code.{ts,tsx}"]
       }).map(file => [
          // The name of the entry point
          // src/nested/foo.ts becomes nested/foo

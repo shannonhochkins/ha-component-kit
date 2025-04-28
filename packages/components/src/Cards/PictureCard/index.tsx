@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, fallback, PreloadImage, CardBase, type CardBaseProps, type PreloadImageProps, type AvailableQueries } from "@components";
-import { motion } from "framer-motion";
 import { ErrorBoundary } from "react-error-boundary";
 
 type OmitProperties =
@@ -41,7 +40,7 @@ const Inner = styled.div`
   justify-content: space-between;
 `;
 
-const PictureCardFooter = styled(motion.h4)`
+const PictureCardFooter = styled.h4`
   all: unset;
   font-family: var(--ha-font-family);
   padding: 1rem;

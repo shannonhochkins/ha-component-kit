@@ -36,7 +36,7 @@ export interface HassProviderProps {
   locale?: Locales;
   /** location to render portals @default document.body */
   portalRoot?: HTMLElement;
-  /** update the window reference that's used internally on some features, for example useBreakpoint will use the current window if not specified, and if running within an iframe this may not be expected behavior */
+  /** Will tell the various features like breakpoints, modals and resize events which window to match media on, if serving within an iframe it'll potentially be running in the wrong window */
   windowContext?: Window;
 }
 
@@ -265,11 +265,17 @@ export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowC
   const triggerOnDisconnect = useStore((store) => store.triggerOnDisconnect);
   // ready is set internally in the store when we have entities (setEntities does this)
   const ready = useStore((store) => store.ready);
+  const setUser = useStore((store) => store.setUser);
   const setReady = useStore((store) => store.setReady);
   const setConfig = useStore((store) => store.setConfig);
   const setHassUrl = useStore((store) => store.setHassUrl);
   const setPortalRoot = useStore((store) => store.setPortalRoot);
   const setWindowContext = useStore((store) => store.setWindowContext);
+
+  const getStates = useCallback(async () => (connection === null ? null : await _getStates(connection)), [connection]);
+  const getServices = useCallback(async () => (connection === null ? null : await _getServices(connection)), [connection]);
+  const getConfig = useCallback(async () => (connection === null ? null : await _getConfig(connection)), [connection]);
+  const getUser = useCallback(async () => (connection === null ? null : await _getUser(connection)), [connection]);
 
   useEffect(() => {
     if (portalRoot) setPortalRoot(portalRoot);
@@ -290,6 +296,7 @@ export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowC
     setCannotConnect(false);
     setReady(false);
     setRoutes([]);
+    setUser(null);
     authenticated.current = false;
     if (configUnsubscribe.current) {
       configUnsubscribe.current();
@@ -299,7 +306,7 @@ export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowC
       entityUnsubscribe.current();
       entityUnsubscribe.current = null;
     }
-  }, [setAuth, setCannotConnect, setConfig, setConnection, setEntities, setError, setReady, setRoutes]);
+  }, [setAuth, setUser, setCannotConnect, setConfig, setConnection, setEntities, setError, setReady, setRoutes]);
 
   const logout = useCallback(async () => {
     try {
@@ -346,17 +353,15 @@ export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowC
         reset();
       });
       _connectionRef.current = connectionResponse.connection;
+      _getUser(connectionResponse.connection).then((user) => {
+        setUser(user);
+      });
     }
-  }, [hassUrl, hassToken, triggerOnDisconnect, setError, setCannotConnect, setAuth, setConnection, setEntities, setConfig, reset]);
+  }, [hassUrl, hassToken, triggerOnDisconnect, setError, setUser, setCannotConnect, setAuth, setConnection, setEntities, setConfig, reset]);
 
   useEffect(() => {
     setHassUrl(hassUrl);
   }, [hassUrl, setHassUrl]);
-
-  const getStates = useCallback(async () => (connection === null ? null : await _getStates(connection)), [connection]);
-  const getServices = useCallback(async () => (connection === null ? null : await _getServices(connection)), [connection]);
-  const getConfig = useCallback(async () => (connection === null ? null : await _getConfig(connection)), [connection]);
-  const getUser = useCallback(async () => (connection === null ? null : await _getUser(connection)), [connection]);
 
   const joinHassUrl = useCallback(
     (path: string) => {

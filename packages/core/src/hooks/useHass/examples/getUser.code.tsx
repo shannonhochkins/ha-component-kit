@@ -7,7 +7,7 @@ function GetUserExample() {
   const [user, setUser] = useState<HassUser | null>(null);
 
   useEffect(() => {
-    getUser().then((user) => setUser(user));
+    getUser().then(setUser);
   }, [getUser]);
 
   return <p>{JSON.stringify(user, null, 2)}</p>;

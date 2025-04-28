@@ -1,3 +1,30 @@
+# 5.1.0
+
+### @hakit/components
+- NEW - Modal position - Now positioned centered within the screen vertically
+- BREAKING - `framer-motion` has been removed entirely as a core dependency, this was previously used to animate the modals and other components, most of the main animations are still supported visually, the main ones that will change are the expand/collapse scale animation from the card to the modal, Custom logic for the Group component to maintain the "expand" / "collapse" animations, Added custom scale functionality to mimic what framer-motion does with whileTap - solves [issue](https://github.com/shannonhochkins/ha-component-kit/issues/209)
+- BREAKING - `breakpoints`, `setBreakpoints` have been moved to the themeStore and out of @hakit/core, nothing in @hakit/core consumes or uses these values, so it makes sense to move to the components package and set via the ThemeProvider
+- NEW - Breakpoints can now be disabled or edited with a smaller pool of breakpoints, or no breakpoints at all, this is useful if you're using a custom theme and want to disable the breakpoints entirely, or if you want to use a smaller set of breakpoints without having to configure all of them. This has all been documented in storybook - solves [issue](https://github.com/shannonhochkins/ha-component-kit/issues/244)
+
+### @hakit/core
+- IMPROVEMENT - Error handling on setBreakpoints if the user provided invalid breakpoint values as values should be provided in a linear format
+- PERFORMANCE - optimisation to useBreakpoint, now state will only update when any of the matches change
+- BUGFIX - If switching window context dynamically, the window match logic will not work and will have to shift midway, this has been addressed
+- NEW - introduced onDisconnect callback for HassConnect options
+- NEW - Added retry connection functionality when the connection is lost for long running dashboards
+- NEW - Locale functionality moved to it's own component to fetch these before render
+- NEW - useUser - a new hook to return the current user of the dashboard logged in at the time - [issue](https://github.com/shannonhochkins/ha-component-kit/issues/253)
+- NEW - Updated locales to match latest home assistant release
+
+
+### General
+
+- CHORE - Updated storybook to latest
+- DOCS - Added documentation to related hooks and methods to retrieve a user, useUser hook exposed, and getUser method still available from useHass
+- DOCS - Simplified other related docs
+- DOCS - Documented custom breakpoints
+
+
 # 5.0.9
 
 ### @hakit/components

@@ -15,3 +15,12 @@ export const DEFAULT_THEME_OPTIONS = {
   lightness: 54,
   contrastThreshold: 65,
 } as const;
+
+export const DEFAULT_BREAKPOINTS = {
+  xxs: 600,
+  xs: 900,
+  sm: 1200,
+  md: 1536,
+  lg: 1700,
+  xlg: 1701,
+};
