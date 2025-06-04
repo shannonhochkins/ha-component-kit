@@ -15,6 +15,7 @@ export { useLogs, type UseLogOptions } from "./useLogs";
 export { useHaStatus } from "./useHaStatus";
 export { useConfig } from "./useConfig";
 export { useUser } from "./useUser";
+export { useUsers, type AuthUser, type FetchUsersArgs } from "./useUsers";
 export { useWeather, type UseWeatherOptions } from "./useWeather";
 export { getSupportedForecastTypes, type ForecastType, type ModernForecastType } from "./useWeather/helpers";
 export * from "./useLogs/logbook";

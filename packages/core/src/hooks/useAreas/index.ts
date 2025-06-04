@@ -24,12 +24,12 @@ export interface Area {
 }
 
 export function useAreas(): Area[] {
-  const { useStore, joinHassUrl, getAllEntities } = useHass();
+  const { useStore, joinHassUrl } = useHass();
   const [areas, setAreas] = useState<AreaRegistryEntry[]>([]);
   const [devices, setDevices] = useState<DeviceRegistryEntry[]>([]);
   const [entities, setEntities] = useState<EntityRegistryEntry[]>([]);
   const connection = useStore((state) => state.connection);
-  const _entities = getAllEntities();
+  const _entities = useStore((state) => state.entities);
 
   useEffect(() => {
     if (!connection) return;

@@ -1,0 +1,33 @@
+import { Meta, Source, Canvas } from '@storybook/blocks';
+import basicExample from './examples/basic.code?raw';
+import refetchExample from './examples/refetch.code?raw';
+import * as Primary from './examples/primary.stories';
+import { redirectToStory } from '../../../../../.storybook/redirect';
+
+<Meta title="core/hooks/useUsers" parameters={{
+  docs: {
+    page: null,
+  }
+}} />
+
+# useUsers()
+###### `useUsers(args: FetchUsersArgs): UsersState & { refetch: (args: FetchUsersArgs) => UsersState }`
+
+A custom React hook to retrieve all users connected to the home assistant instance, this hook will not refresh unless you manually re-trigger the "refresh" function, or reload the application/component consuming this hook.
+
+Whilst loading, it will return an empty array of users and a loading state of `true`. Once the data is fetched, it will return the users in an array, a loading state of `false`, and an error state of `null` if no errors occurred.
+
+- **Dependencies**: This hook requires you to use it within the `HassConnect` component.
+
+### Example Usage
+
+<Source dark code={basicExample} />
+
+### Refetch Usage
+
+<Source dark code={refetchExample} />
+
+#### Outputs
+
+<Canvas of={Primary.PrimaryExample} />
+

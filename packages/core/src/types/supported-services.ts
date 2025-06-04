@@ -75,7 +75,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       T,
       {
         // The configuration entry ID of the entry to be reloaded. @example 8955375327824e14ba89e4b29cc3ec9a
-        entry_id?: string;
+        entry_id?: unknown;
       }
     >;
     // Reloads all YAML configuration that can be reloaded without restarting Home Assistant.
@@ -110,10 +110,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     >;
     // Sets the log level for one or more integrations.
     setLevel: ServiceFunction<object, T, object>;
-  };
-  person: {
-    // Reloads persons from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
   };
   frontend: {
     // Sets the default theme Home Assistant uses. Can be overridden by a user.
@@ -163,270 +159,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     enable: ServiceFunction<object, T, object>;
     // Stops the recording of events and state changes.
     disable: ServiceFunction<object, T, object>;
-  };
-  hassio: {
-    // Starts an add-on.
-    addonStart: ServiceFunction<
-      object,
-      T,
-      {
-        // The add-on to start. @example core_ssh
-        addon: string;
-      }
-    >;
-    // Stops an add-on.
-    addonStop: ServiceFunction<
-      object,
-      T,
-      {
-        // The add-on to stop. @example core_ssh
-        addon: string;
-      }
-    >;
-    // Restarts an add-on.
-    addonRestart: ServiceFunction<
-      object,
-      T,
-      {
-        // The add-on to restart. @example core_ssh
-        addon: string;
-      }
-    >;
-    // Updates an add-on. This action should be used with caution since add-on updates can contain breaking changes. It is highly recommended that you review release notes/change logs before updating an add-on.
-    addonUpdate: ServiceFunction<
-      object,
-      T,
-      {
-        // The add-on to update. @example core_ssh
-        addon: string;
-      }
-    >;
-    // Writes data to the add-on's standard input.
-    addonStdin: ServiceFunction<
-      object,
-      T,
-      {
-        // The add-on to write to. @example core_ssh
-        addon: string;
-      }
-    >;
-    // Powers off the host system.
-    hostShutdown: ServiceFunction<object, T, object>;
-    // Reboots the host system.
-    hostReboot: ServiceFunction<object, T, object>;
-    // Creates a full backup.
-    backupFull: ServiceFunction<
-      object,
-      T,
-      {
-        // Optional (default = current date and time). @example Backup 1
-        name?: string;
-        // Password to protect the backup with. @example password
-        password?: string;
-        // Compresses the backup files.
-        compressed?: boolean;
-        // Name of a backup network storage to host backups. @example my_backup_mount
-        location?: string;
-        // Exclude the Home Assistant database file from the backup.
-        homeassistant_exclude_database?: boolean;
-      }
-    >;
-    // Creates a partial backup.
-    backupPartial: ServiceFunction<
-      object,
-      T,
-      {
-        // Includes Home Assistant settings in the backup.
-        homeassistant?: boolean;
-        // Exclude the Home Assistant database file from the backup.
-        homeassistant_exclude_database?: boolean;
-        // List of add-ons to include in the backup. Use the name slug of each add-on. @example core_ssh,core_samba,core_mosquitto
-        addons?: object;
-        // List of directories to include in the backup. @example homeassistant,share
-        folders?: object;
-        // Optional (default = current date and time). @example Partial backup 1
-        name?: string;
-        // Password to protect the backup with. @example password
-        password?: string;
-        // Compresses the backup files.
-        compressed?: boolean;
-        // Name of a backup network storage to host backups. @example my_backup_mount
-        location?: string;
-      }
-    >;
-    // Restores from full backup.
-    restoreFull: ServiceFunction<
-      object,
-      T,
-      {
-        // Slug of backup to restore from.
-        slug: string;
-        // Optional password. @example password
-        password?: string;
-      }
-    >;
-    // Restores from a partial backup.
-    restorePartial: ServiceFunction<
-      object,
-      T,
-      {
-        // Slug of backup to restore from.
-        slug: string;
-        // Restores Home Assistant.
-        homeassistant?: boolean;
-        // List of directories to restore from the backup. @example homeassistant,share
-        folders?: object;
-        // List of add-ons to restore from the backup. Use the name slug of each add-on. @example core_ssh,core_samba,core_mosquitto
-        addons?: object;
-        // Optional password. @example password
-        password?: string;
-      }
-    >;
-  };
-  update: {
-    // Installs an update for a device or service.
-    install: ServiceFunction<
-      object,
-      T,
-      {
-        // The version to install. If omitted, the latest version will be installed. @example 1.0.0
-        version?: string;
-        // If supported by the integration, this creates a backup before starting the update.
-        backup?: boolean;
-      }
-    >;
-    // Marks currently available update as skipped.
-    skip: ServiceFunction<object, T, object>;
-    // Removes the skipped version marker from an update.
-    clearSkipped: ServiceFunction<object, T, object>;
-  };
-  cloud: {
-    // Makes the instance UI accessible from outside of the local network by enabling your Home Assistant Cloud connection.
-    remoteConnect: ServiceFunction<object, T, object>;
-    // Disconnects the instance UI from Home Assistant Cloud. This disables access to it from outside your local network.
-    remoteDisconnect: ServiceFunction<object, T, object>;
-  };
-  tts: {
-    // Speaks something using text-to-speech on a media player.
-    speak: ServiceFunction<
-      object,
-      T,
-      {
-        // Media players to play the message.
-        media_player_entity_id: string;
-        // The text you want to convert into speech so that you can listen to it on your device. @example My name is hanna
-        message: string;
-        // Stores this message locally so that when the text is requested again, the output can be produced more quickly.
-        cache?: boolean;
-        // Language to use for speech generation. @example ru
-        language?: string;
-        // A dictionary containing integration-specific options. @example platform specific
-        options?: object;
-      }
-    >;
-    // Removes all cached text-to-speech files and purges the memory.
-    clearCache: ServiceFunction<object, T, object>;
-    // Say something using text-to-speech on a media player with cloud.
-    cloudSay: ServiceFunction<
-      object,
-      T,
-      {
-        //
-        entity_id: string;
-        //  @example My name is hanna
-        message: string;
-        //
-        cache?: boolean;
-        //  @example ru
-        language?: string;
-        //  @example platform specific
-        options?: object;
-      }
-    >;
-    // Say something using text-to-speech on a media player with google_translate.
-    googleTranslateSay: ServiceFunction<
-      object,
-      T,
-      {
-        //
-        entity_id: string;
-        //  @example My name is hanna
-        message: string;
-        //
-        cache?: boolean;
-        //  @example ru
-        language?: string;
-        //  @example platform specific
-        options?: object;
-      }
-    >;
-  };
-  conversation: {
-    // Launches a conversation from a transcribed text.
-    process: ServiceFunction<
-      object,
-      T,
-      {
-        // Transcribed text input. @example Turn all lights on
-        text: string;
-        // Language of text. Defaults to server language. @example NL
-        language?: string;
-        // Conversation agent to process your request. The conversation agent is the brains of your assistant. It processes the incoming text commands. @example homeassistant
-        agent_id?: string;
-        // ID of the conversation, to be able to continue a previous conversation @example my_conversation_1
-        conversation_id?: string;
-      }
-    >;
-    // Reloads the intent configuration.
-    reload: ServiceFunction<
-      object,
-      T,
-      {
-        // Language to clear cached intents for. Defaults to server language. @example NL
-        language?: string;
-        // Conversation agent to reload. @example homeassistant
-        agent_id?: string;
-      }
-    >;
-  };
-  scene: {
-    // Activates a scene.
-    turnOn: ServiceFunction<
-      object,
-      T,
-      {
-        // Time it takes the devices to transition into the states defined in the scene. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
-        transition?: number;
-      }
-    >;
-    // Reloads the scenes from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-    // Activates a scene with configuration.
-    apply: ServiceFunction<
-      object,
-      T,
-      {
-        // List of entities and their target state. @example light.kitchen: 'on' light.ceiling:   state: 'on'   brightness: 80
-        entities: object;
-        // Time it takes the devices to transition into the states defined in the scene. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
-        transition?: number;
-      }
-    >;
-    // Creates a new scene.
-    create: ServiceFunction<
-      object,
-      T,
-      {
-        // The entity ID of the new scene. @example all_lights
-        scene_id: string;
-        // List of entities and their target state. If your entities are already in the target state right now, use 'Entities snapshot' instead. @example light.tv_back_light: 'on' light.ceiling:   state: 'on'   brightness: 200
-        entities?: object;
-        // List of entities to be included in the snapshot. By taking a snapshot, you record the current state of those entities. If you do not want to use the current state of all your entities for this scene, you can combine 'Entities snapshot' with 'Entity states'. @example - light.ceiling - light.kitchen
-        snapshot_entities?: string;
-      }
-    >;
-    // Deletes a dynamically created scene.
-    delete: ServiceFunction<object, T, object>;
   };
   mediaPlayer: {
     // Turns on the power of the media player.
@@ -533,6 +265,21 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         media_content_id?: string | number;
       }
     >;
+    // Searches the available media.
+    searchMedia: ServiceFunction<
+      object,
+      T,
+      {
+        // The term to search for. @example Beatles
+        search_query: string;
+        // The type of the content to browse, such as image, music, tv show, video, episode, channel, or playlist. @example music
+        media_content_type?: string;
+        // The ID of the content to browse. Integration dependent. @example A:ALBUMARTIST/Beatles
+        media_content_id?: string | number;
+        // List of media classes to filter the search results by. @example album,artist
+        media_filter_classes?: string;
+      }
+    >;
     // Enables or disables the shuffle mode.
     shuffleSet: ServiceFunction<
       object,
@@ -553,6 +300,226 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         repeat: "off" | "all" | "one";
       }
     >;
+  };
+  hassio: {
+    // Starts an add-on.
+    addonStart: ServiceFunction<
+      object,
+      T,
+      {
+        // The add-on to start. @example core_ssh
+        addon: string;
+      }
+    >;
+    // Stops an add-on.
+    addonStop: ServiceFunction<
+      object,
+      T,
+      {
+        // The add-on to stop. @example core_ssh
+        addon: string;
+      }
+    >;
+    // Restarts an add-on.
+    addonRestart: ServiceFunction<
+      object,
+      T,
+      {
+        // The add-on to restart. @example core_ssh
+        addon: string;
+      }
+    >;
+    // Writes data to the add-on's standard input.
+    addonStdin: ServiceFunction<
+      object,
+      T,
+      {
+        // The add-on to write to. @example core_ssh
+        addon: string;
+      }
+    >;
+    // Powers off the host system.
+    hostShutdown: ServiceFunction<object, T, object>;
+    // Reboots the host system.
+    hostReboot: ServiceFunction<object, T, object>;
+    // Creates a full backup.
+    backupFull: ServiceFunction<
+      object,
+      T,
+      {
+        // Optional (default = current date and time). @example Backup 1
+        name?: string;
+        // Password to protect the backup with. @example password
+        password?: string;
+        // Compresses the backup files.
+        compressed?: boolean;
+        // Name of a backup network storage to host backups. @example my_backup_mount
+        location?: string;
+        // Exclude the Home Assistant database file from the backup.
+        homeassistant_exclude_database?: boolean;
+      }
+    >;
+    // Creates a partial backup.
+    backupPartial: ServiceFunction<
+      object,
+      T,
+      {
+        // Includes Home Assistant settings in the backup.
+        homeassistant?: boolean;
+        // Exclude the Home Assistant database file from the backup.
+        homeassistant_exclude_database?: boolean;
+        // List of add-ons to include in the backup. Use the name slug of each add-on. @example core_ssh,core_samba,core_mosquitto
+        addons?: object;
+        // List of directories to include in the backup. @example homeassistant,share
+        folders?: object;
+        // Optional (default = current date and time). @example Partial backup 1
+        name?: string;
+        // Password to protect the backup with. @example password
+        password?: string;
+        // Compresses the backup files.
+        compressed?: boolean;
+        // Name of a backup network storage to host backups. @example my_backup_mount
+        location?: string;
+      }
+    >;
+    // Restores from full backup.
+    restoreFull: ServiceFunction<
+      object,
+      T,
+      {
+        // Slug of backup to restore from.
+        slug: string;
+        // Optional password. @example password
+        password?: string;
+      }
+    >;
+    // Restores from a partial backup.
+    restorePartial: ServiceFunction<
+      object,
+      T,
+      {
+        // Slug of backup to restore from.
+        slug: string;
+        // Restores Home Assistant.
+        homeassistant?: boolean;
+        // List of directories to restore from the backup. @example homeassistant,share
+        folders?: object;
+        // List of add-ons to restore from the backup. Use the name slug of each add-on. @example core_ssh,core_samba,core_mosquitto
+        addons?: object;
+        // Optional password. @example password
+        password?: string;
+      }
+    >;
+  };
+  update: {
+    // Installs an update for a device or service.
+    install: ServiceFunction<
+      object,
+      T,
+      {
+        // The version to install. If omitted, the latest version will be installed. @example 1.0.0
+        version?: string;
+        // If supported by the integration, this creates a backup before starting the update.
+        backup?: boolean;
+      }
+    >;
+    // Marks currently available update as skipped.
+    skip: ServiceFunction<object, T, object>;
+    // Removes the skipped version marker from an update.
+    clearSkipped: ServiceFunction<object, T, object>;
+  };
+  conversation: {
+    // Launches a conversation from a transcribed text.
+    process: ServiceFunction<
+      object,
+      T,
+      {
+        // Transcribed text input. @example Turn all lights on
+        text: string;
+        // Language of text. Defaults to server language. @example NL
+        language?: string;
+        // Conversation agent to process your request. The conversation agent is the brains of your assistant. It processes the incoming text commands. @example homeassistant
+        agent_id?: string;
+        // ID of the conversation, to be able to continue a previous conversation @example my_conversation_1
+        conversation_id?: string;
+      }
+    >;
+    // Reloads the intent configuration.
+    reload: ServiceFunction<
+      object,
+      T,
+      {
+        // Language to clear cached intents for. Defaults to server language. @example NL
+        language?: string;
+        // Conversation agent to reload. @example homeassistant
+        agent_id?: string;
+      }
+    >;
+  };
+  backup: {
+    // Creates a new backup with automatic backup settings.
+    createAutomatic: ServiceFunction<object, T, object>;
+  };
+  tts: {
+    // Speaks something using text-to-speech on a media player.
+    speak: ServiceFunction<
+      object,
+      T,
+      {
+        // Media players to play the message.
+        media_player_entity_id: string;
+        // The text you want to convert into speech so that you can listen to it on your device. @example My name is hanna
+        message: string;
+        // Stores this message locally so that when the text is requested again, the output can be produced more quickly.
+        cache?: boolean;
+        // Language to use for speech generation. @example ru
+        language?: string;
+        // A dictionary containing integration-specific options. @example platform specific
+        options?: object;
+      }
+    >;
+    // Removes all cached text-to-speech files and purges the memory.
+    clearCache: ServiceFunction<object, T, object>;
+    // Say something using text-to-speech on a media player with google_translate.
+    googleTranslateSay: ServiceFunction<
+      object,
+      T,
+      {
+        //
+        entity_id: string;
+        //  @example My name is hanna
+        message: string;
+        //
+        cache?: boolean;
+        //  @example ru
+        language?: string;
+        //  @example platform specific
+        options?: object;
+      }
+    >;
+    // Say something using text-to-speech on a media player with cloud.
+    cloudSay: ServiceFunction<
+      object,
+      T,
+      {
+        //
+        entity_id: string;
+        //  @example My name is hanna
+        message: string;
+        //
+        cache?: boolean;
+        //  @example ru
+        language?: string;
+        //  @example platform specific
+        options?: object;
+      }
+    >;
+  };
+  cloud: {
+    // Makes the instance UI accessible from outside of the local network by enabling your Home Assistant Cloud connection.
+    remoteConnect: ServiceFunction<object, T, object>;
+    // Disconnects the instance UI from Home Assistant Cloud. This disables access to it from outside your local network.
+    remoteDisconnect: ServiceFunction<object, T, object>;
   };
   group: {
     // Reloads group configuration, entities, and notify services from YAML-configuration.
@@ -599,7 +566,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // The color in RGB format. A list of three integers between 0 and 255 representing the values of red, green, and blue. @example [255, 100, 100]
         rgb_color?: [number, number, number];
         // Color temperature in Kelvin. @constraints  color_temp: unit: kelvin, min: 2000, max: 6500
-        kelvin?: number | object;
+        color_temp_kelvin?: unknown;
         // Number indicating the percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness, and 100 is the maximum brightness. @constraints  number: min: 0, max: 100, unit_of_measurement: %
         brightness_pct?: number;
         // Change brightness by a percentage. @constraints  number: min: -100, max: 100, unit_of_measurement: %
@@ -799,7 +766,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // The color in RGB format. A list of three integers between 0 and 255 representing the values of red, green, and blue. @example [255, 100, 100]
         rgb_color?: [number, number, number];
         // Color temperature in Kelvin. @constraints  color_temp: unit: kelvin, min: 2000, max: 6500
-        kelvin?: number | object;
+        color_temp_kelvin?: unknown;
         // Number indicating the percentage of full brightness, where 0 turns the light off, 1 is the minimum brightness, and 100 is the maximum brightness. @constraints  number: min: 0, max: 100, unit_of_measurement: %
         brightness_pct?: number;
         // Light effect.
@@ -975,20 +942,85 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  logbook: {
-    // Creates a custom entry in the logbook.
-    log: ServiceFunction<
+  scene: {
+    // Activates a scene.
+    turnOn: ServiceFunction<
       object,
       T,
       {
-        // Custom name for an entity, can be referenced using the 'Entity ID' field. @example Kitchen
-        name: string;
-        // Message of the logbook entry. @example is being used
-        message: string;
-        // Entity to reference in the logbook entry.
-        entity_id?: string;
-        // Determines which icon is used in the logbook entry. The icon illustrates the integration domain related to this logbook entry. @example light
-        domain?: string;
+        // Time it takes the devices to transition into the states defined in the scene. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
+        transition?: number;
+      }
+    >;
+    // Reloads the scenes from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+    // Activates a scene with configuration.
+    apply: ServiceFunction<
+      object,
+      T,
+      {
+        // List of entities and their target state. @example light.kitchen: 'on' light.ceiling:   state: 'on'   brightness: 80
+        entities: object;
+        // Time it takes the devices to transition into the states defined in the scene. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
+        transition?: number;
+      }
+    >;
+    // Creates a new scene.
+    create: ServiceFunction<
+      object,
+      T,
+      {
+        // The entity ID of the new scene. @example all_lights
+        scene_id: string;
+        // List of entities and their target state. If your entities are already in the target state right now, use 'Entities snapshot' instead. @example light.tv_back_light: 'on' light.ceiling:   state: 'on'   brightness: 200
+        entities?: object;
+        // List of entities to be included in the snapshot. By taking a snapshot, you record the current state of those entities. If you do not want to use the current state of all your entities for this scene, you can combine 'Entities snapshot' with 'Entity states'. @example - light.ceiling - light.kitchen
+        snapshot_entities?: string;
+      }
+    >;
+    // Deletes a dynamically created scene.
+    delete: ServiceFunction<object, T, object>;
+  };
+  camera: {
+    // Enables the motion detection.
+    enableMotionDetection: ServiceFunction<object, T, object>;
+    // Disables the motion detection.
+    disableMotionDetection: ServiceFunction<object, T, object>;
+    // Turns off the camera.
+    turnOff: ServiceFunction<object, T, object>;
+    // Turns on the camera.
+    turnOn: ServiceFunction<object, T, object>;
+    // Takes a snapshot from a camera.
+    snapshot: ServiceFunction<
+      object,
+      T,
+      {
+        // Full path to filename. @example /tmp/snapshot_{{ entity_id.name }}.jpg
+        filename: string;
+      }
+    >;
+    // Plays the camera stream on a supported media player.
+    playStream: ServiceFunction<
+      object,
+      T,
+      {
+        // Media players to stream to.
+        media_player: string;
+        // Stream format supported by the media player.
+        format?: "hls";
+      }
+    >;
+    // Creates a recording of a live camera feed.
+    record: ServiceFunction<
+      object,
+      T,
+      {
+        // Full path to filename. Must be mp4. @example /tmp/snapshot_{{ entity_id.name }}.mp4
+        filename: string;
+        // Planned duration of the recording. The actual duration may vary. @constraints  number: min: 1, max: 3600, unit_of_measurement: seconds
+        duration?: number;
+        // Planned lookback period to include in the recording (in addition to the duration). Only available if there is currently an active HLS stream. The actual length of the lookback period may vary. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
+        lookback?: number;
       }
     >;
   };
@@ -1036,13 +1068,26 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  backup: {
-    // Creates a new backup with automatic backup settings.
-    createAutomatic: ServiceFunction<object, T, object>;
-  };
   zone: {
     // Reloads zones from the YAML-configuration.
     reload: ServiceFunction<object, T, object>;
+  };
+  logbook: {
+    // Creates a custom entry in the logbook.
+    log: ServiceFunction<
+      object,
+      T,
+      {
+        // Custom name for an entity, can be referenced using the 'Entity ID' field. @example Kitchen
+        name: string;
+        // Message of the logbook entry. @example is being used
+        message: string;
+        // Entity to reference in the logbook entry.
+        entity_id?: string;
+        // Determines which icon is used in the logbook entry. The icon illustrates the integration domain related to this logbook entry. @example light
+        domain?: string;
+      }
+    >;
   };
   script: {
     // Reloads all the available scripts.
@@ -1053,6 +1098,12 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     turnOff: ServiceFunction<object, T, object>;
     // Starts a script if it isn't running, stops it otherwise.
     toggle: ServiceFunction<object, T, object>;
+  };
+  inputButton: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+    // Mimics the physical button press on the device.
+    press: ServiceFunction<object, T, object>;
   };
   inputNumber: {
     // Reloads helpers from the YAML-configuration.
@@ -1070,55 +1121,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     increment: ServiceFunction<object, T, object>;
     // Decrements the current value by 1 step.
     decrement: ServiceFunction<object, T, object>;
-  };
-  inputButton: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-    // Mimics the physical button press on the device.
-    press: ServiceFunction<object, T, object>;
-  };
-  camera: {
-    // Enables the motion detection.
-    enableMotionDetection: ServiceFunction<object, T, object>;
-    // Disables the motion detection.
-    disableMotionDetection: ServiceFunction<object, T, object>;
-    // Turns off the camera.
-    turnOff: ServiceFunction<object, T, object>;
-    // Turns on the camera.
-    turnOn: ServiceFunction<object, T, object>;
-    // Takes a snapshot from a camera.
-    snapshot: ServiceFunction<
-      object,
-      T,
-      {
-        // Full path to filename. @example /tmp/snapshot_{{ entity_id.name }}.jpg
-        filename: string;
-      }
-    >;
-    // Plays the camera stream on a supported media player.
-    playStream: ServiceFunction<
-      object,
-      T,
-      {
-        // Media players to stream to.
-        media_player: string;
-        // Stream format supported by the media player.
-        format?: "hls";
-      }
-    >;
-    // Creates a recording of a live camera feed.
-    record: ServiceFunction<
-      object,
-      T,
-      {
-        // Full path to filename. Must be mp4. @example /tmp/snapshot_{{ entity_id.name }}.mp4
-        filename: string;
-        // Planned duration of the recording. The actual duration may vary. @constraints  number: min: 1, max: 3600, unit_of_measurement: seconds
-        duration?: number;
-        // Planned lookback period to include in the recording (in addition to the duration). Only available if there is currently an active HLS stream. The actual length of the lookback period may vary. @constraints  number: min: 0, max: 300, unit_of_measurement: seconds
-        lookback?: number;
-      }
-    >;
   };
   inputBoolean: {
     // Reloads helpers from the YAML-configuration.
@@ -1158,120 +1160,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  lock: {
-    // Unlocks a lock.
-    unlock: ServiceFunction<
-      object,
-      T,
-      {
-        // Code used to unlock the lock. @example 1234
-        code?: string;
-      }
-    >;
-    // Locks a lock.
-    lock: ServiceFunction<
-      object,
-      T,
-      {
-        // Code used to lock the lock. @example 1234
-        code?: string;
-      }
-    >;
-    // Opens a lock.
-    open: ServiceFunction<
-      object,
-      T,
-      {
-        // Code used to open the lock. @example 1234
-        code?: string;
-      }
-    >;
-  };
-  lawnMower: {
-    // Starts the mowing task.
-    startMowing: ServiceFunction<object, T, object>;
-    // Pauses the mowing task.
-    pause: ServiceFunction<object, T, object>;
-    // Stops the mowing task and returns to the dock.
-    dock: ServiceFunction<object, T, object>;
-  };
-  switch: {
-    // Turns a switch off.
-    turnOff: ServiceFunction<object, T, object>;
-    // Turns a switch on.
-    turnOn: ServiceFunction<object, T, object>;
-    // Toggles a switch on/off.
-    toggle: ServiceFunction<object, T, object>;
-  };
-  vacuum: {
-    // Starts or resumes the cleaning task.
-    start: ServiceFunction<object, T, object>;
-    // Pauses the cleaning task.
-    pause: ServiceFunction<object, T, object>;
-    // Tells the vacuum cleaner to return to its dock.
-    returnToBase: ServiceFunction<object, T, object>;
-    // Tells the vacuum cleaner to do a spot clean-up.
-    cleanSpot: ServiceFunction<object, T, object>;
-    // Locates the vacuum cleaner robot.
-    locate: ServiceFunction<object, T, object>;
-    // Stops the current cleaning task.
-    stop: ServiceFunction<object, T, object>;
-    // Sets the fan speed of the vacuum cleaner.
-    setFanSpeed: ServiceFunction<
-      object,
-      T,
-      {
-        // Fan speed. The value depends on the integration. Some integrations have speed steps, like 'medium'. Some use a percentage, between 0 and 100. @example low
-        fan_speed: string;
-      }
-    >;
-    // Sends a command to the vacuum cleaner.
-    sendCommand: ServiceFunction<
-      object,
-      T,
-      {
-        // Command to execute. The commands are integration-specific. @example set_dnd_timer
-        command: string;
-        // Parameters for the command. The parameters are integration-specific. @example { 'key': 'value' }
-        params?: object;
-      }
-    >;
-  };
-  cover: {
-    // Opens a cover.
-    openCover: ServiceFunction<object, T, object>;
-    // Closes a cover.
-    closeCover: ServiceFunction<object, T, object>;
-    // Moves a cover to a specific position.
-    setCoverPosition: ServiceFunction<
-      object,
-      T,
-      {
-        // Target position. @constraints  number: min: 0, max: 100, unit_of_measurement: %
-        position: number;
-      }
-    >;
-    // Stops the cover movement.
-    stopCover: ServiceFunction<object, T, object>;
-    // Toggles a cover open/closed.
-    toggle: ServiceFunction<object, T, object>;
-    // Tilts a cover open.
-    openCoverTilt: ServiceFunction<object, T, object>;
-    // Tilts a cover to close.
-    closeCoverTilt: ServiceFunction<object, T, object>;
-    // Stops a tilting cover movement.
-    stopCoverTilt: ServiceFunction<object, T, object>;
-    // Moves a cover tilt to a specific position.
-    setCoverTiltPosition: ServiceFunction<
-      object,
-      T,
-      {
-        // Target tilt positition. @constraints  number: min: 0, max: 100, unit_of_measurement: %
-        tilt_position: number;
-      }
-    >;
-    // Toggles a cover tilt open/closed.
-    toggleCoverTilt: ServiceFunction<object, T, object>;
+  person: {
+    // Reloads persons from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
   };
   valve: {
     // Opens a valve.
@@ -1291,40 +1182,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     stopValve: ServiceFunction<object, T, object>;
     // Toggles a valve open/closed.
     toggle: ServiceFunction<object, T, object>;
-  };
-  assistSatellite: {
-    // Lets a satellite announce a message.
-    announce: ServiceFunction<
-      object,
-      T,
-      {
-        // The message to announce. @example Time to wake up!
-        message?: string;
-        // The media ID to announce instead of using text-to-speech.
-        media_id?: string;
-        // Play a sound before the announcement.
-        preannounce?: boolean;
-        // Custom media ID to play before the announcement.
-        preannounce_media_id?: string;
-      }
-    >;
-    // Starts a conversation from a satellite.
-    startConversation: ServiceFunction<
-      object,
-      T,
-      {
-        // The message to start with. @example You left the lights on in the living room. Turn them off?
-        start_message?: string;
-        // The media ID to start with instead of using text-to-speech.
-        start_media_id?: string;
-        // Provide background information to the AI about the request.
-        extra_system_prompt?: string;
-        // Play a sound before the start message or media.
-        preannounce?: boolean;
-        // Custom media ID to play before the start message or media.
-        preannounce_media_id?: string;
-      }
-    >;
   };
   alarmControlPanel: {
     // Disarms the alarm.
@@ -1391,33 +1248,238 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  inputText: {
-    // Reloads helpers from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-    // Sets the value.
+  switch: {
+    // Turns a switch off.
+    turnOff: ServiceFunction<object, T, object>;
+    // Turns a switch on.
+    turnOn: ServiceFunction<object, T, object>;
+    // Toggles a switch on/off.
+    toggle: ServiceFunction<object, T, object>;
+  };
+  cover: {
+    // Opens a cover.
+    openCover: ServiceFunction<object, T, object>;
+    // Closes a cover.
+    closeCover: ServiceFunction<object, T, object>;
+    // Moves a cover to a specific position.
+    setCoverPosition: ServiceFunction<
+      object,
+      T,
+      {
+        // Target position. @constraints  number: min: 0, max: 100, unit_of_measurement: %
+        position: number;
+      }
+    >;
+    // Stops the cover movement.
+    stopCover: ServiceFunction<object, T, object>;
+    // Toggles a cover open/closed.
+    toggle: ServiceFunction<object, T, object>;
+    // Tilts a cover open.
+    openCoverTilt: ServiceFunction<object, T, object>;
+    // Tilts a cover to close.
+    closeCoverTilt: ServiceFunction<object, T, object>;
+    // Stops a tilting cover movement.
+    stopCoverTilt: ServiceFunction<object, T, object>;
+    // Moves a cover tilt to a specific position.
+    setCoverTiltPosition: ServiceFunction<
+      object,
+      T,
+      {
+        // Target tilt positition. @constraints  number: min: 0, max: 100, unit_of_measurement: %
+        tilt_position: number;
+      }
+    >;
+    // Toggles a cover tilt open/closed.
+    toggleCoverTilt: ServiceFunction<object, T, object>;
+  };
+  lawnMower: {
+    // Starts the mowing task.
+    startMowing: ServiceFunction<object, T, object>;
+    // Pauses the mowing task.
+    pause: ServiceFunction<object, T, object>;
+    // Stops the mowing task and returns to the dock.
+    dock: ServiceFunction<object, T, object>;
+  };
+  lock: {
+    // Unlocks a lock.
+    unlock: ServiceFunction<
+      object,
+      T,
+      {
+        // Code used to unlock the lock. @example 1234
+        code?: string;
+      }
+    >;
+    // Locks a lock.
+    lock: ServiceFunction<
+      object,
+      T,
+      {
+        // Code used to lock the lock. @example 1234
+        code?: string;
+      }
+    >;
+    // Opens a lock.
+    open: ServiceFunction<
+      object,
+      T,
+      {
+        // Code used to open the lock. @example 1234
+        code?: string;
+      }
+    >;
+  };
+  vacuum: {
+    // Starts or resumes the cleaning task.
+    start: ServiceFunction<object, T, object>;
+    // Pauses the cleaning task.
+    pause: ServiceFunction<object, T, object>;
+    // Tells the vacuum cleaner to return to its dock.
+    returnToBase: ServiceFunction<object, T, object>;
+    // Tells the vacuum cleaner to do a spot clean-up.
+    cleanSpot: ServiceFunction<object, T, object>;
+    // Locates the vacuum cleaner robot.
+    locate: ServiceFunction<object, T, object>;
+    // Stops the current cleaning task.
+    stop: ServiceFunction<object, T, object>;
+    // Sets the fan speed of the vacuum cleaner.
+    setFanSpeed: ServiceFunction<
+      object,
+      T,
+      {
+        // Fan speed. The value depends on the integration. Some integrations have speed steps, like 'medium'. Some use a percentage, between 0 and 100. @example low
+        fan_speed: string;
+      }
+    >;
+    // Sends a command to the vacuum cleaner.
+    sendCommand: ServiceFunction<
+      object,
+      T,
+      {
+        // Command to execute. The commands are integration-specific. @example set_dnd_timer
+        command: string;
+        // Parameters for the command. The parameters are integration-specific. @example { 'key': 'value' }
+        params?: object;
+      }
+    >;
+  };
+  assistSatellite: {
+    // Lets a satellite announce a message.
+    announce: ServiceFunction<
+      object,
+      T,
+      {
+        // The message to announce. @example Time to wake up!
+        message?: string;
+        // The media ID to announce instead of using text-to-speech.
+        media_id?: string;
+        // Play a sound before the announcement.
+        preannounce?: boolean;
+        // Custom media ID to play before the announcement.
+        preannounce_media_id?: string;
+      }
+    >;
+    // Starts a conversation from a satellite.
+    startConversation: ServiceFunction<
+      object,
+      T,
+      {
+        // The message to start with. @example You left the lights on in the living room. Turn them off?
+        start_message?: string;
+        // The media ID to start with instead of using text-to-speech.
+        start_media_id?: string;
+        // Provide background information to the AI about the request.
+        extra_system_prompt?: string;
+        // Play a sound before the start message or media.
+        preannounce?: boolean;
+        // Custom media ID to play before the start message or media.
+        preannounce_media_id?: string;
+      }
+    >;
+  };
+  counter: {
+    // Increments a counter by its step size.
+    increment: ServiceFunction<object, T, object>;
+    // Decrements a counter by its step size.
+    decrement: ServiceFunction<object, T, object>;
+    // Resets a counter to its initial value.
+    reset: ServiceFunction<object, T, object>;
+    // Sets the counter to a specific value.
     setValue: ServiceFunction<
       object,
       T,
       {
-        // The target value. @example This is an example text
-        value: string;
+        // The new counter value the entity should be set to. @constraints  number: min: 0, max: 9223372036854776000, mode: box
+        value: number;
       }
     >;
   };
-  cast: {
-    // Shows a dashboard view on a Chromecast device.
-    showLovelaceView: ServiceFunction<
+  inputDatetime: {
+    // Reloads helpers from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+    // Sets the date and/or time.
+    setDatetime: ServiceFunction<
       object,
       T,
       {
-        // Media player entity to show the dashboard view on.
-        entity_id: string;
-        // The URL path of the dashboard to show, defaults to lovelace if not specified. @example lovelace-cast
-        dashboard_path?: string;
-        // The URL path of the dashboard view to show. @example downstairs
-        view_path: string;
+        // The target date. @example '2019-04-20'
+        date?: string;
+        // The target time. @example '05:04:20'
+        time?: string;
+        // The target date & time. @example '2019-04-20 05:04:20'
+        datetime?: string;
+        // The target date & time, expressed by a UNIX timestamp. @constraints  number: min: 0, max: 9223372036854776000, mode: box
+        timestamp?: number;
       }
     >;
+  };
+  reolink: {
+    // Plays a ringtone on a Reolink Chime.
+    playChime: ServiceFunction<
+      object,
+      T,
+      {
+        // The Reolink Chime to play the ringtone on.
+        device_id: string;
+        // Ringtone to play.
+        ringtone:
+          | "citybird"
+          | "originaltune"
+          | "pianokey"
+          | "loop"
+          | "attraction"
+          | "hophop"
+          | "goodday"
+          | "operetta"
+          | "moonlight"
+          | "waybackhome";
+      }
+    >;
+    // Moves the camera with a specific speed.
+    ptzMove: ServiceFunction<
+      object,
+      T,
+      {
+        // PTZ move speed. @constraints  number: min: 1, max: 64, step: 1
+        speed: number;
+      }
+    >;
+  };
+  commandLine: {
+    // Reloads command line configuration from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+  };
+  restCommand: {
+    //
+    assistantRelay: ServiceFunction<object, T, object>;
+    // Reloads RESTful commands from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+  };
+  schedule: {
+    // Reloads schedules from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+    // Retrieves the configured time ranges of one or multiple schedules.
+    getSchedule: ServiceFunction<object, T, object>;
   };
   profiler: {
     // Starts the Profiler.
@@ -1489,75 +1551,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // Logs all the current asyncio tasks.
     logCurrentTasks: ServiceFunction<object, T, object>;
   };
-  template: {
-    // Reloads template entities from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-  };
-  schedule: {
-    // Reloads schedules from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-    // Retrieves the configured time ranges of one or multiple schedules.
-    getSchedule: ServiceFunction<object, T, object>;
-  };
-  restCommand: {
-    //
-    assistantRelay: ServiceFunction<object, T, object>;
-    // Reloads RESTful commands from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-  };
-  reolink: {
-    // Plays a ringtone on a Reolink Chime.
-    playChime: ServiceFunction<
-      object,
-      T,
-      {
-        // The Reolink Chime to play the ringtone on.
-        device_id: string;
-        // Ringtone to play.
-        ringtone:
-          | "citybird"
-          | "originaltune"
-          | "pianokey"
-          | "loop"
-          | "attraction"
-          | "hophop"
-          | "goodday"
-          | "operetta"
-          | "moonlight"
-          | "waybackhome";
-      }
-    >;
-    // Moves the camera with a specific speed.
-    ptzMove: ServiceFunction<
-      object,
-      T,
-      {
-        // PTZ move speed. @constraints  number: min: 1, max: 64, step: 1
-        speed: number;
-      }
-    >;
-  };
-  commandLine: {
-    // Reloads command line configuration from the YAML-configuration.
-    reload: ServiceFunction<object, T, object>;
-  };
-  counter: {
-    // Increments a counter by its step size.
-    increment: ServiceFunction<object, T, object>;
-    // Decrements a counter by its step size.
-    decrement: ServiceFunction<object, T, object>;
-    // Resets a counter to its initial value.
-    reset: ServiceFunction<object, T, object>;
-    // Sets the counter to a specific value.
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        // The new counter value the entity should be set to. @constraints  number: min: 0, max: 9223372036854776000, mode: box
-        value: number;
-      }
-    >;
-  };
   mediaExtractor: {
     // Extract media URL from a service.
     extractMediaUrl: ServiceFunction<
@@ -1582,22 +1575,64 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  inputDatetime: {
+  inputText: {
     // Reloads helpers from the YAML-configuration.
     reload: ServiceFunction<object, T, object>;
-    // Sets the date and/or time.
-    setDatetime: ServiceFunction<
+    // Sets the value.
+    setValue: ServiceFunction<
       object,
       T,
       {
-        // The target date. @example '2019-04-20'
-        date?: string;
-        // The target time. @example '05:04:20'
-        time?: string;
-        // The target date & time. @example '2019-04-20 05:04:20'
-        datetime?: string;
-        // The target date & time, expressed by a UNIX timestamp. @constraints  number: min: 0, max: 9223372036854776000, mode: box
-        timestamp?: number;
+        // The target value. @example This is an example text
+        value: string;
+      }
+    >;
+  };
+  cast: {
+    // Shows a dashboard view on a Chromecast device.
+    showLovelaceView: ServiceFunction<
+      object,
+      T,
+      {
+        // Media player entity to show the dashboard view on.
+        entity_id: string;
+        // The URL path of the dashboard to show, defaults to lovelace if not specified. @example lovelace-cast
+        dashboard_path?: string;
+        // The URL path of the dashboard view to show. @example downstairs
+        view_path: string;
+      }
+    >;
+  };
+  template: {
+    // Reloads template entities from the YAML-configuration.
+    reload: ServiceFunction<object, T, object>;
+  };
+  button: {
+    // Press the button entity.
+    press: ServiceFunction<object, T, object>;
+  };
+  onvif: {
+    // If your ONVIF camera supports PTZ, you will be able to pan, tilt or zoom your camera.
+    ptz: ServiceFunction<
+      object,
+      T,
+      {
+        // Tilt direction.
+        tilt?: "DOWN" | "UP";
+        // Pan direction.
+        pan?: "LEFT" | "RIGHT";
+        // Zoom.
+        zoom?: "ZOOM_IN" | "ZOOM_OUT";
+        // Distance coefficient. Sets how much PTZ should be executed in one request. @constraints  number: min: 0, max: 1, step: 0.01
+        distance?: number;
+        // Speed coefficient. Sets how fast PTZ will be executed. @constraints  number: min: 0, max: 1, step: 0.01
+        speed?: number;
+        // Set ContinuousMove delay in seconds before stopping the move. @constraints  number: min: 0, max: 1, step: 0.01
+        continuous_duration?: number;
+        // PTZ preset profile token. Sets the preset profile token which is executed with GotoPreset. @example 1
+        preset?: string;
+        // PTZ moving mode.
+        move_mode?: "AbsoluteMove" | "ContinuousMove" | "GotoPreset" | "RelativeMove" | "Stop";
       }
     >;
   };
@@ -1654,6 +1689,29 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         target?: object;
         //  @example platform specific
         data?: object;
+      }
+    >;
+  };
+  deviceTracker: {
+    // Manually update the records of a seen legacy device tracker in the known_devices.yaml file.
+    see: ServiceFunction<
+      object,
+      T,
+      {
+        // MAC address of the device. @example FF:FF:FF:FF:FF:FF
+        mac?: string;
+        // ID of the device (find the ID in `known_devices.yaml`). @example phonedave
+        dev_id?: string;
+        // Hostname of the device. @example Dave
+        host_name?: string;
+        // Name of the location where the device is located. The options are: `home`, `not_home`, or the name of the zone. @example home
+        location_name?: string;
+        // GPS coordinates where the device is located, specified by latitude and longitude (for example: [51.513845, -0.100539]). @example [51.509802, -0.086692]
+        gps?: object;
+        // Accuracy of the GPS coordinates. @constraints  number: min: 0, mode: box, unit_of_measurement: m
+        gps_accuracy?: number;
+        // Battery level of the device. @constraints  number: min: 0, max: 100, unit_of_measurement: %
+        battery?: number;
       }
     >;
   };
@@ -1743,46 +1801,58 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  calendar: {
-    // Adds a new calendar event.
-    createEvent: ServiceFunction<
+  number: {
+    // Sets the value of a number.
+    setValue: ServiceFunction<
       object,
       T,
       {
-        // Defines the short summary or subject for the event. @example Department Party
-        summary: string;
-        // A more complete description of the event than the one provided by the summary. @example Meeting to provide technical review for 'Phoenix' design.
-        description?: string;
-        // The date and time the event should start. @example 2022-03-22 20:00:00
-        start_date_time?: string;
-        // The date and time the event should end. @example 2022-03-22 22:00:00
-        end_date_time?: string;
-        // The date the all-day event should start. @example 2022-03-22
-        start_date?: string;
-        // The date the all-day event should end (exclusive). @example 2022-03-23
-        end_date?: string;
-        // Days or weeks that you want to create the event in. @example {'days': 2} or {'weeks': 2}
-        in?: object;
-        // The location of the event. @example Conference Room - F123, Bldg. 002
-        location?: string;
+        // The target value to set. @example 42
+        value: string;
       }
     >;
-    // Retrieves events on a calendar within a time range.
-    getEvents: ServiceFunction<
+  };
+  select: {
+    // Selects the first option.
+    selectFirst: ServiceFunction<object, T, object>;
+    // Selects the last option.
+    selectLast: ServiceFunction<object, T, object>;
+    // Selects the next option.
+    selectNext: ServiceFunction<
       object,
       T,
       {
-        // Returns active events after this time (exclusive). When not set, defaults to now. @example 2022-03-22 20:00:00
-        start_date_time?: string;
-        // Returns active events before this time (exclusive). Cannot be used with Duration. @example 2022-03-22 22:00:00
-        end_date_time?: string;
-        // Returns active events from Start time for the specified duration.
-        duration?: {
-          hours?: number;
-          days?: number;
-          minutes?: number;
-          seconds?: number;
-        };
+        // If the option should cycle from the last to the first.
+        cycle?: boolean;
+      }
+    >;
+    // Selects an option.
+    selectOption: ServiceFunction<
+      object,
+      T,
+      {
+        // Option to be selected. @example 'Item A'
+        option: string;
+      }
+    >;
+    // Selects the previous option.
+    selectPrevious: ServiceFunction<
+      object,
+      T,
+      {
+        // If the option should cycle from the first to the last.
+        cycle?: boolean;
+      }
+    >;
+  };
+  text: {
+    // Sets the value.
+    setValue: ServiceFunction<
+      object,
+      T,
+      {
+        // Enter your text. @example Hello world!
+        value: string;
       }
     >;
   };
@@ -1846,9 +1916,78 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  button: {
-    // Press the button entity.
-    press: ServiceFunction<object, T, object>;
+  siren: {
+    // Turns the siren on.
+    turnOn: ServiceFunction<
+      object,
+      T,
+      {
+        // The tone to emit. When `available_tones` property is a map, either the key or the value can be used. Must be supported by the integration. @example fire
+        tone?: string;
+        // The volume. 0 is inaudible, 1 is the maximum volume. Must be supported by the integration. @example 0.5 @constraints  number: min: 0, max: 1, step: 0.05
+        volume_level?: number;
+        // Number of seconds the sound is played. Must be supported by the integration. @example 15
+        duration?: string;
+      }
+    >;
+    // Turns the siren off.
+    turnOff: ServiceFunction<object, T, object>;
+    // Toggles the siren on/off.
+    toggle: ServiceFunction<object, T, object>;
+  };
+  weather: {
+    // Retrieves the forecast from selected weather services.
+    getForecasts: ServiceFunction<
+      object,
+      T,
+      {
+        // The scope of the weather forecast.
+        type: "daily" | "hourly" | "twice_daily";
+      }
+    >;
+  };
+  calendar: {
+    // Adds a new calendar event.
+    createEvent: ServiceFunction<
+      object,
+      T,
+      {
+        // Defines the short summary or subject for the event. @example Department Party
+        summary: string;
+        // A more complete description of the event than the one provided by the summary. @example Meeting to provide technical review for 'Phoenix' design.
+        description?: string;
+        // The date and time the event should start. @example 2022-03-22 20:00:00
+        start_date_time?: string;
+        // The date and time the event should end. @example 2022-03-22 22:00:00
+        end_date_time?: string;
+        // The date the all-day event should start. @example 2022-03-22
+        start_date?: string;
+        // The date the all-day event should end (exclusive). @example 2022-03-23
+        end_date?: string;
+        // Days or weeks that you want to create the event in. @example {'days': 2} or {'weeks': 2}
+        in?: object;
+        // The location of the event. @example Conference Room - F123, Bldg. 002
+        location?: string;
+      }
+    >;
+    // Retrieves events on a calendar within a time range.
+    getEvents: ServiceFunction<
+      object,
+      T,
+      {
+        // Returns active events after this time (exclusive). When not set, defaults to now. @example 2022-03-22 20:00:00
+        start_date_time?: string;
+        // Returns active events before this time (exclusive). Cannot be used with Duration. @example 2022-03-22 22:00:00
+        end_date_time?: string;
+        // Returns active events from Start time for the specified duration.
+        duration?: {
+          hours?: number;
+          days?: number;
+          minutes?: number;
+          seconds?: number;
+        };
+      }
+    >;
   };
   fan: {
     // Turns fan on.
@@ -1947,69 +2086,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  number: {
-    // Sets the value of a number.
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        // The target value to set. @example 42
-        value: string;
-      }
-    >;
-  };
-  select: {
-    // Selects the first option.
-    selectFirst: ServiceFunction<object, T, object>;
-    // Selects the last option.
-    selectLast: ServiceFunction<object, T, object>;
-    // Selects the next option.
-    selectNext: ServiceFunction<
-      object,
-      T,
-      {
-        // If the option should cycle from the last to the first.
-        cycle?: boolean;
-      }
-    >;
-    // Selects an option.
-    selectOption: ServiceFunction<
-      object,
-      T,
-      {
-        // Option to be selected. @example 'Item A'
-        option: string;
-      }
-    >;
-    // Selects the previous option.
-    selectPrevious: ServiceFunction<
-      object,
-      T,
-      {
-        // If the option should cycle from the first to the last.
-        cycle?: boolean;
-      }
-    >;
-  };
-  siren: {
-    // Turns the siren on.
-    turnOn: ServiceFunction<
-      object,
-      T,
-      {
-        // The tone to emit. When `available_tones` property is a map, either the key or the value can be used. Must be supported by the integration. @example fire
-        tone?: string;
-        // The volume. 0 is inaudible, 1 is the maximum volume. Must be supported by the integration. @example 0.5 @constraints  number: min: 0, max: 1, step: 0.05
-        volume_level?: number;
-        // Number of seconds the sound is played. Must be supported by the integration. @example 15
-        duration?: string;
-      }
-    >;
-    // Turns the siren off.
-    turnOff: ServiceFunction<object, T, object>;
-    // Toggles the siren on/off.
-    toggle: ServiceFunction<object, T, object>;
-  };
   waterHeater: {
     // Turns water heater on.
     turnOn: ServiceFunction<object, T, object>;
@@ -2042,76 +2118,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       {
         // New value of the operation mode. For a list of possible modes, refer to the integration documentation. @example eco
         operation_mode: string;
-      }
-    >;
-  };
-  deviceTracker: {
-    // Manually update the records of a seen legacy device tracker in the known_devices.yaml file.
-    see: ServiceFunction<
-      object,
-      T,
-      {
-        // MAC address of the device. @example FF:FF:FF:FF:FF:FF
-        mac?: string;
-        // ID of the device (find the ID in `known_devices.yaml`). @example phonedave
-        dev_id?: string;
-        // Hostname of the device. @example Dave
-        host_name?: string;
-        // Name of the location where the device is located. The options are: `home`, `not_home`, or the name of the zone. @example home
-        location_name?: string;
-        // GPS coordinates where the device is located, specified by latitude and longitude (for example: [51.513845, -0.100539]). @example [51.509802, -0.086692]
-        gps?: object;
-        // Accuracy of the GPS coordinates. @constraints  number: min: 0, mode: box, unit_of_measurement: m
-        gps_accuracy?: number;
-        // Battery level of the device. @constraints  number: min: 0, max: 100, unit_of_measurement: %
-        battery?: number;
-      }
-    >;
-  };
-  text: {
-    // Sets the value.
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        // Enter your text. @example Hello world!
-        value: string;
-      }
-    >;
-  };
-  weather: {
-    // Retrieves the forecast from selected weather services.
-    getForecasts: ServiceFunction<
-      object,
-      T,
-      {
-        // The scope of the weather forecast.
-        type: "daily" | "hourly" | "twice_daily";
-      }
-    >;
-  };
-  onvif: {
-    // If your ONVIF camera supports PTZ, you will be able to pan, tilt or zoom your camera.
-    ptz: ServiceFunction<
-      object,
-      T,
-      {
-        // Tilt direction.
-        tilt?: "DOWN" | "UP";
-        // Pan direction.
-        pan?: "LEFT" | "RIGHT";
-        // Zoom.
-        zoom?: "ZOOM_IN" | "ZOOM_OUT";
-        // Distance coefficient. Sets how much PTZ should be executed in one request. @constraints  number: min: 0, max: 1, step: 0.01
-        distance?: number;
-        // Speed coefficient. Sets how fast PTZ will be executed. @constraints  number: min: 0, max: 1, step: 0.01
-        speed?: number;
-        // Set ContinuousMove delay in seconds before stopping the move. @constraints  number: min: 0, max: 1, step: 0.01
-        continuous_duration?: number;
-        // PTZ preset profile token. Sets the preset profile token which is executed with GotoPreset. @example 1
-        preset?: string;
-        // PTZ moving mode.
-        move_mode?: "AbsoluteMove" | "ContinuousMove" | "GotoPreset" | "RelativeMove" | "Stop";
       }
     >;
   };

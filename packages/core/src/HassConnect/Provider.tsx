@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from "react";
+import { useEffect, useCallback, useRef, useMemo } from "react";
 // types
 import type { Connection, getAuthOptions as AuthOptions, Auth, UnsubscribeFunc } from "home-assistant-js-websocket";
 // methods
@@ -18,12 +18,14 @@ import {
   ERR_INVALID_AUTH,
   ERR_INVALID_HTTPS_TO_HTTP,
   subscribeConfig,
+  entitiesColl,
 } from "home-assistant-js-websocket";
 import { isArray, snakeCase } from "lodash";
 import { SnakeOrCamelDomains, DomainService, Locales, CallServiceArgs, Route, ServiceResponse } from "@typings";
 import { saveTokens, loadTokens, clearTokens } from "./token-storage";
 import { useDebouncedCallback } from "use-debounce";
 import { HassContext, type HassContextProps, useStore } from "./HassContext";
+import { useShallow } from "zustand/shallow";
 
 export interface HassProviderProps {
   /** components to render once authenticated, this accepts a child function which will pass if it is ready or not */
@@ -38,6 +40,8 @@ export interface HassProviderProps {
   portalRoot?: HTMLElement;
   /** Will tell the various features like breakpoints, modals and resize events which window to match media on, if serving within an iframe it'll potentially be running in the wrong window */
   windowContext?: Window;
+  /** A method to render any error states with a react wrapper of your choosing, useful if you want to change styles */
+  renderError?: (children: React.ReactNode) => React.ReactNode;
 }
 
 function handleError(err: number | string | Error | unknown, hassToken?: string): string {
@@ -244,33 +248,95 @@ const tryConnection = async (hassUrl: string, hassToken?: string): Promise<Conne
   };
 };
 
-export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowContext }: HassProviderProps) {
+async function callApi<T>(
+  endpoint: string,
+  options?: RequestInit,
+): Promise<
+  | {
+      data: T;
+      status: "success";
+    }
+  | {
+      data: string;
+      status: "error";
+    }
+> {
+  try {
+    const connection = useStore.getState().connection;
+    const hassUrl = useStore.getState().hassUrl;
+    const response = await fetch(`${hassUrl}/api${endpoint}`, {
+      method: "GET",
+      ...(options ?? {}),
+      headers: {
+        Authorization: "Bearer " + connection?.options.auth?.accessToken,
+        "Content-type": "application/json;charset=UTF-8",
+        ...(options?.headers ?? {}),
+      },
+    });
+    if (response.status === 200) {
+      const data = await response.json();
+      return {
+        status: "success",
+        data,
+      };
+    }
+    return {
+      status: "error",
+      data: response.statusText,
+    };
+  } catch (e) {
+    console.error("API Error:", e);
+    return {
+      status: "error",
+      data: `API Request failed for endpoint "${endpoint}", follow instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/core-hooks-usehass-hass-callapi--docs.`,
+    };
+  }
+}
+
+const getAllEntities = () => useStore.getState().entities;
+
+export function HassProvider({
+  children,
+  hassUrl,
+  hassToken,
+  portalRoot,
+  windowContext,
+  renderError = (children) => children,
+}: HassProviderProps) {
   const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
   const authenticated = useRef(false);
   const configUnsubscribe = useRef<UnsubscribeFunc | null>(null);
-  const setHash = useStore((store) => store.setHash);
-  const _hash = useStore((store) => store.hash);
-  const routes = useStore((store) => store.routes);
-  const setRoutes = useStore((store) => store.setRoutes);
-  const connection = useStore((store) => store.connection);
-  const setConnection = useStore((store) => store.setConnection);
+  const {
+    hash: _hash,
+    routes,
+    ready,
+    error,
+    cannotConnect,
+    connection,
+    setRoutes,
+    setHassUrl,
+    setHash,
+    setError,
+    setPortalRoot,
+    setWindowContext,
+  } = useStore(
+    useShallow((s) => ({
+      hash: s.hash,
+      routes: s.routes,
+      ready: s.ready, // ready is set internally in the store when we have entities (setEntities does this)
+      error: s.error,
+      cannotConnect: s.cannotConnect,
+      auth: s.auth,
+      connection: s.connection,
+      setHash: s.setHash,
+      setRoutes: s.setRoutes,
+      setHassUrl: s.setHassUrl,
+      setError: s.setError,
+      setPortalRoot: s.setPortalRoot,
+      setWindowContext: s.setWindowContext,
+    })),
+  );
   const _connectionRef = useRef<Connection | null>(null);
-  const entities = useStore((store) => store.entities);
-  const setEntities = useStore((store) => store.setEntities);
-  const error = useStore((store) => store.error);
-  const setError = useStore((store) => store.setError);
-  const cannotConnect = useStore((store) => store.cannotConnect);
-  const setCannotConnect = useStore((store) => store.setCannotConnect);
-  const setAuth = useStore((store) => store.setAuth);
-  const triggerOnDisconnect = useStore((store) => store.triggerOnDisconnect);
-  // ready is set internally in the store when we have entities (setEntities does this)
-  const ready = useStore((store) => store.ready);
-  const setUser = useStore((store) => store.setUser);
-  const setReady = useStore((store) => store.setReady);
-  const setConfig = useStore((store) => store.setConfig);
-  const setHassUrl = useStore((store) => store.setHassUrl);
-  const setPortalRoot = useStore((store) => store.setPortalRoot);
-  const setWindowContext = useStore((store) => store.setWindowContext);
 
   const getStates = useCallback(async () => (connection === null ? null : await _getStates(connection)), [connection]);
   const getServices = useCallback(async () => (connection === null ? null : await _getServices(connection)), [connection]);
@@ -285,17 +351,22 @@ export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowC
     if (windowContext) setWindowContext(windowContext);
   }, [windowContext, setWindowContext]);
 
-  const reset = useCallback(() => {
+  const reset = useCallback((partial?: boolean) => {
+    const { setAuth, setUser, setCannotConnect, setConfig, setConnection, setEntities, setError, setReady, setRoutes } =
+      useStore.getState();
     // when the hassUrl changes, reset some properties and re-authenticate
-    setAuth(null);
+    // if we're a partial reset, we may have lost the connection, but auth may still be valid
+    if (!partial) {
+      setAuth(null);
+      setRoutes([]);
+      setReady(false);
+    }
     setConnection(null);
     _connectionRef.current = null;
     setEntities({});
     setConfig(null);
     setError(null);
     setCannotConnect(false);
-    setReady(false);
-    setRoutes([]);
     setUser(null);
     authenticated.current = false;
     if (configUnsubscribe.current) {
@@ -306,7 +377,7 @@ export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowC
       entityUnsubscribe.current();
       entityUnsubscribe.current = null;
     }
-  }, [setAuth, setUser, setCannotConnect, setConfig, setConnection, setEntities, setError, setReady, setRoutes]);
+  }, []);
 
   const logout = useCallback(async () => {
     try {
@@ -320,44 +391,77 @@ export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowC
   }, [reset, setError]);
 
   const handleConnect = useCallback(async () => {
+    const { setError, setUser, setCannotConnect, setAuth, setConnection, setEntities, setConfig } = useStore.getState();
+
     // this will trigger on first mount
-    const connectionResponse = await tryConnection(hassUrl, hassToken);
-    if (connectionResponse.type === "error") {
+    const response = await tryConnection(hassUrl, hassToken);
+    if (response.type === "error") {
       authenticated.current = false;
-      setError(connectionResponse.error);
-    } else if (connectionResponse.type === "failed") {
+      setError(response.error);
+    } else if (response.type === "failed") {
       authenticated.current = false;
       setCannotConnect(true);
-    } else if (connectionResponse.type === "success") {
+    } else if (response.type === "success") {
+      const { connection, auth } = response;
       // store a reference to the authentication object
-      setAuth(connectionResponse.auth);
+      setAuth(auth);
       // store the connection to pass to the provider
-      setConnection(connectionResponse.connection);
-      entityUnsubscribe.current = subscribeEntities(connectionResponse.connection, ($entities) => {
+      setConnection(connection);
+      connection.addEventListener("reconnect-error", () => {
+        console.error("WebSocket - Reconnect error.");
+      });
+      connection.addEventListener("disconnected", () => {
+        console.error("WebSocket - Disconnected.");
+      });
+      function suspendUntil(eventName: "resume" | "visibilitychange") {
+        console.warn(`Tab ${eventName === "resume" ? "frozen" : "hidden"}, suspending reconnect attempts.`);
+
+        const resumePromise = new Promise<void>((resolve) => {
+          const resumeHandler = () => {
+            console.warn(`Tab ${eventName === "resume" ? "resumed" : "visible"} again, resuming reconnect attempts.`);
+            document.removeEventListener(eventName, resumeHandler);
+            resolve(); // lift the suspension
+            try {
+              // as suspend can drop messages in the queue, let's just at least
+              // refresh the entities so we have the latest state
+              const coll = entitiesColl(connection);
+              const entities = coll.state;
+              setEntities(entities);
+            } catch (e) {
+              console.error("Error refreshing entities:", e);
+            }
+          };
+          document.addEventListener(eventName, resumeHandler, { once: true });
+        });
+        // block future retries, this will keep all current messages in a queue until it resumes
+        connection.suspendReconnectUntil(resumePromise);
+        connection.suspend(); // close current socket
+      }
+
+      /* If the tab is switching, lets determine if we should maintain the connection */
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+          suspendUntil("visibilitychange");
+        }
+      });
+
+      /* ---------- 2. Frozen / resumed tab (Chrome, Edge, Samsung) ---------- */
+      document.addEventListener("freeze", () => {
+        console.warn("Tab frozen, suspending reconnect attempts until resume event is received.");
+        return suspendUntil("resume");
+      }); // wait for "resume"
+      entityUnsubscribe.current = subscribeEntities(connection, ($entities) => {
         setEntities($entities);
       });
-      configUnsubscribe.current = subscribeConfig(connectionResponse.connection, (newConfig) => {
+      configUnsubscribe.current = subscribeConfig(connection, (newConfig) => {
         setConfig(newConfig);
       });
-      connectionResponse.connection.addEventListener("disconnected", () => {
-        console.error("Disconnected from Home Assistant, reconnecting...");
-        triggerOnDisconnect();
-        // on disconnection, reset local state
-        reset();
-        // try to reconnect
-        handleConnect();
-      });
-      connectionResponse.connection.addEventListener("reconnect-error", (_, eventData) => {
-        console.error("Reconnection error:", eventData);
-        // on connection error, reset local state
-        reset();
-      });
-      _connectionRef.current = connectionResponse.connection;
-      _getUser(connectionResponse.connection).then((user) => {
+      _connectionRef.current = connection;
+      _getUser(connection).then((user) => {
         setUser(user);
       });
     }
-  }, [hassUrl, hassToken, triggerOnDisconnect, setError, setUser, setCannotConnect, setAuth, setConnection, setEntities, setConfig, reset]);
+  }, [hassUrl, hassToken]);
 
   useEffect(() => {
     setHassUrl(hassUrl);
@@ -365,53 +469,10 @@ export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowC
 
   const joinHassUrl = useCallback(
     (path: string) => {
-      return new URL(path, connection?.options.auth?.data.hassUrl).toString();
+      return connection ? new URL(path, connection?.options.auth?.data.hassUrl).toString() : "";
     },
     [connection],
   );
-
-  async function callApi<T>(
-    endpoint: string,
-    options?: RequestInit,
-  ): Promise<
-    | {
-        data: T;
-        status: "success";
-      }
-    | {
-        data: string;
-        status: "error";
-      }
-  > {
-    try {
-      const response = await fetch(`${hassUrl}/api${endpoint}`, {
-        method: "GET",
-        ...(options ?? {}),
-        headers: {
-          Authorization: "Bearer " + connection?.options.auth?.accessToken,
-          "Content-type": "application/json;charset=UTF-8",
-          ...(options?.headers ?? {}),
-        },
-      });
-      if (response.status === 200) {
-        const data = await response.json();
-        return {
-          status: "success",
-          data,
-        };
-      }
-      return {
-        status: "error",
-        data: response.statusText,
-      };
-    } catch (e) {
-      console.error("API Error:", e);
-      return {
-        status: "error",
-        data: `API Request failed for endpoint "${endpoint}", follow instructions here: https://shannonhochkins.github.io/ha-component-kit/?path=/docs/core-hooks-usehass-hass-callapi--docs.`,
-      };
-    }
-  }
 
   useEffect(() => {
     if (location.hash === "") return;
@@ -469,8 +530,6 @@ export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowC
     },
     [routes],
   );
-
-  const getAllEntities = useCallback(() => entities, [entities]);
 
   const callService = useCallback(
     async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean>({
@@ -547,32 +606,30 @@ export function HassProvider({ children, hassUrl, hassToken, portalRoot, windowC
     debounceConnect();
   }, [debounceConnect]);
 
+  const contextValue = useMemo<HassContextProps>(
+    () => ({
+      useStore,
+      logout,
+      addRoute,
+      getRoute,
+      getStates,
+      getServices,
+      getConfig,
+      getUser,
+      callApi,
+      getAllEntities,
+      callService: callService as HassContextProps["callService"],
+      joinHassUrl,
+    }),
+    [logout, addRoute, getRoute, getStates, getServices, getConfig, getUser, callService, joinHassUrl],
+  );
+
   if (cannotConnect) {
-    return (
+    return renderError(
       <p>
         Unable to connect to ${loadTokens(hassUrl)!.hassUrl}, refresh the page and try again, or <a onClick={logout}>Logout</a>.
-      </p>
+      </p>,
     );
   }
-  return (
-    <HassContext.Provider
-      value={{
-        useStore,
-        logout,
-        addRoute,
-        getRoute,
-        getStates,
-        getServices,
-        getConfig,
-        getUser,
-        callApi,
-        getAllEntities,
-        // cast here we don't have to redefine all the overloads, might fix later
-        callService: callService as HassContextProps["callService"],
-        joinHassUrl,
-      }}
-    >
-      {error === null ? children(ready) : error}
-    </HassContext.Provider>
-  );
+  return <HassContext.Provider value={contextValue}>{error === null ? children(ready) : renderError(error)}</HassContext.Provider>;
 }

@@ -24,6 +24,7 @@ import {
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { useRef, useEffect, useState, useCallback } from "react";
+import { useShallow } from "zustand/shallow";
 
 const StyledCalendarCard = styled(CardBase)`
   .contents .calendar > * {
@@ -409,7 +410,7 @@ function InternalCalendarCard({
   key,
   ...rest
 }: CalendarCardProps): React.ReactNode {
-  const { useStore } = useHass();
+  const { useStore, callApi } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const config = useStore((store) => store.config);
   const calRef = useRef<FullCalendar>(null);
@@ -423,11 +424,10 @@ function InternalCalendarCard({
     handleHeight: false,
     refreshRate: 500,
   });
-  const { callApi, getAllEntities } = useHass();
   const [currentEvent, setCurrentEvent] = useState<CalendarEventWithEntity | null>(null);
-  const allEntities = getAllEntities();
+  const calEntities = useStore(useShallow((state) => entities.map((id) => state.entities[id])));
   const [activeView, setActiveView] = useState<CalendarCardProps["view"]>(view ?? "dayGridMonth");
-  const calEntities = entities.map((entity) => allEntities[entity]);
+
   const calendars = calEntities.filter((entity) => !isUnavailableState(entity?.state));
   const fetchEvents = useCallback(
     async (info: EventSourceFuncArg, successCallback: (events: EventInput[]) => void): Promise<void> => {

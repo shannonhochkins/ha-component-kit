@@ -282,8 +282,6 @@ const useStore = create<Store>((set) => ({
   setCannotConnect: (cannotConnect) => set({ cannotConnect }),
   ready: false,
   setReady: (ready) => set({ ready }),
-  lastUpdated: new Date(),
-  setLastUpdated: (lastUpdated) => set({ lastUpdated }),
   auth: fakeAuth,
   setAuth: (auth) => set({ auth }),
   config: fakeConfig,

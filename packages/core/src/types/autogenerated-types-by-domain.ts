@@ -218,6 +218,7 @@ export interface MediaPlayerEntityAttributes extends HassEntityAttributeBase {
   source_list?: string[];
   sound_mode?: string;
   sound_mode_list?: string[];
+  group_members?: string[];
 }
 export interface PersonEntity extends HassEntityBase {
   attributes: PersonEntityAttributes;

@@ -2,9 +2,8 @@ import { createContext } from "react";
 // types
 import type { Connection, HassEntities, HassEntity, HassConfig, HassUser, HassServices, Auth } from "home-assistant-js-websocket";
 import { type CSSInterpolation } from "@emotion/serialize";
-import { isEmpty } from "lodash";
 import { ServiceData, SnakeOrCamelDomains, DomainService, Target, LocaleKeys, ServiceResponse } from "@typings";
-import { diff } from "deep-object-diff";
+// import { diff } from "deep-object-diff";
 import { create } from "zustand";
 export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean> {
   domain: T;
@@ -58,9 +57,6 @@ export interface Store {
   /** This is an internal value, no need to use this */
   ready: boolean;
   setReady: (ready: boolean) => void;
-  /** The last time the context object was updated */
-  lastUpdated: Date;
-  setLastUpdated: (lastUpdated: Date) => void;
   /** the current hash in the url */
   hash: string;
   /** set the current hash */
@@ -98,21 +94,14 @@ export interface Store {
   triggerOnDisconnect: () => void;
 }
 
-const IGNORE_KEYS_FOR_DIFF = ["last_changed", "last_updated", "context"];
-const ignoreForDiffCheck = (
-  obj: HassEntities,
-  keys: string[] = IGNORE_KEYS_FOR_DIFF,
-): {
-  [key: string]: Omit<HassEntity, "last_changed" | "last_updated" | "context">;
-} => {
-  return Object.fromEntries(
-    Object.entries(obj).map(([entityId, entityData]) => [
-      entityId,
-      Object.fromEntries(Object.entries(entityData).filter(([key]) => !keys.includes(key))),
-    ]),
-  ) as {
-    [key: string]: Omit<HassEntity, "last_changed" | "last_updated" | "context">;
-  };
+// ignore some keys that we don't actually care about when comparing entities
+const shallowEqual = (entity: HassEntity, other: HassEntity): boolean => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { last_changed, last_updated, context, ...restEntity } = entity;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { last_changed: c1, last_updated: c2, context: c3, ...restOther } = other;
+
+  return JSON.stringify(restEntity) === JSON.stringify(restOther);
 };
 
 export const useStore = create<Store>((set) => ({
@@ -130,38 +119,24 @@ export const useStore = create<Store>((set) => ({
   setWindowContext: (windowContext) => set({ windowContext }),
   setEntities: (newEntities) =>
     set((state) => {
-      const entitiesDiffChanged = diff(ignoreForDiffCheck(state.entities), ignoreForDiffCheck(newEntities)) as HassEntities;
-      if (!isEmpty(entitiesDiffChanged)) {
-        // purposely not making this throttle configurable
-        // because lights can animate etc, which doesn't need to reflect in the UI
-        // if a user want's to control individual entities this can be done with useEntity by passing a throttle to it's options.
-        const updatedEntities = Object.keys(entitiesDiffChanged).reduce<HassEntities>(
-          (acc, entityId) => ({
-            ...acc,
-            [entityId]: newEntities[entityId],
-          }),
-          {},
-        );
-        // update the stateEntities with the newEntities with the keys that have changed
-        Object.keys(updatedEntities).forEach((entityId) => {
-          state.entities[entityId] = {
-            ...state.entities[entityId],
-            ...newEntities[entityId],
-          };
-        });
-        if (!state.ready) {
-          return {
-            ready: true,
-            lastUpdated: new Date(),
-            entities: state.entities,
-          };
+      let changed = false;
+      const next = { ...state.entities };
+      for (const [id, newEnt] of Object.entries(newEntities)) {
+        const oldEnt = state.entities[id];
+
+        // ---- fast path: first time we ever see this ID ----
+        if (!oldEnt) {
+          next[id] = newEnt;
+          changed = true;
+          continue;
         }
-        return {
-          lastUpdated: new Date(),
-          entities: state.entities,
-        };
+
+        if (!shallowEqual(oldEnt, newEnt)) {
+          next[id] = newEnt; // replace only if meaningful props differ
+          changed = true;
+        }
       }
-      return state;
+      return changed ? { entities: next, lastUpdated: Date.now(), ready: true } : state;
     }),
   connection: null,
   setConnection: (connection) => set({ connection }),
@@ -169,8 +144,6 @@ export const useStore = create<Store>((set) => ({
   setCannotConnect: (cannotConnect) => set({ cannotConnect }),
   ready: false,
   setReady: (ready) => set({ ready }),
-  lastUpdated: new Date(),
-  setLastUpdated: (lastUpdated) => set({ lastUpdated }),
   auth: null,
   setAuth: (auth) => set({ auth }),
   config: null,

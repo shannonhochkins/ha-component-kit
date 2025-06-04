@@ -7,6 +7,8 @@ import getAllEntitiesExample from './examples/getAllEntities.code?raw';
 
 This will return every entity available in your home assistant instance as an object with the entity id as the key prefixed with the domain associated with it.
 
+This is a snapshot of the entities at the time of the call, so it will not update if entities are added/removed/changed after the call.
+
 ### Definition
 <Source dark language="ts" code={`getAllEntities()`} />
 

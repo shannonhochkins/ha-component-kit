@@ -160,13 +160,13 @@ function InternalMediaPlayerCard({
 }: MediaPlayerCardProps) {
   const entity = useEntity(_entity);
   const mp = useService("mediaPlayer");
-  const { useStore, joinHassUrl, getAllEntities } = useHass();
+  const { useStore, joinHassUrl } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const interval = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
   const clockRef = useRef<HTMLDivElement>(null);
-  const entitiesById = getAllEntities();
+  const entitiesById = useStore((store) => store.entities);
   const groupedEntities = groupMembers
     .map((entity) => entitiesById[entity] ?? null)
     .filter((entity): entity is MediaPlayerEntity => entity !== null && !isUnavailableState(entity.state));

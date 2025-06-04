@@ -96,7 +96,7 @@
     "@emotion/styled": ">=11.x",
     "@iconify/react": ">=5.x",
     "deep-object-diff": ">=1.x.x",
-    "home-assistant-js-websocket": ">=9.x",
+    "home-assistant-js-websocket": "^9.5.0",
     "lodash": ">=4.x",
     "prettier": ">=3.4.2",
     "react": ">=19.x",
@@ -104,7 +104,7 @@
     "use-debounce": ">=9.x",
     "ws": ">=8.x.x",
     "yargs": ">=17.x.x",
-    "zustand": ">=4.x.x"
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@liuli-util/vite-plugin-node": "^0.9.0",
