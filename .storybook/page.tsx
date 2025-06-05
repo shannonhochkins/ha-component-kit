@@ -1,4 +1,4 @@
-import { Title, Description, Primary, ArgTypes, useOf } from "@storybook/blocks";
+import { Title, Description, Primary, ArgTypes, useOf } from "@storybook/addon-docs/blocks";
 import React from "react";
 import { ImportExample } from "./components/importExample";
 import { AfterDescription } from "./components/afterDescription";

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThemeProvider, RangeSlider, ThemeControlsModal } from "@components";
 import type { RangeSliderProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";

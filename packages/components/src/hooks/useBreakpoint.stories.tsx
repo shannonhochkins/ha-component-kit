@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Story, Source, Title, Description } from "@storybook/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Story, Source, Title, Description } from "@storybook/addon-docs/blocks";
 import { getBreakpoints, ThemeProvider, useBreakpoint, useThemeStore } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import jsxToString from "react-element-to-jsx-string";

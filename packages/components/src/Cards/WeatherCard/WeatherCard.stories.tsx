@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThemeProvider, Column, WeatherCard, ThemeControlsModal, WeatherCardDetail } from "@components";
 import type { WeatherCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";

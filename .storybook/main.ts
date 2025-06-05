@@ -14,9 +14,8 @@ export default ({
     "../packages/**/*.stories.@(js|jsx|ts|tsx)"
   ],
   addons: [
-    "@storybook/addon-themes",
-    "@storybook/addon-essentials",
-    "@storybook/addon-docs",
+    getAbsolutePath("@storybook/addon-themes"),
+    getAbsolutePath("@storybook/addon-docs")
   ],
   core: {},
   staticDirs: ['../static'],

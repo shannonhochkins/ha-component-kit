@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThemeProvider, Tooltip, Row, ThemeControlsModal } from "@components";
 import type { TooltipProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";

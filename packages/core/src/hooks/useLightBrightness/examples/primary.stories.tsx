@@ -1,7 +1,7 @@
 import { HassConnect } from "hass-connect-fake";
 import { ThemeProvider } from "@hakit/components";
-import { Story } from "@storybook/blocks";
-import type { Meta, StoryObj } from "@storybook/react";
+import { Story } from "@storybook/addon-docs/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Dashboard } from "./basic.code";
 
 function Primary() {

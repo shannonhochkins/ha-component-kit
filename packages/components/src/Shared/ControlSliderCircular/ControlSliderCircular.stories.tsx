@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThemeProvider, ControlSliderCircular, Row, ThemeControlsModal } from "@components";
 import type { ControlSliderCircularProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";

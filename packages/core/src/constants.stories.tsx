@@ -1,5 +1,5 @@
-import { Story, Source } from "@storybook/blocks";
-import type { Meta, StoryObj } from "@storybook/react";
+import { Story, Source } from "@storybook/addon-docs/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Column, Row } from "@components";
 import { ReactNode } from "react";
 import { Divider } from "@mui/material";

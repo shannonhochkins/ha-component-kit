@@ -1,5 +1,5 @@
 import { useRef, useCallback } from "react";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThemeProvider, Column, ColorPicker, ButtonCard, ThemeControlsModal } from "@components";
 import type { ColorPickerProps, ColorPickerOutputColors } from "@components";
 import { HassConnect } from "@hass-connect-fake";

@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useState, useCallback } from "react";
 import styled from "@emotion/styled";
-import { ControlSlider, Tooltip, Column, FabCard, ColorTempPicker, ColorPicker, useBreakpoint, fallback, Menu } from "@components";
+import { ControlSlider, Tooltip, Column, FabCard, ColorTempPicker, ColorPicker, useBreakpoint, fallback, Menu, ColumnProps } from "@components";
 import {
   useEntity,
   LIGHT_COLOR_MODES,
@@ -109,12 +109,13 @@ const FabCardTemp = styled(FabCard)`
   }
 `;
 
-export interface LightControlsProps {
+type Extended = React.HTMLAttributes<HTMLDivElement> & ColumnProps;
+export interface LightControlsProps extends Extended {
   entity: FilterByDomain<EntityName, "light">;
   onStateChange?: (state: string) => void;
 }
 
-function InternalLightControls({ entity: _entity, onStateChange }: LightControlsProps) {
+function InternalLightControls({ entity: _entity, onStateChange, style, ...rest }: LightControlsProps) {
   const [control, setControl] = useState<MainControl>("brightness");
   const entity = useEntity(_entity);
   const brightnessValue = useLightBrightness(entity);
@@ -160,7 +161,9 @@ function InternalLightControls({ entity: _entity, onStateChange }: LightControls
       justifyContent={device.xxs ? "flex-start" : "center"}
       style={{
         padding: device.xxs ? "1rem" : "0",
+        ...style,
       }}
+      {...rest}
     >
       <Column>
         {supportsColorTemp || supportsColor || supportsBrightness ? (

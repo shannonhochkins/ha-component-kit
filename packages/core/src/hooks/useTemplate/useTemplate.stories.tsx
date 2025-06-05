@@ -1,5 +1,5 @@
-import { Story, Source, Title, Description, ArgTypes } from "@storybook/blocks";
-import type { Meta, StoryObj } from "@storybook/react";
+import { Story, Source, Title, Description, ArgTypes } from "@storybook/addon-docs/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useTemplate, useEntity } from "@hakit/core";
 import { ThemeProvider, Column, Alert, Row, FabCard, ThemeControlsModal } from "@components";
 import { HassConnect } from "@hass-connect-fake";
