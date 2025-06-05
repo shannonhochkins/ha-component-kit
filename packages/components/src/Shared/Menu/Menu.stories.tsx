@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThemeProvider, Menu, Row, FabCard, ThemeControlsModal } from "@components";
 import type { MenuProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";

@@ -1,7 +1,7 @@
-import type { Preview } from "@storybook/react";
+import type { Preview } from "@storybook/react-vite";
 import React from "react";
 import { withThemeFromJSXProvider } from '@storybook/addon-themes';
-import { ThemeProvider } from '@storybook/theming';
+import { ThemeProvider } from 'storybook/theming';
 import { Page } from "./page";
 import { redirectToStory } from './redirect';
 import './global.css';

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Source } from "@storybook/blocks";
-import { useOf } from '@storybook/blocks';
+import { Source } from "@storybook/addon-docs/blocks";
+import { useOf } from '@storybook/addon-docs/blocks';
 
 export function ImportExample() {
   const meta = useOf('meta', ['meta']);

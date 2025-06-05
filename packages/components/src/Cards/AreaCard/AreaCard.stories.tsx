@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Source } from "@storybook/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Source } from "@storybook/addon-docs/blocks";
 import { ThemeProvider, AreaCard, Row, ButtonCard, ThemeControlsModal } from "@components";
 import type { AreaCardProps } from "@components";
 import jsxToString from "react-element-to-jsx-string";

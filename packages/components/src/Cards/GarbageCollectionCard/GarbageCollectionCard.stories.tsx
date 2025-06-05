@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Source } from "@storybook/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Source } from "@storybook/addon-docs/blocks";
 import { ThemeProvider, Column, GarbageCollectionCard, ThemeControlsModal, Row } from "@components";
 import type { GarbageCollectionCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";

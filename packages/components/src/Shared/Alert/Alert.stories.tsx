@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThemeProvider, Column, Alert, ThemeControlsModal } from "@components";
 import type { AlertProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";

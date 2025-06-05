@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThemeProvider, ControlToggle, Row, Column, ThemeControlsModal } from "@components";
 import type { ControlToggleProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThemeProvider, MediaPlayerCard, MediaPlayerCardProps, ThemeControlsModal, Column } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 

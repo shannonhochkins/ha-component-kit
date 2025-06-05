@@ -1,5 +1,5 @@
-import { create } from '@storybook/theming/create';
-import { addons } from '@storybook/manager-api';
+import { create } from 'storybook/theming/create';
+import { addons } from 'storybook/manager-api';
 
 const theme = create({
     base: 'dark',
