@@ -326,19 +326,19 @@ export function HassProvider({
 
   const getStates = useCallback(async () => {
     const connection = getConnection();
-    return connection === null ? null : await _getStates(connection)
+    return connection === null ? null : await _getStates(connection);
   }, []);
   const getServices = useCallback(async () => {
     const connection = getConnection();
-    return connection === null ? null : await _getServices(connection)
+    return connection === null ? null : await _getServices(connection);
   }, []);
   const getConfig = useCallback(async () => {
     const connection = getConnection();
-    return connection === null ? null : await _getConfig(connection)
+    return connection === null ? null : await _getConfig(connection);
   }, []);
   const getUser = useCallback(async () => {
     const connection = getConnection();
-    return connection === null ? null : await _getUser(connection)
+    return connection === null ? null : await _getUser(connection);
   }, []);
 
   useEffect(() => {
@@ -469,13 +469,10 @@ export function HassProvider({
     setHassUrl(hassUrl);
   }, [hassUrl]);
 
-  const joinHassUrl = useCallback(
-    (path: string) => {
-      const { connection } = useStore.getState();
-      return connection ? new URL(path, connection?.options.auth?.data.hassUrl).toString() : "";
-    },
-    [],
-  );
+  const joinHassUrl = useCallback((path: string) => {
+    const { connection } = useStore.getState();
+    return connection ? new URL(path, connection?.options.auth?.data.hassUrl).toString() : "";
+  }, []);
 
   useEffect(() => {
     const { setHash } = useStore.getState();
@@ -509,34 +506,28 @@ export function HassProvider({
     };
   }, []);
 
-  const addRoute = useCallback(
-    (route: Omit<Route, "active">) => {
-      const { routes, setRoutes } = useStore.getState();
-      const exists = routes.find((_route) => _route.hash === route.hash) !== undefined;
-      if (!exists && typeof window !== "undefined") {
-        // if the current has value is the same as the hash, we're active
-        const hashWithoutPound = window.location.hash.replace("#", "");
-        const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
-        setRoutes([
-          ...routes,
-          {
-            ...route,
-            active,
-          } satisfies Route,
-        ]);
-      }
-    },
-    [],
-  );
+  const addRoute = useCallback((route: Omit<Route, "active">) => {
+    const { routes, setRoutes } = useStore.getState();
+    const exists = routes.find((_route) => _route.hash === route.hash) !== undefined;
+    if (!exists && typeof window !== "undefined") {
+      // if the current has value is the same as the hash, we're active
+      const hashWithoutPound = window.location.hash.replace("#", "");
+      const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
+      setRoutes([
+        ...routes,
+        {
+          ...route,
+          active,
+        } satisfies Route,
+      ]);
+    }
+  }, []);
 
-  const getRoute = useCallback(
-    (hash: string) => {
-      const routes = useStore.getState().routes;
-      const route = routes.find((route) => route.hash === hash);
-      return route || null;
-    },
-    [],
-  );
+  const getRoute = useCallback((hash: string) => {
+    const routes = useStore.getState().routes;
+    const route = routes.find((route) => route.hash === hash);
+    return route || null;
+  }, []);
 
   const callService = useCallback(
     async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean>({
@@ -598,9 +589,7 @@ export function HassProvider({
       await handleConnect();
     } catch (e) {
       const message = handleError(e);
-      setError(
-        `Unable to connect to Home Assistant, please check the URL: "${message}"`
-      );
+      setError(`Unable to connect to Home Assistant, please check the URL: "${message}"`);
     }
   }, [reset, handleConnect, setError]);
 

@@ -56,7 +56,7 @@ import { SVG_HEIGHT, SVG_WIDTH } from "../../Shared/SvgGraph/constants";
 import React from "react";
 
 type Extendable<T extends keyof React.JSX.IntrinsicElements> = Omit<
-  React.ComponentPropsWithoutRef<T>,
+  React.ComponentPropsWithRef<T>,
   "onClick" | "disabled" | "title" | "children" | "active"
 >;
 
@@ -69,7 +69,7 @@ type AllowedRelatedEntities = AllowedRelatedEntity | AllowedRelatedEntity[];
 
 type HtmlTag = keyof HTMLElementTagNameMap;
 
-type ElementFromTag<T extends HtmlTag = 'div'> = HTMLElementTagNameMap[T];
+type ElementFromTag<T extends HtmlTag = "div"> = HTMLElementTagNameMap[T];
 
 const getBaseElement = <C extends HtmlTag = "div">(as: C, onlyFunctionality?: boolean) => {
   if (onlyFunctionality) {
@@ -541,9 +541,5 @@ const CardBaseInternal = function CardBase<T extends HtmlTag = "div", E extends 
  * You can use this if you want an empty shell of a component that you can build on top of.
  * */
 export const CardBase = memo(function CardBase<T extends HtmlTag = "div", E extends EntityName = EntityName>(props: CardBaseProps<T, E>) {
-  return (
-    <ErrorBoundary {...fallback({ prefix: "CardBase" })}>
-      {CardBaseInternal<T, E>(props)}
-    </ErrorBoundary>
-  );
+  return <ErrorBoundary {...fallback({ prefix: "CardBase" })}>{CardBaseInternal<T, E>(props)}</ErrorBoundary>;
 });

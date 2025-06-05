@@ -44,7 +44,6 @@ const shallowEqual = (entity: HassEntity, other: HassEntityCustom): boolean => {
   return JSON.stringify(a) === JSON.stringify(b);
 };
 
-
 export function useEntity<E extends EntityName, O extends UseEntityOptions = UseEntityOptions>(
   entity: E,
   options: O = DEFAULT_OPTIONS as O,
@@ -92,7 +91,6 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
   );
   const [$entity, setEntity] = useState<HassEntityCustom | null>(matchedEntity !== null ? formatEntity(matchedEntity) : null);
 
-
   const debounceUpdate = useThrottledCallback(
     (entity: HassEntity) => {
       setEntity(formatEntity(entity));
@@ -110,10 +108,10 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
 
   useEffect(() => {
     const foundEntity = getEntity(true);
-    if (foundEntity && $entity) {      
+    if (foundEntity && $entity) {
       // this check to avoid recursive updates
       let shouldUpdate = !shallowEqual(foundEntity, $entity);
-      
+
       const clonedEntity = cloneDeep(foundEntity);
       // Check for icon differences
       const haHasCustomIcon = typeof clonedEntity.attributes.icon === "string";
@@ -167,5 +165,5 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
       history,
       service,
     } as unknown as UseEntityReturnType<E, O>;
-  }, [$entity, history, service, ]);
+  }, [$entity, history, service]);
 }

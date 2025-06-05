@@ -1571,13 +1571,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // The ID of the content to play. Platform dependent. @example https://soundcloud.com/bruttoband/brutto-11
         media_content_id: string | number;
         // The type of the content to play.
-        media_content_type:
-          | "CHANNEL"
-          | "EPISODE"
-          | "PLAYLIST MUSIC"
-          | "MUSIC"
-          | "TVSHOW"
-          | "VIDEO";
+        media_content_type: "CHANNEL" | "EPISODE" | "PLAYLIST MUSIC" | "MUSIC" | "TVSHOW" | "VIDEO";
       }
     >;
   };
@@ -1638,12 +1632,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // PTZ preset profile token. Sets the preset profile token which is executed with GotoPreset. @example 1
         preset?: string;
         // PTZ moving mode.
-        move_mode?:
-          | "AbsoluteMove"
-          | "ContinuousMove"
-          | "GotoPreset"
-          | "RelativeMove"
-          | "Stop";
+        move_mode?: "AbsoluteMove" | "ContinuousMove" | "GotoPreset" | "RelativeMove" | "Stop";
       }
     >;
   };
@@ -1739,14 +1728,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       T,
       {
         // HVAC operation mode.
-        hvac_mode?:
-          | "off"
-          | "auto"
-          | "cool"
-          | "dry"
-          | "fan_only"
-          | "heat_cool"
-          | "heat";
+        hvac_mode?: "off" | "auto" | "cool" | "dry" | "fan_only" | "heat_cool" | "heat";
       }
     >;
     // Sets preset mode.
@@ -1779,14 +1761,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         // The min temperature setpoint. @constraints  number: min: 0, max: 250, step: 0.1, mode: box
         target_temp_low?: number;
         // HVAC operation mode.
-        hvac_mode?:
-          | "off"
-          | "auto"
-          | "cool"
-          | "dry"
-          | "fan_only"
-          | "heat_cool"
-          | "heat";
+        hvac_mode?: "off" | "auto" | "cool" | "dry" | "fan_only" | "heat_cool" | "heat";
       }
     >;
     // Sets target humidity.

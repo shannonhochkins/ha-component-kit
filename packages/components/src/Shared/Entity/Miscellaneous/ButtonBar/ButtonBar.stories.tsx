@@ -39,7 +39,7 @@ function Template(args?: Partial<ButtonBarProps>) {
 export default {
   title: "components/Shared/Entity/Miscellaneous/ButtonBar",
   component: ButtonBar,
-  subcomponents: { ButtonBarButton },
+  subcomponents: { ButtonBarButton: ButtonBarButton as React.ComponentType<unknown> },
   tags: ["autodocs"],
   parameters: {
     fullWidth: true,
