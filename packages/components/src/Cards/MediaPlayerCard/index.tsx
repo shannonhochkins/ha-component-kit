@@ -167,7 +167,7 @@ function InternalMediaPlayerCard({
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const interval = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-  const playerRef = useRef<HTMLButtonElement>(null);
+  const playerRef = useRef<HTMLElement>(null);
   const clockRef = useRef<HTMLDivElement>(null);
   const entitiesById = useStore((store) => store.entities);
   const groupedEntities = groupMembers
@@ -238,7 +238,7 @@ function InternalMediaPlayerCard({
     (media_duration?: number, media_position?: number) => {
       if (!media_duration || !media_position) return 0;
       const progress = (media_position / media_duration) * 100;
-      console.log("progress", progress, playerRef.current);
+      console.log("progress", { progress, hasRef: !!playerRef.current, media_position, media_duration });
       if (playerRef.current) {
         playerRef.current.style.setProperty(`--progress-${snakeCase(_entity)}-width`, `${clamp(progress, 0, 100)}%`);
       }
