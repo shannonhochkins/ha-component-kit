@@ -60,7 +60,8 @@
     "watch:build": "NODE_ENV=production vite build --watch",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "prerelease": "npm run build",
-    "release": "npm publish --access public",
+    "release": "npm publish",
+    "release:canary": "npm run build && npm publish --tag canary",
     "test": "NODE_ENV=test jest --rootDir=src",
     "clean": "rm -rf node_modules dist"
   },
