@@ -16,7 +16,7 @@ import { Children, ReactElement, cloneElement, isValidElement } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 import styled from "@emotion/styled";
-const FamilyBaseCard = styled(CardBase)`
+const FamilyBaseCard = styled(CardBase as React.ComponentType<CardBaseProps<"div", FilterByDomain<EntityName, "person">>>)`
   cursor: default;
 `;
 

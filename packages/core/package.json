@@ -95,7 +95,6 @@
     "@emotion/react": ">=11.x",
     "@emotion/styled": ">=11.x",
     "@iconify/react": ">=5.x",
-    "deep-object-diff": ">=1.x.x",
     "home-assistant-js-websocket": "^9.5.0",
     "lodash": ">=4.x",
     "prettier": ">=3.4.2",

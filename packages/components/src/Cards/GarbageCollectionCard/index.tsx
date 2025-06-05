@@ -8,10 +8,11 @@ import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
 // @ts-expect-error - this is a custom svg loader
 import GarbageBin from "./garbage-bin.svg?react";
+import { EntityName } from "@hakit/core";
 
 const ASPECT_RATIO = 77.41 / 123.36;
 
-const Card = styled(CardBase)``;
+const Card = styled(CardBase as React.ComponentType<CardBaseProps<"div", EntityName>>)``;
 const Contents = styled.div`
   padding: 1rem;
   width: 100%;

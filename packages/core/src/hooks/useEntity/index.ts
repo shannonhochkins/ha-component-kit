@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { cloneDeep, isEmpty, omit } from "lodash";
+import { cloneDeep, omit } from "lodash";
 import type { HassEntityWithService, HassEntityCustom, ExtractDomain, EntityName } from "@typings";
 import type { HassEntity } from "home-assistant-js-websocket";
 import { useSubscribeEntity } from "../useSubscribeEntity";
@@ -9,7 +9,6 @@ import { getIconByEntity } from "../useIcon";
 import { useThrottledCallback } from "use-debounce";
 import { getCssColorValue } from "@utils/colors";
 import { computeDomain } from "@utils/computeDomain";
-import { diff } from "deep-object-diff";
 import type { HistoryOptions } from "../useHistory";
 import { timeAgo } from "@utils/time/time-ago";
 import { useHass } from "../useHass";
@@ -35,6 +34,16 @@ const DEFAULT_OPTIONS: Required<UseEntityOptions> = {
 type UseEntityReturnType<E, O extends UseEntityOptions> = O["returnNullIfNotFound"] extends true
   ? HassEntityWithService<ExtractDomain<E>> | null
   : HassEntityWithService<ExtractDomain<E>>;
+
+// ignore some keys that we don't actually care about when comparing entities
+const shallowEqual = (entity: HassEntity, other: HassEntityCustom): boolean => {
+  // have to omit attributes.icon here as the original icon may not contain any icon,
+  // however there's custom functionality to determine icon based on state which needs to be omitted from
+  const a = omit(entity, "custom", "last_changed", "last_updated", "context", "attributes.icon");
+  const b = omit(other, "custom", "last_changed", "last_updated", "context", "attributes.icon");
+  return JSON.stringify(a) === JSON.stringify(b);
+};
+
 
 export function useEntity<E extends EntityName, O extends UseEntityOptions = UseEntityOptions>(
   entity: E,
@@ -81,6 +90,9 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
     },
     [language],
   );
+  const [$entity, setEntity] = useState<HassEntityCustom | null>(matchedEntity !== null ? formatEntity(matchedEntity) : null);
+
+
   const debounceUpdate = useThrottledCallback(
     (entity: HassEntity) => {
       setEntity(formatEntity(entity));
@@ -92,28 +104,22 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
     },
   );
 
-  const [$entity, setEntity] = useState<HassEntityCustom | null>(matchedEntity !== null ? formatEntity(matchedEntity) : null);
-
   useEffect(() => {
     setEntity((entity) => (entity === null ? null : formatEntity(entity)));
   }, [formatEntity]);
 
   useEffect(() => {
     const foundEntity = getEntity(true);
-    if (foundEntity && $entity) {
-      // have to omit attributes.icon here as the original icon may not contain any icon,
-      // however there's custom functionality to determine icon based on state which needs to be omitted from
+    if (foundEntity && $entity) {      
       // this check to avoid recursive updates
-      const diffed = diff(
-        omit(foundEntity, "custom", "last_changed", "last_updated", "context", "attributes.icon"),
-        omit($entity, "custom", "last_changed", "last_updated", "context", "attributes.icon"),
-      );
+      let shouldUpdate = !shallowEqual(foundEntity, $entity);
+      
       const clonedEntity = cloneDeep(foundEntity);
       // Check for icon differences
       const haHasCustomIcon = typeof clonedEntity.attributes.icon === "string";
       const derivedIcon = typeof $entity.attributes.icon === "string";
       // Logic for handling icon comparison and updates
-      let shouldUpdate = !isEmpty(diffed);
+      // let shouldUpdate = !isEmpty(diffed);
       if (haHasCustomIcon && derivedIcon && clonedEntity.attributes.icon !== $entity.attributes.icon) {
         // Condition 1: Both icons are strings and differ
         shouldUpdate = true;
@@ -129,8 +135,10 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
       if (shouldUpdate) {
         debounceUpdate(clonedEntity);
       }
+    } else if (foundEntity && !$entity) {
+      debounceUpdate(foundEntity);
     }
-  }, [$entity, debounceUpdate, getEntity]);
+  }, [$entity, debounceUpdate, getEntity, useStore]);
 
   useEffect(() => {
     // when the initial ID doesn't match an entity, but it's updated dynamically through the hook
@@ -159,5 +167,5 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
       history,
       service,
     } as unknown as UseEntityReturnType<E, O>;
-  }, [$entity, history, service]);
+  }, [$entity, history, service, ]);
 }

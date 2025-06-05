@@ -4,7 +4,7 @@ import { EntityName, FilterByDomain, localize, useEntity, useHass, useIcon } fro
 import { useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
-const PersonBaseCard = styled(CardBase)`
+const PersonBaseCard = styled(CardBase as React.ComponentType<CardBaseProps<"div", PersonEntity>>)`
   background-color: var(--ha-S500);
   &:not(.disabled):hover,
   &:not(:disabled):hover {

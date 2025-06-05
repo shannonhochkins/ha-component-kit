@@ -1,3 +1,19 @@
+# 5.1.1
+
+### @hakit/components
+- IMPROVEMENT - Various updates to performance in a few components by updating the zustand store to v5 from v4
+- BUGFIX - TimeCard - was logging missing keys for the formatter tokens, this is now resolved
+- BUGFIX / IMPROVEMENT - All Cards - The scale effect will now only be applied when the card itself is being clicked, if there's buttons with click actions within the card the scale effect will no longer scale whilst these are being tapped
+- BUGFIX - MediaPlayerCard - You could open infinite modals by launching another modal by long pressing the media player card in the initial popup, this has been fixed too.
+- NEW - disableModal - A flag you can provide to call cards to disable the long press modal functionality and control your own functionality via the `longPressCallback` prop.
+
+### @hakit/core
+- NEW - useUsers - a new hook to retrieve all users from the home assistant instance, this will return an array of users with their details, this is useful if you want to display a list of users in your dashboard or use it for other purposes.
+- IMPROVEMENT - zustand has been updated to v5, this should improve performance and reduce the amount of re-renders in the application
+- IMPROVEMENT - the connection methods and re-authentication methods have received some love, the web sockets will now be automatically suspended when on an inactive tab, as well as "frozen" tabs/broswers, and will resume when the tab is active again, this should reduce the amount of connections and re-connections to home assistant, as well as reduce the amount of data sent over the web sockets when not needed.
+- IMPROVEMENT - Removed some packages that are no longer needed, this should reduce the bundle size of the core package and improve performance.
+- NEW - refCallback - A new method to get the ref element of the base card
+
 # 5.1.0
 
 ### @hakit/components

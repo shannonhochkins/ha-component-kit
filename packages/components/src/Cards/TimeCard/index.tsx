@@ -8,7 +8,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { FormatFunction } from "./types";
 import { Time, AmOrPm } from "./shared";
 
-const Card = styled(CardBase)`
+const Card = styled(CardBase as React.ComponentType<CardBaseProps<"div", FilterByDomain<EntityName, "sensor">>>)`
   cursor: default;
 `;
 

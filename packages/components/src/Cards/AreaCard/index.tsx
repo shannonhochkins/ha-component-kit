@@ -36,11 +36,11 @@ export interface AreaCardProps extends Extendable {
   children: React.ReactNode;
   /** called when the card is pressed */
   onClick?: () => void;
-  /** disable the click events on the card, useful if you want to disable the area card for certain situations like drag or panning */
+  /** disable the click events on the card, useful if you want to disable the area card for certain situations like drag or panning @default false */
   disable?: boolean;
 }
 
-const StyledAreaCard = styled(CardBase)<Partial<PictureCardProps>>`
+const StyledAreaCard = styled(CardBase as React.ComponentType<CardBaseProps<"div", EntityName>>)<Partial<PictureCardProps>>`
   aspect-ratio: 16 / 9;
   background-color: transparent;
   &:hover,
@@ -113,7 +113,7 @@ function InternalAreaCard({
   className,
   preloadProps,
   onClick,
-  disable,
+  disable = false,
   id,
   cssStyles,
   key,
@@ -122,13 +122,16 @@ function InternalAreaCard({
   const _id = useId();
   const idRef = id ?? _id;
   const { useStore, addRoute, getRoute } = useHass();
+  const dynamicHash = useStore((store) => store.hash);
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const portalRoot = useStore((store) => store.portalRoot);
   const windowContext = useStore((store) => store.windowContext);
   const win = windowContext ?? window;
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   const [open, setOpen] = useState(false);
-  const route = useMemo(() => getRoute(hash), [hash, getRoute]);
+  // we want to retrigger this effect when the actual hash changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const route = useMemo(() => getRoute(hash), [hash, getRoute, dynamicHash]);
 
   useEffect(() => {
     // if the route is active, and active isn't set, set it

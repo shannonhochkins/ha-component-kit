@@ -23,7 +23,6 @@ import {
 import { isArray, snakeCase } from "lodash";
 import { SnakeOrCamelDomains, DomainService, Locales, CallServiceArgs, Route, ServiceResponse } from "@typings";
 import { saveTokens, loadTokens, clearTokens } from "./token-storage";
-import { useDebouncedCallback } from "use-debounce";
 import { HassContext, type HassContextProps, useStore } from "./HassContext";
 import { useShallow } from "zustand/shallow";
 
@@ -262,8 +261,7 @@ async function callApi<T>(
     }
 > {
   try {
-    const connection = useStore.getState().connection;
-    const hassUrl = useStore.getState().hassUrl;
+    const { connection, hassUrl } = useStore.getState();
     const response = await fetch(`${hassUrl}/api${endpoint}`, {
       method: "GET",
       ...(options ?? {}),
@@ -294,6 +292,7 @@ async function callApi<T>(
 }
 
 const getAllEntities = () => useStore.getState().entities;
+const getConnection = () => useStore.getState().connection;
 
 export function HassProvider({
   children,
@@ -308,17 +307,10 @@ export function HassProvider({
   const configUnsubscribe = useRef<UnsubscribeFunc | null>(null);
   const {
     hash: _hash,
-    routes,
     ready,
     error,
     cannotConnect,
-    connection,
-    setRoutes,
-    setHassUrl,
-    setHash,
     setError,
-    setPortalRoot,
-    setWindowContext,
   } = useStore(
     useShallow((s) => ({
       hash: s.hash,
@@ -327,29 +319,37 @@ export function HassProvider({
       error: s.error,
       cannotConnect: s.cannotConnect,
       auth: s.auth,
-      connection: s.connection,
-      setHash: s.setHash,
-      setRoutes: s.setRoutes,
-      setHassUrl: s.setHassUrl,
       setError: s.setError,
-      setPortalRoot: s.setPortalRoot,
-      setWindowContext: s.setWindowContext,
     })),
   );
   const _connectionRef = useRef<Connection | null>(null);
 
-  const getStates = useCallback(async () => (connection === null ? null : await _getStates(connection)), [connection]);
-  const getServices = useCallback(async () => (connection === null ? null : await _getServices(connection)), [connection]);
-  const getConfig = useCallback(async () => (connection === null ? null : await _getConfig(connection)), [connection]);
-  const getUser = useCallback(async () => (connection === null ? null : await _getUser(connection)), [connection]);
+  const getStates = useCallback(async () => {
+    const connection = getConnection();
+    return connection === null ? null : await _getStates(connection)
+  }, []);
+  const getServices = useCallback(async () => {
+    const connection = getConnection();
+    return connection === null ? null : await _getServices(connection)
+  }, []);
+  const getConfig = useCallback(async () => {
+    const connection = getConnection();
+    return connection === null ? null : await _getConfig(connection)
+  }, []);
+  const getUser = useCallback(async () => {
+    const connection = getConnection();
+    return connection === null ? null : await _getUser(connection)
+  }, []);
 
   useEffect(() => {
+    const { setPortalRoot } = useStore.getState();
     if (portalRoot) setPortalRoot(portalRoot);
-  }, [portalRoot, setPortalRoot]);
+  }, [portalRoot]);
 
   useEffect(() => {
+    const { setWindowContext } = useStore.getState();
     if (windowContext) setWindowContext(windowContext);
-  }, [windowContext, setWindowContext]);
+  }, [windowContext]);
 
   const reset = useCallback((partial?: boolean) => {
     const { setAuth, setUser, setCannotConnect, setConfig, setConnection, setEntities, setError, setReady, setRoutes } =
@@ -380,6 +380,7 @@ export function HassProvider({
   }, []);
 
   const logout = useCallback(async () => {
+    const { setError } = useStore.getState();
     try {
       reset();
       clearTokens();
@@ -388,7 +389,7 @@ export function HassProvider({
       console.error("Error:", err);
       setError("Unable to log out!");
     }
-  }, [reset, setError]);
+  }, [reset]);
 
   const handleConnect = useCallback(async () => {
     const { setError, setUser, setCannotConnect, setAuth, setConnection, setEntities, setConfig } = useStore.getState();
@@ -464,24 +465,28 @@ export function HassProvider({
   }, [hassUrl, hassToken]);
 
   useEffect(() => {
+    const { setHassUrl } = useStore.getState();
     setHassUrl(hassUrl);
-  }, [hassUrl, setHassUrl]);
+  }, [hassUrl]);
 
   const joinHassUrl = useCallback(
     (path: string) => {
+      const { connection } = useStore.getState();
       return connection ? new URL(path, connection?.options.auth?.data.hassUrl).toString() : "";
     },
-    [connection],
+    [],
   );
 
   useEffect(() => {
+    const { setHash } = useStore.getState();
     if (location.hash === "") return;
     if (location.hash.replace("#", "") === _hash) return;
     setHash(location.hash);
-  }, [setHash, _hash]);
+  }, [_hash]);
 
   useEffect(() => {
     function onHashChange() {
+      const { routes, setRoutes, setHash } = useStore.getState();
       setRoutes(
         routes.map((route) => {
           if (route.hash === location.hash.replace("#", "")) {
@@ -502,10 +507,11 @@ export function HassProvider({
     return () => {
       window.removeEventListener("hashchange", onHashChange);
     };
-  }, [routes, setHash, setRoutes]);
+  }, []);
 
   const addRoute = useCallback(
     (route: Omit<Route, "active">) => {
+      const { routes, setRoutes } = useStore.getState();
       const exists = routes.find((_route) => _route.hash === route.hash) !== undefined;
       if (!exists && typeof window !== "undefined") {
         // if the current has value is the same as the hash, we're active
@@ -520,15 +526,16 @@ export function HassProvider({
         ]);
       }
     },
-    [routes, setRoutes],
+    [],
   );
 
   const getRoute = useCallback(
     (hash: string) => {
+      const routes = useStore.getState().routes;
       const route = routes.find((route) => route.hash === hash);
       return route || null;
     },
-    [routes],
+    [],
   );
 
   const callService = useCallback(
@@ -539,6 +546,7 @@ export function HassProvider({
       target: _target,
       returnResponse,
     }: CallServiceArgs<T, M, R>): Promise<R extends true ? ServiceResponse<ResponseType> : void> => {
+      const { connection, ready } = useStore.getState();
       const target =
         typeof _target === "string" || isArray(_target)
           ? {
@@ -572,39 +580,34 @@ export function HassProvider({
       }
       return undefined as R extends true ? never : void;
     },
-    [connection, ready],
+    [],
   );
 
   useEffect(() => {
+    // on unmount, reset the store
     return () => {
       reset();
     };
   }, [reset]);
 
-  const debounceConnect = useDebouncedCallback(
-    async () => {
-      try {
-        if (authenticated.current) {
-          reset();
-        }
-        authenticated.current = true;
-        await handleConnect();
-      } catch (e) {
-        const message = handleError(e);
-        setError(`Unable to connect to Home Assistant, please check the URL: "${message}"`);
-      }
-    },
-    25,
-    {
-      leading: true,
-      trailing: false,
-    },
-  );
+  // then wrap the whole connect routine so it’s stable too
+  const connectOnce = useCallback(async () => {
+    try {
+      if (authenticated.current) reset();
+      authenticated.current = true;
+      await handleConnect();
+    } catch (e) {
+      const message = handleError(e);
+      setError(
+        `Unable to connect to Home Assistant, please check the URL: "${message}"`
+      );
+    }
+  }, [reset, handleConnect, setError]);
 
+  // run it once after mount
   useEffect(() => {
-    // authenticate with ha
-    debounceConnect();
-  }, [debounceConnect]);
+    connectOnce();
+  }, [connectOnce]);
 
   const contextValue = useMemo<HassContextProps>(
     () => ({

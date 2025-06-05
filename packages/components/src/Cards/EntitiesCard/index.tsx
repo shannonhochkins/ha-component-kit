@@ -11,7 +11,7 @@ import {
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { Children, isValidElement, cloneElement, type ReactElement } from "react";
-const StyledEntitiesCard = styled(CardBase)`
+const StyledEntitiesCard = styled(CardBase as React.ComponentType<CardBaseProps<"div", EntityName>>)`
   svg {
     color: currentColor;
   }

@@ -26,7 +26,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { useRef, useEffect, useState, useCallback } from "react";
 import { useShallow } from "zustand/shallow";
 
-const StyledCalendarCard = styled(CardBase)`
+const StyledCalendarCard = styled(CardBase as React.ComponentType<CardBaseProps<"div", FilterByDomain<EntityName, "calendar">>>)`
   .contents .calendar > * {
     flex-grow: 1;
     background-color: var(--ha-S300);

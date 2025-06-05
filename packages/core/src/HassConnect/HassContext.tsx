@@ -3,7 +3,6 @@ import { createContext } from "react";
 import type { Connection, HassEntities, HassEntity, HassConfig, HassUser, HassServices, Auth } from "home-assistant-js-websocket";
 import { type CSSInterpolation } from "@emotion/serialize";
 import { ServiceData, SnakeOrCamelDomains, DomainService, Target, LocaleKeys, ServiceResponse } from "@typings";
-// import { diff } from "deep-object-diff";
 import { create } from "zustand";
 export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean> {
   domain: T;

@@ -162,6 +162,7 @@ export const MediaPlayerControls = ({
     }
   }, [primaryEntity, onStateChange]);
 
+  console.log("primaryEntity", primaryEntity);
   return (
     <Column fullHeight fullWidth {...rest}>
       <Column fullWidth fullHeight className={`column`} gap="1rem">
@@ -172,6 +173,8 @@ export const MediaPlayerControls = ({
             disableColumns
             entity={primaryEntity.entity_id as FilterByDomain<EntityName, "media_player">}
             hideGrouping={true}
+            disableScale
+            disableModal
           />
         )}
         {allEntityIds.length > 1 && (

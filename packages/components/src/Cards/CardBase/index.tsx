@@ -53,8 +53,25 @@ import styled from "@emotion/styled";
 import { useResizeDetector } from "react-resize-detector";
 import { useResizeDetectorProps } from "react-resize-detector";
 import { SVG_HEIGHT, SVG_WIDTH } from "../../Shared/SvgGraph/constants";
+import React from "react";
 
-const getBaseElement = <C extends keyof React.JSX.IntrinsicElements = "div">(as: C, onlyFunctionality?: boolean) => {
+type Extendable<T extends keyof React.JSX.IntrinsicElements> = Omit<
+  React.ComponentPropsWithoutRef<T>,
+  "onClick" | "disabled" | "title" | "children" | "active"
+>;
+
+type AllowedFeaturedEntity = ReactElement<typeof FeatureEntity> | false | null | undefined;
+type AllowedFeaturedEntities = AllowedFeaturedEntity | AllowedFeaturedEntity[];
+
+// Define the allowed children types
+type AllowedRelatedEntity = ReactElement<typeof RelatedEntity> | false | null | undefined;
+type AllowedRelatedEntities = AllowedRelatedEntity | AllowedRelatedEntity[];
+
+type HtmlTag = keyof HTMLElementTagNameMap;
+
+type ElementFromTag<T extends HtmlTag = 'div'> = HTMLElementTagNameMap[T];
+
+const getBaseElement = <C extends HtmlTag = "div">(as: C, onlyFunctionality?: boolean) => {
   if (onlyFunctionality) {
     return styled(as)``;
   }
@@ -62,6 +79,7 @@ const getBaseElement = <C extends keyof React.JSX.IntrinsicElements = "div">(as:
     shouldForwardProp: (prop) => isValidProp(prop),
   })<{
     disableActiveState: boolean;
+    disabled?: boolean;
   }>`
     outline: none;
     border: 0;
@@ -102,7 +120,7 @@ const getBaseElement = <C extends keyof React.JSX.IntrinsicElements = "div">(as:
       cursor: not-allowed;
       opacity: 0.8;
     }
-    &:active:not(.disable-scale-effect):not(.disabled):not(.unavailable) {
+    &.card-base-active:active:not(.disable-scale-effect):not(.disabled):not(.unavailable) {
       transform: scale(0.9) translate3d(0, 0, 0);
     }
     ${(props) =>
@@ -149,20 +167,7 @@ const Trigger = styled.div`
   }
 `;
 
-type Extendable<T extends keyof React.JSX.IntrinsicElements> = Omit<
-  React.ComponentPropsWithRef<T>,
-  "onClick" | "disabled" | "title" | "children" | "active"
->;
-
-// Define the allowed children types
-type AllowedFeaturedEntity = ReactElement<typeof FeatureEntity> | false | null | undefined;
-type AllowedFeaturedEntities = AllowedFeaturedEntity | AllowedFeaturedEntity[];
-
-// Define the allowed children types
-type AllowedRelatedEntity = ReactElement<typeof RelatedEntity> | false | null | undefined;
-type AllowedRelatedEntities = AllowedRelatedEntity | AllowedRelatedEntity[];
-
-export type CardBaseProps<T extends keyof React.JSX.IntrinsicElements = "div", E extends EntityName = EntityName> = Extendable<T> &
+export type CardBaseProps<T extends HtmlTag = "div", E extends EntityName = EntityName> = Extendable<T> &
   AvailableQueries & {
     /** convert the component type to something else @default "div" */
     as?: T;
@@ -195,6 +200,8 @@ export type CardBaseProps<T extends keyof React.JSX.IntrinsicElements = "div", E
     onClick?: E extends undefined
       ? (entity: null, event: React.MouseEvent<HTMLElement>) => void
       : (entity: HassEntityWithService<ExtractDomain<E>>, event: React.MouseEvent<HTMLElement>) => void;
+    /** disable the modal opening functionality @default false */
+    disableModal?: boolean;
     /** props to pass to the modal */
     modalProps?: Partial<ModalByEntityDomainProps<E>>;
     /** include ripples or not */
@@ -243,7 +250,9 @@ export type CardBaseProps<T extends keyof React.JSX.IntrinsicElements = "div", E
     /** remove all base styles of the card and just use the inbuilt functionality */
     onlyFunctionality?: boolean;
     /** props to pass to the resize detector, this is useful if you want to trigger something whenever the card resizes */
-    resizeDetectorProps?: useResizeDetectorProps<HTMLElement>;
+    resizeDetectorProps?: useResizeDetectorProps<ElementFromTag<T>>;
+    /** the ref element to provide to the card */
+    refCallback?: (ref: React.RefObject<ElementFromTag<T> | null>) => void;
   };
 
 const DEFAULT_SIZES: Required<AvailableQueries> = {
@@ -255,7 +264,7 @@ const DEFAULT_SIZES: Required<AvailableQueries> = {
   xlg: 3,
 };
 
-const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicElements = "div", E extends EntityName = EntityName>({
+const CardBaseInternal = function CardBase<T extends HtmlTag = "div", E extends EntityName = EntityName>({
   as = "div" as T,
   entity: _entity,
   title: _title,
@@ -266,6 +275,7 @@ const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicEl
   disabled,
   longPressCallback,
   onClick,
+  disableModal = false,
   modalProps,
   disableRipples = false,
   disableScale = false,
@@ -278,7 +288,7 @@ const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicEl
   borderRadius = "16px",
   rippleProps,
   disableColumns,
-  ref,
+  refCallback,
   key,
   relatedEntities,
   features,
@@ -296,14 +306,14 @@ const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicEl
   const entity = useEntity(_entity ?? "unknown", {
     returnNullIfNotFound: true,
   });
-  const internalRef = useRef<HTMLDivElement | null>(null);
+  const internalRef = useRef<ElementFromTag<T> | null>(null);
   // useful so users can subscribe to the resize event
-  const { width = 0 } = useResizeDetector({
+  const { width = 0 } = useResizeDetector<ElementFromTag<T>>({
     refreshMode: "debounce",
     refreshRate: 50,
     handleHeight: false,
     skipOnMount: false,
-    targetRef: (ref as React.RefObject<HTMLElement>) ?? internalRef,
+    targetRef: internalRef,
     ...(resizeDetectorProps ?? {}),
   });
   const graphEntity = useEntity(graph?.entity ?? "unknown", {
@@ -315,8 +325,8 @@ const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicEl
   });
   const isUnavailable = useMemo(() => (typeof entity?.state === "string" ? isUnavailableState(entity.state) : false), [entity?.state]);
   const _borderRadius = borderRadius;
-  const StyledElement = useMemo(() => getBaseElement(as, onlyFunctionality) as unknown as ReactElement<T>, [as, onlyFunctionality]);
-  const bind = useLongPress<HTMLDivElement>(
+  const StyledElement = useMemo(() => getBaseElement(as as "div", onlyFunctionality), [as, onlyFunctionality]);
+  const bind = useLongPress<Element>(
     (e) => {
       if (typeof longPressCallback === "function") {
         if (entity !== null) {
@@ -326,9 +336,10 @@ const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicEl
           longPressCallback(null as never, e);
         }
       }
-      if (typeof _entity === "string" && !openModal) {
+      if (typeof _entity === "string" && !openModal && !disableModal) {
         setOpenModal(true);
       }
+      internalRef.current?.classList.remove("card-base-active");
     },
     {
       threshold: 300,
@@ -426,12 +437,24 @@ const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicEl
       .join(" ");
   }, [active, className, columnClassNames, disableScale, disableColumns, disabled, graphEntity, hasFeatures, isUnavailable]);
 
+  const handlePointerDown = () => {
+    internalRef.current?.classList.add("card-base-active");
+  };
+
+  const handlePointerUp = () => {
+    internalRef.current?.classList.remove("card-base-active");
+  };
+
   return (
     <>
-      {/* @ts-expect-error - fix later */}
       <StyledElement
         key={key}
-        ref={ref ?? internalRef}
+        ref={(ref) => {
+          internalRef.current = ref as ElementFromTag<T> | null;
+          if (refCallback) {
+            refCallback(internalRef);
+          }
+        }}
         id={id ?? ""}
         className={_classes}
         css={css`
@@ -446,7 +469,7 @@ const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicEl
         disableActiveState={disableActiveState}
         disabled={isUnavailable || disabled}
         {...bind()}
-        {...rest}
+        {...(rest as unknown as React.HTMLAttributes<HTMLDivElement>)}
       >
         {graphEntity && (
           <div className={"graph-element history"}>
@@ -460,13 +483,23 @@ const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicEl
           </div>
         )}
         {disableRipples ? (
-          <Trigger className={`contents trigger-element ${triggerClass}`} onClick={onClickHandler}>
+          <Trigger
+            className={`contents trigger-element ${triggerClass}`}
+            onClick={onClickHandler}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+          >
             {children}
             {featureBar}
           </Trigger>
         ) : (
           <StyledRipples {...rippleProps} key={rippleProps?.key} borderRadius={_borderRadius} disabled={disabled || isUnavailable}>
-            <Trigger className={`contents trigger-element ${triggerClass}`} onClick={onClickHandler}>
+            <Trigger
+              className={`contents trigger-element ${triggerClass}`}
+              onClick={onClickHandler}
+              onPointerDown={handlePointerDown}
+              onPointerUp={handlePointerUp}
+            >
               {children}
               {featureBar}
             </Trigger>
@@ -507,13 +540,10 @@ const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicEl
  *
  * You can use this if you want an empty shell of a component that you can build on top of.
  * */
-export const CardBase = memo(function CardBase<T extends keyof React.JSX.IntrinsicElements = "div", E extends EntityName = EntityName>(
-  props: CardBaseProps<T, E>,
-) {
+export const CardBase = memo(function CardBase<T extends HtmlTag = "div", E extends EntityName = EntityName>(props: CardBaseProps<T, E>) {
   return (
     <ErrorBoundary {...fallback({ prefix: "CardBase" })}>
-      {/* @ts-expect-error - This is fine, can't determine internal types */}
-      <CardBaseInternal {...props} />
+      {CardBaseInternal<T, E>(props)}
     </ErrorBoundary>
   );
 });
