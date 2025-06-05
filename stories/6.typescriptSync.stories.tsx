@@ -1,5 +1,5 @@
-import { Story, Source, Title, Description } from "@storybook/blocks";
-import type { Meta, StoryObj } from "@storybook/react";
+import { Story, Source, Title, Description } from "@storybook/addon-docs/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { Tabs, Tab, Divider, Box} from '@mui/material';
 import { DEFAULT_FILENAME } from '../packages/core/scripts/sync-user-types/constants';

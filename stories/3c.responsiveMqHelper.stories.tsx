@@ -1,5 +1,5 @@
-import { Story, Source } from "@storybook/blocks";
-import type { Meta, StoryObj } from "@storybook/react";
+import { Story, Source } from "@storybook/addon-docs/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import mqHelperInput from './codeExamples/mqHelperInput.code?raw';
 import mqHelperOutput from './codeExamples/mqHelperOutput.code?raw';
 import { redirectToStory } from '../.storybook/redirect';

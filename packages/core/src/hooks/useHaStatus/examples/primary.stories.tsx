@@ -1,6 +1,6 @@
 import { HassConnect } from "hass-connect-fake";
-import { Story } from "@storybook/blocks";
-import type { Meta, StoryObj } from "@storybook/react";
+import { Story } from "@storybook/addon-docs/blocks";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Component } from "./basic.code";
 import { ThemeProvider, FabCard } from "@hakit/components";
 import { useHass } from "@hakit/core";

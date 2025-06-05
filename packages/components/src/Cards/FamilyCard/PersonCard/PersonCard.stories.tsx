@@ -1,6 +1,6 @@
 import { Row, PersonCard, ThemeProvider, ThemeControlsModal } from "@components";
 import { HassConnect } from "@hass-connect-fake";
-import type { Args, Meta, StoryObj } from "@storybook/react";
+import type { Args, Meta, StoryObj } from "@storybook/react-vite";
 
 function Render(args?: Args) {
   return (

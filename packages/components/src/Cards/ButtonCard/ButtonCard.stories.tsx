@@ -1,5 +1,5 @@
-import { Source } from "@storybook/blocks";
-import type { Meta, StoryObj, Args } from "@storybook/react";
+import { Source } from "@storybook/addon-docs/blocks";
+import type { Meta, StoryObj, Args } from "@storybook/react-vite";
 import { ThemeProvider, Group, Column, ButtonCard, ThemeControlsModal } from "@components";
 import type { ButtonCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";

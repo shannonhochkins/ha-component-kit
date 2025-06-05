@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThemeProvider, ButtonBar, ButtonBarButton, ThemeControlsModal, Row, Alert } from "@components";
 import type { ButtonBarProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";

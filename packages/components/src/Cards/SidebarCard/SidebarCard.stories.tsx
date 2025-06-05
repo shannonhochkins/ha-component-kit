@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Global, css } from "@emotion/react";
 import { ThemeProvider, SidebarCard, ButtonCard, Row, AreaCard, Group, Column, TriggerCard, ThemeControlsModal } from "@components";
-import { Source } from "@storybook/blocks";
+import { Source } from "@storybook/addon-docs/blocks";
 import { useEntity } from "@hakit/core";
 import type { SidebarCardProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";

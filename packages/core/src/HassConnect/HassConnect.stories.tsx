@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { HassConnect } from "@core";
 import type { HassConnectProps } from "@core";
 import { HassConnect as HassConnectFake } from "@hass-connect-fake";
-import { Source } from "@storybook/blocks";
+import { Source } from "@storybook/addon-docs/blocks";
 import windowContextExample from "./examples/windowContext.code?raw";
 import portalRootExample from "./examples/portalRoot.code?raw";
 

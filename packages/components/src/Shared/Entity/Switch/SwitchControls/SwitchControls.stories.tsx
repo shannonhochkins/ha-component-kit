@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ThemeProvider, SwitchControls, Row, ThemeControlsModal } from "@components";
 import type { SwitchControlsProps } from "@components";
 import { HassConnect } from "@hass-connect-fake";
