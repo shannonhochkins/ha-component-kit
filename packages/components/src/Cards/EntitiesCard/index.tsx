@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useHass, type EntityName } from "@hakit/core";
+import { useStore, type EntityName } from "@hakit/core";
 import {
   Column,
   fallback,
@@ -53,7 +53,6 @@ function InternalEntitiesCard({
   cssStyles,
   ...rest
 }: EntitiesCardProps): React.ReactNode {
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const childrenWithKeys = Children.map(children, (child, index) => {
     if (isValidElement<EntitiesCardRowProps<EntityName>>(child)) {

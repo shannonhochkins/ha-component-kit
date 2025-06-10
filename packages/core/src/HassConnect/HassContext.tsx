@@ -3,7 +3,9 @@ import { createContext } from "react";
 import type { Connection, HassEntities, HassEntity, HassConfig, HassUser, HassServices, Auth } from "home-assistant-js-websocket";
 import { type CSSInterpolation } from "@emotion/serialize";
 import { ServiceData, SnakeOrCamelDomains, DomainService, Target, LocaleKeys, ServiceResponse } from "@typings";
+import type { UseStoreHook } from "../hooks/useStore";
 import { create } from "zustand";
+import { type ConnectionStatus } from "./handleSuspendResume";
 export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean> {
   domain: T;
   service: M;
@@ -41,9 +43,11 @@ export type SupportedComponentOverrides =
   | "familyCard"
   | "vacuumCard"
   | "alarmCard";
-export interface Store {
+export interface InternalStore {
   entities: HassEntities;
   setEntities: (entities: HassEntities) => void;
+  connectionStatus: ConnectionStatus;
+  setConnectionStatus: (status: ConnectionStatus) => void;
   /** The connection object from home-assistant-js-websocket */
   connection: Connection | null;
   setConnection: (connection: Connection | null) => void;
@@ -103,7 +107,7 @@ const shallowEqual = (entity: HassEntity, other: HassEntity): boolean => {
   return JSON.stringify(restEntity) === JSON.stringify(restOther);
 };
 
-export const useStore = create<Store>((set) => ({
+export const useInternalStore = create<InternalStore>((set) => ({
   routes: [],
   setRoutes: (routes) => set(() => ({ routes })),
   entities: {},
@@ -137,6 +141,8 @@ export const useStore = create<Store>((set) => ({
       }
       return changed ? { entities: next, lastUpdated: Date.now(), ready: true } : state;
     }),
+  connectionStatus: "pending",
+  setConnectionStatus: (status) => set({ connectionStatus: status }),
   connection: null,
   setConnection: (connection) => set({ connection }),
   cannotConnect: false,
@@ -163,7 +169,8 @@ export const useStore = create<Store>((set) => ({
 }));
 
 export interface HassContextProps {
-  useStore: typeof useStore;
+  /** @deprecated - import "useStore" directly from @hakit/core */
+  useStore: UseStoreHook;
   /** logout of HA */
   logout: () => void;
   /** will retrieve all the HassEntities states */

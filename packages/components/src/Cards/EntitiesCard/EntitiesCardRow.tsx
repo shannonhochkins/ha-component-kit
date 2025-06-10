@@ -1,6 +1,6 @@
 import {
   computeStateDisplay,
-  useHass,
+  useStore,
   useEntity,
   useIconByDomain,
   useIconByEntity,
@@ -133,7 +133,6 @@ function InternalEntitiesCardRow<E extends EntityName>({
 }: EntitiesCardRowProps<E>) {
   const _id = useId();
   const [openModal, setOpenModal] = useState(false);
-  const { useStore } = useHass();
   const config = useStore((state) => state.config);
   const entities = useStore((store) => store.entities);
   const connection = useStore((store) => store.connection);

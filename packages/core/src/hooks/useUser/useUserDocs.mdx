@@ -1,7 +1,8 @@
-import { Meta, Source, Canvas } from '@storybook/addon-docs/blocks';
+import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
 import basicExample from './examples/basic.code?raw';
 import * as Primary from './examples/primary.stories';
 import { redirectToStory } from '../../../../../.storybook/redirect';
+import { DummyComponent } from './examples/DummyComponent';
 
 <Meta title="core/hooks/useUser" parameters={{
   docs: {
@@ -31,4 +32,9 @@ If you do need to fetch the user programmatically rather than from a hook, you c
   e.preventDefault();
   redirectToStory('/docs/core-hooks-usehass-hass-getuser--docs')
 }}>getUser</a>} method exposed via useHass.
+
+
+### Returned Value
+
+<ArgTypes of={DummyComponent} />
 

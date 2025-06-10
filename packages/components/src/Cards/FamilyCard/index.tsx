@@ -11,7 +11,7 @@ import {
   fallback,
   BreakPoint,
 } from "@components";
-import { EntityName, FilterByDomain, useHass } from "@hakit/core";
+import { EntityName, FilterByDomain, useStore } from "@hakit/core";
 import { Children, ReactElement, cloneElement, isValidElement } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -94,7 +94,6 @@ export interface FamilyCardProps extends Omit<CardBaseProps<"div", FilterByDomai
 }
 
 function InternalFamilyCard({ title, key, cssStyles, children, className, ...rest }: FamilyCardProps): React.ReactNode {
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const len = Children.count(children);
   const count = len > 2 ? "2-plus" : len === 1 ? "1" : "2";

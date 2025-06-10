@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { useMemo, useCallback, type ReactNode } from "react";
 import {
   localize,
-  useHass,
+  useStore,
   type LocaleKeys,
   type AlarmMode,
   type HassEntityWithService,
@@ -71,7 +71,6 @@ function InternalAlarmCard<E extends FilterByDomain<EntityName, "alarm_control_p
   ...rest
 }: AlarmCardProps<E>) {
   const entity = useEntity<E>(_entity) as HassEntityWithService<"alarm_control_panel">;
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const stateLabel = useCallback((state: AlarmMode | "unavailable") => {
     return state === UNAVAILABLE ? localize("unavailable") : localize(ALARM_STATE_TO_MODE_MAP[state]);

@@ -1,8 +1,10 @@
-import { Meta, Source, Canvas } from '@storybook/blocks';
+import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
 import basicExample from './examples/basic.code?raw';
 import refetchExample from './examples/refetch.code?raw';
 import * as Primary from './examples/primary.stories';
 import { redirectToStory } from '../../../../../.storybook/redirect';
+
+import { DummyComponent } from './examples/DummyComponent';
 
 <Meta title="core/hooks/useUsers" parameters={{
   docs: {
@@ -31,3 +33,6 @@ Whilst loading, it will return an empty array of users and a loading state of `t
 
 <Canvas of={Primary.PrimaryExample} />
 
+### Returned Value
+
+<ArgTypes of={DummyComponent} />

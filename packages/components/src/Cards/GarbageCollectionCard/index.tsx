@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/prefer-namespace-keyword */
 import { useMemo, useEffect, useCallback, useRef, useState, CSSProperties, Key } from "react";
-import { useEntity, useHass } from "@hakit/core";
+import { useEntity, useStore } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { fallback, Row, Column, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -197,7 +197,6 @@ function InternalGarbageCollectionCard({
   key,
   ...rest
 }: GarbageCollectionCardProps): React.ReactNode {
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const dateSensor = useEntity("sensor.date", {
     returnNullIfNotFound: true,

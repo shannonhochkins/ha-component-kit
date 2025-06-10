@@ -12,28 +12,28 @@ import type {
   HaWebSocket,
   MessageBase,
 } from "home-assistant-js-websocket";
-import { Connection, HassEntity } from "home-assistant-js-websocket";
+import { Connection } from "home-assistant-js-websocket";
 import type {
   DomainService,
   SnakeOrCamelDomains,
   Route,
-  Store,
   CallServiceArgs,
   HassContextProps,
   ServiceResponse,
+  AuthUser,  
 } from "@hakit/core";
 import { isArray } from "lodash";
 import { useShallow } from "zustand/shallow";
-import { HassContext, updateLocales, locales } from '@hakit/core';
+import { useStore, HassContext, updateLocales, locales } from '@hakit/core';
 import { entities as ENTITIES } from './mocks/mockEntities';
 import fakeApi from './mocks/fake-call-service';
-import { create } from "zustand";
 import type { ServiceArgs } from './mocks/fake-call-service/types';
 import mockHistory from './mock-history';
 import { mockCallApi } from './mocks/fake-call-api';
 import reolinkSnapshot from './assets/reolink-snapshot.jpg';
 import { logs } from './mocks/mockLogs';
 import {dailyForecast, hourlyForecast} from './mocks/mockWeather';
+import type { InternalStore } from "packages/core/dist/types/HassConnect/HassContext";
 interface HassProviderProps {
   children: (ready: boolean) => ReactNode;
   hassUrl: string;
@@ -191,6 +191,7 @@ class MockConnection extends Connection {
     if (message.type === 'get_config') {
       return fakeConfig as Result;
     }
+    console.log('message.path', message);
     // a mock for the proxy image for the camera
     if (message.path && message.path.includes('camera_proxy')) {
       return {
@@ -200,139 +201,66 @@ class MockConnection extends Connection {
     if (message.path && message.path.includes('config/entity_registry/get')) {
       return '123'as Result;
     }
+    if (message.type === 'config/auth/list') {
+      const users: AuthUser[] = [
+        {
+          id: '123',
+          name: 'Joe Bloggs',
+          is_active: true,
+          is_owner: true,
+          system_generated: false,
+          credentials: [],
+          group_ids: [],
+        },
+        {
+          id: '456',
+          name: 'Jane Doe',
+          is_active: true,
+          is_owner: false,
+          system_generated: false,
+          credentials: [],
+          group_ids: [],
+        },
+      ];
+      return users as Result;
+    }
     return null as Result;
   }
 }
 
-const shallowEqual = (entity: HassEntity, other: HassEntity): boolean => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { last_changed, last_updated, context, ...restEntity } = entity;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { last_changed: c1, last_updated: c2, context: c3, ...restOther } = other;
-
-  return JSON.stringify(restEntity) === JSON.stringify(restOther);
-};
-
-const useStore = create<Store>((set) => ({
-  disconnectCallbacks: [],
-  onDisconnect: (cb) => set((state) => ({ disconnectCallbacks: [...state.disconnectCallbacks, cb] })),
-  triggerOnDisconnect: () => {
-    set((state) => {
-      state.disconnectCallbacks.forEach((callback) => callback());
-      return { disconnectCallbacks: [] };
-    });
-  },
-  routes: [],
-  setRoutes: (routes) => set(() => ({ routes })),
+const originalStore = useStore.getState() as InternalStore;
+useStore.setState({
   hash: '',
-  setHash: (hash) => set({ hash }),
+  routes: [],
   entities: ENTITIES,
-  // this now matches the actual set Entities which fixed a state rendering issue on the demo page
-  setEntities: (newEntities) => set((state) => {
-    let changed = false;
-    const next = state.entities;
-    // used to mock out the render_template service
-    if (state.entities['light.fake_light_1']) {
-      renderTemplatePrevious = state.entities['light.fake_light_1'].state;
-    }
-    for (const [id, newEnt] of Object.entries(newEntities)) {
-      const oldEnt = state.entities[id];
-
-      // ---- fast path: first time we ever see this ID ----
-      if (!oldEnt) {
-        next[id] = newEnt;
-        console.log('new entity', id, newEnt);
-        changed = true;
-        continue;
-      }
-
-      if (!shallowEqual(oldEnt, newEnt)) {
-        next[id] = newEnt; // replace only if meaningful props differ
-        console.log('new entity', id, newEnt);
-        changed = true;
-      }
-    }
-    return changed ? { entities: next, lastUpdated: Date.now(), ready: true } : state;
-    // const entitiesDiffChanged = JSON.stringify(ignoreForDiffCheck(state.entities)) !== JSON.stringify(ignoreForDiffCheck(newEntities));
-    // if (!isEmpty(entitiesDiffChanged)) {
-    //   // purposely not making this throttle configurable
-    //   // because lights can animate etc, which doesn't need to reflect in the UI
-    //   // if a user want's to control individual entities this can be done with useEntity by passing a throttle to it's options.
-    //   const updatedEntities = Object.keys(entitiesDiffChanged).reduce<HassEntities>(
-    //     (acc, entityId) => ({
-    //       ...acc,
-    //       [entityId]: newEntities[entityId],
-    //     }),
-    //     {},
-    //   );
-    //   // update the stateEntities with the newEntities with the keys that have changed
-    //   Object.keys(updatedEntities).forEach((entityId) => {
-    //     state.entities[entityId] = {
-    //       ...state.entities[entityId],
-    //       ...newEntities[entityId],
-    //     };
-    //   });
-    //   // used to mock out the render_template service
-    //   if (state.entities['light.fake_light_1']) {
-    //     renderTemplatePrevious = state.entities['light.fake_light_1'].state;
-    //   }
-    //   if (!state.ready) {
-    //     return {
-    //       ready: true,
-    //       lastUpdated: new Date(),
-    //       entities: state.entities,
-    //     };
-    //   }
-    //   return {
-    //     lastUpdated: new Date(),
-    //     entities: state.entities,
-    //   };
-    // }
-    // return state;
-  }),
-  locales: null,
-  setLocales: (locales) => set({ locales }),
-  connection: new MockConnection(),
-  setConnection: (connection) => set({ connection }),
-  cannotConnect: false,
-  setCannotConnect: (cannotConnect) => set({ cannotConnect }),
-  ready: false,
-  setReady: (ready) => set({ ready }),
-  auth: fakeAuth,
-  setAuth: (auth) => set({ auth }),
   config: fakeConfig,
+  connection: new MockConnection(),
+  auth: fakeAuth,
   user: {
     id: '',
     is_admin: false,
     is_owner: false,
     name: 'Joe Bloggs',
   },
-  setUser: (user) => set({ user }),
+  // @ts-expect-error - intentional error, this method is available, but not typed
   setConfig: (config) => {
-    set((state) => {
-      if (state.connection && 'mockEvent' in state.connection && config) {
-        fakeConfig = config;
-        // @ts-expect-error - don't know domain
-        state.connection.mockEvent('core_config_updated', config);
-      }
-      state.config = config;
-      return state;
-    });
+    const state = useStore.getState();
+    if (state.connection && 'mockEvent' in state.connection && config) {
+      fakeConfig = config;
+      // @ts-expect-error - this is fine, it exists on the mock connection, just not on the real Connection type
+      state.connection.mockEvent('core_config_updated', config);
+    }
+    state.config = config;
+    return state;
   },
-  error: null,
-  setError: (error) => set({ error }),
-  hassUrl: '',
-  setHassUrl: (hassUrl) => set({ hassUrl }),
-  portalRoot: undefined,
-  setPortalRoot: (portalRoot) => set({ portalRoot }),
-  windowContext: window,
-  setWindowContext: (windowContext) => set({ windowContext }),
-  callApi: async (): Promise<unknown> => {
-    return {};
-  },
-  globalComponentStyles: {},
-  setGlobalComponentStyles: (globalComponentStyles) => set({ globalComponentStyles }),
-}))
+  setEntities: (newEntities: HassEntities) => {
+    // used to mock out the render_template service
+    if (newEntities['light.fake_light_1']) {
+      renderTemplatePrevious = newEntities['light.fake_light_1'].state;
+    }
+    return originalStore.setEntities(newEntities);
+  }
+});
 
 const getAllEntities = () => useStore.getState().entities;
 
@@ -360,7 +288,8 @@ function HassProvider({
     ): Promise<R extends true ? ServiceResponse<ResponseType> : void> => {
       if (typeof target !== 'string' && !isArray(target)) return undefined as R extends true ? never : void;
       const now = new Date().toISOString();
-      const { entities, setEntities } = useStore.getState();
+      // Okay to cast here, we know the store is an InternalStore
+      const { entities, setEntities } = (useStore.getState() as InternalStore);
       if (domain in fakeApi) {
         const api = fakeApi[domain as 'scene'] as (params: ServiceArgs<'scene'>) => boolean;
         const skip = api({
@@ -448,7 +377,8 @@ function HassProvider({
 
 
   useEffect(() => {
-    const { setEntities } = useStore.getState();
+    // we intentionally cast here, the actual value is an InternalStore, we just have it typed as a UseStoreHook to avoid consumers
+    const { setEntities } = (useStore.getState() as InternalStore);
     if (clock.current) clearInterval(clock.current);
     clock.current = setInterval(() => {
       const now = new Date();
@@ -509,7 +439,6 @@ function HassProvider({
       const { setRoutes, setHash, routes } = useStore.getState();
       setRoutes(routes.map(route => {
         if (route.hash === location.hash.replace('#', '')) {
-          console.log('setting route active', route.hash, location.hash);
           return {
             ...route,
             active: true,
@@ -559,7 +488,9 @@ function HassProvider({
 
 
   useEffect(() => {
-    const { setLocales, setReady, setConfig } = useStore.getState();
+    // we intentionally cast here, the actual value is an InternalStore, we just have it typed as a UseStoreHook to avoid consumers
+    // using values we don't want them to use.
+    const { setLocales, setReady, setConfig } = (useStore.getState() as InternalStore);
     locales.find(locale => locale.code === 'en')?.fetch().then(_locales => {
       setLocales(_locales);
       updateLocales(_locales);

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useHass } from "@core";
+import { useStore } from "@core";
 import { HassEntity } from "home-assistant-js-websocket";
 import { useShallow } from "zustand/shallow";
 
@@ -17,8 +17,6 @@ export interface LowDevicesOptions {
 const isBattery = (e: HassEntity) => e.attributes.unit_of_measurement === "%" && e.attributes.device_class === "battery";
 
 export const useLowDevices = ({ blacklist = [], whitelist = [], min = 0, max = 20 }: LowDevicesOptions = {}) => {
-  const { useStore } = useHass();
-
   const batteries = useStore(
     useShallow((state) => {
       return Object.values(state.entities).filter(isBattery);

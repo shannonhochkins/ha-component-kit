@@ -25,7 +25,7 @@ import {
   computeDomain,
   isUnavailableState,
   useEntity,
-  useHass,
+  useStore,
   localize,
 } from "@hakit/core";
 import { CSSInterpolation } from "@emotion/serialize";
@@ -295,7 +295,6 @@ const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicEl
   ...rest
 }: CardBaseProps<T, E>): ReactElement<T> {
   const _id = useId();
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const [openModal, setOpenModal] = useState(false);
   const domain = _entity ? computeDomain(_entity) : null;

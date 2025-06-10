@@ -4,7 +4,7 @@ import { css } from "@emotion/react";
 import { useResizeDetector } from "react-resize-detector";
 import { Row } from "@components";
 import { Icon } from "@iconify/react";
-import { useHass } from "@hakit/core";
+import { useStore } from "@hakit/core";
 import { useFloating, FloatingArrow, shift, limitShift, arrow, offset, autoUpdate, type Placement } from "@floating-ui/react";
 
 type Extendable = Omit<React.ComponentPropsWithoutRef<"a">, "event" | "definition">;
@@ -84,7 +84,6 @@ const MenuItem = styled.a`
 
 export function Menu({ children, placement = "bottom", items = [], disabled = false, cssStyles, ...props }: MenuProps) {
   const [open, setOpen] = useState(false);
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const arrowRef = useRef(null);
   const { refs, floatingStyles, context } = useFloating({

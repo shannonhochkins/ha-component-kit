@@ -3,7 +3,7 @@ import { Locales } from "@typings";
 import { useEffect, useRef, useState } from "react";
 import { updateLocales } from "../../hooks/useLocale";
 import locales from "../../hooks/useLocale/locales";
-import { useStore } from "../HassContext";
+import { useInternalStore } from "../HassContext";
 
 interface FetchLocaleProps {
   locale?: Locales;
@@ -14,8 +14,8 @@ export function FetchLocale({ locale, children }: FetchLocaleProps) {
   const [fetched, setFetched] = useState(false);
   const fetchPending = useRef(false);
   const previousLocale = useRef<Locales | null>(null);
-  const setError = useStore((store) => store.setError);
-  const setLocales = useStore((store) => store.setLocales);
+  const setError = useInternalStore((store) => store.setError);
+  const setLocales = useInternalStore((store) => store.setLocales);
 
   useEffect(() => {
     const _locale = locale ?? config?.language;

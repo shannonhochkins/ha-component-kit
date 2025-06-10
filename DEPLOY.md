@@ -79,3 +79,13 @@ npm run release:components:canary
 npm dist-tag ls @hakit/core
 npm dist-tag ls @hakit/components
 ```
+4. Ask users to install or test the canary version by running:
+```bash
+npm install @hakit/core@canary
+npm install @hakit/components@canary
+```
+or the specific version:
+```bash
+npm install @hakit/core@1.0.0-canary.0
+npm install @hakit/components@1.0.0-canary.0
+```

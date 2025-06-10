@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { EntityName, computeDomain, computeStateDisplay, isUnavailableState, ON, OFF, useHass } from "@hakit/core";
+import { EntityName, computeDomain, computeStateDisplay, isUnavailableState, ON, OFF, useStore } from "@hakit/core";
 import { HassConfig, Connection } from "home-assistant-js-websocket";
 import { useCallback, useState, useEffect, useRef } from "react";
 import Switch from "react-switch";
@@ -25,7 +25,6 @@ const StyledSwitch = styled(Switch)`
 `;
 
 export default function ToggleState({ entity, className, ...rest }: StateProps) {
-  const { useStore } = useHass();
   const timeout = useRef<NodeJS.Timeout | null>(null);
   const config = useStore((state) => state.config);
   const entities = useStore((store) => store.entities);

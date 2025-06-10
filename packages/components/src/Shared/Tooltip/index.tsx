@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { fallback } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import { useHass } from "@hakit/core";
+import { useStore } from "@hakit/core";
 
 const TooltipSpan = styled.span<Pick<TooltipProps, "placement">>`
   position: fixed;
@@ -93,7 +93,6 @@ export interface TooltipProps extends Omit<React.ComponentPropsWithRef<"div">, "
 function InternalTooltip({ placement = "top", title = null, children, ref, ...rest }: TooltipProps) {
   const tooltipRef = useRef<HTMLSpanElement | null>(null);
   const childRef = useRef<HTMLDivElement | null>(null);
-  const { useStore } = useHass();
   const portalRoot = useStore((store) => store.portalRoot);
   const windowContext = useStore((store) => store.windowContext);
   const win = windowContext ?? window;

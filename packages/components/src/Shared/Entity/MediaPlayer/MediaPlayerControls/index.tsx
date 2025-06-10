@@ -162,7 +162,6 @@ export const MediaPlayerControls = ({
     }
   }, [primaryEntity, onStateChange]);
 
-  console.log("primaryEntity", primaryEntity);
   return (
     <Column fullHeight fullWidth {...rest}>
       <Column fullWidth fullHeight className={`column`} gap="1rem">

@@ -1,4 +1,4 @@
-import { useHass } from "@core";
+import { useHass, useStore } from "@core";
 import { useEffect, useState, useMemo } from "react";
 import { subscribeAreaRegistry } from "./subscribe/areas";
 import { subscribeEntityRegistry } from "./subscribe/entities";
@@ -24,7 +24,7 @@ export interface Area {
 }
 
 export function useAreas(): Area[] {
-  const { useStore, joinHassUrl } = useHass();
+  const { joinHassUrl } = useHass();
   const [areas, setAreas] = useState<AreaRegistryEntry[]>([]);
   const [devices, setDevices] = useState<DeviceRegistryEntry[]>([]);
   const [entities, setEntities] = useState<EntityRegistryEntry[]>([]);

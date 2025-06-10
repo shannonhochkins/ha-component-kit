@@ -2,11 +2,12 @@ import { Source, Meta, ArgTypes } from '@storybook/addon-docs/blocks';
 import useStoreExample from './examples/useStore.code?raw';
 import { DummyComponent } from './examples/DummyUseStoreComponent';
 import { Redirect } from '../../../../../stories/helpers/redirect';
+import { DATA_KEYS } from './index';
 
 
-<Meta title="core/hooks/useHass/hass/useStore" />
+<Meta title="core/hooks/useStore" />
 
-# useStore(selector: (store: HassStore) => any): any
+# useStore: UseStoreHook
 This will return all the information from the store, you can also pass through a selector through as the function to only
 subscribe to updates for that particular value.
 
@@ -19,15 +20,6 @@ subscribe to updates for that particular value.
 
 > There's a lot more returned by the useStore method, these are intentionally undocumented as they're not intended to be used directly and there's hooks already exposing pretty much all this information, for example <Redirect to="/docs/core-hooks-useuser--docs">useUser</Redirect>.
 
-<ArgTypes of={DummyComponent} include={[
-  'lastUpdated',
-  'hassUrl',
-  'locales',
-  'windowContext',
-  'config',
-  'user',
-  'connection',
-  'auth',
-  'breakpoints',
-  'portalRoot',
-]} />
+### Returned Value
+
+<ArgTypes of={DummyComponent} include={DATA_KEYS} />

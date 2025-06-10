@@ -2,16 +2,10 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { cloneDeep, omit } from "lodash";
 import type { HassEntityWithService, HassEntityCustom, ExtractDomain, EntityName } from "@typings";
 import type { HassEntity } from "home-assistant-js-websocket";
-import { useSubscribeEntity } from "../useSubscribeEntity";
-import { useService } from "../useService";
-import { useHistory } from "../useHistory";
-import { getIconByEntity } from "../useIcon";
 import { useThrottledCallback } from "use-debounce";
 import { getCssColorValue } from "@utils/colors";
-import { computeDomain } from "@utils/computeDomain";
-import type { HistoryOptions } from "../useHistory";
 import { timeAgo } from "@utils/time/time-ago";
-import { useHass } from "../useHass";
+import { computeDomain, useStore, useSubscribeEntity, useHistory, useService, getIconByEntity, type HistoryOptions } from "@core";
 
 interface UseEntityOptions {
   /** The amount of time to throttle updates in milliseconds */
@@ -61,7 +55,6 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
   const domain = computeDomain(entity) as ExtractDomain<E>;
   const service = useService(domain, entity);
   const history = useHistory(entity, historyOptions);
-  const { useStore } = useHass();
   const language = useStore((state) => state.config?.language);
 
   const formatEntity = useCallback(
@@ -136,7 +129,7 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
     } else if (foundEntity && !$entity) {
       debounceUpdate(foundEntity);
     }
-  }, [$entity, debounceUpdate, getEntity, useStore]);
+  }, [$entity, debounceUpdate, getEntity]);
 
   useEffect(() => {
     // when the initial ID doesn't match an entity, but it's updated dynamically through the hook

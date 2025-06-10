@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import type { HassEntityWithService, HvacMode } from "@hakit/core";
 import type { ClimateControlsProps, AvailableQueries } from "@components";
-import { useEntity, OFF, isUnavailableState, useHass, localize } from "@hakit/core";
+import { useEntity, OFF, isUnavailableState, useStore, useHass, localize } from "@hakit/core";
 import { fallback, Row, ButtonBar, Column } from "@components";
 import { capitalize } from "lodash";
 import { icons, activeColors, colors } from "../../Shared/Entity/Climate/ClimateControls/shared";
@@ -95,7 +95,7 @@ function InternalClimateCard({
   targetTempStep,
   ...rest
 }: ClimateCardProps): React.ReactNode {
-  const { getConfig, useStore } = useHass();
+  const { getConfig } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const entity = useEntity(_entity);
   const [config, setConfig] = useState<HassConfig | null>(null);

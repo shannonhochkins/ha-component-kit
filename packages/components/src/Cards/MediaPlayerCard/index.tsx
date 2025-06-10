@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback, useMemo, useState } from "react";
-import { useService, useHass, isUnavailableState, useEntity, OFF, supportsFeatureFromAttributes } from "@hakit/core";
+import { useService, useHass, isUnavailableState, useEntity, OFF, useStore, supportsFeatureFromAttributes } from "@hakit/core";
 import { snakeCase, clamp } from "lodash";
 import { useGesture } from "@use-gesture/react";
 import type { EntityName, FilterByDomain, MediaPlayerEntity } from "@hakit/core";
@@ -163,7 +163,7 @@ function InternalMediaPlayerCard({
 }: MediaPlayerCardProps) {
   const entity = useEntity(_entity);
   const mp = useService("mediaPlayer");
-  const { useStore, joinHassUrl } = useHass();
+  const { joinHassUrl } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const interval = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
@@ -203,14 +203,6 @@ function InternalMediaPlayerCard({
 
   const updateClock = useCallback(
     (x: number) => {
-      console.log("updateClock called with x:", {
-        x,
-        media_duration,
-        seekDisabled,
-        playerRef: playerRef.current,
-        progressRef: progressRef.current,
-        clockRef: clockRef.current,
-      });
       if (!progressRef.current || !clockRef.current || seekDisabled || !playerRef.current || !media_duration) return;
 
       // Get the bounding client rectangle
@@ -238,7 +230,6 @@ function InternalMediaPlayerCard({
     (media_duration?: number, media_position?: number) => {
       if (!media_duration || !media_position) return 0;
       const progress = (media_position / media_duration) * 100;
-      console.log("progress", { progress, hasRef: !!playerRef.current, media_position, media_duration });
       if (playerRef.current) {
         playerRef.current.style.setProperty(`--progress-${snakeCase(_entity)}-width`, `${clamp(progress, 0, 100)}%`);
       }
@@ -341,7 +332,6 @@ function InternalMediaPlayerCard({
         refCallback={(ref) => {
           if (ref) {
             playerRef.current = ref.current;
-            console.log("MediaPlayerCard refCallback called with:", ref);
           }
         }}
         layout={layout}

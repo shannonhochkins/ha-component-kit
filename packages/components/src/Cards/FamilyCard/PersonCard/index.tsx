@@ -1,6 +1,6 @@
 import { AvailableQueries, CardBase, CardBaseProps, fallback } from "@components";
 import styled from "@emotion/styled";
-import { EntityName, FilterByDomain, localize, useEntity, useHass, useIcon } from "@hakit/core";
+import { EntityName, FilterByDomain, localize, useEntity, useStore, useHass, useIcon } from "@hakit/core";
 import { useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -145,7 +145,6 @@ function InternalPersonCard({
   className,
   ...rest
 }: PersonCardProps): React.ReactNode {
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
 
   const personStateMapDefault: PersonStateMap = {

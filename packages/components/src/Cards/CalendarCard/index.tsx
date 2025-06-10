@@ -5,7 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import { Icon } from "@iconify/react";
-import { isUnavailableState, useHass, getColorByIndex, localize } from "@hakit/core";
+import { isUnavailableState, useStore, useHass, getColorByIndex, localize } from "@hakit/core";
 import type { FilterByDomain, EntityName } from "@hakit/core";
 import { HassEntity } from "home-assistant-js-websocket";
 import { useResizeDetector } from "react-resize-detector";
@@ -410,7 +410,7 @@ function InternalCalendarCard({
   key,
   ...rest
 }: CalendarCardProps): React.ReactNode {
-  const { useStore, callApi } = useHass();
+  const { callApi } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const config = useStore((store) => store.config);
   const calRef = useRef<FullCalendar>(null);

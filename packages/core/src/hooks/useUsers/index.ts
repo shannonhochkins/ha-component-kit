@@ -1,9 +1,12 @@
-import { useHass } from "../useHass";
+import { useStore } from "../useStore";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-type UsersState = {
+export type UsersState = {
+  /** loading state while fetching the users */
   loading: boolean;
+  /** error state if there was a problem fetching the information */
   error: string | null;
+  /** list of users linked to the home assistant instance */
   users: AuthUser[];
 };
 
@@ -38,7 +41,6 @@ export function useUsers(args?: FetchUsersArgs): UsersState & {
    *  Resolves with the same shape it returns from the hook. */
   refetch: (args?: FetchUsersArgs) => Promise<UsersState>;
 } {
-  const { useStore } = useHass();
   const hasFetchedOnce = useRef(false);
   const connection = useStore((state) => state.connection);
 
@@ -90,7 +92,7 @@ export function useUsers(args?: FetchUsersArgs): UsersState & {
 
   /* Initial load – runs only when a usable connection appears */
   useEffect(() => {
-    if (connection && !hasFetchedOnce.current) fetchUsers(args);
+    if (!hasFetchedOnce.current) fetchUsers(args);
   }, [connection, fetchUsers, args]);
 
   return {

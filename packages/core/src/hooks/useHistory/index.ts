@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import type { EntityName } from "@core";
 import { useSubscribeEntity } from "../useSubscribeEntity";
-import { useHass } from "../useHass";
+import { useStore } from "../useStore";
 import { HassEntities, HassConfig } from "home-assistant-js-websocket";
 import { subscribeHistory, computeHistory } from "./history";
 import type { TimelineState, EntityHistoryState, HistoryStates } from "./history";
@@ -37,7 +37,6 @@ export interface HistoryOptions {
   disable?: boolean;
 }
 export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
-  const { useStore } = useHass();
   const connection = useStore((state) => state.connection);
   const config = useStore((state) => state.config);
   const subscribed = useRef(false);

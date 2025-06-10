@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { useEffect, useMemo, useState, useId } from "react";
 import { createPortal } from "react-dom";
-import { localize, useHass, type EntityName } from "@hakit/core";
+import { localize, useHass, useStore, type EntityName } from "@hakit/core";
 import { Row, FabCard, fallback, mq, PreloadImage, CardBase } from "@components";
 import type { PictureCardProps, CardBaseProps, AvailableQueries } from "@components";
 import { Icon } from "@iconify/react";
@@ -121,7 +121,7 @@ function InternalAreaCard({
 }: AreaCardProps) {
   const _id = useId();
   const idRef = id ?? _id;
-  const { useStore, addRoute, getRoute } = useHass();
+  const { addRoute, getRoute } = useHass();
   const dynamicHash = useStore((store) => store.hash);
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const portalRoot = useStore((store) => store.portalRoot);

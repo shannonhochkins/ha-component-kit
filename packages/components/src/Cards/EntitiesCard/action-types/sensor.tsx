@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { computeStateDisplay, useHass } from "@hakit/core";
+import { computeStateDisplay, useStore } from "@hakit/core";
 import { HassConfig, Connection } from "home-assistant-js-websocket";
 import { useCallback } from "react";
 import { StateProps } from "./types";
@@ -18,7 +18,6 @@ const Wrapper = styled.div`
 `;
 
 export default function SensorState({ entity }: StateProps) {
-  const { useStore } = useHass();
   const config = useStore((state) => state.config);
   const entities = useStore((store) => store.entities);
   const connection = useStore((store) => store.connection);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useHass, type EntityRegistryEntry, type EntityName } from "@core";
+import { useStore, type EntityRegistryEntry, type EntityName } from "@core";
 
 export interface ExtEntityRegistryEntry extends EntityRegistryEntry {
   capabilities: Record<string, unknown>;
@@ -14,7 +14,6 @@ export interface ExtEntityRegistryEntry extends EntityRegistryEntry {
 export const useDevice = (entityId: EntityName) => {
   const [device, setDevice] = useState<ExtEntityRegistryEntry | null>(null);
 
-  const { useStore } = useHass();
   const connection = useStore((state) => state.connection);
 
   useEffect(() => {

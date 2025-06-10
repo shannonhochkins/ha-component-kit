@@ -8,7 +8,7 @@ import { convertToCssVars } from "./helpers";
 import { useBreakpoint, fallback, type BreakPoints, type BreakPointsWithXlg } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { LIGHT, DARK, ACCENT, DEFAULT_START_LIGHT, DEFAULT_START_DARK, DIFF, DEFAULT_THEME_OPTIONS } from "./constants";
-import { useHass, type SupportedComponentOverrides } from "@hakit/core";
+import { useStore, type SupportedComponentOverrides } from "@hakit/core";
 import { generateColumnBreakpoints } from "./breakpoints";
 import createCache, { type Options } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
@@ -225,7 +225,6 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
   emotionCache,
   children,
 }: ThemeProviderProps<T>): React.ReactNode {
-  const { useStore } = useHass();
   const themeStore = useThemeStore((store) => store.theme);
   const setTheme = useThemeStore((store) => store.setTheme);
   const setBreakpoints = useThemeStore((store) => store.setBreakpoints);

@@ -96,7 +96,7 @@
     "@emotion/react": ">=11.x",
     "@emotion/styled": ">=11.x",
     "@iconify/react": ">=5.x",
-    "home-assistant-js-websocket": "^9.5.0",
+    "home-assistant-js-websocket": ">=9.x.x",
     "lodash": ">=4.x",
     "prettier": ">=3.4.2",
     "react": ">=19.x",
