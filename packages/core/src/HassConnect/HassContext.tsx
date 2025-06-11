@@ -169,7 +169,7 @@ export const useInternalStore = create<InternalStore>((set) => ({
 }));
 
 export interface HassContextProps {
-  /** @deprecated - import "useStore" directly from @hakit/core */
+  /** @deprecated - import directly instead: import { useStore } from "@hakit/core"; */
   useStore: UseStoreHook;
   /** logout of HA */
   logout: () => void;

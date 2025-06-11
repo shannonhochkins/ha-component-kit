@@ -1,0 +1,17 @@
+import { Source, Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+
+import basicExample from './examples/basic.code?raw';
+
+<Meta title="core/hooks/useEntities" />
+# useEntities()
+###### `useEntities(entity: EntityName[], options?: UseEntityOptions): Array<HassEntityWithService<Domain> | null>`
+This hook is a wrapper hook for the `useEntity` hook and behaves exactly the same way with the obvious input/output of an array of entities.
+
+This hook should be used inside the context of [`<HassConnect />`](/docs/core-hassconnect--docs) and not outside of it otherwise it will not have access to
+the authenticated home assistant API.
+
+For more information/context around the behavior of this hook visit [`useEntity`](/docs/core-hooks-useentity--docs)
+
+### Example Usage
+
+<Source dark code={basicExample} />

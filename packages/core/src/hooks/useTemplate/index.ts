@@ -14,7 +14,7 @@ type RenderTemplateError = {
 export type TemplateParams = {
   /** The template expression to process */
   template: string;
-  /** The entity ids or id to watch for changes, this has been marked as @deprecated and may not be needed to use this */
+  /** The entity ids or id to watch for changes, @deprecated This may not be needed as variables should handle this case */
   entity_ids?: EntityName | EntityName[];
   /** variables to define to use within the template
    * @example

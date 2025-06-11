@@ -20,6 +20,8 @@
 - NEW - To add to the above, from the store you can now access `connectionStatus` to determine the current state of the connection via `useStore(state => state.connectionStatus)`, this will return a string with the current status of the connection, this is useful if you want to display a message to the user when the connection is lost or re-established, if you want to configure the suspend/resume options you can pass through `handleResumeOptions` via the `options` prop on `HassConnect`
 - IMPROVEMENT - Removed some packages that are no longer needed, this should reduce the bundle size of the core package and improve performance.
 - DEPRECATED - useStore().lastUpdated and useStore().setLastUpdated - these were remnants of the old store implementation, there was nothing using, or even setting this value so i've decided to remove it.
+- IMPROVEMENT - Many optimisations to useEntity, much faster updates without throttling/debouncing, however there's been some side effects to this
+   - DEPRECATED - throttle - no longer needed as we update as often as we can
 - BREAKING - home assistant has removed the "kelvin" value you can pass to set the temperature of a light entity and is replaced with `color_temp_kelvin`.
 - BREAKING - getAllEntities - There was an unfortunate side effect of the previous store implementation where getAllEntities would automatically re-trigger a re-render of the component that was using it, the intention of this method is to grab a fresh copy of the entities at the time of the call, not trigger a re-render causing it to get new entities on every entity change, if you are using this method, you can swap it for the following:
 ```ts

@@ -75,32 +75,57 @@ export default {
     },
     options: {
       storySort: (a, b) => {
-        const splitAndTakeFirst = (str, delimiter) => str.split(delimiter)[0];
-        const getOrderIndex = (order, item) => order.indexOf(item);
-        const getNumericPrefix = (str) => parseInt(str.match(/\d+/)?.[0] || "-1", 10);
+        // const splitAndTakeFirst = (str, delimiter) => str.split(delimiter)[0];
+        // const getOrderIndex = (order, item) => order.indexOf(item);
+        // const getNumericPrefix = (str) => parseInt(str.match(/\d+/)?.[0] || "-1", 10);
       
-        const aTitle = splitAndTakeFirst(a.title, '/');
-        const bTitle = splitAndTakeFirst(b.title, '/');
+        // const aTitle = splitAndTakeFirst(a.title, '/');
+        // const bTitle = splitAndTakeFirst(b.title, '/');
       
-        const order = ['INTRODUCTION', 'COMPONENTS', 'HOOKS', 'ADVANCED'];
+        // const order = ['INTRODUCTION', 'COMPONENTS', 'HOOKS', 'ADVANCED'];
       
-        const aOrderIndex = getOrderIndex(order, aTitle);
-        const bOrderIndex = getOrderIndex(order, bTitle);
+        // const aOrderIndex = getOrderIndex(order, aTitle);
+        // const bOrderIndex = getOrderIndex(order, bTitle);
       
-        if (aOrderIndex !== -1 && bOrderIndex !== -1) {
-          if (aOrderIndex === bOrderIndex) {
-            // Both have the same top-level title. Sort based on the numeric prefix in importPath.
-            const aNumericPrefix = getNumericPrefix(a.importPath);
-            const bNumericPrefix = getNumericPrefix(b.importPath);
-            return aNumericPrefix - bNumericPrefix;
-          }
-          return aOrderIndex - bOrderIndex;
+        // if (aOrderIndex !== -1 && bOrderIndex !== -1) {
+        //   if (aOrderIndex === bOrderIndex) {
+        //     // Both have the same top-level title. Sort based on the numeric prefix in importPath.
+        //     const aNumericPrefix = getNumericPrefix(a.importPath);
+        //     const bNumericPrefix = getNumericPrefix(b.importPath);
+        //     return aNumericPrefix - bNumericPrefix;
+        //   }
+        //   return aOrderIndex - bOrderIndex;
+        // }
+      
+        // if (aOrderIndex !== -1) return -1;
+        // if (bOrderIndex !== -1) return 1;
+      
+        // return aTitle.localeCompare(bTitle);
+        const splitAndTakeFirst = (str) => str.split('/')[0];
+        const stripGroup = (full, group) => full.replace(`${group}/`, '');
+
+        const groupOrder = ['INTRODUCTION', 'COMPONENTS', 'HOOKS', 'ADVANCED'];
+
+        const aGroup = splitAndTakeFirst(a.title);
+        const bGroup = splitAndTakeFirst(b.title);
+
+        const aIdx = groupOrder.indexOf(aGroup);
+        const bIdx = groupOrder.indexOf(bGroup);
+
+        // if they’re in different top-level groups, respect custom order
+        if (aIdx !== bIdx) {
+          // put unknown groups at the end
+          const ai = aIdx === -1 ? Infinity : aIdx;
+          const bi = bIdx === -1 ? Infinity : bIdx;
+          return ai - bi;
         }
-      
-        if (aOrderIndex !== -1) return -1;
-        if (bOrderIndex !== -1) return 1;
-      
-        return aTitle.localeCompare(bTitle);
+
+        // same group: strip off the "HOOKS/" (or "COMPONENTS/", etc.) prefix
+        const aName = stripGroup(a.title, aGroup);
+        const bName = stripGroup(b.title, bGroup);
+
+        // then just do a normal string compare
+        return aName.localeCompare(bName);
       },
     },
     docs: {

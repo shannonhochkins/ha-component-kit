@@ -4,7 +4,7 @@ import refetchExample from './examples/refetch.code?raw';
 import * as Primary from './examples/primary.stories';
 import { redirectToStory } from '../../../../../.storybook/redirect';
 
-import { DummyComponent } from './examples/DummyComponent';
+import { DummyComponent, DummyComponentAuthUser } from './examples/DummyComponent';
 
 <Meta title="core/hooks/useUsers" parameters={{
   docs: {
@@ -36,3 +36,7 @@ Whilst loading, it will return an empty array of users and a loading state of `t
 ### Returned Value
 
 <ArgTypes of={DummyComponent} />
+
+### AuthUser definition
+
+<ArgTypes of={DummyComponentAuthUser} />

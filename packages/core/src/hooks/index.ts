@@ -1,11 +1,12 @@
 // hooks
 export { useHass } from "./useHass";
-export { useEntity } from "./useEntity";
+export { useEntity, type UseEntityOptions, type UseEntityReturnType } from "./useEntity";
+export { useEntities, type UseEntitiesReturn } from "./useEntities";
 export { useService, createService } from "./useService";
 export { useIconByDomain, useIcon, useIconByEntity, getIconByEntity, batteryIconByLevel } from "./useIcon";
 export { useLightBrightness } from "./useLightBrightness";
 export { useLightTemperature } from "./useLightTemperature";
-export { useLightColor } from "./useLightColor";
+export { useLightColor, type UseLightColorReturn } from "./useLightColor";
 export { useLowDevices, type LowDevicesOptions } from "./useLowDevices";
 export { useDevice, type ExtEntityRegistryEntry } from "./useDevice";
 export { useHistory, type HistoryOptions } from "./useHistory";
@@ -17,7 +18,7 @@ export { useConfig } from "./useConfig";
 export { useUser } from "./useUser";
 export { useStore, type Store, type UseStoreHook } from "./useStore";
 export { useUsers, type AuthUser, type FetchUsersArgs, type UsersState } from "./useUsers";
-export { useWeather, type UseWeatherOptions } from "./useWeather";
+export { useWeather, type UseWeatherOptions, type WeatherEntityWithForecast } from "./useWeather";
 export { getSupportedForecastTypes, type ForecastType, type ModernForecastType } from "./useWeather/helpers";
 export * from "./useLogs/logbook";
 export { useAreas, type Area } from "./useAreas";

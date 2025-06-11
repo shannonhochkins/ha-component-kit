@@ -3,18 +3,19 @@ import basicExample from './examples/basic.code?raw';
 import * as Primary from './examples/primary.stories';
 import { DummyComponentReturn } from './examples/DummyComponent';
 
-<Meta title="core/hooks/useConfig" parameters={{
+<Meta title="core/hooks/useDevice" parameters={{
   docs: {
     page: null,
   }
 }} />
+useDevice(entity: EntityName)
+# useDevice()
+###### `useDevice(entityId: EntityName): ExtEntityRegistryEntry | null`
 
-# useConfig()
-###### `useConfig(): HassConfig | null`
+The useDevice hook is designed to return all the additional information related to a device.
 
-A custom React hook to subscribe to the Home Assistant configuration updates, this hook will return a new value every time your instance configuration changes.
-
-This hook will return the configuration object or null if not available yet.
+The above will either return null or the extended device information, this is not the entity, but rather the device, 
+they're different in the eyes of home assistant, not all entities have devices.
 
 - **Dependencies**: This hook requires you to use it within the `HassConnect` component.
 
@@ -28,6 +29,6 @@ This hook will return the configuration object or null if not available yet.
 
 
 ### Returned Value
-The following is a valid returned value from the `useConfig` hook:
+The following is a valid returned value from the `useDevice` hook:
 
 <ArgTypes of={DummyComponentReturn} />

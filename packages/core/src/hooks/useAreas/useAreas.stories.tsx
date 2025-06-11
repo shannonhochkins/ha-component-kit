@@ -1,5 +1,7 @@
-import { Story, Source, Title, Description } from "@storybook/addon-docs/blocks";
+import { Story, Source, Title, Description, ArgTypes } from "@storybook/addon-docs/blocks";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { DummyComponent, DummyComponent2 } from "./examples/DummyComponent";
+import useAreasCode from "./examples/useAreas.code?raw";
 
 export default {
   title: "core/hooks/useAreas",
@@ -20,17 +22,13 @@ export default {
           <p>Here&apos;s how you could use the hook to render multiple AreaCards</p>
           <Source
             dark
-            code={`
-import { useAreas } from '@hakit/core';
-import { AreaCard, EntitiesCard } from '@hakit/components';
-function RenderAreas() {
-  const areas = useAreas();
-  return areas.map(area => <AreaCard key={area.area_id} title={area.name} image={area.picture} hash={area.area_id}>
-    <EntitiesCard entities={area.entities.map(entity => entity.entity_id as EntityName)} />
-  </AreaCard>)
-}
-          `}
+            code={useAreasCode}
           />
+          <h4>Returned Value</h4>
+          <p>The hook will return a list of areas:</p>
+          <ArgTypes of={DummyComponent} />
+          <p>An area has the following properties</p>
+          <ArgTypes of={DummyComponent2} />
         </>
       ),
       description: {

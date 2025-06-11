@@ -1,21 +1,16 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
-import { cloneDeep, omit } from "lodash";
+import { useMemo } from "react";
 import type { HassEntityWithService, HassEntityCustom, ExtractDomain, EntityName } from "@typings";
 import type { HassEntity } from "home-assistant-js-websocket";
-import { useThrottledCallback } from "use-debounce";
 import { getCssColorValue } from "@utils/colors";
 import { timeAgo } from "@utils/time/time-ago";
 import { computeDomain, useStore, useSubscribeEntity, useHistory, useService, getIconByEntity, type HistoryOptions } from "@core";
 
-interface UseEntityOptions {
-  /** The amount of time to throttle updates in milliseconds */
-  throttle?: number;
+export interface UseEntityOptions {
   returnNullIfNotFound?: boolean;
   historyOptions?: HistoryOptions;
 }
 
 const DEFAULT_OPTIONS: Required<UseEntityOptions> = {
-  throttle: 25,
   returnNullIfNotFound: false,
   historyOptions: {
     hoursToShow: 24,
@@ -25,24 +20,43 @@ const DEFAULT_OPTIONS: Required<UseEntityOptions> = {
   },
 };
 
-type UseEntityReturnType<E, O extends UseEntityOptions> = O["returnNullIfNotFound"] extends true
+export type UseEntityReturnType<E, O extends UseEntityOptions> = O["returnNullIfNotFound"] extends true
   ? HassEntityWithService<ExtractDomain<E>> | null
   : HassEntityWithService<ExtractDomain<E>>;
 
-// ignore some keys that we don't actually care about when comparing entities
-const shallowEqual = (entity: HassEntity, other: HassEntityCustom): boolean => {
-  // have to omit attributes.icon here as the original icon may not contain any icon,
-  // however there's custom functionality to determine icon based on state which needs to be omitted from
-  const a = omit(entity, "custom", "last_changed", "last_updated", "context", "attributes.icon");
-  const b = omit(other, "custom", "last_changed", "last_updated", "context", "attributes.icon");
-  return JSON.stringify(a) === JSON.stringify(b);
-};
+function formatEntity(entity: HassEntity, language: string | undefined): HassEntityCustom {
+  const now = new Date();
+  const then = new Date(entity.attributes.last_triggered ?? entity.last_updated);
+  const relativeTime = timeAgo(then, language);
+  const timeDiff = Math.abs(now.getTime() - then.getTime());
+  const active = relativeTime === "just now";
+  const { hexColor, rgbColor, brightness, brightnessValue, rgbaColor, color } = getCssColorValue(entity);
+  const currentIcon = getIconByEntity(computeDomain(entity.entity_id as EntityName), entity);
+  return {
+    ...entity,
+    attributes: {
+      ...entity.attributes,
+      icon: entity.attributes?.icon || currentIcon,
+    },
+    custom: {
+      color,
+      relativeTime,
+      timeDiff,
+      active,
+      hexColor,
+      rgbColor,
+      brightness,
+      brightnessValue,
+      rgbaColor,
+    },
+  };
+}
 
 export function useEntity<E extends EntityName, O extends UseEntityOptions = UseEntityOptions>(
   entity: E,
   options: O = DEFAULT_OPTIONS as O,
 ): UseEntityReturnType<E, O> {
-  const { throttle, returnNullIfNotFound, historyOptions } = {
+  const { returnNullIfNotFound, historyOptions } = {
     ...DEFAULT_OPTIONS,
     ...options,
     historyOptions: {
@@ -51,112 +65,23 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
     },
   };
   const getEntity = useSubscribeEntity(entity);
-  const matchedEntity = getEntity(returnNullIfNotFound);
+  const rawEntity = getEntity(returnNullIfNotFound);
   const domain = computeDomain(entity) as ExtractDomain<E>;
   const service = useService(domain, entity);
   const history = useHistory(entity, historyOptions);
   const language = useStore((state) => state.config?.language);
-
-  const formatEntity = useCallback(
-    (entity: HassEntity): HassEntityCustom => {
-      const now = new Date();
-      const then = new Date(entity.attributes.last_triggered ?? entity.last_updated);
-      const relativeTime = timeAgo(then, language);
-      const timeDiff = Math.abs(now.getTime() - then.getTime());
-      const active = relativeTime === "just now";
-      const { hexColor, rgbColor, brightness, brightnessValue, rgbaColor, color } = getCssColorValue(entity);
-      return {
-        ...entity,
-        custom: {
-          color,
-          relativeTime,
-          timeDiff,
-          active,
-          hexColor,
-          rgbColor,
-          brightness,
-          brightnessValue,
-          rgbaColor,
-        },
-      };
-    },
-    [language],
+  const formatted = useMemo(
+    () => (rawEntity ? formatEntity(rawEntity, language) : null),
+    [rawEntity, language],
   );
-  const [$entity, setEntity] = useState<HassEntityCustom | null>(matchedEntity !== null ? formatEntity(matchedEntity) : null);
-
-  const debounceUpdate = useThrottledCallback(
-    (entity: HassEntity) => {
-      setEntity(formatEntity(entity));
-    },
-    throttle,
-    {
-      leading: true,
-      trailing: true,
-    },
-  );
-
-  useEffect(() => {
-    setEntity((entity) => (entity === null ? null : formatEntity(entity)));
-  }, [formatEntity]);
-
-  useEffect(() => {
-    const foundEntity = getEntity(true);
-    if (foundEntity && $entity) {
-      // this check to avoid recursive updates
-      let shouldUpdate = !shallowEqual(foundEntity, $entity);
-
-      const clonedEntity = cloneDeep(foundEntity);
-      // Check for icon differences
-      const haHasCustomIcon = typeof clonedEntity.attributes.icon === "string";
-      const derivedIcon = typeof $entity.attributes.icon === "string";
-      // Logic for handling icon comparison and updates
-      // let shouldUpdate = !isEmpty(diffed);
-      if (haHasCustomIcon && derivedIcon && clonedEntity.attributes.icon !== $entity.attributes.icon) {
-        // Condition 1: Both icons are strings and differ
-        shouldUpdate = true;
-      } else if (!haHasCustomIcon) {
-        // Condition 2: clonedEntity's icon is not a string, compute and compare
-        const currentIcon = getIconByEntity(computeDomain(clonedEntity.entity_id as EntityName), clonedEntity);
-        if (currentIcon !== $entity.attributes.icon) {
-          // Replace clonedEntity's icon with the computed icon and mark for update
-          clonedEntity.attributes.icon = currentIcon;
-          shouldUpdate = true;
-        }
-      }
-      if (shouldUpdate) {
-        debounceUpdate(clonedEntity);
-      }
-    } else if (foundEntity && !$entity) {
-      debounceUpdate(foundEntity);
-    }
-  }, [$entity, debounceUpdate, getEntity]);
-
-  useEffect(() => {
-    // when the initial ID doesn't match an entity, but it's updated dynamically through the hook
-    // we need to update the entity state
-    if (matchedEntity && !$entity) {
-      setEntity(formatEntity(matchedEntity));
-    }
-    // when the initial ID matches an entity, but it's updated dynamically through the hook and no longer matches
-    // we need to clear the entity state
-    if (!matchedEntity && $entity) {
-      setEntity(null);
-    }
-    // when the initial ID matches an entity, but it doesn't match the entity id already set, we need to update the entity
-    if (matchedEntity && $entity && matchedEntity.entity_id !== $entity.entity_id) {
-      setEntity(formatEntity(matchedEntity));
-    }
-  }, [matchedEntity, $entity, formatEntity]);
-
-  return useMemo(() => {
-    if ($entity === null) {
+  const entityWithHelpers = useMemo(() => {
+    if (formatted == null) {
       // purposely casting here so types are correct on usage side
+      // if returnNullIfNotFound is true, we return null, if not we throw an error
       return null as unknown as UseEntityReturnType<E, O>;
     }
-    return {
-      ...$entity,
-      history,
-      service,
-    } as unknown as UseEntityReturnType<E, O>;
-  }, [$entity, history, service]);
+    return { ...formatted, service, history } as UseEntityReturnType<E, O>;
+  }, [formatted, service, history]);
+
+  return entityWithHelpers;
 }

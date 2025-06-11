@@ -1,5 +1,6 @@
-import { Meta, Source } from '@storybook/addon-docs/blocks';
+import { Meta, Source, ArgTypes } from '@storybook/addon-docs/blocks';
 import useHistoryExample from './examples/useHistory.code?raw';
+import { DummyComponentHistoryOptions } from './examples/DummyComponent';
 
 <Meta title="core/hooks/useHistory" />
 
@@ -16,3 +17,6 @@ This will automatically subscribe/unsubscribe for you so there's no need to mana
 
 <Source dark code={useHistoryExample} />
 
+### History Options
+Here are the history options you can pass to the `useHistory` hook:
+<ArgTypes of={DummyComponentHistoryOptions} />

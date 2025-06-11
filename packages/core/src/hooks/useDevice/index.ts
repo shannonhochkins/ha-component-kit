@@ -11,7 +11,7 @@ export interface ExtEntityRegistryEntry extends EntityRegistryEntry {
   categories?: Record<string, unknown>;
 }
 
-export const useDevice = (entityId: EntityName) => {
+export const useDevice = (entityId: EntityName): ExtEntityRegistryEntry | null => {
   const [device, setDevice] = useState<ExtEntityRegistryEntry | null>(null);
 
   const connection = useStore((state) => state.connection);
@@ -26,7 +26,6 @@ export const useDevice = (entityId: EntityName) => {
         type: "config/entity_registry/get",
         entity_id: entityId,
       });
-
       setDevice(response);
     };
 

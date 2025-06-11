@@ -4,6 +4,7 @@ import { ThemeProvider, Row, Column, ThemeControlsModal } from "@components";
 import { HassConnect } from "@hass-connect-fake";
 import basicExample from "./examples/basic.code?raw";
 import { RenderDevices } from "./examples/basic.code";
+import { DummyComponentLowDevicesProps } from "./examples/DummyComponent";
 
 function Template() {
   return (
@@ -32,12 +33,15 @@ export default {
         <>
           <Title />
           <h5>
-            <mark>{`useLowDevices({ min = 0, max = 20, blacklist = [], whitelist = [] })`}</mark>
+            <mark>{`useLowDevices({ min = 0, max = 20, blacklist = [], whitelist = [] }): HassEntity[]`}</mark>
           </h5>
           <Description />
           <p>The following is the use of the hook in it&apos;s default form:</p>
           <Source dark code={`const lowDevices = useLowDevices();`} />
-          <ArgTypes />
+          <h4>Options</h4>
+          <p>Here are the optional options to pass to the hook</p>
+          <ArgTypes of={DummyComponentLowDevicesProps} />
+          <h4>Example Usage</h4>
           <Template />
           <p>Here&apos;s the source code for the above EntitiesCard:</p>
           <Source dark code={basicExample} />
@@ -46,40 +50,6 @@ export default {
       description: {
         component: `A hook that will generate a list of devices that are below a certain battery percentage. This is useful for generating a list of devices that need to be charged.`,
       },
-    },
-  },
-  argTypes: {
-    min: {
-      control: "number",
-      description: "The minimum battery percentage to retrieve",
-      table: {
-        type: { summary: "number" },
-        defaultValue: { summary: "0" },
-      },
-    },
-    max: {
-      control: "number",
-      description: "The maximum battery percentage to retrieve",
-      table: {
-        type: { summary: "number" },
-        defaultValue: { summary: "20" },
-      },
-    },
-    blacklist: {
-      table: {
-        type: { summary: "array" },
-        defaultValue: { summary: "[]" },
-      },
-      control: "object",
-      description: `If there's entities returning in the results, that you want to exclude, you can provide a partial entity_id match to exclude it`,
-    },
-    whitelist: {
-      table: {
-        type: { summary: "array" },
-        defaultValue: { summary: "[]" },
-      },
-      control: "object",
-      description: `If there's entities returning in the results, but you only want certain entities, provide a partial entity_id match to include them`,
     },
   },
 } satisfies Meta;

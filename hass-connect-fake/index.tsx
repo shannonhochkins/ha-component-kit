@@ -20,7 +20,8 @@ import type {
   CallServiceArgs,
   HassContextProps,
   ServiceResponse,
-  AuthUser,  
+  AuthUser,
+  ExtEntityRegistryEntry,  
 } from "@hakit/core";
 import { isArray } from "lodash";
 import { useShallow } from "zustand/shallow";
@@ -198,8 +199,31 @@ class MockConnection extends Connection {
         path: `${reolinkSnapshot}?`
       } as Result;
     }
-    if (message.path && message.path.includes('config/entity_registry/get')) {
-      return '123'as Result;
+    if (message.type === 'config/entity_registry/get') {
+      const extDevice: ExtEntityRegistryEntry = {
+        entity_id: message.entity_id,
+        capabilities: {},
+        original_icon: 'mdi:camera',
+        device_class: 'camera',
+        original_device_class: 'camera',
+        aliases: ['Fake Camera'],
+        options: {},
+        categories: {},
+        id: '01H4JAXGF1RTA2MJGGPGAGM7VD',
+        name: 'Fake Camera',
+        icon: '',
+        platform: '',
+        config_entry_id: '',
+        device_id: '',
+        area_id: '',
+        disabled_by: null,
+        hidden_by: null,
+        has_entity_name: true,
+        original_name: '',
+        unique_id: '',
+        translation_key: '',
+      };
+      return extDevice as Result;
     }
     if (message.type === 'config/auth/list') {
       const users: AuthUser[] = [

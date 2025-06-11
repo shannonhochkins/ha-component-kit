@@ -1,9 +1,9 @@
 import { useCallback, useState, useMemo, useEffect, useRef } from "react";
-import { type EntityName, type FilterByDomain, type WeatherEntity, useStore, useEntity } from "@core";
+import { type EntityName, type FilterByDomain, type WeatherEntity, useStore, useEntity, HassEntityWithService } from "@core";
 import type { Connection } from "home-assistant-js-websocket";
 import { useDebouncedCallback } from "use-debounce";
 
-import { type ModernForecastType, type ForecastEvent, getForecast, subscribeForecast } from "./helpers";
+import { type ModernForecastType, type ForecastEvent, getForecast, subscribeForecast, type Forecast } from "./helpers";
 
 export interface UseWeatherOptions {
   type: ModernForecastType;
@@ -13,7 +13,11 @@ export interface WeatherEntityExtended extends WeatherEntity {
   forecast: ForecastEvent | null;
 }
 
-export function useWeather(entityId: FilterByDomain<EntityName, "weather">, options?: UseWeatherOptions) {
+export type WeatherEntityWithForecast = HassEntityWithService<"weather"> & {
+  forecast: Forecast;
+};
+
+export function useWeather(entityId: FilterByDomain<EntityName, "weather">, options?: UseWeatherOptions): WeatherEntityWithForecast {
   const connection = useStore((state) => state.connection);
   const _entity = useEntity(entityId);
   const [error, setError] = useState<string | null>(null);

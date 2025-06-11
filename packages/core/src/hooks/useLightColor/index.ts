@@ -1,7 +1,22 @@
 import { useMemo } from "react";
 import { HassEntityWithService, ON, lightSupportsColorMode, getLightCurrentModeRgbColor, rgb2hs, LIGHT_COLOR_MODES } from "@core";
 
-export const useLightColor = (entity: HassEntityWithService<"light">) => {
+export type UseLightColorReturn = {
+  /** The adjusted brightness color, adjusted to a percentage scale, this will change based on the entity state/attribute values */
+  brightnessAdjusted: number | undefined;
+  /** The white color component of the light. */
+  white: number | undefined;
+  /** The cool white color component of the light. */
+  coolWhite: number | undefined;
+  /** The warm white color component of the light. */
+  warmWhite: number | undefined;
+  /** The brightness of the light's color component. */
+  colorBrightness: number | undefined;
+  /** The hue and saturation values of the light's color component. */
+  hs: [number, number] | undefined;
+}
+
+export const useLightColor = (entity: HassEntityWithService<"light">): UseLightColorReturn => {
   const brightnessAdjusted = useMemo<number | undefined>(() => {
     if (entity.state === ON) {
       if (
