@@ -328,7 +328,7 @@ function InternalCameraCard<E extends FilterByDomain<EntityName, "camera">>({
           <PreloadImage
             onLoad={onImageLoad}
             onLoading={onImageLoading}
-            src={_view === "motion" && mjpeg.url ? mjpeg.url : (poster.url ?? "")}
+            src={_view === "motion" && mjpeg.url ? mjpeg.url : poster.url ?? ""}
             style={{
               width: "100%",
               height: "100%",

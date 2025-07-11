@@ -19,7 +19,6 @@ interface CameraCapabilities {
   frontend_stream_types: StreamType[];
 }
 
-
 export interface CameraEntityExtended extends HassEntityWithService<"camera">, CameraCapabilities {
   stream: {
     url: string | undefined;
@@ -52,8 +51,7 @@ export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?
   const [streamLoading, setStreamLoading] = useState<boolean>(options?.stream === false ? false : true);
   const [posterLoading, setPosterLoading] = useState<boolean>(options?.poster === false ? false : true);
   const mjpeg = useMemo(() => joinHassUrl(computeMJPEGStreamUrl(camera)), [camera, joinHassUrl]);
-  const [capabilities, setCapabilities] = useState<CameraCapabilities>({frontend_stream_types: []});
-  
+  const [capabilities, setCapabilities] = useState<CameraCapabilities>({ frontend_stream_types: [] });
 
   const _getPosterUrl = useCallback(async (): Promise<void> => {
     if (options?.poster === false) return;
@@ -79,18 +77,22 @@ export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?
     }
   }, [camera.entity_id, joinHassUrl, camera.state, connection, options?.poster, options?.aspectRatio, options?.imageWidth]);
 
-  const fetchCapabilities = useCallback(async () =>  connection?.sendMessagePromise<CameraCapabilities>({
-      type: "camera/capabilities",
-      entity_id: entity,
-    }), [connection, camera.entity_id]);
+  const fetchCapabilities = useCallback(
+    async () =>
+      connection?.sendMessagePromise<CameraCapabilities>({
+        type: "camera/capabilities",
+        entity_id: camera.entity_id,
+      }),
+    [connection, camera.entity_id],
+  );
 
-  useEffect(()=> {
+  useEffect(() => {
     async function load() {
-      setCapabilities((await fetchCapabilities()) || {frontend_stream_types: []})
+      setCapabilities((await fetchCapabilities()) || { frontend_stream_types: [] });
     }
-    load()
-  }, [fetchCapabilities])
-  
+    load();
+  }, [fetchCapabilities]);
+
   const _getStreamUrl = useCallback(async (): Promise<void> => {
     if (options?.stream === false) return;
     if (!connection) return;
