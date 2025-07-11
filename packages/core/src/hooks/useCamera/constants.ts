@@ -5,3 +5,6 @@ export const CAMERA_SUPPORT_ON_OFF = 1;
 export const CAMERA_SUPPORT_STREAM = 2;
 export const STREAM_TYPE_HLS = "hls";
 export const STREAM_TYPE_WEB_RTC = "web_rtc";
+
+export type StreamType = typeof STREAM_TYPE_HLS | typeof STREAM_TYPE_WEB_RTC;
+
