@@ -2,7 +2,7 @@ import { Story } from "@storybook/addon-docs/blocks";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
 export default {
-  title: "editor/NEW - Drag and Drop editor",
+  title: "editor/WIP - Drag and Drop editor",
   component: Render,
   tags: ["autodocs"],
   parameters: {
@@ -28,7 +28,7 @@ function SplashContent() {
       {/* TODO: Hero background / screenshot */}
       <h3>Build Your Dream Home&nbsp;Assistant&nbsp;Dashboard&nbsp;<em>without</em>&nbsp;the YAML Headaches</h3>
       <p>
-        <strong>@hakit/core</strong> &amp; <strong>@hakit/components</strong> give developers super-powers, but let’s be real:
+        <a href="https://www.npmjs.com/package/@hakit/core" target="_blank" rel="noreferrer">@hakit/core</a> &amp; <a href="https://www.npmjs.com/package/@hakit/components" target="_blank" rel="noreferrer">@hakit/components</a> give developers super-powers, but let’s be real:
         not everyone wants to live in VS Code. <br />
         <span className="tagline">Introducing a fresh, drag-and-drop editor that anyone can master.</span>
       </p>
@@ -46,7 +46,7 @@ function SplashContent() {
 
     {/* ─────────────────────────  The Solution  ───────────────────────── */}
     <section id="solution">
-      <h4>Say g’day to <a className="brand" href="https://hakit.dev" target="_blank" rel="noreferrer">https://hakit.dev</a></h4>
+      <h4>Say g’day to <a className="brand" href="https://github.com/shannonhochkins/hakit" target="_blank" rel="noreferrer">https://github.com/shannonhochkins/hakit</a></h4>
       <ul className="features">
         <li>
           <strong>Drag &amp; Drop Bliss</strong> – Move components exactly where you want them. No coordinates, no
@@ -114,7 +114,7 @@ function SplashContent() {
         
       </p>
       <p>
-        <a href="https://discord.gg/wmNB8vT3" target="_blank" rel="noopener noreferrer">
+        <a href="https://discord.com/invite/cGgbmppKJZ" target="_blank" rel="noopener noreferrer">
           <strong>💬 Join the Discord crew</strong>
         </a> for hot-off-the-press updates and to ~heckle~ chat with the devs.
       </p>
