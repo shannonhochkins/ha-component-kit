@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "5.1.1-canary.3",
+  "version": "5.1.0",
   "private": false,
   "keywords": [
     "react",
@@ -70,7 +70,7 @@
     "@emotion/react": ">=11.x.x",
     "@emotion/styled": ">=11.x",
     "@fullcalendar/react": ">=6.x.x",
-    "@hakit/core": "^5.1.1-canary.3",
+    "@hakit/core": "^5.1.0",
     "@mui/material": "^6.3.0",
     "@use-gesture/react": ">=10.x",
     "autolinker": ">=4.x",

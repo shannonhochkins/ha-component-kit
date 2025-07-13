@@ -15,6 +15,7 @@
 ### @hakit/core
 - NEW - useUsers - a new hook to retrieve all users from the home assistant instance, this will return an array of users with their details, this is useful if you want to display a list of users in your dashboard or use it for other purposes.
 - NEW - useEntities - a new hook to subscribe to multiple entities at once, this will return an array of entities that match the provided entity ids, this is useful if you want to subscribe to multiple entities at once and get their updates in real-time.
+- IMPROVEMENT - useCamera - updated to support [changes](https://github.com/shannonhochkins/ha-component-kit/pull/273) home assistant made back in November last year, thanks to @kdkavanagh for this one!
 - IMPROVEMENT - zustand has been updated to v5, this should improve performance and reduce the amount of re-renders in the application
 - IMPROVEMENT - the connection methods and re-authentication methods have received some love, the web sockets will now be automatically suspended when on an inactive tab ([home assistant does this too](https://github.com/home-assistant/frontend/blob/8eb7fe8b0aa5ce2651e4ee8aa10ecbf3ec899847/src/layouts/home-assistant.ts#L283)), as well as "frozen" tabs/browsers, and will resume when the tab is active again, this should improve performance on slower devices, messages will be queued whilst inactive and will be sent when the tab is active again.
 - NEW - To add to the above, from the store you can now access `connectionStatus` to determine the current state of the connection via `useStore(state => state.connectionStatus)`, this will return a string with the current status of the connection, this is useful if you want to display a message to the user when the connection is lost or re-established, if you want to configure the suspend/resume options you can pass through `handleResumeOptions` via the `options` prop on `HassConnect`
@@ -38,7 +39,9 @@ const entities = useStore((state) => state.entities);
 - Updated storybook to latest version
 - Bugfix for the MediaPlayerCard, previously the "progress" bar was not displaying correctly (storybook only issue)
 
+### Dependencies
 
+- zustand - now required v5 or higher
 
 
 # 5.1.0
