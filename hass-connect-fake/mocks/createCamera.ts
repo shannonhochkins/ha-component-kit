@@ -10,7 +10,6 @@ const defaults = {
   state: "idle",
   attributes: {
     access_token: "FAKE_TOKEN",
-    frontend_stream_type: "hls",
     entity_picture: "FAKE_PICTURE",
     friendly_name: "Frontdoor Camera",
     supported_features: 2
