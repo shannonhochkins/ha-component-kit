@@ -11,6 +11,7 @@ export const DATA_KEYS = [
   "locales",
   "portalRoot",
   "windowContext",
+  "setWindowContext",
   "connectionStatus",
   "connection",
   "ready",

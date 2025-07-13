@@ -4,7 +4,6 @@ import { DummyComponentReturn, DummyComponentOptions } from "./examples/DummyCom
 import basicExample from "./examples/basic.code?raw";
 import yamlConfiguration from "./examples/yaml.code.yaml?raw";
 
-
 export default {
   title: "core/hooks/useCamera",
   tags: ["autodocs"],
@@ -28,11 +27,7 @@ export default {
             If supported, the motion jpeg by default is the same size that the camera is setup to record with, if you wish to change this so
             it&apos;s a smaller image, you can do this through yaml in your configuration.yaml
           </p>
-          <Source
-            dark
-            language="yml"
-            code={yamlConfiguration}
-          />
+          <Source dark language="yml" code={yamlConfiguration} />
           <h3>Options</h3>
           <p>Here&apos;s the available options</p>
           <ArgTypes of={DummyComponentOptions} />

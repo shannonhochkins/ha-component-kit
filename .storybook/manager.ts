@@ -21,6 +21,9 @@ addons.setConfig({
         if (item.type === 'root' && item.name === 'components') {
           return '@hakit/components';
         }
+        if (item.type === 'root' && item.name === 'editor') {
+          return '@hakit/editor';
+        }
         return item.name;
       }
     }

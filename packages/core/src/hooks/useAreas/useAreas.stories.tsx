@@ -20,10 +20,7 @@ export default {
           <p>The following is the use of the hook:</p>
           <Source dark code={`const areas = useAreas();`} />
           <p>Here&apos;s how you could use the hook to render multiple AreaCards</p>
-          <Source
-            dark
-            code={useAreasCode}
-          />
+          <Source dark code={useAreasCode} />
           <h4>Returned Value</h4>
           <p>The hook will return a list of areas:</p>
           <ArgTypes of={DummyComponent} />

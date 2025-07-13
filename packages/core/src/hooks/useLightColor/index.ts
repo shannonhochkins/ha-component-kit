@@ -14,7 +14,7 @@ export type UseLightColorReturn = {
   colorBrightness: number | undefined;
   /** The hue and saturation values of the light's color component. */
   hs: [number, number] | undefined;
-}
+};
 
 export const useLightColor = (entity: HassEntityWithService<"light">): UseLightColorReturn => {
   const brightnessAdjusted = useMemo<number | undefined>(() => {

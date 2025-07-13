@@ -71,10 +71,12 @@ const getLegacyForecast = (
   return undefined;
 };
 
-export type Forecast = {
-  forecast: ForecastAttribute[];
-  type: "daily" | "hourly" | "twice_daily";
-} | undefined
+export type Forecast =
+  | {
+      forecast: ForecastAttribute[];
+      type: "daily" | "hourly" | "twice_daily";
+    }
+  | undefined;
 
 export const getForecast = (
   weather_attributes: WeatherEntity["attributes"],

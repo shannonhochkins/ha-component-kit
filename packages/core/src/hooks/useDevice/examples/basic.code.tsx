@@ -1,7 +1,7 @@
 import { useDevice } from "@hakit/core";
 
 export function Component() {
-  const device = useDevice('camera.demo_camera');
+  const device = useDevice("camera.demo_camera");
   return (
     <div>
       <h1>Device Information</h1>

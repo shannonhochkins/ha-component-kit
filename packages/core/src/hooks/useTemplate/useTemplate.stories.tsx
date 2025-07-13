@@ -6,7 +6,7 @@ import { HassConnect } from "@hass-connect-fake";
 import { templateCodeToProcess } from "./examples/constants";
 import basicExample from "./examples/basic.code?raw";
 import simpleExample from "./examples/simple.code?raw";
-import { DummyComponentOptions } from './examples/DummyComponent';
+import { DummyComponentOptions } from "./examples/DummyComponent";
 
 function SubscribeTemplateExample() {
   const entity = useEntity("light.fake_light_1");

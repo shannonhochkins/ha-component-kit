@@ -70,10 +70,7 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
   const service = useService(domain, entity);
   const history = useHistory(entity, historyOptions);
   const language = useStore((state) => state.config?.language);
-  const formatted = useMemo(
-    () => (rawEntity ? formatEntity(rawEntity, language) : null),
-    [rawEntity, language],
-  );
+  const formatted = useMemo(() => (rawEntity ? formatEntity(rawEntity, language) : null), [rawEntity, language]);
   const entityWithHelpers = useMemo(() => {
     if (formatted == null) {
       // purposely casting here so types are correct on usage side
