@@ -47,6 +47,8 @@
     "watch:build:sync-script": "npm run watch:build:sync-script --workspace=@hakit/core",
     "release:core": "npm run type-check && npm run release --workspace=@hakit/core",
     "release:components": "npm run type-check && npm run release --workspace=@hakit/components",
+    "release:core:canary": "npm run type-check && npm run release:canary --workspace=@hakit/core",
+    "release:components:canary": "npm run type-check && npm run release:canary --workspace=@hakit/components",
     "release:create-hakit": "npm run type-check && npm run release --workspace=create-hakit",
     "test:dashboard": " cd test-dashboard && npm start",
     "sync-ha-user-types": "npm run sync-ha-user-types --workspace=@hakit/core",

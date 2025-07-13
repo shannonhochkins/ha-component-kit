@@ -60,7 +60,8 @@
     "watch:build": "NODE_ENV=production vite build --watch",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "prerelease": "npm run build",
-    "release": "npm publish --access public",
+    "release": "npm publish",
+    "release:canary": "npm run build && npm publish --tag canary",
     "test": "NODE_ENV=test jest --rootDir=src",
     "clean": "rm -rf node_modules dist"
   },
@@ -86,7 +87,7 @@
     "react-use": ">=17.x",
     "use-debounce": ">=9.x",
     "use-long-press": ">=3.x.x",
-    "zustand": "^4.x.x"
+    "zustand": ">=5.x.x"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.12",

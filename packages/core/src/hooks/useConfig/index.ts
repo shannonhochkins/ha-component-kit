@@ -1,9 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
 import { subscribeConfig, type HassConfig } from "home-assistant-js-websocket";
-import { useHass } from "@core";
+import { useStore } from "@core";
 
 export function useConfig() {
-  const { useStore } = useHass();
   const connection = useStore((state) => state.connection);
   const [config, setConfig] = useState<HassConfig | null>(null);
 

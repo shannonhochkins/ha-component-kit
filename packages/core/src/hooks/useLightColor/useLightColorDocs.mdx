@@ -1,24 +1,17 @@
-import { Meta, Source, Canvas } from '@storybook/addon-docs/blocks';
+import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
 import basicExample from './examples/basic.code?raw';
 import * as Primary from './examples/primary.stories';
+import { DummyComponentReturn } from './examples/DummyComponent';
 
 <Meta title="core/hooks/useLightColor" />
 
 # useLightColor()
-###### `useLightColor(entity: HassEntityWithService<"light">)`
+###### `useLightColor(entity: HassEntityWithService<"light">): UseLightColorReturn`
 
 The `useLightColor` hook in the provided code is a custom React hook that calculates various color-related properties of a light entity in a Home Assistant environment.
 
 Here's a detailed description:
 
-- **Input**: The hook operates on an entity object, which represents a Home Assistant light entity with its associated attributes and state.
-- **Output**: The hook returns an object containing several properties related to the light's color and brightness:
-  - **brightnessAdjusted**: The brightness of the light, adjusted to a percentage scale.
-  - **white**: The white color component of the light.
-  - **coolWhite**: The cool white color component of the light.
-  - **warmWhite**: The warm white color component of the light.
-  - **colorBrightness**: The brightness of the light's color component.
-  - **hs**: The hue and saturation values of the light's color component.
 - **Logic**:
   - **warmWhite**: Calculates the warm white component of the light if the light is on and in RGBWW color mode. It converts the RGBWW color value to a percentage and then back to a 0-255 scale.
   - **currentRgbColor**: Retrieves the current RGB color of the light using the getLightCurrentModeRgbColor function.
@@ -36,5 +29,6 @@ This hook is useful for managing and displaying various color-related properties
 
 <Canvas of={Primary.PrimaryExample} />
 
-
-
+### Return Value
+The hook returns an object containing several properties related to the light's color and brightness:
+<ArgTypes of={DummyComponentReturn} />

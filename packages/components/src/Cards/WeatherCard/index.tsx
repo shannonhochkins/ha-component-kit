@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useState, useEffect, useMemo, ReactNode, ReactElement, Children, isValidElement, cloneElement } from "react";
-import { useWeather, useHass, isUnavailableState, getSupportedForecastTypes, getIconByEntity } from "@hakit/core";
+import { useWeather, useHass, useStore, isUnavailableState, getSupportedForecastTypes, getIconByEntity } from "@hakit/core";
 import type { FilterByDomain, ModernForecastType, EntityName } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import { capitalize } from "lodash";
@@ -175,7 +175,7 @@ function InternalWeatherCard({
   key,
   ...rest
 }: WeatherCardProps): React.ReactNode {
-  const { useStore, getConfig } = useHass();
+  const { getConfig } = useHass();
   const [width, setWidth] = useState<number>(0);
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const itemsToRender = Math.floor(width / FORECAST_ITEM_PROJECTED_WIDTH);

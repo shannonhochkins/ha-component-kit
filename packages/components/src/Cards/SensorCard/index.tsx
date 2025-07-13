@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import type { EntityName } from "@hakit/core";
-import { useHass } from "@hakit/core";
+import { useStore } from "@hakit/core";
 import { ErrorBoundary } from "react-error-boundary";
 import { AvailableQueries } from "@components";
 import { ButtonCard, type ButtonCardProps } from "../ButtonCard";
@@ -23,7 +23,6 @@ function InternalSensorCard<E extends EntityName>({
   serviceData,
   ...rest
 }: SensorCardProps<E>): React.ReactNode {
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   return (
     <StyledSensorCard

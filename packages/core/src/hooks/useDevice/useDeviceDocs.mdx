@@ -1,0 +1,34 @@
+import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
+import basicExample from './examples/basic.code?raw';
+import * as Primary from './examples/primary.stories';
+import { DummyComponentReturn } from './examples/DummyComponent';
+
+<Meta title="core/hooks/useDevice" parameters={{
+  docs: {
+    page: null,
+  }
+}} />
+useDevice(entity: EntityName)
+# useDevice()
+###### `useDevice(entityId: EntityName): ExtEntityRegistryEntry | null`
+
+The useDevice hook is designed to return all the additional information related to a device.
+
+The above will either return null or the extended device information, this is not the entity, but rather the device, 
+they're different in the eyes of home assistant, not all entities have devices.
+
+- **Dependencies**: This hook requires you to use it within the `HassConnect` component.
+
+### Example Usage
+
+<Source dark code={basicExample} />
+
+#### Outputs
+
+<Canvas of={Primary.PrimaryExample} />
+
+
+### Returned Value
+The following is a valid returned value from the `useDevice` hook:
+
+<ArgTypes of={DummyComponentReturn} />

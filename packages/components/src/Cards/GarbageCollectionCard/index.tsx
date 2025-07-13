@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 /* eslint-disable @typescript-eslint/prefer-namespace-keyword */
 import { useMemo, useEffect, useCallback, useRef, useState, CSSProperties, Key } from "react";
-import { useEntity, useHass } from "@hakit/core";
+import { useEntity, useStore } from "@hakit/core";
 import { Icon } from "@iconify/react";
 import { fallback, Row, Column, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import styled from "@emotion/styled";
 // @ts-expect-error - this is a custom svg loader
 import GarbageBin from "./garbage-bin.svg?react";
+import { EntityName } from "@hakit/core";
 
 const ASPECT_RATIO = 77.41 / 123.36;
 
-const Card = styled(CardBase)``;
+const Card = styled(CardBase as React.ComponentType<CardBaseProps<"div", EntityName>>)``;
 const Contents = styled.div`
   padding: 1rem;
   width: 100%;
@@ -196,7 +197,6 @@ function InternalGarbageCollectionCard({
   key,
   ...rest
 }: GarbageCollectionCardProps): React.ReactNode {
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const dateSensor = useEntity("sensor.date", {
     returnNullIfNotFound: true,

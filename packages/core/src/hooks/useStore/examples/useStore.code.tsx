@@ -1,7 +1,6 @@
-import { useHass, HassConnect } from "@hakit/core";
+import { useStore, HassConnect } from "@hakit/core";
 
 function UseStoreExample() {
-  const { useStore } = useHass();
   // there's more available on the store than displayed here, this is just an example
   const entities = useStore((store) => store.entities);
   const connection = useStore((store) => store.connection);
@@ -15,6 +14,9 @@ function UseStoreExample() {
     config,
     auth,
   });
+  // or access the state programmatically
+  const state = useStore.getState();
+  console.log("state", state.entities);
   return <p>{JSON.stringify(user, null, 2)}</p>;
 }
 

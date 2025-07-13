@@ -4,7 +4,7 @@ import type { EntityName } from "@hakit/core";
 import {
   computeDomainTitle,
   useEntity,
-  useHass,
+  useStore,
   useIconByDomain,
   useIcon,
   useIconByEntity,
@@ -157,7 +157,6 @@ function InternalTriggerCard<E extends EntityName>({
   cssStyles,
   ...rest
 }: TriggerCardProps<E>): React.ReactNode {
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const domain = computeDomain(_entity);
   const entity = useEntity(_entity);

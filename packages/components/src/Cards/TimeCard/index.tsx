@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useMemo, useRef, useCallback, useEffect, useState } from "react";
-import { type HassEntityWithService, useHass, useEntity, FilterByDomain, EntityName } from "@hakit/core";
+import { type HassEntityWithService, useStore, useEntity, FilterByDomain, EntityName } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, Column, fallback, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { createDateFormatter, daySuffix } from "./formatter";
@@ -8,7 +8,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { FormatFunction } from "./types";
 import { Time, AmOrPm } from "./shared";
 
-const Card = styled(CardBase)`
+const Card = styled(CardBase as React.ComponentType<CardBaseProps<"div", FilterByDomain<EntityName, "sensor">>>)`
   cursor: default;
 `;
 
@@ -130,7 +130,6 @@ function InternalTimeCard({
   const [currentTime, setCurrentTime] = useState(new Date());
   const previousTimeRef = useRef<number>(Date.now());
   const requestRef = useRef<number>(undefined);
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const timeSensor = useEntity(timeEntity ?? "sensor.time", {
     returnNullIfNotFound: true,

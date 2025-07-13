@@ -7,6 +7,7 @@ import {
   useLogs,
   useHass,
   useDevice,
+  useStore,
   computeDomain,
   createHistoricState,
   localizeStateMessage,
@@ -153,7 +154,7 @@ function InternalLogBookRenderer({
   ...rest
 }: LogBookRendererProps): React.ReactNode {
   const logs = useLogs(entity, options);
-  const { useStore, getServices, joinHassUrl } = useHass();
+  const { getServices, joinHassUrl } = useHass();
   const entities = useStore((state) => state.entities);
   const requestedServices = useRef(false);
   const [services, setServices] = useState<HassServices | null>(null);

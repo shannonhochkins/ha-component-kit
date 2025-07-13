@@ -31,3 +31,10 @@ mark {
 .sbdocs-content {
  max-width: 100% !important;
 }
+
+.docblock-argstable-body tr table tbody tr td:has(strong) {
+  background: rgb(255, 208, 208) !important;
+  border: none !important;
+  padding: 4px !important;
+
+}

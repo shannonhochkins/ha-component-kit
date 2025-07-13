@@ -1,43 +1,35 @@
-import { useEffect, useState, useMemo, useRef } from "react";
-import { useHass } from "@core";
-import { HassEntity, HassEntities } from "home-assistant-js-websocket";
-import { isEqual } from "lodash";
+import { useMemo } from "react";
+import { useStore } from "@core";
+import { HassEntity } from "home-assistant-js-websocket";
+import { useShallow } from "zustand/shallow";
 
 export interface LowDevicesOptions {
-  /** the minimum battery percentage threshold */
+  /** The minimum battery percentage to retrieve @default 0 */
   min?: number;
-  /** the maximum battery percentage threshold */
+  /** The maximum battery percentage to retrieve @default 20 */
   max?: number;
-  /** the list of entities to ignore */
+  /** If there's entities returning in the results, that you want to exclude, you can provide a partial entity_id match to exclude it @default [] */
   blacklist?: string[];
-  /** the list of entities to only include */
+  /** If there's entities returning in the results, but you only want certain entities, provide a partial entity_id match to include them @default [] */
   whitelist?: string[];
 }
 
-export const useLowDevices = ({ blacklist = [], whitelist = [], min = 0, max = 20 }: LowDevicesOptions = {}) => {
-  const { getAllEntities } = useHass();
-  const [lowEntities, setLowEntities] = useState<HassEntity[]>([]);
-  const entities = getAllEntities();
-  const prevEntitiesRef = useRef<null | HassEntities>(null);
-  // Check if entities have actually changed meaningfully
-  const haveEntitiesChanged = !isEqual(prevEntitiesRef.current, entities);
-  const batteryEntities = useMemo(
+const isBattery = (e: HassEntity) => e.attributes.unit_of_measurement === "%" && e.attributes.device_class === "battery";
+
+export const useLowDevices = ({ blacklist = [], whitelist = [], min = 0, max = 20 }: LowDevicesOptions = {}): HassEntity[] => {
+  const batteries = useStore(
+    useShallow((state) => {
+      return Object.values(state.entities).filter(isBattery);
+    }),
+  );
+  return useMemo(
     () =>
-      Object.values(entities).filter((entity) => {
-        const hasBatteryProperties = entity.attributes.unit_of_measurement === "%" && entity.attributes.device_class === "battery";
+      batteries.filter((entity) => {
         const meetsThresholds = Number(entity.state) <= max && Number(entity.state) >= min;
         const isBlacklisted = blacklist.some((blackItem) => entity.entity_id.includes(blackItem));
         const isWhitelisted = whitelist.length === 0 || whitelist.some((whiteItem) => entity.entity_id.includes(whiteItem));
-        return hasBatteryProperties && meetsThresholds && isWhitelisted && !isBlacklisted;
+        return meetsThresholds && isWhitelisted && !isBlacklisted;
       }),
-    [blacklist, entities, max, min, whitelist],
+    [blacklist, batteries, max, min, whitelist],
   );
-
-  useEffect(() => {
-    if (haveEntitiesChanged && !isEqual(batteryEntities, lowEntities)) {
-      setLowEntities(batteryEntities);
-    }
-    prevEntitiesRef.current = entities;
-  }, [haveEntitiesChanged, batteryEntities, lowEntities, entities]);
-  return useMemo(() => lowEntities, [lowEntities]);
 };

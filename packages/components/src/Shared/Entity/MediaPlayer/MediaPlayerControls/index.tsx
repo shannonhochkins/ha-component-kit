@@ -172,6 +172,8 @@ export const MediaPlayerControls = ({
             disableColumns
             entity={primaryEntity.entity_id as FilterByDomain<EntityName, "media_player">}
             hideGrouping={true}
+            disableScale
+            disableModal
           />
         )}
         {allEntityIds.length > 1 && (

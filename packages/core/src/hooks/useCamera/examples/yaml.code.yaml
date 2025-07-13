@@ -1,0 +1,5 @@
+camera:
+  - platform: proxy
+    entity_id: camera.<existingcamera>
+    max_stream_width: <desired_width>
+    max_stream_height: <desired_height>  # Optional    

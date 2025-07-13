@@ -5,7 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import { Icon } from "@iconify/react";
-import { isUnavailableState, useHass, getColorByIndex, localize } from "@hakit/core";
+import { isUnavailableState, useStore, useHass, getColorByIndex, localize } from "@hakit/core";
 import type { FilterByDomain, EntityName } from "@hakit/core";
 import { HassEntity } from "home-assistant-js-websocket";
 import { useResizeDetector } from "react-resize-detector";
@@ -24,8 +24,9 @@ import {
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { useRef, useEffect, useState, useCallback } from "react";
+import { useShallow } from "zustand/shallow";
 
-const StyledCalendarCard = styled(CardBase)`
+const StyledCalendarCard = styled(CardBase as React.ComponentType<CardBaseProps<"div", FilterByDomain<EntityName, "calendar">>>)`
   .contents .calendar > * {
     flex-grow: 1;
     background-color: var(--ha-S300);
@@ -409,7 +410,7 @@ function InternalCalendarCard({
   key,
   ...rest
 }: CalendarCardProps): React.ReactNode {
-  const { useStore } = useHass();
+  const { callApi } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const config = useStore((store) => store.config);
   const calRef = useRef<FullCalendar>(null);
@@ -423,11 +424,10 @@ function InternalCalendarCard({
     handleHeight: false,
     refreshRate: 500,
   });
-  const { callApi, getAllEntities } = useHass();
   const [currentEvent, setCurrentEvent] = useState<CalendarEventWithEntity | null>(null);
-  const allEntities = getAllEntities();
+  const calEntities = useStore(useShallow((state) => entities.map((id) => state.entities[id])));
   const [activeView, setActiveView] = useState<CalendarCardProps["view"]>(view ?? "dayGridMonth");
-  const calEntities = entities.map((entity) => allEntities[entity]);
+
   const calendars = calEntities.filter((entity) => !isUnavailableState(entity?.state));
   const fetchEvents = useCallback(
     async (info: EventSourceFuncArg, successCallback: (events: EventInput[]) => void): Promise<void> => {

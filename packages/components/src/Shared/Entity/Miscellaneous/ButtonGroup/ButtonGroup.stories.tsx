@@ -26,7 +26,7 @@ function Template(args?: Partial<ButtonGroupProps>) {
 export default {
   title: "components/Shared/Entity/Miscellaneous/ButtonGroup",
   component: ButtonGroup,
-  subcomponents: { ButtonGroupButton },
+  subcomponents: { ButtonGroupButton: ButtonGroupButton as React.ComponentType<unknown> },
   tags: ["autodocs"],
   parameters: {
     fullWidth: true,

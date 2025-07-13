@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import {
   useEntity,
   useIconByDomain,
-  useHass,
+  useStore,
   useIcon,
   useIconByEntity,
   isUnavailableState,
@@ -111,7 +111,6 @@ function InternalFabCard<E extends EntityName>({
   key,
   ...rest
 }: FabCardProps<E>): React.ReactNode {
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
@@ -148,10 +147,10 @@ function InternalFabCard<E extends EntityName>({
         <StyledFabCard
           as="button"
           title={title}
-          // @ts-expect-error - don't know the entity name, so we can't know the service type
-          service={service}
-          // @ts-expect-error - don't know the entity name, so we can't know the service data
-          serviceData={serviceData}
+          // just a dodgey hack to let typescript play nicely here
+          // as we don't know the service/serviceData at this level
+          service={service as undefined}
+          serviceData={serviceData as undefined}
           entity={_entity}
           className={`fab-card ${className ?? ""}`}
           disabled={disabled || isUnavailable}

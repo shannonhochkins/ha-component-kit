@@ -1,6 +1,6 @@
 import { useCallback, useState, useMemo, useEffect, useRef } from "react";
 import { subscribeLogbook, type LogbookStreamMessage, type LogbookEntry } from "./logbook";
-import { type EntityName, useHass } from "@core";
+import { type EntityName, useStore } from "@core";
 import type { Connection } from "home-assistant-js-websocket";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -12,8 +12,11 @@ interface LogbookTimePeriod {
 }
 
 export interface UseLogOptions {
+  /**The hours to show in the response */
   hoursToShow?: number;
+  /** The start time of the logbook period */
   startTime?: Date;
+  /** The end time of the logbook period */
   endTime?: Date;
 }
 type RecentTime = {
@@ -27,8 +30,7 @@ const DEFAULT_HOURS_TO_SHOW = 24;
 
 const findStartOfRecentTime = (now: Date, recentTime: number) => new Date(now.getTime() - recentTime * 1000).getTime() / 1000;
 
-export function useLogs(entityId: EntityName, options?: UseLogOptions) {
-  const { useStore } = useHass();
+export function useLogs(entityId: EntityName, options?: UseLogOptions): LogbookEntry[] {
   const [error, setError] = useState<string | undefined>(undefined);
   const connection = useStore((state) => state.connection);
   const [entries, setEntries] = useState<LogbookEntry[]>([]);

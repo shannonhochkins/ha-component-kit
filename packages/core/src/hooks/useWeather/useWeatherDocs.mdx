@@ -1,10 +1,11 @@
-import { Meta, Source } from '@storybook/addon-docs/blocks';
+import { Meta, Source, ArgTypes } from '@storybook/addon-docs/blocks';
 import basicExample from './examples/basic.code?raw';
+import { DummyComponent, DummyComponentOptions } from './examples/DummyComponent';
 
 <Meta title="core/hooks/useWeather" />
 
 # useWeather()
-###### `useWeather(entityId: EntityName, options: UseWeatherOptions)`
+###### `useWeather(entityId: EntityName, options?: UseWeatherOptions): WeatherEntityWithForecast`
 This hook is designed to extend the current entity with the current weather information from the entitiy if available.
 This will add a "forecast" property to the entity which will contain the current weather information including the type of (daily, twice_daily or hourly)
 
@@ -16,5 +17,13 @@ This will add a "forecast" property to the entity which will contain the current
 
 <Source dark code={basicExample} />
 
+### Options
+Here's the available weather options to pass to the hook:
 
+<ArgTypes of={DummyComponentOptions} />
+
+
+### Returned Value
+Here's an example of the returned data:
+<ArgTypes of={DummyComponent} />
 

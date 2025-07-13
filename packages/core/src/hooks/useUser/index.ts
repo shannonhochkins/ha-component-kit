@@ -1,8 +1,7 @@
 import { HassUser } from "home-assistant-js-websocket";
-import { useHass } from "../useHass";
+import { useStore } from "../useStore";
 
 export function useUser(): HassUser | null {
-  const { useStore } = useHass();
   const user = useStore((state) => state.user);
   return user;
 }

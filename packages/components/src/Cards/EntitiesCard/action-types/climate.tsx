@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { localize, computeAttributeValueDisplay, computeStateDisplay, isUnavailableState, OFF, useHass } from "@hakit/core";
+import { localize, computeAttributeValueDisplay, computeStateDisplay, isUnavailableState, OFF, useStore } from "@hakit/core";
 import { HassConfig, Connection } from "home-assistant-js-websocket";
 import { useCallback } from "react";
 import { CLIMATE_PRESET_NONE } from "../../../Shared/Entity/Climate/ClimateControls/data";
@@ -37,7 +37,6 @@ const Wrapper = styled.div`
 `;
 
 export default function ClimateState({ entity, className, ...rest }: StateProps) {
-  const { useStore } = useHass();
   const config = useStore((state) => state.config);
   const entities = useStore((store) => store.entities);
   const connection = useStore((store) => store.connection);

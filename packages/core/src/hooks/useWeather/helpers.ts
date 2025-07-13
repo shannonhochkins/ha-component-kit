@@ -71,16 +71,18 @@ const getLegacyForecast = (
   return undefined;
 };
 
-export const getForecast = (
-  weather_attributes: WeatherEntity["attributes"],
-  forecast_event: ForecastEvent | null,
-  forecast_type?: ForecastType | undefined,
-):
+export type Forecast =
   | {
       forecast: ForecastAttribute[];
       type: "daily" | "hourly" | "twice_daily";
     }
-  | undefined => {
+  | undefined;
+
+export const getForecast = (
+  weather_attributes: WeatherEntity["attributes"],
+  forecast_event: ForecastEvent | null,
+  forecast_type?: ForecastType | undefined,
+): Forecast => {
   if (forecast_type === undefined) {
     if (forecast_event?.type !== undefined && forecast_event?.forecast && forecast_event?.forecast?.length > 2) {
       return { forecast: forecast_event.forecast, type: forecast_event?.type };

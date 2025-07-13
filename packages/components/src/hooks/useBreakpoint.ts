@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { getBreakpoints, allBreakpoints, type BreakPoint, useThemeStore } from "@components";
-import { useHass } from "@hakit/core";
+import { useStore } from "@hakit/core";
 
 /**
  * @description This hook can be used to programmatically change the layout/content or functionality based on the current breakpoint.
@@ -27,7 +27,6 @@ import { useHass } from "@hakit/core";
  * @returns { [key in BreakPoint]: boolean } - Object containing the breakpoint keys and if they're active or not.
  */
 export function useBreakpoint(): { [key in BreakPoint]: boolean } {
-  const { useStore } = useHass();
   const breakpoints = useThemeStore((store) => store.breakpoints);
   const windowContext = useStore((store) => store.windowContext);
   const win = windowContext ?? window;

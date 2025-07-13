@@ -3,8 +3,9 @@ import styled from "@emotion/styled";
 import { Row, Column, fallback, CardBase, CardBaseProps, mq, type AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { AutoHeight } from "../Shared/AutoHeight";
+import { EntityName } from "@core";
 
-const StyledGroup = styled(CardBase)<{
+const StyledGroup = styled(CardBase as React.ComponentType<CardBaseProps<"div", EntityName>>)<{
   collapsed: boolean;
   collapsible: boolean;
 }>`
