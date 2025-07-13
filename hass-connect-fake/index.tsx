@@ -12,28 +12,29 @@ import type {
   HaWebSocket,
   MessageBase,
 } from "home-assistant-js-websocket";
-import { Connection, HassEntity } from "home-assistant-js-websocket";
+import { Connection } from "home-assistant-js-websocket";
 import type {
   DomainService,
   SnakeOrCamelDomains,
   Route,
-  Store,
   CallServiceArgs,
   HassContextProps,
   ServiceResponse,
+  AuthUser,
+  ExtEntityRegistryEntry,  
 } from "@hakit/core";
-import { isArray, isEmpty } from "lodash";
-import { HassContext, updateLocales, locales } from '@hakit/core';
+import { isArray } from "lodash";
+import { useShallow } from "zustand/shallow";
+import { useStore, HassContext, updateLocales, locales } from '@hakit/core';
 import { entities as ENTITIES } from './mocks/mockEntities';
 import fakeApi from './mocks/fake-call-service';
-import { create } from "zustand";
-import { diff } from "deep-object-diff";
 import type { ServiceArgs } from './mocks/fake-call-service/types';
 import mockHistory from './mock-history';
 import { mockCallApi } from './mocks/fake-call-api';
 import reolinkSnapshot from './assets/reolink-snapshot.jpg';
 import { logs } from './mocks/mockLogs';
 import {dailyForecast, hourlyForecast} from './mocks/mockWeather';
+import type { InternalStore } from "packages/core/dist/types/HassConnect/HassContext";
 interface HassProviderProps {
   children: (ready: boolean) => ReactNode;
   hassUrl: string;
@@ -191,156 +192,119 @@ class MockConnection extends Connection {
     if (message.type === 'get_config') {
       return fakeConfig as Result;
     }
+    console.log('message.path', message);
     // a mock for the proxy image for the camera
     if (message.path && message.path.includes('camera_proxy')) {
       return {
         path: `${reolinkSnapshot}?`
       } as Result;
     }
-    if (message.path && message.path.includes('config/entity_registry/get')) {
-      return '123'as Result;
+    if (message.type === 'config/entity_registry/get') {
+      const extDevice: ExtEntityRegistryEntry = {
+        entity_id: message.entity_id,
+        capabilities: {},
+        original_icon: 'mdi:camera',
+        device_class: 'camera',
+        original_device_class: 'camera',
+        aliases: ['Fake Camera'],
+        options: {},
+        categories: {},
+        id: '01H4JAXGF1RTA2MJGGPGAGM7VD',
+        name: 'Fake Camera',
+        icon: '',
+        platform: '',
+        config_entry_id: '',
+        device_id: '',
+        area_id: '',
+        disabled_by: null,
+        hidden_by: null,
+        has_entity_name: true,
+        original_name: '',
+        unique_id: '',
+        translation_key: '',
+      };
+      return extDevice as Result;
+    }
+    if (message.type === 'config/auth/list') {
+      const users: AuthUser[] = [
+        {
+          id: '123',
+          name: 'Joe Bloggs',
+          is_active: true,
+          is_owner: true,
+          system_generated: false,
+          credentials: [],
+          group_ids: [],
+        },
+        {
+          id: '456',
+          name: 'Jane Doe',
+          is_active: true,
+          is_owner: false,
+          system_generated: false,
+          credentials: [],
+          group_ids: [],
+        },
+      ];
+      return users as Result;
     }
     return null as Result;
   }
 }
 
-const IGNORE_KEYS_FOR_DIFF = ["last_changed", "last_updated", "context"];
-const ignoreForDiffCheck = (
-  obj: HassEntities,
-  keys: string[] = IGNORE_KEYS_FOR_DIFF,
-): {
-  [key: string]: Omit<HassEntity, "last_changed" | "last_updated" | "context">;
-} => {
-  return Object.fromEntries(
-    Object.entries(obj).map(([entityId, entityData]) => [
-      entityId,
-      Object.fromEntries(Object.entries(entityData).filter(([key]) => !keys.includes(key))),
-    ]),
-  ) as {
-    [key: string]: Omit<HassEntity, "last_changed" | "last_updated" | "context">;
-  };
-};
-
-const useStore = create<Store>((set) => ({
-  disconnectCallbacks: [],
-  onDisconnect: (cb) => set((state) => ({ disconnectCallbacks: [...state.disconnectCallbacks, cb] })),
-  triggerOnDisconnect: () => {
-    set((state) => {
-      state.disconnectCallbacks.forEach((callback) => callback());
-      return { disconnectCallbacks: [] };
-    });
-  },
-  routes: [],
-  setRoutes: (routes) => set(() => ({ routes })),
+const originalStore = useStore.getState() as InternalStore;
+useStore.setState({
   hash: '',
-  setHash: (hash) => set({ hash }),
+  routes: [],
   entities: ENTITIES,
-  // this now matches the actual set Entities which fixed a state rendering issue on the demo page
-  setEntities: (newEntities) => set((state) => {
-    const entitiesDiffChanged = diff(ignoreForDiffCheck(state.entities), ignoreForDiffCheck(newEntities)) as HassEntities;
-    if (!isEmpty(entitiesDiffChanged)) {
-      // purposely not making this throttle configurable
-      // because lights can animate etc, which doesn't need to reflect in the UI
-      // if a user want's to control individual entities this can be done with useEntity by passing a throttle to it's options.
-      const updatedEntities = Object.keys(entitiesDiffChanged).reduce<HassEntities>(
-        (acc, entityId) => ({
-          ...acc,
-          [entityId]: newEntities[entityId],
-        }),
-        {},
-      );
-      // update the stateEntities with the newEntities with the keys that have changed
-      Object.keys(updatedEntities).forEach((entityId) => {
-        state.entities[entityId] = {
-          ...state.entities[entityId],
-          ...newEntities[entityId],
-        };
-      });
-      // used to mock out the render_template service
-      if (state.entities['light.fake_light_1']) {
-        renderTemplatePrevious = state.entities['light.fake_light_1'].state;
-      }
-      if (!state.ready) {
-        return {
-          ready: true,
-          lastUpdated: new Date(),
-          entities: state.entities,
-        };
-      }
-      return {
-        lastUpdated: new Date(),
-        entities: state.entities,
-      };
-    }
-    return state;
-  }),
-  locales: null,
-  setLocales: (locales) => set({ locales }),
-  connection: new MockConnection(),
-  setConnection: (connection) => set({ connection }),
-  cannotConnect: false,
-  setCannotConnect: (cannotConnect) => set({ cannotConnect }),
-  ready: false,
-  setReady: (ready) => set({ ready }),
-  lastUpdated: new Date(),
-  setLastUpdated: (lastUpdated) => set({ lastUpdated }),
-  auth: fakeAuth,
-  setAuth: (auth) => set({ auth }),
   config: fakeConfig,
+  connection: new MockConnection(),
+  auth: fakeAuth,
   user: {
     id: '',
     is_admin: false,
     is_owner: false,
     name: 'Joe Bloggs',
   },
-  setUser: (user) => set({ user }),
+  // @ts-expect-error - intentional error, this method is available, but not typed
   setConfig: (config) => {
-    set((state) => {
-      if (state.connection && 'mockEvent' in state.connection && config) {
-        fakeConfig = config;
-        // @ts-expect-error - don't know domain
-        state.connection.mockEvent('core_config_updated', config);
-      }
-      state.config = config;
-      return state;
-    });
+    const state = useStore.getState();
+    if (state.connection && 'mockEvent' in state.connection && config) {
+      fakeConfig = config;
+      // @ts-expect-error - this is fine, it exists on the mock connection, just not on the real Connection type
+      state.connection.mockEvent('core_config_updated', config);
+    }
+    state.config = config;
+    return state;
   },
-  error: null,
-  setError: (error) => set({ error }),
-  hassUrl: '',
-  setHassUrl: (hassUrl) => set({ hassUrl }),
-  portalRoot: undefined,
-  setPortalRoot: (portalRoot) => set({ portalRoot }),
-  windowContext: window,
-  setWindowContext: (windowContext) => set({ windowContext }),
-  callApi: async (): Promise<unknown> => {
-    return {};
-  },
-  globalComponentStyles: {},
-  setGlobalComponentStyles: (globalComponentStyles) => set({ globalComponentStyles }),
-}))
+  setEntities: (newEntities: HassEntities) => {
+    // used to mock out the render_template service
+    if (newEntities['light.fake_light_1']) {
+      renderTemplatePrevious = newEntities['light.fake_light_1'].state;
+    }
+    return originalStore.setEntities(newEntities);
+  }
+});
 
+const getAllEntities = () => useStore.getState().entities;
 
 function HassProvider({
   children,
 }: HassProviderProps) {
-  
-  const routes = useStore(store => store.routes);
-  const setRoutes = useStore(store => store.setRoutes);
-  const entities = useStore(store => store.entities);
-  const setEntities = useStore(store => store.setEntities);
-  const setHash = useStore(store => store.setHash);
-  const _hash = useStore(store => store.hash);
-  const ready = useStore(store => store.ready);
-  const setReady = useStore(store => store.setReady);
-  const setLocales = useStore(store => store.setLocales);
-  const setConfig = useStore(store => store.setConfig);
+  const {
+    hash: _hash,
+    ready,
+  } = useStore(
+    useShallow((s) => ({
+      hash: s.hash,
+      ready: s.ready, // ready is set internally in the store when we have entities (setEntities does this)
+    })),
+  );
   const clock = useRef<NodeJS.Timeout | null>(null);
   const getStates = async () => null;
   const getServices = async () => null;
   const getConfig = async () => fakeConfig;
   const getUser = async () => null;
-  const getAllEntities = useMemo(() => () => entities, [entities]);
 
   const callService = useCallback(
     async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean>(
@@ -348,10 +312,12 @@ function HassProvider({
     ): Promise<R extends true ? ServiceResponse<ResponseType> : void> => {
       if (typeof target !== 'string' && !isArray(target)) return undefined as R extends true ? never : void;
       const now = new Date().toISOString();
+      // Okay to cast here, we know the store is an InternalStore
+      const { entities, setEntities } = (useStore.getState() as InternalStore);
       if (domain in fakeApi) {
         const api = fakeApi[domain as 'scene'] as (params: ServiceArgs<'scene'>) => boolean;
         const skip = api({
-          setEntities(cb: (entities: HassEntities) => HassEntities) {
+          setEntities(cb: (entities: HassEntities) => HassEntities) {            
             setEntities(cb(entities));
           },
           now,
@@ -430,11 +396,13 @@ function HassProvider({
       }
       return undefined as R extends true ? never : void;
     },
-    [entities, setEntities]
+    []
   );
 
 
   useEffect(() => {
+    // we intentionally cast here, the actual value is an InternalStore, we just have it typed as a UseStoreHook to avoid consumers
+    const { setEntities } = (useStore.getState() as InternalStore);
     if (clock.current) clearInterval(clock.current);
     clock.current = setInterval(() => {
       const now = new Date();
@@ -443,6 +411,7 @@ function HassProvider({
         last_changed: now.toISOString(),
         last_updated: now.toISOString(),
       }
+      const entities = useStore.getState().entities;
       if (formatted !== entities['sensor.time'].state) {
         setEntities({
           ...entities,
@@ -457,15 +426,17 @@ function HassProvider({
     return () => {
       if (clock.current) clearInterval(clock.current);
     }
-  }, [entities, setEntities]);
+  }, []);
 
   const addRoute = useCallback(
     (route: Omit<Route, "active">) => {
+      const { setRoutes, routes } = useStore.getState();
       const exists = routes.find((_route) => _route.hash === route.hash) !== undefined;
       if (!exists) {
         // if the current has value is the same as the hash, we're active
         const hashWithoutPound = window.location.hash.replace("#", "");
         const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
+        console.log('setting routes', routes, route, active);
         setRoutes([
           ...routes,
           {
@@ -475,19 +446,21 @@ function HassProvider({
         ]);
       }
     },
-    [routes, setRoutes],
+    [],
   );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    const { setHash } = useStore.getState();
     if (location.hash === '') return;
     if (location.hash.replace('#', '') === _hash) return;
     setHash(location.hash)
-  }, [setHash, _hash]);
+  }, [_hash]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     function onHashChange() {
+      const { setRoutes, setHash, routes } = useStore.getState();
       setRoutes(routes.map(route => {
         if (route.hash === location.hash.replace('#', '')) {
           return {
@@ -506,16 +479,17 @@ function HassProvider({
     return () => {
       window.removeEventListener("hashchange", onHashChange);
     };
-  }, [routes, setHash, setRoutes]);
+  }, []);
 
   const joinHassUrl = useCallback((path: string) => path, []);
 
   const getRoute = useCallback(
     (hash: string) => {
+      const routes = useStore.getState().routes;
       const route = routes.find((route) => route.hash === hash);
       return route || null;
     },
-    [routes]
+    []
   );
   const callApi = useCallback(
     async function <T>(endpoint: string): Promise<{
@@ -538,31 +512,38 @@ function HassProvider({
 
 
   useEffect(() => {
+    // we intentionally cast here, the actual value is an InternalStore, we just have it typed as a UseStoreHook to avoid consumers
+    // using values we don't want them to use.
+    const { setLocales, setReady, setConfig } = (useStore.getState() as InternalStore);
     locales.find(locale => locale.code === 'en')?.fetch().then(_locales => {
       setLocales(_locales);
       updateLocales(_locales);
       setReady(true);
       setConfig(fakeConfig);
-
     });
-  }, [setLocales, setConfig, setReady]);
+  }, []);
+
+  const contextValue = useMemo<HassContextProps>(
+    () => ({
+      useStore,
+      logout: () => {},
+      addRoute,
+      getRoute,
+      getStates,
+      getServices,
+      getConfig,
+      getUser,
+      callApi,
+      getAllEntities,
+      callService: callService as HassContextProps["callService"],
+      joinHassUrl,
+    }),
+    [addRoute, getRoute, callApi, callService, joinHassUrl],
+  );
 
   return (
     <HassContext.Provider
-      value={{
-        useStore,
-        logout: () => {},
-        addRoute,
-        getRoute,
-        getStates,
-        getServices,
-        getConfig,
-        getUser,
-        getAllEntities,
-        callService : callService as HassContextProps['callService'],
-        callApi,
-        joinHassUrl,
-      }}
+      value={contextValue}
     >
       {children(ready)}
     </HassContext.Provider>

@@ -40,7 +40,7 @@ export const computeDomainTitle = <E extends EntityName | "unknown">(entityId: E
     case "alert":
       return localize("alert_classes");
     case "water_heater":
-      return `${localize("water")} ${localize("aux_heat")}`;
+      return `${localize("water")} ${localize("heat")}`;
     case "stt":
     case "google":
     case "reolink":

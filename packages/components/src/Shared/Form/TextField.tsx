@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
 import styled from "@emotion/styled";
-import { useHass } from "@hakit/core";
+import { useStore } from "@hakit/core";
 
 export interface TextFieldProps extends React.ComponentPropsWithoutRef<"div"> {
   type?: string;
@@ -278,7 +278,6 @@ export const TextField: React.FC<TextFieldProps> = ({
   disabled,
   ...rest
 }) => {
-  const { useStore } = useHass();
   const windowContext = useStore((store) => store.windowContext);
   const win = windowContext ?? window;
   const [focused, setFocused] = useState(false);

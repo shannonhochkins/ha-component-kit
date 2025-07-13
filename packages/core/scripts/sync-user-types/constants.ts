@@ -9,8 +9,8 @@ export const REMAPPED_TYPES: Record<string, string> = {
   rgbww_color: `[number, number, number, number, number]`,
   group_members: `string[]`,
   media_content_id: `string | number`,
-  kelvin: `number | object`,
+  color_temp_kelvin: `number`,
   white: 'boolean',
-  color_temp: `number | object`,
+  color_temp: `number`,
   xy_color: `[number, number]`,
 };

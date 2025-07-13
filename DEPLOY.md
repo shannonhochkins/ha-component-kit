@@ -66,3 +66,26 @@ npm run release:components
 ```
 
 
+### Canary Releases
+
+1. Bump the package versions in core/components, and suffix with `-canary.0` for example in the package.json files.
+2. Run the canary release command, this will run build first, then publish the canary versions to npm:
+```bash
+npm run release:core:canary
+npm run release:components:canary
+```
+3. Verify it's not public or the latest version in npm, you can do this by running:
+```bash
+npm dist-tag ls @hakit/core
+npm dist-tag ls @hakit/components
+```
+4. Ask users to install or test the canary version by running:
+```bash
+npm install @hakit/core@canary
+npm install @hakit/components@canary
+```
+or the specific version:
+```bash
+npm install @hakit/core@1.0.0-canary.0
+npm install @hakit/components@1.0.0-canary.0
+```

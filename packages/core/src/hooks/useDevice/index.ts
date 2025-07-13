@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useHass, type EntityRegistryEntry, type EntityName } from "@core";
+import { useStore, type EntityRegistryEntry, type EntityName } from "@core";
 
 export interface ExtEntityRegistryEntry extends EntityRegistryEntry {
   capabilities: Record<string, unknown>;
@@ -11,10 +11,9 @@ export interface ExtEntityRegistryEntry extends EntityRegistryEntry {
   categories?: Record<string, unknown>;
 }
 
-export const useDevice = (entityId: EntityName) => {
+export const useDevice = (entityId: EntityName): ExtEntityRegistryEntry | null => {
   const [device, setDevice] = useState<ExtEntityRegistryEntry | null>(null);
 
-  const { useStore } = useHass();
   const connection = useStore((state) => state.connection);
 
   useEffect(() => {
@@ -27,7 +26,6 @@ export const useDevice = (entityId: EntityName) => {
         type: "config/entity_registry/get",
         entity_id: entityId,
       });
-
       setDevice(response);
     };
 

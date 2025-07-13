@@ -37,7 +37,7 @@ function Render(args?: Args) {
 export default {
   title: "components/Cards/EntitiesCard",
   component: EntitiesCard,
-  subcomponents: { EntitiesCardRow },
+  subcomponents: { EntitiesCardRow: EntitiesCardRow as React.ComponentType<unknown> },
   tags: ["autodocs"],
   parameters: {
     fullWidth: true,

@@ -10,6 +10,7 @@ import {
   Token,
 } from "./types";
 import { AmOrPm } from "./shared";
+import { Fragment, cloneElement, isValidElement } from "react";
 
 const parsers: Map<string, Parser> = new Map();
 
@@ -188,5 +189,22 @@ function formatDate(customFormatters: CustomFormatters, format: string, parts: D
   }
   // Finally, render the HTML string inside React. We must do dangerouslySetInnerHTML
   // so that <div> ... </div> is recognized as HTML, not plain text:
-  return <>{tokens}</>;
+  return (
+    <>
+      {tokens.map((tok, i) => {
+        // Strings need to be wrapped so they can carry a key
+        if (typeof tok === "string") {
+          return <Fragment key={i}>{tok}</Fragment>;
+        }
+
+        // Valid elements: clone to add/override the key
+        if (isValidElement(tok)) {
+          return cloneElement(tok, { key: i });
+        }
+
+        // Anything else (null, boolean) can be returned as-is
+        return tok;
+      })}
+    </>
+  );
 }

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Alert } from "@components";
-import { useHass, type EntityName, type FilterByDomain } from "@hakit/core";
+import { useStore, type EntityName, type FilterByDomain } from "@hakit/core";
 import { VideoPlayer, type VideoState } from "./";
 
 type SubscriptionUnsubscribe = () => Promise<void>;
@@ -51,7 +51,6 @@ export interface WebRTCClientConfiguration {
  * is handled entirely client side.
  */
 export function WebRTCPlayer({ entity, controls, muted, autoPlay, playsInline, posterUrl, onStateChange }: WebRTCPlayerProps) {
-  const { useStore } = useHass();
   const connection = useStore((store) => store.connection);
   const _videoEl = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string | undefined>(undefined);

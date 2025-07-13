@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback, useMemo, useState } from "react";
-import { useService, useHass, isUnavailableState, useEntity, OFF, supportsFeatureFromAttributes } from "@hakit/core";
+import { useService, useHass, isUnavailableState, useEntity, OFF, useStore, supportsFeatureFromAttributes } from "@hakit/core";
 import { snakeCase, clamp } from "lodash";
 import { useGesture } from "@use-gesture/react";
 import type { EntityName, FilterByDomain, MediaPlayerEntity } from "@hakit/core";
@@ -18,19 +18,33 @@ import { ProgressBar } from "./ProgressBar";
 import { AlternateControls } from "./AlternateControls";
 import { Layout, VolumeLayout, DEFAULT_FAB_SIZE } from "./constants";
 
-const MediaPlayerWrapper = styled(CardBase)<
-  CardBaseProps<"div", FilterByDomain<EntityName, "media_player">> & {
-    backgroundImage?: string;
-    layoutName?: Layout;
+type BackgroundImageProps = {
+  backgroundImage: string;
+};
+const BackgroundImage = styled.div<BackgroundImageProps>`
+  width: 100%;
+  height: 100%;
+  ${(props) => props.backgroundImage && `background-image: url(${props.backgroundImage});`}
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  background-repeat: no-repeat;
+  inset: 0;
+  z-index: -1;
+  &:after {
+    background: rgba(0, 0, 0, 0.7);
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
   }
->`
+`;
+const MediaPlayerWrapper = styled(CardBase as React.ComponentType<CardBaseProps<"button", MediaPlayerString>>)<MediaPlayerCardProps>`
   padding: 0;
   background-color: var(--ha-S300);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: var(--ha-transition-duration) var(--ha-easing);
-  transition-property: background-image, background-color, box-shadow;
-  background-size: cover;
-  background-repeat: no-repeat;
+  transition-property: background-image, background-color, box-shadow, transform;
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
@@ -38,24 +52,10 @@ const MediaPlayerWrapper = styled(CardBase)<
   flex-shrink: 1;
 
   ${(props) =>
-    props.layoutName === "card" &&
+    props.layout === "card" &&
     `
     aspect-ratio: 1/1;
   `}
-  ${(props) => {
-    if (props.backgroundImage) {
-      return `
-        background-image: url('${props.backgroundImage}');
-        &:after {
-          background: rgba(0,0,0,0.7);
-          content: '';
-          position: absolute;
-          inset: 0;
-          z-index: 0;
-        }
-      `;
-    }
-  }}
   &:disabled {
     cursor: not-allowed;
     opacity: 0.8;
@@ -99,11 +99,13 @@ type OmitProperties =
   | "entity"
   | "disabled"
   | "active"
+  | "ref"
   | "disableActiveState"
-  | "disableScale"
   | "disableRipples"
   | "rippleProps";
-export interface MediaPlayerCardProps extends Omit<CardBaseProps<"div", FilterByDomain<EntityName, "media_player">>, OmitProperties> {
+
+type MediaPlayerString = FilterByDomain<EntityName, "media_player">;
+export interface MediaPlayerCardProps extends Omit<CardBaseProps<"button", MediaPlayerString>, OmitProperties> {
   /** the entity_id of the media_player to control */
   entity: FilterByDomain<EntityName, "media_player">;
   /** an optional override for the title of the entity */
@@ -136,6 +138,7 @@ export interface MediaPlayerCardProps extends Omit<CardBaseProps<"div", FilterBy
   /** show the artwork as the background of the card @default true */
   showArtworkBackground?: boolean;
 }
+
 function InternalMediaPlayerCard({
   entity: _entity,
   groupMembers = [],
@@ -160,13 +163,13 @@ function InternalMediaPlayerCard({
 }: MediaPlayerCardProps) {
   const entity = useEntity(_entity);
   const mp = useService("mediaPlayer");
-  const { useStore, joinHassUrl, getAllEntities } = useHass();
+  const { joinHassUrl } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const interval = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-  const playerRef = useRef<HTMLDivElement>(null);
+  const playerRef = useRef<HTMLElement>(null);
   const clockRef = useRef<HTMLDivElement>(null);
-  const entitiesById = getAllEntities();
+  const entitiesById = useStore((store) => store.entities);
   const groupedEntities = groupMembers
     .map((entity) => entitiesById[entity] ?? null)
     .filter((entity): entity is MediaPlayerEntity => entity !== null && !isUnavailableState(entity.state));
@@ -201,6 +204,7 @@ function InternalMediaPlayerCard({
   const updateClock = useCallback(
     (x: number) => {
       if (!progressRef.current || !clockRef.current || seekDisabled || !playerRef.current || !media_duration) return;
+
       // Get the bounding client rectangle
       const rect = progressRef.current.getBoundingClientRect();
       // Calculate the click position relative to the element
@@ -289,7 +293,6 @@ function InternalMediaPlayerCard({
     },
   );
 
-  // noinspection JSVoidFunctionReturnValueUsed
   const bindProgress = useGesture({
     onMove: (state) => {
       if (seekDisabled) return;
@@ -319,22 +322,26 @@ function InternalMediaPlayerCard({
           ...modalProps,
         }}
         entity={_entity}
-        // @ts-expect-error - don't know the entity name, so we can't know the service type
-        service={service}
-        // @ts-expect-error - don't know the entity name, so we can't know the service data
-        serviceData={serviceData}
+        // just a dodgey hack to let typescript play nicely here
+        // as we don't know the service/serviceData at this level
+        service={service as undefined}
+        serviceData={serviceData as undefined}
         disableActiveState
         disableRipples
         className={`media-player-card ${className ?? ""}`}
-        elRef={playerRef}
-        layoutName={layout}
-        backgroundImage={showArtworkBackground === true && artworkUrl !== null ? artworkUrl : undefined}
+        refCallback={(ref) => {
+          if (ref) {
+            playerRef.current = ref.current;
+          }
+        }}
+        layout={layout}
         cssStyles={`
           ${globalComponentStyle?.mediaPlayerCard ?? ""}
           ${cssStyles ?? ""}
         `}
         {...rest}
       >
+        {showArtworkBackground && artworkUrl !== null && <BackgroundImage className="artwork" backgroundImage={artworkUrl} />}
         <Column fullHeight fullWidth className="column content" justifyContent="space-between">
           <Empty className="empty" />
           {layout === "card" && (

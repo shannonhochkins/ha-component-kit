@@ -8,7 +8,7 @@ import { convertToCssVars } from "./helpers";
 import { useBreakpoint, fallback, type BreakPoints, type BreakPointsWithXlg } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { LIGHT, DARK, ACCENT, DEFAULT_START_LIGHT, DEFAULT_START_DARK, DIFF, DEFAULT_THEME_OPTIONS } from "./constants";
-import { useHass, type SupportedComponentOverrides } from "@hakit/core";
+import { useStore, type SupportedComponentOverrides } from "@hakit/core";
 import { generateColumnBreakpoints } from "./breakpoints";
 import createCache, { type Options } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
@@ -31,6 +31,8 @@ function EmotionProvider({ children, options }: { children: React.ReactNode; opt
 export type ThemeProviderProps<T extends object> = ThemeStore["theme"] & {
   /** the theme properties */
   theme?: DeepPartial<ThemeParams> & T;
+  /** Simple object to define some colors for for success, warning, info and error states, must be provided in [r,g,b] format [number, number, number] */
+  infoColors?: Partial<ThemeProviderInfoColors>;
   /** any global style overrides */
   globalStyles?: CSSInterpolation;
   /** options to pass to the emotion cache provider, if an emotion cache is provided, or a different window context via HassConnect, you'll need to wrap your dashboard in the ThemeProvider
@@ -56,7 +58,14 @@ export type ThemeProviderProps<T extends object> = ThemeStore["theme"] & {
   children?: React.ReactNode;
 };
 
-const INFO_COLORS = {
+export interface ThemeProviderInfoColors {
+  errorColor: [number, number, number];
+  warningColor: [number, number, number];
+  successColor: [number, number, number];
+  infoColor: [number, number, number];
+}
+
+const INFO_COLORS: ThemeProviderInfoColors = {
   errorColor: [219, 68, 55],
   warningColor: [255, 166, 0],
   successColor: [67, 160, 71],
@@ -78,8 +87,8 @@ const getContrastColor = (rgb: number[], alpha: number): string => {
   return luminance > 0.3 ? "rgba(0, 0, 0, 1)" : "rgba(255, 255, 255, 1)";
 };
 
-const generateInfoColors = (): string => {
-  return Object.entries(INFO_COLORS)
+const generateInfoColors = (infoColors = INFO_COLORS): string => {
+  return Object.entries(infoColors)
     .map(([name, rgb]) =>
       alphas
         .map((alpha) => {
@@ -90,7 +99,7 @@ const generateInfoColors = (): string => {
             .replace("-color", "")}-color${suffix}`;
           const contrastVarName = `${varName}-contrast`;
           const rgba = `rgba(${rgb.join(", ")}, ${alpha})`;
-          const contrastColor = getContrastColor(rgb, alpha);
+          const contrastColor = getContrastColor([...rgb], alpha);
           return `${varName}: ${rgba};\n${contrastVarName}: ${contrastColor};`;
         })
         .join("\n"),
@@ -174,7 +183,7 @@ const generateAccentVars = (variants: string[], tint: number, darkMode: boolean)
 };
 
 // Main function to generate all variables
-const generateAllVars = (tint: number, darkMode: boolean): string => {
+const generateAllVars = (tint: number, infoColors: typeof INFO_COLORS, darkMode: boolean): string => {
   const lightVars = generateVariantVars(LIGHT, "Light", tint, darkMode);
   const darkVars = generateVariantVars(DARK, "Dark", tint, darkMode);
   const accentVars = generateAccentVars(ACCENT, tint, darkMode);
@@ -193,7 +202,7 @@ const generateAllVars = (tint: number, darkMode: boolean): string => {
     .join("");
 
   return `
-    ${generateInfoColors()}
+    ${generateInfoColors(infoColors)}
     ${lightVars}
     --ha-500-h: var(--ha-h);
     --ha-500-s: calc(var(--ha-s) * 1%);
@@ -223,9 +232,9 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
   globalStyles,
   globalComponentStyles,
   emotionCache,
+  infoColors = INFO_COLORS,
   children,
 }: ThemeProviderProps<T>): React.ReactNode {
-  const { useStore } = useHass();
   const themeStore = useThemeStore((store) => store.theme);
   const setTheme = useThemeStore((store) => store.setTheme);
   const setBreakpoints = useThemeStore((store) => store.setBreakpoints);
@@ -346,7 +355,14 @@ const InternalThemeProvider = memo(function InternalThemeProvider<T extends obje
             --mtc-light-s: 0;
             --mtc-light-l: 100;
 
-            ${generateAllVars(themeStore.tint ?? DEFAULT_THEME_OPTIONS.tint, themeStore.darkMode ?? DEFAULT_THEME_OPTIONS.darkMode)}
+            ${generateAllVars(
+              themeStore.tint ?? DEFAULT_THEME_OPTIONS.tint,
+              {
+                ...INFO_COLORS,
+                ...infoColors,
+              },
+              themeStore.darkMode ?? DEFAULT_THEME_OPTIONS.darkMode,
+            )}
           }
 
           * {

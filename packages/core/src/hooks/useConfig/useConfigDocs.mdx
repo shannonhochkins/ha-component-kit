@@ -1,6 +1,7 @@
-import { Meta, Source, Canvas } from '@storybook/addon-docs/blocks';
+import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
 import basicExample from './examples/basic.code?raw';
 import * as Primary from './examples/primary.stories';
+import { DummyComponentReturn } from './examples/DummyComponent';
 
 <Meta title="core/hooks/useConfig" parameters={{
   docs: {
@@ -26,3 +27,7 @@ This hook will return the configuration object or null if not available yet.
 <Canvas of={Primary.PrimaryExample} />
 
 
+### Returned Value
+The following is a valid returned value from the `useConfig` hook:
+
+<ArgTypes of={DummyComponentReturn} />

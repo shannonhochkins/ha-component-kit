@@ -70,8 +70,7 @@ function TemplateFull() {
   );
 }
 
-const hashExample = `function UseHashExample() {
-  const { useStore } = useHass();
+const hashExample = `import { useStore } from '@hakit/core';\nfunction UseHashExample() {
   const setHash = useStore((store) => store.setHash);
   return (
     <Row fullHeight fullWidth>

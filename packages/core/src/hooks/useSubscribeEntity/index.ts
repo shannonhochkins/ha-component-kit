@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { HassEntity } from "home-assistant-js-websocket";
-import { localize, useHass } from "@core";
+import { localize, useStore } from "@core";
 import type { EntityName } from "@typings";
 
 type GetEntityFn = {
@@ -10,7 +10,6 @@ type GetEntityFn = {
 };
 
 export function useSubscribeEntity(entityId: EntityName): GetEntityFn {
-  const { useStore } = useHass();
   const entity = useStore((state) => state.entities[entityId]);
   const getEntity: GetEntityFn = useCallback(
     (returnNullIfNotFound?: boolean) => {

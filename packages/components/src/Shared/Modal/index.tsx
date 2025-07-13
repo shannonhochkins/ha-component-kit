@@ -1,7 +1,7 @@
 import { Column, FabCard, Row, fallback, mq } from "@components";
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { localize, useHass } from "@hakit/core";
+import { localize, useStore } from "@hakit/core";
 import { Fragment, ReactNode, memo, useCallback, useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 import { ErrorBoundary } from "react-error-boundary";
@@ -139,7 +139,6 @@ function InternalModal({
 }: ModalProps) {
   const _id = useId();
   const prefix = id ?? _id;
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const windowContext = useStore((store) => store.windowContext);
   const win = windowContext ?? window;

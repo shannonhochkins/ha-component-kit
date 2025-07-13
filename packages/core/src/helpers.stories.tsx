@@ -42,12 +42,11 @@ const helpers: {
     description: "Returns the state of the entity in a human readable format",
     autoImport: false,
     exampleUsage: `
-import { computeStateDisplay, useHass } from '@hakit/core';
+import { computeStateDisplay, useStore } from '@hakit/core';
 import { HassEntity } from 'home-assistant-js-websocket';
 export default function EntityState({ entity }: {
   entity: HassEntity;
 }) {
-  const { useStore } = useHass();
   const config = useStore((state) => state.config);
   const entities = useStore((store) => store.entities);
   const connection = useStore((store) => store.connection);
@@ -68,12 +67,11 @@ export default function EntityState({ entity }: {
     comment: "// use within component context and with available entity",
     autoImport: false,
     exampleUsage: `
-import { computeAttributeValueDisplay, useHass } from '@hakit/core';
+import { computeAttributeValueDisplay, useStore } from '@hakit/core';
 export default function EntityAttribute({ entity, attribute }: {
   entity: HassEntity;
   attribute: string;
 }) {
-  const { useStore } = useHass();
   const config = useStore((state) => state.config);
   const entities = useStore((store) => store.entities);
   const connection = useStore((store) => store.connection);

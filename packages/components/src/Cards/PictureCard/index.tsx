@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, fallback, PreloadImage, CardBase, type CardBaseProps, type PreloadImageProps, type AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
+import { EntityName } from "@hakit/core";
 
 type OmitProperties =
   | "title"
@@ -31,7 +32,7 @@ export interface PictureCardProps extends Omit<CardBaseProps<"button">, OmitProp
   onClick?: () => void;
 }
 
-const StyledPictureCard = styled(CardBase)`
+const StyledPictureCard = styled(CardBase as React.ComponentType<CardBaseProps<"button", EntityName>>)`
   aspect-ratio: 16 / 9;
 `;
 const Inner = styled.div`

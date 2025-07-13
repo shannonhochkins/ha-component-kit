@@ -3,11 +3,12 @@ import { Story } from "@storybook/addon-docs/blocks";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Component } from "./basic.code";
 import { ThemeProvider, FabCard } from "@hakit/components";
-import { useHass } from "@hakit/core";
+import { useStore } from "@hakit/core";
 import { Column, Row } from "@components";
 
 function ShutDown() {
-  const { useStore } = useHass();
+  // @ts-expect-error - Types are intentionally missing, but they do exist, we just don't
+  // encourage users to use these internal methods directly.
   const setConfig = useStore((state) => state.setConfig);
   const config = useStore((state) => state.config);
 

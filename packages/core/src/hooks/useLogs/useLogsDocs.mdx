@@ -1,10 +1,11 @@
-import { Meta, Source } from '@storybook/addon-docs/blocks';
+import { Meta, Source, ArgTypes } from '@storybook/addon-docs/blocks';
 import basicExample from './examples/basic.code?raw';
+import { DummyComponentLogOptions, DummyComponentLogEntry } from './examples/DummyComponent';
 
 <Meta title="core/hooks/useLogs" />
 
 # useLogs()
-###### `useLogs(entityId: EntityName, options: UseLogOptions)`
+###### `useLogs(entityId: EntityName, options?: UseLogOptions): LogbookEntry[]`
 This hook is designed to retrieve the current log information from the entitiy if available.
 
 > <b>NOTE:</b> This hook is already connected to the Modal via the LogBookRenderer component.
@@ -16,3 +17,11 @@ This hook is designed to retrieve the current log information from the entitiy i
 
 <Source dark code={basicExample} />
 
+### Log Options
+Here are the log options you can pass to the `useLogs` hook:
+<ArgTypes of={DummyComponentLogOptions} />
+
+
+### Returned Value
+The hook will return an array of log entries, here's the shape of an individual log entry:
+<ArgTypes of={DummyComponentLogEntry} />

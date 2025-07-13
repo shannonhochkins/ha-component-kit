@@ -47,6 +47,7 @@ const tracks = (now: string) => ({
   }
 });
 
+
 export function mediaPlayerUpdates({
   now,
   target: _target,
@@ -129,8 +130,7 @@ export function mediaPlayerUpdates({
             ...dates,
             attributes: {
               ...entities[target].attributes,
-              // @ts-ignore - TODO - type later
-              media_position: serviceData?.seek_position,
+              media_position: (serviceData as ServiceArgs<'mediaPlayer', 'mediaSeek'>['serviceData'])?.seek_position,
               media_position_updated_at: now,
             }
           }

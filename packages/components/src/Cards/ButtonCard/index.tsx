@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import {
   localize,
   useEntity,
-  useHass,
+  useStore,
   useIconByDomain,
   useIcon,
   useIconByEntity,
@@ -239,7 +239,6 @@ function InternalButtonCard<E extends EntityName>({
   customRenderState,
   ...rest
 }: ButtonCardProps<E>): React.ReactNode {
-  const { useStore } = useHass();
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const domain = _entity ? computeDomain(_entity) : null;
   const entity = useEntity(_entity || "unknown", {

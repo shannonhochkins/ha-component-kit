@@ -1,14 +1,17 @@
-import { Source, Meta } from '@storybook/addon-docs/blocks';
+import { Source, Meta, ArgTypes } from '@storybook/addon-docs/blocks';
 
 import basicExample from './examples/basic.code?raw';
 import serviceExample from './examples/service.code?raw';
 import serviceResponseExample from './examples/serviceResponse.code?raw';
 import historyExample from './examples/withHistory.code?raw';
+import { DummyComponentHistoryOptions, DummyComponentOptions, DummyComponentReturnValue } from './examples/DummyComponent';
 
 <Meta title="core/hooks/useEntity" />
 # useEntity()
-###### `useEntity(entity: string, options?: UseEntityOptions)`
+###### `useEntity(entity: EntityName, options?: UseEntityOptions): HassEntityWithService<Domain> | null`
 This hook is designed to retrieve an entity and return all it's information including history (if not disabled) and the services for the entity.
+
+> Note: By default it will throw an error if entity name is incorrect. You can tell the hook to return null by passing through `returnNullIfNotFound` as true to the options.
 
 This hook should be used inside the context of [`<HassConnect />`](/docs/core-hassconnect--docs) and not outside of it otherwise it will not have access to
 the authenticated home assistant API.
@@ -35,12 +38,20 @@ the authenticated home assistant API.
 ### Options
 useEntity takes a second parameter which is an object of options.
 The options are:
-- `returnNullIfNotFound` - boolean - if true the hook will return null if not found, and not throw an error. Default is false.
-- `throttle` - number - how long to wait to throttle the updates, default is 25ms
-- `historyOptions` - object - options to pass to receive different history data.
 
-Example:
+<ArgTypes of={DummyComponentOptions} />
 
+History options are:
+
+<ArgTypes of={DummyComponentHistoryOptions} />
+
+### Returned Value
+The returned value from the `useEntity` hook is an object containing the entity information, history, and services. The below is a return example of a light entity:
+<ArgTypes of={DummyComponentReturnValue} />
+
+
+### Configuring history
+We can configure the history options by passing an object to the `useEntity` hook, the example below shows how we can enable the history, and also change how far back we're looking:
 <Source dark code={historyExample} />
 
 ### Using services from entity

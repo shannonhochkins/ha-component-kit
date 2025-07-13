@@ -1,5 +1,5 @@
 import { useRef, useEffect, useMemo, useState } from "react";
-import { EntityName, useHass } from "@core";
+import { EntityName, useStore } from "@core";
 import { MessageBase, UnsubscribeFunc } from "home-assistant-js-websocket";
 
 type RenderTemplateResult = {
@@ -14,7 +14,7 @@ type RenderTemplateError = {
 export type TemplateParams = {
   /** The template expression to process */
   template: string;
-  /** The entity ids or id to watch for changes, this has been marked as @deprecated and may not be needed to use this */
+  /** The entity ids or id to watch for changes, @deprecated This may not be needed as variables should handle this case */
   entity_ids?: EntityName | EntityName[];
   /** variables to define to use within the template
    * @example
@@ -31,7 +31,6 @@ export type TemplateParams = {
 };
 
 export const useTemplate = (params: TemplateParams) => {
-  const { useStore } = useHass();
   const connection = useStore((state) => state.connection);
   const [template, setTemplate] = useState<string | null>(null);
   const unsubscribeRef = useRef<UnsubscribeFunc | null>(null);

@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "5.1.0",
+  "version": "5.1.1-canary.3",
   "private": false,
   "type": "module",
   "keywords": [
@@ -75,7 +75,8 @@
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "test": "NODE_ENV=test jest --rootDir=src",
     "prerelease": "npm run build",
-    "release": "npm publish --access public",
+    "release": "npm publish",
+    "release:canary": "npm run build && npm publish --tag canary",
     "sync-ha-user-types": "npm run build:sync-script && node ./sync-ha-user-types.cjs",
     "sync-locales": "npx tsx ./scripts/sync-locales/index.ts",
     "clean": "rm -rf node_modules dist ./scripts/sync-ha-types/.ha-repo-cache"
@@ -95,8 +96,7 @@
     "@emotion/react": ">=11.x",
     "@emotion/styled": ">=11.x",
     "@iconify/react": ">=5.x",
-    "deep-object-diff": ">=1.x.x",
-    "home-assistant-js-websocket": ">=9.x",
+    "home-assistant-js-websocket": ">=9.x.x",
     "lodash": ">=4.x",
     "prettier": ">=3.4.2",
     "react": ">=19.x",
@@ -104,7 +104,7 @@
     "use-debounce": ">=9.x",
     "ws": ">=8.x.x",
     "yargs": ">=17.x.x",
-    "zustand": ">=4.x.x"
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@liuli-util/vite-plugin-node": "^0.9.0",

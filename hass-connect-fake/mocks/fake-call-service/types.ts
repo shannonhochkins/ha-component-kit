@@ -6,10 +6,10 @@ import type {
   ServiceData,
 } from "@hakit/core";
 
-export interface ServiceArgs<D extends SnakeOrCamelDomains> {
+export interface ServiceArgs<D extends SnakeOrCamelDomains, S extends DomainService<D> = DomainService<D>> {
   setEntities: (cb: (entities: HassEntities) => HassEntities) => void;
   now: string;
   target: string | string[];
-  service: DomainService<D>;
-  serviceData: ServiceData<D, DomainService<D>>, 
+  service: S;
+  serviceData: ServiceData<D, S>, 
 }

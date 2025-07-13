@@ -13,7 +13,7 @@ function Template(args?: Partial<TimeCardProps>) {
         <TimeCard timeFormat="hh:mm:ss A" dateFormat={"MMM DD"} {...args} />
         <TimeCard
           timeFormat={(date) => {
-            return "Time: " + date.toLocaleTimeString().replace(/:/g, "-");
+            return <span>Time: {date.toLocaleTimeString().replace(/:/g, "-")}</span>;
           }}
           hideDate
         />
