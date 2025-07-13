@@ -147,7 +147,7 @@ function InternalCameraCard<E extends FilterByDomain<EntityName, "camera">>({
   const isUnavailable = isUnavailableState(camera.state);
 
   const supportsLiveStream =
-    camera.attributes.frontend_stream_type === STREAM_TYPE_HLS || camera.attributes.frontend_stream_type === STREAM_TYPE_WEB_RTC;
+    camera.frontend_stream_types.includes(STREAM_TYPE_WEB_RTC) || camera.frontend_stream_types.includes(STREAM_TYPE_HLS);
 
   const _stopUpdateCameraInterval = (): void => {
     if (cameraUpdater.current) {
@@ -328,7 +328,7 @@ function InternalCameraCard<E extends FilterByDomain<EntityName, "camera">>({
           <PreloadImage
             onLoad={onImageLoad}
             onLoading={onImageLoading}
-            src={_view === "motion" && mjpeg.url ? mjpeg.url : (poster.url ?? "")}
+            src={_view === "motion" && mjpeg.url ? mjpeg.url : poster.url ?? ""}
             style={{
               width: "100%",
               height: "100%",

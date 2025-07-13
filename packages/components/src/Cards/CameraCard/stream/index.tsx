@@ -34,7 +34,20 @@ export function CameraStream({
   if (mjpeg.shouldRenderMJPEG && mjpeg.url) {
     return <img src={mjpeg.url} alt={`${localize("camera_view")} "${camera.attributes.friendly_name ?? camera.entity_id}".`} />;
   }
-  if (camera.attributes.frontend_stream_type === STREAM_TYPE_HLS) {
+  if (camera.frontend_stream_types.includes(STREAM_TYPE_WEB_RTC)) {
+    return (
+      <WebRTCPlayer
+        autoPlay={autoPlay}
+        playsInline={playsInline}
+        muted={muted}
+        controls={controls}
+        entity={entity}
+        onStateChange={onStateChange}
+        posterUrl={poster.url}
+      />
+    );
+  }
+  if (camera.frontend_stream_types.includes(STREAM_TYPE_HLS)) {
     return (
       !poster.loading &&
       poster.url &&
@@ -52,18 +65,6 @@ export function CameraStream({
       )
     );
   }
-  if (camera.attributes.frontend_stream_type === STREAM_TYPE_WEB_RTC) {
-    return (
-      <WebRTCPlayer
-        autoPlay={autoPlay}
-        playsInline={playsInline}
-        muted={muted}
-        controls={controls}
-        entity={entity}
-        onStateChange={onStateChange}
-        posterUrl={poster.url}
-      />
-    );
-  }
+
   return null;
 }
