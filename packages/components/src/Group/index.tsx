@@ -121,12 +121,15 @@ function InternalGroup({
     setCollapsed(true);
   }, []);
 
-  const onHeaderClick = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    if (collapsible) {
-      setCollapsed(!_collapsed);
-    }
-    if (onClick) onClick(event);
-  }, [_collapsed, collapsible, onClick]);
+  const onHeaderClick = useCallback(
+    (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+      if (collapsible) {
+        setCollapsed(!_collapsed);
+      }
+      if (onClick) onClick(event);
+    },
+    [_collapsed, collapsible, onClick],
+  );
 
   return (
     <StyledGroup
@@ -140,10 +143,7 @@ function InternalGroup({
       collapsible={collapsible}
       {...rest}
     >
-      <Header
-        onClick={onHeaderClick}
-        className="header-title"
-      >
+      <Header onClick={onHeaderClick} className="header-title">
         <Title className="title">{title}</Title>
         {description && <Description>{description}</Description>}
       </Header>
