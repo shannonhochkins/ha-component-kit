@@ -99,7 +99,31 @@ export default {
         const aName = stripGroup(a.title, aGroup);
         const bName = stripGroup(b.title, bGroup);
 
-        // then just do a normal string compare
+        // Custom sorting for INTRODUCTION group
+        if (aGroup === 'INTRODUCTION') {
+          const introOrder = [
+            'Getting Started',
+            'Demo', 
+            'Deploying',
+            'Responsive layouts',
+            'TypescriptSync',
+            'Issues & Discussions',
+            'Changelog'
+          ];
+          
+          const aIntroIdx = introOrder.findIndex(item => aName.toLowerCase().includes(item.toLowerCase()));
+          const bIntroIdx = introOrder.findIndex(item => bName.toLowerCase().includes(item.toLowerCase()));
+          
+          // If both items are found in the custom order, use that order
+          if (aIntroIdx !== -1 && bIntroIdx !== -1) {
+            return aIntroIdx - bIntroIdx;
+          }
+          // If only one is found, prioritize the one in the custom order
+          if (aIntroIdx !== -1) return -1;
+          if (bIntroIdx !== -1) return 1;
+        }
+
+        // then just do a normal string compare for other groups
         return aName.localeCompare(bName);
       },
     },
