@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import { Row, Column, fallback, CardBase, CardBaseProps, mq, type AvailableQueries } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -116,6 +116,21 @@ function InternalGroup({
     justifyContent,
     alignItems,
   };
+
+  const onCollapseComplete = useCallback(() => {
+    setCollapsed(true);
+  }, []);
+
+  const onHeaderClick = useCallback(
+    (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+      if (collapsible) {
+        setCollapsed(!_collapsed);
+      }
+      if (onClick) onClick(event);
+    },
+    [_collapsed, collapsible, onClick],
+  );
+
   return (
     <StyledGroup
       onlyFunctionality
@@ -128,19 +143,11 @@ function InternalGroup({
       collapsible={collapsible}
       {...rest}
     >
-      <Header
-        onClick={(event) => {
-          if (collapsible) {
-            setCollapsed(!_collapsed);
-          }
-          if (onClick) onClick(event);
-        }}
-        className="header-title"
-      >
+      <Header onClick={onHeaderClick} className="header-title">
         <Title className="title">{title}</Title>
         {description && <Description>{description}</Description>}
       </Header>
-      <AutoHeight isOpen={!_collapsed || !collapsible} className="content" onCollapseComplete={() => setCollapsed(true)}>
+      <AutoHeight isOpen={!_collapsed || !collapsible} className="content" onCollapseComplete={onCollapseComplete}>
         {layout === "row" ? (
           <Row className="row" {...cssProps}>
             {children}

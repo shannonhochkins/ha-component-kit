@@ -18,7 +18,7 @@ export type HassConnectProps = {
   /** called once the entity subscription is successful, and only once */
   onReady?: () => void;
   /** options for the provider */
-  options?: Omit<HassProviderProps, "children" | "hassUrl">;
+  options?: Omit<HassProviderProps, "children" | "hassUrl" | "hassToken">;
 };
 
 const blip = keyframes`

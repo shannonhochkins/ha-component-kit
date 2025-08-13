@@ -344,7 +344,7 @@ export function HassProvider({
   if (cannotConnect) {
     return renderError(
       <p>
-        Unable to connect to ${loadTokens(hassUrl)!.hassUrl}, refresh the page and try again, or <a onClick={logout}>Logout</a>.
+        Unable to connect to {loadTokens(hassUrl)?.hassUrl}, refresh the page and try again, or <a onClick={logout}>Logout</a>.
       </p>,
     );
   }

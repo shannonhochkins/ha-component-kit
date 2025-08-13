@@ -1,6 +1,6 @@
 {
   "name": "@hakit/core",
-  "version": "5.1.1",
+  "version": "5.1.2-canary.0",
   "private": false,
   "type": "module",
   "keywords": [
