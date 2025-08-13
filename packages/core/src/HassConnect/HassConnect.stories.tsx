@@ -7,6 +7,8 @@ import windowContextExample from "./examples/windowContext.code?raw";
 import portalRootExample from "./examples/portalRoot.code?raw";
 import suspendResume from "./examples/suspendResume.code?raw";
 import statusViaStore from "./examples/statusViaStore.code?raw";
+import specifyingLanguage from "./examples/specifyingLanguage.code?raw";
+import renderError from "./examples/renderError.code?raw";
 
 function Render(args: Partial<HassConnectProps>) {
   return (
@@ -65,6 +67,18 @@ export default {
         <Source code={suspendResume} dark language="tsx" />
         <p>Or you can retrieve the status directly from the store</p>
         <Source code={statusViaStore} dark />
+        <h3>Advanced - Specifying Locale/language</h3>
+        <p>
+          By default, HassConnect will use the locale set within your Home Assistant instance. You can override this by providing a
+          different locale in the options.
+        </p>
+        <Source code={specifyingLanguage} dark language="tsx" />
+        <h3>Advanced - Rendering Errors</h3>
+        <p>
+          In some cases, where authentication fails, or the connection is lost, you may want to render the displayed error message in your
+          own styles which you can do by providing the following override:
+        </p>
+        <Source code={renderError} dark language="tsx" />
       </>
     ),
   },
