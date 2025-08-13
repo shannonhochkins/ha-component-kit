@@ -34,7 +34,7 @@ export type TemplateParams = {
 
 export const useTemplate = (params: TemplateParams) => {
   const connection = useStore((state) => state.connection);
-  const [template, setTemplate] = useState<string | null>(null);
+  const [template, setTemplate] = useState<string | object | null>(null);
   const unsubscribeRef = useRef<UnsubscribeFunc | null>(null);
   const memoizedParams = useMemo(() => params, [params]);
 
@@ -67,9 +67,7 @@ export const useTemplate = (params: TemplateParams) => {
         setTemplate(response.error);
         return;
       }
-      if (typeof response.result === "string") {
-        setTemplate((previous) => (previous === response.result ? previous : response.result));
-      }
+      setTemplate((previous) => (previous === response.result ? previous : response.result));
     };
 
     const handleError = (err: RenderTemplateError) => {

@@ -3,7 +3,6 @@ import { templateCodeToProcess } from "./constants";
 import { useState } from "react";
 
 function RenderCustomTemplate() {
-
   const [enabled, setEnabled] = useState(false);
   const template = useTemplate({
     enabled,
@@ -11,10 +10,12 @@ function RenderCustomTemplate() {
     variables: { entity_id: "light.fake_light_1" },
   });
 
-  return <>
-    Template result: {template ?? "not-enabled"}
-    <button onClick={() => setEnabled(!enabled)}>{enabled ? "Disable" : "Enable"}</button>
-  </>;
+  return (
+    <>
+      Template result: {template ?? "not-enabled"}
+      <button onClick={() => setEnabled(!enabled)}>{enabled ? "Disable" : "Enable"}</button>
+    </>
+  );
 }
 
 export function App() {
