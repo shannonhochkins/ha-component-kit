@@ -12,7 +12,7 @@ function RenderCustomTemplate() {
 
   return (
     <>
-      Template result: {template ?? "not-enabled"}
+      <p>Template result: {typeof template === "string" ? template : "not-enabled"}</p>
       <button onClick={() => setEnabled(!enabled)}>{enabled ? "Disable" : "Enable"}</button>
     </>
   );

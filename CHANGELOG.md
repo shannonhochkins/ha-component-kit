@@ -1,3 +1,6 @@
+# 5.1.5
+- typescript issues.... Nothing worth mentioning
+
 # 5.1.4
 - useTemplate was too restrictive and only setting the state when the value was a string, will now return string/object
 

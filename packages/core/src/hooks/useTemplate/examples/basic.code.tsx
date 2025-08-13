@@ -7,7 +7,7 @@ function RenderCustomTemplate() {
     variables: { entity_id: "light.fake_light_1" },
   });
 
-  return <>Template result: {template ?? "loading"}</>;
+  return <>Template result: {typeof template === "string" ? template : "loading"}</>;
 }
 
 export function App() {
