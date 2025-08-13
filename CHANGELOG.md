@@ -1,3 +1,15 @@
+# 5.1.2
+
+### @hakit/components
+- BUGFIX - GroupCard - re-rendering children when expanding/collapsing causing flickering
+
+### @hakit/core
+
+- HassConnect - provided `renderError` prop to render custom errors during authentication issues
+- HassConnect - removed `hassToken` from options object
+- useTemplate - added `enabled` property to conditionally enable the template subscription, also fixed a change in home assistant where the useTemplate error subscription wasn't working properly.
+
+
 # 5.1.1
 
 ### @hakit/components
