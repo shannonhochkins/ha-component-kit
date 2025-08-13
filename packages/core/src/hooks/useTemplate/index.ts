@@ -62,6 +62,7 @@ export const useTemplate = (params: TemplateParams) => {
 
     const handleResponse = (response: RenderTemplateResult | RenderTemplateError) => {
       if ("error" in response) {
+        console.error("Error processing template:", response.error);
         // We show the latest error, or a warning if there are no errors
         setTemplate(response.error);
         return;
@@ -72,6 +73,7 @@ export const useTemplate = (params: TemplateParams) => {
     };
 
     const handleError = (err: RenderTemplateError) => {
+      console.error("Error processing template:", err);
       setTemplate(err?.error || "Could not process template request.");
     };
 
@@ -84,6 +86,7 @@ export const useTemplate = (params: TemplateParams) => {
         unsubscribeRef.current = unsub;
       })
       .catch((e: RenderTemplateError) => {
+        console.error("Error subscribing to template:", e);
         handleError(e);
       });
 

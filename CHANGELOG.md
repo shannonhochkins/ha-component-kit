@@ -1,3 +1,6 @@
+# 5.1.3
+- Release failed, bumping again, add a console error for template rendering errors.
+
 # 5.1.2
 
 ### @hakit/components

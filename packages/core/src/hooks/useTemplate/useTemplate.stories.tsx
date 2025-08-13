@@ -34,7 +34,6 @@ function SubscribeTemplateExample() {
       <Alert type="info" title={`Template result: ${template ?? "loading"}`} />
       <Alert type="warning" title="Here's the source code for the above template example:" cssStyles={`margin-top: 2rem;`} />
       <Source dark code={basicExample} />
-      <h3>Disable the template</h3>
       <Alert
         type="info"
         title="You can disable the template by setting the enable property to false which will conditionally run the hook subscription"
