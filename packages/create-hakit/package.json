@@ -1,6 +1,6 @@
 {
   "name": "create-hakit",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "type": "module",
   "author": "Shannon Hochkins <mail@shannonhochkins.com>",
   "license": "ISC",
@@ -52,7 +52,7 @@
     "node-scp": "^0.0.23",
     "prompts": "^2.4.2",
     "tsimp": "^2.0.11",
-    "unbuild": "^2.0.0",
+    "unbuild": "^3.6.1",
     "ws": "^8.18.0"
   }
 }
