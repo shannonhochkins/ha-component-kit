@@ -46,7 +46,7 @@ function SplashContent() {
 
     {/* ─────────────────────────  The Solution  ───────────────────────── */}
     <section id="solution">
-      <h4>Say g’day to <a className="brand" href="https://github.com/shannonhochkins/hakit" target="_blank" rel="noreferrer">https://github.com/shannonhochkins/hakit</a></h4>
+      <h4>Say g’day to <a className="brand" href="https://hakit.dev" target="_blank" rel="noreferrer">https://hakit.dev (coming soon)</a></h4>
       <ul className="features">
         <li>
           <strong>Drag &amp; Drop Bliss</strong> – Move components exactly where you want them. No coordinates, no

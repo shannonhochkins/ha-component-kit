@@ -1,3 +1,24 @@
+# 5.1.5
+- typescript issues.... Nothing worth mentioning
+
+# 5.1.4
+- useTemplate was too restrictive and only setting the state when the value was a string, will now return string/object
+
+# 5.1.3
+- Release failed, bumping again, add a console error for template rendering errors.
+
+# 5.1.2
+
+### @hakit/components
+- BUGFIX - GroupCard - re-rendering children when expanding/collapsing causing flickering
+
+### @hakit/core
+
+- HassConnect - provided `renderError` prop to render custom errors during authentication issues
+- HassConnect - removed `hassToken` from options object
+- useTemplate - added `enabled` property to conditionally enable the template subscription, also fixed a change in home assistant where the useTemplate error subscription wasn't working properly.
+
+
 # 5.1.1
 
 ### @hakit/components

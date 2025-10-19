@@ -6,6 +6,7 @@ import { HassConnect } from "@hass-connect-fake";
 import { templateCodeToProcess } from "./examples/constants";
 import basicExample from "./examples/basic.code?raw";
 import simpleExample from "./examples/simple.code?raw";
+import disableExample from "./examples/disable.code?raw";
 import { DummyComponentOptions } from "./examples/DummyComponent";
 
 function SubscribeTemplateExample() {
@@ -33,6 +34,11 @@ function SubscribeTemplateExample() {
       <Alert type="info" title={`Template result: ${template ?? "loading"}`} />
       <Alert type="warning" title="Here's the source code for the above template example:" cssStyles={`margin-top: 2rem;`} />
       <Source dark code={basicExample} />
+      <Alert
+        type="info"
+        title="You can disable the template by setting the enable property to false which will conditionally run the hook subscription"
+      />
+      <Source dark code={disableExample} />
     </Column>
   );
 }
