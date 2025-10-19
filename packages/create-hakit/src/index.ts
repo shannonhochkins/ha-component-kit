@@ -61,6 +61,43 @@ async function validateHaUrl(haUrl: string): Promise<void> {
   }
 }
 
+// Added: helper to run vite and wait for scaffold completion
+async function runViteScaffold(viteCommand: string, projectDir: string): Promise<number> {
+  return new Promise<number>((resolve, reject) => {
+    const [command, ...args] = viteCommand.split(' ');
+    const child = spawn(command, args, {
+      stdio: 'inherit',
+      env: {
+        ...process.env,
+        // Force non-interactive fallback so prompts library doesn't early-resolve
+        CI: process.env.CI || 'true',
+      },
+    });
+    child.on('error', reject);
+    child.on('close', async (code) => {
+      if (code !== 0) {
+        return reject(new Error(`Vite scaffold failed with exit code ${code}`));
+      }
+      try {
+        await waitForScaffoldComplete(projectDir);
+        resolve(code ?? 0);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  });
+}
+
+// Poll for required files (handles delayed writes in newer create-vite versions)
+async function waitForScaffoldComplete(dir: string) {
+  const required = ['package.json', 'tsconfig.json', 'vite.config.ts'];
+  const maxAttempts = 60; // ~30s
+  for (let i = 0; i < maxAttempts; i++) {
+    if (required.every(f => fs.existsSync(path.join(dir, f)))) return;
+    await new Promise(r => setTimeout(r, 500));
+  }
+  throw new Error(`Timed out waiting for Vite to finish scaffolding in "${dir}"`);
+}
 
 // A functional approach to creating the project
 const createProject = async () => {  
@@ -148,12 +185,11 @@ const createProject = async () => {
       }
     }
     console.log(cyan(`Scaffolding Hakit in ${cyan(projectName)}...`));
-    const viteCommand = `npm create vite@latest ${projectName} -- --template react-ts`;
+    const viteCommand = `npm create vite@latest ${projectName} -- --template react-ts --no-rolldown --no-interactive`;
 
-    const [command, ...args] = viteCommand.split(' ')
-    const { status } = spawn.sync(command, args, {
-      stdio: 'inherit',
-    });
+    // REPLACED spawn.sync with async runner that waits for filesystem readiness
+    const status = await runViteScaffold(viteCommand, path.resolve(cwd, projectName));
+
     // now clear the terminal and print out the next steps
     process.stdout.write('\x1Bc');
 

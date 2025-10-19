@@ -6,7 +6,7 @@ export default defineBuildConfig({
   rollup: {
     inlineDependencies: true,
     esbuild: {
-      target: 'node18',
+      target: 'node20',
       minify: true,
     },
   },
