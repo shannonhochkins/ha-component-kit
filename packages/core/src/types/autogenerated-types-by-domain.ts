@@ -9,7 +9,7 @@ export type HvacMode = (typeof HVAC_MODES)[number];
 export const HVAC_MODES = ["auto", "heat_cool", "heat", "cool", "dry", "fan_only", "off"] as const;
 
 export type HumidifierAction = "off" | "idle" | "humidifying" | "drying";
-export const VOLUME_UNITS = ["L", "gal", "ft³", "m³", "CCF"] as const;
+export const VOLUME_UNITS = ["L", "gal", "ft³", "m³", "CCF", "MCF"] as const;
 
 export const MODES = ["single", "restart", "queued", "parallel"] as const;
 

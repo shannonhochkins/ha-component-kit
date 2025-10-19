@@ -1,3 +1,19 @@
+# 5.1.6
+
+### General 
+
+- Bumping core dependencies, removed a bunch of other unused dependencies
+- Exported VideoPlay and hls/webrtc components for more custom usage outside of CameraCard
+- Fixed bug with `npm create hakit@latest` where the latest vite was conflicting with the post creation steps
+- Upgraded storybook
+- Upgraded locales to match latest home assistant release
+
+### @hakit/components
+- BUGFIX - MediaPlayerCard - Play media now expects a "media" object for media_content_type and media_content_id
+
+### @hakit/core
+- Fixed authentication bug where it would make a duplicate request to /auth causing the first login to fail immediately
+
 # 5.1.5
 - typescript issues.... Nothing worth mentioning
 

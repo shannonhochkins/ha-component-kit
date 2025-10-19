@@ -42,6 +42,9 @@ export interface HassProviderProps {
 
 const getAllEntities = () => useInternalStore.getState().entities;
 const getConnection = () => useInternalStore.getState().connection;
+// Track if a connection attempt for the current hassUrl has already started in this page lifecycle.
+// Using a ref avoids any need for timers and is Strict Mode safe.
+const attemptedUrls = new Set<string>();
 
 export function HassProvider({
   children,
@@ -298,17 +301,17 @@ export function HassProvider({
     [],
   );
 
-  useEffect(() => {
-    // on unmount, reset the store
-    return () => {
-      reset();
-    };
-  }, [reset]);
+  // Standard unmount cleanup; Strict Mode double-invocation will call this twice but second time state already cleared.
+  useEffect(() => () => reset(), [reset]);
 
   // then wrap the whole connect routine so it’s stable too
   const connectOnce = useCallback(async () => {
+    if (attemptedUrls.has(hassUrl)) return;
+    attemptedUrls.add(hassUrl);
     try {
-      if (authenticated.current) reset();
+      if (authenticated.current && useInternalStore.getState().hassUrl !== hassUrl) {
+        reset();
+      }
       authenticated.current = true;
       handleResumeOptions?.onStatusChange?.("pending");
       await handleConnect();
@@ -316,7 +319,7 @@ export function HassProvider({
       const message = handleError(e);
       setError(`Unable to connect to Home Assistant, please check the URL: "${message}"`);
     }
-  }, [reset, handleConnect, setError, handleResumeOptions]);
+  }, [reset, handleConnect, setError, handleResumeOptions, hassUrl]);
 
   // run it once after mount
   useEffect(() => {
