@@ -220,7 +220,7 @@ function InternalAlarmControls({
 
   const localizeState = (): string => {
     if (entity.state === "triggered") return localize("pending");
-    if (entity.state.includes("custom_bypass")) return localize("custom_bypass");
+    if (entity.state.includes("custom_bypass")) return localize("arm_custom_bypass");
     if (entity.state.includes("armed_")) return localize("armed");
     return localize(entity.state as LocaleKeys);
   };
@@ -304,6 +304,7 @@ function InternalAlarmControls({
                       }}
                     >
                       <span>{val === "clear" ? localize("clear") : val}</span>
+
                     </ButtonGroupButton>
                   );
                 })}

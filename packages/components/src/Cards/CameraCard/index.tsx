@@ -214,7 +214,7 @@ function InternalCameraCard<E extends FilterByDomain<EntityName, "camera">>({
             setView("live");
           }}
           active={_view === "live"}
-          title={localize("preload_camera_stream")}
+          title={localize("stream.preload_stream")}
           tooltipPlacement="top"
           rippleProps={{
             preventPropagation: true,
@@ -233,7 +233,7 @@ function InternalCameraCard<E extends FilterByDomain<EntityName, "camera">>({
             setView("motion");
           }}
           active={_view === "motion"}
-          title={`${localize("motion")} ${localize("view")}`}
+          title={`${localize("motion")} ${localize("views_label")}`}
           tooltipPlacement="top"
           rippleProps={{
             preventPropagation: true,
@@ -248,7 +248,7 @@ function InternalCameraCard<E extends FilterByDomain<EntityName, "camera">>({
             setView("poster");
           }}
           active={_view === "poster"}
-          title={`${localize("image")} ${localize("view")}`}
+          title={`${localize("image")} ${localize("views_label")}`}
           tooltipPlacement="top"
           rippleProps={{
             preventPropagation: true,

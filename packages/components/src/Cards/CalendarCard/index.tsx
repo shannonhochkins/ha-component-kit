@@ -483,7 +483,7 @@ function InternalCalendarCard({
         });
       });
       if (errors.length > 0) {
-        setError(`${localize("calendar_event_retrieval_error")}: "${errors.join(", ")}".`);
+        setError(`${localize("calendar.event_retrieval_error")}: "${errors.join(", ")}".`);
         successCallback([]);
       } else {
         successCallback(calEvents);
@@ -753,7 +753,7 @@ function InternalCalendarCard({
         </Modal>
       )}
       {error && (
-        <Alert title={localize("calendar_event_retrieval_error")} type="error">
+        <Alert title={localize("calendar.event_retrieval_error")} type="error">
           {error}
         </Alert>
       )}

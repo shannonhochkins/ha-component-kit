@@ -222,7 +222,7 @@ function InternalClimateCard({
                   <Temperature>
                     <div>
                       {capitalize(
-                        localize("name_current_temperature", {
+                        localize("climate.current_temperature", {
                           search: "{name} ",
                           replace: "",
                         }),
@@ -248,7 +248,7 @@ function InternalClimateCard({
                 rippleProps={{
                   preventPropagation: true,
                 }}
-                title={localize("decrease_temperature")}
+                title={localize("temperature_down")}
                 icon={"mdi:minus"}
                 onClick={() => {
                   entity.service.setTemperature({
@@ -267,7 +267,7 @@ function InternalClimateCard({
                 borderRadius={0}
                 noIcon
                 title={capitalize(
-                  localize("name_current_temperature", {
+                  localize("climate.current_temperature", {
                     search: "{name} ",
                     replace: "",
                   }),
@@ -289,7 +289,7 @@ function InternalClimateCard({
                 rippleProps={{
                   preventPropagation: true,
                 }}
-                title={localize("increase_temperature")}
+                title={localize("temperature_up")}
                 icon={"mdi:plus"}
                 onClick={() => {
                   entity.service.setTemperature({

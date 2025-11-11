@@ -56,11 +56,12 @@ export const computeStateDisplayFromEntityAttributes = (
   }
 
   const domain = computeDomain(entityId as EntityName);
-  // dogey - was lazy at the time I added this but, should be a responsibility of HassConnect to fetch and pass through store
+  const is_number_domain = domain === "counter" || domain === "number" || domain === "input_number";
+  // fallback, just in case the connection is not ready yet
   getSensorNumericDeviceClasses(connection).then((r) => (sensorNumericDeviceClasses = r?.numeric_device_classes ?? []));
 
   // Entities with a `unit_of_measurement` or `state_class` are numeric values and should use `formatNumber`
-  if (isNumericFromAttributes(attributes, domain === "sensor" ? sensorNumericDeviceClasses : [])) {
+  if (isNumericFromAttributes(attributes, domain === "sensor" ? sensorNumericDeviceClasses : []) || is_number_domain) {
     const key = attributes.unit_of_measurement as keyof typeof UNIT_TO_MILLISECOND_CONVERT;
     // state is duration
     if (
@@ -102,11 +103,6 @@ export const computeStateDisplayFromEntityAttributes = (
     return value;
   }
 
-  if (domain === "datetime") {
-    const time = new Date(state);
-    return formatDateTime(time, config);
-  }
-
   if (["date", "input_datetime", "time"].includes(domain)) {
     // If trying to display an explicit state, need to parse the explicit state to `Date` then format.
     // Attributes aren't available, we have to use `state`.
@@ -138,10 +134,31 @@ export const computeStateDisplayFromEntityAttributes = (
     }
   }
 
-  // `counter` `number` and `input_number` domains do not have a unit of measurement but should still use `formatNumber`
-  if (domain === "counter" || domain === "number" || domain === "input_number") {
-    // Format as an integer if the value and step are integers
-    return formatNumber(state, getNumberFormatOptions({ state, attributes } as HassEntity, entity));
+  // state is a timestamp
+  if (
+    [
+      "ai_task",
+      "button",
+      "conversation",
+      "event",
+      "image",
+      "input_button",
+      "notify",
+      "scene",
+      "stt",
+      "tag",
+      "tts",
+      "wake_word",
+      "datetime",
+    ].includes(domain) ||
+    (domain === "sensor" && attributes.device_class === "timestamp")
+  ) {
+    try {
+      return formatDateTime(new Date(state), config);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_err) {
+      return state;
+    }
   }
 
   // state is a timestamp
