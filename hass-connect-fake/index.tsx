@@ -192,7 +192,6 @@ class MockConnection extends Connection {
     if (message.type === 'get_config') {
       return fakeConfig as Result;
     }
-    console.log('message.path', message);
     // a mock for the proxy image for the camera
     if (message.path && message.path.includes('camera_proxy')) {
       return {
@@ -436,7 +435,6 @@ function HassProvider({
         // if the current has value is the same as the hash, we're active
         const hashWithoutPound = window.location.hash.replace("#", "");
         const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
-        console.log('setting routes', routes, route, active);
         setRoutes([
           ...routes,
           {

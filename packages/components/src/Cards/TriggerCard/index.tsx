@@ -229,11 +229,12 @@ function InternalTriggerCard<E extends EntityName>({
                 <ToggleMessage hideArrow={hideArrow} active={active} className={`toggle-message`}>
                   {active
                     ? (sliderTextActive ??
-                      localize("triggered_name", {
+                      localize("notification_toast", {
                         search: " {name}",
                         replace: "",
                       }))
-                    : (sliderTextInactive ?? `${localize("run")} ${computeDomainTitle(_entity, entity?.attributes?.device_class)}`)}{" "}
+                    : (sliderTextInactive ??
+                      `${localize("running_single")} ${computeDomainTitle(_entity, entity?.attributes?.device_class)}`)}{" "}
                   {!active && !hideArrow && arrowIcon}
                 </ToggleMessage>
               </>

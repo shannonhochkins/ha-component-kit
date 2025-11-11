@@ -302,7 +302,7 @@ export const computeHistory = (config: HassConfig, entities: HassEntities, state
       unit = stateWithUnitorStateClass.a.unit_of_measurement || " ";
     } else {
       unit = {
-        zone: localize("people_in_zone"),
+        zone: localize("zone.graph_unit"),
         climate: config.unit_system.temperature,
         counter: "#",
         humidifier: "%",

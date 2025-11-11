@@ -134,7 +134,7 @@ function InternalLightControls({ entity: _entity, onStateChange, style, ...rest 
   const isUnavailable = isUnavailableState(entity.state);
   const titleValue = useMemo(() => {
     if (entity.state === OFF) {
-      return "Off";
+      return localize("off");
     }
     if (entity.state === ON) {
       return `${brightnessValue}%`;
@@ -223,7 +223,7 @@ function InternalLightControls({ entity: _entity, onStateChange, style, ...rest 
       </Column>
 
       <ButtonBar>
-        <Tooltip title={entity.state === OFF ? localize("turn_on") : localize("turn_off")}>
+        <Tooltip title={entity.state === OFF ? localize("turn_on.name") : localize("turn_off")}>
           <FabCard
             icon="mdi:power"
             onClick={() => {

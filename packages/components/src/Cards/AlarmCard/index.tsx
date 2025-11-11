@@ -44,13 +44,14 @@ type AlarmServices = keyof HassEntityWithService<"alarm_control_panel">["service
 
 const Wrapper = styled(ButtonCard)``;
 
-const ALARM_STATE_TO_MODE_MAP: Record<AlarmMode, LocaleKeys> = {
-  armed_home: "arm_home",
+const ALARM_STATE_TO_MODE_MAP: Record<AlarmMode | 'disarm', LocaleKeys> = {
+  armed_home: "armed",
   armed_away: "arm_away",
   armed_night: "arm_night",
   armed_vacation: "arm_vacation",
-  armed_custom_bypass: "custom_bypass",
-  disarmed: "disarm",
+  armed_custom_bypass: "arm_custom_bypass",
+  disarmed: "disarmed",
+  disarm: "disarm",
   triggered: "pending",
   pending: "pending",
   arming: "pending",

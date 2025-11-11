@@ -63,7 +63,7 @@ export const subscribeLogbook = (
 ): Promise<() => Promise<void>> => {
   // If all specified filters are empty lists, we can return an empty list.
   if ((entityIds || deviceIds) && (!entityIds || entityIds.length === 0) && (!deviceIds || deviceIds.length === 0)) {
-    return Promise.reject(`${localize("no_matching_entities_found")}, ${localize("no_matching_devices_found")}`);
+    return Promise.reject(`${localize("entity_picker.no_match")}, ${localize("device_picker.no_match")}`);
   }
   const params: MessageBase = {
     type: "logbook/event_stream",
@@ -80,13 +80,13 @@ export const subscribeLogbook = (
 };
 
 const triggerPhrases = {
-  "numeric state of": "logbook_triggered_by_numeric_state_of", // number state trigger
-  "state of": "triggered_by_state_of", // state trigger
-  event: "triggered_by_event", // event trigger
-  time: "triggered_by_time", // time trigger
-  "time pattern": "triggered_by_time_pattern", // time trigger
-  "Home Assistant stopping": "logbook_triggered_by_homeassistant_stopping", // stop event
-  "Home Assistant starting": "logbook_triggered_by_homeassistant_starting", // start event
+  "numeric state of": "logbook.triggered_by_numeric_state_of", // number state trigger
+  "state of": "logbook.triggered_by_state_of", // state trigger
+  event: "logbook.triggered_by_event", // event trigger
+  time: "logbook.triggered_by_time", // time trigger
+  "time pattern": "logbook.triggered_by_time_pattern", // time trigger
+  "Home Assistant stopping": "logbook.triggered_by_homeassistant_stopping", // stop event
+  "Home Assistant starting": "logbook.triggered_by_homeassistant_starting", // start event
 } satisfies Record<string, LocaleKeys>;
 
 export const localizeTriggerSource = (source: string) => {
@@ -107,12 +107,12 @@ export const localizeStateMessage = (state: string, stateObj: HassEntity, domain
     case "device_tracker":
     case "person":
       if (state === "not_home") {
-        return localize(`was_detected_away`);
+        return localize("messages.was_away");
       }
       if (state === "home") {
-        return localize(`was_detected_at_home`);
+        return localize("messages.was_at_home");
       }
-      return localize(`was_detected_at_state`, {
+      return localize(`messages.was_at_state`, {
         search: "{state}",
         replace: state,
       });
@@ -167,7 +167,7 @@ export const localizeStateMessage = (state: string, stateObj: HassEntity, domain
 
         case "plug":
           if (isOn) {
-            return localize(`was_plugged_in`);
+            return localize(`messages.was_plugged_in`);
           }
           if (isOff) {
             return localize(`was_unplugged`);
@@ -176,10 +176,10 @@ export const localizeStateMessage = (state: string, stateObj: HassEntity, domain
 
         case "presence":
           if (isOn) {
-            return localize(`was_detected_at_home`);
+            return localize(`messages.was_at_home`);
           }
           if (isOff) {
-            return localize(`was_detected_away`);
+            return localize(`messages.was_away`);
           }
           break;
 
@@ -210,7 +210,7 @@ export const localizeStateMessage = (state: string, stateObj: HassEntity, domain
             });
           }
           if (isOff) {
-            return localize(`cleared_no_device_class_detected`, {
+            return localize(`cleared_device_classes.gas`, {
               search: "{device_class}",
               replace: device_class,
             });
@@ -244,7 +244,7 @@ export const localizeStateMessage = (state: string, stateObj: HassEntity, domain
       break;
 
     case "event": {
-      return localize(`detected_an_event`);
+      return localize(`messages.detected_event_no_type`);
     }
 
     case "lock":
@@ -279,7 +279,7 @@ export const localizeStateMessage = (state: string, stateObj: HassEntity, domain
     return localize(`became_unavailable`);
   }
 
-  return localize(`changed_to_state`, {
+  return localize(`messages.changed_to_state`, {
     search: "{state}",
     replace: stateObj ? stateObj.state : state,
   });

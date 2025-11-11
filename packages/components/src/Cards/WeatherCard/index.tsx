@@ -1,9 +1,17 @@
 import styled from "@emotion/styled";
 import { useState, useEffect, useMemo, ReactNode, ReactElement, Children, isValidElement, cloneElement } from "react";
-import { useWeather, useHass, useStore, isUnavailableState, getSupportedForecastTypes, getIconByEntity } from "@hakit/core";
+import {
+  useWeather,
+  useHass,
+  useStore,
+  isUnavailableState,
+  getSupportedForecastTypes,
+  getIconByEntity,
+  localize,
+  computeStateDisplay,
+} from "@hakit/core";
 import type { FilterByDomain, ModernForecastType, EntityName } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
-import { capitalize } from "lodash";
 import {
   Row,
   Column,
@@ -17,6 +25,7 @@ import {
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { getAdditionalWeatherInformation } from "./helpers";
+import { Connection, HassConfig } from "home-assistant-js-websocket";
 
 const Card = styled(CardBase)``;
 
@@ -177,6 +186,9 @@ function InternalWeatherCard({
 }: WeatherCardProps): React.ReactNode {
   const { getConfig } = useHass();
   const [width, setWidth] = useState<number>(0);
+  const connection = useStore((state) => state.connection);
+  const config = useStore((state) => state.config);
+  const entities = useStore((state) => state.entities);
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const itemsToRender = Math.floor(width / FORECAST_ITEM_PROJECTED_WIDTH);
   const [timeZone, setTimeZone] = useState<string>("UTC");
@@ -308,8 +320,10 @@ function InternalWeatherCard({
                 )}
                 <SubTitle className="sub-title">
                   {temperature}
-                  {temperatureSuffix || unit}, {capitalize(weather.state)}
-                  {feelsLike ? `, Feels like: ${Math.round(feelsLike)}${temperatureSuffix || unit}` : ""}
+                  {weather.state}
+                  {temperatureSuffix || unit},{" "}
+                  {computeStateDisplay(weather, connection as Connection, config as HassConfig, entities, weather.state)}
+                  {feelsLike ? `, ${localize("apparent_temperature")}: ${Math.round(feelsLike)}${temperatureSuffix || unit}` : ""}
                 </SubTitle>
               </Column>
             </Row>
@@ -351,7 +365,7 @@ function InternalWeatherCard({
           </Row>
         )}
         {includeForecast && !isUnavailable && width > 0 && genForecastRows()}
-        {isUnavailable && weather.state}
+        {isUnavailable && computeStateDisplay(weather, connection as Connection, config as HassConfig, entities, weather.state)}
       </Contents>
     </Card>
   );

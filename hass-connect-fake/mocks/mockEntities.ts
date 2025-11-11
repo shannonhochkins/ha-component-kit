@@ -93,6 +93,30 @@ export const entities: HassEntities = {
       raw_state: undefined,
     },
   }),
+  // create a light that does not support brightness, color, temperature or effects
+  ...createLight("light.simple_light", {
+    attributes: {
+      supported_color_modes: [
+        "onoff"
+      ],
+      color_mode: "onoff",
+      brightness: undefined,
+      off_with_transition: false,
+      off_brightness: null,
+      supported_features: 0,
+      icon: "mdi:lightbulb-outline",
+      friendly_name: "Simple Light",
+      min_color_temp_kelvin: undefined,
+      max_color_temp_kelvin: undefined,
+      min_mireds: undefined,
+      max_mireds: undefined,
+      effect_list: undefined,
+      hs_color: undefined,
+      rgb_color: undefined,
+      xy_color: undefined,
+      raw_state: undefined,
+    },
+  }),
   ...createSwitch("switch.fake_switch"),
   ...createSwitch("switch.unavailable", {
     state: "unavailable",
