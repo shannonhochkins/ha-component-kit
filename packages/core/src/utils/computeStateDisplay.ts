@@ -1,22 +1,30 @@
-import { localize, computeDomain, UNAVAILABLE, UNKNOWN, EntityName, LocaleKeys } from "@core";
-import { HassEntity, HassConfig, HassEntities, HassEntityAttributeBase, Connection } from "home-assistant-js-websocket";
+import {
+  localize,
+  computeDomain,
+  UNAVAILABLE,
+  UNKNOWN,
+  EntityName,
+  LocaleKeys,
+  EntityRegistryDisplayEntry,
+  FrontendLocaleData,
+} from "@core";
+import { HassEntity, HassConfig, HassEntityAttributeBase } from "home-assistant-js-websocket";
 
 import { formatNumber, getNumberFormatOptions, isNumericFromAttributes } from "./number";
 import { UNIT_TO_MILLISECOND_CONVERT, formatDuration, formatDateTime, formatDate, formatTime } from "./date";
 
-import { EntityRegistryDisplayEntry } from "@typings";
-
 export const computeStateDisplay = (
   entity: HassEntity,
-  connection: Connection,
   config: HassConfig,
-  entities: HassEntities,
+  entities: Record<string, EntityRegistryDisplayEntry> | undefined,
+  locale: FrontendLocaleData | null,
+  sensorNumericDeviceClasses: string[],
   state?: string,
 ): string => {
   const _entity = entities?.[entity.entity_id] as EntityRegistryDisplayEntry | undefined;
-
   return computeStateDisplayFromEntityAttributes(
-    connection,
+    locale,
+    sensorNumericDeviceClasses,
     config,
     _entity,
     entity.entity_id,
@@ -25,26 +33,44 @@ export const computeStateDisplay = (
   );
 };
 
-export type SensorNumericDeviceClasses = {
-  numeric_device_classes: string[];
-};
-
-let sensorNumericDeviceClassesCache: Promise<SensorNumericDeviceClasses> | undefined;
-
-const getSensorNumericDeviceClasses = async (connection: Connection): Promise<SensorNumericDeviceClasses> => {
-  if (sensorNumericDeviceClassesCache) {
-    return sensorNumericDeviceClassesCache;
-  }
-  sensorNumericDeviceClassesCache = connection.sendMessagePromise({
-    type: "sensor/numeric_device_classes",
-  });
-  return sensorNumericDeviceClassesCache!;
-};
-
-let sensorNumericDeviceClasses: string[] = [];
-
+/**
+ * Compute a human‑friendly display string for an entity's PRIMARY `state` value (not a specific attribute).
+ *
+ * Differences vs `computeAttributeValueDisplay`:
+ * - Operates on the entity `state` only; does not traverse or recursively format nested structures.
+ * - Applies domain/device_class heuristics (numeric, monetary, duration, timestamp/date handling).
+ * - For numeric states uses `formatNumber` and appends raw unit_of_measurement if present.
+ * - Handles special date/time domains by parsing the raw state string (e.g. "2025-11-12 08:30:00").
+ * - Handles timestamp-like states (device_class: `timestamp` or specific domains) by converting ISO strings.
+ * - Returns a localized placeholder for `unknown` or `unavailable`.
+ * - Does NOT apply attribute-specific transforms like brightness %, weather units, temperature unit selection—those are handled by `computeAttributeValueDisplay` when formatting attributes individually.
+ *
+ * NOTE: This signature intentionally does not take a `locale` argument directly (unlike the attribute formatter)
+ * because it historically relied on Home Assistant's internal formatting helpers where needed; date/time helpers
+ * invoked here already localize based on global config/locale state upstream.
+ *
+ * Example Usage:
+ * ```ts
+ * // Numeric temperature sensor
+ * computeStateDisplayFromEntityAttributes(conn, config, entry, 'sensor.living_room_temp', { unit_of_measurement: '°C', state_class: 'measurement' } as any, '21.56');
+ * // => "21.56°C"
+ *
+ * // Duration sensor (device_class: duration, seconds)
+ * computeStateDisplayFromEntityAttributes(conn, config, entry, 'sensor.timer', { device_class: 'duration', unit_of_measurement: 's' } as any, '3600');
+ * // => "1:00:00"
+ *
+ * // input_datetime entity with date + time
+ * computeStateDisplayFromEntityAttributes(conn, config, entry, 'input_datetime.event', {}, '2025-11-12 08:30:00');
+ * // => "Nov 12, 2025, 8:30 AM" (example – actual formatting depends on locale)
+ *
+ * // Timestamp sensor
+ * computeStateDisplayFromEntityAttributes(conn, config, entry, 'sensor.last_update', { device_class: 'timestamp' } as any, '2025-11-12T07:45:00.000Z');
+ * // => Localized date/time string
+ * ```
+ */
 export const computeStateDisplayFromEntityAttributes = (
-  connection: Connection,
+  locale: FrontendLocaleData | null,
+  sensorNumericDeviceClasses: string[],
   config: HassConfig,
   entity: EntityRegistryDisplayEntry | undefined,
   entityId: string,
@@ -57,8 +83,6 @@ export const computeStateDisplayFromEntityAttributes = (
 
   const domain = computeDomain(entityId as EntityName);
   const is_number_domain = domain === "counter" || domain === "number" || domain === "input_number";
-  // fallback, just in case the connection is not ready yet
-  getSensorNumericDeviceClasses(connection).then((r) => (sensorNumericDeviceClasses = r?.numeric_device_classes ?? []));
 
   // Entities with a `unit_of_measurement` or `state_class` are numeric values and should use `formatNumber`
   if (isNumericFromAttributes(attributes, domain === "sensor" ? sensorNumericDeviceClasses : []) || is_number_domain) {
@@ -112,17 +136,20 @@ export const computeStateDisplayFromEntityAttributes = (
       const components = state.split(" ");
       if (components.length === 2) {
         // Date and time.
-        return formatDateTime(new Date(components.join("T")), config);
+        if (locale) return formatDateTime(new Date(components.join("T")), config, locale);
+        return new Date(components.join("T")).toLocaleString();
       }
       if (components.length === 1) {
         if (state.includes("-")) {
           // Date only.
-          return formatDate(new Date(`${state}T00:00`), config);
+          if (locale) return formatDate(new Date(`${state}T00:00`), config, locale);
+          return new Date(`${state}T00:00`).toLocaleDateString();
         }
         if (state.includes(":")) {
           // Time only.
           const now = new Date();
-          return formatTime(new Date(`${now.toISOString().split("T")[0]}T${state}`), config);
+          if (locale) return formatTime(new Date(`${now.toISOString().split("T")[0]}T${state}`), config, locale);
+          return new Date(`${now.toISOString().split("T")[0]}T${state}`).toLocaleTimeString();
         }
       }
       return state;
@@ -154,7 +181,8 @@ export const computeStateDisplayFromEntityAttributes = (
     (domain === "sensor" && attributes.device_class === "timestamp")
   ) {
     try {
-      return formatDateTime(new Date(state), config);
+      if (locale) return formatDateTime(new Date(state), config, locale);
+      return new Date(state).toLocaleString();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_err) {
       return state;
@@ -167,7 +195,8 @@ export const computeStateDisplayFromEntityAttributes = (
     (domain === "sensor" && attributes.device_class === "timestamp")
   ) {
     try {
-      return formatDateTime(new Date(state), config);
+      if (locale) return formatDateTime(new Date(state), config, locale);
+      return new Date(state).toLocaleString();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_err) {
       return state;

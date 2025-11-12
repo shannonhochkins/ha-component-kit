@@ -1,7 +1,8 @@
-import { EntityName, WeatherEntity, computeDomain, localize } from "@core";
-import { HassConfig, HassEntities, HassEntity } from "home-assistant-js-websocket";
+import { EntityName, EntityRegistryDisplayEntry, FrontendLocaleData, WeatherEntity, computeDomain, localize } from "../";
+import { HassConfig, HassEntity } from "home-assistant-js-websocket";
 import { formatNumber } from "./number";
-import { formatDuration, isDate, isTimestamp, checkValidDate } from "./date";
+import { formatDuration, isDate, isTimestamp, checkValidDate, formatDateTimeWithSeconds, formatDate } from "./date";
+import { blankBeforeUnit } from "./blankBeforeUnit";
 
 export const TEMPERATURE_ATTRIBUTES = new Set([
   "temperature",
@@ -17,7 +18,7 @@ export const TEMPERATURE_ATTRIBUTES = new Set([
 
 type Formatter = (value: number) => string;
 
-export const DOMAIN_ATTRIBUTES_FORMATERS: Record<string, Record<string, Formatter>> = {
+export const DOMAIN_ATTRIBUTES_FORMATTERS: Record<string, Record<string, Formatter>> = {
   light: {
     brightness: (value) => Math.round((value / 255) * 100).toString(),
   },
@@ -103,18 +104,58 @@ export const getWeatherUnit = (config: HassConfig, stateObj: WeatherEntity, meas
     }
   }
 };
-
+/**
+ * Compute a human‑friendly display string for a SPECIFIC ATTRIBUTE of an entity.
+ *
+ * Differences vs `computeStateDisplayFromEntityAttributes`:
+ * - Operates on a single attribute key/value (not the primary entity state) and can be called recursively for arrays.
+ * - Applies attribute/domain specific conversions (e.g. light.brightness 0‑255 → 0‑100 %, media_player.volume_level → %).
+ * - Inserts appropriate units using domain maps (`DOMAIN_ATTRIBUTES_UNITS`), weather‑aware unit resolution & temperature unit system.
+ * - Handles duration/device_class conversions for domain attributes (e.g. media_duration seconds → HH:MM:SS).
+ * - Localizes spacing before units via `blankBeforeUnit` for languages needing a non‑breaking space or locale‑specific separator.
+ * - Formats numeric values with `formatNumber`, respects precision & currency for monetary representations.
+ * - Detects date / timestamp strings and formats them (timestamp → date + time with seconds; date only → long date).
+ * - Serializes nested objects to JSON and flattens arrays to a comma‑separated list, formatting each item individually.
+ * - Returns localized "unknown" when value is nullish.
+ *
+ * Example Usage:
+ * ```ts
+ * // Light brightness attribute (128 → "50 %")
+ * computeAttributeValueDisplay(lightEntity, locale, config, entities, 'brightness', 128);
+ *
+ * // Weather temperature attribute
+ * computeAttributeValueDisplay(weatherEntity, locale, config, entities, 'temperature', 23);
+ * // => "23 °C" (unit depends on config.unit_system.temperature)
+ *
+ * // Timestamp string attribute
+ * computeAttributeValueDisplay(entity, locale, config, entities, 'last_seen', '2025-11-12T08:30:00Z');
+ * // => localized date & time with seconds
+ *
+ * // Date string attribute (no time)
+ * computeAttributeValueDisplay(entity, locale, config, entities, 'date_only', '2025-11-12');
+ * // => "Nov 12, 2025" (example)
+ *
+ * // Array of simple values
+ * computeAttributeValueDisplay(entity, locale, config, entities, 'supported_modes', ['auto','cool','heat']);
+ * // => "auto, cool, heat"
+ *
+ * // Object value
+ * computeAttributeValueDisplay(entity, locale, config, entities, 'options', { a: 1, b: 2 });
+ * // => '{"a":1,"b":2}'
+ * ```
+ */
 export const computeAttributeValueDisplay = (
   entity: HassEntity,
+  locale: FrontendLocaleData,
   config: HassConfig,
-  entities: HassEntities,
+  entities: Record<string, EntityRegistryDisplayEntry>,
   attribute: string,
   value?: unknown,
 ): string => {
   const attributeValue = value !== undefined ? value : entity.attributes[attribute];
 
   // Null value, the state is unknown
-  if (attributeValue === null) {
+  if (attributeValue === null || attributeValue === undefined) {
     return localize("unknown");
   }
 
@@ -122,13 +163,12 @@ export const computeAttributeValueDisplay = (
   if (typeof attributeValue === "number") {
     const domain = computeDomain(entity.entity_id as EntityName);
 
-    const formatter = DOMAIN_ATTRIBUTES_FORMATERS[domain]?.[attribute];
+    const formatter = DOMAIN_ATTRIBUTES_FORMATTERS[domain]?.[attribute];
 
     const formattedValue = formatter ? formatter(attributeValue) : formatNumber(attributeValue);
 
-    const key = domain as string;
-    // @ts-expect-error - it's fine
-    let unit = DOMAIN_ATTRIBUTES_UNITS[key]?.[attribute];
+    const key = domain as keyof typeof DOMAIN_ATTRIBUTES_UNITS;
+    let unit = DOMAIN_ATTRIBUTES_UNITS[key]?.[attribute as keyof (typeof DOMAIN_ATTRIBUTES_UNITS)[typeof key]] as string | undefined;
 
     if (domain === "weather") {
       unit = getWeatherUnit(config, entity as WeatherEntity, attribute);
@@ -137,7 +177,7 @@ export const computeAttributeValueDisplay = (
     }
 
     if (unit) {
-      return `${formattedValue}${unit}`;
+      return `${formattedValue}${blankBeforeUnit(unit, locale)}${unit}`;
     }
 
     return formattedValue;
@@ -151,26 +191,14 @@ export const computeAttributeValueDisplay = (
       if (isTimestamp(attributeValue)) {
         const date = new Date(attributeValue);
         if (checkValidDate(date)) {
-          return new Intl.DateTimeFormat("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-            second: "2-digit",
-            hourCycle: "h12",
-          }).format(date);
+          return formatDateTimeWithSeconds(date, locale, config);
         }
       }
 
       // Value was not a timestamp, so only do date formatting
       const date = new Date(attributeValue);
       if (checkValidDate(date)) {
-        return new Intl.DateTimeFormat("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }).format(date);
+        return formatDate(date, config, locale);
       }
     }
   }
@@ -184,7 +212,7 @@ export const computeAttributeValueDisplay = (
   }
   // If this is an array, try to determine the display value for each item
   if (Array.isArray(attributeValue)) {
-    return attributeValue.map((item) => computeAttributeValueDisplay(entity, config, entities, attribute, item)).join(", ");
+    return attributeValue.map((item) => computeAttributeValueDisplay(entity, locale, config, entities, attribute, item)).join(", ");
   }
 
   return localize(attributeValue);

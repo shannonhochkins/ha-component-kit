@@ -30,6 +30,8 @@ const MIN_WORDS_INCLUDE_PARENT = 2;
 
 // Stable mapping: longKey -> generated hierarchical key.
 const keyMapping: Record<string, string> = {};
+// Track english longKeys that were mapped using the single-word rule so other languages reuse directly.
+const singleWordEnglishKeys = new Set<string>();
 
 // Normalize a single segment for safety (keep dots between joined segments per spec, but clean segment chars)
 function normalizeSegment(seg: string): string {
@@ -259,14 +261,33 @@ export async function downloadTranslations(translations: Record<string, Translat
     return aw - bw;
   });
   for (const [longKey, value] of englishEntries) {
-    const words = value.split(/\s+/).length;
-    if (value === 'Sun') {
-      console.log('Sun found', longKey)
-    }
+    const wordsArr = value.split(/\s+/).filter(Boolean);
+    const words = wordsArr.length;
+    // if (value.toLowerCase() === 'am' || value.toLowerCase() === 'pm') {
+    //   console.log('AM/PM found', longKey)
+    // }
     // Pattern rule: map component.<domain>.title -> <domain>.title (strip leading 'component.')
     if (/^component\.[^.]+\.title$/.test(longKey)) {
       keyMapping[longKey] = longKey.replace(/^component\./, '');
       continue;
+    }
+    // NEW RULE: Single-word English value -> key derived from sanitized, lowercased value itself.
+    // This produces keys like "unavailable" from "Unavailable" regardless of original longKey hierarchy.
+    if (words === 1) {
+      const sanitized = value
+        .normalize('NFKD') // remove diacritics
+        .replace(/[^A-Za-z0-9]/g, '')
+        .toLowerCase();
+      if (sanitized.length) {
+        // If collision and existing mapping uses same sanitized key for same value, just map; otherwise fallback to hierarchical.
+        const collision = Object.values(keyMapping).includes(sanitized);
+        if (!collision || (collision && Object.entries(keyMapping).some(([lk, mk]) => mk === sanitized && combinedTranslations['en'][lk] === value))) {
+          keyMapping[longKey] = sanitized;
+          singleWordEnglishKeys.add(longKey);
+          continue;
+        }
+        // Else collision with different value: fall through to hierarchical logic.
+      }
     }
     if (words > WORD_COUNT_HIERARCHICAL_THRESHOLD) {
       // Keep original longKey as key
@@ -296,6 +317,14 @@ export async function downloadTranslations(translations: Record<string, Translat
         const stripped = longKey.replace(/^component\./, '');
         perLanguage[lang][stripped] = value;
         keyMapping[longKey] = stripped;
+        continue;
+      }
+      // Reuse single-word english mapping for all languages regardless of local word count.
+      if (singleWordEnglishKeys.has(longKey)) {
+        const mapped = keyMapping[longKey];
+        if (mapped) {
+          perLanguage[lang][mapped] = value;
+        }
         continue;
       }
       if (words > WORD_COUNT_HIERARCHICAL_THRESHOLD) {
@@ -355,6 +384,8 @@ const locales = ${JSON.stringify(locales, null, 2)} satisfies Array<{
   hash: string;
   name: string;
 }>;
+
+export const localeTranslations = locales;
 
 export default locales.map(locale => ({
   ...locale,

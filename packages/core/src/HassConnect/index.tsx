@@ -19,6 +19,8 @@ export type HassConnectProps = {
   onReady?: () => void;
   /** options for the provider */
   options?: Omit<HassProviderProps, "children" | "hassUrl" | "hassToken">;
+  /** props to pass to the wrapper element, useful if you want to add additional styling or behavior */
+  wrapperProps?: React.ComponentPropsWithoutRef<"div">;
 };
 
 const blip = keyframes`
@@ -84,6 +86,7 @@ export const HassConnect = memo(function HassConnect({
   loading = <Loader />,
   onReady,
   options = {},
+  wrapperProps,
 }: HassConnectProps): ReactNode {
   const onReadyCalled = useRef(false);
 
@@ -107,7 +110,7 @@ export const HassConnect = memo(function HassConnect({
       {(ready) => (
         <>
           {ready ? (
-            <Wrapper>
+            <Wrapper {...wrapperProps}>
               <FetchLocale locale={options.locale}>
                 {onReady &&
                   !onReadyCalled.current &&
@@ -120,7 +123,7 @@ export const HassConnect = memo(function HassConnect({
               </FetchLocale>
             </Wrapper>
           ) : (
-            <Wrapper>{loading}</Wrapper>
+            <Wrapper {...wrapperProps}>{loading}</Wrapper>
           )}
         </>
       )}

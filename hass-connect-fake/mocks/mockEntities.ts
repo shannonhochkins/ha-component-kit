@@ -70,6 +70,44 @@ export const entities: HassEntities = {
       rgb_color: [64, 255, 112],
     },
   }),
+  // Demo light supporting both color temp and rgb for favorite colors showcase
+  ...createLight("light.favorite_colors_demo", {
+    attributes: {
+      friendly_name: "Favorite Colors Demo",
+      supported_color_modes: ["color_temp", "rgb"],
+      color_mode: "rgb",
+      rgb_color: [255, 120, 30],
+      hs_color: [25, 88],
+      brightness: 180,
+      min_color_temp_kelvin: 2000,
+      max_color_temp_kelvin: 6500,
+      color_temp_kelvin: 3000,
+    },
+  }),
+  ...createLight('light.only_color', {
+    attributes: {
+      supported_color_modes: [
+        "hs"
+      ],
+      color_mode: "hs",
+      hs_color: [350, 80],
+      brightness: undefined,
+      off_with_transition: false,
+      off_brightness: null,
+      supported_features: 16,
+      icon: "mdi:lightbulb-color",
+      friendly_name: "Light Only Color",
+      min_color_temp_kelvin: undefined,
+      max_color_temp_kelvin: undefined,
+      min_mireds: undefined,
+      max_mireds: undefined,
+      effect_list: undefined,
+      rgb_color: undefined,
+      xy_color: undefined,
+      raw_state: undefined,
+    },
+  }),
+  // create a light that only supports brightness
   ...createLight("light.no_color", {
     attributes: {
       supported_color_modes: [

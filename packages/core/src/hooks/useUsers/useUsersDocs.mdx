@@ -1,6 +1,6 @@
 import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
 import basicExample from './examples/basic.code?raw';
-import refetchExample from './examples/refetch.code?raw';
+import filteringExample from './examples/filtering.code?raw';
 import * as Primary from './examples/primary.stories';
 import { redirectToStory } from '../../../../../.storybook/redirect';
 
@@ -13,21 +13,25 @@ import { DummyComponent, DummyComponentAuthUser } from './examples/DummyComponen
 }} />
 
 # useUsers()
-###### `useUsers(args: FetchUsersArgs): UsersState & { refetch: (args: FetchUsersArgs) => UsersState }`
+###### `useUsers(options?: { includeSystemGenerated?: boolean; includeInactiveUsers?: boolean }): AuthUser[]`
 
-A custom React hook to retrieve all users connected to the home assistant instance, this hook will not refresh unless you manually re-trigger the "refresh" function, or reload the application/component consuming this hook.
+Returns a filtered array of Home Assistant users from the internal store. No loading or error state is exposed; if users have not been fetched yet an empty array is returned. Filtering happens client-side.
 
-Whilst loading, it will return an empty array of users and a loading state of `true`. Once the data is fetched, it will return the users in an array, a loading state of `false`, and an error state of `null` if no errors occurred.
+Options:
+- `includeSystemGenerated` (default false): include system/service accounts.
+- `includeInactiveUsers` (default false): include disabled users.
 
-- **Dependencies**: This hook requires you to use it within the `HassConnect` component.
+Updates are applied when the provider refreshes its user store (e.g. on initial load). There is no live push subscription for user list changes; to see external changes reload the page or implement a manual refresh routine.
+
+Dependency: Must be called within `HassConnect` provider context.
 
 ### Example Usage
 
 <Source dark code={basicExample} />
 
-### Refetch Usage
+### Filtering Example
 
-<Source dark code={refetchExample} />
+<Source dark code={filteringExample} />
 
 #### Outputs
 
@@ -35,7 +39,7 @@ Whilst loading, it will return an empty array of users and a loading state of `t
 
 ### Returned Value
 
-<ArgTypes of={DummyComponent} />
+The hook returns only an `AuthUser[]`, this array may be empty whilst data is being fetched
 
 ### AuthUser definition
 

@@ -1,3 +1,39 @@
+# 6.0.0
+
+### @#hakit/components
+- BUGFIX - LightControls - Fixed bugs relating to the control slider, fixed issue where brightness value wasn't aligning with the slider position and value of the entity, fixed issue where lights that don't support color, temp, brightness would not render a "switch" to control the light on/off state.
+- NEW - LightControls - Added support for "favorites" similar to how home assistant displays, we do not have the management of favorite colors via the UI here as home assistant does.
+- BUGFIX - Weather Card - updated hard coded "feels like" to use "apparent temperatre" locale, localizing state value
+- IMPROVEMENT - Updated a few other components to use the new locale keys
+- BREAKING / BUGFIX - TimeCard - Fixing unexpected lag when no entity option is used, falls behind by up to 30seconds in some cases, now uses browser time directly when no entity is provided. Removed default "entity" assignment if it's available, now users will have to opt into using an entity if they want to use one (breaking change), all dates when using non entity flow are now timezone/language/locale aware using the new locale services.
+- BREAKING - ButtonCard - unitOfMeasurement prop removed, now that we're formatting the same as home assistant, it will respect the users settings for units automatically, if you were using this prop, you will have to remove it and let the component handle the formatting automatically.
+
+### @hakit/core
+- BREAKING -Refactoring all logic around locale generation, locale keys have changed, values will change as users reported a few inconsistencies with home assistant locale values, if you're using the locale services directly you may have to update some keys, all types have been updated accordingly so you should get type errors once upgrading.
+- BREAKING - useHass - getConfig, getServices, getUser, getStates methods have been removed, this information is now pre-fetched, and will automatically update whenever any of the information changes, you can access this information via the `useStore` hook to subscribe, and retrieve programmatically `const user = useStore(state => state.user);` or to get a snapshot `const user = useStore.getState().user;`
+- NEW - useLocalData - A new hook to subscribe to locale data updates from home assistant, this includes language, number and date formatting.
+- NEW - useRegistryData - A new hook to subscribe to registry data updates from home assistant for entities, devices, areas, floors and more
+- NEW - useFloors - A new hook to subscribe to floor registry data from home assistant
+- NEW - formatter - Convenience formatter methods to format entity states, attributes and date/time values according to the current locale and configuration, this is now accessible via the store `useStore(state => state.formatter)` or programmatically `useStore.getState().formatter`, examples added to the `useStore` docs.
+- NEW - computeDefaultFavoriteColors - A new function to get the default fav colors for a light if supported, as well as lightSupportsFavoriteColors function
+updating computeStateDisplay to match home assistant logic
+- NEW - entityRegistryEntries now available on the store via useStore(state => state.entityRegistryEntries) or useStore().getState().entityRegistryEntries
+- NEW - useAreas - now supports floors
+- NEW - getExtendedEntityRegistryEntry - a new method to retrieve a single entity registry entry
+- NEW - getExtendedEntityRegistryEntries - a new method to retrieve multiple entity registry entries at once
+- NEW - updateEntityRegistryEntry - a new method to update an entity registry entry
+- NEW - removeEntityRegistryEntry - a new method to remove an entity registry entry
+- NEW - fetchEntityRegistryDisplayEntry - a new method to fetch the display entry for a single entity
+- NEW - getAutomaticEntityIds - Ask Home Assistant for automatically suggested entity_ids for given IDs.
+- NEW - findBatteryEntity - Find the most relevant battery entity from a list of registry display entries.
+- NEW - findBatteryChargingEntity - Locate a battery charging entity (device_class === "battery_charging") in the provided list.
+- NEW - createAreaRegistryEntry - A new method to create an area registry entry.
+- NEW - updateAreaRegistryEntry - A new method to update an area registry entry.
+- NEW - deleteAreaRegistryEntry - A new method to delete an area registry entry.
+- NEW - subscribeFloorRegistry - A new method to subscribe to floor registry updates.
+- NEW - updateDeviceRegistryEntry - A new method to update a device registry entry.
+- NEW - removeConfigEntryFromDevice- A new method to remove a config entry from a device.
+
 # 5.1.6
 
 ### General 

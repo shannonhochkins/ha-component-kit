@@ -209,19 +209,19 @@ function InternalCoverControls({
                     }}
                   >
                     <ButtonGroupButton
-                      title={localize("cover.open_cover")}
+                      title={localize("open_cover")}
                       entity={_entity}
                       service="openCover"
                       icon={reverse ? "mdi:arrow-down" : "mdi:arrow-up"}
                     />
                     <ButtonGroupButton
-                      title={localize("cover.stop_cover")}
+                      title={localize("stop_cover")}
                       entity={_entity}
                       service="stopCover"
                       icon={"mdi:stop-circle-outline"}
                     />
                     <ButtonGroupButton
-                      title={localize("cover.close_cover")}
+                      title={localize("close_cover")}
                       entity={_entity}
                       service="closeCover"
                       icon={!reverse ? "mdi:arrow-down" : "mdi:arrow-up"}

@@ -1,16 +1,7 @@
 import styled from "@emotion/styled";
 import { useState, useEffect, useMemo, ReactNode, ReactElement, Children, isValidElement, cloneElement } from "react";
-import {
-  useWeather,
-  useHass,
-  useStore,
-  isUnavailableState,
-  getSupportedForecastTypes,
-  getIconByEntity,
-  localize,
-  computeStateDisplay,
-} from "@hakit/core";
-import type { FilterByDomain, ModernForecastType, EntityName } from "@hakit/core";
+import { useWeather, useStore, isUnavailableState, getSupportedForecastTypes, getIconByEntity, localize } from "@hakit/core";
+import type { FilterByDomain, ModernForecastType, EntityName, LocaleKeys } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import {
   Row,
@@ -25,7 +16,7 @@ import {
 } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { getAdditionalWeatherInformation } from "./helpers";
-import { Connection, HassConfig } from "home-assistant-js-websocket";
+import { DOMAIN_ATTRIBUTES_UNITS } from "@hakit/core";
 
 const Card = styled(CardBase)``;
 
@@ -184,11 +175,8 @@ function InternalWeatherCard({
   key,
   ...rest
 }: WeatherCardProps): React.ReactNode {
-  const { getConfig } = useHass();
-  const [width, setWidth] = useState<number>(0);
-  const connection = useStore((state) => state.connection);
   const config = useStore((state) => state.config);
-  const entities = useStore((state) => state.entities);
+  const [width, setWidth] = useState<number>(0);
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
   const itemsToRender = Math.floor(width / FORECAST_ITEM_PROJECTED_WIDTH);
   const [timeZone, setTimeZone] = useState<string>("UTC");
@@ -204,14 +192,10 @@ function InternalWeatherCard({
   } = weather;
   const unit = temperature_unit.slice(0, -1);
   useEffect(() => {
-    async function getTimeZone() {
-      const config = await getConfig();
-      if (config) {
-        setTimeZone(config.time_zone);
-      }
+    if (config?.time_zone && timeZone !== config.time_zone) {
+      setTimeZone(config.time_zone);
     }
-    getTimeZone();
-  }, [getConfig]);
+  }, [config, timeZone]);
 
   const supportedForecasts = useMemo(() => getSupportedForecastTypes(weather), [weather]);
 
@@ -322,7 +306,8 @@ function InternalWeatherCard({
                   {temperature}
                   {weather.state}
                   {temperatureSuffix || unit},{" "}
-                  {computeStateDisplay(weather, connection as Connection, config as HassConfig, entities, weather.state)}
+                  {"color_temp_kelvin" in weather.attributes &&
+                    `${weather.attributes.color_temp_kelvin}${DOMAIN_ATTRIBUTES_UNITS.light.color_temp_kelvin}`}
                   {feelsLike ? `, ${localize("apparent_temperature")}: ${Math.round(feelsLike)}${temperatureSuffix || unit}` : ""}
                 </SubTitle>
               </Column>
@@ -365,7 +350,7 @@ function InternalWeatherCard({
           </Row>
         )}
         {includeForecast && !isUnavailable && width > 0 && genForecastRows()}
-        {isUnavailable && computeStateDisplay(weather, connection as Connection, config as HassConfig, entities, weather.state)}
+        {isUnavailable && localize(weather.state as LocaleKeys)}
       </Contents>
     </Card>
   );

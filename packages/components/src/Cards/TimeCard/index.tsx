@@ -30,75 +30,39 @@ const Contents = styled.div`
   }
 `;
 
-function convertTo12Hour(time: string) {
-  // Create a new Date object
-  const [hour, minute] = time.split(":");
-  const date = new Date();
-
-  // Set the hours and minutes of the Date object
-  date.setHours(parseInt(hour));
-  date.setMinutes(parseInt(minute));
-
-  // Use Intl.DateTimeFormat to format the time
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
-
-  return formatter.formatToParts(date);
-}
-
-function formatDate(dateString: string): string {
-  // Create a new Date object
-  const date = new Date(dateString);
-
-  // Use Intl.DateTimeFormat to format the date
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "2-digit",
-  });
-
-  // Format the date
-  let formattedDate = formatter.format(date);
-
-  // Add the ordinal suffix
-  const day = date.getDate();
-  const suffix = daySuffix(day);
-
-  // Replace the day number with the number plus the suffix
-  formattedDate = formattedDate.replace(/\d+/, `${day}${suffix}`);
-
-  return formattedDate;
-}
+// We intentionally removed bespoke locale logic in favor of the central formatter exposed via useStore.
+// The only custom logic retained locally is the ordinal day suffix (1st, 2nd, 3rd...) which Home Assistant
+// itself does not currently expose as a dedicated helper; we compose that around the shared formatter parts.
 type CustomFormatter = (date: Date, formatter: FormatFunction) => React.ReactNode;
 type OmitProperties = "title" | "as" | "active" | "entity" | "service" | "serviceData" | "longPressCallback" | "modalProps";
 export interface TimeCardProps extends Omit<CardBaseProps<"div">, OmitProperties> {
-  /** provide a custom entity to read the time from, if not found/provided it will update from machine time @default "sensor.time" */
+  /** Optional Home Assistant sensor providing time (state string HH:MM). If omitted, component uses internal ticking clock.
+   * Entity value is assumed already localized by HA; we only derive optional AM/PM suffix. */
   timeEntity?: FilterByDomain<EntityName, "sensor">;
-  /** provide a custom entity to read the date from, if not found/provided it will update from machine time @default "sensor.date" */
+  /** Optional Home Assistant sensor providing date (state string YYYY-MM-DD). If omitted, component uses current date locally but
+   * formats via HA locale/timezone helpers. */
   dateEntity?: FilterByDomain<EntityName, "sensor">;
-  /** time format, by providing this it will bypass the sensor.time entity if available, for formatting options @see https://www.npmjs.com/package/intl-dateformat#formatters  @default "hh:mm a", you can also provide a custom function which will call every time the component re-renders */
+  /** Custom time format pattern or function. Providing this always ignores `timeEntity` even if present.
+   * Pattern uses intl-dateformat style tokens; function receives (date, haFormatter). */
   timeFormat?: string | CustomFormatter;
-  /** date format, by providing this it will bypass the sensor.date entity if available, for formatting options @see https://www.npmjs.com/package/intl-dateformat#formatters  @default "dddd, MMMM DD YYYY", you can also provide a custom function which will call every time the component re-renders */
+  /** Custom date format pattern or function. Providing this always ignores `dateEntity` even if present.
+   * Pattern uses intl-dateformat style tokens; function receives (date, haFormatter). */
   dateFormat?: string | CustomFormatter;
-  /** add this if you do not want to include the date, @default false */
+  /** Hide the date portion entirely. @default false */
   hideDate?: boolean;
-  /** add this if you do not want to include the time, @default false */
+  /** Hide the time portion entirely. @default false */
   hideTime?: boolean;
-  /** remove the icon before the time, @default false */
+  /** Hide the leading icon. @default false */
   hideIcon?: boolean;
-  /** update throttle time in milliseconds for the timer when you're not using the entities and using custom formatters @default 1000 */
+  /** Milliseconds throttle for internal ticker when NOT entity-driven (custom formats or missing entities). @default 1000 */
   throttleTime?: number;
-  /** the name of the icon, defaults to the sensor.date icon or mdi:calendar @default mdi:calendar */
+  /** Override icon; falls back to date entity icon or mdi:calendar. */
   icon?: string;
-  /** the props for the icon, which includes styles for the icon */
+  /** Additional icon props/styles. */
   iconProps?: Omit<IconProps, "icon">;
-  /** center everything instead of left aligned @default false */
+  /** Center align contents instead of left alignment. @default false */
   center?: boolean;
-  /** callback when the card is pressed, it will return the time sensor entity */
+  /** Click handler; receives time sensor entity when entity-driven. */
   onClick?: (entity: HassEntityWithService<"sensor">, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
 }
 
@@ -106,6 +70,8 @@ const DEFAULT_TIME_FORMAT = "hh:mm A";
 const DEFAULT_DATE_FORMAT = "dddd, MMMM DD YYYY";
 
 const customFormatter = createDateFormatter({});
+// HA-aware wrapper adding locale & timezone when formatting outside entity-driven mode.
+// Ensures non-entity clock/date respects Home Assistant user preferences instead of browser defaults.
 
 function InternalTimeCard({
   timeEntity,
@@ -128,31 +94,70 @@ function InternalTimeCard({
   ...rest
 }: TimeCardProps): React.ReactNode {
   const [currentTime, setCurrentTime] = useState(new Date());
+  // Access the centralized, timezone & locale aware formatter from the store (HA config + user profile driven)
+  const formatter = useStore((s) => s.formatter);
+  const locale = useStore((s) => s.locale);
+  const config = useStore((s) => s.config);
+  const language = locale?.language;
+  const timeZone = config?.time_zone;
+
+  const { formatAmPmSuffix, formatDateWeekday, formatDateMonth, formatDateYear, formatTime } = formatter;
   const previousTimeRef = useRef<number>(Date.now());
   const requestRef = useRef<number>(undefined);
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
-  const timeSensor = useEntity(timeEntity ?? "sensor.time", {
+  const timeSensor = useEntity(timeEntity ?? "unknown", {
     returnNullIfNotFound: true,
   });
-  const dateSensor = useEntity(dateEntity ?? "sensor.date", {
+  const dateSensor = useEntity(dateEntity ?? "unknown", {
     returnNullIfNotFound: true,
   });
   const dateIcon = useMemo(() => icon || dateSensor?.attributes?.icon || "mdi:calendar", [icon, dateSensor]);
   const [formatted, amOrPm] = useMemo(() => {
-    const parts = convertTo12Hour(timeSensor?.state ?? "00:00");
-    const hour = parts.find((part) => part.type === "hour");
-    const minute = parts.find((part) => part.type === "minute");
-    const amOrPm = parts.find((part) => part.type === "dayPeriod");
-    return [`${hour?.value}:${minute?.value}`, amOrPm?.value];
-  }, [timeSensor?.state]);
+    // Entity-driven path: sensor.time already reflects HA timezone & user locale preferences.
+    // Do not re-format the HH:MM portion; only optionally derive AM/PM suffix if user prefers 12h.
+    if (timeSensor && !timeFormat) {
+      const raw = timeSensor.state ?? "00:00"; // 24h HH:MM
+      const [h, m] = raw.split(":").map(Number);
+      const entityDate = new Date();
+      entityDate.setHours(h, m, 0, 0);
+      // Decide suffix using HA-aware formatter; keep raw string unchanged.
+      return [raw, formatAmPmSuffix(entityDate)];
+    }
+    // Non-entity path: use HA-aware formatter (NOT browser locale/timezone) for both parts.
+    const timeStr = formatTime(currentTime); // includes suffix if AM/PM preference, else 24h.
+    // Split suffix out so UI stays consistent with separate span.
+    const match = timeStr.match(/^(.*?)(?:\s([AP]M))$/i);
+    if (match) {
+      return [match[1], match[2]];
+    }
+    return [timeStr, undefined];
+  }, [timeSensor, timeFormat, currentTime, formatTime, formatAmPmSuffix]);
   const hasOnClick = typeof onClick === "function";
+
+  // Memoized HA format function (FormatFunction signature) injecting locale/timezone.
+  const haFormatter = useCallback<FormatFunction>(
+    (date, format, opts) => {
+      return customFormatter(date, format, { locale: language, timezone: timeZone, ...opts });
+    },
+    [language, timeZone],
+  );
 
   const timeValue = useMemo(() => {
     if (timeSensor && !timeFormat) {
       return (
         <>
           <Time className="time">{formatted}</Time>
-          <AmOrPm className="time-suffix">{amOrPm}</AmOrPm>
+          {amOrPm && <AmOrPm className="time-suffix">{amOrPm}</AmOrPm>}
+        </>
+      );
+    }
+    // Custom formatter path retained for backwards compatibility; note it uses browser timezone.
+    // Prefer built-in HA formatter functions instead; if user supplies pattern we fall back.
+    if (!timeSensor && !timeFormat) {
+      return (
+        <>
+          <Time className="time">{formatted}</Time>
+          {amOrPm && <AmOrPm className="time-suffix">{amOrPm}</AmOrPm>}
         </>
       );
     }
@@ -160,47 +165,71 @@ function InternalTimeCard({
       return (
         <Time className="time">
           {typeof timeFormat === "function"
-            ? timeFormat(currentTime, customFormatter)
-            : customFormatter(currentTime, timeFormat ?? DEFAULT_TIME_FORMAT)}
+            ? timeFormat(currentTime, haFormatter)
+            : haFormatter(currentTime, timeFormat ?? DEFAULT_TIME_FORMAT)}
         </Time>
       );
     } catch (e) {
       console.error("Time formatting error", e);
-      return <Time className="time">{customFormatter(currentTime, DEFAULT_TIME_FORMAT)}</Time>;
+      return <Time className="time">{formatted}</Time>;
     }
-  }, [amOrPm, currentTime, formatted, timeFormat, timeSensor]);
+  }, [amOrPm, currentTime, formatted, timeFormat, timeSensor, haFormatter]);
 
   const dateValue = useMemo(() => {
+    if (hideDate) return null;
     try {
-      return dateSensor && !dateFormat
-        ? formatDate(dateSensor.state)
-        : typeof dateFormat === "function"
-          ? dateFormat(currentTime, customFormatter)
-          : customFormatter(currentTime, dateFormat ?? DEFAULT_DATE_FORMAT);
+      // Entity path using HA date entity (YYYY-MM-DD) and HA-aware formatter parts.
+      if (dateSensor && !dateFormat) {
+        const parts = dateSensor.state.split("-").map(Number);
+        if (parts.length === 3) {
+          const d = new Date(parts[0], parts[1] - 1, parts[2]);
+          const day = d.getDate();
+          const suffix = daySuffix(day);
+          // Compose: Weekday, Month <day><suffix> <year>
+          return `${formatDateWeekday(d)}, ${formatDateMonth(d)} ${day}${suffix} ${formatDateYear(d)}`;
+        }
+      }
+      // Non-entity default path: build HA timezone/locale aware date using formatter parts (with ordinal).
+      if (!dateSensor && !dateFormat) {
+        const d = currentTime;
+        const day = d.getDate();
+        const suffix = daySuffix(day);
+        return `${formatDateWeekday(d)}, ${formatDateMonth(d)} ${day}${suffix} ${formatDateYear(d)}`;
+      }
+      // Custom formatting path now injected with HA locale/timezone via haFormatter.
+      return typeof dateFormat === "function"
+        ? dateFormat(currentTime, haFormatter)
+        : haFormatter(currentTime, dateFormat ?? DEFAULT_DATE_FORMAT);
     } catch (e) {
       console.error("Date formatting error", e);
-      return customFormatter(currentTime, DEFAULT_DATE_FORMAT);
+      return haFormatter(currentTime, DEFAULT_DATE_FORMAT);
     }
-  }, [currentTime, dateFormat, dateSensor]);
+  }, [hideDate, dateSensor, dateFormat, currentTime, formatDateWeekday, formatDateMonth, formatDateYear, haFormatter]);
 
   const updateClock = useCallback(() => {
     const now = Date.now();
     const elapsed = now - previousTimeRef.current;
     if (elapsed >= throttleTime) {
-      // Update the clock every second
       setCurrentTime(new Date());
-      previousTimeRef.current = now - (elapsed % throttleTime); // Adjust for any drift
+      previousTimeRef.current = now - (elapsed % throttleTime);
     }
     requestRef.current = requestAnimationFrame(updateClock);
   }, [throttleTime]);
 
+  // Only run a ticker when we are NOT fully entity-driven for both time & date (i.e. custom formats or missing entities)
+  const needTicker = useMemo(() => {
+    const timeEntityDriven = timeSensor && !timeFormat;
+    const dateEntityDriven = dateSensor && !dateFormat;
+    return !(timeEntityDriven && dateEntityDriven);
+  }, [timeSensor, timeFormat, dateSensor, dateFormat]);
+
   useEffect(() => {
-    const hasEntities = timeSensor || dateSensor;
-    const hasFormatters = timeFormat || dateFormat;
-    if (hasEntities && !hasFormatters) return; // let home assistant trigger updates
+    if (!needTicker) return; // Entity-driven; rely on websocket updates.
     requestRef.current = requestAnimationFrame(updateClock);
-    return () => cancelAnimationFrame(requestRef.current!);
-  }, [updateClock, timeFormat, dateFormat, timeSensor, dateSensor]);
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    };
+  }, [needTicker, updateClock]);
 
   return (
     <Card
@@ -235,12 +264,16 @@ function InternalTimeCard({
     </Card>
   );
 }
-/** There's no required props on this component, by default it retrieves information from the time and date sensor
- * from your home assistant information and the dates are formatted by the timezone specified in your home assistant settings.
+/**
  *
- * If you do NOT want to use the entities from home assistant, even if they're available, simply provide a "format" attribute and it will skip
- * the retrieval of the time and date sensors and use the format provided using a custom implementation outside of home assistant.
- * */
+ * Default behavior: Renders current clock time & date using Home Assistant locale, timezone and 12/24h preference.
+ * It maintains an internal ticking Date (throttled) unless both a `timeEntity` and `dateEntity` are provided
+ * without custom format overrides—in which case updates rely on HA websocket events. Entities are optional.
+ *
+ * Custom formats (timeFormat/dateFormat): Always override entity usage for that portion. The function versions of the formatters will receive a timezone/locale aware formatter from the home assistant instance, so output still respects user settings. Pattern strings use intl-dateformat tokens.
+ *
+ * Ordinal day suffix (1st, 2nd, 3rd...) is added locally when composing default date output.
+ */
 export function TimeCard(props: TimeCardProps) {
   const defaultColumns: AvailableQueries = {
     xxs: 12,

@@ -7,6 +7,7 @@ const defaults = {
   attributes: {
     friendly_name: "Dining room light",
     icon: "mdi:light-recessed",
+    color_temp_kelvin: 3993,
     min_color_temp_kelvin: 2702,
     max_color_temp_kelvin: 6535,
     min_mireds: 153,

@@ -1,12 +1,8 @@
 import { useHass, useStore } from "@core";
-import { useEffect, useState, useMemo } from "react";
-import { subscribeAreaRegistry } from "./subscribe/areas";
-import { subscribeEntityRegistry } from "./subscribe/entities";
-import { subscribeDeviceRegistry } from "./subscribe/devices";
-import type { AreaRegistryEntry } from "./subscribe/areas";
-import type { EntityRegistryEntry } from "./subscribe/entities";
-import type { DeviceRegistryEntry } from "./subscribe/devices";
+import { useMemo } from "react";
+import type { DeviceRegistryEntry } from "@utils/subscribe/devices";
 import type { HassEntity } from "home-assistant-js-websocket";
+import type { FloorRegistryEntry } from "@utils/subscribe/floors";
 
 export interface Area {
   /** the area id */
@@ -21,42 +17,28 @@ export interface Area {
   services: DeviceRegistryEntry[];
   /** the entities linked to the area */
   entities: HassEntity[];
+  /** the floors linked to the area */
+  floors: FloorRegistryEntry[];
 }
 
 export function useAreas(): Area[] {
   const { joinHassUrl } = useHass();
-  const [areas, setAreas] = useState<AreaRegistryEntry[]>([]);
-  const [devices, setDevices] = useState<DeviceRegistryEntry[]>([]);
-  const [entities, setEntities] = useState<EntityRegistryEntry[]>([]);
-  const connection = useStore((state) => state.connection);
   const _entities = useStore((state) => state.entities);
-
-  useEffect(() => {
-    if (!connection) return;
-    const areaUnsub = subscribeAreaRegistry(connection, (areas) => {
-      setAreas(areas);
-    });
-    const entityUnsub = subscribeEntityRegistry(connection, (entities) => {
-      setEntities(entities);
-    });
-    const deviceUnsub = subscribeDeviceRegistry(connection, (devices) => {
-      setDevices(devices);
-    });
-    // Returning a cleanup function that will be called on component unmount
-    return () => {
-      areaUnsub();
-      entityUnsub();
-      deviceUnsub();
-    };
-  }, [connection]);
+  const areas = useStore((state) => state.areas);
+  const devices = useStore((state) => state.devices);
+  const floors = useStore((state) => state.floors);
+  const entities = useStore((state) => state.entitiesRegistry);
 
   return useMemo(() => {
-    return areas.map((area) => {
+    return Object.values(areas).map((area) => {
       const matchedEntities: HassEntity[] = [];
       const matchedDevices: DeviceRegistryEntry[] = [];
       const matchedServices: DeviceRegistryEntry[] = [];
+      const matchedFloors: FloorRegistryEntry[] = [];
 
-      for (const device of devices) {
+      const deviceValues = Object.values(devices);
+
+      for (const device of deviceValues) {
         if (device.area_id === area.area_id) {
           if (device.entry_type === "service") {
             matchedServices.push(device);
@@ -65,9 +47,13 @@ export function useAreas(): Area[] {
           }
         }
       }
+      const floorMatch = Object.values(floors).find((f) => f.floor_id === area.floor_id);
+      if (floorMatch && !matchedFloors.includes(floorMatch)) {
+        matchedFloors.push(floorMatch);
+      }
       // ! entities only have an area_id if they are manually assigned to an area and
       // ! not inherited from the parent device (or because they don't have a parent device)
-      for (const entity of entities) {
+      for (const entity of Object.values(entities)) {
         const _entity = _entities[entity.entity_id];
         if (!_entity) continue;
 
@@ -77,7 +63,7 @@ export function useAreas(): Area[] {
         }
 
         if (!entity.device_id) continue;
-        const device = devices.find((d) => d.id === entity.device_id);
+        const device = deviceValues.find((d) => d.id === entity.device_id);
         if (!device) continue;
 
         const deviceIsInArea = device.area_id === area.area_id;
@@ -92,7 +78,8 @@ export function useAreas(): Area[] {
         devices: matchedDevices,
         services: matchedServices,
         entities: matchedEntities,
+        floors: matchedFloors,
       };
     });
-  }, [areas, devices, joinHassUrl, entities, _entities]);
+  }, [areas, devices, joinHassUrl, entities, _entities, floors]);
 }

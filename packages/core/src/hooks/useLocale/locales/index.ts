@@ -329,6 +329,8 @@ const locales = [
   name: string;
 }>;
 
+export const localeTranslations = locales;
+
 export default locales.map((locale) => ({
   ...locale,
   async fetch(): Promise<LocaleData> {

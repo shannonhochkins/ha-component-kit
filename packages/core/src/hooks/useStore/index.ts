@@ -18,8 +18,19 @@ export const DATA_KEYS = [
   "auth",
   "config",
   "user",
+  "users",
   "globalComponentStyles",
   "setGlobalComponentStyles",
+  "entitiesRegistry",
+  "entitiesRegistryDisplay",
+  "services",
+  "areas",
+  "devices",
+  "floors",
+  "services",
+  "formatter",
+  "locale",
+  "sensorNumericDeviceClasses",
 ] satisfies (keyof InternalStore)[];
 
 type KeysToPick = (typeof DATA_KEYS)[number];

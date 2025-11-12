@@ -178,7 +178,7 @@ export const MediaPlayerControls = ({
         )}
         {allEntityIds.length > 1 && (
           <Group
-            title={localize("related_items.entity")}
+            title={localize("related_items")}
             disableColumns
             cssStyles={`
             &.group {

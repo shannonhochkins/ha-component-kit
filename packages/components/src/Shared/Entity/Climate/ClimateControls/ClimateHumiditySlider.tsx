@@ -3,17 +3,16 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   type FilterByDomain,
   type EntityName,
-  useHass,
   UNAVAILABLE,
   useEntity,
   supportsFeatureFromAttributes,
   stateActive,
+  useStore,
 } from "@hakit/core";
 import { useDebouncedCallback } from "use-debounce";
 import { clamp } from "lodash";
 import { FabCard, ControlSliderCircular } from "@components";
 import { colors } from "./shared";
-import { HassConfig } from "home-assistant-js-websocket";
 import { BigNumber } from "./BigNumber";
 import { Icon } from "@iconify/react";
 
@@ -26,17 +25,12 @@ export interface ClimateHumiditySliderProps {
 export function ClimateHumiditySlider({ entity: _entity, targetTempStep, showCurrent = false }: ClimateHumiditySliderProps) {
   const entity = useEntity(_entity);
   const [_targetHumidity, setTargetHumidity] = useState<number | null>(entity.attributes.humidity ?? null);
-  const [config, setConfig] = useState<HassConfig | null>(null);
-  const { getConfig } = useHass();
+  const config = useStore((state) => state.config);
   const { target_temp_step, min_humidity = 0, max_humidity = 100 } = entity.attributes;
 
   const _step = useMemo(() => {
     return targetTempStep ?? target_temp_step ?? (config?.unit_system.temperature === UNIT_F ? 1 : 0.5);
   }, [config?.unit_system.temperature, targetTempStep, target_temp_step]);
-
-  useEffect(() => {
-    getConfig().then(setConfig);
-  }, [getConfig]);
 
   useEffect(() => {
     setTargetHumidity(entity.attributes.humidity ?? null);

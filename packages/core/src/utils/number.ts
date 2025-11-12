@@ -1,5 +1,5 @@
 import { HassEntityAttributeBase, HassEntity } from "home-assistant-js-websocket";
-import { EntityRegistryDisplayEntry } from "@typings";
+import { EntityRegistryDisplayEntry } from "./entity_registry";
 
 /**
  * Checks if the current entity state should be formatted as an integer based on the `state` and `step` attribute and returns the appropriate `Intl.NumberFormatOptions` object with `maximumFractionDigits` set

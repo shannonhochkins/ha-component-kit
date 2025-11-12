@@ -1,22 +1,11 @@
-import {
-  computeStateDisplay,
-  useStore,
-  useEntity,
-  useIconByDomain,
-  useIconByEntity,
-  computeDomain,
-  isUnavailableState,
-  ON,
-  localize,
-} from "@hakit/core";
+import { useStore, useEntity, useIconByDomain, useIconByEntity, computeDomain, isUnavailableState, ON, localize } from "@hakit/core";
 import type { EntityName, ExtractDomain, AllDomains, HassEntityWithService } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, fallback, ModalByEntityDomain, type ModalPropsHelper } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import { useState, ReactNode, useId, useMemo, useCallback, lazy, Suspense } from "react";
+import { useState, ReactNode, useId, useMemo, lazy, Suspense } from "react";
 import { useLongPress } from "use-long-press";
 import styled from "@emotion/styled";
-import { Connection, HassConfig } from "home-assistant-js-websocket";
 
 const IconWrapper = styled(Row)`
   width: 100%;
@@ -133,9 +122,7 @@ function InternalEntitiesCardRow<E extends EntityName>({
 }: EntitiesCardRowProps<E>) {
   const _id = useId();
   const [openModal, setOpenModal] = useState(false);
-  const config = useStore((state) => state.config);
-  const entities = useStore((store) => store.entities);
-  const connection = useStore((store) => store.connection);
+  const formatter = useStore((store) => store.formatter);
   const entity = useEntity(_entity);
   const domain = computeDomain(_entity);
   const domainIcon = useIconByDomain(domain === null ? "unknown" : domain);
@@ -159,10 +146,7 @@ function InternalEntitiesCardRow<E extends EntityName>({
       },
     },
   );
-  const computeState = useCallback(
-    () => computeStateDisplay(entity, connection as Connection, config as HassConfig, entities, entity.state),
-    [config, connection, entities, entity],
-  );
+
   const lazyKey = DOMAIN_TO_ELEMENT_TYPE[domain];
 
   const LazyComponent = useMemo(() => {
@@ -194,9 +178,11 @@ function InternalEntitiesCardRow<E extends EntityName>({
             ) : isUnavailable ? (
               localize("unavailable")
             ) : LazyComponent ? (
-              <Suspense fallback={<div>Loading...</div>}>{<LazyComponent entity={entity as HassEntityWithService<AllDomains>} />}</Suspense>
+              <Suspense fallback={<div>{localize("loading")}...</div>}>
+                {<LazyComponent entity={entity as HassEntityWithService<AllDomains>} />}
+              </Suspense>
             ) : (
-              <>{computeState()}</>
+              <>{formatter.stateValue(entity)}</>
             )}
           </State>
         </Row>
