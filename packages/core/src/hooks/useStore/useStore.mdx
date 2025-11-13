@@ -1,6 +1,16 @@
-import { Source, Meta, ArgTypes } from '@storybook/addon-docs/blocks';
+import { Source, Meta, ArgTypes, Canvas } from '@storybook/addon-docs/blocks';
+import * as Primary from './examples/primary.stories';
+import * as HelperFunctions from './examples/helper.stories';
 import useStoreExample from './examples/useStore.code?raw';
+import formatterStateValueExample from './examples/formatterStateValue.code?raw';
+import formatterDatesExample from './examples/formatterDates.code?raw';
+import helperFunctionsExample from './examples/helperFunctions.code?raw';
+import storeGlobalStylesExample from './examples/storeGlobalStyles.code?raw';
+import storeProgrammaticExample from './examples/storeProgrammatic.code?raw';
 import { DummyComponent } from './examples/DummyUseStoreComponent';
+import { FormatterDatesExample } from './examples/formatterDates.code';
+import { HelperFunctionsExample } from './examples/helperFunctions.code';
+
 import { Redirect } from '../../../../../stories/helpers/redirect';
 import { DATA_KEYS } from './index';
 
@@ -8,17 +18,95 @@ import { DATA_KEYS } from './index';
 <Meta title="core/hooks/useStore" />
 
 # useStore: UseStoreHook
-This will return all the information from the store, you can also pass through a selector through as the function to only
-subscribe to updates for that particular value.
+The primary access point to internal Home Assistant state. You can pass a selector to subscribe to just the slice you need, or call `useStore.getState()` for synchronous programmatic access.
 
 
-### Example Usage
+### Basic Example
 
 <Source dark language="ts" code={useStoreExample} />
 
+### Formatter API
+
+The store exposes a `formatter` object for converting entity states & attributes to human readable localized strings and for date/time formatting.
+
+Core formatter methods:
+- `formatter.stateValue(entity)` – formatted primary state string (localized units, numeric formatting, domain heuristics).
+- `formatter.attributeValue(entity, attribute)` – formatted attribute string with automatic unit suffixes (°C, kWh, etc.).
+
+Date & time helpers (all accept `Date | string`, auto-read locale/config, fallback to browser defaults if not ready):
+
+**Core Time & Date**
+- `formatDate`
+- `formatTime`
+- `formatTimeWithoutAmPm` (forced 24h HH:MM)
+- `formatAmPmSuffix` (localized day period)
+
+**Granular Time Parts**
+- `formatHour` (numeric hour respecting 12/24 preference, no suffix)
+- `formatMinute`
+- `formatSeconds`
+
+**DateTime Composites**
+- `formatDateTime`
+- `formatDateTimeWithSeconds`
+- `formatShortDateTime`
+- `formatShortDateTimeWithYear`
+- `formatShortDateTimeWithConditionalYear`
+
+**Fallback & Numeric**
+- `formatDateTimeWithBrowserDefaults`
+- `formatDateTimeNumeric`
+
+**Date Variants**
+- `formatDateWeekdayDay`
+- `formatDateShort`
+- `formatDateVeryShort`
+- `formatDateMonthYear`
+- `formatDateMonth`
+- `formatDateYear`
+- `formatDateWeekday`
+- `formatDateWeekdayShort`
+- `formatDateNumeric`
+
+> Until `locale` & `config` load, `formatter.stateValue`/`attributeValue` will return an empty string and date helpers will use a safe browser fallback.
+
+#### State & Attribute Formatting Example
+<Source dark language="ts" code={formatterStateValueExample} />
+
+#### Date & Time Formatting Example
+<Source dark language="ts" code={formatterDatesExample} />
+
+#### Example of above
+<Canvas of={Primary.PrimaryExample} />
+
+### Helpers API
+
+The `helpers` object exposes utility methods that aren't strictly formatting, grouped by concern. Currently available:
+
+#### `helpers.dateTime`
+
+- `getTimeZone()` – resolved timezone after applying user preference (local/server) via `resolveTimeZone`.
+- `shouldUseAmPm()` – boolean indicating if 12h clock (AM/PM) should be used.
+
+These pair with the granular formatter methods (`formatHour`, `formatMinute`, `formatSeconds`, `formatAmPmSuffix`) for building custom time displays.
+
+#### Helper Functions Example
+<Source dark language="ts" code={helperFunctionsExample} />
+
+#### Example Preview
+<Canvas of={HelperFunctions.HelpersExample} />
+
+### Styling via Store
+You can override component-level styles centrally:
+<Source dark language="ts" code={storeGlobalStylesExample} />
+
+### Programmatic Access Pattern
+Reading and writing store values outside render logic:
+<Source dark language="ts" code={storeProgrammaticExample} />
+
 ### Returned object from `useStore`
 
-> There's a lot more returned by the useStore method, these are intentionally undocumented as they're not intended to be used directly and there's hooks already exposing pretty much all this information, for example <Redirect to="/docs/core-hooks-useuser--docs">useUser</Redirect>.
+Below are the documented, user-facing keys. Some internal values remain intentionally undocumented; prefer higher-level hooks (e.g. <Redirect to="/docs/core-hooks-useuser--docs">useUser</Redirect>) for specific data.
 
 ### Returned Value
 

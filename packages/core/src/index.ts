@@ -6,7 +6,7 @@ export * from "./data";
 export type { HassContextProps, Route, SupportedComponentOverrides } from "./HassConnect/HassContext";
 export type { HassConnectProps } from "./HassConnect";
 export { HassConnect } from "./HassConnect";
-export { HassContext } from "./HassConnect/HassContext";
+export { HassContext, type SensorNumericDeviceClasses } from "./HassConnect/HassContext";
 export { loadTokens, saveTokens } from "./HassConnect/token-storage";
 // hooks
 export * from "./hooks";

@@ -1,11 +1,26 @@
 import { createContext } from "react";
 // types
-import type { Connection, HassEntities, HassEntity, HassConfig, HassUser, HassServices, Auth } from "home-assistant-js-websocket";
+import type { Connection, HassEntities, HassEntity, HassConfig, HassServices, Auth } from "home-assistant-js-websocket";
 import { type CSSInterpolation } from "@emotion/serialize";
 import { ServiceData, SnakeOrCamelDomains, DomainService, Target, LocaleKeys, ServiceResponse } from "@typings";
 import type { UseStoreHook } from "../hooks/useStore";
 import { create } from "zustand";
 import { type ConnectionStatus } from "./handleSuspendResume";
+import {
+  AreaRegistryEntry,
+  AuthUser,
+  computeAttributeValueDisplay,
+  computeStateDisplay,
+  DeviceRegistryEntry,
+  EntityRegistryDisplayEntry,
+  EntityRegistryEntry,
+  FloorRegistryEntry,
+  FrontendLocaleData,
+  resolveTimeZone,
+  shouldUseAmPm,
+} from "@core";
+import { createDateFormatters, DateFormatters } from "./createDateFormatters";
+import { CurrentUser } from "@utils/subscribe/user";
 export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean> {
   domain: T;
   service: M;
@@ -19,6 +34,10 @@ export interface Route {
   name: string;
   icon: string;
   active: boolean;
+}
+
+export interface SensorNumericDeviceClasses {
+  numeric_device_classes: string[];
 }
 
 export type SupportedComponentOverrides =
@@ -44,8 +63,33 @@ export type SupportedComponentOverrides =
   | "vacuumCard"
   | "alarmCard";
 export interface InternalStore {
+  sensorNumericDeviceClasses: string[];
+  setSensorNumericDeviceClasses: (classes: string[]) => void;
+  /** home assistant instance locale data */
+  locale: FrontendLocaleData | null;
+  setLocale: (locale: FrontendLocaleData | null) => void;
+  /** the device registry from home assistant */
+  devices: Record<string, DeviceRegistryEntry>;
+  setDevices: (devices: Record<string, DeviceRegistryEntry>) => void;
+  /** the entity registry from home assistant */
+  entitiesRegistry: Record<string, EntityRegistryEntry>;
+  setEntitiesRegistry: (entities: Record<string, EntityRegistryEntry>) => void;
+  /** the entity registry display from home assistant */
+  entitiesRegistryDisplay: Record<string, EntityRegistryDisplayEntry>;
+  setEntitiesRegistryDisplay: (entities: Record<string, EntityRegistryDisplayEntry>) => void;
+  /** the area registry from home assistant */
+  areas: Record<string, AreaRegistryEntry>;
+  setAreas: (areas: Record<string, AreaRegistryEntry>) => void;
+  /** the floor registry from home assistant */
+  floors: Record<string, FloorRegistryEntry>;
+  setFloors: (floors: Record<string, FloorRegistryEntry>) => void;
+  /** The entities in the home assistant instance */
   entities: HassEntities;
   setEntities: (entities: HassEntities) => void;
+  /** the home assistant services data */
+  services: HassServices;
+  setServices: (services: HassServices) => void;
+  /** the connection status of your home assistant instance */
   connectionStatus: ConnectionStatus;
   setConnectionStatus: (status: ConnectionStatus) => void;
   /** The connection object from home-assistant-js-websocket */
@@ -70,8 +114,12 @@ export interface InternalStore {
   /** the home assistant authentication object */
   auth: Auth | null;
   setAuth: (auth: Auth | null) => void;
-  user: HassUser | null;
-  setUser: (user: HassUser | null) => void;
+  /** the current authenticated user */
+  user: CurrentUser | null;
+  setUser: (user: CurrentUser | null) => void;
+  /** all users in the home assistant instance */
+  users: AuthUser[];
+  setUsers: (users: AuthUser[]) => void;
   /** the home assistant configuration */
   config: HassConfig | null;
   setConfig: (config: HassConfig | null) => void;
@@ -95,6 +143,21 @@ export interface InternalStore {
   onDisconnect?: (cb: () => void) => void;
   /** internal function which will trigger when the connection disconnects */
   triggerOnDisconnect: () => void;
+  /** convenience helpers to format specific entity attributes, values, dates etc */
+  formatter: {
+    /** will format the state value automatically based on the entity provided */
+    stateValue: (entity: HassEntity) => string;
+    /** will format the attribute value automatically based on the entity and attribute provided */
+    attributeValue: (entity: HassEntity, attribute: string) => string;
+  } & DateFormatters;
+  helpers: {
+    dateTime: {
+      /** determine if the current locale/timezone should use am/pm time format */
+      shouldUseAmPm: () => boolean;
+      /** resolve the correct timezone to use based on locale and config */
+      getTimeZone: () => string;
+    };
+  };
 }
 
 // ignore some keys that we don't actually care about when comparing entities
@@ -107,10 +170,26 @@ const shallowEqual = (entity: HassEntity, other: HassEntity): boolean => {
   return JSON.stringify(restEntity) === JSON.stringify(restOther);
 };
 
-export const useInternalStore = create<InternalStore>((set) => ({
+export const useInternalStore = create<InternalStore>((set, get) => ({
+  sensorNumericDeviceClasses: [],
+  setSensorNumericDeviceClasses: (classes: string[]) => set({ sensorNumericDeviceClasses: classes }),
+  locale: null,
+  setLocale: (locale) => set({ locale }),
   routes: [],
   setRoutes: (routes) => set(() => ({ routes })),
   entities: {},
+  devices: {},
+  setDevices: (devices) => set(() => ({ devices })),
+  entitiesRegistry: {},
+  setEntitiesRegistry: (entities) => set(() => ({ entitiesRegistry: entities })),
+  entitiesRegistryDisplay: {},
+  setEntitiesRegistryDisplay: (entities) => set(() => ({ entitiesRegistryDisplay: entities })),
+  areas: {},
+  setAreas: (areas) => set(() => ({ areas })),
+  floors: {},
+  services: {},
+  setServices: (services: HassServices) => set(() => ({ services })),
+  setFloors: (floors) => set(() => ({ floors })),
   setHassUrl: (hassUrl) => set({ hassUrl }),
   hassUrl: null,
   hash: "",
@@ -155,6 +234,8 @@ export const useInternalStore = create<InternalStore>((set) => ({
   setConfig: (config) => set({ config }),
   user: null,
   setUser: (user) => set({ user }),
+  users: [],
+  setUsers: (users) => set({ users }),
   error: null,
   setError: (error) => set({ error }),
   globalComponentStyles: {},
@@ -166,6 +247,41 @@ export const useInternalStore = create<InternalStore>((set) => ({
       state.disconnectCallbacks.forEach((cb) => cb());
       return { disconnectCallbacks: [] };
     }),
+  helpers: {
+    dateTime: {
+      shouldUseAmPm: () => {
+        const { locale } = get();
+        if (locale) {
+          return shouldUseAmPm(locale);
+        }
+        return true;
+      },
+      getTimeZone() {
+        const { locale, config } = get();
+        if (!config || !locale) {
+          return "UTC";
+        }
+        return resolveTimeZone(locale.time_zone, config.time_zone);
+      },
+    },
+  },
+  formatter: {
+    stateValue: (entity: HassEntity) => {
+      const { config, entitiesRegistryDisplay, locale, sensorNumericDeviceClasses } = get();
+      if (!config || !locale) {
+        return "";
+      }
+      return computeStateDisplay(entity, config, entitiesRegistryDisplay, locale, sensorNumericDeviceClasses, entity.state);
+    },
+    attributeValue: (entity: HassEntity, attribute: string) => {
+      const { config, entitiesRegistryDisplay, locale } = get();
+      if (!config || !locale) {
+        return "";
+      }
+      return computeAttributeValueDisplay(entity, locale, config, entitiesRegistryDisplay, attribute);
+    },
+    ...createDateFormatters(),
+  },
 }));
 
 export interface HassContextProps {
@@ -173,14 +289,6 @@ export interface HassContextProps {
   useStore: UseStoreHook;
   /** logout of HA */
   logout: () => void;
-  /** will retrieve all the HassEntities states */
-  getStates: () => Promise<HassEntity[] | null>;
-  /** will retrieve all the HassServices */
-  getServices: () => Promise<HassServices | null>;
-  /** will retrieve HassConfig */
-  getConfig: () => Promise<HassConfig | null>;
-  /** will retrieve HassUser */
-  getUser: () => Promise<HassUser | null>;
   /** function to call a service through web sockets */
   callService: {
     <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(

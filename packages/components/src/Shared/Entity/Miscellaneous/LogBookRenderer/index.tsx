@@ -1,8 +1,8 @@
-import { HassEntity, HassServices } from "home-assistant-js-websocket";
+import { HassEntity } from "home-assistant-js-websocket";
 import styled from "@emotion/styled";
 import { Row, fallback } from "@components";
 import { css } from "@emotion/react";
-import { useRef, useCallback, useState, useEffect, ComponentPropsWithoutRef } from "react";
+import { useCallback, ComponentPropsWithoutRef } from "react";
 import {
   useLogs,
   useHass,
@@ -154,18 +154,11 @@ function InternalLogBookRenderer({
   ...rest
 }: LogBookRendererProps): React.ReactNode {
   const logs = useLogs(entity, options);
-  const { getServices, joinHassUrl } = useHass();
+  const { joinHassUrl } = useHass();
   const entities = useStore((state) => state.entities);
-  const requestedServices = useRef(false);
-  const [services, setServices] = useState<HassServices | null>(null);
+  const services = useStore((state) => state.services);
   const language = useStore((state) => state.config?.language);
   const device = useDevice(entity);
-
-  useEffect(() => {
-    if (requestedServices.current) return;
-    requestedServices.current = true;
-    getServices().then((services) => setServices(services));
-  }, [services, getServices]);
 
   const _entityClicked = useCallback(
     async (entityId: string | undefined) => {

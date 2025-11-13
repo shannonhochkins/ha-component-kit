@@ -87,9 +87,7 @@ export const _getActionLabel = (
   state: AlarmPanelCardConfigState | "disarm",
   labelMap?: Record<AlarmPanelCardConfigState | "disarm", string>,
 ): string => {
-  return (
-    labelMap?.[state] ?? localize(state === "arm_custom_bypass" ? "options.arm_custom_bypass" : state === 'disarm' ? 'alarm_disarm' : state)
-  );
+  return labelMap?.[state] ?? localize(state === "arm_custom_bypass" ? "arm_custom_bypass" : state === "disarm" ? "disarm" : state);
 };
 
 export const filterSupportedAlarmStates = (

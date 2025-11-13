@@ -1,5 +1,5 @@
 import { Connection, HassEntities, HassEntity, HassConfig, HassEntityAttributeBase, MessageBase } from "home-assistant-js-websocket";
-import { computeDomain, localize } from "@core";
+import { computeDomain, computeStateNameFromEntityAttributes, localize } from "@core";
 import type { EntityName } from "@core";
 
 const DOMAINS_USE_LAST_UPDATED = ["climate", "humidifier", "water_heater"];
@@ -71,12 +71,6 @@ export interface EntityHistoryState {
   /** last_updated */
   lu: number;
 }
-
-/** Compute the object ID of a state. */
-export const computeObjectId = (entityId: string): string => entityId.substr(entityId.indexOf(".") + 1);
-
-export const computeStateNameFromEntityAttributes = (entityId: string, attributes: HassEntity["attributes"]): string =>
-  attributes?.friendly_name === undefined ? computeObjectId(entityId).replace(/_/g, " ") : attributes.friendly_name || "";
 
 export const entityIdHistoryNeedsAttributes = (entityId: EntityName) => NEED_ATTRIBUTE_DOMAINS.includes(computeDomain(entityId));
 interface SubscribeOptions {

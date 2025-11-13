@@ -233,7 +233,7 @@ function InternalCameraCard<E extends FilterByDomain<EntityName, "camera">>({
             setView("motion");
           }}
           active={_view === "motion"}
-          title={`${localize("motion")} ${localize("views_label")}`}
+          title={`${localize("motion")} ${localize("view")}`}
           tooltipPlacement="top"
           rippleProps={{
             preventPropagation: true,
@@ -248,7 +248,7 @@ function InternalCameraCard<E extends FilterByDomain<EntityName, "camera">>({
             setView("poster");
           }}
           active={_view === "poster"}
-          title={`${localize("image")} ${localize("views_label")}`}
+          title={`${localize("image")} ${localize("view")}`}
           tooltipPlacement="top"
           rippleProps={{
             preventPropagation: true,

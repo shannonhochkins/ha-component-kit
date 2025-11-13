@@ -304,7 +304,6 @@ function InternalAlarmControls({
                       }}
                     >
                       <span>{val === "clear" ? localize("clear") : val}</span>
-
                     </ButtonGroupButton>
                   );
                 })}

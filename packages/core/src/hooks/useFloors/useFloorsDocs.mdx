@@ -1,0 +1,38 @@
+import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
+import basicExample from './examples/basic.code?raw';
+import * as Primary from './examples/useFloorsExample.stories';
+import { DummyComponent, DummyComponent2 } from './examples/DummyComponent';
+
+<Meta title="core/hooks/useFloors" parameters={{
+  docs: {
+    page: null,
+  }
+}} />
+
+# useFloors()
+###### `useFloors(): FloorRegistryEntry[] | null`
+
+A custom React hook to subscribe to the Home Assistant floor registry updates.
+
+This hook will return the data or null if not available yet.
+
+- **Dependencies**: This hook requires you to use it within the `HassConnect` component.
+
+### Example Usage
+
+<Source dark code={basicExample} />
+
+#### Outputs
+
+<Canvas of={Primary.PrimaryExample} />
+
+
+### Returned Value
+The following is a valid returned value from the `useFloors` hook:
+
+<ArgTypes of={DummyComponent} />
+
+### FloorRegistryEntry
+The following is the `FloorRegistryEntry` type returned by the `useFloors` hook:
+
+<ArgTypes of={DummyComponent2} />

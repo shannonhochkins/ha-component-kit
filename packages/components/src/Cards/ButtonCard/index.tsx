@@ -12,7 +12,6 @@ import {
   OFF,
   computeDomainTitle,
   computeDomain,
-  type LocaleKeys,
   type HassEntityWithService,
   type ExtractDomain,
   type EntityName,
@@ -194,8 +193,6 @@ export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProp
   title?: ReactNode | null;
   /** The description will naturally fall under the title, by default it will show the information of the entity like the state */
   description?: ReactNode | null;
-  /** override the unit displayed alongside the state if the entity has a unit of measurement */
-  unitOfMeasurement?: ReactNode;
   /** The layout of the button card, mimics the style of HA mushroom cards in slim/slim-vertical @default "default" */
   layoutType?: "default" | "slim" | "slim-vertical";
   /** custom method to render the state however you choose, this will just change how the "suffix" of the title will appear */
@@ -235,11 +232,11 @@ function InternalButtonCard<E extends EntityName>({
   cssStyles,
   key,
   hideToggle = false,
-  unitOfMeasurement,
   customRenderState,
   ...rest
 }: ButtonCardProps<E>): React.ReactNode {
   const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const formatter = useStore((state) => state.formatter);
   const domain = _entity ? computeDomain(_entity) : null;
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
@@ -278,16 +275,11 @@ function InternalButtonCard<E extends EntityName>({
       // static usage without entity
       return active ? `${localize(ON)}` : `${localize(OFF)}`;
     }
-    if (isUnavailable) return localize("unavailable");
     if (entity && entity.state === ON && domain === "light") {
-      // dynamic usage with entity if it's a light
-      return `${entity.custom.brightnessValue}%`;
+      return formatter.attributeValue(entity, "brightness");
     }
     if (entity) {
-      if (entity.attributes.unit_of_measurement) {
-        return `${localize(entity.state as LocaleKeys)}${unitOfMeasurement ?? entity.attributes.unit_of_measurement}`;
-      }
-      return `${localize(entity.state as LocaleKeys)}`;
+      return formatter.stateValue(entity);
     }
     return null;
   }

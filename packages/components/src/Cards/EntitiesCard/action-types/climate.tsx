@@ -1,7 +1,5 @@
 import styled from "@emotion/styled";
-import { localize, computeAttributeValueDisplay, computeStateDisplay, isUnavailableState, OFF, useStore } from "@hakit/core";
-import { HassConfig, Connection } from "home-assistant-js-websocket";
-import { useCallback } from "react";
+import { localize, isUnavailableState, OFF, useStore } from "@hakit/core";
 import { CLIMATE_PRESET_NONE } from "../../../Shared/Entity/Climate/ClimateControls/data";
 import { StateProps } from "./types";
 
@@ -37,31 +35,20 @@ const Wrapper = styled.div`
 `;
 
 export default function ClimateState({ entity, className, ...rest }: StateProps) {
-  const config = useStore((state) => state.config);
-  const entities = useStore((store) => store.entities);
-  const connection = useStore((store) => store.connection);
   const isUnavailable = isUnavailableState(entity.state);
-  const computeAttribute = useCallback(
-    (attribute: string) => computeAttributeValueDisplay(entity, config as HassConfig, entities, attribute),
-    [entity, config, entities],
-  );
-  const computeState = useCallback(
-    () => computeStateDisplay(entity, connection as Connection, config as HassConfig, entities, entity.state),
-    [config, connection, entities, entity],
-  );
-
+  const formatter = useStore((store) => store.formatter);
   const _computeCurrentStatus = (): string | undefined => {
     if (entity.attributes.current_temperature != null && entity.attributes.current_humidity != null) {
-      return `${computeAttribute("current_temperature")}/
-      ${computeAttribute("current_humidity")}`;
+      return `${formatter.attributeValue(entity, "current_temperature")}/
+      ${formatter.attributeValue(entity, "current_humidity")}`;
     }
 
     if (entity.attributes.current_temperature != null) {
-      return computeAttribute("current_temperature");
+      return formatter.attributeValue(entity, "current_temperature");
     }
 
     if (entity.attributes.current_humidity != null) {
-      return computeAttribute("current_humidity");
+      return formatter.attributeValue(entity, "current_humidity");
     }
 
     return undefined;
@@ -72,10 +59,10 @@ export default function ClimateState({ entity, className, ...rest }: StateProps)
       return localize("unavailable");
     }
 
-    const stateString = computeState();
+    const stateString = formatter.stateValue(entity);
 
     if (entity.attributes.hvac_action && entity.state !== OFF) {
-      const actionString = computeAttribute("hvac_action");
+      const actionString = formatter.attributeValue(entity, "hvac_action");
       return `${actionString} (${stateString})`;
     }
 
@@ -84,18 +71,18 @@ export default function ClimateState({ entity, className, ...rest }: StateProps)
 
   const _computeTarget = (): string => {
     if (entity.attributes.target_temp_low != null && entity.attributes.target_temp_high != null) {
-      return `${computeAttribute("target_temp_low")}-${computeAttribute("target_temp_high")}`;
+      return `${formatter.attributeValue(entity, "target_temp_low")}-${formatter.attributeValue(entity, "target_temp_high")}`;
     }
 
     if (entity.attributes.temperature != null) {
-      return computeAttribute("temperature");
+      return formatter.attributeValue(entity, "temperature");
     }
     if (entity.attributes.target_humidity_low != null && entity.attributes.target_humidity_high != null) {
-      return `${computeAttribute("target_humidity_low")}-${computeAttribute("target_humidity_high")}`;
+      return `${formatter.attributeValue(entity, "target_humidity_low")}-${formatter.attributeValue(entity, "target_humidity_high")}`;
     }
 
     if (entity.attributes.humidity != null) {
-      return computeAttribute("humidity");
+      return formatter.attributeValue(entity, "humidity");
     }
 
     return "";
@@ -111,7 +98,7 @@ export default function ClimateState({ entity, className, ...rest }: StateProps)
             <span className="state-label">
               {_localizeState()}
               {entity.attributes.preset_mode && entity.attributes.preset_mode !== CLIMATE_PRESET_NONE ? (
-                <>- {computeAttribute("preset_mode")}</>
+                <>- {formatter.attributeValue(entity, "preset_mode")}</>
               ) : null}
             </span>
             <div className="unit">{_computeTarget()}</div>

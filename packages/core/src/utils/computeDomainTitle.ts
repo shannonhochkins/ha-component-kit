@@ -17,8 +17,7 @@ export const computeDomainTitle = <E extends EntityName | "unknown">(entityId: E
     }
     case "alarm_control_panel":
       return localize("alarm_panel");
-    case "tts":
-      return localize("tts");
+
     case "homeassistant":
       return localize("homeassistant");
     case "lawn_mower":
@@ -61,6 +60,7 @@ export const computeDomainTitle = <E extends EntityName | "unknown">(entityId: E
     case "input_number":
     case "binary_sensor":
     case "persistent_notification":
+    case "tts":
       return localize(`${domain}.title`);
     default: {
       const localized = localize(domain, {

@@ -1,11 +1,10 @@
 import { Menu, FabCard, ButtonBar, ButtonBarButton, fallback } from "@components";
 import type { EntityName, FilterByDomain } from "@hakit/core";
-import { useEntity, useHass, HvacMode, toReadableString, OFF, localize, supportsFeatureFromAttributes, UNAVAILABLE } from "@hakit/core";
+import { useEntity, HvacMode, toReadableString, OFF, localize, supportsFeatureFromAttributes, UNAVAILABLE, useStore } from "@hakit/core";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import styled from "@emotion/styled";
 import { ErrorBoundary } from "react-error-boundary";
 import { css } from "@emotion/react";
-import type { HassConfig } from "home-assistant-js-websocket";
 import {
   ClimateEntityFeature,
   ClimateBuiltInPresetMode,
@@ -90,8 +89,7 @@ function InternalClimateControls({
   const preset_modes = entity.attributes.preset_modes as ClimateBuiltInPresetMode[] | undefined;
   const swing_modes = entity.attributes.swing_modes as ClimateBuiltInSwingMode[] | undefined;
   const modes = hvacModes ?? entity.attributes.hvac_modes;
-  const [config, setConfig] = useState<HassConfig | null>(null);
-  const { getConfig } = useHass();
+  const config = useStore((state) => state.config);
 
   const supportTargetHumidity = supportsFeatureFromAttributes(entity.attributes, ClimateEntityFeature.TARGET_HUMIDITY);
   const supportFanMode = supportsFeatureFromAttributes(entity.attributes, ClimateEntityFeature.FAN_MODE);
@@ -105,10 +103,6 @@ function InternalClimateControls({
     }
     return entityStateChanged(hvac_action ?? "unknown");
   }, [hvac_action, entityStateChanged, isOff]);
-
-  useEffect(() => {
-    getConfig().then(setConfig);
-  }, [getConfig]);
 
   useEffect(() => {
     setMainControl(mainControl);

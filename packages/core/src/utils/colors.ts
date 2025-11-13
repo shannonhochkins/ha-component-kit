@@ -36,10 +36,8 @@ export function getCssColorValue(entity: HassEntity | null) {
   // we round the values here so the change in decimal place doesn't trigger
   // the react render cycle
   const roundedColor = color ? color.map((x) => x.toFixed(0)).map(Number) : null;
-  // TODO - potentially return null here instead, and let @hakit/components determine
-  // the css variables if the value is null
-  // If a user is using @hakit/core, and not the ThemeProvider - these variables will do & mean nothing.
-  // FIX SHANNON, FIX!
+  // TODO - These are hard coded @hakit/component variables, rather than these css variables we should
+  // expose functionality to either provide these values, or return null and let the consuming app provide defaults
   const hexColor = color ? rgb2hex(color) : "var(--ha-A400)";
   const rgbColor = roundedColor ? `rgba(${roundedColor.join(", ")})` : "var(--ha-S500-contrast)";
   const rgbaColor = roundedColor ? `rgba(${[...roundedColor, 0.35].join(", ")})` : "var(--ha-A200)";

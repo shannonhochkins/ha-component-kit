@@ -8,7 +8,7 @@ function UseStoreExample() {
   const config = useStore((store) => store.config);
   const auth = useStore((store) => store.auth);
   const user = useStore((store) => store.user);
-  console.log("data", {
+  console.debug("data", {
     entities,
     connection,
     config,
@@ -16,7 +16,7 @@ function UseStoreExample() {
   });
   // or access the state programmatically
   const state = useStore.getState();
-  console.log("state", state.entities);
+  console.debug("state", state.entities);
   return <p>{JSON.stringify(user, null, 2)}</p>;
 }
 
