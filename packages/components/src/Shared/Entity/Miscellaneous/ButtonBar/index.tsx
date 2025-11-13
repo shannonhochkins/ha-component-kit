@@ -58,6 +58,7 @@ const ButtonBarInner = styled.div<Partial<ButtonBarProps>>`
   width: ${({ fullWidth }) => (fullWidth ? "100%" : "auto")};
   height: ${({ fullHeight }) => (fullHeight ? "100%" : "auto")};
   overflow: hidden;
+  flex-wrap: nowrap;
 
   > * {
     height: 100%;

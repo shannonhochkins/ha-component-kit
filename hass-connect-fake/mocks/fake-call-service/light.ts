@@ -82,40 +82,6 @@ export function lightUpdates({
             state: 'on',
           },
         };
-        // const attributes: LightEntity['attributes'] = {
-        //   ...entities[target].attributes,
-        //   ...serviceData || {},
-        // }
-        // const { hs_color, brightness_pct, rgb_color, color_temp } = serviceData;
-        // if (brightness_pct) {
-        //   attributes.brightness = (255 * brightness_pct) / 100;
-        // } else if (!attributes.brightness) {
-        //   attributes.brightness = 255;
-        // }
-        // if (hs_color) {
-        //   attributes.color_mode = "hs";
-        //   attributes.hs_color = hs_color;
-        // }
-        // if (rgb_color) {
-        //   attributes.color_mode = "rgb";
-        //   attributes.rgb_color = rgb_color;
-        // }
-        // if (color_temp) {
-        //   attributes.color_mode = "color_temp";
-        //   attributes.color_temp = color_temp;
-        //   delete attributes.rgb_color;
-        // }
-        // return {
-        //   ...entities,
-        //   [target]: {
-        //     ...entities[target],
-        //     attributes: {
-        //       ...attributes,
-        //     },
-        //     ...dates,
-        //     state: 'on'
-        //   }
-        // };
       });
   }
   return true;

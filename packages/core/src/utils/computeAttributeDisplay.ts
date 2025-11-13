@@ -172,6 +172,7 @@ export const computeAttributeValueDisplay = (
 
     if (domain === "weather") {
       unit = getWeatherUnit(config, entity as WeatherEntity, attribute);
+      console.log("unit", unit, config.unit_system, entity);
     } else if (TEMPERATURE_ATTRIBUTES.has(attribute)) {
       unit = config.unit_system.temperature;
     }

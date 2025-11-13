@@ -1,28 +1,28 @@
 import { HassConnect } from "hass-connect-fake";
 import { Story } from "@storybook/addon-docs/blocks";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Component } from "./basic.code";
+import { HelperFunctionsExample } from "./helperFunctions.code";
 import { ThemeProvider } from "@hakit/components";
 
-function Primary() {
+function Helpers() {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider />
-      <Component />
+      <HelperFunctionsExample />
     </HassConnect>
   );
 }
 
-const meta: Meta<typeof Primary> = {
-  component: Primary,
+const meta: Meta<typeof Helpers> = {
+  component: Helpers,
 };
 
 export default meta;
-type Story = StoryObj<typeof Primary>;
+type Story = StoryObj<typeof Helpers>;
 
-export const PrimaryExample: Story = {
+export const HelpersExample: Story = {
   args: {
-    label: "PrimaryExample",
+    label: "HelpersExample",
   },
   /*
    * All stories in this file will:

@@ -1,12 +1,15 @@
 import { Source, Meta, ArgTypes, Canvas } from '@storybook/addon-docs/blocks';
 import * as Primary from './examples/primary.stories';
+import * as HelperFunctions from './examples/helper.stories';
 import useStoreExample from './examples/useStore.code?raw';
 import formatterStateValueExample from './examples/formatterStateValue.code?raw';
 import formatterDatesExample from './examples/formatterDates.code?raw';
+import helperFunctionsExample from './examples/helperFunctions.code?raw';
 import storeGlobalStylesExample from './examples/storeGlobalStyles.code?raw';
 import storeProgrammaticExample from './examples/storeProgrammatic.code?raw';
 import { DummyComponent } from './examples/DummyUseStoreComponent';
 import { FormatterDatesExample } from './examples/formatterDates.code';
+import { HelperFunctionsExample } from './examples/helperFunctions.code';
 
 import { Redirect } from '../../../../../stories/helpers/redirect';
 import { DATA_KEYS } from './index';
@@ -31,13 +34,39 @@ Core formatter methods:
 - `formatter.attributeValue(entity, attribute)` – formatted attribute string with automatic unit suffixes (°C, kWh, etc.).
 
 Date & time helpers (all accept `Date | string`, auto-read locale/config, fallback to browser defaults if not ready):
-- `formatDate`, `formatTime`, `formatTimeWithoutAmPm`, `formatAmPmSuffix`
-- `formatDateTime`, `formatDateTimeWithSeconds`
-- `formatShortDateTime`, `formatShortDateTimeWithYear`, `formatShortDateTimeWithConditionalYear`
-- `formatDateTimeWithBrowserDefaults`, `formatDateTimeNumeric`
-- `formatDateWeekdayDay`, `formatDateShort`, `formatDateVeryShort`
-- `formatDateMonthYear`, `formatDateMonth`, `formatDateYear`
-- `formatDateWeekday`, `formatDateWeekdayShort`, `formatDateNumeric`
+
+**Core Time & Date**
+- `formatDate`
+- `formatTime`
+- `formatTimeWithoutAmPm` (forced 24h HH:MM)
+- `formatAmPmSuffix` (localized day period)
+
+**Granular Time Parts**
+- `formatHour` (numeric hour respecting 12/24 preference, no suffix)
+- `formatMinute`
+- `formatSeconds`
+
+**DateTime Composites**
+- `formatDateTime`
+- `formatDateTimeWithSeconds`
+- `formatShortDateTime`
+- `formatShortDateTimeWithYear`
+- `formatShortDateTimeWithConditionalYear`
+
+**Fallback & Numeric**
+- `formatDateTimeWithBrowserDefaults`
+- `formatDateTimeNumeric`
+
+**Date Variants**
+- `formatDateWeekdayDay`
+- `formatDateShort`
+- `formatDateVeryShort`
+- `formatDateMonthYear`
+- `formatDateMonth`
+- `formatDateYear`
+- `formatDateWeekday`
+- `formatDateWeekdayShort`
+- `formatDateNumeric`
 
 > Until `locale` & `config` load, `formatter.stateValue`/`attributeValue` will return an empty string and date helpers will use a safe browser fallback.
 
@@ -49,6 +78,23 @@ Date & time helpers (all accept `Date | string`, auto-read locale/config, fallba
 
 #### Example of above
 <Canvas of={Primary.PrimaryExample} />
+
+### Helpers API
+
+The `helpers` object exposes utility methods that aren't strictly formatting, grouped by concern. Currently available:
+
+#### `helpers.dateTime`
+
+- `getTimeZone()` – resolved timezone after applying user preference (local/server) via `resolveTimeZone`.
+- `shouldUseAmPm()` – boolean indicating if 12h clock (AM/PM) should be used.
+
+These pair with the granular formatter methods (`formatHour`, `formatMinute`, `formatSeconds`, `formatAmPmSuffix`) for building custom time displays.
+
+#### Helper Functions Example
+<Source dark language="ts" code={helperFunctionsExample} />
+
+#### Example Preview
+<Canvas of={HelperFunctions.HelpersExample} />
 
 ### Styling via Store
 You can override component-level styles centrally:

@@ -1,7 +1,8 @@
 import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
 import basicExample from './examples/basic.code?raw';
 import * as Primary from './examples/primary.stories';
-import { DummyComponentReturn } from './examples/DummyComponent';
+import { DummyComponentReturn, DummyComponentReturnFloors, DummyComponentAreas, DummyComponentDevices, DummyComponentServices, DummyComponentEntitiesRegistry, DummyComponentEntitiesRegistryDisplay } from './examples/DummyComponent';
+
 
 <Meta title="core/hooks/useRegistryData" parameters={{
   docs: {
@@ -62,7 +63,42 @@ Type narrowing occurs automatically. Hover over `entitiesRegistry` in your edito
 <Canvas of={Primary.PrimaryExample} />
 
 
-### Returned Value (Storybook ArgTypes)
-Below ArgTypes reflect the example component’s inferred props; for direct usage prefer the examples above.
+### Returned Value
+This hook returns a list of registry data based on the provided type:
 
 <ArgTypes of={DummyComponentReturn} />
+
+### FloorRegistryEntry
+The following is the `FloorRegistryEntry` type returned by the `useRegistryData` hook when using the type "floors":
+<ArgTypes of={DummyComponentReturnFloors} />
+
+### AreaRegistryEntry
+The following is the `AreaRegistryEntry` type returned by the `useRegistryData` hook when using the type "areas":
+<ArgTypes of={DummyComponentAreas} />
+
+### DeviceRegistryEntry
+The following is the `DeviceRegistryEntry` type returned by the `useRegistryData` hook when using the type "devices":
+<ArgTypes of={DummyComponentDevices} />
+
+### ServiceDefinition
+The following is the `HassServices` type returned by the `useRegistryData` hook when using the type "services", services are returned in the following format:
+
+<Source dark language="ts" code={`
+export type HassServices = {
+  [domain: string]: {
+    [service_name: string]: HassService;
+  }
+};
+`} />
+
+A `HassService` is defined as:
+
+<ArgTypes of={DummyComponentServices} />
+
+### EntityRegistryEntry
+The following is the `EntityRegistryEntry` type returned by the `useRegistryData` hook when using the type "entitiesRegistry":
+<ArgTypes of={DummyComponentEntitiesRegistry} />
+
+### EntityRegistryDisplayEntry
+The following is the `EntityRegistryDisplayEntry` type returned by the `useRegistryData` hook when using the type "entitiesRegistryDisplay":
+<ArgTypes of={DummyComponentEntitiesRegistryDisplay} />

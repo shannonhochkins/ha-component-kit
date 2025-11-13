@@ -28,7 +28,6 @@ export const shouldUseAmPm = (locale: FrontendLocaleData): boolean => {
     const test = new Date("January 1, 2023 22:00:00").toLocaleString(testLanguage);
     return test.includes("10");
   }
-
   return locale.time_format === TimeFormat.am_pm;
 };
 
@@ -143,15 +142,45 @@ const timeFormatterMem = singleEntryMemo(
     }),
 );
 
-// Always returns 24h time without an AM/PM suffix regardless of locale time preference.
-// We intentionally only respect timezone here: language does not influence output because it's numeric.
+// 24h time (HH:MM) without any day period suffix, always forcing hourCycle h23 but still honoring
+// the user's chosen timezone preference (locale.time_zone vs server time zone). Language is passed
+// purely for consistency but does not materially affect numeric output.
 const timeWithoutAmPmFormatterMem = singleEntryMemo(
-  (serverTZ: string) =>
-    new Intl.DateTimeFormat(undefined, {
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
       hour: "2-digit",
       minute: "2-digit",
       hourCycle: "h23",
-      timeZone: serverTZ,
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+// Hour-only formatter respecting 12/24 preference. For 12h locales returns values like "5 PM",
+// for 24h preference returns zero-padded "17" (no suffix). Minute component intentionally omitted.
+const hourOnlyFormatterMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      hour: shouldUseAmPm(locale) ? "numeric" : "2-digit",
+      hourCycle: shouldUseAmPm(locale) ? "h12" : "h23",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+// Minute-only formatter (always 2-digit) respecting timezone
+const minuteOnlyFormatterMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      minute: "2-digit",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+// Second-only formatter (always 2-digit) respecting timezone
+const secondOnlyFormatterMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      second: "2-digit",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
     }),
 );
 
@@ -309,8 +338,27 @@ export const formatDate = (dateObj: Date, config: HassConfig, locale: FrontendLo
 export const formatTime = (dateObj: Date, config: HassConfig, locale: FrontendLocaleData) =>
   timeFormatterMem(locale, config.time_zone).format(dateObj);
 
-/** Format a time forcing 24h cycle (HH:MM) without an AM/PM suffix, ignoring user 12h preference. */
-export const formatTimeWithoutAmPm = (dateObj: Date, config: HassConfig) => timeWithoutAmPmFormatterMem(config.time_zone).format(dateObj);
+/** Format a time forcing 24h cycle (HH:MM) without an AM/PM suffix, ignoring user 12h preference but honoring timezone preference. */
+export const formatTimeWithoutAmPm = (dateObj: Date, config: HassConfig, locale: FrontendLocaleData) =>
+  timeWithoutAmPmFormatterMem(locale, config.time_zone).format(dateObj);
+
+/** Hour numeric only respecting 12/24 preference (no suffix). e.g. "5" or "17" */
+export const formatHour = (dateObj: Date, config: HassConfig, locale: FrontendLocaleData) => {
+  const parts = hourOnlyFormatterMem(locale, config.time_zone).formatToParts(dateObj);
+  return parts.find((p) => p.type === "hour")?.value || "";
+};
+
+/** Minute numeric only (zero-padded, e.g. "07") */
+export const formatMinute = (dateObj: Date, config: HassConfig, locale: FrontendLocaleData) => {
+  const parts = minuteOnlyFormatterMem(locale, config.time_zone).formatToParts(dateObj);
+  return parts.find((p) => p.type === "minute")?.value || "";
+};
+
+/** Seconds numeric only (zero-padded, e.g. "09") */
+export const formatSeconds = (dateObj: Date, config: HassConfig, locale: FrontendLocaleData) => {
+  const parts = secondOnlyFormatterMem(locale, config.time_zone).formatToParts(dateObj);
+  return parts.find((p) => p.type === "second")?.value || "";
+};
 
 /** Long date & time without seconds e.g. "August 9, 2021, 8:23 AM" */
 export const formatDateTime = (dateObj: Date, config: HassConfig, locale: FrontendLocaleData) =>

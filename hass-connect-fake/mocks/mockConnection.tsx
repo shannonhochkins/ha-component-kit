@@ -30,11 +30,6 @@ export const mocked = {
       expired: false,
     }
   },
-  async getConfig() {
-    return {
-      time_zone: 'Australia/Sydney'
-    }
-  },
   async createConnection() {
     return connection;
   },

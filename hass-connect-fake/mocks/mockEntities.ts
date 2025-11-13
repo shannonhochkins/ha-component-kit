@@ -316,7 +316,11 @@ export const entities: HassEntities = {
   }),
   ...createCalendar("calendar.google_calendar"),
   ...createCalendar("calendar.another_google_calendar"),
-  ...createWeather("weather.entity"),
+  ...createWeather("weather.entity", {
+    attributes: {
+      apparent_temperature: 22
+    }
+  }),
   ...createWeather("weather.openweathermap", openWeatherFixture),
   ...createClimate("climate.air_conditioner"),
   ...createClimate("climate.unavailable", {

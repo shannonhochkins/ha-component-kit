@@ -1,7 +1,7 @@
 import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
 import basicExample from './examples/basic.code?raw';
-import * as Primary from './examples/primary.stories';
-import { DummyComponentReturn } from './examples/DummyComponent';
+import * as Primary from './examples/useFloorsExample.stories';
+import { DummyComponent, DummyComponent2 } from './examples/DummyComponent';
 
 <Meta title="core/hooks/useFloors" parameters={{
   docs: {
@@ -30,4 +30,9 @@ This hook will return the data or null if not available yet.
 ### Returned Value
 The following is a valid returned value from the `useFloors` hook:
 
-<ArgTypes of={DummyComponentReturn} />
+<ArgTypes of={DummyComponent} />
+
+### FloorRegistryEntry
+The following is the `FloorRegistryEntry` type returned by the `useFloors` hook:
+
+<ArgTypes of={DummyComponent2} />

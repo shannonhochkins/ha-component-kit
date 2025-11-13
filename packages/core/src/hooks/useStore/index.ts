@@ -29,6 +29,7 @@ export const DATA_KEYS = [
   "floors",
   "services",
   "formatter",
+  "helpers",
   "locale",
   "sensorNumericDeviceClasses",
 ] satisfies (keyof InternalStore)[];

@@ -10,6 +10,9 @@ export function FormatterDatesExample() {
       <p>
         24h Time + Suffix: {formatter.formatTimeWithoutAmPm(now)} {formatter.formatAmPmSuffix(now)}
       </p>
+      <p>Hour Only: {formatter.formatHour(now)}</p>
+      <p>Minute Only: {formatter.formatMinute(now)}</p>
+      <p>Seconds Only: {formatter.formatSeconds(now)}</p>
       <p>DateTime: {formatter.formatDateTime(now)}</p>
       <p>DateTime (Seconds): {formatter.formatDateTimeWithSeconds(now)}</p>
       <p>Short DateTime: {formatter.formatShortDateTime(now)}</p>

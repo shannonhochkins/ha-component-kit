@@ -4,7 +4,7 @@ import filteringExample from './examples/filtering.code?raw';
 import * as Primary from './examples/primary.stories';
 import { redirectToStory } from '../../../../../.storybook/redirect';
 
-import { DummyComponent, DummyComponentAuthUser } from './examples/DummyComponent';
+import { DummyComponent, DummyComponentAuthUser, DummyComponentUseUsersOptions } from './examples/DummyComponent';
 
 <Meta title="core/hooks/useUsers" parameters={{
   docs: {
@@ -17,9 +17,9 @@ import { DummyComponent, DummyComponentAuthUser } from './examples/DummyComponen
 
 Returns a filtered array of Home Assistant users from the internal store. No loading or error state is exposed; if users have not been fetched yet an empty array is returned. Filtering happens client-side.
 
-Options:
-- `includeSystemGenerated` (default false): include system/service accounts.
-- `includeInactiveUsers` (default false): include disabled users.
+### Options
+
+<ArgTypes of={DummyComponentUseUsersOptions} />
 
 Updates are applied when the provider refreshes its user store (e.g. on initial load). There is no live push subscription for user list changes; to see external changes reload the page or implement a manual refresh routine.
 

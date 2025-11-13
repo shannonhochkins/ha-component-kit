@@ -20,6 +20,9 @@ import {
   formatDateNumeric,
   formatTimeWithoutAmPm,
   formatAmPmSuffix,
+  formatHour,
+  formatMinute,
+  formatSeconds,
 } from "@core";
 
 /**
@@ -35,10 +38,16 @@ export interface DateFormatters {
   formatDate(date: Date | string): string;
   /** Time respecting 12/24 preference (e.g. "8:23 AM" or "08:23") */
   formatTime(date: Date | string): string;
-  /** Time without AM/PM regardless of user preference (forced 24h HH:MM) */
+  /** Time without AM/PM regardless of user preference is set to 12 or 24 hours */
   formatTimeWithoutAmPm(date: Date | string): string;
+  /** Hour numeric only respecting 12/24 preference (no suffix, e.g. "5" or "17") */
+  formatHour(date: Date | string): string;
   /** Localized AM/PM (day period) suffix irrespective of user 24h preference */
   formatAmPmSuffix(date: Date | string): string;
+  /** Minute numeric only (e.g. "07") */
+  formatMinute(date: Date | string): string;
+  /** Seconds numeric only (e.g. "09") */
+  formatSeconds(date: Date | string): string;
   /** Long date & time without seconds (e.g. "August 9, 2025, 8:23 AM") */
   formatDateTime(date: Date | string): string;
   /** Long date & time with seconds (e.g. "August 9, 2025, 8:23:15 AM") */
@@ -107,12 +116,22 @@ export function createDateFormatters(): DateFormatters {
   /** Time without AM/PM */
   const formatTimeWithoutAmPmWrapper = (value: Date | string) => {
     const d = toDate(value);
-    const { config } = getCtx();
-    if (!config) {
+    const { locale, config } = getCtx();
+    if (!locale || !config) {
       // simple 24h fallback
       return `${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
     }
-    return formatTimeWithoutAmPm(d, config);
+    return formatTimeWithoutAmPm(d, config, locale);
+  };
+  /** Hour only respecting 12/24 preference */
+  const formatHourWrapper = (value: Date | string) => {
+    const d = toDate(value);
+    const { locale, config } = getCtx();
+    if (!locale || !config) {
+      // Fallback: 24h hour without suffix
+      return d.getHours().toString().padStart(2, "0");
+    }
+    return formatHour(d, config, locale);
   };
   /** AM/PM suffix only */
   const formatAmPmSuffixWrapper = (value: Date | string) => {
@@ -120,6 +139,20 @@ export function createDateFormatters(): DateFormatters {
     const { locale, config } = getCtx();
     if (!locale || !config) return d.getHours() >= 12 ? "PM" : "AM";
     return formatAmPmSuffix(d, locale, config);
+  };
+  /** Minute only */
+  const formatMinuteWrapper = (value: Date | string) => {
+    const d = toDate(value);
+    const { locale, config } = getCtx();
+    if (!locale || !config) return d.getMinutes().toString().padStart(2, "0");
+    return formatMinute(d, config, locale);
+  };
+  /** Seconds only */
+  const formatSecondsWrapper = (value: Date | string) => {
+    const d = toDate(value);
+    const { locale, config } = getCtx();
+    if (!locale || !config) return d.getSeconds().toString().padStart(2, "0");
+    return formatSeconds(d, config, locale);
   };
   /** Long date & time without seconds */
   const formatDateTimeWrapper = (value: Date | string) => {
@@ -235,7 +268,10 @@ export function createDateFormatters(): DateFormatters {
     formatDate: formatDateWrapper,
     formatTime: formatTimeWrapper,
     formatTimeWithoutAmPm: formatTimeWithoutAmPmWrapper,
+    formatHour: formatHourWrapper,
     formatAmPmSuffix: formatAmPmSuffixWrapper,
+    formatMinute: formatMinuteWrapper,
+    formatSeconds: formatSecondsWrapper,
     formatDateTime: formatDateTimeWrapper,
     formatDateTimeWithSeconds: formatDateTimeWithSecondsWrapper,
     formatShortDateTime: formatShortDateTimeWrapper,

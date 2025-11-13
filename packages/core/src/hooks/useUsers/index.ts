@@ -3,9 +3,9 @@ import { useStore } from "../useStore";
 import { useMemo } from "react";
 
 export type UseUsersOptions = {
-  /** Include system generated users (like internal service accounts). Default false. */
+  /** Include system generated users (like internal service accounts). @default false. */
   includeSystemGenerated?: boolean;
-  /** Include inactive (disabled) users. Default false. */
+  /** Include inactive (disabled) users. @default false. */
   includeInactiveUsers?: boolean;
 };
 

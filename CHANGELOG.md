@@ -3,14 +3,17 @@
 ### @#hakit/components
 - BUGFIX - LightControls - Fixed bugs relating to the control slider, fixed issue where brightness value wasn't aligning with the slider position and value of the entity, fixed issue where lights that don't support color, temp, brightness would not render a "switch" to control the light on/off state.
 - NEW - LightControls - Added support for "favorites" similar to how home assistant displays, we do not have the management of favorite colors via the UI here as home assistant does.
-- BUGFIX - Weather Card - updated hard coded "feels like" to use "apparent temperatre" locale, localizing state value
+- BUGFIX - Weather Card - updated hard coded "feels like" to use "apparent temperature" locale, localizing state value
+- IMPROVEMENT - Weather Card - Updated some styling issues and layout issues for smaller devices, moved apparent temperature to be in the weather details section automatically when available, locale updates for state values and attributes
 - IMPROVEMENT - Updated a few other components to use the new locale keys
 - BREAKING / BUGFIX - TimeCard - Fixing unexpected lag when no entity option is used, falls behind by up to 30seconds in some cases, now uses browser time directly when no entity is provided. Removed default "entity" assignment if it's available, now users will have to opt into using an entity if they want to use one (breaking change), all dates when using non entity flow are now timezone/language/locale aware using the new locale services.
+- IMPROVEMENT - ButtonCard - Updated to use new formatters to format attribute/state values correctly
 - BREAKING - ButtonCard - unitOfMeasurement prop removed, now that we're formatting the same as home assistant, it will respect the users settings for units automatically, if you were using this prop, you will have to remove it and let the component handle the formatting automatically.
 
 ### @hakit/core
 - BREAKING -Refactoring all logic around locale generation, locale keys have changed, values will change as users reported a few inconsistencies with home assistant locale values, if you're using the locale services directly you may have to update some keys, all types have been updated accordingly so you should get type errors once upgrading.
-- BREAKING - useHass - getConfig, getServices, getUser, getStates methods have been removed, this information is now pre-fetched, and will automatically update whenever any of the information changes, you can access this information via the `useStore` hook to subscribe, and retrieve programmatically `const user = useStore(state => state.user);` or to get a snapshot `const user = useStore.getState().user;`
+- BREAKING - useHass - The methods - `getConfig`, `getServices`, `getUser`, `getStates` have been removed, this information is now pre-fetched, and will automatically update whenever any of the information changes, you can access this information via the `useStore` hook to subscribe, and retrieve programmatically `const user = useStore(state => state.user);` or to get a snapshot `const user = useStore.getState().user;`
+- BREAKING - useUsers - options passed to this hook have changed, `refetch` function has been removed, and you now just pass the filtering options directly.
 - NEW - useLocalData - A new hook to subscribe to locale data updates from home assistant, this includes language, number and date formatting.
 - NEW - useRegistryData - A new hook to subscribe to registry data updates from home assistant for entities, devices, areas, floors and more
 - NEW - useFloors - A new hook to subscribe to floor registry data from home assistant

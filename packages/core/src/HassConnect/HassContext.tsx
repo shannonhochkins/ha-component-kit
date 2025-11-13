@@ -16,6 +16,8 @@ import {
   EntityRegistryEntry,
   FloorRegistryEntry,
   FrontendLocaleData,
+  resolveTimeZone,
+  shouldUseAmPm,
 } from "@core";
 import { createDateFormatters, DateFormatters } from "./createDateFormatters";
 import { CurrentUser } from "@utils/subscribe/user";
@@ -148,6 +150,14 @@ export interface InternalStore {
     /** will format the attribute value automatically based on the entity and attribute provided */
     attributeValue: (entity: HassEntity, attribute: string) => string;
   } & DateFormatters;
+  helpers: {
+    dateTime: {
+      /** determine if the current locale/timezone should use am/pm time format */
+      shouldUseAmPm: () => boolean;
+      /** resolve the correct timezone to use based on locale and config */
+      getTimeZone: () => string;
+    };
+  };
 }
 
 // ignore some keys that we don't actually care about when comparing entities
@@ -237,7 +247,24 @@ export const useInternalStore = create<InternalStore>((set, get) => ({
       state.disconnectCallbacks.forEach((cb) => cb());
       return { disconnectCallbacks: [] };
     }),
-
+  helpers: {
+    dateTime: {
+      shouldUseAmPm: () => {
+        const { locale } = get();
+        if (locale) {
+          return shouldUseAmPm(locale);
+        }
+        return true;
+      },
+      getTimeZone() {
+        const { locale, config } = get();
+        if (!config || !locale) {
+          return "UTC";
+        }
+        return resolveTimeZone(locale.time_zone, config.time_zone);
+      },
+    },
+  },
   formatter: {
     stateValue: (entity: HassEntity) => {
       const { config, entitiesRegistryDisplay, locale, sensorNumericDeviceClasses } = get();
