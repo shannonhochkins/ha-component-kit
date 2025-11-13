@@ -20,7 +20,7 @@ export function useSubscribeEntity(entityId: EntityName): GetEntityFn {
         if (returnNullIfNotFound) {
           return null;
         }
-        throw new Error(`${localize("common.entity_not_found")} - "${entityId}"`);
+        throw new Error(`${localize("entity_not_found")} - "${entityId}"`);
       }
       return entity;
     },

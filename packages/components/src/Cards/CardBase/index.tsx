@@ -473,7 +473,7 @@ const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicEl
             ) : graphEntity.history.coordinates.length > 0 ? (
               <SvgGraph coordinates={graphEntity.history.coordinates} {...graph?.props} />
             ) : (
-              <Alert className={"no-state-history"} description={localize("history_charts.no_history_found")} />
+              <Alert className={"no-state-history"} description={localize("no_state_history_found")} />
             )}
           </div>
         )}

@@ -256,7 +256,7 @@ export default {
     docs: {
       page: () => <Page />,
       description: {
-        component: `A hook/helper that will retrieve available locales for your current language which are automatically retrieved from Home Assistant.`,
+        component: `A hook/helper that will retrieve available locales for your current language which are automatically retrieved from Home Assistant. Keys themselves are canonical English identifiers (e.g. "light") but when resolved they return the localized value from your Home Assistant instance (so in a German setup "light" becomes "Licht"). This lets you code against stable English keys while displaying the correct language to your users without any extra work.`,
       },
     },
   },

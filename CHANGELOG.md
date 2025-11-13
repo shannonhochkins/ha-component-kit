@@ -14,6 +14,7 @@
 - BREAKING -Refactoring all logic around locale generation, locale keys have changed, values will change as users reported a few inconsistencies with home assistant locale values, if you're using the locale services directly you may have to update some keys, all types have been updated accordingly so you should get type errors once upgrading.
 - BREAKING - useHass - The methods - `getConfig`, `getServices`, `getUser`, `getStates` have been removed, this information is now pre-fetched, and will automatically update whenever any of the information changes, you can access this information via the `useStore` hook to subscribe, and retrieve programmatically `const user = useStore(state => state.user);` or to get a snapshot `const user = useStore.getState().user;`
 - BREAKING - useUsers - options passed to this hook have changed, `refetch` function has been removed, and you now just pass the filtering options directly.
+- NEW - useHistory - Updated useHistory subscriptions to match latest logic with home assistant, added new options to support numeric histories and splitting by device class.
 - NEW - useLocalData - A new hook to subscribe to locale data updates from home assistant, this includes language, number and date formatting.
 - NEW - useRegistryData - A new hook to subscribe to registry data updates from home assistant for entities, devices, areas, floors and more
 - NEW - useFloors - A new hook to subscribe to floor registry data from home assistant

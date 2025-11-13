@@ -214,7 +214,7 @@ function InternalCameraCard<E extends FilterByDomain<EntityName, "camera">>({
             setView("live");
           }}
           active={_view === "live"}
-          title={localize("stream.preload_stream")}
+          title={localize("preload_camera_stream")}
           tooltipPlacement="top"
           rippleProps={{
             preventPropagation: true,

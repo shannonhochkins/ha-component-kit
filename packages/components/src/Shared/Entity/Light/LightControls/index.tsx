@@ -303,7 +303,7 @@ function InternalLightControls({
         <ButtonBar>
           {/* Power button only when brightness supported (HA pattern) */}
           {supportsBrightness && (
-            <Tooltip title={entity.state === OFF ? localize("turn_on.name") : localize("turn_off")}>
+            <Tooltip title={entity.state === OFF ? localize("turn_on") : localize("turn_off")}>
               <FabCard
                 icon="mdi:power"
                 onClick={() => {

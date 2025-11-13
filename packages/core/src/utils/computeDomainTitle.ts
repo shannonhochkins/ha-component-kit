@@ -17,19 +17,30 @@ export const computeDomainTitle = <E extends EntityName | "unknown">(entityId: E
     }
     case "alarm_control_panel":
       return localize("alarm_panel");
-
-    case "homeassistant":
-      return localize("homeassistant");
     case "lawn_mower":
-      return localize("lawn_mower_commands.label");
+      return localize("lawn_mower_commands");
     case "datetime":
-      return localize("datetime.name");
+      return localize("date_time");
     case "alert":
       return localize("alert_classes");
     case "water_heater":
       return `${localize("water")} ${localize("heat")}`;
     case "logbook":
       return localize("activity");
+    case "homeassistant":
+      return localize("home_assistant");
+    // exact matches
+    case "weather":
+    case "sun":
+    case "binary_sensor":
+    case "timer":
+    case "counter":
+    case "automation":
+    case "input_select":
+    case "device_tracker":
+    case "media_player":
+    case "input_number":
+      return localize(domain);
     case "stt":
     case "google":
     case "reolink":
@@ -37,30 +48,23 @@ export const computeDomainTitle = <E extends EntityName | "unknown">(entityId: E
     case "zha":
     case "vacuum":
       return startCase(lowerCase(domain));
-    case "input_select":
-    case "recorder":
-    case "conversation":
-    case "rest_command":
-    case "cloud":
-    case "hassio":
     case "frontend":
-    case "file":
-    case "profiler":
+    case "conversation":
+    case "hassio":
+    case "command_line":
     case "onvif":
+    case "rest_command":
     case "system_log":
     case "media_extractor":
-    case "command_line":
-    case "device_tracker":
-    case "sun":
-    case "weather":
-    case "timer":
-    case "counter":
-    case "automation":
-    case "media_player":
-    case "input_number":
-    case "binary_sensor":
+    case "file":
     case "persistent_notification":
+    case "cloud":
+    case "profiler":
+    case "recorder":
+    case "logger":
     case "tts":
+    case "backup":
+    case "climate":
       return localize(`${domain}.title`);
     default: {
       const localized = localize(domain, {

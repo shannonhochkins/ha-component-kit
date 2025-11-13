@@ -2,7 +2,6 @@ import { useEffect, useState, useMemo, useRef } from "react";
 import type { EntityName } from "@core";
 import { useSubscribeEntity } from "../useSubscribeEntity";
 import { useStore } from "../useStore";
-import { HassEntities, HassConfig } from "home-assistant-js-websocket";
 import { subscribeHistory, computeHistory } from "./history";
 import type { TimelineState, EntityHistoryState, HistoryStates } from "./history";
 import { coordinatesMinimalResponseCompressedState } from "./coordinates";
@@ -35,10 +34,13 @@ export interface HistoryOptions {
   };
   /** disable the history subscription @default false */
   disable?: boolean;
+  /** force the history to assume the values received in history are numeric */
+  forceNumeric?: boolean;
+  /** split groups by device class */
+  splitDeviceClasses?: boolean;
 }
 export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
   const connection = useStore((state) => state.connection);
-  const config = useStore((state) => state.config);
   const subscribed = useRef(false);
   const getEntity = useSubscribeEntity(entityId);
   const [historyStates, setHistoryStates] = useState<HistoryStates>({});
@@ -61,8 +63,18 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
       minimalResponse: options?.minimalResponse,
       hoursToShow: options?.hoursToShow,
       limits: options?.limits,
+      forceNumeric: options?.forceNumeric,
+      splitDeviceClasses: options?.splitDeviceClasses,
     };
-  }, [options?.disable, options?.significantChangesOnly, options?.minimalResponse, options?.hoursToShow, options?.limits]);
+  }, [
+    options?.disable,
+    options?.significantChangesOnly,
+    options?.minimalResponse,
+    options?.hoursToShow,
+    options?.limits,
+    options?.forceNumeric,
+    options?.splitDeviceClasses,
+  ]);
 
   useEffect(() => {
     if (!connection || memoizedOptions?.disable) return;
@@ -100,10 +112,7 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
     if (subscribed.current) {
       const entity = getEntity(true);
       if (!entity) return;
-      const entities = {
-        [entityId]: entity,
-      } satisfies HassEntities;
-      const computedHistory = computeHistory(config as HassConfig, entities, historyStates);
+      const computedHistory = computeHistory(entity, historyStates, memoizedOptions.forceNumeric, memoizedOptions?.splitDeviceClasses);
       const matchedHistory = computedHistory.timeline.filter(({ entity_id }) => entity_id === entityId);
       const coordinates =
         coordinatesMinimalResponseCompressedState(
@@ -121,7 +130,7 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
         coordinates,
       });
     }
-  }, [entityId, config, memoizedOptions, getEntity, historyStates]);
+  }, [entityId, memoizedOptions, getEntity, historyStates]);
 
   return useMemo(() => history, [history]);
 };

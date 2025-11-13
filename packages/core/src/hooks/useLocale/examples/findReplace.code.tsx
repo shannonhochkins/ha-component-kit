@@ -4,7 +4,7 @@ export function MyComponent() {
   const camera = useCamera("camera.mycamera");
   return (
     <>
-      {localize("messages.changed_to_state", {
+      {localize("changed_to_state", {
         search: "{state}",
         replace: camera.state,
         fallback: "Camera is not available", // this will be used if \`changed_to_state\` is not available in the locales

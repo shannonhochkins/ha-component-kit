@@ -49,7 +49,7 @@ const ALARM_STATE_TO_MODE_MAP: Record<AlarmMode | "disarm", LocaleKeys> = {
   armed_away: "arm_away",
   armed_night: "arm_night",
   armed_vacation: "arm_vacation",
-  armed_custom_bypass: "arm_custom_bypass",
+  armed_custom_bypass: "custom_bypass",
   disarmed: "disarmed",
   disarm: "disarm",
   triggered: "pending",
