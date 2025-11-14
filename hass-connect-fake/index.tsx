@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useEffect, type ReactNode } from "react";
-import type { HassEntities, HassConfig, Auth, HaWebSocket, MessageBase } from "home-assistant-js-websocket";
+import type { HassEntities, HassEntity, HassConfig, Auth, HaWebSocket, MessageBase } from "home-assistant-js-websocket";
 import { Connection } from "home-assistant-js-websocket";
 import type {
   DomainService,
@@ -10,6 +10,8 @@ import type {
   ServiceResponse,
   AuthUser,
   ExtEntityRegistryEntry,
+  InternalStore,
+  EntityRegistryDisplayEntry,
 } from "@hakit/core";
 import { isArray } from "lodash";
 import { useShallow } from "zustand/shallow";
@@ -22,7 +24,6 @@ import { mockCallApi } from "./mocks/fake-call-api";
 import reolinkSnapshot from "./assets/reolink-snapshot.jpg";
 import { logs } from "./mocks/mockLogs";
 import { dailyForecast, hourlyForecast } from "./mocks/mockWeather";
-import type { InternalStore } from "packages/core/dist/types/HassConnect/HassContext";
 interface HassProviderProps {
   children: (ready: boolean) => ReactNode;
   hassUrl: string;
@@ -244,6 +245,70 @@ class MockConnection extends Connection {
 }
 
 const originalStore = useStore.getState() as InternalStore;
+// build a registry display map for every entity so hooks like useAreas/useFloors can
+// resolve direct + inherited area relationships. We intentionally mix:
+//  - direct area assignments
+//  - indirect (via device only, area_id null)
+//  - fully unassigned (no area on entity or device)
+// This allows demos to showcase the synthetic "Unassigned" floor bucket and
+// inheritance logic (entity.area_id || device.area_id).
+const entitiesEntries = Object.entries(ENTITIES) as [string, HassEntity][];
+const entitiesRegistryDisplay = entitiesEntries.reduce<Record<string, EntityRegistryDisplayEntry>>(
+  (acc, [entityId, entity], index) => {
+    // decide mapping pattern based on index for variety (include miscellaneous unassigned-floor area_5)
+    const mod = index % 8;
+    let device_id: string;
+    let area_id: string | null = null;
+    switch (mod) {
+      case 0:
+        device_id = "device_camera1";
+        area_id = "area_1"; // direct assignment
+        break;
+      case 1:
+        device_id = "device_light1";
+        area_id = "area_2"; // direct assignment
+        break;
+      case 2:
+        device_id = "device_tv1"; // inherits area_3 via device
+        // area_id stays null
+        break;
+      case 3:
+        device_id = "device_office1"; // inherits area_4 via device
+        break;
+      case 4:
+        device_id = "device_unassigned1"; // completely unassigned
+        break;
+      case 5:
+        device_id = "device_tv1";
+        area_id = "area_3"; // direct assignment on top of device mapping
+        break;
+      case 6:
+        device_id = "device_office1";
+        area_id = "area_4"; // direct assignment
+        break;
+      case 7:
+      default:
+        device_id = "device_misc1"; // inherits area_5 (no floor)
+        // area_id stays null so inheritance logic shows under Unassigned floor
+        break;
+    }
+    acc[entityId] = {
+      entity_id: entityId,
+      platform: "mock",
+      name: entity?.attributes?.friendly_name ?? entityId,
+      device_id,
+      icon: entity?.attributes?.icon ?? "",
+      area_id: area_id ?? undefined, // undefined when not directly assigned
+      has_entity_name: true,
+      translation_key: "",
+      labels: [],
+      entity_category: undefined,
+    };
+    return acc;
+  },
+  {},
+);
+
 useStore.setState({
   hash: "",
   routes: [],
@@ -265,34 +330,232 @@ useStore.setState({
       icon: null,
       aliases: [],
       created_at: 0,
-      modified_at: 0
-    }
-  },
-  entitiesRegistry: {
-    "camera.fake_camera_1": {
-      entity_id: "camera.fake-reolink-1",
-      platform: "Reo link",
-      name: "Fake Camera 1",
-      device_id: "device_1",
-      id: "fake_camera_1_id",
-      icon: "mdi:camera",
-      config_entry_id: "fake_config_entry_id",
-      config_subentry_id: null,
-      area_id: null,
-      disabled_by: null,
-      hidden_by: null,
-      has_entity_name: true,
-      original_name: "Fake Camera 1",
-      translation_key: "",
-      unique_id: "fake_camera_1_unique_id",
-      options: {},
-      categories: {},
-      labels: [],
-      entity_category: null,
-      created_at: Date.now(),
-      modified_at: Date.now(),
+      modified_at: 0,
+    },
+    floor_2: {
+      floor_id: "floor_2",
+      name: "Upstairs",
+      level: 1,
+      icon: null,
+      aliases: [],
+      created_at: 0,
+      modified_at: 0,
     },
   },
+  devices: {
+    device_camera1: {
+      config_entries: [],
+      connections: [],
+      id: "device_camera1",
+      config_entries_subentries: {},
+      identifiers: [],
+      manufacturer: null,
+      model: null,
+      model_id: null,
+      name: "Reolink Camera",
+      labels: [],
+      sw_version: null,
+      hw_version: null,
+      serial_number: null,
+      via_device_id: null,
+      area_id: "area_1",
+      name_by_user: null,
+      entry_type: null,
+      disabled_by: null,
+      configuration_url: null,
+      primary_config_entry: null,
+      created_at: 0,
+      modified_at: 0,
+    },
+    device_light1: {
+      config_entries: [],
+      connections: [],
+      id: "device_light1",
+      config_entries_subentries: {},
+      identifiers: [],
+      manufacturer: null,
+      model: null,
+      model_id: null,
+      name: "Dining Light",
+      labels: [],
+      sw_version: null,
+      hw_version: null,
+      serial_number: null,
+      via_device_id: null,
+      area_id: "area_2",
+      name_by_user: null,
+      entry_type: null,
+      disabled_by: null,
+      configuration_url: null,
+      primary_config_entry: null,
+      created_at: 0,
+      modified_at: 0,
+    },
+    device_tv1: {
+      config_entries: [],
+      connections: [],
+      id: "device_tv1",
+      config_entries_subentries: {},
+      identifiers: [],
+      manufacturer: null,
+      model: null,
+      model_id: null,
+      name: "Bedroom TV",
+      labels: [],
+      sw_version: null,
+      hw_version: null,
+      serial_number: null,
+      via_device_id: null,
+      area_id: "area_3",
+      name_by_user: null,
+      entry_type: null,
+      disabled_by: null,
+      configuration_url: null,
+      primary_config_entry: null,
+      created_at: 0,
+      modified_at: 0,
+    },
+    device_office1: {
+      config_entries: [],
+      connections: [],
+      id: "device_office1",
+      config_entries_subentries: {},
+      identifiers: [],
+      manufacturer: null,
+      model: null,
+      model_id: null,
+      name: "Office Multi Sensor",
+      labels: [],
+      sw_version: null,
+      hw_version: null,
+      serial_number: null,
+      via_device_id: null,
+      area_id: "area_4",
+      name_by_user: null,
+      entry_type: null,
+      disabled_by: null,
+      configuration_url: null,
+      primary_config_entry: null,
+      created_at: 0,
+      modified_at: 0,
+    },
+    device_unassigned1: {
+      config_entries: [],
+      connections: [],
+      id: "device_unassigned1",
+      config_entries_subentries: {},
+      identifiers: [],
+      manufacturer: null,
+      model: null,
+      model_id: null,
+      name: "Loose Device",
+      labels: [],
+      sw_version: null,
+      hw_version: null,
+      serial_number: null,
+      via_device_id: null,
+      area_id: null,
+      name_by_user: null,
+      entry_type: null,
+      disabled_by: null,
+      configuration_url: null,
+      primary_config_entry: null,
+      created_at: 0,
+      modified_at: 0,
+    },
+    device_misc1: {
+      config_entries: [],
+      connections: [],
+      id: "device_misc1",
+      config_entries_subentries: {},
+      identifiers: [],
+      manufacturer: null,
+      model: null,
+      model_id: null,
+      name: "Misc Sensor",
+      labels: [],
+      sw_version: null,
+      hw_version: null,
+      serial_number: null,
+      via_device_id: null,
+      area_id: "area_5",
+      name_by_user: null,
+      entry_type: null,
+      disabled_by: null,
+      configuration_url: null,
+      primary_config_entry: null,
+      created_at: 0,
+      modified_at: 0,
+    },
+  },
+  areas: {
+    area_1: {
+      area_id: "area_1",
+      name: "Living Room",
+      picture: `https://picsum.photos/200/300?t=${Math.random()}`,
+      floor_id: "floor_1",
+      created_at: 0,
+      modified_at: 0,
+      aliases: [],
+      humidity_entity_id: null,
+      icon: null,
+      labels: [],
+      temperature_entity_id: null,
+    },
+    area_2: {
+      area_id: "area_2",
+      name: "Kitchen",
+      picture: `https://picsum.photos/200/300?t=${Math.random()}`,
+      floor_id: "floor_1",
+      created_at: 0,
+      modified_at: 0,
+      aliases: [],
+      humidity_entity_id: null,
+      icon: null,
+      labels: [],
+      temperature_entity_id: null,
+    },
+    area_3: {
+      area_id: "area_3",
+      name: "Bedroom",
+      picture: `https://picsum.photos/200/300?t=${Math.random()}`,
+      floor_id: "floor_2",
+      created_at: 0,
+      modified_at: 0,
+      aliases: [],
+      humidity_entity_id: null,
+      icon: null,
+      labels: [],
+      temperature_entity_id: null,
+    },
+    area_4: {
+      area_id: "area_4",
+      name: "Office",
+      picture: `https://picsum.photos/200/300?t=${Math.random()}`,
+      floor_id: "floor_2",
+      created_at: 0,
+      modified_at: 0,
+      aliases: [],
+      humidity_entity_id: null,
+      icon: null,
+      labels: [],
+      temperature_entity_id: null,
+    },
+    area_5: {
+      area_id: "area_5",
+      name: "Misc Storage",
+      picture: `https://picsum.photos/200/300?t=${Math.random()}`,
+      floor_id: null, // triggers synthetic Unassigned floor in useFloors
+      created_at: 0,
+      modified_at: 0,
+      aliases: [],
+      humidity_entity_id: null,
+      icon: null,
+      labels: [],
+      temperature_entity_id: null,
+    },
+  },
+  entitiesRegistryDisplay,
   connection: new MockConnection(),
   auth: fakeAuth,
   user: {

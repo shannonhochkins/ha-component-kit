@@ -38,5 +38,5 @@ export { useTemplate, type TemplateParams } from "./useTemplate";
 export { useCamera, type CameraEntityExtended, type UseCameraOptions } from "./useCamera";
 export { useLocaleData } from "./useLocaleData";
 export { useRegistryData, type RegistryDataKey } from "./useRegistryData";
-export { useFloors } from "./useFloors";
+export { useFloors, type FloorWithAreas } from "./useFloors";
 export * from "./useCamera/constants";

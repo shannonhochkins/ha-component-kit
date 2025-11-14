@@ -66,7 +66,6 @@ export default defineConfig(configEnv => {
         external:[
           ...Object.keys(packageJson.peerDependencies),
           'react/jsx-runtime',
-          'react-is',
           '@emotion/sheet',
           '@emotion/cache',
           '@emotion/serialize',

@@ -1,14 +1,14 @@
 import { HassConnect } from "hass-connect-fake";
 import { Story } from "@storybook/addon-docs/blocks";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Component } from "./useFloorsParent.code";
+import { RenderAreas } from "./useAreas.code";
 import { ThemeProvider } from "@hakit/components";
 
 function UseFloors() {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider />
-      <Component />
+      <RenderAreas />
     </HassConnect>
   );
 }

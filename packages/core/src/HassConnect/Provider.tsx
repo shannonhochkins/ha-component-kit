@@ -280,7 +280,6 @@ export function HassProvider({
         await subscribeFrontendUserData(connection, "language", (data) => {
           if (data.value) {
             const language = getUserLocaleLanguage(data.value);
-            console.log("data", data);
             setLocale({
               ...data.value,
               language,
@@ -417,8 +416,7 @@ export function HassProvider({
           // Otherwise, return void
           return undefined as R extends true ? never : void;
         } catch (e) {
-          // TODO - raise error to client here
-          console.log("Error:", e);
+          console.error("Error calling service:", e);
         }
       }
       return undefined as R extends true ? never : void;

@@ -13,7 +13,6 @@ import {
   computeStateDisplay,
   DeviceRegistryEntry,
   EntityRegistryDisplayEntry,
-  EntityRegistryEntry,
   FloorRegistryEntry,
   FrontendLocaleData,
   resolveTimeZone,
@@ -71,9 +70,6 @@ export interface InternalStore {
   /** the device registry from home assistant */
   devices: Record<string, DeviceRegistryEntry>;
   setDevices: (devices: Record<string, DeviceRegistryEntry>) => void;
-  /** the entity registry from home assistant */
-  entitiesRegistry: Record<string, EntityRegistryEntry>;
-  setEntitiesRegistry: (entities: Record<string, EntityRegistryEntry>) => void;
   /** the entity registry display from home assistant */
   entitiesRegistryDisplay: Record<string, EntityRegistryDisplayEntry>;
   setEntitiesRegistryDisplay: (entities: Record<string, EntityRegistryDisplayEntry>) => void;
@@ -180,8 +176,6 @@ export const useInternalStore = create<InternalStore>((set, get) => ({
   entities: {},
   devices: {},
   setDevices: (devices) => set(() => ({ devices })),
-  entitiesRegistry: {},
-  setEntitiesRegistry: (entities) => set(() => ({ entitiesRegistry: entities })),
   entitiesRegistryDisplay: {},
   setEntitiesRegistryDisplay: (entities) => set(() => ({ entitiesRegistryDisplay: entities })),
   areas: {},

@@ -21,7 +21,6 @@ export const DATA_KEYS = [
   "users",
   "globalComponentStyles",
   "setGlobalComponentStyles",
-  "entitiesRegistry",
   "entitiesRegistryDisplay",
   "services",
   "areas",

@@ -1,13 +1,13 @@
-import { FloorRegistryEntry } from "@hakit/core";
+import { FloorWithAreas } from "@hakit/core";
 
 export function DummyComponent(
   props: Partial<{
-    floors: FloorRegistryEntry[];
+    floors: FloorWithAreas[];
   }>,
 ) {
   return props;
 }
 
-export function DummyComponent2(props: Partial<FloorRegistryEntry>) {
+export function DummyComponent2(props: Partial<FloorWithAreas>) {
   return props;
 }

@@ -1,10 +1,10 @@
 import { HassConnect } from "hass-connect-fake";
 import { Story } from "@storybook/addon-docs/blocks";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Component } from "./useFloorsParent.code";
+import { Component } from "./useAreasData.code";
 import { ThemeProvider } from "@hakit/components";
 
-function UseFloors() {
+function UseFloorsData() {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">
       <ThemeProvider />
@@ -13,16 +13,16 @@ function UseFloors() {
   );
 }
 
-const meta: Meta<typeof UseFloors> = {
-  component: UseFloors,
+const meta: Meta<typeof UseFloorsData> = {
+  component: UseFloorsData,
 };
 
 export default meta;
-type Story = StoryObj<typeof UseFloors>;
+type Story = StoryObj<typeof UseFloorsData>;
 
-export const PrimaryExample: Story = {
+export const PrimaryExampleData: Story = {
   args: {
-    label: "PrimaryExample",
+    label: "PrimaryExampleData",
   },
   /*
    * All stories in this file will:

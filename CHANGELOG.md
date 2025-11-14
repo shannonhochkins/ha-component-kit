@@ -17,12 +17,12 @@
 - NEW - useHistory - Updated useHistory subscriptions to match latest logic with home assistant, added new options to support numeric histories and splitting by device class.
 - NEW - useLocalData - A new hook to subscribe to locale data updates from home assistant, this includes language, number and date formatting.
 - NEW - useRegistryData - A new hook to subscribe to registry data updates from home assistant for entities, devices, areas, floors and more
-- NEW - useFloors - A new hook to subscribe to floor registry data from home assistant
+- NEW - useFloors - A new hook to subscribe to floor registry data from home assistant, this will return a hierarchical list of floors and their associated areas, and the devices/entities within the areas, any areas not assigned to a floor will be part of the "Unassigned" floor.
 - NEW - formatter - Convenience formatter methods to format entity states, attributes and date/time values according to the current locale and configuration, this is now accessible via the store `useStore(state => state.formatter)` or programmatically `useStore.getState().formatter`, examples added to the `useStore` docs.
 - NEW - computeDefaultFavoriteColors - A new function to get the default fav colors for a light if supported, as well as lightSupportsFavoriteColors function
 updating computeStateDisplay to match home assistant logic
 - NEW - entityRegistryEntries now available on the store via useStore(state => state.entityRegistryEntries) or useStore().getState().entityRegistryEntries
-- NEW - useAreas - now supports floors
+- NEW/BREAKING - useAreas - now supports floors, a floor_id and a FloorRegistryEntry will be associated with an area, the breaking change is that "services" were removed from the area structure.
 - NEW - getExtendedEntityRegistryEntry - a new method to retrieve a single entity registry entry
 - NEW - getExtendedEntityRegistryEntries - a new method to retrieve multiple entity registry entries at once
 - NEW - updateEntityRegistryEntry - a new method to update an entity registry entry
