@@ -1,0 +1,54 @@
+import { Meta, Source, ArgTypes, Canvas } from "@storybook/addon-docs/blocks";
+import { DummyComponent, DummyComponent2 } from "./examples/DummyComponent";
+import useAreasCode from "./examples/useAreas.code?raw";
+import useAreaDataCode from "./examples/useAreasData.code?raw";
+import * as Primary from "./examples/useAreasExample.stories";
+import * as PrimaryData from "./examples/useAreasDataExample.stories";
+
+
+<Meta title="core/hooks/useAreas" parameters={{
+  docs: {
+    page: null,
+  }
+}} />
+
+# useAreas()
+###### `useAreas(): Area[] | null`
+
+A hook that will retrieve all the areas configured in home assistant and the related entities, services, floors and devices, this will return all information about the area like the name, picture and the area id.
+
+The areas returned will match your areas in your Home Assistant instance.
+
+This hook will return the data or null if not available yet.
+
+- **Dependencies**: This hook requires you to use it within the `HassConnect` component.
+
+<p>The following is the use of the hook:</p>
+<Source dark code={`const areas = useAreas();`} />
+
+### Example Usage
+
+<Source dark code={useAreaDataCode} />
+
+#### Outputs
+
+<Canvas of={PrimaryData.PrimaryExampleData} />
+
+
+### Generating UI
+
+The following example will show you how to render the areas with an `AreaCard` from `@hakit/components`.
+
+<p>Here&apos;s how you could use the hook to render multiple AreaCards</p>
+<Source dark code={useAreasCode} />
+<Canvas of={Primary.PrimaryExample} />
+
+### Returned Value
+The following is a valid returned value from the `useAreas` hook:
+
+<ArgTypes of={DummyComponent} />
+
+### Area
+The following is the structure of an `Area` type returned by the `useAreas` hook:
+
+<ArgTypes of={DummyComponent2} />

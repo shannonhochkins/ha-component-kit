@@ -1,7 +1,7 @@
-import { useStore } from "@hakit/core";
+import { useHass } from "@hakit/core";
 
 export function HelperFunctionsExample() {
-  const helpers = useStore((s) => s.helpers);
+  const helpers = useHass.getState().helpers;
   const tz = helpers.dateTime.getTimeZone();
   const ampm = helpers.dateTime.shouldUseAmPm();
   return (

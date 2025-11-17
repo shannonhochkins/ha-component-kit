@@ -1,7 +1,7 @@
 import { HassConnect } from "hass-connect-fake";
 import { Story } from "@storybook/addon-docs/blocks";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Component } from "./basic.code";
+import { Component } from "./useFloorsParent.code";
 import { ThemeProvider } from "@hakit/components";
 
 function UseFloors() {

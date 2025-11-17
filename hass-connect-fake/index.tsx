@@ -1,19 +1,19 @@
-import { useCallback, useMemo, useRef, useEffect, type ReactNode } from "react";
-import type { HassEntities, HassConfig, Auth, HaWebSocket, MessageBase } from "home-assistant-js-websocket";
+import { useRef, useEffect, type ReactNode } from "react";
+import type { HassEntities, HassEntity, HassConfig, Auth, HaWebSocket, MessageBase } from "home-assistant-js-websocket";
 import { Connection } from "home-assistant-js-websocket";
 import type {
   DomainService,
   SnakeOrCamelDomains,
-  Route,
   CallServiceArgs,
-  HassContextProps,
   ServiceResponse,
   AuthUser,
   ExtEntityRegistryEntry,
+  InternalStore,
+  EntityRegistryDisplayEntry,
 } from "@hakit/core";
 import { isArray } from "lodash";
 import { useShallow } from "zustand/shallow";
-import { useStore, HassContext, updateLocales, locales, NumberFormat, TimeFormat, DateFormat, FirstWeekday, TimeZone } from "@hakit/core";
+import { useHass, updateLocales, locales, NumberFormat, TimeFormat, DateFormat, FirstWeekday, TimeZone } from "@hakit/core";
 import { entities as ENTITIES } from "./mocks/mockEntities";
 import fakeApi from "./mocks/fake-call-service";
 import type { ServiceArgs } from "./mocks/fake-call-service/types";
@@ -22,7 +22,6 @@ import { mockCallApi } from "./mocks/fake-call-api";
 import reolinkSnapshot from "./assets/reolink-snapshot.jpg";
 import { logs } from "./mocks/mockLogs";
 import { dailyForecast, hourlyForecast } from "./mocks/mockWeather";
-import type { InternalStore } from "packages/core/dist/types/HassConnect/HassContext";
 interface HassProviderProps {
   children: (ready: boolean) => ReactNode;
   hassUrl: string;
@@ -243,8 +242,70 @@ class MockConnection extends Connection {
   }
 }
 
-const originalStore = useStore.getState() as InternalStore;
-useStore.setState({
+const originalStore = useHass.getState() as InternalStore;
+
+// build a registry display map for every entity so hooks like useAreas/useFloors can
+// resolve direct + inherited area relationships. We intentionally mix:
+//  - direct area assignments
+//  - indirect (via device only, area_id null)
+//  - fully unassigned (no area on entity or device)
+// This allows demos to showcase the synthetic "Unassigned" floor bucket and
+// inheritance logic (entity.area_id || device.area_id).
+const entitiesEntries = Object.entries(ENTITIES) as [string, HassEntity][];
+const entitiesRegistryDisplay = entitiesEntries.reduce<Record<string, EntityRegistryDisplayEntry>>((acc, [entityId, entity], index) => {
+  // decide mapping pattern based on index for variety (include miscellaneous unassigned-floor area_5)
+  const mod = index % 8;
+  let device_id: string;
+  let area_id: string | null = null;
+  switch (mod) {
+    case 0:
+      device_id = "device_camera1";
+      area_id = "area_1"; // direct assignment
+      break;
+    case 1:
+      device_id = "device_light1";
+      area_id = "area_2"; // direct assignment
+      break;
+    case 2:
+      device_id = "device_tv1"; // inherits area_3 via device
+      // area_id stays null
+      break;
+    case 3:
+      device_id = "device_office1"; // inherits area_4 via device
+      break;
+    case 4:
+      device_id = "device_unassigned1"; // completely unassigned
+      break;
+    case 5:
+      device_id = "device_tv1";
+      area_id = "area_3"; // direct assignment on top of device mapping
+      break;
+    case 6:
+      device_id = "device_office1";
+      area_id = "area_4"; // direct assignment
+      break;
+    case 7:
+    default:
+      device_id = "device_misc1"; // inherits area_5 (no floor)
+      // area_id stays null so inheritance logic shows under Unassigned floor
+      break;
+  }
+  acc[entityId] = {
+    entity_id: entityId,
+    platform: "mock",
+    name: entity?.attributes?.friendly_name ?? entityId,
+    device_id,
+    icon: entity?.attributes?.icon ?? "",
+    area_id: area_id ?? undefined, // undefined when not directly assigned
+    has_entity_name: true,
+    translation_key: "",
+    labels: [],
+    entity_category: undefined,
+  };
+  return acc;
+}, {});
+
+useHass.setState({
   hash: "",
   routes: [],
   entities: ENTITIES,
@@ -265,34 +326,232 @@ useStore.setState({
       icon: null,
       aliases: [],
       created_at: 0,
-      modified_at: 0
-    }
-  },
-  entitiesRegistry: {
-    "camera.fake_camera_1": {
-      entity_id: "camera.fake-reolink-1",
-      platform: "Reo link",
-      name: "Fake Camera 1",
-      device_id: "device_1",
-      id: "fake_camera_1_id",
-      icon: "mdi:camera",
-      config_entry_id: "fake_config_entry_id",
-      config_subentry_id: null,
-      area_id: null,
-      disabled_by: null,
-      hidden_by: null,
-      has_entity_name: true,
-      original_name: "Fake Camera 1",
-      translation_key: "",
-      unique_id: "fake_camera_1_unique_id",
-      options: {},
-      categories: {},
-      labels: [],
-      entity_category: null,
-      created_at: Date.now(),
-      modified_at: Date.now(),
+      modified_at: 0,
+    },
+    floor_2: {
+      floor_id: "floor_2",
+      name: "Upstairs",
+      level: 1,
+      icon: null,
+      aliases: [],
+      created_at: 0,
+      modified_at: 0,
     },
   },
+  devices: {
+    device_camera1: {
+      config_entries: [],
+      connections: [],
+      id: "device_camera1",
+      config_entries_subentries: {},
+      identifiers: [],
+      manufacturer: null,
+      model: null,
+      model_id: null,
+      name: "Reolink Camera",
+      labels: [],
+      sw_version: null,
+      hw_version: null,
+      serial_number: null,
+      via_device_id: null,
+      area_id: "area_1",
+      name_by_user: null,
+      entry_type: null,
+      disabled_by: null,
+      configuration_url: null,
+      primary_config_entry: null,
+      created_at: 0,
+      modified_at: 0,
+    },
+    device_light1: {
+      config_entries: [],
+      connections: [],
+      id: "device_light1",
+      config_entries_subentries: {},
+      identifiers: [],
+      manufacturer: null,
+      model: null,
+      model_id: null,
+      name: "Dining Light",
+      labels: [],
+      sw_version: null,
+      hw_version: null,
+      serial_number: null,
+      via_device_id: null,
+      area_id: "area_2",
+      name_by_user: null,
+      entry_type: null,
+      disabled_by: null,
+      configuration_url: null,
+      primary_config_entry: null,
+      created_at: 0,
+      modified_at: 0,
+    },
+    device_tv1: {
+      config_entries: [],
+      connections: [],
+      id: "device_tv1",
+      config_entries_subentries: {},
+      identifiers: [],
+      manufacturer: null,
+      model: null,
+      model_id: null,
+      name: "Bedroom TV",
+      labels: [],
+      sw_version: null,
+      hw_version: null,
+      serial_number: null,
+      via_device_id: null,
+      area_id: "area_3",
+      name_by_user: null,
+      entry_type: null,
+      disabled_by: null,
+      configuration_url: null,
+      primary_config_entry: null,
+      created_at: 0,
+      modified_at: 0,
+    },
+    device_office1: {
+      config_entries: [],
+      connections: [],
+      id: "device_office1",
+      config_entries_subentries: {},
+      identifiers: [],
+      manufacturer: null,
+      model: null,
+      model_id: null,
+      name: "Office Multi Sensor",
+      labels: [],
+      sw_version: null,
+      hw_version: null,
+      serial_number: null,
+      via_device_id: null,
+      area_id: "area_4",
+      name_by_user: null,
+      entry_type: null,
+      disabled_by: null,
+      configuration_url: null,
+      primary_config_entry: null,
+      created_at: 0,
+      modified_at: 0,
+    },
+    device_unassigned1: {
+      config_entries: [],
+      connections: [],
+      id: "device_unassigned1",
+      config_entries_subentries: {},
+      identifiers: [],
+      manufacturer: null,
+      model: null,
+      model_id: null,
+      name: "Loose Device",
+      labels: [],
+      sw_version: null,
+      hw_version: null,
+      serial_number: null,
+      via_device_id: null,
+      area_id: null,
+      name_by_user: null,
+      entry_type: null,
+      disabled_by: null,
+      configuration_url: null,
+      primary_config_entry: null,
+      created_at: 0,
+      modified_at: 0,
+    },
+    device_misc1: {
+      config_entries: [],
+      connections: [],
+      id: "device_misc1",
+      config_entries_subentries: {},
+      identifiers: [],
+      manufacturer: null,
+      model: null,
+      model_id: null,
+      name: "Misc Sensor",
+      labels: [],
+      sw_version: null,
+      hw_version: null,
+      serial_number: null,
+      via_device_id: null,
+      area_id: "area_5",
+      name_by_user: null,
+      entry_type: null,
+      disabled_by: null,
+      configuration_url: null,
+      primary_config_entry: null,
+      created_at: 0,
+      modified_at: 0,
+    },
+  },
+  areas: {
+    area_1: {
+      area_id: "area_1",
+      name: "Living Room",
+      picture: `https://picsum.photos/200/300?t=${Math.random()}`,
+      floor_id: "floor_1",
+      created_at: 0,
+      modified_at: 0,
+      aliases: [],
+      humidity_entity_id: null,
+      icon: null,
+      labels: [],
+      temperature_entity_id: null,
+    },
+    area_2: {
+      area_id: "area_2",
+      name: "Kitchen",
+      picture: `https://picsum.photos/200/300?t=${Math.random()}`,
+      floor_id: "floor_1",
+      created_at: 0,
+      modified_at: 0,
+      aliases: [],
+      humidity_entity_id: null,
+      icon: null,
+      labels: [],
+      temperature_entity_id: null,
+    },
+    area_3: {
+      area_id: "area_3",
+      name: "Bedroom",
+      picture: `https://picsum.photos/200/300?t=${Math.random()}`,
+      floor_id: "floor_2",
+      created_at: 0,
+      modified_at: 0,
+      aliases: [],
+      humidity_entity_id: null,
+      icon: null,
+      labels: [],
+      temperature_entity_id: null,
+    },
+    area_4: {
+      area_id: "area_4",
+      name: "Office",
+      picture: `https://picsum.photos/200/300?t=${Math.random()}`,
+      floor_id: "floor_2",
+      created_at: 0,
+      modified_at: 0,
+      aliases: [],
+      humidity_entity_id: null,
+      icon: null,
+      labels: [],
+      temperature_entity_id: null,
+    },
+    area_5: {
+      area_id: "area_5",
+      name: "Misc Storage",
+      picture: `https://picsum.photos/200/300?t=${Math.random()}`,
+      floor_id: null, // triggers synthetic Unassigned floor in useFloors
+      created_at: 0,
+      modified_at: 0,
+      aliases: [],
+      humidity_entity_id: null,
+      icon: null,
+      labels: [],
+      temperature_entity_id: null,
+    },
+  },
+  entitiesRegistryDisplay,
   connection: new MockConnection(),
   auth: fakeAuth,
   user: {
@@ -303,48 +562,18 @@ useStore.setState({
     credentials: [],
     mfa_modules: [],
   },
-  // @ts-expect-error - intentional error, this method is available, but not typed
-  setConfig: (config) => {
-    const state = useStore.getState();
-    if (state.connection && "mockEvent" in state.connection && config) {
-      fakeConfig = config;
-      // @ts-expect-error - this is fine, it exists on the mock connection, just not on the real Connection type
-      state.connection.mockEvent("core_config_updated", config);
-    }
-    state.config = config;
-    return state;
-  },
-  setEntities: (newEntities: HassEntities) => {
-    // used to mock out the render_template service
-    if (newEntities["light.fake_light_1"]) {
-      renderTemplatePrevious = newEntities["light.fake_light_1"].state;
-    }
-    return originalStore.setEntities(newEntities);
-  },
-});
-
-const getAllEntities = () => useStore.getState().entities;
-
-function HassProvider({ children }: HassProviderProps) {
-  const { hash: _hash, ready } = useStore(
-    useShallow((s) => ({
-      hash: s.hash,
-      ready: s.ready, // ready is set internally in the store when we have entities (setEntities does this)
-    })),
-  );
-  const clock = useRef<NodeJS.Timeout | null>(null);
-
-  const callService = useCallback(
-    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean>({
-      domain,
-      service,
-      serviceData,
-      target,
-    }: CallServiceArgs<T, M, R>): Promise<R extends true ? ServiceResponse<ResponseType> : void> => {
+  helpers: {
+    ...originalStore.helpers,
+    joinHassUrl: p => p,
+    callApi: mockCallApi as typeof originalStore.helpers.callApi,
+    callService: (<R extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+      rawArgs: CallServiceArgs<T, M, boolean>,
+    ): Promise<ServiceResponse<R>> | void => {
+      const { domain, service, serviceData, target: target } = rawArgs;
       if (typeof target !== "string" && !isArray(target)) return undefined as R extends true ? never : void;
       const now = new Date().toISOString();
       // Okay to cast here, we know the store is an InternalStore
-      const { entities, setEntities } = useStore.getState() as InternalStore;
+      const { entities, setEntities } = useHass.getState() as InternalStore;
       if (domain in fakeApi) {
         const api = fakeApi[domain as "scene"] as (params: ServiceArgs<"scene">) => boolean;
         const skip = api({
@@ -426,13 +655,42 @@ function HassProvider({ children }: HassProviderProps) {
           break;
       }
       return undefined as R extends true ? never : void;
-    },
-    [],
+    }) as InternalStore["helpers"]["callService"],
+  },
+
+  // @ts-expect-error - intentional error, this method is available, but not typed
+  setConfig: (config) => {
+    const state = useHass.getState();
+    if (state.connection && "mockEvent" in state.connection && config) {
+      fakeConfig = config;
+      // @ts-expect-error - this is fine, it exists on the mock connection, just not on the real Connection type
+      state.connection.mockEvent("core_config_updated", config);
+    }
+    state.config = config;
+    return state;
+  },
+  setEntities: (newEntities: HassEntities) => {
+    // used to mock out the render_template service
+    if (newEntities["light.fake_light_1"]) {
+      renderTemplatePrevious = newEntities["light.fake_light_1"].state;
+    }
+    return originalStore.setEntities(newEntities);
+  },
+});
+
+function HassProvider({ children }: HassProviderProps) {
+  const { hash: _hash, ready } = useHass(
+    useShallow((s) => ({
+      hash: s.hash,
+      ready: s.ready, // ready is set internally in the store when we have entities (setEntities does this)
+    })),
   );
+  const clock = useRef<NodeJS.Timeout | null>(null);
+
 
   useEffect(() => {
-    // we intentionally cast here, the actual value is an InternalStore, we just have it typed as a UseStoreHook to avoid consumers
-    const { setEntities } = useStore.getState() as InternalStore;
+    // we intentionally cast here, the actual value is an InternalStore, we just have it typed as a UseHassHook to avoid consumers
+    const { setEntities } = useHass.getState() as InternalStore;
     if (clock.current) clearInterval(clock.current);
     clock.current = setInterval(() => {
       const now = new Date();
@@ -441,7 +699,7 @@ function HassProvider({ children }: HassProviderProps) {
         last_changed: now.toISOString(),
         last_updated: now.toISOString(),
       };
-      const entities = useStore.getState().entities;
+      const entities = useHass.getState().entities;
       if (formatted !== entities["sensor.time"].state) {
         setEntities({
           ...entities,
@@ -458,26 +716,10 @@ function HassProvider({ children }: HassProviderProps) {
     };
   }, []);
 
-  const addRoute = useCallback((route: Omit<Route, "active">) => {
-    const { setRoutes, routes } = useStore.getState();
-    const exists = routes.find((_route) => _route.hash === route.hash) !== undefined;
-    if (!exists) {
-      // if the current has value is the same as the hash, we're active
-      const hashWithoutPound = window.location.hash.replace("#", "");
-      const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
-      setRoutes([
-        ...routes,
-        {
-          ...route,
-          active,
-        },
-      ]);
-    }
-  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const { setHash } = useStore.getState();
+    const { setHash } = useHass.getState();
     if (location.hash === "") return;
     if (location.hash.replace("#", "") === _hash) return;
     setHash(location.hash);
@@ -486,7 +728,7 @@ function HassProvider({ children }: HassProviderProps) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     function onHashChange() {
-      const { setRoutes, setHash, routes } = useStore.getState();
+      const { setRoutes, setHash, routes } = useHass.getState();
       setRoutes(
         routes.map((route) => {
           if (route.hash === location.hash.replace("#", "")) {
@@ -509,38 +751,10 @@ function HassProvider({ children }: HassProviderProps) {
     };
   }, []);
 
-  const joinHassUrl = useCallback((path: string) => path, []);
-
-  const getRoute = useCallback((hash: string) => {
-    const routes = useStore.getState().routes;
-    const route = routes.find((route) => route.hash === hash);
-    return route || null;
-  }, []);
-  const callApi = useCallback(async function <T>(endpoint: string): Promise<
-    | {
-        data: T;
-        status: "success";
-      }
-    | {
-        data: string;
-        status: "error";
-      }
-  > {
-    return (await mockCallApi(endpoint)) as
-      | {
-          data: T;
-          status: "success";
-        }
-      | {
-          data: string;
-          status: "error";
-        };
-  }, []);
-
   useEffect(() => {
     // we intentionally cast here, the actual value is an InternalStore, we just have it typed as a UseStoreHook to avoid consumers
     // using values we don't want them to use.
-    const { setLocales, setReady, setConfig } = useStore.getState() as InternalStore;
+    const { setLocales, setReady, setConfig } = useHass.getState() as InternalStore;
     locales
       .find((locale) => locale.code === "en")
       ?.fetch()
@@ -552,21 +766,7 @@ function HassProvider({ children }: HassProviderProps) {
       });
   }, []);
 
-  const contextValue = useMemo<HassContextProps>(
-    () => ({
-      useStore,
-      logout: () => {},
-      addRoute,
-      getRoute,
-      callApi,
-      getAllEntities,
-      callService: callService as HassContextProps["callService"],
-      joinHassUrl,
-    }),
-    [addRoute, getRoute, callApi, callService, joinHassUrl],
-  );
-
-  return <HassContext.Provider value={contextValue}>{children(ready)}</HassContext.Provider>;
+  return children(ready);
 }
 
 export type HassConnectProps = {

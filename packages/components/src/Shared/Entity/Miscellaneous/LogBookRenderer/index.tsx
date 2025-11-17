@@ -5,9 +5,8 @@ import { css } from "@emotion/react";
 import { useCallback, ComponentPropsWithoutRef } from "react";
 import {
   useLogs,
-  useHass,
   useDevice,
-  useStore,
+  useHass,
   computeDomain,
   createHistoricState,
   localizeStateMessage,
@@ -154,10 +153,10 @@ function InternalLogBookRenderer({
   ...rest
 }: LogBookRendererProps): React.ReactNode {
   const logs = useLogs(entity, options);
-  const { joinHassUrl } = useHass();
-  const entities = useStore((state) => state.entities);
-  const services = useStore((state) => state.services);
-  const language = useStore((state) => state.config?.language);
+  const { joinHassUrl } = useHass.getState().helpers;
+  const entities = useHass((state) => state.entities);
+  const services = useHass((state) => state.services);
+  const language = useHass((state) => state.config?.language);
   const device = useDevice(entity);
 
   const _entityClicked = useCallback(
@@ -306,7 +305,7 @@ function InternalLogBookRenderer({
             : undefined;
         return (
           <>
-            <span className="triggered-by">{localize("logbook.triggered_by_state_of")}</span>
+            <span className="triggered-by">{localize("triggered_by_state_of")}</span>
             {_renderEntity(item.context_entity_id, item.context_entity_id_name)}
             <span>
               {historicStateObj
@@ -320,7 +319,7 @@ function InternalLogBookRenderer({
       if (item.context_event_type === "call_service") {
         return (
           <>
-            <span className="triggered-by">{localize("logbook.triggered_by_action")}</span>
+            <span className="triggered-by">{localize("triggered_by_action")}</span>
             {item.context_domain && item.context_service ? (
               <span className="service-trigger-details">
                 {item.context_domain}:{" "}
@@ -341,9 +340,7 @@ function InternalLogBookRenderer({
         return (
           <>
             <span className="triggered-by">
-              {localize(
-                item.context_event_type === "automation_triggered" ? "logbook.triggered_by_automation" : "logbook.triggered_by_script",
-              )}
+              {localize(item.context_event_type === "automation_triggered" ? "triggered_by_automation" : "triggered_by_script")}
             </span>
             {_renderEntity(item.context_entity_id, item.context_entity_id_name)}
             {item.context_message ? _formatMessageWithPossibleEntity(contextTriggerSource, seenEntityIds, undefined) : null}
@@ -463,7 +460,7 @@ function InternalLogBookRenderer({
       {...rest}
     >
       {!logs.length ? (
-        <span className="no-entries">{localize("logbook.entries_not_found")}</span>
+        <span className="no-entries">{localize("no_activity_found")}</span>
       ) : (
         <Header>
           {!hideHeader && (

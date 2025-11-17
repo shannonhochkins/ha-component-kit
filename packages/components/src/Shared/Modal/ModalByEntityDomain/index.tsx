@@ -131,7 +131,7 @@ export function ModalByEntityDomain<E extends EntityName>({
   children,
   ...rest
 }: ModalByEntityDomainProps<E>) {
-  const { joinHassUrl } = useHass();
+  const { joinHassUrl } = useHass.getState().helpers;
   const [showLogbook, setShowLogbook] = useState(false);
   const _entity = useEntity(entity);
   const device = useDevice(entity);
@@ -234,13 +234,7 @@ export function ModalByEntityDomain<E extends EntityName>({
             )}
             {headerActionsPosition === "middle" && headerActions && headerActions()}
             {device && device.device_id && (
-              <FabCard
-                title={localize("editor.open_device_settings")}
-                tooltipPlacement="left"
-                icon="mdi:cog"
-                size={30}
-                onClick={openDevice}
-              />
+              <FabCard title={localize("open_device_settings")} tooltipPlacement="left" icon="mdi:cog" size={30} onClick={openDevice} />
             )}
             {headerActionsPosition === "end" && headerActions && headerActions()}
             {(!hideLogbook || (device && device.device_id)) && <Separator />}

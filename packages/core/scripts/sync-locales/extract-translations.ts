@@ -2,102 +2,60 @@ import fs from 'fs';
 import path from 'path';
 import { type Connection, createLongLivedTokenAuth, createConnection } from "home-assistant-js-websocket";
 import { createSocket } from '../sync-user-types/connection';
+// Simple debug facility (stderr) - toggle to silence or enable diagnostics
+const DEBUG = false;
+function debug(msg: string) {
+  if (DEBUG) console.error(`[locale-sync] ${msg}`);
+}
 const OUTPUT_PATH = path.resolve(__dirname, '../../src/hooks/useLocale/locales');
 const TYPES_FILE_PATH = path.join(OUTPUT_PATH, 'types.ts');
 
 // ========================= CONFIGURATION CONSTANTS =========================
-// WORD_COUNT_HIERARCHICAL_THRESHOLD: If an English value has more words than this threshold,
-// we keep the original longKey instead of generating a hierarchical compressed key.
-// (Previously hardcoded as 7)
-const WORD_COUNT_HIERARCHICAL_THRESHOLD = 7;
-
 // WORD_COUNT_REMOVE_THRESHOLD: Any key in any language whose value word count is >= this threshold
 // will be removed entirely from all languages (aggressive trimming of long descriptions).
-// (Previously hardcoded as 10)
 const WORD_COUNT_REMOVE_THRESHOLD = 10;
 
-// COLLAPSE_DUPLICATE_VALUES: When true, if the exact same value appears under multiple keys
-// within the same language, we keep only the shortest key name (tie-breaker: lexicographical)
-// and drop the others. This reduces redundancy like cleared_device_classes.*.
-const COLLAPSE_DUPLICATE_VALUES = true;
-// Duplicate collapse is now dynamic: no hardcoded generic or weekday lists.
-// We compute a score based on relationship between the key and its value.
-// MIN_WORDS_INCLUDE_PARENT: If a value has more than this number of words, we prefer a more descriptive
-// key by including the immediate parent segment (parent.child) instead of just the last segment.
-// This helps retain context (e.g. device_picker.no_match instead of no_match alone).
-const MIN_WORDS_INCLUDE_PARENT = 2;
+// Values with >=4 words previously retained full original key.
+// We now attempt short tail compression for ALL non-slugged values to reduce verbosity.
+const LONG_VALUE_WORD_COUNT = 6;
+
+// picking a slice of the long key to use as default, when shortening
+const LONG_KEY_SLICE_SIZE = 3;
+
+// Prefix applied when slugging values that start with a digit (numeric-leading values).
+// Allows us to still shorten verbose original dotted keys while making the semantic explicit.
+const LEADING_DIGIT_VALUE_PREFIX = 'value.';
+
 // ==========================================================================
 
-// Stable mapping: longKey -> generated hierarchical key.
+// Ephemeral mapping used during generation: original English key -> final key (possibly slug)
 const keyMapping: Record<string, string> = {};
-// Track english longKeys that were mapped using the single-word rule so other languages reuse directly.
-const singleWordEnglishKeys = new Set<string>();
 
-// Normalize a single segment for safety (keep dots between joined segments per spec, but clean segment chars)
-function normalizeSegment(seg: string): string {
-  return seg.replace(/[^a-zA-Z0-9]/g, '_').replace(/_+/g, '_').toLowerCase();
+// Slugify English value (<4 words rule) -> key candidate
+function createSlug(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '') // drop punctuation/specials
+    .replace(/\s+/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_+|_+$/g, '');
 }
 
-// Build hierarchical key: start with last segment; if exists with different value escalate by prefixing parent.
-// If exists with same value, skip (return null). If exhausted segments and still conflict, throw.
-function deriveHierarchicalKey(longKey: string, value: string, langMap: Record<string, string>): string | null {
-  // Reuse previously established mapping if possible.
-  const existingMapping = keyMapping[longKey];
-  if (existingMapping) {
-    if (!(existingMapping in langMap)) return existingMapping; // not used yet here
-    if (langMap[existingMapping] === value) return null; // duplicate same value
-    // need escalation starting from existingMapping base (treat as last segment compound)
+// Attempt to derive a shorter fallback key from the tail segments of the original dotted key.
+// Algorithm:
+//   Start with last LONG_KEY_SLICE_SIZE segments (or all if < LONG_KEY_SLICE_SIZE). If that candidate is unused, accept.
+//   Otherwise prepend one more segment (i.e. increase slice size by 1) and retry until unique or full key length reached.
+//   If no unique shorter candidate found, return originalKey.
+function createShortFallbackKey(originalKey: string, used: Record<string, string>): string {
+  const parts = originalKey.split('.').filter(Boolean);
+  if (!parts.length) return originalKey;
+  const startLen = Math.min(LONG_KEY_SLICE_SIZE, parts.length); // initial slice size
+  for (let len = startLen; len <= parts.length; len++) {
+    const candidate = parts.slice(parts.length - len).join('.');
+    if (!used[candidate]) return candidate;
   }
-  let parts = longKey.split('.').filter(Boolean).map(normalizeSegment);
-  // Remove placeholder '_' segments produced by normalization of original underscores
-  if (parts.includes('_')) {
-    parts = parts.filter(p => p !== '_');
-  }
-  // Decide initial candidate: if word count > MIN_WORDS_INCLUDE_PARENT and we have a parent, use parent.child
-  const wordCount = value.split(/\s+/).filter(Boolean).length;
-  let candidateKey: string;
-  if (wordCount > MIN_WORDS_INCLUDE_PARENT && parts.length > 1) {
-    candidateKey = parts.slice(parts.length - 2).join('.'); // parent.child
-  } else {
-    candidateKey = parts[parts.length - 1];
-  }
-  if (!(candidateKey in langMap)) {
-    if (candidateKey === '_' && parts.length > 1) {
-      const fallback = parts.slice(parts.length - 2).join('.');
-      if (!(fallback in langMap) && fallback !== '_') {
-        keyMapping[longKey] = fallback;
-        return fallback;
-      }
-      const parent = parts[parts.length - 2];
-      if (!(parent in langMap) && parent !== '_') {
-        keyMapping[longKey] = parent;
-        return parent;
-      }
-    }
-    keyMapping[longKey] = candidateKey === '_' ? normalizeSegment(longKey.replace(/\./g,'_')) : candidateKey;
-    return keyMapping[longKey];
-  }
-  if (langMap[candidateKey] === value) return null;
-  // Try previous segment ALONE before combining (apparent_temperature instead of apparent_temperature.name)
-  if (parts.length > 1) {
-    const prevAlone = parts[parts.length - 2];
-    if (!(prevAlone in langMap)) {
-      keyMapping[longKey] = prevAlone;
-      return prevAlone;
-    }
-    if (langMap[prevAlone] === value) return null; // same value already represented by previous segment
-  }
-  // Escalate by combining previous + current, then further parents
-  for (let i = parts.length - 2; i >= 0; i--) {
-    // Build combined candidate from slice i..end
-    candidateKey = parts.slice(i).join('.');
-    if (!(candidateKey in langMap)) {
-      keyMapping[longKey] = candidateKey;
-      return candidateKey;
-    }
-    if (langMap[candidateKey] === value) return null;
-  }
-  throw new Error(`Unable to derive unique hierarchical key for ${longKey}`);
+  return originalKey; // all candidates taken; fall back to original
 }
 
 type Translation = {
@@ -254,109 +212,181 @@ export async function downloadTranslations(translations: Record<string, Translat
   }
 
   await fetchTranslations(locales.map(locale => locale.code), combinedTranslations);
-  // generate keys from english originally, shortest value (word count) first
-  const englishEntries = Object.entries(combinedTranslations['en']).sort((a, b) => {
-    const aw = a[1].split(/\s+/).length; const bw = b[1].split(/\s+/).length;
+
+  // ================= English key processing =================
+  const english = combinedTranslations['en'];
+  if (!english) throw new Error('English translations (en) not found');
+  const englishEntries = Object.entries(english);
+  // Sort for stable deterministic output (shorter word count first, then key)
+  englishEntries.sort((a, b) => {
+    const aw = a[1].split(/\s+/).filter(Boolean).length; const bw = b[1].split(/\s+/).filter(Boolean).length;
     if (aw === bw) return a[0].localeCompare(b[0]);
     return aw - bw;
   });
-  for (const [longKey, value] of englishEntries) {
-    const wordsArr = value.split(/\s+/).filter(Boolean);
-    const words = wordsArr.length;
-    // if (value.toLowerCase() === 'am' || value.toLowerCase() === 'pm') {
-    //   console.log('AM/PM found', longKey)
-    // }
-    // Pattern rule: map component.<domain>.title -> <domain>.title (strip leading 'component.')
-    if (/^component\.[^.]+\.title$/.test(longKey)) {
-      keyMapping[longKey] = longKey.replace(/^component\./, '');
-      continue;
+
+  interface MappingInfo { original: string; final: string; value: string; }
+  const mappings: MappingInfo[] = [];
+  const usedFinalKeys: Record<string, string> = {}; // finalKey -> englishValue
+  const usedEnglishValuesLower: Set<string> = new Set(); // track dedup of identical values case-insensitive
+
+  for (const [originalKey, valueRaw] of englishEntries) {
+    const value = valueRaw.trim();
+    const words = value.split(/\s+/).filter(Boolean);
+    const wordCount = words.length;
+
+    const lowerVal = value.toLowerCase();
+    if (usedEnglishValuesLower.has(lowerVal)) {
+      debug(`Duplicate English value skipped: '${value}' (key '${originalKey}') already represented.`);
+      continue; // do not map this duplicate key
     }
-    // NEW RULE: Single-word English value -> key derived from sanitized, lowercased value itself.
-    // This produces keys like "unavailable" from "Unavailable" regardless of original longKey hierarchy.
-    if (words === 1) {
-      const sanitized = value
-        .normalize('NFKD') // remove diacritics
-        .replace(/[^A-Za-z0-9]/g, '')
-        .toLowerCase();
-      if (sanitized.length) {
-        // If collision and existing mapping uses same sanitized key for same value, just map; otherwise fallback to hierarchical.
-        const collision = Object.values(keyMapping).includes(sanitized);
-        if (!collision || (collision && Object.entries(keyMapping).some(([lk, mk]) => mk === sanitized && combinedTranslations['en'][lk] === value))) {
-          keyMapping[longKey] = sanitized;
-          singleWordEnglishKeys.add(longKey);
-          continue;
+
+    // Leading digit rule: previously retained original key; now we slug and prefix with 'value.'
+    // Example: "12 ticks (Every hour)" -> value.12_ticks_every_hour
+    if (/^\d/.test(value)) {
+      const baseSlug = createSlug(value); // will preserve leading digits
+      let finalKey = `${LEADING_DIGIT_VALUE_PREFIX}${baseSlug}`;
+      // Collision handling (unlikely but safeguard): if already used with different value, fall back to short tail
+      if (usedFinalKeys[finalKey]) {
+        if (usedFinalKeys[finalKey].toLowerCase() === value.toLowerCase()) {
+          debug(`Leading digit slug collision identical value: '${finalKey}' already maps to '${value}', skipping new mapping for '${originalKey}'.`);
+          // Map originalKey to existing finalKey for consistency
+          keyMapping[originalKey] = finalKey;
+          mappings.push({ original: originalKey, final: finalKey, value });
+        } else {
+          debug(`Leading digit slug collision DIFFERENT value for '${finalKey}', attempting short tail fallback for '${originalKey}'.`);
+          const shortKey = createShortFallbackKey(originalKey, usedFinalKeys);
+          finalKey = shortKey;
+          if (shortKey !== originalKey) {
+            debug(`Leading digit fallback adopted: '${originalKey}' -> '${shortKey}'`);
+          }
+          keyMapping[originalKey] = finalKey;
+          mappings.push({ original: originalKey, final: finalKey, value });
+          usedFinalKeys[finalKey] = value;
         }
-        // Else collision with different value: fall through to hierarchical logic.
+      } else {
+        debug(`Leading digit value slugged: '${originalKey}' -> '${finalKey}'`);
+        keyMapping[originalKey] = finalKey;
+        mappings.push({ original: originalKey, final: finalKey, value });
+        usedFinalKeys[finalKey] = value;
       }
-    }
-    if (words > WORD_COUNT_HIERARCHICAL_THRESHOLD) {
-      // Keep original longKey as key
-      keyMapping[longKey] = longKey;
+      usedEnglishValuesLower.add(lowerVal);
       continue;
     }
-    const k = deriveHierarchicalKey(longKey, value, {});
-    if (k) keyMapping[longKey] = k;
+    // Pattern rule for component.<domain>.title
+    if (/^component\.[^.]+\.title$/.test(originalKey)) {
+      const stripped = originalKey.replace(/^component\./, '');
+      keyMapping[originalKey] = stripped;
+      mappings.push({ original: originalKey, final: stripped, value });
+      usedFinalKeys[stripped] = value;
+      usedEnglishValuesLower.add(lowerVal);
+      continue;
+    }
+    // Values with >=X words previously retained full original key.
+    // We now attempt short tail compression for ALL non-slugged values to reduce verbosity.
+    if (wordCount >= LONG_VALUE_WORD_COUNT) {
+      const shortKey = createShortFallbackKey(originalKey, usedFinalKeys);
+      if (shortKey !== originalKey) {
+        debug(`Short fallback key adopted for long value: '${originalKey}' -> '${shortKey}'`);
+      }
+      keyMapping[originalKey] = shortKey;
+      mappings.push({ original: originalKey, final: shortKey, value });
+      usedFinalKeys[shortKey] = value;
+      usedEnglishValuesLower.add(lowerVal);
+      continue;
+    }
+    // Generate slug for < LONG_VALUE_WORD_COUNT words
+    const slug = createSlug(value);
+    if (!slug) {
+      debug(`Invalid slug (empty) for key '${originalKey}' value '${value}', retaining original key.`);
+      const shortKey = createShortFallbackKey(originalKey, usedFinalKeys);
+      if (shortKey !== originalKey) {
+        debug(`Short fallback key adopted: '${originalKey}' -> '${shortKey}'`);
+      }
+      keyMapping[originalKey] = shortKey;
+      mappings.push({ original: originalKey, final: shortKey, value });
+      usedFinalKeys[shortKey] = value;
+      usedEnglishValuesLower.add(lowerVal);
+      continue;
+    }
+    // Collision handling
+    const existing = usedFinalKeys[slug];
+    if (existing) {
+      if (existing.toLowerCase() === value.toLowerCase()) {
+        // Same semantic value - keep original key, don't overwrite existing slug
+        debug(`Slug collision with identical value: '${slug}' already maps to '${existing}', skipping rename for '${originalKey}'.`);
+        const shortKey = createShortFallbackKey(originalKey, usedFinalKeys);
+        if (shortKey !== originalKey) {
+          debug(`Short fallback key adopted after identical collision: '${originalKey}' -> '${shortKey}'`);
+        }
+        keyMapping[originalKey] = shortKey;
+        mappings.push({ original: originalKey, final: shortKey, value });
+        usedFinalKeys[shortKey] = value;
+        usedEnglishValuesLower.add(lowerVal);
+      } else {
+        debug(`Slug collision DIFFERENT value: '${slug}' existing='${existing}' new='${value}' for original key '${originalKey}'. Retaining original key.`);
+        const shortKey = createShortFallbackKey(originalKey, usedFinalKeys);
+        if (shortKey !== originalKey) {
+          debug(`Short fallback key adopted after different collision: '${originalKey}' -> '${shortKey}'`);
+        }
+        keyMapping[originalKey] = shortKey;
+        mappings.push({ original: originalKey, final: shortKey, value });
+        usedFinalKeys[shortKey] = value;
+        usedEnglishValuesLower.add(lowerVal);
+      }
+      continue;
+    }
+    // Accept slug
+    keyMapping[originalKey] = slug;
+    usedFinalKeys[slug] = value;
+    usedEnglishValuesLower.add(lowerVal);
+    mappings.push({ original: originalKey, final: slug, value });
   }
-  // Build per-language shortKey maps using stable english mapping; do not disambiguate yet.
+
+  // ================= Per-language reconstruction =================
   const perLanguage: Record<string, Record<string, string>> = {};
-  const orderedLangs = ['en', ...Object.keys(combinedTranslations).filter(l => l !== 'en')];
-  for (const lang of orderedLangs) {
-    const translations = combinedTranslations[lang];
-    perLanguage[lang] = {};
-    // shortest values first for each language as well
-    const sortedEntries = Object.entries(translations).sort((a, b) => {
-      const aw = a[1].split(/\s+/).length; const bw = b[1].split(/\s+/).length;
-      if (aw === bw) return a[0].localeCompare(b[0]);
-      return aw - bw;
-    });
-    for (const [longKey, value] of sortedEntries) {
-
-      const words = value.split(/\s+/).length;
-      // Apply title pattern consistently across languages
-      if (/^component\.[^.]+\.title$/.test(longKey)) {
-        const stripped = longKey.replace(/^component\./, '');
-        perLanguage[lang][stripped] = value;
-        keyMapping[longKey] = stripped;
-        continue;
-      }
-      // Reuse single-word english mapping for all languages regardless of local word count.
-      if (singleWordEnglishKeys.has(longKey)) {
-        const mapped = keyMapping[longKey];
-        if (mapped) {
-          perLanguage[lang][mapped] = value;
-        }
-        continue;
-      }
-      if (words > WORD_COUNT_HIERARCHICAL_THRESHOLD) {
-        // Keep original longKey mapping; if already set we may skip duplicate same value
-        const existingVal = perLanguage[lang][longKey];
-        if (existingVal === value) continue;
-        perLanguage[lang][longKey] = value;
-        keyMapping[longKey] = longKey;
-        continue;
-      }
-
-      const hierarchicalKey = deriveHierarchicalKey(longKey, value, perLanguage[lang]);
-      if (hierarchicalKey) {
-        // If we already mapped longKey to longKey (due to >7 rule earlier in English) keep that.
-        const finalKey = keyMapping[longKey] && keyMapping[longKey] === longKey ? longKey : hierarchicalKey;
-        perLanguage[lang][finalKey] = value;
-        keyMapping[longKey] = finalKey;
+  for (const locale of locales) {
+    const lang = locale.code;
+    const source = combinedTranslations[lang] || {};
+    const out: Record<string, string> = {};
+    for (const map of mappings) {
+      const { original, final } = map;
+      const val = source[original];
+      if (typeof val === 'undefined') {
+        // fallback to English value (intentional) and debug
+        debug(`Missing translation for '${original}' in '${lang}', falling back to English.`);
+        out[final] = map.value;
+      } else {
+        out[final] = val;
       }
     }
+    perLanguage[lang] = out;
   }
-  // Prune phase: collapse duplicates (>7 words) to a single canonical key and remove very long identical values (>10 words)
-  pruneLongValueDuplicates(perLanguage);
-  // Enforce English as master key list (adds missing English keys to other languages, drops extras)
-  enforceEnglishMaster(perLanguage);
-  // Collect keys after pruning
-  const finalKeys = new Set<string>(Object.keys(perLanguage['en'] ?? {}));
+
+  // ================= Removal of long value entries (>= WORD_COUNT_REMOVE_THRESHOLD words) =================
+  const removedLong: Record<string, number> = {};
+  for (const [lang, data] of Object.entries(perLanguage)) {
+    let removed = 0;
+    for (const [k, v] of Object.entries(data)) {
+      const wc = v.split(/\s+/).filter(Boolean).length;
+      if (wc >= WORD_COUNT_REMOVE_THRESHOLD) {
+        delete data[k];
+        removed++;
+      }
+    }
+    if (removed) removedLong[lang] = removed;
+  }
+  Object.entries(removedLong).forEach(([lang, count]) => debug(`Removed ${count} long value key(s) (>=${WORD_COUNT_REMOVE_THRESHOLD} words) from '${lang}'.`));
+
+  // ================= Output generation =================
+  const finalEnglish = perLanguage['en'];
+  const finalKeys = new Set<string>(Object.keys(finalEnglish));
   for (const [lang, data] of Object.entries(perLanguage)) {
     const filePath = path.join(OUTPUT_PATH, lang, `${lang}.json`);
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), { encoding: 'utf-8' });
   }
   generateIndexFile(locales);
   generateTypeDefinitions(finalKeys, locales);
+  debug(`Generation complete. Keys: ${finalKeys.size}. Renamed: ${mappings.filter(m => m.original !== m.final).length}. Unchanged: ${mappings.filter(m => m.original === m.final).length}.`);
 
 }
 
@@ -413,105 +443,5 @@ export default locales.map(locale => ({
 // 2. After normalization, remove any key whose value has >10 words AND is identical across all languages that contain that key
 //    (assumption: "matches across languages" means not localized; we require the value string to be exactly the same for >=2 languages).
 // Assumptions noted: rule 2 requires identical value present in at least 2 languages; if every language shares identical long value it's removed entirely.
-function pruneLongValueDuplicates(perLanguage: Record<string, Record<string, string>>) {
-  // Build value -> occurrences
-  interface Occurrence { lang: string; key: string; }
-  const valueMap = new Map<string, Occurrence[]>();
-  for (const lang of Object.keys(perLanguage)) {
-    for (const [key, value] of Object.entries(perLanguage[lang])) {
-      if (!valueMap.has(value)) valueMap.set(value, []);
-      valueMap.get(value)!.push({ lang, key });
-    }
-  }
-
-  // Rule 1: collapse duplicates for >7 word values
-  for (const [value, occurrences] of valueMap.entries()) {
-    const wordCount = value.split(/\s+/).filter(Boolean).length;
-    if (wordCount <= WORD_COUNT_HIERARCHICAL_THRESHOLD) continue;
-    if (occurrences.length <= 1) continue; // only one usage
-    // Determine canonical key
-    let canonicalKey: string | undefined;
-    const englishOcc = occurrences.find(o => o.lang === 'en');
-    if (englishOcc) canonicalKey = englishOcc.key;
-    else {
-      canonicalKey = occurrences.map(o => o.key).sort((a, b) => a.localeCompare(b))[0];
-    }
-    // For each language ensure only canonicalKey remains for this value
-    const langsTouched = new Set<string>();
-    for (const occ of occurrences) {
-      if (occ.key !== canonicalKey) {
-        delete perLanguage[occ.lang][occ.key];
-        langsTouched.add(occ.lang);
-      } else {
-        langsTouched.add(occ.lang);
-      }
-    }
-    // Re-add canonical key for languages that had value but lost it under different key
-    for (const lang of Array.from(langsTouched)) {
-      perLanguage[lang][canonicalKey] = value; // ensure present
-    }
-  }
-
-  // New rule 2: remove any key whose value in any language has >=10 words (aggressive trim of long descriptions).
-  const keysToDelete: Set<string> = new Set();
-  for (const lang of Object.keys(perLanguage)) {
-    for (const [key, value] of Object.entries(perLanguage[lang])) {
-      const wc = value.split(/\s+/).filter(Boolean).length;
-      if (wc >= WORD_COUNT_REMOVE_THRESHOLD) keysToDelete.add(key);
-    }
-  }
-  if (keysToDelete.size) {
-    for (const lang of Object.keys(perLanguage)) {
-      for (const key of keysToDelete) {
-        delete perLanguage[lang][key];
-      }
-    }
-    console.debug(`Pruned ${keysToDelete.size} key(s) with >=${WORD_COUNT_REMOVE_THRESHOLD} word values`);
-  }
-
-  // Collapse identical values within each language keeping shortest key name.
-  if (COLLAPSE_DUPLICATE_VALUES) {
-    for (const lang of Object.keys(perLanguage)) {
-      const map = perLanguage[lang];
-      const valueGroups: Record<string, string[]> = {};
-      for (const [key, value] of Object.entries(map)) {
-        (valueGroups[value] ||= []).push(key);
-      }
-      let removedCount = 0;
-      for (const [val, keys] of Object.entries(valueGroups)) {
-        if (keys.length <= 1) continue;
-        // Only collapse duplicates for long values (> WORD_COUNT_HIERARCHICAL_THRESHOLD words)
-        const wordCount = val.split(/\s+/).filter(Boolean).length;
-        if (wordCount <= WORD_COUNT_HIERARCHICAL_THRESHOLD) continue; // keep all short duplicate keys
-        // Pick shortest key then lexicographical as canonical
-        const canonical = keys.sort((a, b) => a.length === b.length ? a.localeCompare(b) : a.length - b.length)[0];
-        for (const k of keys) {
-          if (k === canonical) continue;
-          delete map[k];
-          removedCount++;
-        }
-      }
-      if (removedCount) {
-        console.debug(`Collapsed ${removedCount} duplicate value key(s) in ${lang}`);
-      }
-    }
-  }
-}
-
-// Ensure English is the source-of-truth for key set: remove any keys not present
-// in English from other languages, and add missing English keys to them (fallback to English value).
-function enforceEnglishMaster(perLanguage: Record<string, Record<string, string>>) {
-  const english = perLanguage['en'];
-  if (!english) return; // safety
-  const englishKeys = new Set(Object.keys(english));
-  for (const lang of Object.keys(perLanguage)) {
-    if (lang === 'en') continue;
-    const map = perLanguage[lang];
-    // Drop keys not in English
-    for (const key of Object.keys(map)) {
-      if (!englishKeys.has(key)) delete map[key];
-    }
-    // Do NOT inject missing English values; leave gaps so runtime can fallback.
-  }
-}
+// Legacy pruning & hierarchical functions removed per refactor requirements.
 

@@ -1,7 +1,7 @@
 import { useHass, HassConnect } from "@hakit/core";
 
 export function SomeComponent() {
-  const { joinHassUrl } = useHass();
+  const { joinHassUrl } = useHass.getState().helpers;
   const url = joinHassUrl("/something");
   return <p>{url}</p>; // expected output: 'https://homeassistant.local:8123/something'
 }

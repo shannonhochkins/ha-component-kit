@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { LocaleKeys } from "./locales/types";
 import locales from "./locales";
-import { useStore } from "../useStore";
+import { useHass } from "../useHass";
 
 const LOCALES: Record<string, string> = {};
 
@@ -40,8 +40,8 @@ export function useLocales(): Record<LocaleKeys, string> {
 export const useLocale = (key: LocaleKeys, options?: Options) => {
   const { fallback = localize("unknown") } = options ?? {};
   const [value, setValue] = useState<string>(fallback);
-  const config = useStore((state) => state.config);
-  const localeData = useStore((state) => state.locale);
+  const config = useHass((state) => state.config);
+  const localeData = useHass((state) => state.locale);
 
   useEffect(() => {
     const fetchAndSetLocale = async () => {

@@ -7,7 +7,7 @@ import {
   useEntity,
   supportsFeatureFromAttributes,
   stateActive,
-  useStore,
+  useHass,
 } from "@hakit/core";
 import { useDebouncedCallback } from "use-debounce";
 import { clamp } from "lodash";
@@ -25,7 +25,7 @@ export interface ClimateHumiditySliderProps {
 export function ClimateHumiditySlider({ entity: _entity, targetTempStep, showCurrent = false }: ClimateHumiditySliderProps) {
   const entity = useEntity(_entity);
   const [_targetHumidity, setTargetHumidity] = useState<number | null>(entity.attributes.humidity ?? null);
-  const config = useStore((state) => state.config);
+  const config = useHass((state) => state.config);
   const { target_temp_step, min_humidity = 0, max_humidity = 100 } = entity.attributes;
 
   const _step = useMemo(() => {

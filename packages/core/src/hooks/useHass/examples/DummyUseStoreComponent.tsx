@@ -1,4 +1,4 @@
-import { type Store } from "../";
+import { type Store } from "..";
 
 export function DummyComponent(props: Partial<Store>) {
   return props;

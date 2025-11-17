@@ -15,7 +15,6 @@ const globals = {
   'react/jsx-runtime': 'react/jsx-runtime',
   '@hakit/core': '@hakit/core',
   'lodash': 'lodash',
-  'react-is': 'react-is',
   '@iconify/react': '@iconify/react',
   'react-use': 'react-use',
   '@emotion/styled': '@emotion/styled',
@@ -130,7 +129,6 @@ ${content}`
         external:[
           ...Object.keys(packageJson.peerDependencies),
           'react/jsx-runtime',
-          'react-is',
           '@hakit/core',
           '@iconify/react',
           '@emotion/sheet',

@@ -1,6 +1,6 @@
 import { useCallback, useState, useMemo, useEffect, useRef } from "react";
 import { subscribeLogbook, type LogbookStreamMessage, type LogbookEntry } from "./logbook";
-import { type EntityName, useStore } from "@core";
+import { type EntityName, useHass } from "@core";
 import type { Connection } from "home-assistant-js-websocket";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -32,7 +32,7 @@ const findStartOfRecentTime = (now: Date, recentTime: number) => new Date(now.ge
 
 export function useLogs(entityId: EntityName, options?: UseLogOptions): LogbookEntry[] {
   const [error, setError] = useState<string | undefined>(undefined);
-  const connection = useStore((state) => state.connection);
+  const connection = useHass((state) => state.connection);
   const [entries, setEntries] = useState<LogbookEntry[]>([]);
   const _entriesRef = useRef<LogbookEntry[]>([]);
   const _subscribed = useRef<boolean>(false);

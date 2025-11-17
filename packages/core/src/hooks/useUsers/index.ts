@@ -1,5 +1,5 @@
 import { type AuthUser } from "@core";
-import { useStore } from "../useStore";
+import { useHass } from "../useHass";
 import { useMemo } from "react";
 
 export type UseUsersOptions = {
@@ -22,7 +22,7 @@ export type UseUsersOptions = {
  * @param options Filtering options.
  */
 export function useUsers({ includeSystemGenerated = false, includeInactiveUsers = false }: UseUsersOptions = {}): AuthUser[] {
-  const users = useStore((state) => state.users);
+  const users = useHass((state) => state.users);
   return useMemo(
     () =>
       users.filter((user) => {

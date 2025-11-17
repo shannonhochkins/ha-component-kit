@@ -1,7 +1,7 @@
 import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
 import basicExample from './examples/basic.code?raw';
 import * as Primary from './examples/primary.stories';
-import { DummyComponentReturn, DummyComponentReturnFloors, DummyComponentAreas, DummyComponentDevices, DummyComponentServices, DummyComponentEntitiesRegistry, DummyComponentEntitiesRegistryDisplay } from './examples/DummyComponent';
+import { DummyComponentReturn, DummyComponentReturnFloors, DummyComponentAreas, DummyComponentDevices, DummyComponentServices, DummyComponentEntitiesRegistryDisplay } from './examples/DummyComponent';
 
 
 <Meta title="core/hooks/useRegistryData" parameters={{
@@ -25,7 +25,6 @@ All returned values are plain objects keyed by an ID (usually an entity_id, devi
 
 ### **Available `type` values:**
 
-- `entitiesRegistry` - Canonical definition records for each entity (unique_id, platform, device linkage, area assignment, disabled_by, etc). Mirrors HA entity registry entries.
 - `entitiesRegistryDisplay` - Display-oriented overrides and friendly metadata (name, localized name variants, hidden status). Combines registry info used for UI labels.
 - `services` - Nested object of domains and their callable services (`services[domain][service]`). Each service entry includes fields like `description`, `fields` (schema for service data), and optionally target requirements, in home assistant these are also known as actions.
 - `areas` - Area definitions (name, id, aliases, floor linkage). Useful for grouping devices/entities.
@@ -37,11 +36,11 @@ If a slice has not loaded yet you still receive its initialized empty object (ne
 ### **Notes**
 
 1. Because the hook is keyed by a string literal union, TypeScript narrows precisely; no manual casting required.
-2. For programmatic (non-hook) access you can still do: `const { entitiesRegistry } = useStore.getState();` but the hook gives you reactivity
+2. For programmatic (non-hook) access you can still do: `const { entitiesRegistryDisplay } = useHass.getState();` but the hook gives you reactivity
 
 ### When to Prefer Direct Store Access
 
-Use the hook for component-level reactive subscriptions. Use `useStore.getState()` when:
+Use the hook for component-level reactive subscriptions. Use `useHass.getState()` when:
 - Executing logic outside React lifecycle (e.g. in a utility module)
 - Performing one-off synchronous reads where re-rendering isn’t needed
 
@@ -52,7 +51,7 @@ Use the hook for component-level reactive subscriptions. Use `useStore.getState(
 
 ### IntelliSense
 
-Type narrowing occurs automatically. Hover over `entitiesRegistry` in your editor to see full `EntityRegistryEntry` structure without casts.
+Type narrowing occurs automatically. Hover over `entitiesRegistryDisplay` in your editor to see full `EntityRegistryDisplayEntry` structure without casts.
 
 ### Example Usage
 
@@ -94,10 +93,6 @@ export type HassServices = {
 A `HassService` is defined as:
 
 <ArgTypes of={DummyComponentServices} />
-
-### EntityRegistryEntry
-The following is the `EntityRegistryEntry` type returned by the `useRegistryData` hook when using the type "entitiesRegistry":
-<ArgTypes of={DummyComponentEntitiesRegistry} />
 
 ### EntityRegistryDisplayEntry
 The following is the `EntityRegistryDisplayEntry` type returned by the `useRegistryData` hook when using the type "entitiesRegistryDisplay":

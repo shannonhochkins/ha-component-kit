@@ -1,13 +1,13 @@
 import { useMemo, useCallback } from "react";
-import { useHass } from "../useHass";
+import { useHass } from "@core";
 import { localize } from "../useLocale";
 import type { SupportedServices, DomainService, SnakeOrCamelDomains, ServiceData, SnakeToCamel, Target } from "@typings";
-import type { HassContextProps } from "@core";
+import type { HassStore } from "@core";
 import { uniq } from "lodash";
 
 export function createService<T extends SnakeOrCamelDomains>(
   domain: T,
-  callService: HassContextProps["callService"],
+  callService: HassStore["helpers"]["callService"],
   rootTarget?: Target,
 ): SupportedServices[SnakeToCamel<T>] {
   return new Proxy<SupportedServices[SnakeToCamel<T>]>(
@@ -29,7 +29,7 @@ export function createService<T extends SnakeOrCamelDomains>(
             target = [...uniq(target)];
           }
           console.info(
-            `${localize("picture_elements.perform_action", {
+            `${localize("perform_action", {
               search: "{name}",
               replace: `${domain}.${service}`,
             })} ${domain}.${service}:`,
@@ -57,7 +57,7 @@ export function useService<T extends SnakeOrCamelDomains>(domain: T, rootTarget:
 export function useService<T extends SnakeOrCamelDomains>(domain: T): SupportedServices[SnakeToCamel<T>];
 export function useService(): <T extends SnakeOrCamelDomains>(domain: T) => SupportedServices[SnakeToCamel<T>];
 export function useService<T extends SnakeOrCamelDomains>(domain?: T, rootTarget?: Target) {
-  const { callService } = useHass();
+  const { callService } = useHass.getState().helpers;
 
   const service = useMemo(() => {
     return domain ? createService(domain, callService, rootTarget) : undefined;

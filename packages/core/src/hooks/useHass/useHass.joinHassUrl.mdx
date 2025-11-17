@@ -1,7 +1,8 @@
 import { Source, Meta } from '@storybook/addon-docs/blocks';
-import joinHassUrlExample from './examples/joinHassUrl.code?raw';
+import joinHassUrlExample from './examples/joinHassUrl.code.tsx?raw';
+import joinHassUrlDefinition from './examples/joinHassUrl.definition.code.ts?raw';
 
-<Meta title="core/hooks/useHass/hass/joinHassUrl" />
+<Meta title="core/hooks/useHass/joinHassUrl" />
 
 # joinHassUrl(path: string)
 This will essentially suffix the hassUrl provided to `HassConnect` with the string provided to the first param.
@@ -9,7 +10,7 @@ This will essentially suffix the hassUrl provided to `HassConnect` with the stri
 This may be useful if you want to extract the name or perform different UI updates based on the role of the logged in user.
 
 ### Definition
-<Source dark language="ts" code={`const url = joinHassUrl('/something')`} />
+<Source dark language="ts" code={joinHassUrlDefinition} />
 
 
 ### Example Usage

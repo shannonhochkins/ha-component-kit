@@ -1,8 +1,8 @@
 import { HassConnect, useRegistryData } from "@hakit/core";
 
 export function Component() {
-  const entitiesRegistry = useRegistryData("entitiesRegistry");
-  const firstEntity = Object.values(entitiesRegistry)[0];
+  const entitiesRegistryDisplay = useRegistryData("entitiesRegistryDisplay");
+  const firstEntity = Object.values(entitiesRegistryDisplay)[0];
   return (
     <div>
       Entity ID: {firstEntity?.entity_id}, platform: {firstEntity?.platform}

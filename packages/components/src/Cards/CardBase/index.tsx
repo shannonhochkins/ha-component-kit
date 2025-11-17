@@ -25,7 +25,7 @@ import {
   computeDomain,
   isUnavailableState,
   useEntity,
-  useStore,
+  useHass,
   localize,
 } from "@hakit/core";
 import { CSSInterpolation } from "@emotion/serialize";
@@ -295,7 +295,7 @@ const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicEl
   ...rest
 }: CardBaseProps<T, E>): ReactElement<T> {
   const _id = useId();
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const [openModal, setOpenModal] = useState(false);
   const domain = _entity ? computeDomain(_entity) : null;
   const entity = useEntity(_entity ?? "unknown", {
@@ -473,7 +473,7 @@ const CardBaseInternal = function CardBase<T extends keyof React.JSX.IntrinsicEl
             ) : graphEntity.history.coordinates.length > 0 ? (
               <SvgGraph coordinates={graphEntity.history.coordinates} {...graph?.props} />
             ) : (
-              <Alert className={"no-state-history"} description={localize("history_charts.no_history_found")} />
+              <Alert className={"no-state-history"} description={localize("no_state_history_found")} />
             )}
           </div>
         )}

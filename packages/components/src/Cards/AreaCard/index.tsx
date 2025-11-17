@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { useEffect, useMemo, useState, useId } from "react";
 import { createPortal } from "react-dom";
-import { localize, useHass, useStore, type EntityName } from "@hakit/core";
+import { localize, useHass, type EntityName } from "@hakit/core";
 import { Row, FabCard, fallback, mq, PreloadImage, CardBase } from "@components";
 import type { PictureCardProps, CardBaseProps, AvailableQueries } from "@components";
 import { Icon } from "@iconify/react";
@@ -121,11 +121,11 @@ function InternalAreaCard({
 }: AreaCardProps) {
   const _id = useId();
   const idRef = id ?? _id;
-  const { addRoute, getRoute } = useHass();
-  const dynamicHash = useStore((store) => store.hash);
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
-  const portalRoot = useStore((store) => store.portalRoot);
-  const windowContext = useStore((store) => store.windowContext);
+  const { addRoute, getRoute } = useHass.getState().helpers;
+  const dynamicHash = useHass((store) => store.hash);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
+  const portalRoot = useHass((store) => store.portalRoot);
+  const windowContext = useHass((store) => store.windowContext);
   const win = windowContext ?? window;
   const [isPressed] = useKeyPress((event) => event.key === "Escape");
   const [open, setOpen] = useState(false);

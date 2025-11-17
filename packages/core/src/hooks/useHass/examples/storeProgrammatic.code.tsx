@@ -1,12 +1,12 @@
-import { useStore } from "@hakit/core";
+import { useHass } from "@hakit/core";
 
 // Programmatic access pattern (non-hook usage inside an event handler or util)
 export function StoreProgrammaticExample() {
-  const user = useStore((s) => s.user);
-  const routes = useStore((s) => s.routes);
+  const user = useHass((s) => s.user);
+  const routes = useHass((s) => s.routes);
 
   function addDemoRoute() {
-    const state = useStore.getState();
+    const state = useHass.getState();
     const existing = state.routes.find((r) => r.hash === "demo");
     if (!existing) {
       state.setRoutes([...state.routes, { hash: "demo", name: "Demo", icon: "mdi:test-tube", active: false }]);

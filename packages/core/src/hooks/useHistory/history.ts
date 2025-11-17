@@ -1,9 +1,9 @@
-import { Connection, HassEntities, HassEntity, HassConfig, HassEntityAttributeBase, MessageBase } from "home-assistant-js-websocket";
-import { computeDomain, computeStateNameFromEntityAttributes, localize } from "@core";
+import { Connection, HassEntity, HassEntityAttributeBase, MessageBase } from "home-assistant-js-websocket";
+import { computeDomain, computeStateNameFromEntityAttributes, localize, useHass } from "@core";
 import type { EntityName } from "@core";
 
 const DOMAINS_USE_LAST_UPDATED = ["climate", "humidifier", "water_heater"];
-const NEED_ATTRIBUTE_DOMAINS = ["climate", "humidifier", "input_datetime", "thermostat", "water_heater", "person", "device_tracker"];
+const NEED_ATTRIBUTE_DOMAINS = ["climate", "humidifier", "input_datetime", "water_heater", "person", "device_tracker"];
 const LINE_ATTRIBUTES_TO_KEEP = [
   "temperature",
   "current_temperature",
@@ -27,10 +27,12 @@ export interface LineChartEntity {
   name: string;
   entity_id: string;
   states: LineChartState[];
+  statistics?: LineChartState[];
 }
 
 export interface LineChartUnit {
   unit: string;
+  device_class?: string;
   identifier: string;
   data: LineChartEntity[];
 }
@@ -42,6 +44,7 @@ export interface HistoryStreamMessage {
 }
 
 export interface TimelineState {
+  state_localize: string;
   state: string;
   last_changed: number;
 }
@@ -67,12 +70,12 @@ export interface EntityHistoryState {
   /** attributes */
   a: HassEntity["attributes"];
   /** last_changed; if set, also applies to lu */
-  lc: number;
+  lc?: number;
   /** last_updated */
   lu: number;
 }
 
-export const entityIdHistoryNeedsAttributes = (entityId: EntityName) => NEED_ATTRIBUTE_DOMAINS.includes(computeDomain(entityId));
+const entityIdHistoryNeedsAttributes = (entityId: EntityName) => NEED_ATTRIBUTE_DOMAINS.includes(computeDomain(entityId));
 interface SubscribeOptions {
   connection: Connection;
   entityIds: EntityName[];
@@ -100,19 +103,16 @@ export const subscribeHistory = ({
     significant_changes_only: significantChangesOnly,
     no_attributes: noAttributes ?? !entityIds.some((entityId) => entityIdHistoryNeedsAttributes(entityId)),
   };
-  const stream = new HistoryStream(connection, hoursToShow);
+  const stream = new HistoryStream(hoursToShow);
   return connection.subscribeMessage<HistoryStreamMessage>((message) => callbackFunction(stream.processMessage(message)), params);
 };
 
 class HistoryStream {
-  connection: Connection;
-
   hoursToShow?: number;
 
   combinedHistory: HistoryStates;
 
-  constructor(connection: Connection, hoursToShow?: number) {
-    this.connection = connection;
+  constructor(hoursToShow?: number) {
     this.hoursToShow = hoursToShow;
     this.combinedHistory = {};
   }
@@ -179,11 +179,12 @@ const equalState = (obj1: LineChartState, obj2: LineChartState) =>
   // will have attributes except for domains in DOMAINS_USE_LAST_UPDATED.
   (!obj1.attributes || !obj2.attributes || LINE_ATTRIBUTES_TO_KEEP.every((attr) => obj1.attributes![attr] === obj2.attributes![attr]));
 
-const processLineChartEntities = (unit: string, historyStates: HistoryStates, entities: HassEntities): LineChartUnit => {
+const processLineChartEntities = (unit: string, device_class: string | undefined, entities: HistoryStates): LineChartUnit => {
+  const hassEntities = useHass.getState().entities;
   const data: LineChartEntity[] = [];
 
-  Object.keys(historyStates).forEach((entityId) => {
-    const states = historyStates[entityId];
+  Object.keys(entities).forEach((entityId) => {
+    const states = entities[entityId];
     const first: EntityHistoryState = states[0];
     const domain = computeDomain(entityId as EntityName);
     const processedStates: LineChartState[] = [];
@@ -224,7 +225,7 @@ const processLineChartEntities = (unit: string, historyStates: HistoryStates, en
       processedStates.push(processedState);
     }
 
-    const attributes = entityId in entities ? entities[entityId].attributes : "friendly_name" in first.a ? first.a : undefined;
+    const attributes = entityId in hassEntities ? hassEntities[entityId].attributes : "friendly_name" in first.a ? first.a : undefined;
 
     data.push({
       domain,
@@ -236,6 +237,7 @@ const processLineChartEntities = (unit: string, historyStates: HistoryStates, en
 
   return {
     unit,
+    device_class,
     identifier: Object.keys(entities).join(""),
     data,
   };
@@ -244,6 +246,8 @@ const processLineChartEntities = (unit: string, historyStates: HistoryStates, en
 const processTimelineEntity = (entityId: string, states: EntityHistoryState[], current_state: HassEntity | undefined): TimelineEntity => {
   const data: TimelineState[] = [];
   const first: EntityHistoryState = states[0];
+  const formatter = useHass.getState().formatter;
+  const entities = useHass.getState().entities;
   for (const state of states) {
     if (data.length > 0 && state.s === data[data.length - 1].state) {
       continue;
@@ -253,8 +257,19 @@ const processTimelineEntity = (entityId: string, states: EntityHistoryState[], c
     if (current_state?.attributes.device_class) {
       currentAttributes.device_class = current_state?.attributes.device_class;
     }
+    const entity = entities[entityId];
 
     data.push({
+      state_localize: formatter.attributeValue(
+        {
+          ...entity,
+          attributes: {
+            ...(state.a || first.a),
+            ...currentAttributes,
+          },
+        },
+        state.s,
+      ),
       state: state.s,
       // lc (last_changed) may be omitted if its the same
       // as lu (last_updated).
@@ -269,56 +284,121 @@ const processTimelineEntity = (entityId: string, states: EntityHistoryState[], c
   };
 };
 
-const stateUsesUnits = (state: HassEntity) => attributesHaveUnits(state.attributes);
+const NUMERICAL_DOMAINS = ["counter", "input_number", "number"];
 
-const attributesHaveUnits = (attributes: HassEntity["attributes"]) => "unit_of_measurement" in attributes || "state_class" in attributes;
+const isNumericFromDomain = (domain: string) => NUMERICAL_DOMAINS.includes(domain);
 
-export const computeHistory = (config: HassConfig, entities: HassEntities, stateHistory: HistoryStates): HistoryResult => {
+const isNumericFromAttributes = (attributes: Record<string, unknown>) => "unit_of_measurement" in attributes || "state_class" in attributes;
+
+const isNumericSensorEntity = (stateObj: HassEntity, sensorNumericalDeviceClasses: string[]) =>
+  stateObj.attributes.device_class != null && sensorNumericalDeviceClasses.includes(stateObj.attributes.device_class);
+
+const isNumericEntity = (
+  domain: string,
+  currentState: HassEntity | undefined,
+  numericStateFromHistory: EntityHistoryState | undefined,
+  sensorNumericalDeviceClasses: string[],
+  forceNumeric = false,
+): boolean =>
+  forceNumeric ||
+  isNumericFromDomain(domain) ||
+  (currentState != null && isNumericFromAttributes(currentState.attributes)) ||
+  (currentState != null && domain === "sensor" && isNumericSensorEntity(currentState, sensorNumericalDeviceClasses)) ||
+  numericStateFromHistory != null;
+
+const BLANK_UNIT = " ";
+
+const computeGroupKey = (unit: string | undefined, device_class: string | undefined, splitDeviceClasses: boolean) =>
+  splitDeviceClasses ? `${unit}_${device_class || ""}` : unit;
+
+export const computeHistory = (
+  entity: HassEntity,
+  stateHistory: HistoryStates,
+  forceNumeric = false,
+  splitDeviceClasses = false,
+): HistoryResult => {
   const lineChartDevices: { [unit: string]: HistoryStates } = {};
   const timelineDevices: TimelineEntity[] = [];
-  if (!stateHistory) {
+  const localStateHistory: HistoryStates = {};
+  const sensorNumericalDeviceClasses = useHass.getState().sensorNumericDeviceClasses;
+  const config = useHass.getState().config;
+  const entities = useHass.getState().entities;
+
+  if (entity.entity_id in stateHistory) {
+    localStateHistory[entity.entity_id] = stateHistory[entity.entity_id];
+  } else if (entities[entity.entity_id]) {
+    localStateHistory[entity.entity_id] = [
+      {
+        s: entities[entity.entity_id].state,
+        a: entities[entity.entity_id].attributes,
+        lu: new Date(entities[entity.entity_id].last_updated).getTime() / 1000,
+      },
+    ];
+  }
+
+  if (!localStateHistory) {
     return { line: [], timeline: [] };
   }
   Object.keys(stateHistory).forEach((entityId) => {
-    const stateInfo = stateHistory[entityId];
+    const stateInfo = localStateHistory[entityId];
     if (stateInfo.length === 0) {
       return;
     }
 
+    const domain = computeDomain(entityId as EntityName);
+
     const currentState = entityId in entities ? entities[entityId] : undefined;
-    const stateWithUnitorStateClass = !currentState && stateInfo.find((state) => state.a && attributesHaveUnits(state.a));
+    const numericStateFromHistory =
+      currentState || isNumericFromDomain(domain) ? undefined : stateInfo.find((state) => state.a && isNumericFromAttributes(state.a));
+
+    const isNumeric = isNumericEntity(domain, currentState, numericStateFromHistory, sensorNumericalDeviceClasses, forceNumeric);
 
     let unit: string | undefined;
 
-    if (currentState && stateUsesUnits(currentState)) {
-      unit = currentState.attributes.unit_of_measurement || " ";
-    } else if (stateWithUnitorStateClass) {
-      unit = stateWithUnitorStateClass.a.unit_of_measurement || " ";
+    if (isNumeric) {
+      unit = currentState?.attributes.unit_of_measurement || numericStateFromHistory?.a.unit_of_measurement || BLANK_UNIT;
     } else {
-      unit = {
-        zone: localize("zone.graph_unit"),
-        climate: config.unit_system.temperature,
-        counter: "#",
-        humidifier: "%",
-        input_number: "#",
-        number: "#",
-        water_heater: config.unit_system.temperature,
-      }[computeDomain(entityId as EntityName) as string];
+      if (domain === "zone") {
+        unit = localize("people_in_zone");
+      } else if (domain === "climate" || domain === "water_heater") {
+        unit = config?.unit_system.temperature;
+      } else if (domain === "humidifier") {
+        unit = "%";
+      }
     }
+
+    let deviceClassSpecial: string | undefined;
+
+    if (domain === "climate") {
+      deviceClassSpecial = "temperature";
+    } else if (domain === "humidifier") {
+      deviceClassSpecial = "humidity";
+    } else if (domain === "water_heater") {
+      deviceClassSpecial = "temperature";
+    }
+
+    const deviceClass: string | undefined = deviceClassSpecial || (currentState?.attributes || numericStateFromHistory?.a)?.device_class;
+
+    const key = computeGroupKey(unit, deviceClass, splitDeviceClasses);
 
     if (!unit) {
       timelineDevices.push(processTimelineEntity(entityId, stateInfo, currentState));
-    } else if (unit in lineChartDevices && entityId in lineChartDevices[unit]) {
-      lineChartDevices[unit][entityId].push(...stateInfo);
-    } else {
-      if (!(unit in lineChartDevices)) {
-        lineChartDevices[unit] = {};
+    } else if (key && key in lineChartDevices && entityId in lineChartDevices[key]) {
+      lineChartDevices[key][entityId].push(...stateInfo);
+    } else if (key) {
+      if (!(key in lineChartDevices)) {
+        lineChartDevices[key] = {};
       }
-      lineChartDevices[unit][entityId] = stateInfo;
+      lineChartDevices[key][entityId] = stateInfo;
     }
   });
 
-  const unitStates = Object.keys(lineChartDevices).map((unit) => processLineChartEntities(unit, lineChartDevices[unit], entities));
+  const unitStates = Object.keys(lineChartDevices).map((key) => {
+    const splitKey = key.split("_");
+    const unit = splitKey[0];
+    const deviceClass = splitKey.slice(1).join("_") || undefined;
+    return processLineChartEntities(unit, deviceClass, lineChartDevices[key]);
+  });
 
   return { line: unitStates, timeline: timelineDevices };
 };

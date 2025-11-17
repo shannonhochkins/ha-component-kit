@@ -12,7 +12,7 @@ import {
   stateActive,
   toReadableString,
   localize,
-  useStore,
+  useHass,
 } from "@hakit/core";
 import styled from "@emotion/styled";
 import { useDebouncedCallback } from "use-debounce";
@@ -131,7 +131,7 @@ export function ClimateControlSlider({ entity: _entity, targetTempStep, showCurr
   const [_targetTemperature, setTargetTemperature] = useState<Partial<Record<Target, number>>>({});
   const [_selectTargetTemperature, setSelectTargetTemperature] = useState<Target>("low");
   const entity = useEntity(_entity);
-  const config = useStore((store) => store.config);
+  const config = useHass((store) => store.config);
 
   const { min_temp: _min, max_temp: _max, target_temp_step, hvac_modes } = entity.attributes;
 

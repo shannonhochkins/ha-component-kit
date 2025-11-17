@@ -1,7 +1,53 @@
-import { useStore } from "@hakit/core";
+import { useHass } from "@hakit/core";
+
+/**
+ * Date & Time Formatting Helpers
+ *
+ * All helpers accept `Date | string` (ISO-like) and use loaded locale/config; they fall back to
+ * safe browser defaults (Intl) until locale + config are ready.
+ *
+ * Core Time & Date:
+ * - `formatDate`
+ * - `formatTime`
+ * - `formatTimeWithoutAmPm` (forced 24h HH:MM)
+ * - `formatAmPmSuffix` (localized day period, if applicable)
+ *
+ * Granular Time Parts:
+ * - `formatHour`
+ * - `formatMinute`
+ * - `formatSeconds`
+ *
+ * DateTime Composites:
+ * - `formatDateTime`
+ * - `formatDateTimeWithSeconds`
+ * - `formatShortDateTime`
+ * - `formatShortDateTimeWithYear`
+ * - `formatShortDateTimeWithConditionalYear`
+ *
+ * Fallback & Numeric:
+ * - `formatDateTimeWithBrowserDefaults` (explicit browser Intl fallback)
+ * - `formatDateTimeNumeric` (numeric compact variant)
+ *
+ * Date Variants:
+ * - `formatDateWeekdayDay`
+ * - `formatDateShort`
+ * - `formatDateVeryShort`
+ * - `formatDateMonthYear`
+ * - `formatDateMonth`
+ * - `formatDateYear`
+ * - `formatDateWeekday`
+ * - `formatDateWeekdayShort`
+ * - `formatDateNumeric`
+ *
+ * Fallback behavior:
+ * - Until `locale` & `config` load, formatter methods return an empty string.
+ * - Date helpers fall back to browser Intl if not ready.
+ *
+ * See also: formatterStateValue.code.tsx for state/attribute helpers.
+ */
 
 export function FormatterDatesExample() {
-  const formatter = useStore((s) => s.formatter);
+  const formatter = useHass((s) => s.formatter);
   const now = new Date();
   return (
     <div>

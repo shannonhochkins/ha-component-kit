@@ -3,14 +3,13 @@ import styled from "@emotion/styled";
 import {
   localize,
   useEntity,
-  useStore,
+  useHass,
   useIconByDomain,
   useIcon,
   useIconByEntity,
   isUnavailableState,
   ON,
   OFF,
-  computeDomainTitle,
   computeDomain,
   type HassEntityWithService,
   type ExtractDomain,
@@ -209,6 +208,8 @@ export interface ButtonCardProps<E extends EntityName> extends Omit<CardBaseProp
   hideToggle?: boolean;
   /** The children to render at the bottom of the card */
   children?: React.ReactNode;
+  /** Separator rendered between description and state when both exist. Can be any React node. @default '-' */
+  descriptionSeparator?: React.ReactNode;
 }
 function InternalButtonCard<E extends EntityName>({
   entity: _entity,
@@ -219,7 +220,7 @@ function InternalButtonCard<E extends EntityName>({
   fabProps,
   active,
   onClick,
-  description: _description,
+  description,
   title: _title,
   layoutType,
   disabled = false,
@@ -235,8 +236,8 @@ function InternalButtonCard<E extends EntityName>({
   customRenderState,
   ...rest
 }: ButtonCardProps<E>): React.ReactNode {
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
-  const formatter = useStore((state) => state.formatter);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
+  const formatter = useHass((state) => state.formatter);
   const domain = _entity ? computeDomain(_entity) : null;
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
@@ -259,11 +260,6 @@ function InternalButtonCard<E extends EntityName>({
   const title = useMemo(() => {
     return _title === null ? null : _title || entity?.attributes.friendly_name || entity?.entity_id || null;
   }, [_title, entity]);
-  // use the input title if provided, else use the domain if available, else null
-  const description = useMemo(
-    () => _description || (domain !== null && _entity ? computeDomainTitle(_entity, entity?.attributes?.device_class) : null),
-    [_description, domain, entity, _entity],
-  );
 
   function renderState() {
     if (hideState) return null;
@@ -284,6 +280,19 @@ function InternalButtonCard<E extends EntityName>({
     return null;
   }
   const hasFeatures = Children.toArray(rest?.features).filter((child) => isValidElement(child)).length > 0;
+  const stateNode = renderState();
+  const separatorNode = rest.descriptionSeparator ?? "-";
+  function buildDescriptionContent(main: React.ReactNode, state: React.ReactNode) {
+    if (!main && !state) return null;
+    if (main && state) {
+      return (
+        <>
+          {main} <span className="description-separator">{separatorNode}</span> {state}
+        </>
+      );
+    }
+    return main || state;
+  }
   return (
     <StyledButtonCard
       key={key}
@@ -333,10 +342,8 @@ function InternalButtonCard<E extends EntityName>({
           {isSlimLayout && (
             <Column fullWidth alignItems={layoutType === "slim-vertical" ? "center" : "flex-start"}>
               {title && <Title className="title">{title}</Title>}
-              {!hideDetails && description && (
-                <Description className={`description ${layoutType ?? ""}`}>
-                  {description} {!hideState ? ` - ${renderState()}` : ""}
-                </Description>
+              {!hideDetails && (
+                <Description className={`description ${layoutType ?? ""}`}>{buildDescriptionContent(description, stateNode)}</Description>
               )}
               {entity && !hideLastUpdated && (
                 <Description className={`description secondary ${layoutType === "slim-vertical" ? "center" : ""}`}>
@@ -349,12 +356,7 @@ function InternalButtonCard<E extends EntityName>({
         {isDefaultLayout && (
           <Footer className="footer">
             {title && <Title className="title">{title}</Title>}
-            {!hideDetails && description && (
-              <Description className="description">
-                {description}
-                {entity && !hideState ? ` - ${renderState()}` : ""}
-              </Description>
-            )}
+            {!hideDetails && <Description className="description">{buildDescriptionContent(description, stateNode)}</Description>}
             {!hideDetails && entity && !hideLastUpdated && (
               <Description className="description secondary">
                 {localize("last_updated")}: {entity.custom.relativeTime}

@@ -179,7 +179,7 @@ function InternalCoverControls({
                       if (onStateChange) onStateChange(computeTitleDisplay(entity, Math.round(value)));
                     }}
                   />
-                  <Label>{localize("cover_tilt_position.label")}</Label>
+                  <Label>{localize("cover_tilt_position")}</Label>
                 </Column>
               )}
             </Row>
@@ -252,7 +252,7 @@ function InternalCoverControls({
                       icon={reverse ? "mdi:arrow-collapse" : "mdi:arrow-expand"}
                     />
                     <ButtonGroupButton
-                      title={localize("stop_cover_tilt")}
+                      title={localize("stops_a_tilting_cover_movement")}
                       entity={_entity}
                       service="stopCoverTilt"
                       icon={"mdi:stop-circle-outline"}

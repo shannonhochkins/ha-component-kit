@@ -1,9 +1,9 @@
-import { useStore } from "@hakit/core";
+import { useHass } from "@hakit/core";
 import { useEffect } from "react";
 
 // Example: Override styles for a component at runtime.
 export function StoreGlobalStylesExample() {
-  const setGlobalComponentStyles = useStore((s) => s.setGlobalComponentStyles);
+  const setGlobalComponentStyles = useHass((s) => s.setGlobalComponentStyles);
   useEffect(() => {
     setGlobalComponentStyles({
       cardBase: {

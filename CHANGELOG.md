@@ -1,27 +1,58 @@
 # 6.0.0
 
-### @#hakit/components
-- BUGFIX - LightControls - Fixed bugs relating to the control slider, fixed issue where brightness value wasn't aligning with the slider position and value of the entity, fixed issue where lights that don't support color, temp, brightness would not render a "switch" to control the light on/off state.
-- NEW - LightControls - Added support for "favorites" similar to how home assistant displays, we do not have the management of favorite colors via the UI here as home assistant does.
-- BUGFIX - Weather Card - updated hard coded "feels like" to use "apparent temperature" locale, localizing state value
-- IMPROVEMENT - Weather Card - Updated some styling issues and layout issues for smaller devices, moved apparent temperature to be in the weather details section automatically when available, locale updates for state values and attributes
-- IMPROVEMENT - Updated a few other components to use the new locale keys
+## TL;DR / High-Level Upgrade Notes
+Major locale & store refactor, hook renames, and component prop removals. Expect TypeScript errors guiding required code changes. See Migration Checklist below before upgrading.
+
+## Migration Checklist
+Perform these steps in order - Full details below under the BREAKING CHANGES section.
+1. Replace `useStore` usage where accessing helpers/state directly with `useHass` (BREAKING rename). Update any imports & snapshots accordingly.
+2. Remove deprecated `getConfig`, `getServices`, `getUser`, `getStates` calls. Replace with store subscriptions: `useHass(state => state.config)` etc, or snapshots `useHass.getState().config`.
+3. Update `useUsers` hook calls: remove `refetch` usage; pass filtering options directly.
+4. ButtonCard: remove `unitOfMeasurement` prop. Use automatic locale formatting or `customRenderState` for overrides.
+5. ButtonCard/SensorCard: if you relied on automatic domain prefix (e.g. `Light: 50%`), manually add via `description` or `customRenderState`, or use `computeDomainTitle`.
+6. TimeCard: if you depended on implicit entity assignment, explicitly pass entity props OR rely on new browser-time behavior.
+7. Locale keys changed - You may have typescript errors if referencing locale keys that no longer exist.
+8. Migrate any usage of removed `HassContext` / `HassContextProps` (now merged into store). Remove direct context imports.
+9. Adjust any code using previous area structure (`services` removed) as it's information that's not in use (please raise an issue if you need this data for a specific use case).
+
+## BREAKING CHANGES
+
+### @hakit/components
 - BREAKING / BUGFIX - TimeCard - Fixing unexpected lag when no entity option is used, falls behind by up to 30seconds in some cases, now uses browser time directly when no entity is provided. Removed default "entity" assignment if it's available, now users will have to opt into using an entity if they want to use one (breaking change), all dates when using non entity flow are now timezone/language/locale aware using the new locale services.
-- IMPROVEMENT - ButtonCard - Updated to use new formatters to format attribute/state values correctly
-- BREAKING - ButtonCard - unitOfMeasurement prop removed, now that we're formatting the same as home assistant, it will respect the users settings for units automatically, if you were using this prop, you will have to remove it and let the component handle the formatting automatically.
+- BREAKING - ButtonCard - unitOfMeasurement prop removed, now that we're formatting the same as home assistant, it will respect the users settings for units automatically, if you were using this prop, you will have to remove it and let the component handle the formatting automatically, if you still need to have a custom render state, you can use the `customRenderState` prop to provide your own custom rendering logic.
+- BREAKING - ButtonCard - A subtle breaking change, the automatic "domain" prefix before the state value on ButtonCards/SensorCards has been removed, this means for a light card you'll no longer see "Light: 50%", where 50% is the brightness value, this was redundant information as the Name of the entity is clearly displayed, if you still want to add this prefix back, you can either use `customRenderState` prop to provide your own logic, or you can set the `description` prop to include the domain name if you wish, you can import the `computeDomainTitle` helper from `@hakit/core` to help with this.
 
 ### @hakit/core
 - BREAKING -Refactoring all logic around locale generation, locale keys have changed, values will change as users reported a few inconsistencies with home assistant locale values, if you're using the locale services directly you may have to update some keys, all types have been updated accordingly so you should get type errors once upgrading.
 - BREAKING - useHass - The methods - `getConfig`, `getServices`, `getUser`, `getStates` have been removed, this information is now pre-fetched, and will automatically update whenever any of the information changes, you can access this information via the `useStore` hook to subscribe, and retrieve programmatically `const user = useStore(state => state.user);` or to get a snapshot `const user = useStore.getState().user;`
 - BREAKING - useUsers - options passed to this hook have changed, `refetch` function has been removed, and you now just pass the filtering options directly.
-- NEW - useLocalData - A new hook to subscribe to locale data updates from home assistant, this includes language, number and date formatting.
+- BREAKING - useStore -> Deprecated and renamed to useHass, useHass functionality has been merged into useStore with methods accessible via the store directly, for example:
+```ts
+// OLD
+const { callService } = useHass();
+// NEW
+const { callService } = useStore.getState().helpers;
+// OLD
+const { windowContext } = useHass();
+// NEW
+const windowContext = useStore((state) => state.windowContext);
+```
+- BREAKING - HassContext, HassContextProps - Removed, and merged with UseHassStore (or HassStore if not using the hook)
+- NEW/BREAKING - useAreas - now supports floors, a floor_id and a FloorRegistryEntry will be associated with an area, the breaking change is that "services" were removed from the area structure.
+
+## NEW FEATURES
+
+### @hakit/components
+- NEW - LightControls - Added support for "favorites" similar to how home assistant displays, we do not have the management of favorite colors via the UI here as home assistant does.
+
+### @hakit/core
+- NEW - useHistory - Updated useHistory subscriptions to match latest logic with home assistant, added new options to support numeric histories and splitting by device class.
+- NEW - useLocalData - A new hook to subscribe to locale data updates from home assistant, this includes information related to formatting language, number and date formatting, the formatter api functions rely on this data to format values correctly and a wide range of helper methods are now available.
 - NEW - useRegistryData - A new hook to subscribe to registry data updates from home assistant for entities, devices, areas, floors and more
-- NEW - useFloors - A new hook to subscribe to floor registry data from home assistant
+- NEW - useFloors - A new hook to subscribe to floor registry data from home assistant, this will return a hierarchical list of floors and their associated areas, and the devices/entities within the areas, any areas not assigned to a floor will be part of the "Unassigned" floor.
 - NEW - formatter - Convenience formatter methods to format entity states, attributes and date/time values according to the current locale and configuration, this is now accessible via the store `useStore(state => state.formatter)` or programmatically `useStore.getState().formatter`, examples added to the `useStore` docs.
 - NEW - computeDefaultFavoriteColors - A new function to get the default fav colors for a light if supported, as well as lightSupportsFavoriteColors function
-updating computeStateDisplay to match home assistant logic
 - NEW - entityRegistryEntries now available on the store via useStore(state => state.entityRegistryEntries) or useStore().getState().entityRegistryEntries
-- NEW - useAreas - now supports floors
 - NEW - getExtendedEntityRegistryEntry - a new method to retrieve a single entity registry entry
 - NEW - getExtendedEntityRegistryEntries - a new method to retrieve multiple entity registry entries at once
 - NEW - updateEntityRegistryEntry - a new method to update an entity registry entry
@@ -36,6 +67,23 @@ updating computeStateDisplay to match home assistant logic
 - NEW - subscribeFloorRegistry - A new method to subscribe to floor registry updates.
 - NEW - updateDeviceRegistryEntry - A new method to update a device registry entry.
 - NEW - removeConfigEntryFromDevice- A new method to remove a config entry from a device.
+
+## IMPROVEMENTS
+
+### @hakit/components
+- IMPROVEMENT - Weather Card - Updated some styling issues and layout issues for smaller devices, moved apparent temperature to be in the weather details section automatically when available, locale updates for state values and attributes
+- IMPROVEMENT - Updated multiple components to use the new locale keys
+- IMPROVEMENT - ButtonCard - Updated to use new formatters to format attribute/state values correctly
+
+### @hakit/core
+- updating computeStateDisplay to match home assistant logic
+
+## BUGFIXES
+
+### @hakit/components
+- BUGFIX - LightControls - Fixed bugs relating to the control slider, fixed issue where brightness value wasn't aligning with the slider position and value of the entity, fixed issue where lights that don't support color, temp, brightness would not render a "switch" to control the light on/off state.
+- BUGFIX - Weather Card - updated hard coded "feels like" to use "apparent temperature" locale, localizing state value
+
 
 # 5.1.6
 

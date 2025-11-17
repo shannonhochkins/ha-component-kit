@@ -3,7 +3,7 @@ import type { HassEntityWithService, HassEntityCustom, ExtractDomain, EntityName
 import type { HassEntity } from "home-assistant-js-websocket";
 import { getCssColorValue } from "@utils/colors";
 import { timeAgo } from "@utils/time/time-ago";
-import { computeDomain, useStore, useSubscribeEntity, useHistory, useService, getIconByEntity, type HistoryOptions } from "@core";
+import { computeDomain, useHass, useSubscribeEntity, useHistory, useService, getIconByEntity, type HistoryOptions } from "@core";
 
 export interface UseEntityOptions {
   returnNullIfNotFound?: boolean;
@@ -69,7 +69,7 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
   const domain = computeDomain(entity) as ExtractDomain<E>;
   const service = useService(domain, entity);
   const history = useHistory(entity, historyOptions);
-  const language = useStore((state) => state.config?.language);
+  const language = useHass((state) => state.config?.language);
   const formatted = useMemo(() => (rawEntity ? formatEntity(rawEntity, language) : null), [rawEntity, language]);
   const entityWithHelpers = useMemo(() => {
     if (formatted == null) {

@@ -1,5 +1,5 @@
 import type { EntityName, FilterByDomain, CameraEntityExtended } from "@hakit/core";
-import { useCamera, useStore, isUnavailableState, STREAM_TYPE_WEB_RTC, STREAM_TYPE_HLS, localize } from "@hakit/core";
+import { useCamera, useHass, isUnavailableState, STREAM_TYPE_WEB_RTC, STREAM_TYPE_HLS, localize } from "@hakit/core";
 import styled from "@emotion/styled";
 import { useEffect, useCallback, useRef, useState, useMemo, Children, isValidElement, cloneElement } from "react";
 import {
@@ -131,7 +131,7 @@ function InternalCameraCard<E extends FilterByDomain<EntityName, "camera">>({
   key,
   ...rest
 }: CameraCardProps<E>) {
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const cameraUpdater = useRef<NodeJS.Timeout | undefined>(undefined);
   const loadingIconRef = useRef<SVGSVGElement | null>(null);
   const stateValueRef = useRef<HTMLDivElement | null>(null);
@@ -214,7 +214,7 @@ function InternalCameraCard<E extends FilterByDomain<EntityName, "camera">>({
             setView("live");
           }}
           active={_view === "live"}
-          title={localize("stream.preload_stream")}
+          title={localize("preload_camera_stream")}
           tooltipPlacement="top"
           rippleProps={{
             preventPropagation: true,
