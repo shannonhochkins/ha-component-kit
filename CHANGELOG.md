@@ -1,8 +1,5 @@
 # 6.0.0
 
-## TL;DR / High-Level Upgrade Notes
-Major locale & store refactor, hook renames, and component prop removals. Expect TypeScript errors guiding required code changes. See Migration Checklist below before upgrading.
-
 ## Migration Checklist
 Perform these steps in order - Full details below under the BREAKING CHANGES section.
 1. Replace `useStore` usage where accessing helpers/state directly with `useHass` (BREAKING rename). Update any imports & snapshots accordingly.
