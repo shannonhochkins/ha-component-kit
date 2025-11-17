@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from "react";
-import { useHass } from "../useHass";
+import { useHass } from "@core";
 import { localize } from "../useLocale";
 import type { SupportedServices, DomainService, SnakeOrCamelDomains, ServiceData, SnakeToCamel, Target } from "@typings";
 import type { HassContextProps } from "@core";
@@ -57,7 +57,7 @@ export function useService<T extends SnakeOrCamelDomains>(domain: T, rootTarget:
 export function useService<T extends SnakeOrCamelDomains>(domain: T): SupportedServices[SnakeToCamel<T>];
 export function useService(): <T extends SnakeOrCamelDomains>(domain: T) => SupportedServices[SnakeToCamel<T>];
 export function useService<T extends SnakeOrCamelDomains>(domain?: T, rootTarget?: Target) {
-  const { callService } = useHass();
+  const { callService } = useHass.getState().helpers;
 
   const service = useMemo(() => {
     return domain ? createService(domain, callService, rootTarget) : undefined;

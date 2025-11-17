@@ -34,7 +34,7 @@ import {
   rgbw2rgb,
   hs2rgb,
   type LightColor,
-  useStore,
+  useHass,
   DOMAIN_ATTRIBUTES_UNITS,
   isOffState,
 } from "@hakit/core";
@@ -158,7 +158,7 @@ function InternalLightControls({
   const brightnessValue = useLightBrightness(entity);
   const device = useBreakpoint();
   const isUnavailable = isUnavailableState(entity.state);
-  const formatter = useStore((state) => state.formatter);
+  const formatter = useHass((state) => state.formatter);
   const titleValue = useMemo(() => {
     if (entity.state === OFF) {
       return localize("off");

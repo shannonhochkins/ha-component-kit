@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useMemo, useRef, useCallback, useEffect, useState } from "react";
-import { type HassEntityWithService, useStore, useEntity, FilterByDomain, EntityName } from "@hakit/core";
+import { type HassEntityWithService, useHass, useEntity, FilterByDomain, EntityName } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, Column, fallback, CardBase, type CardBaseProps, type AvailableQueries } from "@components";
 import { createDateFormatter, daySuffix } from "./formatter";
@@ -30,7 +30,7 @@ const Contents = styled.div`
   }
 `;
 
-// We intentionally removed bespoke locale logic in favor of the central formatter exposed via useStore.
+// We intentionally removed bespoke locale logic in favor of the central formatter exposed via useHass.
 // The only custom logic retained locally is the ordinal day suffix (1st, 2nd, 3rd...) which Home Assistant
 // itself does not currently expose as a dedicated helper; we compose that around the shared formatter parts.
 type CustomFormatter = (date: Date, formatter: FormatFunction) => React.ReactNode;
@@ -95,16 +95,16 @@ function InternalTimeCard({
 }: TimeCardProps): React.ReactNode {
   const [currentTime, setCurrentTime] = useState(new Date());
   // Access the centralized, timezone & locale aware formatter from the store (HA config + user profile driven)
-  const formatter = useStore((s) => s.formatter);
-  const locale = useStore((s) => s.locale);
-  const config = useStore((s) => s.config);
+  const formatter = useHass((s) => s.formatter);
+  const locale = useHass((s) => s.locale);
+  const config = useHass((s) => s.config);
   const language = locale?.language;
   const timeZone = config?.time_zone;
 
   const { formatAmPmSuffix, formatDateWeekday, formatDateMonth, formatDateYear, formatTime } = formatter;
   const previousTimeRef = useRef<number>(Date.now());
   const requestRef = useRef<number>(undefined);
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const timeSensor = useEntity(timeEntity ?? "unknown", {
     returnNullIfNotFound: true,
   });

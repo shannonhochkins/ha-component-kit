@@ -30,11 +30,11 @@ export function climateUpdates({
       attributes: {
         ...entities[target].attributes,
         ...serviceData || {},
-        // @ts-ignore - purposely casting here so i don't have to setup manual types for fake data
+        // @ts-expect-error - purposely casting here so i don't have to setup manual types for fake data
         hvac_action: MODE_TO_HVAC_ACTION[serviceData?.hvac_mode] || entities[target].attributes.hvac_action
       },
       ...dates,
-      // @ts-ignore - purposely casting here so i don't have to setup manual types for fake data
+      // @ts-expect-error - purposely casting here so i don't have to setup manual types for fake data
       state: serviceData?.hvac_mode || entities[target].state
     }
   }));

@@ -16,7 +16,7 @@ export interface CalendarEvent {
   rrule?: string;
 }
 export function CallApiExample() {
-  const { callApi } = useHass();
+  const { callApi } = useHass.getState().helpers;
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   useEffect(() => {
     callApi<CalendarEvent[]>("/calendars/calendar.google_calendar?start=2023-09-30T14:00:00.000Z&end=2023-11-11T13:00:00.000Z").then(

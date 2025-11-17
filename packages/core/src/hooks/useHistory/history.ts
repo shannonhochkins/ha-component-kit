@@ -1,5 +1,5 @@
 import { Connection, HassEntity, HassEntityAttributeBase, MessageBase } from "home-assistant-js-websocket";
-import { computeDomain, computeStateNameFromEntityAttributes, localize, useStore } from "@core";
+import { computeDomain, computeStateNameFromEntityAttributes, localize, useHass } from "@core";
 import type { EntityName } from "@core";
 
 const DOMAINS_USE_LAST_UPDATED = ["climate", "humidifier", "water_heater"];
@@ -180,7 +180,7 @@ const equalState = (obj1: LineChartState, obj2: LineChartState) =>
   (!obj1.attributes || !obj2.attributes || LINE_ATTRIBUTES_TO_KEEP.every((attr) => obj1.attributes![attr] === obj2.attributes![attr]));
 
 const processLineChartEntities = (unit: string, device_class: string | undefined, entities: HistoryStates): LineChartUnit => {
-  const hassEntities = useStore.getState().entities;
+  const hassEntities = useHass.getState().entities;
   const data: LineChartEntity[] = [];
 
   Object.keys(entities).forEach((entityId) => {
@@ -246,8 +246,8 @@ const processLineChartEntities = (unit: string, device_class: string | undefined
 const processTimelineEntity = (entityId: string, states: EntityHistoryState[], current_state: HassEntity | undefined): TimelineEntity => {
   const data: TimelineState[] = [];
   const first: EntityHistoryState = states[0];
-  const formatter = useStore.getState().formatter;
-  const entities = useStore.getState().entities;
+  const formatter = useHass.getState().formatter;
+  const entities = useHass.getState().entities;
   for (const state of states) {
     if (data.length > 0 && state.s === data[data.length - 1].state) {
       continue;
@@ -320,9 +320,9 @@ export const computeHistory = (
   const lineChartDevices: { [unit: string]: HistoryStates } = {};
   const timelineDevices: TimelineEntity[] = [];
   const localStateHistory: HistoryStates = {};
-  const sensorNumericalDeviceClasses = useStore.getState().sensorNumericDeviceClasses;
-  const config = useStore.getState().config;
-  const entities = useStore.getState().entities;
+  const sensorNumericalDeviceClasses = useHass.getState().sensorNumericDeviceClasses;
+  const config = useHass.getState().config;
+  const entities = useHass.getState().entities;
 
   if (entity.entity_id in stateHistory) {
     localStateHistory[entity.entity_id] = stateHistory[entity.entity_id];

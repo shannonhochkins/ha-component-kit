@@ -3,14 +3,14 @@ import { Story } from "@storybook/addon-docs/blocks";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Component } from "./basic.code";
 import { ThemeProvider, FabCard } from "@hakit/components";
-import { useStore } from "@hakit/core";
+import { useHass } from "@hakit/core";
 import { Column, Row } from "@components";
 
 function ShutDown() {
   // @ts-expect-error - Types are intentionally missing, but they do exist, we just don't
   // encourage users to use these internal methods directly.
-  const setConfig = useStore((state) => state.setConfig);
-  const config = useStore((state) => state.config);
+  const setConfig = useHass((state) => state.setConfig);
+  const config = useHass((state) => state.config);
 
   if (!config) return null;
   // This example code here will not actually trigger the shutdown in a real world scenario

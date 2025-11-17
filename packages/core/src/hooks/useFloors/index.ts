@@ -1,4 +1,4 @@
-import { useAreas, useStore, type Area } from "@core";
+import { useAreas, useHass, type Area } from "@core";
 import { useMemo } from "react";
 import type { FloorRegistryEntry } from "@utils/subscribe/floors";
 
@@ -16,7 +16,7 @@ export interface FloorWithAreas extends FloorRegistryEntry {
  */
 export function useFloors(): FloorWithAreas[] {
   const allAreas = useAreas();
-  const floorsRecord = useStore((state) => state.floors);
+  const floorsRecord = useHass((state) => state.floors);
 
   return useMemo(() => {
     const floorAreaLookup = getFloorAreaLookup(allAreas);

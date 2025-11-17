@@ -1,4 +1,4 @@
-import { AreaRegistryEntry, EntityRegistryDisplayEntry, useHass, useStore } from "@core";
+import { AreaRegistryEntry, EntityRegistryDisplayEntry, useHass } from "@core";
 import { useMemo } from "react";
 import type { DeviceRegistryEntry } from "@utils/subscribe/devices";
 import type { HassEntity } from "home-assistant-js-websocket";
@@ -21,13 +21,12 @@ export interface Area extends AreaRegistryEntry {
 }
 
 export function useAreas(): Area[] {
-  const { joinHassUrl } = useHass();
-  // const _entities = useStore((state) => state.entities);
-  const areas = useStore((state) => state.areas);
-  const devices = useStore((state) => state.devices);
-  const floors = useStore((state) => state.floors);
-  const entitiesRegistryDisplay = useStore((state) => state.entitiesRegistryDisplay);
-  const entities = useStore((state) => state.entities);
+  const { joinHassUrl } = useHass.getState().helpers;
+  const areas = useHass((state) => state.areas);
+  const devices = useHass((state) => state.devices);
+  const floors = useHass((state) => state.floors);
+  const entitiesRegistryDisplay = useHass((state) => state.entitiesRegistryDisplay);
+  const entities = useHass((state) => state.entities);
 
   return useMemo(() => {
     const _areas = Object.values(areas);

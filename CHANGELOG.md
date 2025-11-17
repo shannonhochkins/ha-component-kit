@@ -8,7 +8,8 @@
 - IMPROVEMENT - Updated a few other components to use the new locale keys
 - BREAKING / BUGFIX - TimeCard - Fixing unexpected lag when no entity option is used, falls behind by up to 30seconds in some cases, now uses browser time directly when no entity is provided. Removed default "entity" assignment if it's available, now users will have to opt into using an entity if they want to use one (breaking change), all dates when using non entity flow are now timezone/language/locale aware using the new locale services.
 - IMPROVEMENT - ButtonCard - Updated to use new formatters to format attribute/state values correctly
-- BREAKING - ButtonCard - unitOfMeasurement prop removed, now that we're formatting the same as home assistant, it will respect the users settings for units automatically, if you were using this prop, you will have to remove it and let the component handle the formatting automatically.
+- BREAKING - ButtonCard - unitOfMeasurement prop removed, now that we're formatting the same as home assistant, it will respect the users settings for units automatically, if you were using this prop, you will have to remove it and let the component handle the formatting automatically, if you still need to have a custom render state, you can use the `customRenderState` prop to provide your own custom rendering logic.
+- BREAKING - ButtonCard - A subtle breaking change, the automatic "domain" prefix before the state value on ButtonCards/SensorCards has been removed, this means for a light card you'll no longer see "Light: 50%", where 50% is the brightness value, this was redundant information as the Name of the entity is clearly displayed, if you still want to add this prefix back, you can either use `customRenderState` prop to provide your own logic, or you can set the `description` prop to include the domain name if you wish, you can import the `computeDomainTitle` helper from `@hakit/core` to help with this.
 
 ### @hakit/core
 - BREAKING -Refactoring all logic around locale generation, locale keys have changed, values will change as users reported a few inconsistencies with home assistant locale values, if you're using the locale services directly you may have to update some keys, all types have been updated accordingly so you should get type errors once upgrading.
@@ -21,6 +22,18 @@
 - NEW - formatter - Convenience formatter methods to format entity states, attributes and date/time values according to the current locale and configuration, this is now accessible via the store `useStore(state => state.formatter)` or programmatically `useStore.getState().formatter`, examples added to the `useStore` docs.
 - NEW - computeDefaultFavoriteColors - A new function to get the default fav colors for a light if supported, as well as lightSupportsFavoriteColors function
 updating computeStateDisplay to match home assistant logic
+- BREAKING - useStore -> Deprecated and renamed to useHass, useHass functionality has been merged into useStore with methods accessible via the store directly, for example:
+```ts 
+// OLD
+const { callService } = useHass();
+// NEW
+const { callService } = useStore.getState().helpers;
+// OLD
+const { windowContext } = useHass();
+// NEW
+const windowContext = useStore((state) => state.windowContext);
+```
+- BREAKING - HassContext, HassContextProps - Removed, and merged with UseHassStore (or HassStore if not using the hook)
 - NEW - entityRegistryEntries now available on the store via useStore(state => state.entityRegistryEntries) or useStore().getState().entityRegistryEntries
 - NEW/BREAKING - useAreas - now supports floors, a floor_id and a FloorRegistryEntry will be associated with an area, the breaking change is that "services" were removed from the area structure.
 - NEW - getExtendedEntityRegistryEntry - a new method to retrieve a single entity registry entry

@@ -1,7 +1,8 @@
 import { Source, Meta } from '@storybook/addon-docs/blocks';
-import getAllEntitiesExample from './examples/getAllEntities.code?raw';
+import getAllEntitiesExample from './examples/getAllEntities.code.tsx?raw';
+import getAllEntitiesDefinition from './examples/getAllEntities.definition.code.ts?raw';
 
-<Meta title="core/hooks/useHass/hass/getAllEntities" />
+<Meta title="core/hooks/useHass/getAllEntities" />
 
 # getAllEntities()
 
@@ -10,7 +11,7 @@ This will return every entity available in your home assistant instance as an ob
 This is a snapshot of the entities at the time of the call, so it will not update if entities are added/removed/changed after the call.
 
 ### Definition
-<Source dark language="ts" code={`getAllEntities()`} />
+<Source dark language="ts" code={getAllEntitiesDefinition} />
 
 
 ### Example Usage

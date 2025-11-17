@@ -1,4 +1,4 @@
-import { useStore, Store } from "@core";
+import { useHass, Store } from "@core";
 
 /**
  * The allowable registry data keys that can be retrieved via the hook.
@@ -14,5 +14,5 @@ export type RegistryDataKey = "entitiesRegistryDisplay" | "services" | "areas" |
  * const areas = useRegistryData('areas'); // areas: Record<string, AreaRegistryEntry>
  */
 export function useRegistryData<K extends RegistryDataKey>(type: K): Store[K] {
-  return useStore((state) => state[type]);
+  return useHass((state) => state[type]);
 }

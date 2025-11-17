@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from "react";
 import styled from "@emotion/styled";
 import { type AvailableQueries, fallback } from "@components";
 import type { VacuumControlsProps } from "@components";
-import { useStore, useEntity, localize, type EntityName, type FilterByDomain } from "@hakit/core";
+import { useHass, useEntity, localize, type EntityName, type FilterByDomain } from "@hakit/core";
 import { VacuumImage } from "../../Shared/Entity/Vacuum/VacuumControls/VacuumImage";
 import { ErrorBoundary } from "react-error-boundary";
 import { getToolbarActions } from "../../Shared/Entity/Vacuum/VacuumControls/shared";
@@ -42,7 +42,7 @@ function InternalVacuumCard({
   ...rest
 }: VacuumCardProps) {
   const [flash, setFlash] = useState(false);
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const entity = useEntity(_entity);
 
   const titleValue = useMemo(() => {

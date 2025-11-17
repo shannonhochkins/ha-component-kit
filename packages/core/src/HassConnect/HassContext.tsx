@@ -1,9 +1,7 @@
-import { createContext } from "react";
 // types
 import type { Connection, HassEntities, HassEntity, HassConfig, HassServices, Auth } from "home-assistant-js-websocket";
 import { type CSSInterpolation } from "@emotion/serialize";
 import { ServiceData, SnakeOrCamelDomains, DomainService, Target, LocaleKeys, ServiceResponse } from "@typings";
-import type { UseStoreHook } from "../hooks/useStore";
 import { create } from "zustand";
 import { type ConnectionStatus } from "./handleSuspendResume";
 import {
@@ -19,6 +17,9 @@ import {
   shouldUseAmPm,
 } from "@core";
 import { createDateFormatters, DateFormatters } from "./createDateFormatters";
+import { isArray, snakeCase } from "lodash";
+import { callService as _callService } from "home-assistant-js-websocket";
+import { callApi } from "./callApi";
 import { CurrentUser } from "@utils/subscribe/user";
 export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean> {
   domain: T;
@@ -147,6 +148,47 @@ export interface InternalStore {
     attributeValue: (entity: HassEntity, attribute: string) => string;
   } & DateFormatters;
   helpers: {
+    /** logout of HA */
+    logout: () => void;
+    /** function to call a service through web sockets */
+    callService: {
+      <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+        args: CallServiceArgs<T, M, true>,
+      ): Promise<ServiceResponse<ResponseType>>;
+
+      /** Overload for when `returnResponse` is false */
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(args: CallServiceArgs<T, M, false>): void;
+
+      /** Overload for when `returnResponse` is omitted (defaults to false) */
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+        args: Omit<CallServiceArgs<T, M, false>, "returnResponse">,
+      ): void;
+    };
+    /** add a new route to the provider */
+    addRoute: (route: Omit<Route, "active">) => void;
+    /** retrieve a route by name */
+    getRoute: (hash: string) => Route | null;
+    /** will retrieve all HassEntities from the context */
+    getAllEntities: () => HassEntities;
+    /** join a path to the hassUrl */
+    joinHassUrl: (path: string) => string;
+    /** call the home assistant api */
+    callApi: <T>(
+      endpoint: string,
+      options?: RequestInit,
+    ) => Promise<
+      | {
+          data: T;
+          status: "success";
+        }
+      | {
+          data: string;
+          status: "error";
+        }
+    >;
+    /** date time related helper functions */
     dateTime: {
       /** determine if the current locale/timezone should use am/pm time format */
       shouldUseAmPm: () => boolean;
@@ -165,6 +207,28 @@ const shallowEqual = (entity: HassEntity, other: HassEntity): boolean => {
 
   return JSON.stringify(restEntity) === JSON.stringify(restOther);
 };
+
+// Store dedicated to provider-level connection/session bookkeeping (authentication state and active websocket subscriptions)
+export interface HassProviderStore {
+  /** whether we've successfully initiated an auth/connect attempt for current hassUrl */
+  authenticated: boolean;
+  /** set authenticated flag */
+  setAuthenticated: (value: boolean) => void;
+  /** active unsubscribe functions keyed by a descriptive name */
+  subscriptions: Record<string, UnsubscribeFunc>;
+  /** register (or replace) a subscription; will auto-unsubscribe previous key before storing */
+  addSubscription: (key: string, fn: UnsubscribeFunc | null | undefined) => void;
+  /** remove a subscription by key and call its unsubscribe */
+  removeSubscription: (key: string) => void;
+  /** unsubscribe every tracked subscription and clear map */
+  unsubscribeAll: () => void;
+  /** resets the information on the internal store */
+  reset: () => void;
+}
+
+// We import the type from home-assistant-js-websocket here to avoid circular imports elsewhere
+import type { UnsubscribeFunc } from "home-assistant-js-websocket";
+import { clearTokens } from "./token-storage";
 
 export const useInternalStore = create<InternalStore>((set, get) => ({
   sensorNumericDeviceClasses: [],
@@ -242,6 +306,75 @@ export const useInternalStore = create<InternalStore>((set, get) => ({
       return { disconnectCallbacks: [] };
     }),
   helpers: {
+    logout() {
+      const { reset } = useHassProviderStore.getState();
+      const { setError } = get();
+      try {
+        reset();
+        clearTokens();
+        if (location) location.reload();
+      } catch (err: unknown) {
+        console.error("Error:", err);
+        setError("Unable to log out!");
+      }
+    },
+    callService: ((<ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+      rawArgs: CallServiceArgs<T, M, boolean>,
+    ): Promise<ServiceResponse<ResponseType>> | void => {
+      const { domain, service, serviceData, target: _target, returnResponse } = rawArgs;
+      const { connection, ready } = get();
+      const target =
+        typeof _target === "string" || isArray(_target)
+          ? { entity_id: _target }
+          : _target;
+
+      // basic guards
+      if (!connection || !ready) {
+        if (returnResponse) {
+          return Promise.reject(new Error("callService: connection not established or not ready"));
+        }
+        return; // fire & forget path does nothing when not ready
+      }
+
+      try {
+        const result = _callService(
+          connection,
+          snakeCase(domain),
+          snakeCase(service),
+          serviceData ?? {},
+          target,
+          returnResponse,
+        );
+        return returnResponse
+          ? (result as Promise<ServiceResponse<ResponseType>>)
+          : undefined; // fire & forget
+      } catch (e) {
+        console.error("Error calling service:", e);
+        return returnResponse ? Promise.reject(e) : undefined;
+      }
+      
+    }) as InternalStore["helpers"]["callService"]),
+    addRoute(route) {
+      const { routes, setRoutes } = get();
+      const exists = routes.find((r) => r.hash === route.hash);
+      if (!exists) {
+        const hashWithoutPound = typeof window !== "undefined" ? window.location.hash.replace("#", "") : "";
+        const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
+        setRoutes([...routes, { ...route, active } satisfies Route]);
+      }
+    },
+    getRoute(hash) {
+      const { routes } = get();
+      return routes.find((r) => r.hash === hash) || null;
+    },
+    getAllEntities() {
+      return get().entities;
+    },
+    joinHassUrl(path: string) {
+      const { connection } = get();
+      return connection ? new URL(path, connection.options.auth?.data.hassUrl).toString() : "";
+    },
+    callApi: callApi,
     dateTime: {
       shouldUseAmPm: () => {
         const { locale } = get();
@@ -278,51 +411,79 @@ export const useInternalStore = create<InternalStore>((set, get) => ({
   },
 }));
 
-export interface HassContextProps {
-  /** @deprecated - import directly instead: import { useStore } from "@hakit/core"; */
-  useStore: UseStoreHook;
-  /** logout of HA */
-  logout: () => void;
-  /** function to call a service through web sockets */
-  callService: {
-    <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
-      args: CallServiceArgs<T, M, true>,
-    ): Promise<ServiceResponse<ResponseType>>;
-
-    /** Overload for when `returnResponse` is false */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(args: CallServiceArgs<T, M, false>): void;
-
-    /** Overload for when `returnResponse` is omitted (defaults to false) */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
-      args: Omit<CallServiceArgs<T, M, false>, "returnResponse">,
-    ): void;
-  };
-  /** add a new route to the provider */
-  addRoute(route: Omit<Route, "active">): void;
-  /** retrieve a route by name */
-  getRoute(hash: string): Route | null;
-  /** will retrieve all HassEntities from the context */
-  getAllEntities: () => HassEntities;
-  /** join a path to the hassUrl */
-  joinHassUrl: (path: string) => string;
-  /** call the home assistant api */
-  callApi: <T>(
-    endpoint: string,
-    options?: RequestInit,
-  ) => Promise<
-    | {
-        data: T;
-        status: "success";
+export const useHassProviderStore = create<HassProviderStore>((set, get) => ({
+  authenticated: false,
+  setAuthenticated: (value) => set({ authenticated: value }),
+  subscriptions: {},
+  addSubscription: (key, fn) => {
+    if (!fn) return;
+    const subs = get().subscriptions;
+    // if an existing subscription with this key exists, attempt cleanup first
+    if (subs[key]) {
+      try {
+        subs[key]();
+      } catch (e) {
+        if (process.env.NODE_ENV !== "production") {
+          console.warn(`Failed to unsubscribe previous subscription for key '${key}'`, e);
+        }
       }
-    | {
-        data: string;
-        status: "error";
+    }
+    set({ subscriptions: { ...subs, [key]: fn } });
+  },
+  removeSubscription: (key) => {
+    const subs = get().subscriptions;
+    if (!subs[key]) return;
+    try {
+      subs[key]!();
+    } catch (e) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(`Failed to unsubscribe subscription for key '${key}'`, e);
       }
-  >;
-  /** Will tell the various features like breakpoints, modals and resize events which window to match media on, if serving within an iframe it'll potentially be running in the wrong window */
-  windowContext?: Window;
-}
+    }
+    const next = { ...subs };
+    delete next[key];
+    set({ subscriptions: next });
+  },
+  unsubscribeAll: () => {
+    const subs = get().subscriptions;
+    for (const key of Object.keys(subs)) {
+      try {
+        subs[key]!();
+      } catch (e) {
+        if (process.env.NODE_ENV !== "production") {
+          console.warn(`Failed during mass unsubscribe for key '${key}'`, e);
+        }
+      }
+    }
+    set({ subscriptions: {} });
+  },
 
-export const HassContext = createContext<HassContextProps>({} as HassContextProps);
+  reset() {
+    const { unsubscribeAll, setAuthenticated } = get();
+    const {
+      setAuth,
+      setUser,
+      setCannotConnect,
+      setConfig,
+      setConnection,
+      setEntities,
+      setError,
+      setReady,
+      setRoutes,
+      setConnectionStatus,
+    } = useInternalStore.getState();
+    // when the hassUrl changes, reset some properties and re-authenticate
+    setAuth(null);
+    setRoutes([]);
+    setReady(false);
+    setConnection(null);
+    setEntities({});
+    setConfig(null);
+    setError(null);
+    setCannotConnect(false);
+    setUser(null);
+    setConnectionStatus("pending");
+    setAuthenticated(false);
+    unsubscribeAll();
+  },
+}));

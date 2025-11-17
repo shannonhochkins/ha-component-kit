@@ -5,9 +5,8 @@ import { css } from "@emotion/react";
 import { useCallback, ComponentPropsWithoutRef } from "react";
 import {
   useLogs,
-  useHass,
   useDevice,
-  useStore,
+  useHass,
   computeDomain,
   createHistoricState,
   localizeStateMessage,
@@ -154,10 +153,10 @@ function InternalLogBookRenderer({
   ...rest
 }: LogBookRendererProps): React.ReactNode {
   const logs = useLogs(entity, options);
-  const { joinHassUrl } = useHass();
-  const entities = useStore((state) => state.entities);
-  const services = useStore((state) => state.services);
-  const language = useStore((state) => state.config?.language);
+  const { joinHassUrl } = useHass.getState().helpers;
+  const entities = useHass((state) => state.entities);
+  const services = useHass((state) => state.services);
+  const language = useHass((state) => state.config?.language);
   const device = useDevice(entity);
 
   const _entityClicked = useCallback(

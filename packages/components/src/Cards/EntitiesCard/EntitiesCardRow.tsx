@@ -1,4 +1,4 @@
-import { useStore, useEntity, useIconByDomain, useIconByEntity, computeDomain, isUnavailableState, ON, localize } from "@hakit/core";
+import { useHass, useEntity, useIconByDomain, useIconByEntity, computeDomain, isUnavailableState, ON, localize } from "@hakit/core";
 import type { EntityName, ExtractDomain, AllDomains, HassEntityWithService } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import { Row, fallback, ModalByEntityDomain, type ModalPropsHelper } from "@components";
@@ -122,7 +122,7 @@ function InternalEntitiesCardRow<E extends EntityName>({
 }: EntitiesCardRowProps<E>) {
   const _id = useId();
   const [openModal, setOpenModal] = useState(false);
-  const formatter = useStore((store) => store.formatter);
+  const formatter = useHass((store) => store.formatter);
   const entity = useEntity(_entity);
   const domain = computeDomain(_entity);
   const domainIcon = useIconByDomain(domain === null ? "unknown" : domain);

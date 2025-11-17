@@ -6,6 +6,8 @@ import jsxToString from "react-element-to-jsx-string";
 import { HassConnect } from "@hass-connect-fake";
 import office from "./office.jpg";
 import livingRoom from "./living-room.jpg";
+import hashExample from "./examples/hashExample.code?raw";
+
 function Template(args: AreaCardProps) {
   return (
     <HassConnect hassUrl="http://localhost:8123">
@@ -69,23 +71,6 @@ function TemplateFull() {
     </>
   );
 }
-
-const hashExample = `import { useStore } from '@hakit/core';\nfunction UseHashExample() {
-  const setHash = useStore((store) => store.setHash);
-  return (
-    <Row fullHeight fullWidth>
-      <AreaCard image={office} title="Office" icon="mdi:office-chair" hash="office">
-        The office is active!
-      </AreaCard>
-      <ButtonCard
-        title="Trigger the office!"
-        onClick={() => {
-          setHash("office");
-        }}
-      />
-    </Row>
-  );
-}`;
 
 export default {
   title: "components/Cards/AreaCard",

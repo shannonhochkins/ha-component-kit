@@ -1,5 +1,4 @@
 // hooks
-export { useHass } from "./useHass";
 export { useEntity, type UseEntityOptions, type UseEntityReturnType } from "./useEntity";
 export { useEntities, type UseEntitiesReturn } from "./useEntities";
 export { useService, createService } from "./useService";
@@ -16,7 +15,7 @@ export { useLogs, type UseLogOptions } from "./useLogs";
 export { useHaStatus } from "./useHaStatus";
 export { useConfig } from "./useConfig";
 export { useUser } from "./useUser";
-export { useStore, type Store, type UseStoreHook } from "./useStore";
+export { useStore, useHass, type Store, type HassStore, type UseStoreHook, type UseHassHook } from "./useHass";
 export { useUsers, type UseUsersOptions } from "./useUsers";
 export { useWeather, type UseWeatherOptions, type WeatherEntityWithForecast } from "./useWeather";
 export { getSupportedForecastTypes, type ForecastType, type ModernForecastType } from "./useWeather/helpers";

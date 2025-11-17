@@ -5,7 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import { Icon } from "@iconify/react";
-import { isUnavailableState, useStore, useHass, getColorByIndex, localize } from "@hakit/core";
+import { isUnavailableState, useHass, getColorByIndex, localize } from "@hakit/core";
 import type { FilterByDomain, EntityName } from "@hakit/core";
 import { HassEntity } from "home-assistant-js-websocket";
 import { useResizeDetector } from "react-resize-detector";
@@ -410,9 +410,9 @@ function InternalCalendarCard({
   key,
   ...rest
 }: CalendarCardProps): React.ReactNode {
-  const { callApi } = useHass();
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
-  const config = useStore((store) => store.config);
+  const { callApi } = useHass.getState().helpers;
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
+  const config = useHass((store) => store.config);
   const calRef = useRef<FullCalendar>(null);
   const initialRequest = useRef(false);
   const [error, setError] = useState<string | null>(null);
@@ -425,7 +425,7 @@ function InternalCalendarCard({
     refreshRate: 500,
   });
   const [currentEvent, setCurrentEvent] = useState<CalendarEventWithEntity | null>(null);
-  const calEntities = useStore(useShallow((state) => entities.map((id) => state.entities[id])));
+  const calEntities = useHass(useShallow((state) => entities.map((id) => state.entities[id])));
   const [activeView, setActiveView] = useState<CalendarCardProps["view"]>(view ?? "dayGridMonth");
 
   const calendars = calEntities.filter((entity) => !isUnavailableState(entity?.state));

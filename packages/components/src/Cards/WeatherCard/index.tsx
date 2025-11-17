@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useState, useEffect, useMemo, ReactNode, ReactElement, Children, isValidElement, cloneElement } from "react";
-import { useWeather, useStore, isUnavailableState, getSupportedForecastTypes, getIconByEntity, localize } from "@hakit/core";
+import { useWeather, useHass, isUnavailableState, getSupportedForecastTypes, getIconByEntity, localize } from "@hakit/core";
 import type { FilterByDomain, ModernForecastType, EntityName } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
 import {
@@ -164,13 +164,13 @@ function InternalWeatherCard({
   key,
   ...rest
 }: WeatherCardProps): React.ReactNode {
-  const config = useStore((state) => state.config);
+  const config = useHass((state) => state.config);
   const [width, setWidth] = useState<number>(0);
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const itemsToRender = Math.floor(width / FORECAST_ITEM_PROJECTED_WIDTH);
   const [timeZone, setTimeZone] = useState<string>("UTC");
-  const formatter = useStore((s) => s.formatter);
-  const helpers = useStore((s) => s.helpers);
+  const formatter = useHass((s) => s.formatter);
+  const helpers = useHass((s) => s.helpers);
   // Determine 12/24h preference directly from locale using core helper
   const shouldAmPm = helpers.dateTime.shouldUseAmPm();
   const [type, setType] = useState<ModernForecastType>(forecastType);

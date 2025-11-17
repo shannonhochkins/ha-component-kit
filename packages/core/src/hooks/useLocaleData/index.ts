@@ -1,5 +1,5 @@
-import { useStore } from "@core";
+import { useHass } from "@core";
 
 export function useLocaleData() {
-  return useStore.getState().locale;
+  return useHass.getState().locale;
 }

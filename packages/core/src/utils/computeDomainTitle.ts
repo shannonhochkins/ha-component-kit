@@ -3,6 +3,12 @@ import { computeDomain } from "./computeDomain";
 import { lowerCase, startCase } from "lodash";
 import { localize } from "../hooks/useLocale";
 
+/**
+ * @description - Compute a localized title for a given entity domain, with special handling for certain domains and device classes.
+ * @param entityId - The entity ID to compute the domain title for.
+ * @param deviceClass - A device class if needed to compute outlet vs switch titles.
+ * @returns 
+ */
 export const computeDomainTitle = <E extends EntityName | "unknown">(entityId: E, deviceClass?: string): string => {
   const domain = computeDomain(entityId);
   // add in switches for different domains

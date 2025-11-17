@@ -1,4 +1,4 @@
-import { HassConnect, useStore } from "@hakit/core";
+import { HassConnect, useHass } from "@hakit/core";
 import { ThemeProvider } from "@hakit/components";
 export function App() {
   return (
@@ -10,7 +10,7 @@ export function App() {
 }
 
 function SomeComponent() {
-  const connection = useStore((state) => state.connection);
+  const connection = useHass((state) => state.connection);
 
   return (
     <div>

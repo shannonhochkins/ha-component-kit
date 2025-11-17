@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { EntityName, computeDomain, isUnavailableState, ON, OFF, useStore } from "@hakit/core";
+import { type EntityName, computeDomain, isUnavailableState, ON, OFF, useHass } from "@hakit/core";
 import { useState, useEffect, useRef } from "react";
 import Switch from "react-switch";
 import { StateProps } from "./types";
@@ -25,7 +25,7 @@ const StyledSwitch = styled(Switch)`
 
 export default function ToggleState({ entity, className, ...rest }: StateProps) {
   const timeout = useRef<NodeJS.Timeout | null>(null);
-  const formatter = useStore((store) => store.formatter);
+  const formatter = useHass((store) => store.formatter);
   const isUnavailable = isUnavailableState(entity.state);
 
   const showToggle = entity.state === ON || entity.state === OFF || isUnavailable;

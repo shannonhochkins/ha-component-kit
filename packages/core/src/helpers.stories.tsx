@@ -196,7 +196,7 @@ export default {
       </>
     ),
   },
-} satisfies Meta;
+} as Meta;
 
 export type Story = StoryObj;
 export const Docs: Story = {

@@ -36,11 +36,11 @@ If a slice has not loaded yet you still receive its initialized empty object (ne
 ### **Notes**
 
 1. Because the hook is keyed by a string literal union, TypeScript narrows precisely; no manual casting required.
-2. For programmatic (non-hook) access you can still do: `const { entitiesRegistryDisplay } = useStore.getState();` but the hook gives you reactivity
+2. For programmatic (non-hook) access you can still do: `const { entitiesRegistryDisplay } = useHass.getState();` but the hook gives you reactivity
 
 ### When to Prefer Direct Store Access
 
-Use the hook for component-level reactive subscriptions. Use `useStore.getState()` when:
+Use the hook for component-level reactive subscriptions. Use `useHass.getState()` when:
 - Executing logic outside React lifecycle (e.g. in a utility module)
 - Performing one-off synchronous reads where re-rendering isn’t needed
 

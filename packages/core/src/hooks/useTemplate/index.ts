@@ -1,5 +1,5 @@
 import { useRef, useEffect, useMemo, useState } from "react";
-import { EntityName, useStore } from "@core";
+import { EntityName, useHass } from "@core";
 import { MessageBase, UnsubscribeFunc } from "home-assistant-js-websocket";
 
 type RenderTemplateResult = {
@@ -33,7 +33,7 @@ export type TemplateParams = {
 };
 
 export const useTemplate = (params: TemplateParams) => {
-  const connection = useStore((state) => state.connection);
+  const connection = useHass((state) => state.connection);
   const [template, setTemplate] = useState<string | object | null>(null);
   const unsubscribeRef = useRef<UnsubscribeFunc | null>(null);
   const memoizedParams = useMemo(() => params, [params]);

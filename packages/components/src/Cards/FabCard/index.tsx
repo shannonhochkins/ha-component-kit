@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import {
   useEntity,
   useIconByDomain,
-  useStore,
+  useHass,
   useIcon,
   useIconByEntity,
   isUnavailableState,
@@ -111,7 +111,7 @@ function InternalFabCard<E extends EntityName>({
   key,
   ...rest
 }: FabCardProps<E>): React.ReactNode {
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const entity = useEntity(_entity || "unknown", {
     returnNullIfNotFound: true,
   });

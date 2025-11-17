@@ -1,16 +1,11 @@
-import { useEffect, useCallback, useRef, useMemo } from "react";
-// types
-import type { UnsubscribeFunc } from "home-assistant-js-websocket";
-// methods
-import { subscribeEntities, callService as _callService, subscribeConfig, subscribeServices } from "home-assistant-js-websocket";
-import { isArray, snakeCase } from "lodash";
-import { SnakeOrCamelDomains, DomainService, Locales, CallServiceArgs, Route, ServiceResponse } from "@typings";
-import { loadTokens, clearTokens } from "./token-storage";
-import { HassContext, type HassContextProps, InternalStore, useInternalStore } from "./HassContext";
-import { useStore } from "../hooks/useStore";
+import { useEffect, useCallback } from "react";
+import { subscribeEntities, subscribeConfig, subscribeServices } from "home-assistant-js-websocket";
+import { Locales } from "@typings";
+import { loadTokens } from "./token-storage";
+import { InternalStore, useInternalStore, useHassProviderStore } from "./HassContext";
+import { useHass } from "../hooks/useHass";
 import { useShallow } from "zustand/shallow";
 import { handleSuspendResume, type HandleSuspendResumeOptions } from "./handleSuspendResume";
-import { callApi } from "./callApi";
 import { handleError, tryConnection } from "./tryConnection";
 import {
   subscribeAreaRegistry,
@@ -42,12 +37,10 @@ export interface HassProviderProps {
   handleResumeOptions?: HandleSuspendResumeOptions;
 }
 
-const getAllEntities = () => useInternalStore.getState().entities;
 // Track if a connection attempt for the current hassUrl has already started in this page lifecycle.
 // Using a ref avoids any need for timers and is Strict Mode safe.
 const attemptedUrls = new Set<string>();
 
-const DEBUG = false;
 
 export function HassProvider({
   children,
@@ -58,23 +51,9 @@ export function HassProvider({
   renderError = (children) => children,
   handleResumeOptions,
 }: HassProviderProps) {
-  // Unified subscription manager: all websocket/unsubscribe functions stored here
-  const subscriptionsRef = useRef<Record<string, UnsubscribeFunc>>({});
-  const authenticated = useRef(false);
-  const addSubscription = useCallback((key: string, fn: UnsubscribeFunc | null | undefined) => {
-    if (!fn) return;
-    // If a subscription with the same key exists, clean it before replacing
-    if (subscriptionsRef.current[key]) {
-      try {
-        subscriptionsRef.current[key]();
-      } catch (e) {
-        if (DEBUG) {
-          console.warn(`Error cleaning previous subscription for ${key}`, e);
-        }
-      }
-    }
-    subscriptionsRef.current[key] = fn;
-  }, []);
+  // provider-level state & subscription helpers from dedicated store
+  const addSubscription = useHassProviderStore((s) => s.addSubscription);
+  const setAuthenticated = useHassProviderStore((s) => s.setAuthenticated);
   const {
     hash: _hash,
     ready,
@@ -103,57 +82,6 @@ export function HassProvider({
     if (windowContext) setWindowContext(windowContext);
   }, [windowContext]);
 
-  const reset = useCallback(() => {
-    const {
-      setAuth,
-      setUser,
-      setCannotConnect,
-      setConfig,
-      setConnection,
-      setEntities,
-      setError,
-      setReady,
-      setRoutes,
-      setConnectionStatus,
-    } = useInternalStore.getState();
-    // when the hassUrl changes, reset some properties and re-authenticate
-    setAuth(null);
-    setRoutes([]);
-    setReady(false);
-    setConnection(null);
-    setEntities({});
-    setConfig(null);
-    setError(null);
-    setCannotConnect(false);
-    setUser(null);
-    setConnectionStatus("pending");
-    authenticated.current = false;
-    // Clean up all active subscriptions
-    const subs = subscriptionsRef.current;
-    for (const key of Object.keys(subs)) {
-      try {
-        subs[key]();
-      } catch (e) {
-        if (DEBUG) {
-          console.warn(`Error during unsubscribe for ${key}`, e);
-        }
-      }
-    }
-    subscriptionsRef.current = {};
-  }, []);
-
-  const logout = useCallback(async () => {
-    const { setError } = useInternalStore.getState();
-    try {
-      reset();
-      clearTokens();
-      if (location) location.reload();
-    } catch (err: unknown) {
-      console.error("Error:", err);
-      setError("Unable to log out!");
-    }
-  }, [reset]);
-
   const handleConnect = useCallback(async () => {
     const {
       setError,
@@ -177,10 +105,10 @@ export function HassProvider({
     // this will trigger on first mount
     const response = await tryConnection(hassUrl, hassToken);
     if (response.type === "error") {
-      authenticated.current = false;
+      setAuthenticated(false);
       setError(response.error);
     } else if (response.type === "failed") {
-      authenticated.current = false;
+      setAuthenticated(false);
       setCannotConnect(true);
     } else if (response.type === "success") {
       const { connection, auth } = response;
@@ -313,17 +241,12 @@ export function HassProvider({
       });
       addSubscription("resume", resumeCleanup);
     }
-  }, [hassUrl, hassToken, handleResumeOptions, addSubscription]);
+  }, [hassUrl, hassToken, handleResumeOptions, addSubscription, setAuthenticated]);
 
   useEffect(() => {
     const { setHassUrl } = useInternalStore.getState();
     setHassUrl(hassUrl);
   }, [hassUrl]);
-
-  const joinHassUrl = useCallback((path: string) => {
-    const { connection } = useInternalStore.getState();
-    return connection ? new URL(path, connection?.options.auth?.data.hassUrl).toString() : "";
-  }, []);
 
   useEffect(() => {
     const { setHash } = useInternalStore.getState();
@@ -333,142 +256,62 @@ export function HassProvider({
   }, [_hash]);
 
   useEffect(() => {
-    function onHashChange() {
-      const { routes, setRoutes, setHash } = useInternalStore.getState();
-      setRoutes(
-        routes.map((route) => {
-          if (route.hash === location.hash.replace("#", "")) {
-            return {
-              ...route,
-              active: true,
-            };
-          }
-          return {
-            ...route,
-            active: false,
-          };
-        }),
-      );
-      setHash(location.hash);
-    }
     window.addEventListener("hashchange", onHashChange);
     return () => {
       window.removeEventListener("hashchange", onHashChange);
     };
   }, []);
 
-  const addRoute = useCallback((route: Omit<Route, "active">) => {
-    const { routes, setRoutes } = useInternalStore.getState();
-    const exists = routes.find((_route) => _route.hash === route.hash) !== undefined;
-    if (!exists && typeof window !== "undefined") {
-      // if the current has value is the same as the hash, we're active
-      const hashWithoutPound = window.location.hash.replace("#", "");
-      const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
-      setRoutes([
-        ...routes,
-        {
-          ...route,
-          active,
-        } satisfies Route,
-      ]);
-    }
-  }, []);
-
-  const getRoute = useCallback((hash: string) => {
-    const routes = useInternalStore.getState().routes;
-    const route = routes.find((route) => route.hash === hash);
-    return route || null;
-  }, []);
-
-  const callService = useCallback(
-    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean>({
-      domain,
-      service,
-      serviceData,
-      target: _target,
-      returnResponse,
-    }: CallServiceArgs<T, M, R>): Promise<R extends true ? ServiceResponse<ResponseType> : void> => {
-      const { connection, ready } = useInternalStore.getState();
-      const target =
-        typeof _target === "string" || isArray(_target)
-          ? {
-              entity_id: _target,
-            }
-          : _target;
-      if (typeof service !== "string") {
-        throw new Error("service must be a string");
-      }
-      if (connection && ready) {
-        try {
-          const result = await _callService(
-            connection,
-            snakeCase(domain),
-            snakeCase(service),
-            // purposely cast here as we know it's correct
-            serviceData as object,
-            target,
-            returnResponse,
-          );
-          if (returnResponse) {
-            // Return the result if returnResponse is true
-            return result as R extends true ? ServiceResponse<ResponseType> : never;
-          }
-          // Otherwise, return void
-          return undefined as R extends true ? never : void;
-        } catch (e) {
-          console.error("Error calling service:", e);
-        }
-      }
-      return undefined as R extends true ? never : void;
-    },
-    [],
-  );
-
   // Standard unmount cleanup; Strict Mode double-invocation will call this twice but second time state already cleared.
-  useEffect(() => () => reset(), [reset]);
+  useEffect(() => () => useHassProviderStore.getState().reset(), []);
 
   // then wrap the whole connect routine so it’s stable too
   const connectOnce = useCallback(async () => {
     if (attemptedUrls.has(hassUrl)) return;
     attemptedUrls.add(hassUrl);
     try {
-      if (authenticated.current && useInternalStore.getState().hassUrl !== hassUrl) {
-        reset();
+      if (useHassProviderStore.getState().authenticated && useInternalStore.getState().hassUrl !== hassUrl) {
+        useHassProviderStore.getState().reset();
       }
-      authenticated.current = true;
+      setAuthenticated(true);
       handleResumeOptions?.onStatusChange?.("pending");
       await handleConnect();
     } catch (e) {
       const message = handleError(e);
       setError(`Unable to connect to Home Assistant, please check the URL: "${message}"`);
     }
-  }, [reset, handleConnect, setError, handleResumeOptions, hassUrl]);
+  }, [handleConnect, setError, handleResumeOptions, hassUrl, setAuthenticated]);
 
   // run it once after mount
   useEffect(() => {
     connectOnce();
   }, [connectOnce]);
 
-  const contextValue = useMemo<HassContextProps>(
-    () => ({
-      useStore,
-      logout,
-      addRoute,
-      getRoute,
-      callApi,
-      getAllEntities,
-      callService: callService as HassContextProps["callService"],
-      joinHassUrl,
-    }),
-    [logout, addRoute, getRoute, callService, joinHassUrl],
-  );
-
   if (cannotConnect) {
     return renderError(
       <p>
-        Unable to connect to {loadTokens(hassUrl)?.hassUrl}, refresh the page and try again, or <a onClick={logout}>Logout</a>.
+        Unable to connect to {loadTokens(hassUrl)?.hassUrl}, refresh the page and try again, or <a onClick={useHass.getState().helpers.logout}>Logout</a>.
       </p>,
     );
   }
-  return <HassContext.Provider value={contextValue}>{error === null ? children(ready) : renderError(error)}</HassContext.Provider>;
+  return error === null ? children(ready) : renderError(error);
+}
+
+function onHashChange() {
+  const { routes, setRoutes, setHash } = useInternalStore.getState();
+  setRoutes(
+    routes.map((route) => {
+      if (route.hash === location.hash.replace("#", "")) {
+        return {
+          ...route,
+          active: true,
+        };
+      }
+      return {
+        ...route,
+        active: false,
+      };
+    }),
+  );
+  setHash(location.hash);
 }

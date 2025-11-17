@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { Icon } from "@iconify/react";
-import { useStore } from "@hakit/core";
+import { useHass } from "@hakit/core";
 import { TimeCard, WeatherCard, Row, Column, fallback, mq, useBreakpoint } from "@components";
 import type { WeatherCardProps, TimeCardProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
@@ -286,8 +286,8 @@ function InternalSidebarCard({
   ...rest
 }: SidebarCardProps) {
   const [open, setOpen] = useState(startOpen);
-  const routes = useStore((state) => state.routes);
-  const hash = useStore((state) => state.hash);
+  const routes = useHass((state) => state.routes);
+  const hash = useHass((state) => state.hash);
   const devices = useBreakpoint();
   const concatenatedMenuItems = useMemo<MenuItem[]>(() => {
     const mappedRoutes = routes.map<MenuItem>((route) => ({

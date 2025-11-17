@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useStore } from "@hakit/core";
+import { useHass } from "@hakit/core";
 import { StateProps } from "./types";
 
 const Wrapper = styled.div`
@@ -16,7 +16,7 @@ const Wrapper = styled.div`
 `;
 
 export default function SensorState({ entity }: StateProps) {
-  const formatter = useStore((store) => store.formatter);
+  const formatter = useHass((store) => store.formatter);
   return (
     <Wrapper>
       <div className="text-content value">{formatter.stateValue(entity)}</div>

@@ -4,7 +4,7 @@ import type { EntityName } from "@hakit/core";
 import {
   computeDomainTitle,
   useEntity,
-  useStore,
+  useHass,
   useIconByDomain,
   useIcon,
   useIconByEntity,
@@ -157,7 +157,7 @@ function InternalTriggerCard<E extends EntityName>({
   cssStyles,
   ...rest
 }: TriggerCardProps<E>): React.ReactNode {
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const domain = computeDomain(_entity);
   const entity = useEntity(_entity);
   const entityIcon = useIconByEntity(_entity, iconProps);
@@ -233,8 +233,7 @@ function InternalTriggerCard<E extends EntityName>({
                         search: " {name}",
                         replace: "",
                       }))
-                    : (sliderTextInactive ??
-                      `${localize("card.script.running_single")} ${computeDomainTitle(_entity, entity?.attributes?.device_class)}`)}{" "}
+                    : (sliderTextInactive ?? `${localize("run")} ${computeDomainTitle(_entity, entity?.attributes?.device_class)}`)}{" "}
                   {!active && !hideArrow && arrowIcon}
                 </ToggleMessage>
               </>

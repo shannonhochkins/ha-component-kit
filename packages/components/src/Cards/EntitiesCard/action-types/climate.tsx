@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { localize, isUnavailableState, OFF, useStore } from "@hakit/core";
+import { localize, isUnavailableState, OFF, useHass } from "@hakit/core";
 import { CLIMATE_PRESET_NONE } from "../../../Shared/Entity/Climate/ClimateControls/data";
 import { StateProps } from "./types";
 
@@ -36,7 +36,7 @@ const Wrapper = styled.div`
 
 export default function ClimateState({ entity, className, ...rest }: StateProps) {
   const isUnavailable = isUnavailableState(entity.state);
-  const formatter = useStore((store) => store.formatter);
+  const formatter = useHass((store) => store.formatter);
   const _computeCurrentStatus = (): string | undefined => {
     if (entity.attributes.current_temperature != null && entity.attributes.current_humidity != null) {
       return `${formatter.attributeValue(entity, "current_temperature")}/

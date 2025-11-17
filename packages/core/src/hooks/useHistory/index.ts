@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import type { EntityName } from "@core";
 import { useSubscribeEntity } from "../useSubscribeEntity";
-import { useStore } from "../useStore";
+import { useHass } from "../useHass";
 import { subscribeHistory, computeHistory } from "./history";
 import type { TimelineState, EntityHistoryState, HistoryStates } from "./history";
 import { coordinatesMinimalResponseCompressedState } from "./coordinates";
@@ -40,7 +40,7 @@ export interface HistoryOptions {
   splitDeviceClasses?: boolean;
 }
 export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
-  const connection = useStore((state) => state.connection);
+  const connection = useHass((state) => state.connection);
   const subscribed = useRef(false);
   const getEntity = useSubscribeEntity(entityId);
   const [historyStates, setHistoryStates] = useState<HistoryStates>({});

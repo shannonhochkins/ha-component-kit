@@ -1,4 +1,4 @@
-import { useEntity, isUnavailableState, useHass, supportsFeatureFromAttributes, useStore } from "@core";
+import { useEntity, isUnavailableState, useHass, supportsFeatureFromAttributes } from "@core";
 import type { HassEntityWithService, FilterByDomain, EntityName } from "@core";
 import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import { fetchThumbnailUrlWithCache, fetchStreamUrl, computeMJPEGStreamUrl } from "./camera";
@@ -40,8 +40,8 @@ export interface CameraEntityExtended extends HassEntityWithService<"camera">, C
 /** The useCamera hook is designed to return all the custom complex logic in an easy to retrieve structure, it supports streams, motion jpeg, posters and the camera entity */
 export function useCamera(entity: FilterByDomain<EntityName, "camera">, options?: UseCameraOptions): CameraEntityExtended {
   const camera = useEntity(entity);
-  const { joinHassUrl } = useHass();
-  const connection = useStore((state) => state.connection);
+  const { joinHassUrl } = useHass.getState().helpers;
+  const connection = useHass((state) => state.connection);
   const requestedStreamUrl = useRef(false);
   const requestedPosterUrl = useRef(false);
   const [posterUrl, setPosterUrl] = useState<string | undefined>(undefined);

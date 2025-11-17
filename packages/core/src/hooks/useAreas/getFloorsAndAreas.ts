@@ -7,7 +7,6 @@ import {
   type FloorRegistryEntry,
   type EntityListInfoCommon,
   stringCompare,
-  useStore,
   EntityName,
   type EntityRegistryDisplayEntry,
   useHass,
@@ -83,12 +82,12 @@ export const useAreas = (
   excludeAreas?: string[],
   excludeFloors?: string[],
 ): UseAreasReturn[] => {
-  const { joinHassUrl } = useHass();
-  const _entities = useStore((store) => store.entities);
-  const _entitiesRegistryDisplay = useStore((store) => store.entitiesRegistryDisplay);
-  const _devices = useStore((store) => store.devices);
-  const _areas = useStore((store) => store.areas);
-  const _floors = useStore((store) => store.floors);
+  const { joinHassUrl } = useHass.getState().helpers;
+  const _entities = useHass((store) => store.entities);
+  const _entitiesRegistryDisplay = useHass((store) => store.entitiesRegistryDisplay);
+  const _devices = useHass((store) => store.devices);
+  const _areas = useHass((store) => store.areas);
+  const _floors = useHass((store) => store.floors);
   const floors = Object.values(_floors);
   const areas = Object.values(_areas);
   const devices = Object.values(_devices);

@@ -3,10 +3,10 @@ export * from "./utils";
 // custom data types
 export * from "./data";
 // HassConnect
-export type { HassContextProps, Route, SupportedComponentOverrides } from "./HassConnect/HassContext";
+export type { Route, SupportedComponentOverrides } from "./HassConnect/HassContext";
 export type { HassConnectProps } from "./HassConnect";
 export { HassConnect } from "./HassConnect";
-export { HassContext, type SensorNumericDeviceClasses, type InternalStore } from "./HassConnect/HassContext";
+export { type SensorNumericDeviceClasses, type InternalStore } from "./HassConnect/HassContext";
 export { loadTokens, saveTokens } from "./HassConnect/token-storage";
 // hooks
 export * from "./hooks";

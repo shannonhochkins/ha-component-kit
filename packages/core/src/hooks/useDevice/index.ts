@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useStore, type ExtEntityRegistryEntry, type EntityName } from "@core";
+import { useHass, type ExtEntityRegistryEntry, type EntityName } from "@core";
 
 export const useDevice = (entityId: EntityName): ExtEntityRegistryEntry | null => {
   const [device, setDevice] = useState<ExtEntityRegistryEntry | null>(null);
 
-  const connection = useStore((state) => state.connection);
+  const connection = useHass((state) => state.connection);
 
   useEffect(() => {
     const getDevice = async () => {

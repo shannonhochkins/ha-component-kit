@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 import { useEffect, useState, CSSProperties, useRef } from "react";
 import {
   localize,
-  useStore,
+  useHass,
   type AlarmMode,
   type AlarmPanelCardConfigState,
   type EntityName,
@@ -186,7 +186,7 @@ function InternalAlarmControls({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [inputVal, setInputVal] = useState<string>(defaultCode ? `${defaultCode}` : "");
   const entity = useEntity(_entity);
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
 
   const states = _states || filterSupportedAlarmStates(entity, DEFAULT_STATES);
 

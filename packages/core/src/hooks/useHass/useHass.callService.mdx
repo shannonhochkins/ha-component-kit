@@ -1,6 +1,9 @@
 import { Source, Meta } from '@storybook/addon-docs/blocks';
+import callServiceDefinition from './examples/callService.definition.code.ts?raw';
+import callServiceUsage from './examples/callService.usage.code.tsx?raw';
+import callServiceResponse from './examples/callService.response.code.tsx?raw';
 
-<Meta title="core/hooks/useHass/hass/callService" />
+<Meta title="core/hooks/useHass/callService" />
 
 # callService()
 ###### `callService(args: CallServiceArgs<ResponseType, SnakeOrCamelDomain, DomainService<SnakeOrCamelDomain>>)`
@@ -14,75 +17,14 @@ navigate to this inside your instance, here you'll see a dropdown list and if yo
 This is an easy way to visualize all the available domains/service for your home assistant instance.
 
 ### Definition
-<Source dark language="ts" code={`callService({
-  domain: SnakeOrCamelDomains; // "climate", "light" etc
-  service: DomainService<SnakeOrCamelDomains>; // "turn_on", "turnOn",  "toggle" etc
-  serviceData?: CallServiceArgs<SnakeOrCamelDomains, DomainService<SnakeOrCamelDomains>>; // any data to pass to the request
-  target?: {
-    entity_id?: string | string[];
-    device_id?: string | string[];
-    area_id?: string | string[];
-  } | string | string[] // if a string or string[] is passed it's automatically mapped back to entity_id
-  returnResponse?: boolean; // if the service is expected to return a response, enable this flag
-})`} />
+<Source dark language="ts" code={callServiceDefinition} />
 
 ### Example Usage
 
-<Source dark language="ts" code={`
-function CallServiceExample() {
-  const { callService } = useHass();
-  const turnOnAC = useCallback(() => {
-    callService({
-      domain: 'climate',
-      service: 'turn_on',
-      target: {
-        entity_id: 'climate.air_conditioner'
-      }
-    })
-  }, [callService]);
-  // can now access all properties relating to the light
-  return <Button onClick={toggleClimate}>
-    TURN ON CONDITIONER
-  </Button>
-}
-`} />
+<Source dark language="ts" code={callServiceUsage} />
 
 ### Returning a response
 Some services return a response, like the calendar `get_events` service, you can access this response value by adding `returnResponse` to the service call.
 The response object type is able to be defined by passing a generic type to the service call itself, see example below:
 
-<Source dark language="ts" code={`
-interface CalendarEvent {
-  description: string;
-  end: string;
-  start: string;
-  summary: string;
-}
-interface CalendarResponse {
-  "calendar.some_calendar": {
-    events: CalendarEvent[];
-  }
-}
-function CallServiceExample() {
-  const { callService } = useHass();
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const getEvents = useCallback(() => {
-    callService<CalendarResponse[], 'calendar', 'get_events'>({
-      domain: 'calendar',
-      service: 'get_events',
-      returnResponse: true,
-      target: {
-        entity_id: 'calendar.my_calendar'
-      }
-    }).then((response) => {
-      setEvents(response);
-    })
-  }, [callService]);
-  return<>
-    <p>Events: {events.length}</p>
-    <Button onClick={getEvents}>
-      GET EVENTS
-    </Button>
-  </>
-}
-`} />
+<Source dark language="ts" code={callServiceResponse} />

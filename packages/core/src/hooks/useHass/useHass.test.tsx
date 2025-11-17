@@ -16,7 +16,7 @@ describe("useHass", () => {
         wrapper: TestWrapper,
       });
       act(() => {
-        result.current.callService({
+        result.current.helpers.callService({
           domain: "mediaPlayer",
           service: "volumeSet",
           serviceData: {
@@ -45,7 +45,7 @@ describe("useHass", () => {
       });
       await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
       act(() => {
-        result.current.callService({
+        result.current.helpers.callService({
           domain: "media_player",
           service: "volume_set",
           serviceData: {
@@ -75,7 +75,7 @@ describe("useHass", () => {
         wrapper: TestWrapper,
       });
       await waitFor(() => expect(onReady).toHaveBeenCalledTimes(1));
-      const entities = result.current.getAllEntities();
+      const entities = result.current.helpers.getAllEntities();
       expect(entities).toMatchSnapshot();
     });
   });
