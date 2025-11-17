@@ -41,7 +41,6 @@ export interface HassProviderProps {
 // Using a ref avoids any need for timers and is Strict Mode safe.
 const attemptedUrls = new Set<string>();
 
-
 export function HassProvider({
   children,
   hassUrl,
@@ -290,7 +289,8 @@ export function HassProvider({
   if (cannotConnect) {
     return renderError(
       <p>
-        Unable to connect to {loadTokens(hassUrl)?.hassUrl}, refresh the page and try again, or <a onClick={useHass.getState().helpers.logout}>Logout</a>.
+        Unable to connect to {loadTokens(hassUrl)?.hassUrl}, refresh the page and try again, or{" "}
+        <a onClick={useHass.getState().helpers.logout}>Logout</a>.
       </p>,
     );
   }

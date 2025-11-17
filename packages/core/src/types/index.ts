@@ -4,7 +4,7 @@ import type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 export type { DefinedPropertiesByDomain } from "./entitiesByDomain";
 import type { TimelineState, EntityHistoryState } from "../hooks/useHistory/history";
 export type { Locales, LocaleKeys } from "../hooks/useLocale/locales/types";
-export type { Route, CallServiceArgs, HassContextProps } from "../HassConnect/HassContext";
+export type { Route, CallServiceArgs } from "../HassConnect/HassContext";
 export type { HistoryStreamMessage, TimelineState, HistoryResult, EntityHistoryState } from "../hooks/useHistory/history";
 
 export interface CustomSupportedServices<T extends ServiceFunctionTypes = "target"> {

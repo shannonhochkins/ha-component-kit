@@ -318,15 +318,12 @@ export const useInternalStore = create<InternalStore>((set, get) => ({
         setError("Unable to log out!");
       }
     },
-    callService: ((<ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+    callService: (<ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
       rawArgs: CallServiceArgs<T, M, boolean>,
     ): Promise<ServiceResponse<ResponseType>> | void => {
       const { domain, service, serviceData, target: _target, returnResponse } = rawArgs;
       const { connection, ready } = get();
-      const target =
-        typeof _target === "string" || isArray(_target)
-          ? { entity_id: _target }
-          : _target;
+      const target = typeof _target === "string" || isArray(_target) ? { entity_id: _target } : _target;
 
       // basic guards
       if (!connection || !ready) {
@@ -337,23 +334,13 @@ export const useInternalStore = create<InternalStore>((set, get) => ({
       }
 
       try {
-        const result = _callService(
-          connection,
-          snakeCase(domain),
-          snakeCase(service),
-          serviceData ?? {},
-          target,
-          returnResponse,
-        );
-        return returnResponse
-          ? (result as Promise<ServiceResponse<ResponseType>>)
-          : undefined; // fire & forget
+        const result = _callService(connection, snakeCase(domain), snakeCase(service), serviceData ?? {}, target, returnResponse);
+        return returnResponse ? (result as Promise<ServiceResponse<ResponseType>>) : undefined; // fire & forget
       } catch (e) {
         console.error("Error calling service:", e);
         return returnResponse ? Promise.reject(e) : undefined;
       }
-      
-    }) as InternalStore["helpers"]["callService"]),
+    }) as InternalStore["helpers"]["callService"],
     addRoute(route) {
       const { routes, setRoutes } = get();
       const exists = routes.find((r) => r.hash === route.hash);

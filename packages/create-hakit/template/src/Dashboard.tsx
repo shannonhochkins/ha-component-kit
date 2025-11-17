@@ -2,7 +2,7 @@ import { Column, TimeCard } from '@hakit/components';
 import { useHass } from "@hakit/core";
 
 function Dashboard() {
-  const { getAllEntities } = useHass();
+  const { getAllEntities } = useHass.getState().helpers;
   return <Column fullWidth fullHeight>
     <h2>Successfully Authenticated!</h2>
     <p>The time below will update automatically from Home Assistant.</p>

@@ -2,12 +2,12 @@ import { useMemo, useCallback } from "react";
 import { useHass } from "@core";
 import { localize } from "../useLocale";
 import type { SupportedServices, DomainService, SnakeOrCamelDomains, ServiceData, SnakeToCamel, Target } from "@typings";
-import type { HassContextProps } from "@core";
+import type { HassStore } from "@core";
 import { uniq } from "lodash";
 
 export function createService<T extends SnakeOrCamelDomains>(
   domain: T,
-  callService: HassContextProps["callService"],
+  callService: HassStore["helpers"]["callService"],
   rootTarget?: Target,
 ): SupportedServices[SnakeToCamel<T>] {
   return new Proxy<SupportedServices[SnakeToCamel<T>]>(

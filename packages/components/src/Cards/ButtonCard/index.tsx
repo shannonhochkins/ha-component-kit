@@ -281,17 +281,13 @@ function InternalButtonCard<E extends EntityName>({
   }
   const hasFeatures = Children.toArray(rest?.features).filter((child) => isValidElement(child)).length > 0;
   const stateNode = renderState();
-  const separatorNode = (rest.descriptionSeparator ?? "-");
+  const separatorNode = rest.descriptionSeparator ?? "-";
   function buildDescriptionContent(main: React.ReactNode, state: React.ReactNode) {
     if (!main && !state) return null;
     if (main && state) {
       return (
         <>
-          {main}
-          {" "}
-          <span className="description-separator">{separatorNode}</span>
-          {" "}
-          {state}
+          {main} <span className="description-separator">{separatorNode}</span> {state}
         </>
       );
     }
@@ -347,9 +343,7 @@ function InternalButtonCard<E extends EntityName>({
             <Column fullWidth alignItems={layoutType === "slim-vertical" ? "center" : "flex-start"}>
               {title && <Title className="title">{title}</Title>}
               {!hideDetails && (
-                <Description className={`description ${layoutType ?? ""}`}>
-                  {buildDescriptionContent(description, stateNode)}
-                </Description>
+                <Description className={`description ${layoutType ?? ""}`}>{buildDescriptionContent(description, stateNode)}</Description>
               )}
               {entity && !hideLastUpdated && (
                 <Description className={`description secondary ${layoutType === "slim-vertical" ? "center" : ""}`}>
