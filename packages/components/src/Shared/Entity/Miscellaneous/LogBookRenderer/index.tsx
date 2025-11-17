@@ -1,13 +1,12 @@
-import { HassEntity, HassServices } from "home-assistant-js-websocket";
+import { HassEntity } from "home-assistant-js-websocket";
 import styled from "@emotion/styled";
 import { Row, fallback } from "@components";
 import { css } from "@emotion/react";
-import { useRef, useCallback, useState, useEffect, ComponentPropsWithoutRef } from "react";
+import { useCallback, ComponentPropsWithoutRef } from "react";
 import {
   useLogs,
-  useHass,
   useDevice,
-  useStore,
+  useHass,
   computeDomain,
   createHistoricState,
   localizeStateMessage,
@@ -154,18 +153,11 @@ function InternalLogBookRenderer({
   ...rest
 }: LogBookRendererProps): React.ReactNode {
   const logs = useLogs(entity, options);
-  const { getServices, joinHassUrl } = useHass();
-  const entities = useStore((state) => state.entities);
-  const requestedServices = useRef(false);
-  const [services, setServices] = useState<HassServices | null>(null);
-  const language = useStore((state) => state.config?.language);
+  const { joinHassUrl } = useHass.getState().helpers;
+  const entities = useHass((state) => state.entities);
+  const services = useHass((state) => state.services);
+  const language = useHass((state) => state.config?.language);
   const device = useDevice(entity);
-
-  useEffect(() => {
-    if (requestedServices.current) return;
-    requestedServices.current = true;
-    getServices().then((services) => setServices(services));
-  }, [services, getServices]);
 
   const _entityClicked = useCallback(
     async (entityId: string | undefined) => {
@@ -468,12 +460,12 @@ function InternalLogBookRenderer({
       {...rest}
     >
       {!logs.length ? (
-        <span className="no-entries">{localize("no_logbook_events_found")}</span>
+        <span className="no-entries">{localize("no_activity_found")}</span>
       ) : (
         <Header>
           {!hideHeader && (
             <Row fullWidth justifyContent="space-between">
-              <h3>{localize("logbook")}</h3>
+              <h3>{localize("activity")}</h3>
               <button className="link" onClick={showMoreLogs}>
                 {localize("show_more")}
               </button>

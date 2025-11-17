@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback, useMemo, useState } from "react";
-import { useService, useHass, isUnavailableState, useEntity, OFF, useStore, supportsFeatureFromAttributes } from "@hakit/core";
+import { useService, useHass, isUnavailableState, useEntity, OFF, supportsFeatureFromAttributes } from "@hakit/core";
 import { snakeCase, clamp } from "lodash";
 import { useGesture } from "@use-gesture/react";
 import type { EntityName, FilterByDomain, MediaPlayerEntity } from "@hakit/core";
@@ -163,13 +163,13 @@ function InternalMediaPlayerCard({
 }: MediaPlayerCardProps) {
   const entity = useEntity(_entity);
   const mp = useService("mediaPlayer");
-  const { joinHassUrl } = useHass();
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const { joinHassUrl } = useHass.getState().helpers;
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const interval = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<HTMLElement>(null);
   const clockRef = useRef<HTMLDivElement>(null);
-  const entitiesById = useStore((store) => store.entities);
+  const entitiesById = useHass((store) => store.entities);
   const groupedEntities = groupMembers
     .map((entity) => entitiesById[entity] ?? null)
     .filter((entity): entity is MediaPlayerEntity => entity !== null && !isUnavailableState(entity.state));

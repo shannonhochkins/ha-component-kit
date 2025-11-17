@@ -1,11 +1,26 @@
-import { createContext } from "react";
 // types
-import type { Connection, HassEntities, HassEntity, HassConfig, HassUser, HassServices, Auth } from "home-assistant-js-websocket";
+import type { Connection, HassEntities, HassEntity, HassConfig, HassServices, Auth } from "home-assistant-js-websocket";
 import { type CSSInterpolation } from "@emotion/serialize";
 import { ServiceData, SnakeOrCamelDomains, DomainService, Target, LocaleKeys, ServiceResponse } from "@typings";
-import type { UseStoreHook } from "../hooks/useStore";
 import { create } from "zustand";
 import { type ConnectionStatus } from "./handleSuspendResume";
+import {
+  AreaRegistryEntry,
+  AuthUser,
+  computeAttributeValueDisplay,
+  computeStateDisplay,
+  DeviceRegistryEntry,
+  EntityRegistryDisplayEntry,
+  FloorRegistryEntry,
+  FrontendLocaleData,
+  resolveTimeZone,
+  shouldUseAmPm,
+} from "@core";
+import { createDateFormatters, DateFormatters } from "./createDateFormatters";
+import { isArray, snakeCase } from "lodash";
+import { callService as _callService } from "home-assistant-js-websocket";
+import { callApi } from "./callApi";
+import { CurrentUser } from "@utils/subscribe/user";
 export interface CallServiceArgs<T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean> {
   domain: T;
   service: M;
@@ -19,6 +34,10 @@ export interface Route {
   name: string;
   icon: string;
   active: boolean;
+}
+
+export interface SensorNumericDeviceClasses {
+  numeric_device_classes: string[];
 }
 
 export type SupportedComponentOverrides =
@@ -44,8 +63,30 @@ export type SupportedComponentOverrides =
   | "vacuumCard"
   | "alarmCard";
 export interface InternalStore {
+  sensorNumericDeviceClasses: string[];
+  setSensorNumericDeviceClasses: (classes: string[]) => void;
+  /** home assistant instance locale data */
+  locale: FrontendLocaleData | null;
+  setLocale: (locale: FrontendLocaleData | null) => void;
+  /** the device registry from home assistant */
+  devices: Record<string, DeviceRegistryEntry>;
+  setDevices: (devices: Record<string, DeviceRegistryEntry>) => void;
+  /** the entity registry display from home assistant */
+  entitiesRegistryDisplay: Record<string, EntityRegistryDisplayEntry>;
+  setEntitiesRegistryDisplay: (entities: Record<string, EntityRegistryDisplayEntry>) => void;
+  /** the area registry from home assistant */
+  areas: Record<string, AreaRegistryEntry>;
+  setAreas: (areas: Record<string, AreaRegistryEntry>) => void;
+  /** the floor registry from home assistant */
+  floors: Record<string, FloorRegistryEntry>;
+  setFloors: (floors: Record<string, FloorRegistryEntry>) => void;
+  /** The entities in the home assistant instance */
   entities: HassEntities;
   setEntities: (entities: HassEntities) => void;
+  /** the home assistant services data */
+  services: HassServices;
+  setServices: (services: HassServices) => void;
+  /** the connection status of your home assistant instance */
   connectionStatus: ConnectionStatus;
   setConnectionStatus: (status: ConnectionStatus) => void;
   /** The connection object from home-assistant-js-websocket */
@@ -70,8 +111,12 @@ export interface InternalStore {
   /** the home assistant authentication object */
   auth: Auth | null;
   setAuth: (auth: Auth | null) => void;
-  user: HassUser | null;
-  setUser: (user: HassUser | null) => void;
+  /** the current authenticated user */
+  user: CurrentUser | null;
+  setUser: (user: CurrentUser | null) => void;
+  /** all users in the home assistant instance */
+  users: AuthUser[];
+  setUsers: (users: AuthUser[]) => void;
   /** the home assistant configuration */
   config: HassConfig | null;
   setConfig: (config: HassConfig | null) => void;
@@ -95,6 +140,62 @@ export interface InternalStore {
   onDisconnect?: (cb: () => void) => void;
   /** internal function which will trigger when the connection disconnects */
   triggerOnDisconnect: () => void;
+  /** convenience helpers to format specific entity attributes, values, dates etc */
+  formatter: {
+    /** will format the state value automatically based on the entity provided */
+    stateValue: (entity: HassEntity) => string;
+    /** will format the attribute value automatically based on the entity and attribute provided */
+    attributeValue: (entity: HassEntity, attribute: string) => string;
+  } & DateFormatters;
+  helpers: {
+    /** logout of HA */
+    logout: () => void;
+    /** function to call a service through web sockets */
+    callService: {
+      <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+        args: CallServiceArgs<T, M, true>,
+      ): Promise<ServiceResponse<ResponseType>>;
+
+      /** Overload for when `returnResponse` is false */
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(args: CallServiceArgs<T, M, false>): void;
+
+      /** Overload for when `returnResponse` is omitted (defaults to false) */
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+        args: Omit<CallServiceArgs<T, M, false>, "returnResponse">,
+      ): void;
+    };
+    /** add a new route to the provider */
+    addRoute: (route: Omit<Route, "active">) => void;
+    /** retrieve a route by name */
+    getRoute: (hash: string) => Route | null;
+    /** will retrieve all HassEntities from the context */
+    getAllEntities: () => HassEntities;
+    /** join a path to the hassUrl */
+    joinHassUrl: (path: string) => string;
+    /** call the home assistant api */
+    callApi: <T>(
+      endpoint: string,
+      options?: RequestInit,
+    ) => Promise<
+      | {
+          data: T;
+          status: "success";
+        }
+      | {
+          data: string;
+          status: "error";
+        }
+    >;
+    /** date time related helper functions */
+    dateTime: {
+      /** determine if the current locale/timezone should use am/pm time format */
+      shouldUseAmPm: () => boolean;
+      /** resolve the correct timezone to use based on locale and config */
+      getTimeZone: () => string;
+    };
+  };
 }
 
 // ignore some keys that we don't actually care about when comparing entities
@@ -107,10 +208,46 @@ const shallowEqual = (entity: HassEntity, other: HassEntity): boolean => {
   return JSON.stringify(restEntity) === JSON.stringify(restOther);
 };
 
-export const useInternalStore = create<InternalStore>((set) => ({
+// Store dedicated to provider-level connection/session bookkeeping (authentication state and active websocket subscriptions)
+export interface HassProviderStore {
+  /** whether we've successfully initiated an auth/connect attempt for current hassUrl */
+  authenticated: boolean;
+  /** set authenticated flag */
+  setAuthenticated: (value: boolean) => void;
+  /** active unsubscribe functions keyed by a descriptive name */
+  subscriptions: Record<string, UnsubscribeFunc>;
+  /** register (or replace) a subscription; will auto-unsubscribe previous key before storing */
+  addSubscription: (key: string, fn: UnsubscribeFunc | null | undefined) => void;
+  /** remove a subscription by key and call its unsubscribe */
+  removeSubscription: (key: string) => void;
+  /** unsubscribe every tracked subscription and clear map */
+  unsubscribeAll: () => void;
+  /** resets the information on the internal store */
+  reset: () => void;
+}
+
+// We import the type from home-assistant-js-websocket here to avoid circular imports elsewhere
+import type { UnsubscribeFunc } from "home-assistant-js-websocket";
+import { clearTokens } from "./token-storage";
+
+export const useInternalStore = create<InternalStore>((set, get) => ({
+  sensorNumericDeviceClasses: [],
+  setSensorNumericDeviceClasses: (classes: string[]) => set({ sensorNumericDeviceClasses: classes }),
+  locale: null,
+  setLocale: (locale) => set({ locale }),
   routes: [],
   setRoutes: (routes) => set(() => ({ routes })),
   entities: {},
+  devices: {},
+  setDevices: (devices) => set(() => ({ devices })),
+  entitiesRegistryDisplay: {},
+  setEntitiesRegistryDisplay: (entities) => set(() => ({ entitiesRegistryDisplay: entities })),
+  areas: {},
+  setAreas: (areas) => set(() => ({ areas })),
+  floors: {},
+  services: {},
+  setServices: (services: HassServices) => set(() => ({ services })),
+  setFloors: (floors) => set(() => ({ floors })),
   setHassUrl: (hassUrl) => set({ hassUrl }),
   hassUrl: null,
   hash: "",
@@ -155,6 +292,8 @@ export const useInternalStore = create<InternalStore>((set) => ({
   setConfig: (config) => set({ config }),
   user: null,
   setUser: (user) => set({ user }),
+  users: [],
+  setUsers: (users) => set({ users }),
   error: null,
   setError: (error) => set({ error }),
   globalComponentStyles: {},
@@ -166,61 +305,172 @@ export const useInternalStore = create<InternalStore>((set) => ({
       state.disconnectCallbacks.forEach((cb) => cb());
       return { disconnectCallbacks: [] };
     }),
+  helpers: {
+    logout() {
+      const { reset } = useHassProviderStore.getState();
+      const { setError } = get();
+      try {
+        reset();
+        clearTokens();
+        if (location) location.reload();
+      } catch (err: unknown) {
+        console.error("Error:", err);
+        setError("Unable to log out!");
+      }
+    },
+    callService: (<ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
+      rawArgs: CallServiceArgs<T, M, boolean>,
+    ): Promise<ServiceResponse<ResponseType>> | void => {
+      const { domain, service, serviceData, target: _target, returnResponse } = rawArgs;
+      const { connection, ready } = get();
+      const target = typeof _target === "string" || isArray(_target) ? { entity_id: _target } : _target;
+
+      // basic guards
+      if (!connection || !ready) {
+        if (returnResponse) {
+          return Promise.reject(new Error("callService: connection not established or not ready"));
+        }
+        return; // fire & forget path does nothing when not ready
+      }
+
+      try {
+        const result = _callService(connection, snakeCase(domain), snakeCase(service), serviceData ?? {}, target, returnResponse);
+        return returnResponse ? (result as Promise<ServiceResponse<ResponseType>>) : undefined; // fire & forget
+      } catch (e) {
+        console.error("Error calling service:", e);
+        return returnResponse ? Promise.reject(e) : undefined;
+      }
+    }) as InternalStore["helpers"]["callService"],
+    addRoute(route) {
+      const { routes, setRoutes } = get();
+      const exists = routes.find((r) => r.hash === route.hash);
+      if (!exists) {
+        const hashWithoutPound = typeof window !== "undefined" ? window.location.hash.replace("#", "") : "";
+        const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
+        setRoutes([...routes, { ...route, active } satisfies Route]);
+      }
+    },
+    getRoute(hash) {
+      const { routes } = get();
+      return routes.find((r) => r.hash === hash) || null;
+    },
+    getAllEntities() {
+      return get().entities;
+    },
+    joinHassUrl(path: string) {
+      const { connection } = get();
+      return connection ? new URL(path, connection.options.auth?.data.hassUrl).toString() : "";
+    },
+    callApi: callApi,
+    dateTime: {
+      shouldUseAmPm: () => {
+        const { locale } = get();
+        if (locale) {
+          return shouldUseAmPm(locale);
+        }
+        return true;
+      },
+      getTimeZone() {
+        const { locale, config } = get();
+        if (!config || !locale) {
+          return "UTC";
+        }
+        return resolveTimeZone(locale.time_zone, config.time_zone);
+      },
+    },
+  },
+  formatter: {
+    stateValue: (entity: HassEntity) => {
+      const { config, entitiesRegistryDisplay, locale, sensorNumericDeviceClasses } = get();
+      if (!config || !locale) {
+        return "";
+      }
+      return computeStateDisplay(entity, config, entitiesRegistryDisplay, locale, sensorNumericDeviceClasses, entity.state);
+    },
+    attributeValue: (entity: HassEntity, attribute: string) => {
+      const { config, entitiesRegistryDisplay, locale } = get();
+      if (!config || !locale) {
+        return "";
+      }
+      return computeAttributeValueDisplay(entity, locale, config, entitiesRegistryDisplay, attribute);
+    },
+    ...createDateFormatters(),
+  },
 }));
 
-export interface HassContextProps {
-  /** @deprecated - import directly instead: import { useStore } from "@hakit/core"; */
-  useStore: UseStoreHook;
-  /** logout of HA */
-  logout: () => void;
-  /** will retrieve all the HassEntities states */
-  getStates: () => Promise<HassEntity[] | null>;
-  /** will retrieve all the HassServices */
-  getServices: () => Promise<HassServices | null>;
-  /** will retrieve HassConfig */
-  getConfig: () => Promise<HassConfig | null>;
-  /** will retrieve HassUser */
-  getUser: () => Promise<HassUser | null>;
-  /** function to call a service through web sockets */
-  callService: {
-    <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
-      args: CallServiceArgs<T, M, true>,
-    ): Promise<ServiceResponse<ResponseType>>;
-
-    /** Overload for when `returnResponse` is false */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(args: CallServiceArgs<T, M, false>): void;
-
-    /** Overload for when `returnResponse` is omitted (defaults to false) */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
-      args: Omit<CallServiceArgs<T, M, false>, "returnResponse">,
-    ): void;
-  };
-  /** add a new route to the provider */
-  addRoute(route: Omit<Route, "active">): void;
-  /** retrieve a route by name */
-  getRoute(hash: string): Route | null;
-  /** will retrieve all HassEntities from the context */
-  getAllEntities: () => HassEntities;
-  /** join a path to the hassUrl */
-  joinHassUrl: (path: string) => string;
-  /** call the home assistant api */
-  callApi: <T>(
-    endpoint: string,
-    options?: RequestInit,
-  ) => Promise<
-    | {
-        data: T;
-        status: "success";
+export const useHassProviderStore = create<HassProviderStore>((set, get) => ({
+  authenticated: false,
+  setAuthenticated: (value) => set({ authenticated: value }),
+  subscriptions: {},
+  addSubscription: (key, fn) => {
+    if (!fn) return;
+    const subs = get().subscriptions;
+    // if an existing subscription with this key exists, attempt cleanup first
+    if (subs[key]) {
+      try {
+        subs[key]();
+      } catch (e) {
+        if (process.env.NODE_ENV !== "production") {
+          console.warn(`Failed to unsubscribe previous subscription for key '${key}'`, e);
+        }
       }
-    | {
-        data: string;
-        status: "error";
+    }
+    set({ subscriptions: { ...subs, [key]: fn } });
+  },
+  removeSubscription: (key) => {
+    const subs = get().subscriptions;
+    if (!subs[key]) return;
+    try {
+      subs[key]!();
+    } catch (e) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(`Failed to unsubscribe subscription for key '${key}'`, e);
       }
-  >;
-  /** Will tell the various features like breakpoints, modals and resize events which window to match media on, if serving within an iframe it'll potentially be running in the wrong window */
-  windowContext?: Window;
-}
+    }
+    const next = { ...subs };
+    delete next[key];
+    set({ subscriptions: next });
+  },
+  unsubscribeAll: () => {
+    const subs = get().subscriptions;
+    for (const key of Object.keys(subs)) {
+      try {
+        subs[key]!();
+      } catch (e) {
+        if (process.env.NODE_ENV !== "production") {
+          console.warn(`Failed during mass unsubscribe for key '${key}'`, e);
+        }
+      }
+    }
+    set({ subscriptions: {} });
+  },
 
-export const HassContext = createContext<HassContextProps>({} as HassContextProps);
+  reset() {
+    const { unsubscribeAll, setAuthenticated } = get();
+    const {
+      setAuth,
+      setUser,
+      setCannotConnect,
+      setConfig,
+      setConnection,
+      setEntities,
+      setError,
+      setReady,
+      setRoutes,
+      setConnectionStatus,
+    } = useInternalStore.getState();
+    // when the hassUrl changes, reset some properties and re-authenticate
+    setAuth(null);
+    setRoutes([]);
+    setReady(false);
+    setConnection(null);
+    setEntities({});
+    setConfig(null);
+    setError(null);
+    setCannotConnect(false);
+    setUser(null);
+    setConnectionStatus("pending");
+    setAuthenticated(false);
+    unsubscribeAll();
+  },
+}));

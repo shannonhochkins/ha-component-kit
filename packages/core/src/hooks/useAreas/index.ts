@@ -1,98 +1,92 @@
-import { useHass, useStore } from "@core";
-import { useEffect, useState, useMemo } from "react";
-import { subscribeAreaRegistry } from "./subscribe/areas";
-import { subscribeEntityRegistry } from "./subscribe/entities";
-import { subscribeDeviceRegistry } from "./subscribe/devices";
-import type { AreaRegistryEntry } from "./subscribe/areas";
-import type { EntityRegistryEntry } from "./subscribe/entities";
-import type { DeviceRegistryEntry } from "./subscribe/devices";
+import { AreaRegistryEntry, EntityRegistryDisplayEntry, useHass } from "@core";
+import { useMemo } from "react";
+import type { DeviceRegistryEntry } from "@utils/subscribe/devices";
 import type { HassEntity } from "home-assistant-js-websocket";
+import type { FloorRegistryEntry } from "@utils/subscribe/floors";
 
-export interface Area {
-  /** the area id */
-  area_id: string;
-  /** the name of the area */
-  name: string;
-  /** the picture of the area */
+/**
+ * Enriched area shape returned by `useAreas`.
+ * Extends the raw registry entry with resolved picture URL, linked floor,
+ * concrete lists of devices & entities.
+ */
+export interface Area extends AreaRegistryEntry {
+  /** Resolved (absolute) picture URL or null */
   picture: string | null;
-  /** the devices linked to the area */
+  /** Devices (non-service type) whose area_id matches this area */
   devices: DeviceRegistryEntry[];
-  /** the services linked to the area */
-  services: DeviceRegistryEntry[];
-  /** the entities linked to the area */
+  /** Entities (state objects) whose area_id matches this area */
   entities: HassEntity[];
+  /** Associated floor (null if none assigned) */
+  floor: FloorRegistryEntry | null;
 }
 
 export function useAreas(): Area[] {
-  const { joinHassUrl } = useHass();
-  const [areas, setAreas] = useState<AreaRegistryEntry[]>([]);
-  const [devices, setDevices] = useState<DeviceRegistryEntry[]>([]);
-  const [entities, setEntities] = useState<EntityRegistryEntry[]>([]);
-  const connection = useStore((state) => state.connection);
-  const _entities = useStore((state) => state.entities);
-
-  useEffect(() => {
-    if (!connection) return;
-    const areaUnsub = subscribeAreaRegistry(connection, (areas) => {
-      setAreas(areas);
-    });
-    const entityUnsub = subscribeEntityRegistry(connection, (entities) => {
-      setEntities(entities);
-    });
-    const deviceUnsub = subscribeDeviceRegistry(connection, (devices) => {
-      setDevices(devices);
-    });
-    // Returning a cleanup function that will be called on component unmount
-    return () => {
-      areaUnsub();
-      entityUnsub();
-      deviceUnsub();
-    };
-  }, [connection]);
+  const { joinHassUrl } = useHass.getState().helpers;
+  const areas = useHass((state) => state.areas);
+  const devices = useHass((state) => state.devices);
+  const floors = useHass((state) => state.floors);
+  const entitiesRegistryDisplay = useHass((state) => state.entitiesRegistryDisplay);
+  const entities = useHass((state) => state.entities);
 
   return useMemo(() => {
-    return areas.map((area) => {
-      const matchedEntities: HassEntity[] = [];
-      const matchedDevices: DeviceRegistryEntry[] = [];
-      const matchedServices: DeviceRegistryEntry[] = [];
-
-      for (const device of devices) {
-        if (device.area_id === area.area_id) {
-          if (device.entry_type === "service") {
-            matchedServices.push(device);
-          } else {
-            matchedDevices.push(device);
-          }
-        }
-      }
-      // ! entities only have an area_id if they are manually assigned to an area and
-      // ! not inherited from the parent device (or because they don't have a parent device)
-      for (const entity of entities) {
-        const _entity = _entities[entity.entity_id];
-        if (!_entity) continue;
-
-        const entityIsInArea = entity.area_id === area.area_id;
-        if (entityIsInArea) {
-          matchedEntities.push(_entity);
-        }
-
-        if (!entity.device_id) continue;
-        const device = devices.find((d) => d.id === entity.device_id);
-        if (!device) continue;
-
-        const deviceIsInArea = device.area_id === area.area_id;
-        const entityInheritsArea = !entity.area_id;
-        if (entityInheritsArea && deviceIsInArea) {
-          matchedEntities.push(_entity);
-        }
-      }
-      return {
-        ...area,
-        picture: area.picture ? joinHassUrl(area.picture) : area.picture,
-        devices: matchedDevices,
-        services: matchedServices,
-        entities: matchedEntities,
-      };
+    const _areas = Object.values(areas);
+    return processAreas({
+      areas: _areas,
+      devices,
+      entitiesRegistryDisplay,
+      floors,
+      joinHassUrl,
+      hassEntities: entities,
     });
-  }, [areas, devices, joinHassUrl, entities, _entities]);
+  }, [areas, devices, joinHassUrl, entitiesRegistryDisplay, floors, entities]);
+}
+interface ProcessAreasParams {
+  areas: AreaRegistryEntry[];
+  devices: Record<string, DeviceRegistryEntry>;
+  entitiesRegistryDisplay: Record<string, EntityRegistryDisplayEntry>;
+  floors: Record<string, FloorRegistryEntry>;
+  joinHassUrl: (path: string) => string;
+  hassEntities: Record<string, HassEntity>;
+}
+
+function processAreas({ areas, devices, entitiesRegistryDisplay, floors, joinHassUrl, hassEntities }: ProcessAreasParams): Area[] {
+  const processArea = (area: AreaRegistryEntry): Area => {
+    const devicesInArea: DeviceRegistryEntry[] = [];
+    for (const device of Object.values(devices)) {
+      if (device.area_id === area.area_id) {
+        if (device.entry_type !== "service") {
+          devicesInArea.push(device);
+        }
+      }
+    }
+
+    // Collect entities that belong to this area either directly (entity.area_id) or
+    // indirectly via the device assignment (entity.area_id unset but device.area_id matches).
+    const entitiesInAreaSet = new Set<string>();
+    const entitiesInArea: HassEntity[] = [];
+    for (const entity of Object.values(entitiesRegistryDisplay)) {
+      const directMatch = entity.area_id === area.area_id;
+      const inheritedMatch = !entity.area_id && entity.device_id && devices[entity.device_id]?.area_id === area.area_id;
+      if (directMatch || inheritedMatch) {
+        const hassEntity = hassEntities[entity.entity_id];
+        if (hassEntity && !entitiesInAreaSet.has(entity.entity_id)) {
+          entitiesInAreaSet.add(entity.entity_id);
+          entitiesInArea.push(hassEntity);
+        } else if (!hassEntity) {
+          // Registry entry exists but we have no current state object; skip silently.
+          // (Could log if needed: console.debug(`Missing state for ${entity.entity_id}`))
+        }
+      }
+    }
+
+    return {
+      ...area,
+      picture: area.picture ? joinHassUrl(area.picture) : null,
+      devices: devicesInArea,
+      entities: entitiesInArea,
+      floor: area.floor_id ? floors[area.floor_id] || null : null,
+    };
+  };
+
+  return areas.map(processArea);
 }

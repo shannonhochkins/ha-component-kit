@@ -1,7 +1,9 @@
 import { Source, Meta } from '@storybook/addon-docs/blocks';
-import callApiExample from './examples/callApi.code?raw';
+import callApiExample from './examples/callApi.code.tsx?raw';
+import callApiContext from './examples/callApi.context.code.ts?raw';
+import callApiSnapshot from './examples/callApi.snapshot.code.ts?raw';
 
-<Meta title="core/hooks/useHass/hass/callApi" />
+<Meta title="core/hooks/useHass/callApi" />
 
 # callApi()
 ###### `callApi(endpoint: string, options?: FetchOptions)`
@@ -26,8 +28,10 @@ http:
 `} />
 
 ### Example Usage
-The below is an example of how to use the hook to retrieve calendar events from home assistant.
+Use the context helper (stable) or snapshot from the store for non-render code.
 I recommend you read the documentation for the [REST API](https://developers.home-assistant.io/docs/api/rest/#actions) before attempting to use the callApi function as it will help you understand what you need to pass to the function and what you can expect to get back.
 
+<Source dark language="ts" code={callApiContext} />
+<Source dark language="ts" code={callApiSnapshot} />
 <Source dark language="ts" code={callApiExample} />
 

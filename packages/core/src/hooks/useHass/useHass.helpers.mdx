@@ -1,0 +1,16 @@
+import { Meta, Source, Canvas } from '@storybook/addon-docs/blocks';
+import formatterStateValueExample from './examples/formatterStateValue.code?raw';
+import formatterDatesExample from './examples/formatterDates.code?raw';
+import * as Primary from './examples/primary.stories';
+
+<Meta title="core/hooks/useHass/helpers" />
+
+### Formatter API
+
+The `formatter` object provides helpers for converting entity state and attributes to localized, human-friendly strings, as well as a comprehensive set of date/time formatting utilities. See the following dedicated sections for full API and usage:
+
+### State & Attribute Formatting
+<Source dark language="ts" code={formatterStateValueExample} />
+### Date & Time Formatting
+<Source dark language="ts" code={formatterDatesExample} />
+<Canvas of={Primary.PrimaryExample} />

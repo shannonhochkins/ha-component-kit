@@ -1,0 +1,99 @@
+import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
+import basicExample from './examples/basic.code?raw';
+import * as Primary from './examples/primary.stories';
+import { DummyComponentReturn, DummyComponentReturnFloors, DummyComponentAreas, DummyComponentDevices, DummyComponentServices, DummyComponentEntitiesRegistryDisplay } from './examples/DummyComponent';
+
+
+<Meta title="core/hooks/useRegistryData" parameters={{
+  docs: {
+    page: null,
+  }
+}} />
+
+# useRegistryData()
+###### useRegistryData\<K extends RegistryDataKey>(type: K): Store[K]
+
+`useRegistryData` lets you retrieve specific registry/metadata collections from the internal store with full TypeScript inference. You pass a the type you want to retrieve, for example `"services"` and it returns the correctly typed value for that key.
+
+All returned values are plain objects keyed by an ID (usually an entity_id, device_id, area_id or floor_id). They are reactive: The data will update whenever the slice you're subscribing to changes.
+
+> Each object will be initially empty until data has been loaded.
+
+> This hook does **not** deal with formatting of the data, it returns the raw data from home assistant, if you're after formatting for example areas, you can use the `useAreas` hook to get the data in a formatted structure.
+
+> Treat returned objects as **read-only**. Mutating them locally will not update the store nor Home Assistant.
+
+### **Available `type` values:**
+
+- `entitiesRegistryDisplay` - Display-oriented overrides and friendly metadata (name, localized name variants, hidden status). Combines registry info used for UI labels.
+- `services` - Nested object of domains and their callable services (`services[domain][service]`). Each service entry includes fields like `description`, `fields` (schema for service data), and optionally target requirements, in home assistant these are also known as actions.
+- `areas` - Area definitions (name, id, aliases, floor linkage). Useful for grouping devices/entities.
+- `devices` - Device records (manufacturer, model, identifiers, via_device, area_id, configuration_url). Links multiple entities together.
+- `floors` - Floor definitions allowing hierarchical grouping of areas.
+
+If a slice has not loaded yet you still receive its initialized empty object (never `null`), so you can safely do `Object.keys(data).length === 0` checks.
+
+### **Notes**
+
+1. Because the hook is keyed by a string literal union, TypeScript narrows precisely; no manual casting required.
+2. For programmatic (non-hook) access you can still do: `const { entitiesRegistryDisplay } = useHass.getState();` but the hook gives you reactivity
+
+### When to Prefer Direct Store Access
+
+Use the hook for component-level reactive subscriptions. Use `useHass.getState()` when:
+- Executing logic outside React lifecycle (e.g. in a utility module)
+- Performing one-off synchronous reads where re-rendering isn’t needed
+
+### Caveats
+
+- The shape of service field schemas (`services[domain][service].fields`) can vary per integration. Inspect them defensively.
+- Floor support may not be enabled in all Home Assistant versions; if unsupported you’ll simply have an empty object.
+
+### IntelliSense
+
+Type narrowing occurs automatically. Hover over `entitiesRegistryDisplay` in your editor to see full `EntityRegistryDisplayEntry` structure without casts.
+
+### Example Usage
+
+<Source dark code={basicExample} />
+
+#### Outputs
+
+<Canvas of={Primary.PrimaryExample} />
+
+
+### Returned Value
+This hook returns a list of registry data based on the provided type:
+
+<ArgTypes of={DummyComponentReturn} />
+
+### FloorRegistryEntry
+The following is the `FloorRegistryEntry` type returned by the `useRegistryData` hook when using the type "floors":
+<ArgTypes of={DummyComponentReturnFloors} />
+
+### AreaRegistryEntry
+The following is the `AreaRegistryEntry` type returned by the `useRegistryData` hook when using the type "areas":
+<ArgTypes of={DummyComponentAreas} />
+
+### DeviceRegistryEntry
+The following is the `DeviceRegistryEntry` type returned by the `useRegistryData` hook when using the type "devices":
+<ArgTypes of={DummyComponentDevices} />
+
+### ServiceDefinition
+The following is the `HassServices` type returned by the `useRegistryData` hook when using the type "services", services are returned in the following format:
+
+<Source dark language="ts" code={`
+export type HassServices = {
+  [domain: string]: {
+    [service_name: string]: HassService;
+  }
+};
+`} />
+
+A `HassService` is defined as:
+
+<ArgTypes of={DummyComponentServices} />
+
+### EntityRegistryDisplayEntry
+The following is the `EntityRegistryDisplayEntry` type returned by the `useRegistryData` hook when using the type "entitiesRegistryDisplay":
+<ArgTypes of={DummyComponentEntitiesRegistryDisplay} />

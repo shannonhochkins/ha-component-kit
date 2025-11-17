@@ -1,4 +1,35 @@
 import { HassConfig } from "home-assistant-js-websocket";
+import { FrontendLocaleData, DateFormat } from "./subscribe/frontend_data";
+
+const RESOLVED_TIME_ZONE = Intl.DateTimeFormat?.().resolvedOptions?.().timeZone;
+
+// Browser time zone can be determined from Intl, with fallback to UTC for polyfill or no support.
+export const LOCAL_TIME_ZONE = RESOLVED_TIME_ZONE ?? "UTC";
+
+// Pick time zone based on user profile option.  Core zone is used when local cannot be determined.
+export const resolveTimeZone = (option: TimeZone, serverTimeZone: string) =>
+  option === TimeZone.local && RESOLVED_TIME_ZONE ? LOCAL_TIME_ZONE : serverTimeZone;
+
+export enum TimeFormat {
+  language = "language",
+  system = "system",
+  am_pm = "12",
+  twenty_four = "24",
+}
+
+export enum TimeZone {
+  local = "local",
+  server = "server",
+}
+
+export const shouldUseAmPm = (locale: FrontendLocaleData): boolean => {
+  if (locale.time_format === TimeFormat.language || locale.time_format === TimeFormat.system) {
+    const testLanguage = locale.time_format === TimeFormat.language ? locale.language : undefined;
+    const test = new Date("January 1, 2023 22:00:00").toLocaleString(testLanguage);
+    return test.includes("10");
+  }
+  return locale.time_format === TimeFormat.am_pm;
+};
 
 const DAY_IN_MILLISECONDS = 86400000;
 const HOUR_IN_MILLISECONDS = 3600000;
@@ -75,51 +106,375 @@ export function checkValidDate(date?: Date): boolean {
   return date instanceof Date && !isNaN(date.valueOf());
 }
 
-const dateFormatterCache: { [key: string]: Intl.DateTimeFormat } = {};
-const timeFormatterCache: { [key: string]: Intl.DateTimeFormat } = {};
-const dateTimeFormatterCache: { [key: string]: Intl.DateTimeFormat } = {};
+// Single-entry memo factory: caches only the last invocation per formatter.
+// This keeps memory footprint minimal while still avoiding repeated construction
+// during render cycles with stable locale/timezone preferences.
+function singleEntryMemo<Args extends unknown[], R>(factory: (...a: Args) => R) {
+  let lastArgs: Args | null = null;
+  let lastResult: R | null = null;
+  return (...args: Args): R => {
+    if (lastArgs && lastArgs.length === args.length && lastArgs.every((v, i) => v === args[i])) {
+      return lastResult as R;
+    }
+    lastArgs = args;
+    lastResult = factory(...args);
+    return lastResult as R;
+  };
+}
 
-const getDateFormatter = (timeZone: string) => {
-  if (!dateFormatterCache[timeZone]) {
-    dateFormatterCache[timeZone] = new Intl.DateTimeFormat("en-US", {
+const dateFormatterMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
       year: "numeric",
       month: "long",
       day: "numeric",
-      timeZone,
-    });
-  }
-  return dateFormatterCache[timeZone];
-};
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
 
-const getTimeFormatter = (timeZone: string) => {
-  if (!timeFormatterCache[timeZone]) {
-    timeFormatterCache[timeZone] = new Intl.DateTimeFormat("en-US", {
-      hour: "numeric",
+const timeFormatterMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      hour: shouldUseAmPm(locale) ? "numeric" : "2-digit",
       minute: "2-digit",
-      hourCycle: "h12",
-      timeZone,
-    });
-  }
-  return timeFormatterCache[timeZone];
-};
+      hourCycle: shouldUseAmPm(locale) ? "h12" : "h23",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
 
-const getDateTimeFormatter = (timeZone: string) => {
-  if (!dateTimeFormatterCache[timeZone]) {
-    dateTimeFormatterCache[timeZone] = new Intl.DateTimeFormat("en-US", {
+// 24h time (HH:MM) without any day period suffix, always forcing hourCycle h23 but still honoring
+// the user's chosen timezone preference (locale.time_zone vs server time zone). Language is passed
+// purely for consistency but does not materially affect numeric output.
+const timeWithoutAmPmFormatterMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+// Hour-only formatter respecting 12/24 preference. For 12h locales returns values like "5 PM",
+// for 24h preference returns zero-padded "17" (no suffix). Minute component intentionally omitted.
+const hourOnlyFormatterMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      hour: shouldUseAmPm(locale) ? "numeric" : "2-digit",
+      hourCycle: shouldUseAmPm(locale) ? "h12" : "h23",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+// Minute-only formatter (always 2-digit) respecting timezone
+const minuteOnlyFormatterMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      minute: "2-digit",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+// Second-only formatter (always 2-digit) respecting timezone
+const secondOnlyFormatterMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      second: "2-digit",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+const dateTimeFormatterMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
       year: "numeric",
       month: "long",
       day: "numeric",
-      hour: "numeric",
+      hour: shouldUseAmPm(locale) ? "numeric" : "2-digit",
       minute: "2-digit",
-      hourCycle: "h12",
-      timeZone,
-    });
-  }
-  return dateTimeFormatterCache[timeZone];
+      hourCycle: shouldUseAmPm(locale) ? "h12" : "h23",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+const dateTimeWithSecondsFormatterMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: shouldUseAmPm(locale) ? "numeric" : "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: shouldUseAmPm(locale) ? "h12" : "h23",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+const shortDateTimeWithYearMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: shouldUseAmPm(locale) ? "numeric" : "2-digit",
+      minute: "2-digit",
+      hourCycle: shouldUseAmPm(locale) ? "h12" : "h23",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+const shortDateTimeMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      month: "short",
+      day: "numeric",
+      hour: shouldUseAmPm(locale) ? "numeric" : "2-digit",
+      minute: "2-digit",
+      hourCycle: shouldUseAmPm(locale) ? "h12" : "h23",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+const browserDefaultsFormatterMem = singleEntryMemo(
+  () =>
+    new Intl.DateTimeFormat(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+);
+
+// --- Additional granular date formatters for HA parity ---
+
+const dateWeekdayDayMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+const dateShortMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+const dateVeryShortMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      day: "numeric",
+      month: "short",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+const dateMonthYearMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      month: "long",
+      year: "numeric",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+const dateMonthMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      month: "long",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+const dateYearMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      year: "numeric",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+const dateWeekdayMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      weekday: "long",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+const dateWeekdayShortMem = singleEntryMemo(
+  (locale: FrontendLocaleData, serverTZ: string) =>
+    new Intl.DateTimeFormat(locale.language, {
+      weekday: "short",
+      timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+    }),
+);
+
+// Numeric date with user preference ordering (DMY/MDY/YMD) when locale.date_format overrides language/system.
+const dateNumericBaseMem = singleEntryMemo((locale: FrontendLocaleData, serverTZ: string) => {
+  const localeString = locale.date_format === DateFormat.system ? undefined : locale.language;
+  return new Intl.DateTimeFormat(localeString, {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    timeZone: resolveTimeZone(locale.time_zone, serverTZ),
+  });
+});
+
+/** Format a date (long month) e.g. "August 9, 2021" */
+export const formatDate = (dateObj: Date, config: HassConfig, locale: FrontendLocaleData) =>
+  dateFormatterMem(locale, config.time_zone).format(dateObj);
+
+/** Format a time respecting 12/24 preference e.g. "8:23 AM" or "08:23" */
+export const formatTime = (dateObj: Date, config: HassConfig, locale: FrontendLocaleData) =>
+  timeFormatterMem(locale, config.time_zone).format(dateObj);
+
+/** Format a time forcing 24h cycle (HH:MM) without an AM/PM suffix, ignoring user 12h preference but honoring timezone preference. */
+export const formatTimeWithoutAmPm = (dateObj: Date, config: HassConfig, locale: FrontendLocaleData) =>
+  timeWithoutAmPmFormatterMem(locale, config.time_zone).format(dateObj);
+
+/** Hour numeric only respecting 12/24 preference (no suffix). e.g. "5" or "17" */
+export const formatHour = (dateObj: Date, config: HassConfig, locale: FrontendLocaleData) => {
+  const parts = hourOnlyFormatterMem(locale, config.time_zone).formatToParts(dateObj);
+  return parts.find((p) => p.type === "hour")?.value || "";
 };
-// 9:15 PM || 21:15
-export const formatDate = (dateObj: Date, config: HassConfig) => getDateFormatter(config.time_zone).format(dateObj);
-// 9:15 PM || 21:15
-export const formatTime = (dateObj: Date, config: HassConfig) => getTimeFormatter(config.time_zone).format(dateObj);
-// August 9, 2021, 8:23 AM
-export const formatDateTime = (dateObj: Date, config: HassConfig) => getDateTimeFormatter(config.time_zone).format(dateObj);
+
+/** Minute numeric only (zero-padded, e.g. "07") */
+export const formatMinute = (dateObj: Date, config: HassConfig, locale: FrontendLocaleData) => {
+  const parts = minuteOnlyFormatterMem(locale, config.time_zone).formatToParts(dateObj);
+  return parts.find((p) => p.type === "minute")?.value || "";
+};
+
+/** Seconds numeric only (zero-padded, e.g. "09") */
+export const formatSeconds = (dateObj: Date, config: HassConfig, locale: FrontendLocaleData) => {
+  const parts = secondOnlyFormatterMem(locale, config.time_zone).formatToParts(dateObj);
+  return parts.find((p) => p.type === "second")?.value || "";
+};
+
+/** Long date & time without seconds e.g. "August 9, 2021, 8:23 AM" */
+export const formatDateTime = (dateObj: Date, config: HassConfig, locale: FrontendLocaleData) =>
+  dateTimeFormatterMem(locale, config.time_zone).format(dateObj);
+
+// August 9, 2021, 8:23:15 AM
+/** Long date & time with seconds e.g. "August 9, 2021, 8:23:15 AM" */
+export const formatDateTimeWithSeconds = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) =>
+  dateTimeWithSecondsFormatterMem(locale, config.time_zone).format(dateObj);
+
+/** Short date/time without year if same year e.g. "Aug 9, 8:23 AM" */
+export const formatShortDateTime = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) =>
+  shortDateTimeMem(locale, config.time_zone).format(dateObj);
+
+/** Short date/time with year e.g. "Aug 9, 2021, 8:23 AM" */
+export const formatShortDateTimeWithYear = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) =>
+  shortDateTimeWithYearMem(locale, config.time_zone).format(dateObj);
+
+/** Conditionally include year (current year omitted) */
+export const formatShortDateTimeWithConditionalYear = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) => {
+  const now = new Date();
+  return now.getFullYear() === dateObj.getFullYear()
+    ? formatShortDateTime(dateObj, locale, config)
+    : formatShortDateTimeWithYear(dateObj, locale, config);
+};
+
+/** Browser default locale (useful for fallback) */
+export const formatDateTimeWithBrowserDefaults = (dateObj: Date) => browserDefaultsFormatterMem().format(dateObj);
+
+/** Numeric date/time variant (delegates to existing helpers if present) */
+export const formatDateTimeNumeric = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) => {
+  // Provide a simple numeric format similar to HA's `formatDateTimeNumeric`.
+  // We intentionally do not memoize this combined string (two memoized parts already).
+  const datePart = new Intl.DateTimeFormat(locale.language, {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    timeZone: resolveTimeZone(locale.time_zone, config.time_zone),
+  }).format(dateObj);
+  return `${datePart}, ${formatTime(dateObj, config, locale)}`;
+};
+
+/** Weekday + Month + Day (e.g. "Tuesday, August 10") */
+export const formatDateWeekdayDay = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) =>
+  dateWeekdayDayMem(locale, config.time_zone).format(dateObj);
+
+/** Short date (e.g. "Aug 10, 2021") */
+export const formatDateShort = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) =>
+  dateShortMem(locale, config.time_zone).format(dateObj);
+
+/** Very short date (e.g. "Aug 10") */
+export const formatDateVeryShort = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) =>
+  dateVeryShortMem(locale, config.time_zone).format(dateObj);
+
+/** Month + Year (e.g. "August 2021") */
+export const formatDateMonthYear = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) =>
+  dateMonthYearMem(locale, config.time_zone).format(dateObj);
+
+/** Month name (e.g. "August") */
+export const formatDateMonth = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) =>
+  dateMonthMem(locale, config.time_zone).format(dateObj);
+
+/** Year (e.g. "2021") */
+export const formatDateYear = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) =>
+  dateYearMem(locale, config.time_zone).format(dateObj);
+
+/** Weekday long (e.g. "Monday") */
+export const formatDateWeekday = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) =>
+  dateWeekdayMem(locale, config.time_zone).format(dateObj);
+
+/** Weekday short (e.g. "Mon") */
+export const formatDateWeekdayShort = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) =>
+  dateWeekdayShortMem(locale, config.time_zone).format(dateObj);
+
+/** Numeric date honoring user ordering preference (e.g. DMY -> 10/08/2021) */
+export const formatDateNumeric = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig) => {
+  const formatter = dateNumericBaseMem(locale, config.time_zone);
+  if (locale.date_format === DateFormat.language || locale.date_format === DateFormat.system) {
+    return formatter.format(dateObj);
+  }
+  const parts = formatter.formatToParts(dateObj);
+  const literal = parts.find((p) => p.type === "literal")?.value || "/";
+  const day = parts.find((p) => p.type === "day")?.value || "";
+  const month = parts.find((p) => p.type === "month")?.value || "";
+  const year = parts.find((p) => p.type === "year")?.value || "";
+  const lastPart = parts[parts.length - 1];
+  let lastLiteral = lastPart?.type === "literal" ? lastPart.value : "";
+  if (locale.language === "bg" && locale.date_format === DateFormat.YMD) {
+    lastLiteral = "";
+  }
+  const byFormat: Record<DateFormat, string> = {
+    [DateFormat.DMY]: `${day}${literal}${month}${literal}${year}${lastLiteral}`,
+    [DateFormat.MDY]: `${month}${literal}${day}${literal}${year}${lastLiteral}`,
+    [DateFormat.YMD]: `${year}${literal}${month}${literal}${day}${lastLiteral}`,
+    [DateFormat.language]: formatter.format(dateObj),
+    [DateFormat.system]: formatter.format(dateObj),
+  };
+  return byFormat[locale.date_format];
+};
+
+/**
+ * Return a localized day period (AM/PM or locale equivalent) for the given date.
+ * This intentionally ignores the user's 24h preference so callers can always access the suffix if desired.
+ * Only timezone and language are considered (not time_format). Falls back to simple "AM"/"PM" on failure.
+ */
+export const formatAmPmSuffix = (dateObj: Date, locale: FrontendLocaleData, config: HassConfig): string => {
+  try {
+    const formatter = new Intl.DateTimeFormat(locale.language, {
+      hour: "numeric",
+      hour12: true,
+      timeZone: resolveTimeZone(locale.time_zone, config.time_zone),
+    });
+    const parts = formatter.formatToParts(dateObj);
+    const period = parts.find((p) => p.type === "dayPeriod")?.value;
+    return period || (dateObj.getHours() >= 12 ? "PM" : "AM");
+  } catch {
+    return dateObj.getHours() >= 12 ? "PM" : "AM";
+  }
+};

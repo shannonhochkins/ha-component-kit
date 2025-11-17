@@ -1,7 +1,5 @@
 import styled from "@emotion/styled";
-import { computeStateDisplay, useStore } from "@hakit/core";
-import { HassConfig, Connection } from "home-assistant-js-websocket";
-import { useCallback } from "react";
+import { useHass } from "@hakit/core";
 import { StateProps } from "./types";
 
 const Wrapper = styled.div`
@@ -18,16 +16,10 @@ const Wrapper = styled.div`
 `;
 
 export default function SensorState({ entity }: StateProps) {
-  const config = useStore((state) => state.config);
-  const entities = useStore((store) => store.entities);
-  const connection = useStore((store) => store.connection);
-  const computeState = useCallback(
-    () => computeStateDisplay(entity, connection as Connection, config as HassConfig, entities, entity.state),
-    [config, connection, entities, entity],
-  );
+  const formatter = useHass((store) => store.formatter);
   return (
     <Wrapper>
-      <div className="text-content value">{computeState()}</div>
+      <div className="text-content value">{formatter.stateValue(entity)}</div>
     </Wrapper>
   );
 }

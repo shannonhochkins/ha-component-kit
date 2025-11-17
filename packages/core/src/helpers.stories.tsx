@@ -37,57 +37,6 @@ const helpers: {
     exampleUsage: `const isActive = stateActive(entity.state);`,
   },
   {
-    name: "computeStateDisplay",
-    comment: "// use within component context and with available entity",
-    description: "Returns the state of the entity in a human readable format",
-    autoImport: false,
-    exampleUsage: `
-import { computeStateDisplay, useStore } from '@hakit/core';
-import { HassEntity } from 'home-assistant-js-websocket';
-export default function EntityState({ entity }: {
-  entity: HassEntity;
-}) {
-  const config = useStore((state) => state.config);
-  const entities = useStore((store) => store.entities);
-  const connection = useStore((store) => store.connection);
-  const computeState = useCallback(
-    () => computeStateDisplay(entity, connection as Connection, config as HassConfig, entities, entity.state),
-    [config, connection, entities, entity],
-  );
-  return (
-    {computeState()}
-  );
-}    
-    `,
-  },
-  {
-    name: "computeAttributeValueDisplay",
-    description:
-      "Returns the value of the attribute in a human readable format, automatically adding suffix like °C for temperature or kWh for energy",
-    comment: "// use within component context and with available entity",
-    autoImport: false,
-    exampleUsage: `
-import { computeAttributeValueDisplay, useStore } from '@hakit/core';
-export default function EntityAttribute({ entity, attribute }: {
-  entity: HassEntity;
-  attribute: string;
-}) {
-  const config = useStore((state) => state.config);
-  const entities = useStore((store) => store.entities);
-  const connection = useStore((store) => store.connection);
-  const isUnavailable = isUnavailableState(entity.state);
-  const computeAttribute = useCallback(
-    (attribute: string) => computeAttributeValueDisplay(entity, config as HassConfig, entities, attribute),
-    [entity, config, entities],
-  );
-  return (
-    {computeAttribute(attribute)}
-  );
-}
-
-    `,
-  },
-  {
     name: "computeDomainTitle",
     description: "Returns a readable title for the domain of the entity in a localized language",
     comment: "// use within component context and with available entity",
@@ -226,14 +175,14 @@ export default {
                 >
                   {name}
                 </h3>
-                <p
+                <div
                   style={{
                     margin: 0,
                     padding: 0,
                   }}
                 >
                   {description}.
-                </p>
+                </div>
                 <Source dark code={`${autoImport ? `import { ${name} } from '@hakit/core';\n` : ""}${comment ?? ""}\n${exampleUsage}`} />
                 <Divider
                   style={{
@@ -247,7 +196,7 @@ export default {
       </>
     ),
   },
-} satisfies Meta;
+} as Meta;
 
 export type Story = StoryObj;
 export const Docs: Story = {

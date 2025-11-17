@@ -252,7 +252,7 @@ function InternalCoverControls({
                       icon={reverse ? "mdi:arrow-collapse" : "mdi:arrow-expand"}
                     />
                     <ButtonGroupButton
-                      title={localize("close_cover")}
+                      title={localize("stops_a_tilting_cover_movement")}
                       entity={_entity}
                       service="stopCoverTilt"
                       icon={"mdi:stop-circle-outline"}

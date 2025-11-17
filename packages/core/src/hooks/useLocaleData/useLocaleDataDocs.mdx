@@ -1,0 +1,33 @@
+import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
+import basicExample from './examples/basic.code?raw';
+import * as Primary from './examples/primary.stories';
+import { DummyComponentReturn } from './examples/DummyComponent';
+
+<Meta title="core/hooks/useLocaleData" parameters={{
+  docs: {
+    page: null,
+  }
+}} />
+
+# useLocaleData()
+###### `useLocaleData(): FrontendLocaleData | null`
+
+A custom React hook to subscribe to the Home Assistant locale updates, this includes language, number and date formatting.
+
+This hook will return the data or null if not available yet.
+
+- **Dependencies**: This hook requires you to use it within the `HassConnect` component.
+
+### Example Usage
+
+<Source dark code={basicExample} />
+
+#### Outputs
+
+<Canvas of={Primary.PrimaryExample} />
+
+
+### Returned Value
+The following is a valid returned value from the `useLocaleData` hook:
+
+<ArgTypes of={DummyComponentReturn} />

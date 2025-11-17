@@ -1,21 +1,50 @@
-import { Meta, Source, ArgTypes } from '@storybook/addon-docs/blocks';
+import { Source, Meta, ArgTypes, Canvas } from '@storybook/addon-docs/blocks';
+import * as Primary from './examples/primary.stories';
 import useHassExample from './examples/useHass.code?raw';
-import { DummyComponent } from './examples/DummyComponent';
+
+import formatterDatesExample from './examples/formatterDates.code?raw';
+import { DummyComponent } from './examples/DummyUseStoreComponent';
+import { FormatterDatesExample } from './examples/formatterDates.code';
+
+import { Redirect } from '../../../../../stories/helpers/redirect';
+import { DATA_KEYS } from './index';
+
+import * as HelperFunctions from './examples/helper.stories';
+import helperFunctionsExample from './examples/helperFunctions.code?raw';
+
 
 <Meta title="core/hooks/useHass" />
 
-# useHass()
-This hook will return you a set of functions that you can use to interact with your home assistant instance.
+# useHass: UseHassHook
+`useHass()` returns high-level helper functions plus all data retrieved from the authenticated Home Assistant instance (entities, areas, floors, user info, etc.) via a single hook.
 
-This hook should be used inside the context of [`<HassConnect />`](/docs/core-hassconnect--docs) and not outside of it otherwise it will not have access to
-the authenticated home assistant API.
+> Snapshot (`useHass.getState()`) is preferred for invoking static helper functions outside render. Subscribing to them provides no benefit and may cause unnecessary renders.
 
-> Typically, most of the functionality is available as individual hooks, you should only have to use functions from useHass if you're absolutely certain you need them! For example, getAllEntities will return all entities, but most of the time you'll just want information about a single entity, in which case you should use `useEntity`
-
-### Example Usage
+### Basic Example
 
 <Source dark language="ts" code={useHassExample} />
 
+### Helpers API
+
+The `helpers` object exposes utility methods that aren't strictly formatting, grouped by concern. See below for available helpers and usage:
+
+- `helpers.dateTime.getTimeZone()` – resolved timezone after applying user preference (local/server) via `resolveTimeZone`.
+- `helpers.dateTime.shouldUseAmPm()` – boolean indicating if 12h clock (AM/PM) should be used.
+
+These pair with the granular formatter methods (`formatHour`, `formatMinute`, `formatSeconds`, `formatAmPmSuffix`) for building custom time displays. See the <Redirect to="/docs/core-hooks-usehass-helpers--docs">helpers</Redirect> documentation for more information.
+
+#### Helper Functions Example
+<Source dark language="ts" code={helperFunctionsExample} />
+<Canvas of={HelperFunctions.HelpersExample} />
+
+
+
+
+
 ### Returned object from `useHass`
 
-<ArgTypes of={DummyComponent} />
+Below are the documented, user-facing keys. Some internal values remain intentionally undocumented; prefer higher-level hooks (e.g. <Redirect to="/docs/core-hooks-useuser--docs">useUser</Redirect>) for specific data.
+
+### Returned Value
+
+<ArgTypes of={DummyComponent} include={DATA_KEYS} />

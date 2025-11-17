@@ -1,25 +1,22 @@
-import { useEffect, useCallback, useRef, useMemo } from "react";
-// types
-import type { UnsubscribeFunc } from "home-assistant-js-websocket";
-// methods
-import {
-  subscribeEntities,
-  callService as _callService,
-  getStates as _getStates,
-  getServices as _getServices,
-  getConfig as _getConfig,
-  getUser as _getUser,
-  subscribeConfig,
-} from "home-assistant-js-websocket";
-import { isArray, snakeCase } from "lodash";
-import { SnakeOrCamelDomains, DomainService, Locales, CallServiceArgs, Route, ServiceResponse } from "@typings";
-import { loadTokens, clearTokens } from "./token-storage";
-import { HassContext, type HassContextProps, useInternalStore } from "./HassContext";
-import { useStore } from "../hooks/useStore";
+import { useEffect, useCallback } from "react";
+import { subscribeEntities, subscribeConfig, subscribeServices } from "home-assistant-js-websocket";
+import { Locales } from "@typings";
+import { loadTokens } from "./token-storage";
+import { InternalStore, useInternalStore, useHassProviderStore } from "./HassContext";
+import { useHass } from "../hooks/useHass";
 import { useShallow } from "zustand/shallow";
 import { handleSuspendResume, type HandleSuspendResumeOptions } from "./handleSuspendResume";
-import { callApi } from "./callApi";
 import { handleError, tryConnection } from "./tryConnection";
+import {
+  subscribeAreaRegistry,
+  subscribeEntityRegistryDisplay,
+  subscribeDeviceRegistry,
+  subscribeFloorRegistry,
+  subscribeFrontendUserData,
+  getUserLocaleLanguage,
+  type SensorNumericDeviceClasses,
+} from "@core";
+import { subscribeUser, subscribeUsers } from "@utils/subscribe/user";
 
 export interface HassProviderProps {
   /** components to render once authenticated, this accepts a child function which will pass if it is ready or not */
@@ -40,8 +37,6 @@ export interface HassProviderProps {
   handleResumeOptions?: HandleSuspendResumeOptions;
 }
 
-const getAllEntities = () => useInternalStore.getState().entities;
-const getConnection = () => useInternalStore.getState().connection;
 // Track if a connection attempt for the current hassUrl has already started in this page lifecycle.
 // Using a ref avoids any need for timers and is Strict Mode safe.
 const attemptedUrls = new Set<string>();
@@ -55,9 +50,9 @@ export function HassProvider({
   renderError = (children) => children,
   handleResumeOptions,
 }: HassProviderProps) {
-  const entityUnsubscribe = useRef<UnsubscribeFunc | null>(null);
-  const authenticated = useRef(false);
-  const configUnsubscribe = useRef<UnsubscribeFunc | null>(null);
+  // provider-level state & subscription helpers from dedicated store
+  const addSubscription = useHassProviderStore((s) => s.addSubscription);
+  const setAuthenticated = useHassProviderStore((s) => s.setAuthenticated);
   const {
     hash: _hash,
     ready,
@@ -75,22 +70,6 @@ export function HassProvider({
       setError: s.setError,
     })),
   );
-  const getStates = useCallback(async () => {
-    const connection = getConnection();
-    return connection === null ? null : await _getStates(connection);
-  }, []);
-  const getServices = useCallback(async () => {
-    const connection = getConnection();
-    return connection === null ? null : await _getServices(connection);
-  }, []);
-  const getConfig = useCallback(async () => {
-    const connection = getConnection();
-    return connection === null ? null : await _getConfig(connection);
-  }, []);
-  const getUser = useCallback(async () => {
-    const connection = getConnection();
-    return connection === null ? null : await _getUser(connection);
-  }, []);
 
   useEffect(() => {
     const { setPortalRoot } = useInternalStore.getState();
@@ -102,64 +81,33 @@ export function HassProvider({
     if (windowContext) setWindowContext(windowContext);
   }, [windowContext]);
 
-  const reset = useCallback(() => {
+  const handleConnect = useCallback(async () => {
     const {
-      setAuth,
+      setError,
       setUser,
       setCannotConnect,
-      setConfig,
+      setAuth,
       setConnection,
       setEntities,
-      setError,
-      setReady,
-      setRoutes,
+      setConfig,
       setConnectionStatus,
+      setAreas,
+      setDevices,
+      setFloors,
+      setEntitiesRegistryDisplay,
+      setServices,
+      setUsers,
+      setLocale,
+      setSensorNumericDeviceClasses,
     } = useInternalStore.getState();
-    // when the hassUrl changes, reset some properties and re-authenticate
-    setAuth(null);
-    setRoutes([]);
-    setReady(false);
-    setConnection(null);
-    setEntities({});
-    setConfig(null);
-    setError(null);
-    setCannotConnect(false);
-    setUser(null);
-    setConnectionStatus("pending");
-    authenticated.current = false;
-    if (configUnsubscribe.current) {
-      configUnsubscribe.current();
-      configUnsubscribe.current = null;
-    }
-    if (entityUnsubscribe.current) {
-      entityUnsubscribe.current();
-      entityUnsubscribe.current = null;
-    }
-  }, []);
-
-  const logout = useCallback(async () => {
-    const { setError } = useInternalStore.getState();
-    try {
-      reset();
-      clearTokens();
-      if (location) location.reload();
-    } catch (err: unknown) {
-      console.error("Error:", err);
-      setError("Unable to log out!");
-    }
-  }, [reset]);
-
-  const handleConnect = useCallback(async () => {
-    const { setError, setUser, setCannotConnect, setAuth, setConnection, setEntities, setConfig, setConnectionStatus } =
-      useInternalStore.getState();
 
     // this will trigger on first mount
     const response = await tryConnection(hassUrl, hassToken);
     if (response.type === "error") {
-      authenticated.current = false;
+      setAuthenticated(false);
       setError(response.error);
     } else if (response.type === "failed") {
-      authenticated.current = false;
+      setAuthenticated(false);
       setCannotConnect(true);
     } else if (response.type === "success") {
       const { connection, auth } = response;
@@ -167,18 +115,120 @@ export function HassProvider({
       setAuth(auth);
       // store the connection to pass to the provider
       setConnection(connection);
-      entityUnsubscribe.current = subscribeEntities(connection, ($entities) => {
-        setEntities($entities);
-      });
-      configUnsubscribe.current = subscribeConfig(connection, (newConfig) => {
-        setConfig(newConfig);
-      });
-      _getUser(connection).then((user) => {
-        setUser(user);
-      });
+      addSubscription(
+        "entities",
+        subscribeEntities(connection, ($entities) => {
+          setEntities($entities);
+        }),
+      );
+      addSubscription(
+        "entity_registry_display",
+        subscribeEntityRegistryDisplay(connection, (entityReg) => {
+          const entitiesRegistryDisplay: InternalStore["entitiesRegistryDisplay"] = {};
+          for (const entity of entityReg.entities) {
+            entitiesRegistryDisplay[entity.ei] = {
+              entity_id: entity.ei,
+              device_id: entity.di,
+              area_id: entity.ai,
+              labels: entity.lb,
+              translation_key: entity.tk,
+              platform: entity.pl,
+              entity_category: entity.ec !== undefined ? entityReg.entity_categories[entity.ec] : undefined,
+              has_entity_name: entity.hn,
+              name: entity.en,
+              icon: entity.ic,
+              hidden: entity.hb,
+              display_precision: entity.dp,
+            };
+          }
+          setEntitiesRegistryDisplay(entitiesRegistryDisplay);
+        }),
+      );
+      addSubscription(
+        "areas",
+        subscribeAreaRegistry(connection, (areaReg) => {
+          const areas: InternalStore["areas"] = {};
+          for (const area of areaReg) {
+            areas[area.area_id] = area;
+          }
+          setAreas(areas);
+        }),
+      );
+      addSubscription(
+        "devices",
+        subscribeDeviceRegistry(connection, (deviceReg) => {
+          const devices: InternalStore["devices"] = {};
+          for (const device of deviceReg) {
+            devices[device.id] = device;
+          }
+          setDevices(devices);
+        }),
+      );
+      addSubscription(
+        "floors",
+        subscribeFloorRegistry(connection, (floorReg) => {
+          const floors: InternalStore["floors"] = {};
+          for (const floor of floorReg) {
+            floors[floor.floor_id] = floor;
+          }
+          setFloors(floors);
+        }),
+      );
+      addSubscription(
+        "config",
+        subscribeConfig(connection, (newConfig) => {
+          setConfig(newConfig);
+        }),
+      );
+
+      addSubscription(
+        "current_user",
+        subscribeUser(connection, (user) => {
+          setUser(user);
+        }),
+      );
+
+      addSubscription(
+        "services",
+        subscribeServices(connection, (services) => {
+          setServices(services);
+        }),
+      );
+
+      addSubscription(
+        "users",
+        subscribeUsers(connection, (users) => {
+          setUsers(users);
+        }),
+      );
+
+      addSubscription(
+        "language",
+        await subscribeFrontendUserData(connection, "language", (data) => {
+          if (data.value) {
+            const language = getUserLocaleLanguage(data.value);
+            setLocale({
+              ...data.value,
+              language,
+            });
+          } else {
+            setLocale(data.value);
+          }
+        }),
+      );
+
+      connection
+        .sendMessagePromise<SensorNumericDeviceClasses>({
+          type: "sensor/numeric_device_classes",
+        })
+        .then((sensorNumericDeviceClasses) => {
+          // once we have the device classes, we are ready
+          setSensorNumericDeviceClasses(sensorNumericDeviceClasses.numeric_device_classes);
+        });
+
       const { onStatusChange, ...rest } = handleResumeOptions || {};
       // return the cleanup function
-      return handleSuspendResume(connection, {
+      const resumeCleanup = handleSuspendResume(connection, {
         suspendWhenHidden: true,
         hiddenDelayMs: 300_000, // 5 minutes
         debug: false,
@@ -188,18 +238,14 @@ export function HassProvider({
         },
         ...rest,
       });
+      addSubscription("resume", resumeCleanup);
     }
-  }, [hassUrl, hassToken, handleResumeOptions]);
+  }, [hassUrl, hassToken, handleResumeOptions, addSubscription, setAuthenticated]);
 
   useEffect(() => {
     const { setHassUrl } = useInternalStore.getState();
     setHassUrl(hassUrl);
   }, [hassUrl]);
-
-  const joinHassUrl = useCallback((path: string) => {
-    const { connection } = useInternalStore.getState();
-    return connection ? new URL(path, connection?.options.auth?.data.hassUrl).toString() : "";
-  }, []);
 
   useEffect(() => {
     const { setHash } = useInternalStore.getState();
@@ -209,147 +255,63 @@ export function HassProvider({
   }, [_hash]);
 
   useEffect(() => {
-    function onHashChange() {
-      const { routes, setRoutes, setHash } = useInternalStore.getState();
-      setRoutes(
-        routes.map((route) => {
-          if (route.hash === location.hash.replace("#", "")) {
-            return {
-              ...route,
-              active: true,
-            };
-          }
-          return {
-            ...route,
-            active: false,
-          };
-        }),
-      );
-      setHash(location.hash);
-    }
     window.addEventListener("hashchange", onHashChange);
     return () => {
       window.removeEventListener("hashchange", onHashChange);
     };
   }, []);
 
-  const addRoute = useCallback((route: Omit<Route, "active">) => {
-    const { routes, setRoutes } = useInternalStore.getState();
-    const exists = routes.find((_route) => _route.hash === route.hash) !== undefined;
-    if (!exists && typeof window !== "undefined") {
-      // if the current has value is the same as the hash, we're active
-      const hashWithoutPound = window.location.hash.replace("#", "");
-      const active = hashWithoutPound !== "" && hashWithoutPound === route.hash;
-      setRoutes([
-        ...routes,
-        {
-          ...route,
-          active,
-        } satisfies Route,
-      ]);
-    }
-  }, []);
-
-  const getRoute = useCallback((hash: string) => {
-    const routes = useInternalStore.getState().routes;
-    const route = routes.find((route) => route.hash === hash);
-    return route || null;
-  }, []);
-
-  const callService = useCallback(
-    async <ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>, R extends boolean>({
-      domain,
-      service,
-      serviceData,
-      target: _target,
-      returnResponse,
-    }: CallServiceArgs<T, M, R>): Promise<R extends true ? ServiceResponse<ResponseType> : void> => {
-      const { connection, ready } = useInternalStore.getState();
-      const target =
-        typeof _target === "string" || isArray(_target)
-          ? {
-              entity_id: _target,
-            }
-          : _target;
-      if (typeof service !== "string") {
-        throw new Error("service must be a string");
-      }
-      if (connection && ready) {
-        try {
-          const result = await _callService(
-            connection,
-            snakeCase(domain),
-            snakeCase(service),
-            // purposely cast here as we know it's correct
-            serviceData as object,
-            target,
-            returnResponse,
-          );
-          if (returnResponse) {
-            // Return the result if returnResponse is true
-            return result as R extends true ? ServiceResponse<ResponseType> : never;
-          }
-          // Otherwise, return void
-          return undefined as R extends true ? never : void;
-        } catch (e) {
-          // TODO - raise error to client here
-          console.log("Error:", e);
-        }
-      }
-      return undefined as R extends true ? never : void;
-    },
-    [],
-  );
-
   // Standard unmount cleanup; Strict Mode double-invocation will call this twice but second time state already cleared.
-  useEffect(() => () => reset(), [reset]);
+  useEffect(() => () => useHassProviderStore.getState().reset(), []);
 
   // then wrap the whole connect routine so it’s stable too
   const connectOnce = useCallback(async () => {
     if (attemptedUrls.has(hassUrl)) return;
     attemptedUrls.add(hassUrl);
     try {
-      if (authenticated.current && useInternalStore.getState().hassUrl !== hassUrl) {
-        reset();
+      if (useHassProviderStore.getState().authenticated && useInternalStore.getState().hassUrl !== hassUrl) {
+        useHassProviderStore.getState().reset();
       }
-      authenticated.current = true;
+      setAuthenticated(true);
       handleResumeOptions?.onStatusChange?.("pending");
       await handleConnect();
     } catch (e) {
       const message = handleError(e);
       setError(`Unable to connect to Home Assistant, please check the URL: "${message}"`);
     }
-  }, [reset, handleConnect, setError, handleResumeOptions, hassUrl]);
+  }, [handleConnect, setError, handleResumeOptions, hassUrl, setAuthenticated]);
 
   // run it once after mount
   useEffect(() => {
     connectOnce();
   }, [connectOnce]);
 
-  const contextValue = useMemo<HassContextProps>(
-    () => ({
-      useStore,
-      logout,
-      addRoute,
-      getRoute,
-      getStates,
-      getServices,
-      getConfig,
-      getUser,
-      callApi,
-      getAllEntities,
-      callService: callService as HassContextProps["callService"],
-      joinHassUrl,
-    }),
-    [logout, addRoute, getRoute, getStates, getServices, getConfig, getUser, callService, joinHassUrl],
-  );
-
   if (cannotConnect) {
     return renderError(
       <p>
-        Unable to connect to {loadTokens(hassUrl)?.hassUrl}, refresh the page and try again, or <a onClick={logout}>Logout</a>.
+        Unable to connect to {loadTokens(hassUrl)?.hassUrl}, refresh the page and try again, or{" "}
+        <a onClick={useHass.getState().helpers.logout}>Logout</a>.
       </p>,
     );
   }
-  return <HassContext.Provider value={contextValue}>{error === null ? children(ready) : renderError(error)}</HassContext.Provider>;
+  return error === null ? children(ready) : renderError(error);
+}
+
+function onHashChange() {
+  const { routes, setRoutes, setHash } = useInternalStore.getState();
+  setRoutes(
+    routes.map((route) => {
+      if (route.hash === location.hash.replace("#", "")) {
+        return {
+          ...route,
+          active: true,
+        };
+      }
+      return {
+        ...route,
+        active: false,
+      };
+    }),
+  );
+  setHash(location.hash);
 }

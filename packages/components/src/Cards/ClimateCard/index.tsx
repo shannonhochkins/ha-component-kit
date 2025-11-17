@@ -1,14 +1,13 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import styled from "@emotion/styled";
 import type { HassEntityWithService, HvacMode } from "@hakit/core";
 import type { ClimateControlsProps, AvailableQueries } from "@components";
-import { useEntity, OFF, isUnavailableState, useStore, useHass, localize } from "@hakit/core";
+import { useEntity, OFF, isUnavailableState, useHass, localize } from "@hakit/core";
 import { fallback, Row, ButtonBar, Column } from "@components";
 import { capitalize } from "lodash";
 import { icons, activeColors, colors } from "../../Shared/Entity/Climate/ClimateControls/shared";
 import { UNIT_F } from "../../Shared/Entity/Climate/ClimateControls/data";
 import { ErrorBoundary } from "react-error-boundary";
-import type { HassConfig } from "home-assistant-js-websocket";
 import { FeatureEntity, type FeatureEntityProps } from "../CardBase/FeatureEntity";
 
 import { ButtonCard, type ButtonCardProps } from "../ButtonCard";
@@ -95,10 +94,9 @@ function InternalClimateCard({
   targetTempStep,
   ...rest
 }: ClimateCardProps): React.ReactNode {
-  const { getConfig } = useHass();
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const config = useHass((state) => state.config);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const entity = useEntity(_entity);
-  const [config, setConfig] = useState<HassConfig | null>(null);
   const currentMode = entity.state in icons ? entity.state : "unknown-mode";
   const isUnavailable = isUnavailableState(entity.state);
   const on = entity.state !== "off" && !isUnavailable && !disabled;
@@ -126,10 +124,6 @@ function InternalClimateCard({
   const _step = useMemo(() => {
     return targetTempStep ?? target_temp_step ?? (config?.unit_system.temperature === UNIT_F ? 1 : 0.5);
   }, [config?.unit_system.temperature, targetTempStep, target_temp_step]);
-
-  useEffect(() => {
-    getConfig().then(setConfig);
-  }, [getConfig]);
 
   const havacModesToUse = (hvacModes ?? []).length === 0 ? hvac_modes : (hvacModes ?? []);
 
@@ -222,7 +216,7 @@ function InternalClimateCard({
                   <Temperature>
                     <div>
                       {capitalize(
-                        localize("name_current_temperature", {
+                        localize("current_temperature", {
                           search: "{name} ",
                           replace: "",
                         }),
@@ -267,7 +261,7 @@ function InternalClimateCard({
                 borderRadius={0}
                 noIcon
                 title={capitalize(
-                  localize("name_current_temperature", {
+                  localize("current_temperature", {
                     search: "{name} ",
                     replace: "",
                   }),

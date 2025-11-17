@@ -1,6 +1,6 @@
 import { AvailableQueries, CardBase, CardBaseProps, fallback } from "@components";
 import styled from "@emotion/styled";
-import { EntityName, FilterByDomain, localize, useEntity, useStore, useHass, useIcon } from "@hakit/core";
+import { type EntityName, type FilterByDomain, localize, useEntity, useHass, useIcon } from "@hakit/core";
 import { useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -114,7 +114,7 @@ export const UserAvatar = ({
   stateIcon,
 }: UserAvatarProps) => {
   const person = useEntity(entity);
-  const { joinHassUrl } = useHass();
+  const { joinHassUrl } = useHass.getState().helpers;
 
   const userImage = useMemo(() => {
     const url = person.attributes.entity_picture ? person.attributes.entity_picture : null;
@@ -145,7 +145,7 @@ function InternalPersonCard({
   className,
   ...rest
 }: PersonCardProps): React.ReactNode {
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
 
   const personStateMapDefault: PersonStateMap = {
     home: { text: localize("home"), icon: "mdi:home" },

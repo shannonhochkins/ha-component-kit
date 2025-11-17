@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
-import { EntityName, computeDomain, computeStateDisplay, isUnavailableState, ON, OFF, useStore } from "@hakit/core";
-import { HassConfig, Connection } from "home-assistant-js-websocket";
-import { useCallback, useState, useEffect, useRef } from "react";
+import { type EntityName, computeDomain, isUnavailableState, ON, OFF, useHass } from "@hakit/core";
+import { useState, useEffect, useRef } from "react";
 import Switch from "react-switch";
 import { StateProps } from "./types";
 
@@ -26,14 +25,8 @@ const StyledSwitch = styled(Switch)`
 
 export default function ToggleState({ entity, className, ...rest }: StateProps) {
   const timeout = useRef<NodeJS.Timeout | null>(null);
-  const config = useStore((state) => state.config);
-  const entities = useStore((store) => store.entities);
-  const connection = useStore((store) => store.connection);
+  const formatter = useHass((store) => store.formatter);
   const isUnavailable = isUnavailableState(entity.state);
-  const computeState = useCallback(
-    () => computeStateDisplay(entity, connection as Connection, config as HassConfig, entities, entity.state),
-    [config, connection, entities, entity],
-  );
 
   const showToggle = entity.state === ON || entity.state === OFF || isUnavailable;
   const [isOn, setIsOn] = useState(entity.state === ON);
@@ -96,7 +89,7 @@ export default function ToggleState({ entity, className, ...rest }: StateProps) 
           onChange={() => _callService(isOn ? false : true)}
         />
       ) : (
-        <div className="text-content">{computeState()}</div>
+        <div className="text-content">{formatter.stateValue(entity)}</div>
       )}
     </Wrapper>
   );

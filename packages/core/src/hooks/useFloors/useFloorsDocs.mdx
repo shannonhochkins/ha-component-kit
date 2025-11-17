@@ -1,0 +1,41 @@
+import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
+import parentStructureExample from './examples/useFloorsParent.code?raw';
+import * as Primary from './examples/useFloorsExample.stories';
+import { DummyComponent, DummyComponent2 } from './examples/DummyComponent';
+import { Redirect } from '../../../../../stories/helpers/redirect';
+
+<Meta title="core/hooks/useFloors" parameters={{
+  docs: {
+    page: null,
+  }
+}} />
+
+# useFloors()
+###### `useFloors(): FloorWithAreas[] | null`
+
+A custom React hook to subscribe to the Home Assistant floor registry updates, and return a hierarchical list of floors and their associated areas, and the devices/entities within the areas, any areas not assigned to a floor will be part of the "Unassigned" floor.
+
+The areas returned under each floor are returned in the same structure as the <Redirect to="/docs/core-hooks-useareas--docs">useAreas</Redirect> hook.
+
+This hook will return the data or null if not available yet.
+
+- **Dependencies**: This hook requires you to use it within the `HassConnect` component.
+
+### Example Usage
+
+<Source dark code={parentStructureExample} />
+
+#### Outputs
+
+<Canvas of={Primary.PrimaryExample} />
+
+
+### Returned Value
+The following is a valid returned value from the `useFloors` hook:
+
+<ArgTypes of={DummyComponent} />
+
+### FloorWithAreas
+The following is the `FloorWithAreas` type returned by the `useFloors` hook:
+
+<ArgTypes of={DummyComponent2} />

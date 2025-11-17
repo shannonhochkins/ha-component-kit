@@ -8,11 +8,11 @@ import {
   isOffState,
   UNAVAILABLE,
   useEntity,
-  useHass,
   supportsFeatureFromAttributes,
   stateActive,
   toReadableString,
   localize,
+  useHass,
 } from "@hakit/core";
 import styled from "@emotion/styled";
 import { useDebouncedCallback } from "use-debounce";
@@ -20,7 +20,6 @@ import { clamp } from "lodash";
 import { FabCard, ControlSliderCircular, type ControlCircularSliderMode } from "@components";
 import { colors } from "./shared";
 import { BigNumber } from "./BigNumber";
-import { HassConfig } from "home-assistant-js-websocket";
 
 import { Icon } from "@iconify/react";
 
@@ -132,8 +131,7 @@ export function ClimateControlSlider({ entity: _entity, targetTempStep, showCurr
   const [_targetTemperature, setTargetTemperature] = useState<Partial<Record<Target, number>>>({});
   const [_selectTargetTemperature, setSelectTargetTemperature] = useState<Target>("low");
   const entity = useEntity(_entity);
-  const [config, setConfig] = useState<HassConfig | null>(null);
-  const { getConfig } = useHass();
+  const config = useHass((store) => store.config);
 
   const { min_temp: _min, max_temp: _max, target_temp_step, hvac_modes } = entity.attributes;
 
@@ -152,10 +150,6 @@ export function ClimateControlSlider({ entity: _entity, targetTempStep, showCurr
   const supportsTargetTemperature = supportsFeatureFromAttributes(entity.attributes, ClimateEntityFeature.TARGET_TEMPERATURE);
 
   const supportsTargetTemperatureRange = supportsFeatureFromAttributes(entity.attributes, ClimateEntityFeature.TARGET_TEMPERATURE_RANGE);
-
-  useEffect(() => {
-    getConfig().then(setConfig);
-  }, [getConfig]);
 
   const _callService = useCallback(
     (type: string) => {

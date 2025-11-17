@@ -8,7 +8,7 @@ import type { RowProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
 const DetailsRow = styled(Row)`
-  width: calc(50% - 1rem);
+  width: auto;
   ${mq(
     ["xxs"],
     `

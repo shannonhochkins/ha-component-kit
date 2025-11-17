@@ -1,20 +1,10 @@
 import { useEffect, useState } from "react";
-import { useStore, type EntityRegistryEntry, type EntityName } from "@core";
-
-export interface ExtEntityRegistryEntry extends EntityRegistryEntry {
-  capabilities: Record<string, unknown>;
-  original_icon?: string;
-  device_class?: string;
-  original_device_class?: string;
-  aliases: string[];
-  options?: Record<string, unknown>;
-  categories?: Record<string, unknown>;
-}
+import { useHass, type ExtEntityRegistryEntry, type EntityName } from "@core";
 
 export const useDevice = (entityId: EntityName): ExtEntityRegistryEntry | null => {
   const [device, setDevice] = useState<ExtEntityRegistryEntry | null>(null);
 
-  const connection = useStore((state) => state.connection);
+  const connection = useHass((state) => state.connection);
 
   useEffect(() => {
     const getDevice = async () => {

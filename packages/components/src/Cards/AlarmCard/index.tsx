@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { useMemo, useCallback, type ReactNode } from "react";
 import {
   localize,
-  useStore,
+  useHass,
   type LocaleKeys,
   type AlarmMode,
   type HassEntityWithService,
@@ -44,13 +44,14 @@ type AlarmServices = keyof HassEntityWithService<"alarm_control_panel">["service
 
 const Wrapper = styled(ButtonCard)``;
 
-const ALARM_STATE_TO_MODE_MAP: Record<AlarmMode, LocaleKeys> = {
-  armed_home: "arm_home",
+const ALARM_STATE_TO_MODE_MAP: Record<AlarmMode | "disarm", LocaleKeys> = {
+  armed_home: "armed",
   armed_away: "arm_away",
   armed_night: "arm_night",
   armed_vacation: "arm_vacation",
   armed_custom_bypass: "custom_bypass",
-  disarmed: "disarm",
+  disarmed: "disarmed",
+  disarm: "disarm",
   triggered: "pending",
   pending: "pending",
   arming: "pending",
@@ -71,7 +72,7 @@ function InternalAlarmCard<E extends FilterByDomain<EntityName, "alarm_control_p
   ...rest
 }: AlarmCardProps<E>) {
   const entity = useEntity<E>(_entity) as HassEntityWithService<"alarm_control_panel">;
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const stateLabel = useCallback((state: AlarmMode | "unavailable") => {
     return state === UNAVAILABLE ? localize("unavailable") : localize(ALARM_STATE_TO_MODE_MAP[state]);
   }, []);

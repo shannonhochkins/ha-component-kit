@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { fallback } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
-import { useStore } from "@hakit/core";
+import { useHass } from "@hakit/core";
 
 export interface RipplesProps extends React.ComponentPropsWithoutRef<"div"> {
   /** the animation duration of the ripple @default 600 */
@@ -67,7 +67,7 @@ const _Ripples = memo(
   }: RipplesProps) => {
     const rippleRef = useRef<HTMLDivElement | null>(null);
     const timeoutId = useRef<NodeJS.Timeout | null>(null);
-    const windowContext = useStore((store) => store.windowContext);
+    const windowContext = useHass((store) => store.windowContext);
     const win = windowContext ?? window;
     useEffect(() => {
       return () => {

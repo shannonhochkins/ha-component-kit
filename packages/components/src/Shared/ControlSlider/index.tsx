@@ -32,6 +32,8 @@ export interface ControlSliderProps extends Omit<React.ComponentPropsWithoutRef<
   onChange?: (value: number) => void;
   /** called when the user has finished interacting with the slider @default undefined */
   onChangeApplied?: (value: number) => void;
+  /** when true, minimum value (>0) is visually mapped to a baseline fill (12%) so it's still visible */
+  clampValueToBaseline?: boolean;
 }
 
 const Slider = styled.div<Pick<ControlSliderProps, "disabled" | "sliderColor" | "vertical" | "showHandle" | "thickness" | "borderRadius">>`
@@ -130,27 +132,24 @@ const Slider = styled.div<Pick<ControlSliderProps, "disabled" | "sliderColor" | 
         .slider-track-bar {
           top: 0;
           left: 0;
-          transform: translate3d(
-            calc((var(--value, 0) - 1) * var(--ha-slider-control-slider-size)),
-            0,
-            0
-          );
+          width: calc(var(--value, 0) * 100%);
+          height: 100%;
+          transition: width 180ms ease-in-out, background-color 180ms ease-in-out;
           border-radius: 0 var(--ha-slider-control-border-radius) var(--ha-slider-control-border-radius) 0;
+          overflow: hidden;
           &:after {
             top: 0;
             bottom: 0;
             right: var(--ha-slider-control-handle-margin);
             height: 50%;
             width: var(--ha-slider-control-handle-size);
+            opacity: calc(var(--value, 0));
+            transition: opacity 120ms ease-in-out;
           }
           &.end {
             right: 0;
             left: initial;
-            transform: translate3d(
-              calc(var(--value, 0) * var(--ha-slider-control-slider-size)),
-              0,
-              0
-            );
+            width: calc(var(--value, 0) * 100%);
             border-radius: var(--ha-slider-control-border-radius) 0 0 var(--ha-slider-control-border-radius);
             &:after {
               right: initial;
@@ -164,7 +163,7 @@ const Slider = styled.div<Pick<ControlSliderProps, "disabled" | "sliderColor" | 
           left: calc(var(--value, 0) * (100% - calc(var(--ha-slider-control-thickness) / 4)));
           width: calc(var(--ha-slider-control-thickness) / 4);
           right: 0;
-          height: calc(var(--ha-slider-control-thickness) / 4)
+          height: calc(var(--ha-slider-control-thickness) / 4);
           &:after {
             height: 50%;
             width: var(--ha-slider-control-handle-size);
@@ -175,12 +174,11 @@ const Slider = styled.div<Pick<ControlSliderProps, "disabled" | "sliderColor" | 
         .slider-track-bar {
           bottom: 0;
           left: 0;
-          transform: translate3d(
-            0,
-            calc((1 - var(--value, 0)) * var(--ha-slider-control-slider-size)),
-            0
-          );
+          width: 100%;
+          height: calc(var(--value, 0) * 100%);
+          transition: height 180ms ease-in-out, background-color 180ms ease-in-out;
           border-radius: var(--ha-slider-control-border-radius) var(--ha-slider-control-border-radius) 0 0;
+          overflow: hidden;
           &:after {
             top: var(--ha-slider-control-handle-margin);
             right: 0;
@@ -188,15 +186,13 @@ const Slider = styled.div<Pick<ControlSliderProps, "disabled" | "sliderColor" | 
             bottom: initial;
             width: 50%;
             height: var(--ha-slider-control-handle-size);
+            opacity: calc(var(--value, 0));
+            transition: opacity 120ms ease-in-out;
           }
           &.end {
             top: 0;
             bottom: initial;
-            transform: translate3d(
-              0,
-              calc((0 - var(--value, 0)) * var(--ha-slider-control-slider-size)),
-              0
-            );
+            height: calc(var(--value, 0) * 100%);
             border-radius: 0 0 var(--ha-slider-control-border-radius) var(--ha-slider-control-border-radius);
             &:after {
               top: initial;
@@ -239,7 +235,7 @@ function InternalControlSlider({
   vertical = true,
   disabled = false,
   showHandle = true,
-  min = 0,
+  min = 1,
   max = 100,
   step = 1,
   value,
@@ -249,6 +245,7 @@ function InternalControlSlider({
   sliderColor = [70, 70, 70],
   onChangeApplied,
   onChange,
+  clampValueToBaseline = true,
   cssStyles,
   className,
   ...rest
@@ -266,10 +263,15 @@ function InternalControlSlider({
   );
 
   const valueToPercentage = useCallback(
-    (value: number) => {
-      return (boundedValue(value) - min) / (max - min);
+    (val: number) => {
+      const clamped = boundedValue(val);
+      const raw = (clamped - min) / (max - min);
+      if (!clampValueToBaseline) return raw; // direct mapping
+      const baseline = min > 0 ? 0.09 : 0; // baseline only when min > 0
+      if (raw <= 0) return baseline;
+      return baseline + raw * (1 - baseline);
     },
-    [min, max, boundedValue],
+    [boundedValue, clampValueToBaseline, min, max],
   );
 
   const percentageToValue = useCallback(
@@ -314,13 +316,13 @@ function InternalControlSlider({
   const setValue = useCallback(
     (updatedValue: number) => {
       if (!trackBarRef.current) return;
-      inlineValue.current = updatedValue;
+      inlineValue.current = boundedValue(updatedValue);
       trackBarRef.current.style.setProperty(
         "--value",
         disabled ? (mode === "start" ? `${min}` : mode === "end" ? `${max}` : "0") : `${valueToPercentage(updatedValue)}`,
       );
     },
-    [valueToPercentage, disabled, min, max, mode],
+    [valueToPercentage, boundedValue, disabled, min, max, mode],
   );
 
   useEffect(() => {

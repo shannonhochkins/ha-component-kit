@@ -89,7 +89,7 @@ export const VideoPlayer = forwardRef<HTMLVideoElement, VideoPlayerProps>(({ src
   return (
     <Video ref={videoRef} {...rest}>
       <source src={src} type={type} />
-      {localize("format_description")}
+      {localize("fields.format.description")}
     </Video>
   );
 });

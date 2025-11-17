@@ -1,9 +1,8 @@
 import styled from "@emotion/styled";
 import { useState, useEffect, useMemo, ReactNode, ReactElement, Children, isValidElement, cloneElement } from "react";
-import { useWeather, useHass, useStore, isUnavailableState, getSupportedForecastTypes, getIconByEntity } from "@hakit/core";
+import { useWeather, useHass, isUnavailableState, getSupportedForecastTypes, getIconByEntity, localize } from "@hakit/core";
 import type { FilterByDomain, ModernForecastType, EntityName } from "@hakit/core";
 import { Icon, type IconProps } from "@iconify/react";
-import { capitalize } from "lodash";
 import {
   Row,
   Column,
@@ -58,17 +57,7 @@ const LocationIcon = styled(Icon)`
   margin-right: 0.2rem;
 `;
 
-function convertDateTime(datetime: string, timezone: string) {
-  const options = {
-    timeZone: timezone,
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    hour12: true,
-  } satisfies Intl.DateTimeFormatOptions;
-  return new Intl.DateTimeFormat("en-US", options).format(new Date(datetime));
-}
+// Removed convertDateTime in favor of centralized HA-aware formatter (formatForecastHour)
 
 function splitForecastsIntoRows<T>(arr: T[], rowCount: number, maxItemsPerRow: number): T[][] {
   const maxItems = rowCount * maxItemsPerRow;
@@ -175,11 +164,15 @@ function InternalWeatherCard({
   key,
   ...rest
 }: WeatherCardProps): React.ReactNode {
-  const { getConfig } = useHass();
+  const config = useHass((state) => state.config);
   const [width, setWidth] = useState<number>(0);
-  const globalComponentStyle = useStore((state) => state.globalComponentStyles);
+  const globalComponentStyle = useHass((state) => state.globalComponentStyles);
   const itemsToRender = Math.floor(width / FORECAST_ITEM_PROJECTED_WIDTH);
   const [timeZone, setTimeZone] = useState<string>("UTC");
+  const formatter = useHass((s) => s.formatter);
+  const helpers = useHass((s) => s.helpers);
+  // Determine 12/24h preference directly from locale using core helper
+  const shouldAmPm = helpers.dateTime.shouldUseAmPm();
   const [type, setType] = useState<ModernForecastType>(forecastType);
   const weather = useWeather(entity, {
     type,
@@ -190,16 +183,11 @@ function InternalWeatherCard({
   const {
     attributes: { friendly_name, temperature, temperature_unit },
   } = weather;
-  const unit = temperature_unit.slice(0, -1);
   useEffect(() => {
-    async function getTimeZone() {
-      const config = await getConfig();
-      if (config) {
-        setTimeZone(config.time_zone);
-      }
+    if (config?.time_zone && timeZone !== config.time_zone) {
+      setTimeZone(config.time_zone);
     }
-    getTimeZone();
-  }, [getConfig]);
+  }, [config, timeZone]);
 
   const supportedForecasts = useMemo(() => getSupportedForecastTypes(weather), [weather]);
 
@@ -235,12 +223,16 @@ function InternalWeatherCard({
           }}
         >
           {forecastForRow.map((forecast, index) => {
-            const dateFormatted = convertDateTime(forecast.datetime, timeZone);
-            const [day, , hour] = dateFormatted.split(",");
+            const dateObj = new Date(forecast.datetime);
+            // Derive weekday, hour numeric, and optional AM/PM suffix via helpers.
+            const dayDisplay = formatter.formatDateWeekdayShort(dateObj);
+            const hourNumeric = formatter.formatHour(dateObj);
+            const suffix = shouldAmPm ? formatter.formatAmPmSuffix(dateObj) : "";
+            const hourDisplay = shouldAmPm ? `${hourNumeric} ${suffix}` : hourNumeric;
             return (
               <Forecast key={index} className="forecast">
-                {includeDay && <Day className="day">{day}</Day>}
-                {includeTime && <Time className="time">{hour}</Time>}
+                {includeDay && <Day className="day">{dayDisplay}</Day>}
+                {includeTime && <Time className="time">{hourDisplay}</Time>}
                 <ForecastIcon
                   className="icon forecast-icon"
                   icon={
@@ -253,12 +245,12 @@ function InternalWeatherCard({
                 />
                 <Temperature className="temperature">
                   {forecast.temperature}
-                  {temperatureSuffix || unit}
+                  {temperatureSuffix || temperature_unit}
                 </Temperature>
                 {forecast.templow && (
                   <TemperatureLow className="temperature-low">
                     {forecast.templow}
-                    {temperatureSuffix || unit}
+                    {temperatureSuffix || temperature_unit}
                   </TemperatureLow>
                 )}
               </Forecast>
@@ -296,10 +288,10 @@ function InternalWeatherCard({
     >
       <Contents>
         {includeCurrent && !isUnavailable && (
-          <Row className="row" justifyContent="space-between" fullWidth>
+          <Row className="row" justifyContent="space-between" fullWidth wrap="nowrap">
             <Row wrap="nowrap">
               <StyledIcon icon={icon} className="icon" />
-              <Column className="column">
+              <Column className="column" alignItems="flex-start" justifyContent="center">
                 {includeTitle && (
                   <Title className="title">
                     <LocationIcon className="location-icon icon" icon={_icon || "mdi:location"} />
@@ -307,9 +299,11 @@ function InternalWeatherCard({
                   </Title>
                 )}
                 <SubTitle className="sub-title">
-                  {temperature}
-                  {temperatureSuffix || unit}, {capitalize(weather.state)}
-                  {feelsLike ? `, Feels like: ${Math.round(feelsLike)}${temperatureSuffix || unit}` : ""}
+                  <Row align-items="center" justifyContent="flex-start">
+                    <span className="temperature-value">{formatter.attributeValue(weather, "temperature")}</span>
+                    <span className="sub-title-separator">,&nbsp;</span>
+                    <span className="state-value">{formatter.stateValue(weather)}</span>
+                  </Row>
                 </SubTitle>
               </Column>
             </Row>
@@ -338,8 +332,18 @@ function InternalWeatherCard({
             )}
           </Row>
         )}
-        {details && details.length > 0 && (
-          <Row gap="0.5rem" className="row">
+
+        {((details && details.length > 0) || typeof feelsLike === "number") && (
+          <Row gap="0.5rem" className="row" alignItems="flex-start" justifyContent="space-between" fullWidth>
+            {typeof feelsLike === "number" && (
+              <WeatherCardDetail
+                entity={entity}
+                title={localize("apparent_temperature")}
+                render={() => {
+                  return `${localize("apparent_temperature")} - ${Math.round(feelsLike)}${temperatureSuffix || temperature_unit}`;
+                }}
+              />
+            )}
             {Children.map(details, (child, index) => {
               if (isValidElement(child)) {
                 return cloneElement(child, {
@@ -351,7 +355,7 @@ function InternalWeatherCard({
           </Row>
         )}
         {includeForecast && !isUnavailable && width > 0 && genForecastRows()}
-        {isUnavailable && weather.state}
+        {isUnavailable && localize("unavailable")}
       </Contents>
     </Card>
   );

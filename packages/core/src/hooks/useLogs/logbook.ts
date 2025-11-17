@@ -80,13 +80,13 @@ export const subscribeLogbook = (
 };
 
 const triggerPhrases = {
-  "numeric state of": "logbook_triggered_by_numeric_state_of", // number state trigger
+  "numeric state of": "triggered_by_numeric_state_of", // number state trigger
   "state of": "triggered_by_state_of", // state trigger
   event: "triggered_by_event", // event trigger
   time: "triggered_by_time", // time trigger
   "time pattern": "triggered_by_time_pattern", // time trigger
-  "Home Assistant stopping": "logbook_triggered_by_homeassistant_stopping", // stop event
-  "Home Assistant starting": "logbook_triggered_by_homeassistant_starting", // start event
+  "Home Assistant stopping": "triggered_by_home_assistant_stopping", // stop event
+  "Home Assistant starting": "triggered_by_home_assistant_starting", // start event
 } satisfies Record<string, LocaleKeys>;
 
 export const localizeTriggerSource = (source: string) => {
@@ -107,10 +107,10 @@ export const localizeStateMessage = (state: string, stateObj: HassEntity, domain
     case "device_tracker":
     case "person":
       if (state === "not_home") {
-        return localize(`was_detected_away`);
+        return localize("was_detected_away");
       }
       if (state === "home") {
-        return localize(`was_detected_at_home`);
+        return localize("was_detected_at_home");
       }
       return localize(`was_detected_at_state`, {
         search: "{state}",
@@ -204,13 +204,13 @@ export const localizeStateMessage = (state: string, stateObj: HassEntity, domain
         case "sound":
         case "vibration":
           if (isOn) {
-            return localize(`detected_device_class`, {
+            return localize(`detected_deviceclass`, {
               search: "{device_class}",
               replace: device_class,
             });
           }
           if (isOff) {
-            return localize(`cleared_no_device_class_detected`, {
+            return localize(`cleared_no_deviceclass_detected`, {
               search: "{device_class}",
               replace: device_class,
             });
