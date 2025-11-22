@@ -94,6 +94,7 @@ export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<Ex
   hideUpdated?: boolean;
   hideAttributes?: boolean;
   hideLogbook?: boolean;
+  hideSettings?: boolean;
   stateTitle?: ReactNode;
   /** There's currently a few default header actions, this will allow you to place your own actions in a different order @default 'start' */
   headerActionsPosition?: "start" | "middle" | "end";
@@ -124,6 +125,7 @@ export function ModalByEntityDomain<E extends EntityName>({
   hideState,
   hideUpdated,
   hideAttributes,
+  hideSettings,
   headerActionsPosition = "start",
   headerActions,
   hideLogbook = false,
@@ -159,17 +161,20 @@ export function ModalByEntityDomain<E extends EntityName>({
       childProps,
     ];
   }, [rest]);
+
   const domain = computeDomain(entity);
 
   const onStateChange = useCallback((value: string) => {
     if (!stateRef.current) return;
     stateRef.current.innerText = value;
   }, []);
+
   const LazyModalComponent = useMemo(() => {
     const modal = getLazyModal(domain as keyof ModalPropsByDomain);
     if (!modal) return null;
     return lazy(modal);
   }, [domain]);
+
   const defaultChildren = useMemo(() => {
     if (!LazyModalComponent || hideDefaultLayout) return null;
     const fallback = (
@@ -207,45 +212,55 @@ export function ModalByEntityDomain<E extends EntityName>({
   const titleValue = useMemo(() => {
     return modalProps.stateTitle ?? startCase(lowerCase(`${_entity.state}${_entity.attributes.unit_of_measurement ?? ""}`));
   }, [_entity, modalProps.stateTitle]);
+
   return (
     <Modal
       {...modalProps}
-      headerActions={() => {
-        return (
-          <>
-            {!hideLogbook && showLogbook && (
-              <FabCard
-                title={localize("device")}
-                tooltipPlacement="left"
-                icon="mdi:arrow-back"
-                size={30}
-                onClick={() => setShowLogbook(false)}
-              />
-            )}
-            {headerActionsPosition === "start" && headerActions && headerActions()}
-            {!hideLogbook && !showLogbook && (
-              <FabCard
-                title={localize("activity")}
-                tooltipPlacement="left"
-                icon="mdi:graph-box"
-                size={30}
-                onClick={() => setShowLogbook(true)}
-              />
-            )}
-            {headerActionsPosition === "middle" && headerActions && headerActions()}
-            {device && device.device_id && (
-              <FabCard title={localize("open_device_settings")} tooltipPlacement="left" icon="mdi:cog" size={30} onClick={openDevice} />
-            )}
-            {headerActionsPosition === "end" && headerActions && headerActions()}
-            {(!hideLogbook || (device && device.device_id)) && <Separator />}
-          </>
-        );
-      }}
+      headerActions={() => (
+        <>
+          {/* Logbook Back Button */}
+          {!hideLogbook && showLogbook && (
+            <FabCard
+              title={localize("device")}
+              tooltipPlacement="left"
+              icon="mdi:arrow-back"
+              size={30}
+              onClick={() => setShowLogbook(false)}
+            />
+          )}
+
+          {/* Header actions at the start */}
+          {headerActionsPosition === "start" && headerActions && headerActions()}
+
+          {/* Logbook Open Button */}
+          {!hideLogbook && !showLogbook && (
+            <FabCard
+              title={localize("activity")}
+              tooltipPlacement="left"
+              icon="mdi:graph-box"
+              size={30}
+              onClick={() => setShowLogbook(true)}
+            />
+          )}
+
+          {/* Header actions in the middle */}
+          {headerActionsPosition === "middle" && headerActions && headerActions()}
+
+          {/* Device Settings (Cog) */}
+          {device && device.device_id && !hideSettings && (
+            <FabCard title={localize("open_device_settings")} tooltipPlacement="left" icon="mdi:cog" size={30} onClick={openDevice} />
+          )}
+
+          {/* Header actions at the end */}
+          {headerActionsPosition === "end" && headerActions && headerActions()}
+
+          {/* Separator if either logbook or settings exists */}
+          {(!hideLogbook || (device && device.device_id && !hideSettings)) && <Separator />}
+        </>
+      )}
     >
       {showLogbook ? (
-        <>
-          <LogBookRenderer entity={entity} />
-        </>
+        <LogBookRenderer entity={entity} />
       ) : (
         <>
           {(!hideUpdated || !hideState) && (
