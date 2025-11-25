@@ -94,7 +94,7 @@ export type ModalByEntityDomainProps<E extends EntityName> = ModalPropsHelper<Ex
   hideUpdated?: boolean;
   hideAttributes?: boolean;
   hideLogbook?: boolean;
-  hideSettings?: boolean;
+  hideDeviceSettings?: boolean;
   stateTitle?: ReactNode;
   /** There's currently a few default header actions, this will allow you to place your own actions in a different order @default 'start' */
   headerActionsPosition?: "start" | "middle" | "end";
@@ -125,7 +125,7 @@ export function ModalByEntityDomain<E extends EntityName>({
   hideState,
   hideUpdated,
   hideAttributes,
-  hideSettings,
+  hideDeviceSettings,
   headerActionsPosition = "start",
   headerActions,
   hideLogbook = false,
@@ -247,7 +247,7 @@ export function ModalByEntityDomain<E extends EntityName>({
           {headerActionsPosition === "middle" && headerActions && headerActions()}
 
           {/* Device Settings (Cog) */}
-          {device && device.device_id && !hideSettings && (
+          {device && device.device_id && !hideDeviceSettings && (
             <FabCard title={localize("open_device_settings")} tooltipPlacement="left" icon="mdi:cog" size={30} onClick={openDevice} />
           )}
 
@@ -255,7 +255,7 @@ export function ModalByEntityDomain<E extends EntityName>({
           {headerActionsPosition === "end" && headerActions && headerActions()}
 
           {/* Separator if either logbook or settings exists */}
-          {(!hideLogbook || (device && device.device_id && !hideSettings)) && <Separator />}
+          {(!hideLogbook || (device && device.device_id && !hideDeviceSettings)) && <Separator />}
         </>
       )}
     >
