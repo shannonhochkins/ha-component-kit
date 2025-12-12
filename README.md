@@ -1,70 +1,97 @@
+<br />
+
+
+
+
+<div align="center">
+
+
+
 <table>
   <tr>
-    <td width="127"><img src="https://cdn.discordapp.com/icons/1231534799248691252/4b6124f952f099f855b5186d8a68f33e.webp?size=100" alt="LOGO" ></td>
-    <td><h1>HA COMPONENT KIT</h1></td>
-  </tr>
-</table>
-<table>
+    <td width="127"><img src="https://cdn.discordapp.com/icons/1231534799248691252/4b6124f952f099f855b5186d8a68f33e.webp?size=100" alt="HAKIT LOGO" ></td>
+    <td><h1 style="border: none">HA COMPONENT KIT</h1>
+    <table>
   <tr>
-    <td width="200">
-        <a aria-label="@HAKIT/CORE" href="https://www.npmjs.com/package/@hakit/core" width="250">
-    <img alt="" src="https://img.shields.io/npm/v/@hakit/core.svg?style=for-the-badge&labelColor=000000&label=@hakit/CORE" align="center">
+    <td>
+        <a aria-label="@HAKIT/CORE" href="https://www.npmjs.com/package/@hakit/core">
+    <img alt="" src="https://img.shields.io/npm/v/@hakit/core.svg?style=for-the-badge&labelColor=000000&label=@hakit/CORE" align="center" height="16" width="auto">
   </a>
     </td>
-    <td width="250"><a aria-label="@HAKIT/COMPONENTS" href="https://www.npmjs.com/package/@hakit/components">
-    <img alt="" src="https://img.shields.io/npm/v/@hakit/components.svg?style=for-the-badge&labelColor=000000&label=@HAKIT/COMPONENTS" align="center">
-  </a></td>
-    <td width="210"><a aria-label="Join the community on Discord" href="https://discord.com/invite/cGgbmppKJZ">
-    <img alt="" src="https://img.shields.io/badge/Join%20the%20Discord-blueviolet.svg?style=for-the-badge&logo=Discord&labelColor=000000&logoWidth=20" align="center">
+    <td><a aria-label="@HAKIT/COMPONENTS" href="https://www.npmjs.com/package/@hakit/components">
+    <img alt="" src="https://img.shields.io/npm/v/@hakit/components.svg?style=for-the-badge&labelColor=000000&label=@HAKIT/COMPONENTS" align="center" height="16" width="auto">
   </a></td>
   </tr>
 <tr>
     <td align="center">
-        <a aria-label="@HAKIT/CORE" href="https://www.npmjs.com/package/@hakit/core" width="250">
-    <img alt="" src="https://img.shields.io/npm/dt/%40hakit%2Fcore.svg?style=flat&colorA=000000&colorB=000000&label=Downloads" align="top">
+        <a aria-label="@HAKIT/CORE" href="https://www.npmjs.com/package/@hakit/core">
+    <img alt="" src="https://img.shields.io/npm/dt/%40hakit%2Fcore.svg?style=flat&colorA=000000&colorB=000000&label=Downloads" align="top" height="16" width="auto">
   </a>
     </td>
   <td align="center">
     <a aria-label="@HAKIT/COMPONENTS" href="https://www.npmjs.com/package/@hakit/components">
-    <img src="https://img.shields.io/npm/dt/%40hakit%2Fcomponents.svg?style=flat&colorA=000000&colorB=000000&label=Downloads" alt="" align="top">
+    <img src="https://img.shields.io/npm/dt/%40hakit%2Fcomponents.svg?style=flat&colorA=000000&colorB=000000&label=Downloads" alt="" align="top"height="16" width="auto">
   </a>
   </td>
-  <td align="center">Join our community!</td>
+  </tr>
+</table>
+    </td>
   </tr>
 </table>
 
-## Take Your [Home Assistant](https://www.home-assistant.io/) Dashboards to the Next Level 🚀
+_Beautiful, Reactive, Real-Time Smarthome UI—Powered by You._
 
-Designed with developers in mind, this powerful package is built on [React](https://react.dev/) to create seamless, highly customizable interfaces for your Home Assistant dashboards. Whether you're coding your own unique components or taking advantage of the prebuilt library from [@hakit/components](https://www.npmjs.com/package/@hakit/components), the possibilities are endless!
+[Demo](https://shannonhochkins.github.io/ha-component-kit/iframe.html?args=&id=introduction-demo--demo&viewMode=story) • [Documentation](https://shannonhochkins.github.io/ha-component-kit/)  • [Discord](https://discord.com/invite/cGgbmppKJZ) • [Contributing](https://github.com/shannonhochkins/ha-component-kit/blob/master/CONTRIBUTING.md)
 
-##### 🏠 **Ultimate Flexibility**: Create stunning, personalized dashboards tailored to your needs.
-##### ⚡ **Powered by Home Assistant**: The [@hakit/core](https://www.npmjs.com/package/@hakit/core) leverages the official [Home Assistant WebSocket API](https://github.com/home-assistant/home-assistant-js-websocket) to handle authentication and core functionality, enabling a dynamic, real-time experience in your React dashboards.
-##### 🌍 **Effortless Deployment**: Host your dashboard on any web server or serve it directly from Home Assistant using the [Home Assistant Addon](https://github.com/shannonhochkins/ha-component-kit/blob/master/ADDON.md).
-##### 📅 **Future Goals**: While the package currently focuses on empowering developers, we're working on a future release that will introduce an intuitive drag-and-drop UI editor, enabling anyone to design dashboards effortlessly through the Home Assistant Addon.
+⭐️ Having fun? Support us! [leave a star](https://github.com/shannonhochkins/ha-component-kit)!
+</div>
 
-Ready to transform your Home Assistant experience? Dive into the [Getting Started](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-getting-started--docs) Guide and begin building today!
-
-
-## Demo
-
-Visit the [Demo](https://shannonhochkins.github.io/ha-component-kit/iframe.html?args=&id=introduction-demo--demo&viewMode=story) to try it out!
-
-If you like anything here, be sure to 🌟 [the repo!](https://github.com/shannonhochkins/ha-component-kit)
-
+<br /><br />
 ![DEMO](https://github.com/shannonhochkins/ha-component-kit/blob/master/stories/hakit-demo.gif?raw=true)
+<br /><br />
+## What is this?
 
-### Documentation
+HA component kit is a set of [React](https://react.dev/)-based packages for building highly customizable dashboards on top of [Home Assistant](https://www.home-assistant.io/).
 
-There's extensive [documentation](https://shannonhochkins.github.io/ha-component-kit) which should give you all the information you need to get started!
+Use it to:
 
-## Help me out?
+- Build your own dashboard UI using familiar React patterns.
+- Drop in ready-made components from [@hakit/components](https://www.npmjs.com/package/@hakit/components).
+- Talk to Home Assistant via [@hakit/core](https://www.npmjs.com/package/@hakit/core), which wraps the official [Home Assistant WebSocket API](https://github.com/home-assistant/home-assistant-js-websocket) for authentication, state and actions.
 
-As you can probably tell, a $*#% tonne of hours have gone into this! I'd really appreciate a small donation as it will help me validate that my time is well spent and will guarantee future additional changes :)
+Whether you just want a nicer wall tablet view or a fully bespoke control centre, HAKit gives you the building blocks.
 
-<a href="https://www.buymeacoffee.com/jinglezzz" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" style="height: 40px !important;width: auto !important;" ></a>
+### Key ideas
+
+- **Flexible by design**  
+  Compose your own layouts and components, or mix them with the prebuilt cards. You’re not locked into a single layout or opinionated theme.
+
+- **Real-time, reactive dashboards**  
+  State updates flow in via WebSockets, so your UI stays in sync with Home Assistant without extra glue code.
+
+- **Easy to host**  
+  Serve your dashboard from any web server, or use the [Home Assistant Add-on](https://github.com/shannonhochkins/ha-component-kit/blob/master/ADDON.md) to surface it directly in the Home Assistant sidebar.
+
+- **Future: visual editor**  
+  The current focus is on developers. The longer-term goal is a drag-and-drop UI editor, shipped via the add-on, so non-devs can build dashboards visually.
+
+Ready to dive in? Start with the [Getting Started guide](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/introduction-getting-started--docs).
+
+---
+
+## Support the project
+
+This has taken a $*#% tonne of hours to build, document, and maintain.  
+If it saves you time or becomes part of your setup, a small donation goes a long way in justifying future work.
+
+<a href="https://www.buymeacoffee.com/jinglezzz" target="_blank">
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-red.png" alt="Buy Me A Coffee" style="height: 40px !important;width: auto !important;">
+</a>
+
+---
 
 ### Get Started
-There's an npm create command which will setup react, typescript, vite & hakit automatically for you with a terminal wizard!
+The fastest way to spin up a new project is with the create command. It sets up React, TypeScript, Vite and HAKit with a simple terminal wizard:
 
 ```
   npm create hakit@latest
@@ -75,42 +102,14 @@ Or, if you want to install [@hakit/core](https://www.npmjs.com/package/@hakit/co
   npm install @hakit/core @hakit/components
 ```
 
-### Home Assistant Addon (WIP)
-There's a [Home Assistant Addon](ADDON.md) available which will serve your dashboard to a new sidebar link in home assistant making it easier to access your custom dashboard.
+### Contributing
 
+Contributions are very welcome — whether it’s bug reports, new features, docs improvements, or just “this feels weird” feedback.
 
-### Supported Cards
-- [AlarmCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-alarmcard--docs)
-- [AreaCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-areacard--docs)
-- [ButtonCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-buttoncard--docs)
-- [ClimateCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-climatecard--docs)
-- [CameraCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-cameracard--docs)
-- [CalendarCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-calendarcard--docs)
-- [EntitiesCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-entitiescard--docs)
-- [FabCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-fabcard--docs)
-- [FamilyCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-familycard--docs)
-- [GarbageCollectionCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-garbagecollectioncard--docs)
-- [MediaPlayerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-mediaplayercard--docs)
-- [PictureCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-picturecard--docs)
-- [SensorCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-sensorcard--docs)
-- [SidebarCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-sidebarcard--docs)
-- [TimeCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-timecard--docs)
-- [TriggerCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-triggercard--docs)
-- [WeatherCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-weathercard--docs)
-- [VacuumCard](https://shannonhochkins.github.io/ha-component-kit/?path=/docs/components-cards-vacuumcard--docs)
+- Open an issue if something looks off or could be improved.
+- Open a PR if you’ve got a fix or feature ready to go.
 
-### Known Issues
-- Anything else? Please, if you notice anything that doesn't feel / look right, please report it, i rely on user testing to make improvements.
+There are detailed guidelines on getting set up and adding new features in [here](CONTRIBUTING.md).
 
-### What's next?
-
-There's a Roadmap.md file with a few things i'm working on!
-Have your say! Join the [discord](https://discord.com/invite/cGgbmppKJZ) and let me know what you'd like to see next!
-
-### Contributors!
-
-I welcome anyone who's willing to contribute to the package, if you're interested in helping out or have some suggestions to changes, please feel free to open a PR or an issue!
-
-There's detailed instructions on how to get started if you want to introduce a new feature to the repository [here](CONTRIBUTING.md).
 
 
