@@ -111,6 +111,7 @@ export type HumidifierEntity = HassEntityBase & {
     mode?: string;
     action?: HumidifierAction;
     available_modes?: string[];
+    target_humidity_step?: number;
   };
 };
 export interface ImageEntity extends HassEntityBase {

@@ -70,6 +70,8 @@ export const computeDomainTitle = <E extends EntityName | "unknown">(entityId: E
     case "logger":
     case "tts":
     case "backup":
+    case "shelly":
+    case "matter":
     case "climate":
       return localize(`${domain}.title`);
     default: {

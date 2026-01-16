@@ -63,7 +63,7 @@ export const subscribeLogbook = (
 ): Promise<() => Promise<void>> => {
   // If all specified filters are empty lists, we can return an empty list.
   if ((entityIds || deviceIds) && (!entityIds || entityIds.length === 0) && (!deviceIds || deviceIds.length === 0)) {
-    return Promise.reject(`${localize("no_matching_entities_found")}, ${localize("no_matching_devices_found")}`);
+    return Promise.reject(`${localize("entity_not_found")}, ${localize("device_not_found")}`);
   }
   const params: MessageBase = {
     type: "logbook/event_stream",

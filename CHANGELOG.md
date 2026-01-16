@@ -1,3 +1,20 @@
+# 6.0.1
+
+### General
+CHORE - Locales refreshed to the latest Home Assistant strings/hashes; locale key types updated for new tokens (e.g., any/first/last, additional device status terms).
+
+### @hakit/core
+BUGFIX - HassConnect now guards all window access in suspend/resume and connection flows to avoid SSR/test crashes and ensure inherited connections/auth-callback cleanup stay safe (nextjs fix)
+IMPROVEMENT - Entity registry list derives domain titles via computeDomainTitle, improving labels/search without relying on locale strings.
+IMPROVEMENT - Service schema/types regenerated from the latest HA: frontend.setTheme supports optional light/dark names, scene services add apply/create/delete with transitions, media/recorder constraints refreshed.
+IMPROVEMENT - Humidifier entities expose target_humidity_step for finer control.
+
+### @hakit/components
+No component code changes; version bumped to align with core 6.0.1.
+
+### create-hakit
+Bump to 1.2.3 to consume the latest packages.
+
 # 6.0.0
 
 ## Migration Checklist
