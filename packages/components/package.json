@@ -1,7 +1,7 @@
 {
   "name": "@hakit/components",
   "type": "module",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "private": false,
   "keywords": [
     "react",
@@ -70,7 +70,7 @@
     "@emotion/react": ">=11.x.x",
     "@emotion/styled": ">=11.x",
     "@fullcalendar/react": ">=6.x.x",
-    "@hakit/core": "^6.0.0",
+    "@hakit/core": "^6.0.1",
     "@use-gesture/react": ">=10.x",
     "autolinker": ">=4.x",
     "fullcalendar": ">=6.x.x",

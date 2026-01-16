@@ -2,6 +2,32 @@
 
 import type { ServiceFunctionTypes, ServiceFunction } from "./";
 export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
+  persistentNotification: {
+    // undefined
+    create: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example Please check your configuration.yaml.
+        message: string;
+        //  @example Test notification
+        title?: string;
+        //  @example 1234
+        notification_id?: string;
+      }
+    >;
+    // undefined
+    dismiss: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example 1234
+        notification_id: string;
+      }
+    >;
+    // undefined
+    dismissAll: ServiceFunction<object, T, object>;
+  };
   homeassistant: {
     // undefined
     savePersistentStates: ServiceFunction<object, T, object>;
@@ -55,32 +81,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // undefined
     reloadAll: ServiceFunction<object, T, object>;
   };
-  persistentNotification: {
-    // undefined
-    create: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example Please check your configuration.yaml.
-        message: string;
-        //  @example Test notification
-        title?: string;
-        //  @example 1234
-        notification_id?: string;
-      }
-    >;
-    // undefined
-    dismiss: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example 1234
-        notification_id: string;
-      }
-    >;
-    // undefined
-    dismissAll: ServiceFunction<object, T, object>;
-  };
   systemLog: {
     // undefined
     clear: ServiceFunction<object, T, object>;
@@ -118,9 +118,9 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       T,
       {
         //  @example default
-        name: string;
-        //
-        mode?: "dark" | "light";
+        name?: string;
+        //  @example default
+        name_dark?: string;
       }
     >;
     // undefined
@@ -263,7 +263,7 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       object,
       T,
       {
-        //  @example {'media_content_id': 'https://home-assistant.io/images/cast/splash.png', 'media_content_type': 'music'} @constraints  media:
+        //  @example {'media_content_id': 'https://home-assistant.io/images/cast/splash.png', 'media_content_type': 'music'} @constraints  media: multiple: false
         media: unknown;
         //
         enqueue?: "play" | "next" | "add" | "replace";
@@ -546,46 +546,56 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // undefined
     remoteDisconnect: ServiceFunction<object, T, object>;
   };
-  camera: {
+  assistSatellite: {
     // undefined
-    enableMotionDetection: ServiceFunction<object, T, object>;
-    // undefined
-    disableMotionDetection: ServiceFunction<object, T, object>;
-    // undefined
-    turnOff: ServiceFunction<object, T, object>;
-    // undefined
-    turnOn: ServiceFunction<object, T, object>;
-    // undefined
-    snapshot: ServiceFunction<
+    announce: ServiceFunction<
       object,
       T,
       {
-        //  @example /tmp/snapshot_{{ entity_id.name }}.jpg
-        filename: string;
+        //  @example Time to wake up!
+        message?: string;
+        //  @constraints  media: accept: audio/*, multiple: false
+        media_id?: unknown;
+        //  @constraints  boolean:
+        preannounce?: boolean;
+        //  @constraints  media: accept: audio/*, multiple: false
+        preannounce_media_id?: unknown;
       }
     >;
     // undefined
-    playStream: ServiceFunction<
+    startConversation: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example You left the lights on in the living room. Turn them off?
+        start_message?: string;
+        //  @constraints  media: accept: audio/*, multiple: false
+        start_media_id?: unknown;
+        //
+        extra_system_prompt?: string;
+        //  @constraints  boolean:
+        preannounce?: boolean;
+        //  @constraints  media: accept: audio/*, multiple: false
+        preannounce_media_id?: unknown;
+      }
+    >;
+    // undefined
+    askQuestion: ServiceFunction<
       object,
       T,
       {
         //
-        media_player: string;
-        //
-        format?: "hls";
-      }
-    >;
-    // undefined
-    record: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example /tmp/snapshot_{{ entity_id.name }}.mp4
-        filename: string;
-        //  @constraints  number: min: 1, max: 3600, unit_of_measurement: seconds, step: 1, mode: slider
-        duration?: number;
-        //  @constraints  number: min: 0, max: 300, unit_of_measurement: seconds, step: 1, mode: slider
-        lookback?: number;
+        entity_id: string;
+        //  @example What kind of music would you like to play?
+        question?: string;
+        //  @constraints  media: accept: audio/*, multiple: false
+        question_media_id?: unknown;
+        //  @constraints  boolean:
+        preannounce?: boolean;
+        //  @constraints  media: accept: audio/*, multiple: false
+        preannounce_media_id?: unknown;
+        //  @constraints  object: label_field: sentences, description_field: id, multiple: true, translation_key: answers, fields: [object Object]
+        answers?: object;
       }
     >;
   };
@@ -1049,62 +1059,68 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  assistSatellite: {
+  camera: {
     // undefined
-    announce: ServiceFunction<
+    enableMotionDetection: ServiceFunction<object, T, object>;
+    // undefined
+    disableMotionDetection: ServiceFunction<object, T, object>;
+    // undefined
+    turnOff: ServiceFunction<object, T, object>;
+    // undefined
+    turnOn: ServiceFunction<object, T, object>;
+    // undefined
+    snapshot: ServiceFunction<
       object,
       T,
       {
-        //  @example Time to wake up!
-        message?: string;
-        //  @constraints  media: accept: audio/*
-        media_id?: unknown;
-        //  @constraints  boolean:
-        preannounce?: boolean;
-        //  @constraints  media: accept: audio/*
-        preannounce_media_id?: unknown;
+        //  @example /tmp/snapshot_{{ entity_id.name }}.jpg
+        filename: string;
       }
     >;
     // undefined
-    startConversation: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example You left the lights on in the living room. Turn them off?
-        start_message?: string;
-        //  @constraints  media: accept: audio/*
-        start_media_id?: unknown;
-        //
-        extra_system_prompt?: string;
-        //  @constraints  boolean:
-        preannounce?: boolean;
-        //  @constraints  media: accept: audio/*
-        preannounce_media_id?: unknown;
-      }
-    >;
-    // undefined
-    askQuestion: ServiceFunction<
+    playStream: ServiceFunction<
       object,
       T,
       {
         //
-        entity_id: string;
-        //  @example What kind of music would you like to play?
-        question?: string;
-        //  @constraints  media: accept: audio/*
-        question_media_id?: unknown;
-        //  @constraints  boolean:
-        preannounce?: boolean;
-        //  @constraints  media: accept: audio/*
-        preannounce_media_id?: unknown;
-        //  @constraints  object: label_field: sentences, description_field: id, multiple: true, translation_key: answers, fields: [object Object]
-        answers?: object;
+        media_player: string;
+        //
+        format?: "hls";
+      }
+    >;
+    // undefined
+    record: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example /tmp/snapshot_{{ entity_id.name }}.mp4
+        filename: string;
+        //  @constraints  number: min: 1, max: 3600, unit_of_measurement: seconds, step: 1, mode: slider
+        duration?: number;
+        //  @constraints  number: min: 0, max: 300, unit_of_measurement: seconds, step: 1, mode: slider
+        lookback?: number;
       }
     >;
   };
   zone: {
     // undefined
     reload: ServiceFunction<object, T, object>;
+  };
+  inputButton: {
+    // undefined
+    reload: ServiceFunction<object, T, object>;
+    // undefined
+    press: ServiceFunction<object, T, object>;
+  };
+  script: {
+    // undefined
+    reload: ServiceFunction<object, T, object>;
+    // undefined
+    turnOn: ServiceFunction<object, T, object>;
+    // undefined
+    turnOff: ServiceFunction<object, T, object>;
+    // undefined
+    toggle: ServiceFunction<object, T, object>;
   };
   logbook: {
     // undefined
@@ -1120,6 +1136,51 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         entity_id?: string;
         //  @example light
         domain?: string;
+      }
+    >;
+  };
+  inputNumber: {
+    // undefined
+    reload: ServiceFunction<object, T, object>;
+    // undefined
+    setValue: ServiceFunction<
+      object,
+      T,
+      {
+        //  @constraints  number: min: 0, max: 9223372036854776000, step: 0.001, mode: box
+        value: number;
+      }
+    >;
+    // undefined
+    increment: ServiceFunction<object, T, object>;
+    // undefined
+    decrement: ServiceFunction<object, T, object>;
+  };
+  timer: {
+    // undefined
+    reload: ServiceFunction<object, T, object>;
+    // undefined
+    start: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example 00:01:00 or 60
+        duration?: string;
+      }
+    >;
+    // undefined
+    pause: ServiceFunction<object, T, object>;
+    // undefined
+    cancel: ServiceFunction<object, T, object>;
+    // undefined
+    finish: ServiceFunction<object, T, object>;
+    // undefined
+    change: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example 00:01:00, 60 or -60
+        duration: string;
       }
     >;
   };
@@ -1167,39 +1228,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  inputButton: {
-    // undefined
-    reload: ServiceFunction<object, T, object>;
-    // undefined
-    press: ServiceFunction<object, T, object>;
-  };
-  inputNumber: {
-    // undefined
-    reload: ServiceFunction<object, T, object>;
-    // undefined
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        //  @constraints  number: min: 0, max: 9223372036854776000, step: 0.001, mode: box
-        value: number;
-      }
-    >;
-    // undefined
-    increment: ServiceFunction<object, T, object>;
-    // undefined
-    decrement: ServiceFunction<object, T, object>;
-  };
-  script: {
-    // undefined
-    reload: ServiceFunction<object, T, object>;
-    // undefined
-    turnOn: ServiceFunction<object, T, object>;
-    // undefined
-    turnOff: ServiceFunction<object, T, object>;
-    // undefined
-    toggle: ServiceFunction<object, T, object>;
-  };
   inputBoolean: {
     // undefined
     reload: ServiceFunction<object, T, object>;
@@ -1210,37 +1238,101 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // undefined
     toggle: ServiceFunction<object, T, object>;
   };
-  timer: {
-    // undefined
-    reload: ServiceFunction<object, T, object>;
-    // undefined
-    start: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example 00:01:00 or 60
-        duration?: string;
-      }
-    >;
-    // undefined
-    pause: ServiceFunction<object, T, object>;
-    // undefined
-    cancel: ServiceFunction<object, T, object>;
-    // undefined
-    finish: ServiceFunction<object, T, object>;
-    // undefined
-    change: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example 00:01:00, 60 or -60
-        duration: string;
-      }
-    >;
-  };
   person: {
     // undefined
     reload: ServiceFunction<object, T, object>;
+  };
+  cover: {
+    // undefined
+    openCover: ServiceFunction<object, T, object>;
+    // undefined
+    closeCover: ServiceFunction<object, T, object>;
+    // undefined
+    setCoverPosition: ServiceFunction<
+      object,
+      T,
+      {
+        //  @constraints  number: min: 0, max: 100, unit_of_measurement: %, step: 1, mode: slider
+        position: number;
+      }
+    >;
+    // undefined
+    stopCover: ServiceFunction<object, T, object>;
+    // undefined
+    toggle: ServiceFunction<object, T, object>;
+    // undefined
+    openCoverTilt: ServiceFunction<object, T, object>;
+    // undefined
+    closeCoverTilt: ServiceFunction<object, T, object>;
+    // undefined
+    stopCoverTilt: ServiceFunction<object, T, object>;
+    // undefined
+    setCoverTiltPosition: ServiceFunction<
+      object,
+      T,
+      {
+        //  @constraints  number: min: 0, max: 100, unit_of_measurement: %, step: 1, mode: slider
+        tilt_position: number;
+      }
+    >;
+    // undefined
+    toggleCoverTilt: ServiceFunction<object, T, object>;
+  };
+  lock: {
+    // undefined
+    unlock: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example 1234
+        code?: string;
+      }
+    >;
+    // undefined
+    lock: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example 1234
+        code?: string;
+      }
+    >;
+    // undefined
+    open: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example 1234
+        code?: string;
+      }
+    >;
+  };
+  lawnMower: {
+    // undefined
+    startMowing: ServiceFunction<object, T, object>;
+    // undefined
+    pause: ServiceFunction<object, T, object>;
+    // undefined
+    dock: ServiceFunction<object, T, object>;
+  };
+  valve: {
+    // undefined
+    openValve: ServiceFunction<object, T, object>;
+    // undefined
+    closeValve: ServiceFunction<object, T, object>;
+    // undefined
+    setValvePosition: ServiceFunction<
+      object,
+      T,
+      {
+        //  @constraints  number: min: 0, max: 100, unit_of_measurement: %, step: 1, mode: slider
+        position: number;
+      }
+    >;
+    // undefined
+    stopValve: ServiceFunction<object, T, object>;
+    // undefined
+    toggle: ServiceFunction<object, T, object>;
   };
   vacuum: {
     // undefined
@@ -1341,172 +1433,29 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  lock: {
+  shelly: {
     // undefined
-    unlock: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example 1234
-        code?: string;
-      }
-    >;
-    // undefined
-    lock: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example 1234
-        code?: string;
-      }
-    >;
-    // undefined
-    open: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example 1234
-        code?: string;
-      }
-    >;
-  };
-  cover: {
-    // undefined
-    openCover: ServiceFunction<object, T, object>;
-    // undefined
-    closeCover: ServiceFunction<object, T, object>;
-    // undefined
-    setCoverPosition: ServiceFunction<
-      object,
-      T,
-      {
-        //  @constraints  number: min: 0, max: 100, unit_of_measurement: %, step: 1, mode: slider
-        position: number;
-      }
-    >;
-    // undefined
-    stopCover: ServiceFunction<object, T, object>;
-    // undefined
-    toggle: ServiceFunction<object, T, object>;
-    // undefined
-    openCoverTilt: ServiceFunction<object, T, object>;
-    // undefined
-    closeCoverTilt: ServiceFunction<object, T, object>;
-    // undefined
-    stopCoverTilt: ServiceFunction<object, T, object>;
-    // undefined
-    setCoverTiltPosition: ServiceFunction<
-      object,
-      T,
-      {
-        //  @constraints  number: min: 0, max: 100, unit_of_measurement: %, step: 1, mode: slider
-        tilt_position: number;
-      }
-    >;
-    // undefined
-    toggleCoverTilt: ServiceFunction<object, T, object>;
-  };
-  valve: {
-    // undefined
-    openValve: ServiceFunction<object, T, object>;
-    // undefined
-    closeValve: ServiceFunction<object, T, object>;
-    // undefined
-    setValvePosition: ServiceFunction<
-      object,
-      T,
-      {
-        //  @constraints  number: min: 0, max: 100, unit_of_measurement: %, step: 1, mode: slider
-        position: number;
-      }
-    >;
-    // undefined
-    stopValve: ServiceFunction<object, T, object>;
-    // undefined
-    toggle: ServiceFunction<object, T, object>;
-  };
-  lawnMower: {
-    // undefined
-    startMowing: ServiceFunction<object, T, object>;
-    // undefined
-    pause: ServiceFunction<object, T, object>;
-    // undefined
-    dock: ServiceFunction<object, T, object>;
-  };
-  cast: {
-    // undefined
-    showLovelaceView: ServiceFunction<
-      object,
-      T,
-      {
-        //
-        entity_id: string;
-        //  @example lovelace-cast
-        dashboard_path?: string;
-        //  @example downstairs
-        view_path: string;
-      }
-    >;
-  };
-  reolink: {
-    // undefined
-    playChime: ServiceFunction<
+    getKvsValue: ServiceFunction<
       object,
       T,
       {
         //
         device_id: string;
         //
-        ringtone:
-          | "citybird"
-          | "originaltune"
-          | "pianokey"
-          | "loop"
-          | "attraction"
-          | "hophop"
-          | "goodday"
-          | "operetta"
-          | "moonlight"
-          | "waybackhome";
+        key: string;
       }
     >;
     // undefined
-    ptzMove: ServiceFunction<
+    setKvsValue: ServiceFunction<
       object,
       T,
       {
-        //  @constraints  number: min: 1, max: 64, step: 1, mode: slider
-        speed: number;
-      }
-    >;
-  };
-  schedule: {
-    // undefined
-    reload: ServiceFunction<object, T, object>;
-    // undefined
-    getSchedule: ServiceFunction<object, T, object>;
-  };
-  mediaExtractor: {
-    // undefined
-    extractMediaUrl: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example https://www.youtube.com/watch?v=dQw4w9WgXcQ
-        url: string;
-        //  @example best
-        format_query?: string;
-      }
-    >;
-    // undefined
-    playMedia: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example https://soundcloud.com/bruttoband/brutto-11
-        media_content_id: string | number;
         //
-        media_content_type: "CHANNEL" | "EPISODE" | "PLAYLIST MUSIC" | "MUSIC" | "TVSHOW" | "VIDEO";
+        device_id: string;
+        //
+        key: string;
+        //  @constraints  object: multiple: false
+        value: object;
       }
     >;
   };
@@ -1520,61 +1469,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         file_name?: string;
         //  @example JSON
         file_encoding?: "JSON" | "YAML";
-      }
-    >;
-  };
-  inputDatetime: {
-    // undefined
-    reload: ServiceFunction<object, T, object>;
-    // undefined
-    setDatetime: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example '2019-04-20'
-        date?: string;
-        //  @example '05:04:20' @constraints  time:
-        time?: string;
-        //  @example '2019-04-20 05:04:20'
-        datetime?: string;
-        //  @constraints  number: min: 0, max: 9223372036854776000, mode: box, step: 1
-        timestamp?: number;
-      }
-    >;
-  };
-  restCommand: {
-    // undefined
-    assistantRelay: ServiceFunction<object, T, object>;
-    // undefined
-    reload: ServiceFunction<object, T, object>;
-  };
-  counter: {
-    // undefined
-    increment: ServiceFunction<object, T, object>;
-    // undefined
-    decrement: ServiceFunction<object, T, object>;
-    // undefined
-    reset: ServiceFunction<object, T, object>;
-    // undefined
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        //  @constraints  number: min: 0, max: 9223372036854776000, mode: box, step: 1
-        value: number;
-      }
-    >;
-  };
-  inputText: {
-    // undefined
-    reload: ServiceFunction<object, T, object>;
-    // undefined
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example This is an example text
-        value: string;
       }
     >;
   };
@@ -1650,127 +1544,75 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
     // undefined
     logCurrentTasks: ServiceFunction<object, T, object>;
   };
-  commandLine: {
+  schedule: {
     // undefined
     reload: ServiceFunction<object, T, object>;
+    // undefined
+    getSchedule: ServiceFunction<object, T, object>;
   };
-  template: {
+  reolink: {
     // undefined
-    reload: ServiceFunction<object, T, object>;
-  };
-  calendar: {
-    // undefined
-    createEvent: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example Department Party
-        summary: string;
-        //  @example Meeting to provide technical review for 'Phoenix' design.
-        description?: string;
-        //  @example 2022-03-22 20:00:00 @constraints  datetime:
-        start_date_time?: string;
-        //  @example 2022-03-22 22:00:00 @constraints  datetime:
-        end_date_time?: string;
-        //  @example 2022-03-22 @constraints  date:
-        start_date?: string;
-        //  @example 2022-03-23 @constraints  date:
-        end_date?: string;
-        //  @example {'days': 2} or {'weeks': 2}
-        in?: object;
-        //  @example Conference Room - F123, Bldg. 002
-        location?: string;
-      }
-    >;
-    // undefined
-    getEvents: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example 2022-03-22 20:00:00 @constraints  datetime:
-        start_date_time?: string;
-        //  @example 2022-03-22 22:00:00 @constraints  datetime:
-        end_date_time?: string;
-        //  @constraints  duration:
-        duration?: {
-          hours?: number;
-          days?: number;
-          minutes?: number;
-          seconds?: number;
-        };
-      }
-    >;
-  };
-  notify: {
-    // undefined
-    sendMessage: ServiceFunction<
+    playChime: ServiceFunction<
       object,
       T,
       {
         //
-        message: string;
+        device_id: string;
         //
-        title?: string;
+        ringtone:
+          | "citybird"
+          | "originaltune"
+          | "pianokey"
+          | "loop"
+          | "attraction"
+          | "hophop"
+          | "goodday"
+          | "operetta"
+          | "moonlight"
+          | "waybackhome";
       }
     >;
     // undefined
-    persistentNotification: ServiceFunction<
+    ptzMove: ServiceFunction<
       object,
       T,
       {
-        //  @example The garage door has been open for 10 minutes.
-        message: string;
-        //  @example Your Garage Door Friend
-        title?: string;
-        //  @example platform specific @constraints  object: multiple: false
-        data?: object;
+        //  @constraints  number: min: 1, max: 64, step: 1, mode: slider
+        speed: number;
       }
     >;
-    // Sends a notification message using the mobile_app_shans_s25 integration.
-    mobileAppShansS25: ServiceFunction<
+  };
+  matter: {
+    // undefined
+    waterHeaterBoost: ServiceFunction<
       object,
       T,
       {
-        //  @example The garage door has been open for 10 minutes.
-        message: string;
-        //  @example Your Garage Door Friend
-        title?: string;
-        //  @example platform specific
-        target?: object;
-        //  @example platform specific
-        data?: object;
+        //  @constraints  number: min: 60, max: 14400, step: 60, mode: box
+        duration: number;
+        //  @constraints  boolean:
+        emergency_boost?: boolean;
+        //  @constraints  number: min: 30, max: 65, step: 1, mode: slider
+        temporary_setpoint?: number;
       }
     >;
-    // Sends a notification message using the notify service.
-    notify: ServiceFunction<
+  };
+  inputText: {
+    // undefined
+    reload: ServiceFunction<object, T, object>;
+    // undefined
+    setValue: ServiceFunction<
       object,
       T,
       {
-        //  @example The garage door has been open for 10 minutes.
-        message: string;
-        //  @example Your Garage Door Friend
-        title?: string;
-        //  @example platform specific
-        target?: object;
-        //  @example platform specific
-        data?: object;
+        //  @example This is an example text
+        value: string;
       }
     >;
-    // Sends a notification message using the google_assistant_sdk service.
-    googleAssistantSdk: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example The garage door has been open for 10 minutes.
-        message: string;
-        //  @example Your Garage Door Friend
-        title?: string;
-        //  @example platform specific
-        target?: object;
-        //  @example platform specific
-        data?: object;
-      }
-    >;
+  };
+  button: {
+    // undefined
+    press: ServiceFunction<object, T, object>;
   };
   climate: {
     // undefined
@@ -1849,167 +1691,6 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  deviceTracker: {
-    // undefined
-    see: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example FF:FF:FF:FF:FF:FF
-        mac?: string;
-        //  @example phonedave
-        dev_id?: string;
-        //  @example Dave
-        host_name?: string;
-        //  @example home
-        location_name?: string;
-        //  @example [51.509802, -0.086692] @constraints  object: multiple: false
-        gps?: object;
-        //  @constraints  number: min: 0, mode: box, unit_of_measurement: m, step: 1
-        gps_accuracy?: number;
-        //  @constraints  number: min: 0, max: 100, unit_of_measurement: %, step: 1, mode: slider
-        battery?: number;
-      }
-    >;
-  };
-  button: {
-    // undefined
-    press: ServiceFunction<object, T, object>;
-  };
-  number: {
-    // undefined
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example 42
-        value: string;
-      }
-    >;
-  };
-  select: {
-    // undefined
-    selectFirst: ServiceFunction<object, T, object>;
-    // undefined
-    selectLast: ServiceFunction<object, T, object>;
-    // undefined
-    selectNext: ServiceFunction<
-      object,
-      T,
-      {
-        //  @constraints  boolean:
-        cycle?: boolean;
-      }
-    >;
-    // undefined
-    selectOption: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example 'Item A' @constraints  state: hide_states: unavailable,unknown, multiple: false
-        option: unknown;
-      }
-    >;
-    // undefined
-    selectPrevious: ServiceFunction<
-      object,
-      T,
-      {
-        //  @constraints  boolean:
-        cycle?: boolean;
-      }
-    >;
-  };
-  text: {
-    // undefined
-    setValue: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example Hello world!
-        value: string;
-      }
-    >;
-  };
-  siren: {
-    // undefined
-    turnOn: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example fire
-        tone?: string;
-        //  @example 0.5 @constraints  number: min: 0, max: 1, step: 0.05, mode: slider
-        volume_level?: number;
-        //  @example 15
-        duration?: string;
-      }
-    >;
-    // undefined
-    turnOff: ServiceFunction<object, T, object>;
-    // undefined
-    toggle: ServiceFunction<object, T, object>;
-  };
-  remote: {
-    // undefined
-    turnOff: ServiceFunction<object, T, object>;
-    // undefined
-    turnOn: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example BedroomTV
-        activity?: string;
-      }
-    >;
-    // undefined
-    toggle: ServiceFunction<object, T, object>;
-    // undefined
-    sendCommand: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example 32756745
-        device?: string;
-        //  @example Play @constraints  object: multiple: false
-        command: object;
-        //  @constraints  number: min: 0, max: 255, step: 1, mode: slider
-        num_repeats?: number;
-        //  @constraints  number: min: 0, max: 60, step: 0.1, unit_of_measurement: seconds, mode: slider
-        delay_secs?: number;
-        //  @constraints  number: min: 0, max: 60, step: 0.1, unit_of_measurement: seconds, mode: slider
-        hold_secs?: number;
-      }
-    >;
-    // undefined
-    learnCommand: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example television
-        device?: string;
-        //  @example Turn on @constraints  object: multiple: false
-        command?: object;
-        //
-        command_type?: "ir" | "rf";
-        //  @constraints  boolean:
-        alternative?: boolean;
-        //  @constraints  number: min: 0, max: 60, step: 5, unit_of_measurement: seconds, mode: slider
-        timeout?: number;
-      }
-    >;
-    // undefined
-    deleteCommand: ServiceFunction<
-      object,
-      T,
-      {
-        //  @example television
-        device?: string;
-        //  @example Mute @constraints  object: multiple: false
-        command: object;
-      }
-    >;
-  };
   fan: {
     // undefined
     turnOn: ServiceFunction<
@@ -2081,29 +1762,47 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  humidifier: {
+  number: {
     // undefined
-    turnOn: ServiceFunction<object, T, object>;
-    // undefined
-    turnOff: ServiceFunction<object, T, object>;
-    // undefined
-    toggle: ServiceFunction<object, T, object>;
-    // undefined
-    setMode: ServiceFunction<
+    setValue: ServiceFunction<
       object,
       T,
       {
-        //  @example away
-        mode: string;
+        //  @example 42
+        value: string;
+      }
+    >;
+  };
+  select: {
+    // undefined
+    selectFirst: ServiceFunction<object, T, object>;
+    // undefined
+    selectLast: ServiceFunction<object, T, object>;
+    // undefined
+    selectNext: ServiceFunction<
+      object,
+      T,
+      {
+        //  @constraints  boolean:
+        cycle?: boolean;
       }
     >;
     // undefined
-    setHumidity: ServiceFunction<
+    selectOption: ServiceFunction<
       object,
       T,
       {
-        //  @constraints  number: min: 0, max: 100, unit_of_measurement: %, step: 1, mode: slider
-        humidity: number;
+        //  @example 'Item A' @constraints  state: hide_states: unavailable,unknown, multiple: false
+        option: unknown;
+      }
+    >;
+    // undefined
+    selectPrevious: ServiceFunction<
+      object,
+      T,
+      {
+        //  @constraints  boolean:
+        cycle?: boolean;
       }
     >;
   };
@@ -2142,14 +1841,345 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
-  weather: {
+  mediaExtractor: {
     // undefined
-    getForecasts: ServiceFunction<
+    extractMediaUrl: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example https://www.youtube.com/watch?v=dQw4w9WgXcQ
+        url: string;
+        //  @example best
+        format_query?: string;
+      }
+    >;
+    // undefined
+    playMedia: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example https://soundcloud.com/bruttoband/brutto-11
+        media_content_id: string | number;
+        //
+        media_content_type: "CHANNEL" | "EPISODE" | "PLAYLIST MUSIC" | "MUSIC" | "TVSHOW" | "VIDEO";
+      }
+    >;
+  };
+  commandLine: {
+    // undefined
+    reload: ServiceFunction<object, T, object>;
+  };
+  cast: {
+    // undefined
+    showLovelaceView: ServiceFunction<
       object,
       T,
       {
         //
-        type: "daily" | "hourly" | "twice_daily";
+        entity_id: string;
+        //  @example lovelace-cast
+        dashboard_path?: string;
+        //  @example downstairs
+        view_path: string;
+      }
+    >;
+  };
+  restCommand: {
+    // undefined
+    assistantRelay: ServiceFunction<object, T, object>;
+    // undefined
+    reload: ServiceFunction<object, T, object>;
+  };
+  counter: {
+    // undefined
+    increment: ServiceFunction<object, T, object>;
+    // undefined
+    decrement: ServiceFunction<object, T, object>;
+    // undefined
+    reset: ServiceFunction<object, T, object>;
+    // undefined
+    setValue: ServiceFunction<
+      object,
+      T,
+      {
+        //  @constraints  number: min: 0, max: 9223372036854776000, mode: box, step: 1
+        value: number;
+      }
+    >;
+  };
+  inputDatetime: {
+    // undefined
+    reload: ServiceFunction<object, T, object>;
+    // undefined
+    setDatetime: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example '2019-04-20'
+        date?: string;
+        //  @example '05:04:20' @constraints  time:
+        time?: string;
+        //  @example '2019-04-20 05:04:20'
+        datetime?: string;
+        //  @constraints  number: min: 0, max: 9223372036854776000, mode: box, step: 1
+        timestamp?: number;
+      }
+    >;
+  };
+  template: {
+    // undefined
+    reload: ServiceFunction<object, T, object>;
+  };
+  notify: {
+    // undefined
+    sendMessage: ServiceFunction<
+      object,
+      T,
+      {
+        //
+        message: string;
+        //
+        title?: string;
+      }
+    >;
+    // undefined
+    persistentNotification: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example The garage door has been open for 10 minutes.
+        message: string;
+        //  @example Your Garage Door Friend
+        title?: string;
+        //  @example platform specific @constraints  object: multiple: false
+        data?: object;
+      }
+    >;
+    // Sends a notification message using the mobile_app_shans_s25 integration.
+    mobileAppShansS25: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example The garage door has been open for 10 minutes.
+        message: string;
+        //  @example Your Garage Door Friend
+        title?: string;
+        //  @example platform specific
+        target?: object;
+        //  @example platform specific
+        data?: object;
+      }
+    >;
+    // Sends a notification message using the notify service.
+    notify: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example The garage door has been open for 10 minutes.
+        message: string;
+        //  @example Your Garage Door Friend
+        title?: string;
+        //  @example platform specific
+        target?: object;
+        //  @example platform specific
+        data?: object;
+      }
+    >;
+    // Sends a notification message using the google_assistant_sdk service.
+    googleAssistantSdk: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example The garage door has been open for 10 minutes.
+        message: string;
+        //  @example Your Garage Door Friend
+        title?: string;
+        //  @example platform specific
+        target?: object;
+        //  @example platform specific
+        data?: object;
+      }
+    >;
+  };
+  deviceTracker: {
+    // undefined
+    see: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example FF:FF:FF:FF:FF:FF
+        mac?: string;
+        //  @example phonedave
+        dev_id?: string;
+        //  @example Dave
+        host_name?: string;
+        //  @example home
+        location_name?: string;
+        //  @example [51.509802, -0.086692] @constraints  object: multiple: false
+        gps?: object;
+        //  @constraints  number: min: 0, mode: box, unit_of_measurement: m, step: 1
+        gps_accuracy?: number;
+        //  @constraints  number: min: 0, max: 100, unit_of_measurement: %, step: 1, mode: slider
+        battery?: number;
+      }
+    >;
+  };
+  text: {
+    // undefined
+    setValue: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example Hello world!
+        value: string;
+      }
+    >;
+  };
+  remote: {
+    // undefined
+    turnOff: ServiceFunction<object, T, object>;
+    // undefined
+    turnOn: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example BedroomTV
+        activity?: string;
+      }
+    >;
+    // undefined
+    toggle: ServiceFunction<object, T, object>;
+    // undefined
+    sendCommand: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example 32756745
+        device?: string;
+        //  @example Play @constraints  object: multiple: false
+        command: object;
+        //  @constraints  number: min: 0, max: 255, step: 1, mode: slider
+        num_repeats?: number;
+        //  @constraints  number: min: 0, max: 60, step: 0.1, unit_of_measurement: seconds, mode: slider
+        delay_secs?: number;
+        //  @constraints  number: min: 0, max: 60, step: 0.1, unit_of_measurement: seconds, mode: slider
+        hold_secs?: number;
+      }
+    >;
+    // undefined
+    learnCommand: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example television
+        device?: string;
+        //  @example Turn on @constraints  object: multiple: false
+        command?: object;
+        //
+        command_type?: "ir" | "rf";
+        //  @constraints  boolean:
+        alternative?: boolean;
+        //  @constraints  number: min: 0, max: 60, step: 5, unit_of_measurement: seconds, mode: slider
+        timeout?: number;
+      }
+    >;
+    // undefined
+    deleteCommand: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example television
+        device?: string;
+        //  @example Mute @constraints  object: multiple: false
+        command: object;
+      }
+    >;
+  };
+  siren: {
+    // undefined
+    turnOn: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example fire
+        tone?: string;
+        //  @example 0.5 @constraints  number: min: 0, max: 1, step: 0.05, mode: slider
+        volume_level?: number;
+        //  @example 15
+        duration?: string;
+      }
+    >;
+    // undefined
+    turnOff: ServiceFunction<object, T, object>;
+    // undefined
+    toggle: ServiceFunction<object, T, object>;
+  };
+  calendar: {
+    // undefined
+    createEvent: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example Department Party
+        summary: string;
+        //  @example Meeting to provide technical review for 'Phoenix' design.
+        description?: string;
+        //  @example 2022-03-22 20:00:00 @constraints  datetime:
+        start_date_time?: string;
+        //  @example 2022-03-22 22:00:00 @constraints  datetime:
+        end_date_time?: string;
+        //  @example 2022-03-22 @constraints  date:
+        start_date?: string;
+        //  @example 2022-03-23 @constraints  date:
+        end_date?: string;
+        //  @example {'days': 2} or {'weeks': 2}
+        in?: object;
+        //  @example Conference Room - F123, Bldg. 002
+        location?: string;
+      }
+    >;
+    // undefined
+    getEvents: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example 2022-03-22 20:00:00 @constraints  datetime:
+        start_date_time?: string;
+        //  @example 2022-03-22 22:00:00 @constraints  datetime:
+        end_date_time?: string;
+        //  @constraints  duration:
+        duration?: {
+          hours?: number;
+          days?: number;
+          minutes?: number;
+          seconds?: number;
+        };
+      }
+    >;
+  };
+  humidifier: {
+    // undefined
+    turnOn: ServiceFunction<object, T, object>;
+    // undefined
+    turnOff: ServiceFunction<object, T, object>;
+    // undefined
+    toggle: ServiceFunction<object, T, object>;
+    // undefined
+    setMode: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example away
+        mode: string;
+      }
+    >;
+    // undefined
+    setHumidity: ServiceFunction<
+      object,
+      T,
+      {
+        //  @constraints  number: min: 0, max: 100, unit_of_measurement: %, step: 1, mode: slider
+        humidity: number;
       }
     >;
   };
@@ -2178,6 +2208,17 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
       }
     >;
   };
+  weather: {
+    // undefined
+    getForecasts: ServiceFunction<
+      object,
+      T,
+      {
+        //
+        type: "daily" | "hourly" | "twice_daily";
+      }
+    >;
+  };
   google: {
     // undefined
     createEvent: ServiceFunction<
@@ -2200,6 +2241,17 @@ export interface DefaultServices<T extends ServiceFunctionTypes = "target"> {
         in?: object;
         //  @example Conference Room - F123, Bldg. 002
         location?: string;
+      }
+    >;
+  };
+  image: {
+    // undefined
+    snapshot: ServiceFunction<
+      object,
+      T,
+      {
+        //  @example /tmp/image_snapshot.jpg
+        filename: string;
       }
     >;
   };

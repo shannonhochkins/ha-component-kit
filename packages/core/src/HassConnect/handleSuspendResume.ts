@@ -99,24 +99,27 @@ export function handleSuspendResume(connection: Connection, options: HandleSuspe
 
     // Wait DELAY_MS before actually closing the socket.
     if (debug) console.log(`[SR] Starting hidden delay of ${DELAY_MS}ms before actual suspend()`);
-    hiddenTimeoutId = window.setTimeout(() => {
-      hiddenTimeoutId = null;
-      // If still hidden, suspend the connection:
-      if (document.hidden) {
-        if (debug) console.log("[SR] Hidden timeout elapsed → calling suspend()");
-        suspend();
-      } else {
-        // User returned before timeout. Resolve immediately.
-        if (pendingResolve) {
-          if (debug) console.log("[SR] Hidden timeout elapsed but page is visible → resolving pendingResolve()");
-          // potentially unreachable, but just in case!
-          pendingResolve();
-        }
-      }
-    }, DELAY_MS);
+    hiddenTimeoutId =
+      typeof window !== "undefined"
+        ? window.setTimeout(() => {
+            hiddenTimeoutId = null;
+            // If still hidden, suspend the connection:
+            if (document.hidden) {
+              if (debug) console.log("[SR] Hidden timeout elapsed → calling suspend()");
+              suspend();
+            } else {
+              // User returned before timeout. Resolve immediately.
+              if (pendingResolve) {
+                if (debug) console.log("[SR] Hidden timeout elapsed but page is visible → resolving pendingResolve()");
+                // potentially unreachable, but just in case!
+                pendingResolve();
+              }
+            }
+          }, DELAY_MS)
+        : null;
 
     // If the user focuses before DELAY_MS is up, resume immediately:
-    window.addEventListener("focus", onVisibleOrResume, { once: true });
+    if (typeof window !== "undefined") window.addEventListener("focus", onVisibleOrResume, { once: true });
   }
 
   // helper when page/tab becomes visible or “resume” fires after freeze
@@ -161,7 +164,7 @@ export function handleSuspendResume(connection: Connection, options: HandleSuspe
     }
     onStatusChange?.("suspended");
     if (debug) console.log("[SR] suspend() called → suspending connection");
-    window.stop();
+    if (typeof window !== "undefined") window.stop();
     connection.suspend();
   }
 
@@ -179,7 +182,7 @@ export function handleSuspendResume(connection: Connection, options: HandleSuspe
     document.removeEventListener("visibilitychange", visibilityChangeHandler, false);
     document.removeEventListener("freeze", suspend);
     document.removeEventListener("resume", resumeHandler);
-    window.removeEventListener("focus", onVisibleOrResume);
+    if (typeof window !== "undefined") window.removeEventListener("focus", onVisibleOrResume);
 
     if (hiddenTimeoutId !== null) {
       if (debug) console.log("[SR] cleanup: Clearing hiddenTimeoutId");
