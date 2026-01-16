@@ -77,7 +77,7 @@ export function useEntity<E extends EntityName, O extends UseEntityOptions = Use
       // if returnNullIfNotFound is true, we return null, if not we throw an error
       return null as unknown as UseEntityReturnType<E, O>;
     }
-    return { ...formatted, service, history } as UseEntityReturnType<E, O>;
+    return { ...formatted, service, history } as unknown as UseEntityReturnType<E, O>;
   }, [formatted, service, history]);
 
   return entityWithHelpers;

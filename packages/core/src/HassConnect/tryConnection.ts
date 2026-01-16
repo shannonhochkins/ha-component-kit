@@ -61,7 +61,7 @@ type ConnectionType = "auth-callback" | "user-request" | "saved-tokens" | "inher
 
 function getInheritedConnection(): typeof window.hassConnection | undefined {
   try {
-    return window.top?.hassConnection;
+    return typeof window !== "undefined" ? window.top?.hassConnection : undefined;
   } catch (e) {
     console.error("Error getting inherited connection", e);
     return undefined;
@@ -185,7 +185,7 @@ export const tryConnection = async (hassUrl: string, hassToken?: string): Promis
     };
   } finally {
     // Clear url if we have a auth callback in url.
-    if (location && location.search.includes("auth_callback=1")) {
+    if (typeof window !== "undefined" && location && location.search.includes("auth_callback=1")) {
       history.replaceState(null, "", location.pathname);
     }
   }
