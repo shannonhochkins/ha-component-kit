@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npx tsx -r tsconfig-paths/register server/index.ts",
     "build": "rm -rf ./server/dist && npx tsc",
-    "start": "node server/dist/server/index.js",
+    "start": "node server/dist/index.js",
     "copy-to-ha": "node scripts/copy-to-ha.js",
     "type-check": "tsc --noEmit"
   },
@@ -16,8 +16,8 @@
     "url": "git+https://github.com/shannonhochkins/ha-component-kit.git"
   },
   "engines": {
-    "npm": ">=9.0.0",
-    "node": ">=18.0.0"
+    "npm": ">=10.0.0",
+    "node": ">=20.0.0"
   },
   "license": "ISC",
   "bugs": {
@@ -25,26 +25,21 @@
   },
   "homepage": "https://github.com/shannonhochkins/ha-component-kit#readme",
   "dependencies": {
-    "@googleapis/drive": "^8.11.0",
-    "@types/axios": "^0.14.0",
-    "@types/cors": "^2.8.16",
+    "@types/cors": "^2.8.19",
     "@types/express": "^4.17.21",
-    "@types/mime-types": "^2.1.4",
-    "@types/node": "^20.9.0",
-    "@types/unzipper": "^0.10.9",
+    "@types/mime-types": "^3.0.1",
+    "@types/node": "^25.0.9",
+    "axios": "^1.13.2",
     "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "mime-types": "^2.1.35",
-    "next": "^14.2.5",
-    "ts-node": "^10.9.1",
+    "express": "^5.2.1",
+    "mime-types": "^3.0.2",
+    "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.4.5",
-    "unzipper": "^0.12.1"
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "chalk": "^5.3.0",
-    "dotenv": "^16.4.5",
-    "fs": "0.0.1-security",
-    "node-scp": "0.0.23"
+    "chalk": "^5.6.2",
+    "dotenv": "^17.2.3",
+    "node-scp": "^0.0.25"
   }
 }
