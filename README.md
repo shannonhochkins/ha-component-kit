@@ -3,7 +3,7 @@
 
 
 
-<div align="center">
+<div align="left">
 
 
 
@@ -15,23 +15,19 @@
   <tr>
     <td>
         <a aria-label="@HAKIT/CORE" href="https://www.npmjs.com/package/@hakit/core">
-    <img alt="" src="https://img.shields.io/npm/v/@hakit/core.svg?style=for-the-badge&labelColor=000000&label=@hakit/CORE" align="center" height="16" width="auto">
+    <img alt="" src="https://img.shields.io/npm/v/@hakit/core.svg?style=for-the-badge&labelColor=000000&label=@hakit/CORE" align="left" height="16" width="auto">
   </a>
     </td>
     <td><a aria-label="@HAKIT/COMPONENTS" href="https://www.npmjs.com/package/@hakit/components">
-    <img alt="" src="https://img.shields.io/npm/v/@hakit/components.svg?style=for-the-badge&labelColor=000000&label=@HAKIT/COMPONENTS" align="center" height="16" width="auto">
+    <img alt="" src="https://img.shields.io/npm/v/@hakit/components.svg?style=for-the-badge&labelColor=000000&label=@HAKIT/COMPONENTS" align="left" height="16" width="auto">
   </a></td>
   </tr>
 <tr>
-    <td align="center">
-        <a aria-label="@HAKIT/CORE" href="https://www.npmjs.com/package/@hakit/core">
-    <img alt="" src="https://img.shields.io/npm/dt/%40hakit%2Fcore.svg?style=flat&colorA=000000&colorB=000000&label=Downloads" align="top" height="16" width="auto">
-  </a>
+    <td align="left">
+    <img alt="" src="https://img.shields.io/npm/dt/%40hakit%2Fcore.svg?style=flat&colorA=000000&colorB=000000&label=Downloads" align="top" height="20" width="auto">
     </td>
-  <td align="center">
-    <a aria-label="@HAKIT/COMPONENTS" href="https://www.npmjs.com/package/@hakit/components">
-    <img src="https://img.shields.io/npm/dt/%40hakit%2Fcomponents.svg?style=flat&colorA=000000&colorB=000000&label=Downloads" alt="" align="top"height="16" width="auto">
-  </a>
+  <td align="left">
+    <img src="https://img.shields.io/npm/dt/%40hakit%2Fcomponents.svg?style=flat&colorA=000000&colorB=000000&label=Downloads" alt="" align="top" height="20" width="auto">
   </td>
   </tr>
 </table>
@@ -101,6 +97,10 @@ Or, if you want to install [@hakit/core](https://www.npmjs.com/package/@hakit/co
 ```
   npm install @hakit/core @hakit/components
 ```
+
+### Home Assistant Addon
+There's a [Home Assistant Addon](hakit/README.md) available which will serve your prebuilt dashboard to a new sidebar link in home assistant making it easier to access your custom dashboard.
+
 
 ### Contributing
 
