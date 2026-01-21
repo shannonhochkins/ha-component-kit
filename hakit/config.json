@@ -1,35 +1,31 @@
 {
   "name": "Hakit",
-  "version": "1.0.35",
+  "version": "1.1.0",
   "slug": "hakit",
   "init": false,
   "ingress": true,
   "ingress_stream": true,
   "stage": "stable",
   "url": "https://github.com/shannonhochkins/ha-component-kit",
+  "changelog": "https://github.com/shannonhochkins/ha-component-kit/blob/main/hakit/CHANGELOG.md",
   "ingress_port": 2022,
-  "description": "An addon to render custom dashboards for home assistant using @hakit, please ignore the custom_dashboard, it should be enabled",
-  "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
+  "description": "An addon to render custom dashboards for home assistant using @hakit.",
+  "arch": ["aarch64", "amd64", "armv7"],
   "boot": "auto",
   "map": [
     "config:rw",
-    "all_addon_configs:rw",
-    "backup:rw",
-    "homeassistant_config:rw",
-    "media:rw",
     "share:rw",
-    "ssl:rw",
-    "addon_config:rw"
+    "backup:rw",
+    "media:rw",
+    "ssl:ro"
   ],
   "options": {
     "html_file_path": "www/ha-dashboard/index.html",
-    "spa_mode": true,
-    "custom_dashboard": true
+    "spa_mode": true
   },
   "schema": {
     "html_file_path": "str",
-    "spa_mode": "bool",
-    "custom_dashboard": "bool"
+    "spa_mode": "bool"
   },
   "startup": "services",
   "hassio_api": true,

@@ -1,5 +1,16 @@
 ARG BUILD_FROM
+ARG BUILD_ARCH
+ARG BUILD_VERSION
 FROM $BUILD_FROM
+
+ARG BUILD_ARCH
+ARG BUILD_VERSION
+
+LABEL \
+  io.hass.type="addon" \
+  io.hass.arch="${BUILD_ARCH}" \
+  io.hass.version="${BUILD_VERSION}"
+
 WORKDIR /usr/app
 # Install nodejs and npm
 RUN apk add --no-cache nodejs npm
@@ -20,9 +31,6 @@ RUN npm ci
 RUN echo "Building Addon"
 # Attempt to build the application, with output for debugging
 RUN npm run build
-RUN echo "Copying html file"
-# manually copy the default.html file into the dist directory
-COPY server/default.html /usr/app/server/dist/server/default.html
 # Expose the port the app runs on
 EXPOSE 2022
 RUN echo "Starting addon"

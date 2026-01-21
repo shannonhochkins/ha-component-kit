@@ -18,7 +18,6 @@ interface Data {
   options?: {
     html_file_path?: string;
     spa_mode?: boolean;
-    custom_dashboard?: boolean;
   };
   schema?: Array<{
     name?: string;
