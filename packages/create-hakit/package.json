@@ -16,7 +16,7 @@
   "scripts": {
     "clean": "npx rimraf ./test-project node_modules dist",
     "dev": "npx tsx ./src/index.ts",
-    "lint": "eslint 'src/**/*.{ts,tsx}' --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
     "prebuild": "npm run lint",
     "build": "unbuild",
     "prerelease": "npm run build",
