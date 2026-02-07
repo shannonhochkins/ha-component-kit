@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { css, Global } from "@emotion/react";
 import { Icon } from "@iconify/react";
 import { useHass } from "@hakit/core";
-import { TimeCard, WeatherCard, Row, Column, fallback, mq, useBreakpoint } from "@components";
+import { Tooltip, TimeCard, WeatherCard, Row, Column, fallback, mq, useBreakpoint } from "@components";
 import type { WeatherCardProps, TimeCardProps } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -264,6 +264,8 @@ export interface SidebarCardProps extends React.ComponentProps<"div"> {
   children?: React.ReactNode;
   /** a method to apply a sort function to the sidebar menu items before they render */
   sortSidebarMenuItems?: (a: MenuItem, b: MenuItem) => number;
+  /** Show Tooltips on item hover when the sidebar is closed @default false */
+  tooltipsWhenClosed?: boolean;
 }
 function InternalSidebarCard({
   weatherCardProps,
@@ -274,6 +276,7 @@ function InternalSidebarCard({
   },
   startOpen = true,
   collapsible = true,
+  tooltipsWhenClosed = false,
   menuItems = [],
   children,
   autoIncludeRoutes = true,
@@ -384,6 +387,18 @@ function InternalSidebarCard({
             <Divider className="divider" />
             <Menu open={open} className="menu">
               {concatenatedMenuItems.map((item, index) => {
+                const innerItemContent = (
+                  <a>
+                    {typeof item.icon === "string" ? <Icon className="icon" icon={item.icon} /> : item.icon}
+                    {open && (
+                      <div className="menu-inner">
+                        {item.title}
+                        {item.description && <span>{item.description}</span>}
+                      </div>
+                    )}
+                  </a>
+                );
+
                 return (
                   <li
                     onClick={(event) => {
@@ -393,15 +408,13 @@ function InternalSidebarCard({
                     key={index}
                     className={item.active ? "active" : "inactive"}
                   >
-                    <a>
-                      {typeof item.icon === "string" ? <Icon className="icon" icon={item.icon} /> : item.icon}
-                      {open && (
-                        <div className="menu-inner">
-                          {item.title}
-                          {item.description && <span>{item.description}</span>}
-                        </div>
-                      )}
-                    </a>
+                    {tooltipsWhenClosed && !open ? (
+                      <Tooltip title={item.title} placement="right" offsetX={-16}>
+                        {innerItemContent}
+                      </Tooltip>
+                    ) : (
+                      innerItemContent
+                    )}
                   </li>
                 );
               })}

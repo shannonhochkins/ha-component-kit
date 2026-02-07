@@ -283,6 +283,28 @@ export const SidebarExample: SidebarStory = {
   },
 };
 
+export const SidebarTooltipsWhenClosedExample: SidebarStory = {
+  render: Template,
+  args: {
+    menuItems: [
+      {
+        title: "Air Conditioner",
+        description: "On - currently 23°",
+        icon: "mdi:fan",
+        active: false,
+        onClick() {
+          console.info("do something on click!");
+        },
+      },
+    ],
+    weatherCardProps: {
+      entity: "weather.entity",
+      includeForecast: true,
+    },
+    tooltipsWhenClosed: true,
+  },
+};
+
 export const CustomMenuItemsExample: SidebarStory = {
   render: TemplateMenuItems,
   args: {
