@@ -62,24 +62,24 @@
   "funding": "https://github.com/shannonhochkins/ha-component-kit?sponsor=1",
   "scripts": {
     "dev": "vite",
-    "prebuild": "rm -rf ./dist",
+    "prebuild": "rimraf ./dist",
     "postbuild": "npm run prettier",
     "build": "npm run sync-locales && npm run sync-ha-user-types && npm run build:sync-script-cli && npm run build:sync-ha-types && npm run build:core",
-    "build:core": "NODE_ENV=production vite build",
-    "build:sync-script": "NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build",
+    "build:core": "cross-env NODE_ENV=production vite build",
+    "build:sync-script": "cross-env NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build",
     "build:sync-script-cli": "tsup",
     "build:sync-ha-types": "npx tsx ./scripts/sync-ha-types/index.ts",
-    "watch:build": "NODE_ENV=production vite build --watch",
-    "watch:build:sync-script": "NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build --watch",
+    "watch:build": "cross-env NODE_ENV=production vite build --watch",
+    "watch:build:sync-script": "cross-env NODE_ENV=production vite --config ./scripts/sync-user-types/vite-node.config.ts build --watch",
     "dev:test:sync-script": "npm run build:sync-script && ts-node ./scripts/sync-user-types/test.ts",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
-    "test": "NODE_ENV=test jest --rootDir=src",
+    "test": "cross-env NODE_ENV=test jest --rootDir=src",
     "prerelease": "npm run build",
     "release": "npm publish",
     "release:canary": "npm run build && npm publish --tag canary",
     "sync-ha-user-types": "npm run build:sync-script && node ./sync-ha-user-types.cjs",
     "sync-locales": "npx tsx ./scripts/sync-locales/index.ts",
-    "clean": "rm -rf node_modules dist ./scripts/sync-ha-types/.ha-repo-cache"
+    "clean": "rimraf node_modules dist ./scripts/sync-ha-types/.ha-repo-cache"
   },
   "tsup": {
     "entry": [
@@ -109,7 +109,9 @@
   "devDependencies": {
     "@liuli-util/vite-plugin-node": "^0.9.0",
     "@types/ws": "^8.5.5",
+    "cross-env": "^7.0.3",
     "prettier": "^3.4.2",
+    "rimraf": "^6.1.2",
     "rollup-plugin-node-externals": "^7.1.2",
     "simple-git": "^3.24.0",
     "ts-morph": "^22.0.0",
