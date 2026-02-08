@@ -332,7 +332,13 @@ function InternalButtonCard<E extends EntityName>({
                     (on ? (domain === "light" ? (entity?.custom?.rgbaColor ?? "var(--ha-A400)") : "var(--ha-A400)") : "var(--ha-S400)"),
                   color:
                     fabProps?.style?.color ??
-                    (entity ? (on ? entity.custom.rgbColor : "var(--ha-S500-contrast)") : on ? "var(--ha-A400)" : "var(--ha-S500-contrast)"),
+                    (entity
+                      ? on
+                        ? entity.custom.rgbColor
+                        : "var(--ha-S500-contrast)"
+                      : on
+                        ? "var(--ha-A400)"
+                        : "var(--ha-S500-contrast)"),
                 }}
               >
                 {iconNode ?? iconElement ?? entityIcon ?? domainIcon}
