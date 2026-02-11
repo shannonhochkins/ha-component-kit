@@ -140,7 +140,6 @@ const LayoutBetween = styled.div`
   flex-direction: row;
   gap: 10px;
   width: 100%;
-  margin-bottom: 20px;
   &.vertical {
     flex-direction: column;
     height: 100%;
@@ -319,7 +318,16 @@ function InternalButtonCard<E extends EntityName>({
     >
       <Contents className={`contents ${hasFeatures ? "has-features" : ""}`}>
         {hasHeaderContent && (
-          <LayoutBetween className={`layout-between ${layoutType === "slim-vertical" ? "vertical" : ""}`}>
+          <LayoutBetween
+            className={`layout-between ${layoutType === "slim-vertical" ? "vertical" : ""}`}
+            style={
+              isDefaultLayout || children
+                ? {
+                  marginBottom: "20px",
+                }
+                : undefined
+            }
+          >
             {!hideIcon && (
               <Fab
                 brightness={(on && entity?.custom.brightness) || "brightness(100%)"}
