@@ -86,11 +86,10 @@ const ToggleState = styled.div<ToggleProps>`
   height: 16px;
   position: absolute;
   top: 2px;
-  left: 0;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: left, transform;
-  left: ${(props) => (props.active ? "100%" : "0px")};
+  left: ${(props) => (props.active ? "100%" : 0)};
   transform: ${(props) => (props.active ? "translate3d(calc(-100% - 2px), 0, 0)" : "translate3d(calc(0% + 2px), 0, 0)")};
 `;
 
@@ -119,7 +118,7 @@ const Fab = styled.div<
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
   ${(props) =>
     props.brightness &&
     `
