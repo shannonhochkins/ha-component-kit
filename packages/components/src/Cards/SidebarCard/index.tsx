@@ -276,7 +276,7 @@ function InternalSidebarCard({
   },
   startOpen = true,
   collapsible = true,
-  tooltipsWhenClosed = false,
+  tooltipsWhenClosed = true,
   menuItems = [],
   children,
   autoIncludeRoutes = true,
