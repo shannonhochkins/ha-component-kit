@@ -84,13 +84,17 @@ const TooltipSpan = styled.span<Pick<TooltipProps, "placement">>`
 export interface TooltipProps extends Omit<React.ComponentPropsWithRef<"div">, "title"> {
   /** the placement of the tooltip @default 'top' */
   placement?: "top" | "right" | "bottom" | "left";
+  /** the X-axis offset of the tooltip @default 0 */
+  offsetX?: number;
+  /** the Y-axis offset of the tooltip @default 0 */
+  offsetY?: number;
   /** the title of the tooltip */
   title?: React.ReactNode | null;
   /** the children of the tooltip */
   children: React.ReactNode;
 }
 
-function InternalTooltip({ placement = "top", title = null, children, ref, ...rest }: TooltipProps) {
+function InternalTooltip({ placement = "top", offsetX = 0, offsetY = 0, title = null, children, ref, ...rest }: TooltipProps) {
   const tooltipRef = useRef<HTMLSpanElement | null>(null);
   const childRef = useRef<HTMLDivElement | null>(null);
   const portalRoot = useHass((store) => store.portalRoot);
@@ -122,6 +126,8 @@ function InternalTooltip({ placement = "top", title = null, children, ref, ...re
           left = childRect.left;
           break;
       }
+      top = top + offsetY;
+      left = left + offsetX;
       el.style.top = `${top}px`;
       el.style.left = `${left}px`;
       // to ensure animations play out, we need to update these values after the next tick
@@ -130,7 +136,7 @@ function InternalTooltip({ placement = "top", title = null, children, ref, ...re
         el.style.visibility = "visible";
       }, 0);
     },
-    [placement],
+    [placement, offsetX, offsetY],
   );
 
   const handleMouseEnter = useCallback(() => {
