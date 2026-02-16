@@ -86,11 +86,10 @@ const ToggleState = styled.div<ToggleProps>`
   height: 16px;
   position: absolute;
   top: 2px;
-  left: 0;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
   transition: var(--ha-transition-duration) var(--ha-easing);
   transition-property: left, transform;
-  left: ${(props) => (props.active ? "100%" : "0px")};
+  left: ${(props) => (props.active ? "100%" : 0)};
   transform: ${(props) => (props.active ? "translate3d(calc(-100% - 2px), 0, 0)" : "translate3d(calc(0% + 2px), 0, 0)")};
 `;
 
@@ -119,7 +118,7 @@ const Fab = styled.div<
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
   ${(props) =>
     props.brightness &&
     `
@@ -151,7 +150,6 @@ const Footer = styled.div`
   align-items: flex-start;
   justify-content: flex-start;
   flex-direction: column;
-  margin-top: 20px;
   width: 100%;
 `;
 
@@ -293,6 +291,9 @@ function InternalButtonCard<E extends EntityName>({
     }
     return main || state;
   }
+
+  const hasHeaderContent = !hideIcon || (isDefaultLayout && !hideToggle) || isSlimLayout;
+
   return (
     <StyledButtonCard
       key={key}
@@ -315,44 +316,61 @@ function InternalButtonCard<E extends EntityName>({
       {...rest}
     >
       <Contents className={`contents ${hasFeatures ? "has-features" : ""}`}>
-        <LayoutBetween className={`layout-between ${layoutType === "slim-vertical" ? "vertical" : ""}`}>
-          {!hideIcon && (
-            <Fab
-              brightness={(on && entity?.custom.brightness) || "brightness(100%)"}
-              {...fabProps}
-              className={`fab-card-inner icon ${fabProps?.className} ${fabProps?.style ? "custom" : ""}`}
-              style={{
-                ...fabProps?.style,
-                backgroundColor:
-                  fabProps?.style?.backgroundColor ??
-                  (on ? (domain === "light" ? (entity?.custom?.rgbaColor ?? "var(--ha-A400)") : "var(--ha-A400)") : "var(--ha-S400)"),
-                color:
-                  fabProps?.style?.color ??
-                  (entity ? (on ? entity.custom.rgbColor : "var(--ha-S500-contrast)") : on ? "var(--ha-A400)" : "var(--ha-S500-contrast)"),
-              }}
-            >
-              {iconNode ?? iconElement ?? entityIcon ?? domainIcon}
-            </Fab>
-          )}
-          {isDefaultLayout && !hideToggle && (
-            <Toggle active={on} className="toggle">
-              {!isUnavailable && <ToggleState active={on} className="toggle-state" />}
-            </Toggle>
-          )}
-          {isSlimLayout && (
-            <Column fullWidth alignItems={layoutType === "slim-vertical" ? "center" : "flex-start"}>
-              {title && <Title className="title">{title}</Title>}
-              {!hideDetails && (
-                <Description className={`description ${layoutType ?? ""}`}>{buildDescriptionContent(description, stateNode)}</Description>
-              )}
-              {entity && !hideLastUpdated && (
-                <Description className={`description secondary ${layoutType === "slim-vertical" ? "center" : ""}`}>
-                  {localize("last_updated")}: {entity.custom.relativeTime}
-                </Description>
-              )}
-            </Column>
-          )}
-        </LayoutBetween>
+        {hasHeaderContent && (
+          <LayoutBetween
+            className={`layout-between ${layoutType === "slim-vertical" ? "vertical" : ""}`}
+            style={
+              isDefaultLayout || children
+                ? {
+                  marginBottom: "20px",
+                }
+                : undefined
+            }
+          >
+            {!hideIcon && (
+              <Fab
+                brightness={(on && entity?.custom.brightness) || "brightness(100%)"}
+                {...fabProps}
+                className={`fab-card-inner icon ${fabProps?.className} ${fabProps?.style ? "custom" : ""}`}
+                style={{
+                  ...fabProps?.style,
+                  backgroundColor:
+                    fabProps?.style?.backgroundColor ??
+                    (on ? (domain === "light" ? (entity?.custom?.rgbaColor ?? "var(--ha-A400)") : "var(--ha-A400)") : "var(--ha-S400)"),
+                  color:
+                    fabProps?.style?.color ??
+                    (entity
+                      ? on
+                        ? entity.custom.rgbColor
+                        : "var(--ha-S500-contrast)"
+                      : on
+                        ? "var(--ha-A400)"
+                        : "var(--ha-S500-contrast)"),
+                }}
+              >
+                {iconNode ?? iconElement ?? entityIcon ?? domainIcon}
+              </Fab>
+            )}
+            {isDefaultLayout && !hideToggle && (
+              <Toggle active={on} className="toggle">
+                {!isUnavailable && <ToggleState active={on} className="toggle-state" />}
+              </Toggle>
+            )}
+            {isSlimLayout && (
+              <Column fullWidth alignItems={layoutType === "slim-vertical" ? "center" : "flex-start"}>
+                {title && <Title className="title">{title}</Title>}
+                {!hideDetails && (
+                  <Description className={`description ${layoutType ?? ""}`}>{buildDescriptionContent(description, stateNode)}</Description>
+                )}
+                {entity && !hideLastUpdated && (
+                  <Description className={`description secondary ${layoutType === "slim-vertical" ? "center" : ""}`}>
+                    {localize("last_updated")}: {entity.custom.relativeTime}
+                  </Description>
+                )}
+              </Column>
+            )}
+          </LayoutBetween>
+        )}
         {isDefaultLayout && (
           <Footer className="footer">
             {title && <Title className="title">{title}</Title>}
