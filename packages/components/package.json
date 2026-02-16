@@ -54,15 +54,15 @@
   "funding": "https://github.com/shannonhochkins/ha-component-kit?sponsor=1",
   "scripts": {
     "dev": "vite",
-    "prebuild": "rm -rf ./dist",
-    "build": "NODE_ENV=production vite build",
+    "prebuild": "rimraf ./dist",
+    "build": "cross-env NODE_ENV=production vite build",
     "postbuild": "npm run prettier",
-    "watch:build": "NODE_ENV=production vite build --watch",
+    "watch:build": "cross-env NODE_ENV=production vite build --watch",
     "prettier": "prettier \"src/**/*.{ts,tsx}\" --write && git status",
     "prerelease": "npm run build",
     "release": "npm publish",
     "release:canary": "npm run build && npm publish --tag canary",
-    "test": "NODE_ENV=test jest --rootDir=src",
+    "test": "cross-env NODE_ENV=test jest --rootDir=src",
     "clean": "rm -rf node_modules dist"
   },
   "peerDependencies": {
