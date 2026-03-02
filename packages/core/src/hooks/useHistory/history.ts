@@ -358,7 +358,7 @@ export const computeHistory = (
       unit = currentState?.attributes.unit_of_measurement || numericStateFromHistory?.a.unit_of_measurement || BLANK_UNIT;
     } else {
       unit = {
-        zone: localize("unit"),
+        zone: localize("people_in_zone"),
         climate: config?.unit_system.temperature,
         humidifier: "%",
         water_heater: config?.unit_system.temperature,
