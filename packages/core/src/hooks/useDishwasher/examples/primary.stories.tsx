@@ -73,6 +73,15 @@ function Result() {
   return (
     <Column fullWidth alignItems="flex-start" gap="1rem">
       <p>Mock Home Assistant data. Changing the example never operates a dishwasher.</p>
+      <p role="status">
+        {dishwasher.needsEmptying === true
+          ? "Finished — awaiting emptying"
+          : dishwasher.needsEmptying === false
+            ? dishwasher.cycle.doorAccessStatus === "cycle-active"
+              ? "Cycle active"
+              : "Emptying reminder cleared — door opened after finish"
+            : "Emptying status unknown"}
+      </p>
       {dishwasher.history.error && <p role="alert">{dishwasher.history.error.message}</p>}
       <pre style={{ maxWidth: "100%", overflow: "auto" }} aria-label="Dishwasher hook output">
         {JSON.stringify(
@@ -80,6 +89,7 @@ function Result() {
             availability: dishwasher.availability,
             operationState: dishwasher.operationState,
             doorState: dishwasher.doorState,
+            needsEmptying: dishwasher.needsEmptying,
             progressPercent: dishwasher.progressPercent,
             estimatedFinishAt: dishwasher.estimatedFinishAt,
             programs: dishwasher.programs,

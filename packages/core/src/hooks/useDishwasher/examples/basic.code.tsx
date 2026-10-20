@@ -26,8 +26,16 @@ export function Dishwasher() {
       <dd>{dishwasher.operationState}</dd>
       <dt>Door</dt>
       <dd>{dishwasher.doorState}</dd>
-      <dt>Cycle access</dt>
-      <dd>{dishwasher.cycle.doorAccessStatus}</dd>
+      <dt>Emptying reminder</dt>
+      <dd>
+        {dishwasher.needsEmptying === true
+          ? "Finished — awaiting emptying"
+          : dishwasher.needsEmptying === false
+            ? dishwasher.cycle.doorAccessStatus === "cycle-active"
+              ? "Cycle active"
+              : "Reminder cleared — door opened after finish"
+            : "Unknown"}
+      </dd>
       {dishwasher.progressPercent !== null && (
         <>
           <dt>Progress</dt>

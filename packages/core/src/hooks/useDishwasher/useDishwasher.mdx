@@ -14,7 +14,17 @@ import {
 
 # useDishwasher
 
-`useDishwasher(entities, options?)` combines explicitly selected Home Assistant entities, their native typed services, and streaming Recorder history. It provides operation/door state, reported cycle metrics, programs, remote permissions and evidence of door access after a completed cycle. It sends no commands on mount or state changes.
+`useDishwasher(entities, options?)` combines explicitly selected Home Assistant entities, their native typed services, and streaming Recorder history. It provides an emptying reminder, operation/door state, reported cycle metrics, programs and remote permissions. It sends no commands on mount or state changes.
+
+## Finished but not emptied
+
+Bind both `operationState` and `door`. `needsEmptying` becomes `true` when Recorder shows running → finished and the door has stayed closed. It stays true when operation returns to ready and after browser refresh. Opening the door after completion clears the reminder; closing it again does not bring it back.
+
+- `true`: finished — awaiting emptying.
+- `false`: a post-completion door opening cleared the reminder, or a new cycle is active.
+- `null`: the required history or source readings are missing, loading, unavailable or uncertain.
+
+Door opening is the proxy for emptying, including on appliances that open automatically. Record both entities in HA Recorder and choose a lookback covering the cycle and subsequent opening (default seven days). The hook restores this inference from Recorder without browser storage.
 
 ### Example Usage
 
@@ -72,7 +82,7 @@ A completion requires an observed running → finished sequence. Pauses preserve
 - `door-opened`: a recorded closed/locked → open transition after completion, retained when the door closes again.
 - `unknown`: insufficient, loading, disabled or failed history, uncertain intervals, or unavailable inputs.
 
-A door opening proves access, **not that dishes were unloaded**. Automatic door opening can produce the same evidence. No `isEmpty`/`isFull` claim is made. Record both entities in HA Recorder and choose a lookback covering the cycle and subsequent access (default seven days). Purged/excluded data cannot be recovered by this hook. A current closed door alone is insufficient. Live entity updates bridge streaming latency but never invent a historical baseline. Browser refresh restores evidence from Recorder; the hook needs no browser storage or continuously open dashboard.
+`needsEmptying` derives from this status: `awaiting-door-opening` gives true, `door-opened` or `cycle-active` gives false, and `unknown` gives null. Purged/excluded data cannot be recovered by this hook. A current closed door alone is insufficient. Live entity updates bridge streaming latency but never invent a historical baseline.
 
 ## Commands
 

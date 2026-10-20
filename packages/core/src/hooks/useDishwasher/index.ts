@@ -28,7 +28,7 @@ import {
 } from "./model";
 export type * from "./types";
 
-/** Reported dishwasher readings and history-backed evidence. No returned value proves dishes were unloaded. */
+/** Reported dishwasher readings, cycle history and an inferred emptying reminder. */
 export interface UseDishwasherReturn {
   /** Expected or resolved HA registry device ID; null when neither supplied nor discoverable from the operation entity. */
   deviceId: string | null;
@@ -44,6 +44,8 @@ export interface UseDishwasherReturn {
   isPaused: boolean;
   /** True only when the appliance is available and currently reports finished. Does not establish a historical completion time or unloading. */
   isFinished: boolean;
+  /** Inferred emptying reminder: true after a recorded running → finished cycle with no subsequent door opening, even once operation returns to ready. False after a post-completion door opening or while a new cycle is active; null when evidence is insufficient or unavailable. Door opening is the proxy for emptying. */
+  needsEmptying: boolean | null;
   /** Reported active-cycle progress from 0 to 100 percent; null when inactive, missing, unavailable, out of range or not measured in %. */
   progressPercent: number | null;
   /** Reported estimated completion time as Unix milliseconds (ms since 1970-01-01T00:00:00Z). Null when inactive or the timezone-qualified source timestamp is unusable. Never a countdown or proof of completion. */
@@ -182,6 +184,7 @@ export function useDishwasher(bindings: DishwasherEntities, options: UseDishwash
     isRunning: isAvailable && state === "running",
     isPaused: isAvailable && state === "paused",
     isFinished: isAvailable && state === "finished",
+    needsEmptying: cycle.doorAccessStatus === "unknown" ? null : cycle.doorAccessStatus === "awaiting-door-opening",
     progressPercent:
       active &&
       progress.entity?.attributes.unit_of_measurement === "%" &&

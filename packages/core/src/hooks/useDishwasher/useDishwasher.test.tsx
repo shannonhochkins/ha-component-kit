@@ -79,16 +79,71 @@ it("composes two native history streams, derives completion and responds to live
   const { result } = renderHook(() => useDishwasher(bindings));
   expect(result.current.history.loading).toBe(true);
   expect(result.current.cycle.doorAccessStatus).toBe("unknown");
+  expect(result.current.needsEmptying).toBeNull();
   expect(streams.size).toBe(2);
   emit(bindings.operationState, samples([0, "ready"], [10, "run"], [100, "finished"]));
   emit(bindings.door!, samples([0, "closed"]));
   await waitFor(() => expect(result.current.cycle.doorAccessStatus).toBe("awaiting-door-opening"));
   expect(result.current.cycle.completedAt).toBe(base + 100 * 60000);
+  expect(result.current.needsEmptying).toBe(true);
   act(() =>
     useHass.setState(({ entities }) => ({ entities: { ...entities, "sensor.wash_door": state("sensor.wash_door", "open", {}, 125) } })),
   );
   expect(result.current.cycle.doorAccessStatus).toBe("door-opened");
+  expect(result.current.needsEmptying).toBe(false);
   expect(result.current.issues).toEqual([]);
+});
+it("restores the emptying reminder from Recorder after remount, including when operation has returned to ready", async () => {
+  const recordedOperation = samples([0, "ready"], [10, "run"], [100, "finished"], [110, "ready"]);
+  act(() => useHass.setState(({ entities }) => ({ entities: { ...entities, "sensor.wash_state": state("sensor.wash_state", "ready") } })));
+  const first = renderHook(() => useDishwasher(bindings));
+  emit(bindings.operationState, recordedOperation);
+  emit(bindings.door!, samples([0, "closed"]));
+  await waitFor(() => expect(first.result.current.needsEmptying).toBe(true));
+  expect(first.result.current.isFinished).toBe(false);
+  first.unmount();
+
+  const restored = renderHook(() => useDishwasher(bindings));
+  expect(restored.result.current.needsEmptying).toBeNull();
+  emit(bindings.operationState, recordedOperation);
+  emit(bindings.door!, samples([0, "closed"]));
+  await waitFor(() => expect(restored.result.current.needsEmptying).toBe(true));
+
+  // Recorder retains the opening even when the current door has already closed again.
+  act(() =>
+    useHass.setState(({ entities }) => ({ entities: { ...entities, "sensor.wash_door": state("sensor.wash_door", "closed", {}, 140) } })),
+  );
+  emit(bindings.door!, samples([130, "open"], [140, "closed"]));
+  await waitFor(() => expect(restored.result.current.needsEmptying).toBe(false));
+  expect(restored.result.current.cycle.doorOpenedAt).toBe(base + 130 * 60000);
+  restored.unmount();
+
+  const cleared = renderHook(() => useDishwasher(bindings));
+  emit(bindings.operationState, recordedOperation);
+  emit(bindings.door!, samples([0, "closed"], [130, "open"], [140, "closed"]));
+  await waitFor(() => expect(cleared.result.current.needsEmptying).toBe(false));
+});
+it("supersedes a previous emptying reminder when a new cycle starts", async () => {
+  const { result } = renderHook(() => useDishwasher(bindings));
+  emit(bindings.operationState, samples([0, "ready"], [10, "run"], [100, "finished"]));
+  emit(bindings.door!, samples([0, "closed"]));
+  await waitFor(() => expect(result.current.needsEmptying).toBe(true));
+  act(() =>
+    useHass.setState(({ entities }) => ({ entities: { ...entities, "sensor.wash_state": state("sensor.wash_state", "run", {}, 130) } })),
+  );
+  expect(result.current.cycle.doorAccessStatus).toBe("cycle-active");
+  expect(result.current.needsEmptying).toBe(false);
+});
+it("keeps the reminder unknown without door history and suppresses known evidence on connection loss", async () => {
+  const { result } = renderHook(() => useDishwasher(bindings));
+  emit(bindings.operationState, samples([0, "ready"], [10, "run"], [100, "finished"]));
+  emit(bindings.door!, []);
+  await waitFor(() => expect(result.current.history.loading).toBe(false));
+  expect(result.current.needsEmptying).toBeNull();
+  emit(bindings.door!, samples([0, "closed"]));
+  await waitFor(() => expect(result.current.needsEmptying).toBe(true));
+  act(() => useHass.setState({ connectionStatus: "disconnected" }));
+  expect(result.current.needsEmptying).toBeNull();
 });
 it("retains native generated service types and acknowledges only after transport completion", async () => {
   const { result } = renderHook(() => useDishwasher(bindings, { history: { disable: true } }));
@@ -188,6 +243,7 @@ it("propagates Recorder failures and recovers without leaking evidence or subscr
   const { result, rerender, unmount } = renderHook(({ value }) => useDishwasher(value), { initialProps: { value: bindings } });
   await waitFor(() => expect(result.current.history.error?.message).toBe("Recorder denied"));
   expect(result.current.cycle.doorAccessStatus).toBe("unknown");
+  expect(result.current.needsEmptying).toBeNull();
   fail.mockReset();
   fail.mockImplementation(subscribe as never);
   const other = { operationState: "sensor.other_state", door: "binary_sensor.other_door" } as const;

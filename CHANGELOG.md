@@ -2,10 +2,10 @@
 
 ### @hakit/core
 
-- FEATURE - Introducing `useDishwasher` to combine explicitly bound operation, door, program and capability entities, with native typed services and reported cycle metrics. Recorder history exposes completed cycles and subsequent door access; uncertain history stays unknown and door access does not claim that dishes were unloaded.
+- FEATURE - Introducing `useDishwasher` to combine explicitly bound operation, door, program and capability entities, with native typed services and reported cycle metrics. Its `needsEmptying` reminder combines recorded cycle completion with door history, persists through ready state and refresh, and clears after a subsequent door opening. Uncertain evidence returns null.
 - FEATURE - Expose `entitiesRegistry` through `useHass` and `useRegistryData`, reusing the existing `subscribeEntityRegistry` subscription for the full registry when authorized, with display-registry fallback. Add `isEntityRegistryEntryDisabled` through `@hakit/core/registry`.
 - BUGFIX - Ordinary service calls now return an acknowledgement promise without requesting service response data. Explicit `returnResponse: true` retains typed responses; disconnected calls and transport failures reject. Applies to native helpers, `useService` and entity services.
-- BUGFIX - `useHistory` now exposes subscription errors and releases subscriptions that finish opening after unmount.
+- BUGFIX - `useHistory` now exposes subscription errors, releases subscriptions that finish opening after unmount and handles new events after an initially empty recording.
 - BUGFIX - Correct CommonJS package metadata and external default-import interoperability so the published require entry loads correctly in browser environments.
 - IMPROVEMENT - Document `useDishwasher` return fields with JSDoc, including units, null values and source availability. Use `operationState`, `estimatedFinishAt` (Unix milliseconds) and `cycle.doorAccessStatus` to make their meanings explicit.
 - IMPROVEMENT - Add typed input, options and return-value tables and mocked dishwasher examples to the demo documentation; update history, registry and service-call examples for the native contracts.
