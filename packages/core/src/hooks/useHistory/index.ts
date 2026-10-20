@@ -64,7 +64,7 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
       significantChangesOnly: options?.significantChangesOnly,
       minimalResponse: options?.minimalResponse,
       hoursToShow: options?.hoursToShow,
-      limits: options?.limits,
+      limits: { min: options?.limits?.min, max: options?.limits?.max },
       forceNumeric: options?.forceNumeric,
       splitDeviceClasses: options?.splitDeviceClasses,
     };
@@ -73,7 +73,8 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
     options?.significantChangesOnly,
     options?.minimalResponse,
     options?.hoursToShow,
-    options?.limits,
+    options?.limits?.min,
+    options?.limits?.max,
     options?.forceNumeric,
     options?.splitDeviceClasses,
   ]);
