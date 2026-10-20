@@ -26,3 +26,7 @@ There's detailed [documentation](https://shannonhochkins.github.io/ha-component-
 
 ### Issues / Discusssions
 If you have any issues getting this going, found any bugs or want to discuss anything, please feel free to open an issue on the [github repository](https://github.com/shannonhochkins/ha-component-kit/issues), or open up a discussion on the [github discussions](https://github.com/shannonhochkins/ha-component-kit/discussions).
+
+### Dishwasher state and cycle history
+
+`useDishwasher` combines explicit operation, door, program and optional capability entities with native `useEntity` services and `useHistory`. It exposes reported metrics and door-access evidence after completed cycles without inferring that dishes were unloaded. See [the hook reference](src/hooks/useDishwasher/useDishwasher.mdx) for bindings, state overrides, Recorder requirements and command semantics.

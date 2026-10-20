@@ -1,0 +1,86 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="core/hooks/useDishwasher" />
+
+# useDishwasher
+
+`useDishwasher(entities, options?)` combines explicitly selected Home Assistant entities, their native typed services, and streaming Recorder history. It provides operation/door state, reported cycle metrics, programs, remote permissions and evidence of door access after a completed cycle. It sends no commands on mount or state changes.
+
+```tsx
+import { useDishwasher } from "@hakit/core";
+
+const dishwasher = useDishwasher(
+  {
+    operationState: "sensor.dishwasher_operation_state",
+    door: "sensor.dishwasher_door",
+    selectedProgram: "select.dishwasher_selected_program",
+    activeProgram: "select.dishwasher_active_program",
+    stop: "button.dishwasher_stop_program",
+    progress: "sensor.dishwasher_program_progress",
+    finishTime: "sensor.dishwasher_finish_time",
+    remoteStart: "binary_sensor.dishwasher_remote_start",
+  },
+  {
+    history: { hoursToShow: 168 },
+  },
+);
+
+// Render the actual raw options; do not guess supported programs.
+const options = dishwasher.programs.selectedOptions;
+// A host application's explicitly confirmed, revalidated event handler can use:
+// await dishwasher.entities.selectedProgram?.service.selectOption({
+//   serviceData: { option: options[0] },
+// });
+```
+
+The names above are examples, not entity discovery. Use the actual entity IDs exposed by the installation; generated `EntityName` augmentation validates their domains. There is no guessed suffix, device substitution or bundled house configuration. `deviceId` can constrain bindings to an expected registry device. Otherwise the operation entity's registry device is used when available. Missing, disabled, mismatched or unverifiable constrained bindings are reported in `issues` and excluded. Explicit entities without registry membership remain readable when no device constraint can be established.
+
+## Entity roles
+
+Only `operationState` is required. Omit unsupported roles.
+
+| Role                                           | Entity domain         | Use                                                       |
+| ---------------------------------------------- | --------------------- | --------------------------------------------------------- |
+| `operationState`                               | sensor, input_select  | Actual operating state                                    |
+| `door`                                         | sensor, binary_sensor | Closed, locked or open; cycle-access history              |
+| `selectedProgram`, `activeProgram`             | select                | Actual values/options and native services                 |
+| `start`, `stop`                                | button                | Explicit integration-provided commands                    |
+| `power`                                        | switch                | Reported power and native services; never cycle inference |
+| `remoteControl`, `remoteStart`, `connectivity` | binary_sensor         | Reported permissions/connectivity                         |
+| `progress`, `finishTime`, `remainingTime`      | sensor                | Reported percentage, absolute finish, duration            |
+| `saltLow`, `rinseAidLow`                       | binary_sensor         | `on` means replenishment needed                           |
+
+## Returned data
+
+- `availability`: available, missing, unknown, unavailable or disconnected. Cached readings do not make an offline dishwasher available.
+- `state`, `doorState`, `isRunning`, `isPaused`, `isFinished`: normalized states; unknown/unavailable remain distinct.
+- `programs`: `selected`, `active`, `selectedOptions`, `activeOptions`. The two option lists remain independent. Unknown active-program state can legitimately have usable options.
+- `progressPercent`, `estimatedFinish`, `remainingSeconds`: active-cycle measurements, otherwise null. Progress requires `%` and 0–100; finish requires an absolute timestamp with timezone and is Unix milliseconds; remaining duration requires `s`, `min` or `h`. No animation, power reading or elapsed browser time creates an estimate.
+- `remoteControlEnabled`, `remoteStartEnabled`, `saltLow`, `rinseAidLow`: booleans or null for missing/unknown/unavailable values.
+- `entities`: the bound native `useEntity` results, retaining generated `.service` types and `.history`. `deviceId` and `issues` expose binding resolution.
+- `history`: enabled, requested hours, loading and native Recorder error. Disabled/unavailable/failed history does not imply an unloaded dishwasher.
+
+Defaults normalize HA Home Connect states: inactive, ready, delayedstart, run, pause, actionrequired, finished, error and aborting. Door defaults are open/on, closed/off and locked. Other integrations can supply `operationStates` and `doorStates` maps, merged with defaults. HA unknown/unavailable cannot be overridden. Labels/friendly names and watts are never interpreted as capabilities.
+
+## Cycle and unloading evidence
+
+`cycle` provides `startedAt`, `completedAt`, `durationMs`, `doorOpenedAt`, `doorOpenedSinceCompletion` and `unloadStatus`. All times are Unix milliseconds.
+
+A completion requires an observed running → finished sequence. Pauses preserve that sequence; a fault, abort, unavailable gap or ready-without-finished transition does not complete it. A history window already beginning in finished state proves no completion time. Duration/start are null when only an already-running baseline was recorded. A new active cycle supersedes old unloading evidence.
+
+`unloadStatus` is:
+
+- `cycle-active`: currently running, paused, scheduled, requiring action or aborting.
+- `awaiting-door-opening`: a completed cycle and continuously known closed/locked door history, with no observed subsequent opening.
+- `door-opened`: a recorded closed/locked → open transition after completion, retained when the door closes again.
+- `unknown`: insufficient, loading, disabled or failed history, uncertain intervals, or unavailable inputs.
+
+A door opening proves access, **not that dishes were unloaded**. Automatic door opening can produce the same evidence. No `isEmpty`/`isFull` claim is made. Record both entities in HA Recorder and choose a lookback covering the cycle and subsequent access (default seven days). Purged/excluded data cannot be recovered by this hook. A current closed door alone is insufficient. Live entity updates bridge streaming latency but never invent a historical baseline. Browser refresh restores evidence from Recorder; the hook needs no browser storage or continuously open dashboard.
+
+## Commands
+
+The hook does not manufacture generic Start/Stop actions: service semantics vary by integration. For example, HA Home Connect's active-program select can **start a program**. A selected-program select has a different purpose. Native `.service` methods retain generated payload/response types and resolve only after acknowledgement; failures reject. Acknowledgement never changes reported operation state optimistically.
+
+Before an explicitly confirmed command, the host UI must revalidate current connection, entity/device identity, availability, advertised option and the integration's door/power/remote-control/remote-start gates. Recheck with `useHass.getState()` at confirmation time rather than a stale render closure. This hook exposes facts and native services, not a universal appliance authorization policy. No retries, queues or automatic power writes are added.
+
+References: [HA Home Connect](https://www.home-assistant.io/integrations/home_connect/), [operation/door sensors](https://github.com/home-assistant/core/blob/dev/homeassistant/components/home_connect/sensor.py), [program select behavior](https://github.com/home-assistant/core/blob/dev/homeassistant/components/home_connect/select.py), [Recorder history stream](https://github.com/home-assistant/core/blob/dev/homeassistant/components/history/websocket_api.py).
