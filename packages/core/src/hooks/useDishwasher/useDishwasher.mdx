@@ -51,6 +51,8 @@ Only `operationState` is required. Omit unsupported roles.
 
 <ArgTypes of={DummyComponentHistory} />
 
+`estimatedFinishAt` is an absolute time in Unix milliseconds, suitable for `new Date(estimatedFinishAt).toLocaleString()`. `remainingSeconds` is a duration in seconds. Neither value is a browser countdown or proof that the cycle completed.
+
 Optional readings are null when missing or unusable. Active-cycle progress requires a reported percentage from 0–100; estimated finish is a timezone-qualified timestamp returned as Unix milliseconds; remaining duration requires `s`, `min` or `h`. Idle readings are suppressed. The selected and active program option lists remain independent.
 
 Defaults normalize HA Home Connect states: inactive, ready, delayedstart, run, pause, actionrequired, finished, error and aborting. Door defaults are open/on, closed/off and locked. Other integrations can supply `operationStates` and `doorStates` maps, merged with defaults. HA unknown/unavailable cannot be overridden. Labels/friendly names and watts are never interpreted as capabilities.
@@ -63,7 +65,7 @@ All cycle timestamps are Unix milliseconds.
 
 A completion requires an observed running → finished sequence. Pauses preserve that sequence; a fault, abort, unavailable gap or ready-without-finished transition does not complete it. A history window already beginning in finished state proves no completion time. Duration/start are null when only an already-running baseline was recorded. A new active cycle supersedes old unloading evidence.
 
-`unloadStatus` is:
+`doorAccessStatus` is:
 
 - `cycle-active`: currently running, paused, scheduled, requiring action or aborting.
 - `awaiting-door-opening`: a completed cycle and continuously known closed/locked door history, with no observed subsequent opening.

@@ -78,10 +78,10 @@ function Result() {
         {JSON.stringify(
           {
             availability: dishwasher.availability,
-            state: dishwasher.state,
+            operationState: dishwasher.operationState,
             doorState: dishwasher.doorState,
             progressPercent: dishwasher.progressPercent,
-            estimatedFinish: dishwasher.estimatedFinish,
+            estimatedFinishAt: dishwasher.estimatedFinishAt,
             programs: dishwasher.programs,
             remoteStartEnabled: dishwasher.remoteStartEnabled,
             cycle: dishwasher.cycle,

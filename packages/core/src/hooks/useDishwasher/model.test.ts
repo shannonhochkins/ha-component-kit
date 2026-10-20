@@ -37,22 +37,22 @@ it("reports a completed cycle with a continuously closed door, including its act
     durationMs: 90 * 60000,
     doorOpenedAt: null,
     doorOpenedSinceCompletion: false,
-    unloadStatus: "awaiting-door-opening",
+    doorAccessStatus: "awaiting-door-opening",
   });
 });
 it("retains an observed opening after the door closes again, without claiming unloading", () => {
   expect(cycle(undefined, history([0, "locked"], [110, "open"], [115, "closed"]))).toMatchObject({
     doorOpenedAt: time(110),
     doorOpenedSinceCompletion: true,
-    unloadStatus: "door-opened",
+    doorAccessStatus: "door-opened",
   });
 });
 it("does not confuse an opening before completion with access after completion", () => {
   expect(cycle(undefined, history([0, "closed"], [50, "open"], [60, "closed"])).doorOpenedSinceCompletion).toBe(false);
-  expect(cycle(undefined, history([0, "closed"], [90, "open"]), "finished", "open").unloadStatus).toBe("unknown");
+  expect(cycle(undefined, history([0, "closed"], [90, "open"]), "finished", "open").doorAccessStatus).toBe("unknown");
 });
 it("reports unknown with missing history, a window beginning finished, or a ready transition without finished", () => {
-  expect(cycle([], []).unloadStatus).toBe("unknown");
+  expect(cycle([], []).doorAccessStatus).toBe("unknown");
   expect(cycle(history([0, "finished"])).completedAt).toBeNull();
   expect(cycle(history([0, "run"], [100, "ready"]), undefined, "ready").completedAt).toBeNull();
   expect(cycle(undefined, []).doorOpenedSinceCompletion).toBeNull();
@@ -72,8 +72,8 @@ it("does not invent a start time from an already-running history baseline", () =
 });
 it("unknown/unavailable door intervals prevent negative claims, but later observed openings are useful evidence", () => {
   for (const gap of ["unknown", "unavailable"]) {
-    expect(cycle(undefined, history([0, "closed"], [105, gap], [110, "closed"])).unloadStatus).toBe("unknown");
-    expect(cycle(undefined, history([0, "closed"], [105, gap], [110, "closed"], [115, "open"]), "finished", "open").unloadStatus).toBe(
+    expect(cycle(undefined, history([0, "closed"], [105, gap], [110, "closed"])).doorAccessStatus).toBe("unknown");
+    expect(cycle(undefined, history([0, "closed"], [105, gap], [110, "closed"], [115, "open"]), "finished", "open").doorAccessStatus).toBe(
       "door-opened",
     );
   }
@@ -88,8 +88,8 @@ it("a second cycle replaces the prior cycle and a live running state supersedes 
     completedAt: time(100),
     doorOpenedSinceCompletion: false,
   });
-  expect(cycle(undefined, undefined, "run").unloadStatus).toBe("cycle-active");
-  expect(cycle(history([0, "run"], [50, "finished"], [60, "run"], [70, "ready"]), undefined, "ready").unloadStatus).toBe("unknown");
+  expect(cycle(undefined, undefined, "run").doorAccessStatus).toBe("cycle-active");
+  expect(cycle(history([0, "run"], [50, "finished"], [60, "run"], [70, "ready"]), undefined, "ready").doorAccessStatus).toBe("unknown");
 });
 it("bridges live entity updates arriving before the Recorder stream", () => {
   expect(cycle(history([0, "ready"], [10, "run"]))).toMatchObject({ completedAt: time(120), doorOpenedSinceCompletion: false });
@@ -105,7 +105,7 @@ it("ignores future/invalid history and exposes no evidence when disabled, loadin
       doorHistory: history([0, "closed"]),
       options: {},
       usable: false,
-    }).unloadStatus,
+    }).doorAccessStatus,
   ).toBe("unknown");
 });
 it("supports explicit raw state mappings while preserving HA unknown/unavailable", () => {

@@ -78,16 +78,16 @@ afterEach(() => {
 it("composes two native history streams, derives completion and responds to live door updates", async () => {
   const { result } = renderHook(() => useDishwasher(bindings));
   expect(result.current.history.loading).toBe(true);
-  expect(result.current.cycle.unloadStatus).toBe("unknown");
+  expect(result.current.cycle.doorAccessStatus).toBe("unknown");
   expect(streams.size).toBe(2);
   emit(bindings.operationState, samples([0, "ready"], [10, "run"], [100, "finished"]));
   emit(bindings.door!, samples([0, "closed"]));
-  await waitFor(() => expect(result.current.cycle.unloadStatus).toBe("awaiting-door-opening"));
+  await waitFor(() => expect(result.current.cycle.doorAccessStatus).toBe("awaiting-door-opening"));
   expect(result.current.cycle.completedAt).toBe(base + 100 * 60000);
   act(() =>
     useHass.setState(({ entities }) => ({ entities: { ...entities, "sensor.wash_door": state("sensor.wash_door", "open", {}, 125) } })),
   );
-  expect(result.current.cycle.unloadStatus).toBe("door-opened");
+  expect(result.current.cycle.doorAccessStatus).toBe("door-opened");
   expect(result.current.issues).toEqual([]);
 });
 it("retains native generated service types and acknowledges only after transport completion", async () => {
@@ -120,7 +120,7 @@ it("retains native generated service types and acknowledges only after transport
   expect(settled).toBe(true);
   send.mockRejectedValueOnce(new Error("Denied"));
   await expect(result.current.entities.stop!.service.press()).rejects.toThrow("Denied");
-  expect(result.current.state).toBe("finished");
+  expect(result.current.operationState).toBe("finished");
   expect(streams.size).toBe(0);
 });
 it("includes only explicitly bound, existing entities from the expected device", () => {
@@ -157,7 +157,7 @@ it("keeps unregistered explicit bindings readable, but rejects an unverified exp
 it("keeps reported active metrics separate from stale idle measurements and validates availability", () => {
   const { result } = renderHook(() => useDishwasher(bindings, { history: { disable: true } }));
   expect(result.current.progressPercent).toBeNull();
-  expect(result.current.estimatedFinish).toBeNull();
+  expect(result.current.estimatedFinishAt).toBeNull();
   act(() =>
     useHass.setState(({ entities }) => ({
       entities: {
@@ -170,7 +170,7 @@ it("keeps reported active metrics separate from stale idle measurements and vali
   expect(result.current.isRunning).toBe(true);
   expect(result.current.progressPercent).toBe(75);
   expect(result.current.remainingSeconds).toBe(1200);
-  expect(result.current.estimatedFinish).toBe(Date.parse("2026-10-20T03:00:00Z"));
+  expect(result.current.estimatedFinishAt).toBe(Date.parse("2026-10-20T03:00:00Z"));
   act(() =>
     useHass.setState(({ entities }) => ({
       entities: { ...entities, "binary_sensor.wash_connected": state("binary_sensor.wash_connected", "off") },
@@ -187,7 +187,7 @@ it("propagates Recorder failures and recovers without leaking evidence or subscr
   const fail = jest.spyOn(connection, "subscribeMessage").mockRejectedValueOnce(new Error("Recorder denied"));
   const { result, rerender, unmount } = renderHook(({ value }) => useDishwasher(value), { initialProps: { value: bindings } });
   await waitFor(() => expect(result.current.history.error?.message).toBe("Recorder denied"));
-  expect(result.current.cycle.unloadStatus).toBe("unknown");
+  expect(result.current.cycle.doorAccessStatus).toBe("unknown");
   fail.mockReset();
   fail.mockImplementation(subscribe as never);
   const other = { operationState: "sensor.other_state", door: "binary_sensor.other_door" } as const;

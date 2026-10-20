@@ -23,11 +23,11 @@ export function Dishwasher() {
   return (
     <dl>
       <dt>Operation</dt>
-      <dd>{dishwasher.state}</dd>
+      <dd>{dishwasher.operationState}</dd>
       <dt>Door</dt>
       <dd>{dishwasher.doorState}</dd>
       <dt>Cycle access</dt>
-      <dd>{dishwasher.cycle.unloadStatus}</dd>
+      <dd>{dishwasher.cycle.doorAccessStatus}</dd>
       {dishwasher.progressPercent !== null && (
         <>
           <dt>Progress</dt>

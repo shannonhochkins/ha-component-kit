@@ -7,6 +7,7 @@
 - BUGFIX - Ordinary service calls now return an acknowledgement promise without requesting service response data. Explicit `returnResponse: true` retains typed responses; disconnected calls and transport failures reject. Applies to native helpers, `useService` and entity services.
 - BUGFIX - `useHistory` now exposes subscription errors and releases subscriptions that finish opening after unmount.
 - BUGFIX - Correct CommonJS package metadata and external default-import interoperability so the published require entry loads correctly in browser environments.
+- IMPROVEMENT - Document `useDishwasher` return fields with JSDoc, including units, null values and source availability. Use `operationState`, `estimatedFinishAt` (Unix milliseconds) and `cycle.doorAccessStatus` to make their meanings explicit.
 - IMPROVEMENT - Add typed input, options and return-value tables and mocked dishwasher examples to the demo documentation; update history, registry and service-call examples for the native contracts.
 
 # 6.0.2

@@ -3,7 +3,17 @@ import { useHass } from "../useHass";
 import { isEntityRegistryEntryDisabled } from "../../utils/entity_registry_state";
 import type { EntityName } from "@typings";
 import type { HistoryOptions } from "../useHistory";
-import type { DishwasherBindingIssue, DishwasherEntities, UseDishwasherOptions } from "./types";
+import type {
+  DishwasherBindingIssue,
+  DishwasherBoundEntities,
+  DishwasherCycle,
+  DishwasherDoorState,
+  DishwasherEntities,
+  DishwasherHistory,
+  DishwasherOperationState,
+  DishwasherPrograms,
+  UseDishwasherOptions,
+} from "./types";
 import {
   available,
   binaryValue,
@@ -17,6 +27,48 @@ import {
   remainingSeconds,
 } from "./model";
 export type * from "./types";
+
+/** Reported dishwasher readings and history-backed evidence. No returned value proves dishes were unloaded. */
+export interface UseDishwasherReturn {
+  /** Expected or resolved HA registry device ID; null when neither supplied nor discoverable from the operation entity. */
+  deviceId: string | null;
+  /** Overall connection/operation-source availability. Optional capabilities may still be missing; inspect issues and nullable readings. */
+  availability: "available" | "disconnected" | "missing" | "unavailable" | "unknown";
+  /** Normalized operation reading. It may be cached while disconnected; check availability before acting on it. */
+  operationState: DishwasherOperationState;
+  /** Normalized door reading. Unknown when the appliance or binding cannot be used; unavailable stays distinct for the door sensor itself. */
+  doorState: DishwasherDoorState;
+  /** True only when the appliance is available and reports running. Never inferred from power or elapsed time. */
+  isRunning: boolean;
+  /** True only when the appliance is available and reports paused. */
+  isPaused: boolean;
+  /** True only when the appliance is available and currently reports finished. Does not establish a historical completion time or unloading. */
+  isFinished: boolean;
+  /** Reported active-cycle progress from 0 to 100 percent; null when inactive, missing, unavailable, out of range or not measured in %. */
+  progressPercent: number | null;
+  /** Reported estimated completion time as Unix milliseconds (ms since 1970-01-01T00:00:00Z). Null when inactive or the timezone-qualified source timestamp is unusable. Never a countdown or proof of completion. */
+  estimatedFinishAt: number | null;
+  /** Reported active-cycle remaining duration, converted from s/min/h to seconds. Null when inactive or unusable; never calculated from browser elapsed time. */
+  remainingSeconds: number | null;
+  /** Raw selected/active program keys and each select's own advertised options. Does not infer supported programs or start a cycle. */
+  programs: DishwasherPrograms;
+  /** Reported remote-control permission: true for on, false for off, null when missing, unknown or the appliance is unavailable. */
+  remoteControlEnabled: boolean | null;
+  /** Reported remote-start permission: true for on, false for off, otherwise null. True alone does not authorize starting; other appliance gates still apply. */
+  remoteStartEnabled: boolean | null;
+  /** Reported salt replenishment flag: true for on, false for off, null when its source or the appliance cannot be used. */
+  saltLow: boolean | null;
+  /** Reported rinse-aid replenishment flag: true for on, false for off, null when its source or the appliance cannot be used. */
+  rinseAidLow: boolean | null;
+  /** Latest observed completed cycle and subsequent door-access evidence within the requested Recorder history. Uncertain evidence remains unknown. */
+  cycle: DishwasherCycle;
+  /** Native Recorder subscription configuration, loading and failure state. Empty recordings do not prove an event never happened. */
+  history: DishwasherHistory;
+  /** Explicit bindings excluded because they are missing, disabled, on another device or unverifiable under a device constraint. Omitted optional roles are not issues. */
+  issues: DishwasherBindingIssue[];
+  /** Native bound entities with generated .service methods and .history. Unbound/rejected/missing roles are null. Revalidate current identity and permissions before confirmed commands. */
+  entities: DishwasherBoundEntities;
+}
 
 // Called in a fixed order, including absent optional bindings: never subscribe to a guessed entity.
 function useBoundEntity<E extends EntityName>(
@@ -46,7 +98,7 @@ function useBoundEntity<E extends EntityName>(
  * Composes native entities/services and Recorder history for an explicitly bound dishwasher.
  * No discovery, writes, retries, power-based cycle detection, or background persistence.
  */
-export function useDishwasher(bindings: DishwasherEntities, options: UseDishwasherOptions = {}) {
+export function useDishwasher(bindings: DishwasherEntities, options: UseDishwasherOptions = {}): UseDishwasherReturn {
   const registryDeviceId = useHass((state) => state.entitiesRegistry[bindings.operationState]?.device_id);
   const ready = useHass((state) => state.ready);
   const hasConnection = useHass((state) => !!state.connection && state.connection.connected !== false);
@@ -125,7 +177,7 @@ export function useDishwasher(bindings: DishwasherEntities, options: UseDishwash
   return {
     deviceId: deviceId ?? null,
     availability,
-    state,
+    operationState: state,
     doorState: isAvailable ? doorState(door.entity?.state, options.doorStates) : ("unknown" as const),
     isRunning: isAvailable && state === "running",
     isPaused: isAvailable && state === "paused",
@@ -138,7 +190,7 @@ export function useDishwasher(bindings: DishwasherEntities, options: UseDishwash
       progressValue <= 100
         ? progressValue
         : null,
-    estimatedFinish: active ? finishTimestamp(finishTime.entity) : null,
+    estimatedFinishAt: active ? finishTimestamp(finishTime.entity) : null,
     remainingSeconds: active ? remainingSeconds(remainingTime.entity) : null,
     programs: {
       selected: isAvailable && available(selectedProgram.entity) ? selectedProgram.entity!.state : null,
@@ -173,5 +225,3 @@ export function useDishwasher(bindings: DishwasherEntities, options: UseDishwash
     },
   };
 }
-
-export type UseDishwasherReturn = ReturnType<typeof useDishwasher>;

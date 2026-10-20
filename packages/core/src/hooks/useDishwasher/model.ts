@@ -105,7 +105,7 @@ export function deriveCycle({
     durationMs: null,
     doorOpenedAt: null,
     doorOpenedSinceCompletion: null,
-    unloadStatus: "unknown",
+    doorAccessStatus: "unknown",
   };
   const currentState = operationState(operation?.state, options.operationStates);
   if (!usable) return result;
@@ -134,7 +134,7 @@ export function deriveCycle({
     previous = state;
   }
   if (isActive(currentState)) {
-    result.unloadStatus = "cycle-active";
+    result.doorAccessStatus = "cycle-active";
     return result;
   }
   // Unknown current operation/door or a new cycle after completion invalidates a negative claim.
@@ -155,7 +155,7 @@ export function deriveCycle({
     if (state === "open" && (previousDoor === "closed" || previousDoor === "locked")) {
       result.doorOpenedAt = event.at;
       result.doorOpenedSinceCompletion = true;
-      result.unloadStatus = "door-opened";
+      result.doorAccessStatus = "door-opened";
       return result;
     }
     if (state === "unknown" || state === "unavailable") continuous = false;
@@ -163,7 +163,7 @@ export function deriveCycle({
   }
   if (continuous && ["closed", "locked"].includes(doorState(door.state, options.doorStates))) {
     result.doorOpenedSinceCompletion = false;
-    result.unloadStatus = "awaiting-door-opening";
+    result.doorAccessStatus = "awaiting-door-opening";
   }
   return result;
 }
