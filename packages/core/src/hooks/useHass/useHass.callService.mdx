@@ -23,6 +23,10 @@ This is an easy way to visualize all the available domains/service for your home
 
 <Source dark language="ts" code={callServiceUsage} />
 
+### Acknowledged calls
+
+An ordinary `helpers.callService(...)` returns `Promise<void>` after Home Assistant acknowledges the request, without requesting service response data. Await it and handle rejection for disconnected/not-ready calls and transport failures. Only `returnResponse: true` requests a typed service response. Acknowledgement confirms the request, not a completed device operation. `useService` and entity services retain this same contract.
+
 ### Returning a response
 Some services return a response, like the calendar `get_events` service, you can access this response value by adding `returnResponse` to the service call.
 The response object type is able to be defined by passing a generic type to the service call itself, see example below:

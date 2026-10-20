@@ -56,7 +56,7 @@ We can configure the history options by passing an object to the `useEntity` hoo
 
 ### Using services from entity
 The `useEntity()` hook is integrated with the `useService` hook so you can use it directly from the entity object.
-Everything is typed so it makes it very easy to use and develop with.
+Everything is typed so it makes it very easy to use and develop with. Ordinary entity-service calls return `Promise<void>` after acknowledgement and reject on connection/transport failures. See the [acknowledged-call example](/docs/core-hooks-useservice--docs#acknowledged-calls) for pending and error handling. Acknowledgement does not optimistically change entity state.
 <Source dark code={serviceExample} />
 
 

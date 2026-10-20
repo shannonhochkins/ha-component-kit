@@ -2,22 +2,20 @@ import { HassConnect, useHistory } from "@hakit/core";
 
 function Office() {
   const history = useHistory("light.some_light");
-  // can now access all properties relating to the history for this light.
-  return history.loading ? (
-    <p>Loading</p>
-  ) : (
-    <p>
-      History:{" "}
-      {history.timeline.map((state, index) => {
-        return (
-          <p key={index}>
-            {state.state}: {state.last_changed};
-          </p>
-        );
-      })}
-    </p>
+  if (history.error) return <p role="alert">History unavailable: {history.error.message}</p>;
+  if (history.loading) return <p>Loading history…</p>;
+  if (!history.timeline.length) return <p>No recorded changes.</p>;
+  return (
+    <ul>
+      {history.timeline.map((state, index) => (
+        <li key={index}>
+          {state.state}: {state.last_changed}
+        </li>
+      ))}
+    </ul>
   );
 }
+
 export function App() {
   return (
     <HassConnect hassUrl="http://homeassistant.local:8123">

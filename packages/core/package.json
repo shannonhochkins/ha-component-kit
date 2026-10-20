@@ -53,8 +53,7 @@
     "dist",
     "package.json",
     "README.md",
-    "LICENSE.md",
-    "CHANGELOG.md"
+    "LICENSE.md"
   ],
   "repository": {
     "type": "git",

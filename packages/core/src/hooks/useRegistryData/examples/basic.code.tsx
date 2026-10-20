@@ -1,12 +1,19 @@
 import { HassConnect, useRegistryData } from "@hakit/core";
+import { isEntityRegistryEntryDisabled } from "@hakit/core/registry";
 
 export function Component() {
-  const entitiesRegistryDisplay = useRegistryData("entitiesRegistryDisplay");
-  const firstEntity = Object.values(entitiesRegistryDisplay)[0];
+  const registry = useRegistryData("entitiesRegistry");
+  const firstEntity = Object.values(registry)[0];
+  if (!firstEntity) return <p>Loading registry…</p>;
+  const status =
+    "disabled_by" in firstEntity ? (isEntityRegistryEntryDisabled(firstEntity) ? "Disabled" : "Enabled") : "Display metadata only";
   return (
-    <div>
-      Entity ID: {firstEntity?.entity_id}, platform: {firstEntity?.platform}
-    </div>
+    <dl>
+      <dt>Entity ID</dt>
+      <dd>{firstEntity.entity_id}</dd>
+      <dt>Registry information</dt>
+      <dd>{status}</dd>
+    </dl>
   );
 }
 

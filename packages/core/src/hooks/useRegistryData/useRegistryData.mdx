@@ -1,16 +1,27 @@
-import { Meta, Source, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
-import basicExample from './examples/basic.code?raw';
-import * as Primary from './examples/primary.stories';
-import { DummyComponentReturn, DummyComponentReturnFloors, DummyComponentAreas, DummyComponentDevices, DummyComponentServices, DummyComponentEntitiesRegistryDisplay } from './examples/DummyComponent';
+import { Meta, Source, Canvas, ArgTypes } from "@storybook/addon-docs/blocks";
+import basicExample from "./examples/basic.code?raw";
+import * as Primary from "./examples/primary.stories";
+import {
+  DummyComponentReturn,
+  DummyComponentReturnFloors,
+  DummyComponentAreas,
+  DummyComponentDevices,
+  DummyComponentServices,
+  DummyComponentEntitiesRegistryDisplay,
+  DummyComponentEntitiesRegistry,
+} from "./examples/DummyComponent";
 
-
-<Meta title="core/hooks/useRegistryData" parameters={{
-  docs: {
-    page: null,
-  }
-}} />
+<Meta
+  title="core/hooks/useRegistryData"
+  parameters={{
+    docs: {
+      page: null,
+    },
+  }}
+/>
 
 # useRegistryData()
+
 ###### useRegistryData\<K extends RegistryDataKey>(type: K): Store[K]
 
 `useRegistryData` lets you retrieve specific registry/metadata collections from the internal store with full TypeScript inference. You pass a the type you want to retrieve, for example `"services"` and it returns the correctly typed value for that key.
@@ -25,6 +36,7 @@ All returned values are plain objects keyed by an ID (usually an entity_id, devi
 
 ### **Available `type` values:**
 
+- `entitiesRegistry` - Native full registry entries when authorized, indexed by entity ID. Admin sessions reuse the existing `subscribeEntityRegistry` collection; other sessions receive display-registry entries without invented disabled flags.
 - `entitiesRegistryDisplay` - Display-oriented overrides and friendly metadata (name, localized name variants, hidden status). Combines registry info used for UI labels.
 - `services` - Nested object of domains and their callable services (`services[domain][service]`). Each service entry includes fields like `description`, `fields` (schema for service data), and optionally target requirements, in home assistant these are also known as actions.
 - `areas` - Area definitions (name, id, aliases, floor linkage). Useful for grouping devices/entities.
@@ -41,6 +53,7 @@ If a slice has not loaded yet you still receive its initialized empty object (ne
 ### When to Prefer Direct Store Access
 
 Use the hook for component-level reactive subscriptions. Use `useHass.getState()` when:
+
 - Executing logic outside React lifecycle (e.g. in a utility module)
 - Performing one-off synchronous reads where re-rendering isn’t needed
 
@@ -61,39 +74,60 @@ Type narrowing occurs automatically. Hover over `entitiesRegistryDisplay` in you
 
 <Canvas of={Primary.PrimaryExample} />
 
-
 ### Returned Value
+
 This hook returns a list of registry data based on the provided type:
 
 <ArgTypes of={DummyComponentReturn} />
 
 ### FloorRegistryEntry
+
 The following is the `FloorRegistryEntry` type returned by the `useRegistryData` hook when using the type "floors":
+
 <ArgTypes of={DummyComponentReturnFloors} />
 
 ### AreaRegistryEntry
+
 The following is the `AreaRegistryEntry` type returned by the `useRegistryData` hook when using the type "areas":
+
 <ArgTypes of={DummyComponentAreas} />
 
 ### DeviceRegistryEntry
+
 The following is the `DeviceRegistryEntry` type returned by the `useRegistryData` hook when using the type "devices":
+
 <ArgTypes of={DummyComponentDevices} />
 
 ### ServiceDefinition
+
 The following is the `HassServices` type returned by the `useRegistryData` hook when using the type "services", services are returned in the following format:
 
-<Source dark language="ts" code={`
+<Source
+  dark
+  language="ts"
+  code={`
 export type HassServices = {
   [domain: string]: {
     [service_name: string]: HassService;
   }
 };
-`} />
+`}
+/>
 
 A `HassService` is defined as:
 
 <ArgTypes of={DummyComponentServices} />
 
 ### EntityRegistryDisplayEntry
+
 The following is the `EntityRegistryDisplayEntry` type returned by the `useRegistryData` hook when using the type "entitiesRegistryDisplay":
+
 <ArgTypes of={DummyComponentEntitiesRegistryDisplay} />
+
+### EntityRegistryEntry and the existing subscription
+
+<ArgTypes of={DummyComponentEntitiesRegistry} />
+
+`subscribeEntityRegistry(connection, callback)` already fetches `config/entity_registry/list` and listens for `entity_registry_updated`. Its shared collection reuses the connection-level subscription; the returned function releases the subscriber. `HassConnect` uses that existing API to populate `entitiesRegistry` for admin sessions. Hooks such as `useDishwasher` read focused selectors from that native data and do not create another registry transport.
+
+Use `useRegistryData("entitiesRegistry")` for reactive access, or `useHass.getState().entitiesRegistry` for a confirmation-time snapshot. The full registry includes `disabled_by`; display metadata does not. Test for that field before treating a record as full registry data. `isEntityRegistryEntryDisabled` from `@hakit/core/registry` supports either shape, but a false result on display-only metadata does not establish that an entity is enabled. Registry state is released on session cleanup.
