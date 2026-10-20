@@ -76,11 +76,20 @@ export default defineConfig(configEnv => {
           assetFileNames: 'assets/[name][extname]',
           entryFileNames: '[format]/[name].js',
           exports: 'named',
+          interop: 'auto',
         }
       },
       minify: true,
     },
     plugins: [
+      {
+        name: 'core-commonjs-package-boundary',
+        generateBundle(output) {
+          if (output.format === 'cjs') {
+            this.emitFile({ type: 'asset', fileName: 'cjs/package.json', source: '{"type":"commonjs"}\n' });
+          }
+        },
+      },
       tsconfigPaths({
         root: resolve(__dirname, './')
       }),

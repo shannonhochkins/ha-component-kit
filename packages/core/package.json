@@ -85,7 +85,8 @@
     "release:canary": "npm run build && npm publish --tag canary",
     "sync-ha-user-types": "npm run build:sync-script && node ./sync-ha-user-types.cjs",
     "sync-locales": "npx tsx ./scripts/sync-locales/index.ts",
-    "clean": "rimraf node_modules dist ./scripts/sync-ha-types/.ha-repo-cache"
+    "clean": "rimraf node_modules dist ./scripts/sync-ha-types/.ha-repo-cache",
+    "test:package": "cross-env NODE_ENV=test jest --config jest.package.config.ts --rootDir=src --runInBand"
   },
   "tsup": {
     "entry": [

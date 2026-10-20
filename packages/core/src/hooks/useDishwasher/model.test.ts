@@ -137,3 +137,9 @@ it("uses last_changed for transitions with later attribute-update timestamps", (
     doorOpenedSinceCompletion: null,
   });
 });
+
+it("treats arbitrary raw strings and unit names as unknown, including object prototype keys", () => {
+  expect(operationState("constructor")).toBe("unknown");
+  expect(doorState("toString")).toBe("unknown");
+  expect(remainingSeconds(entity("10", 120, { unit_of_measurement: "constructor" }))).toBeNull();
+});

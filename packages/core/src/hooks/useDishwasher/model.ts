@@ -21,15 +21,18 @@ const DOOR_STATES: Readonly<Record<string, DishwasherDoorState>> = {
   locked: "locked",
 };
 
+const ownValue = <T>(values: Readonly<Record<string, T>> | undefined, key: string): T | undefined =>
+  values && Object.prototype.hasOwnProperty.call(values, key) ? values[key] : undefined;
+
 export function operationState(raw: string | undefined, overrides?: UseDishwasherOptions["operationStates"]): DishwasherOperationState {
   if (raw === "unavailable") return "unavailable";
   if (!raw || raw === "unknown") return "unknown";
-  return overrides?.[raw] ?? OPERATION_STATES[raw] ?? "unknown";
+  return ownValue(overrides, raw) ?? ownValue(OPERATION_STATES, raw) ?? "unknown";
 }
 export function doorState(raw: string | undefined, overrides?: UseDishwasherOptions["doorStates"]): DishwasherDoorState {
   if (raw === "unavailable") return "unavailable";
   if (!raw || raw === "unknown") return "unknown";
-  return overrides?.[raw] ?? DOOR_STATES[raw] ?? "unknown";
+  return ownValue(overrides, raw) ?? ownValue(DOOR_STATES, raw) ?? "unknown";
 }
 export const isActive = (state: DishwasherOperationState) =>
   ["running", "paused", "scheduled", "action-required", "aborting"].includes(state);
@@ -49,7 +52,8 @@ export function finishTimestamp(entity: HassEntity | null): number | null {
 }
 export function remainingSeconds(entity: HassEntity | null): number | null {
   const value = numericValue(entity);
-  const factor = { s: 1, min: 60, h: 3600 }[entity?.attributes.unit_of_measurement as string];
+  const unit: unknown = entity?.attributes.unit_of_measurement;
+  const factor = unit === "s" ? 1 : unit === "min" ? 60 : unit === "h" ? 3600 : null;
   return value != null && value >= 0 && factor ? value * factor : null;
 }
 export function programOptions(entity: HassEntity | null): string[] {
