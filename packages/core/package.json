@@ -40,6 +40,11 @@
       "types": "./dist/sync/node/types/index.d.ts",
       "import": "./dist/sync/node/index.cjs",
       "require": "./dist/sync/node/index.cjs"
+    },
+    "./registry": {
+      "types": "./dist/types/utils/entity_registry_state.d.ts",
+      "import": "./dist/es/utils/entity_registry_state.js",
+      "require": "./dist/cjs/utils/entity_registry_state.js"
     }
   },
   "author": "Shannon Hochkins <mail@shannonhochkins.com>",

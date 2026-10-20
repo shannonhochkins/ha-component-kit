@@ -11,6 +11,7 @@ import {
   computeStateDisplay,
   DeviceRegistryEntry,
   EntityRegistryDisplayEntry,
+  EntityRegistryEntry,
   FloorRegistryEntry,
   FrontendLocaleData,
   resolveTimeZone,
@@ -71,6 +72,9 @@ export interface InternalStore {
   /** the device registry from home assistant */
   devices: Record<string, DeviceRegistryEntry>;
   setDevices: (devices: Record<string, DeviceRegistryEntry>) => void;
+  /** Full registry for administrators; display registry for other authenticated users. */
+  entitiesRegistry: Record<string, EntityRegistryEntry | EntityRegistryDisplayEntry>;
+  setEntitiesRegistry: (entities: InternalStore["entitiesRegistry"]) => void;
   /** the entity registry display from home assistant */
   entitiesRegistryDisplay: Record<string, EntityRegistryDisplayEntry>;
   setEntitiesRegistryDisplay: (entities: Record<string, EntityRegistryDisplayEntry>) => void;
@@ -158,13 +162,13 @@ export interface InternalStore {
 
       /** Overload for when `returnResponse` is false */
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(args: CallServiceArgs<T, M, false>): void;
+      <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(args: CallServiceArgs<T, M, false>): Promise<void>;
 
       /** Overload for when `returnResponse` is omitted (defaults to false) */
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       <_ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
         args: Omit<CallServiceArgs<T, M, false>, "returnResponse">,
-      ): void;
+      ): Promise<void>;
     };
     /** add a new route to the provider */
     addRoute: (route: Omit<Route, "active">) => void;
@@ -240,6 +244,8 @@ export const useInternalStore = create<InternalStore>((set, get) => ({
   entities: {},
   devices: {},
   setDevices: (devices) => set(() => ({ devices })),
+  entitiesRegistry: {},
+  setEntitiesRegistry: (entitiesRegistry) => set({ entitiesRegistry }),
   entitiesRegistryDisplay: {},
   setEntitiesRegistryDisplay: (entities) => set(() => ({ entitiesRegistryDisplay: entities })),
   areas: {},
@@ -320,25 +326,20 @@ export const useInternalStore = create<InternalStore>((set, get) => ({
     },
     callService: (<ResponseType extends object, T extends SnakeOrCamelDomains, M extends DomainService<T>>(
       rawArgs: CallServiceArgs<T, M, boolean>,
-    ): Promise<ServiceResponse<ResponseType>> | void => {
+    ): Promise<ServiceResponse<ResponseType> | void> => {
       const { domain, service, serviceData, target: _target, returnResponse } = rawArgs;
       const { connection, ready } = get();
       const target = typeof _target === "string" || isArray(_target) ? { entity_id: _target } : _target;
-
-      // basic guards
-      if (!connection || !ready) {
-        if (returnResponse) {
-          return Promise.reject(new Error("callService: connection not established or not ready"));
-        }
-        return; // fire & forget path does nothing when not ready
+      if (!connection || connection.connected === false || !ready) {
+        return Promise.reject(new Error("callService: connection not established or not ready"));
       }
-
       try {
         const result = _callService(connection, snakeCase(domain), snakeCase(service), serviceData ?? {}, target, returnResponse);
-        return returnResponse ? (result as Promise<ServiceResponse<ResponseType>>) : undefined; // fire & forget
-      } catch (e) {
-        console.error("Error calling service:", e);
-        return returnResponse ? Promise.reject(e) : undefined;
+        return returnResponse
+          ? (result as Promise<ServiceResponse<ResponseType>>)
+          : result.then(() => undefined);
+      } catch (error) {
+        return Promise.reject(error);
       }
     }) as InternalStore["helpers"]["callService"],
     addRoute(route) {
@@ -465,6 +466,7 @@ export const useHassProviderStore = create<HassProviderStore>((set, get) => ({
     setReady(false);
     setConnection(null);
     setEntities({});
+    useInternalStore.setState({ entitiesRegistry: {}, entitiesRegistryDisplay: {}, devices: {}, areas: {}, floors: {} });
     setConfig(null);
     setError(null);
     setCannotConnect(false);

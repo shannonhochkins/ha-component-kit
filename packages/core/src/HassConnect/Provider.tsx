@@ -10,6 +10,7 @@ import { handleError, tryConnection } from "./tryConnection";
 import {
   subscribeAreaRegistry,
   subscribeEntityRegistryDisplay,
+  subscribeEntityRegistry,
   subscribeDeviceRegistry,
   subscribeFloorRegistry,
   subscribeFrontendUserData,
@@ -142,6 +143,9 @@ export function HassProvider({
             };
           }
           setEntitiesRegistryDisplay(entitiesRegistryDisplay);
+          if (!useInternalStore.getState().user?.is_admin) {
+            useInternalStore.getState().setEntitiesRegistry(entitiesRegistryDisplay);
+          }
         }),
       );
       addSubscription(
@@ -185,6 +189,13 @@ export function HassProvider({
         "current_user",
         subscribeUser(connection, (user) => {
           setUser(user);
+          if (user.is_admin) {
+            addSubscription("entity_registry", subscribeEntityRegistry(connection, (entries) => {
+              if (useInternalStore.getState().connection === connection) {
+                useInternalStore.getState().setEntitiesRegistry(Object.fromEntries(entries.map((entry) => [entry.entity_id, entry])));
+              }
+            }));
+          }
         }),
       );
 

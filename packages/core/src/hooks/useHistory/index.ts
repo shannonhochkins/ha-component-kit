@@ -49,8 +49,10 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
     entityHistory: EntityHistoryState[];
     coordinates: number[][];
     loading: boolean;
+    error: Error | null;
   }>({
     loading: options?.disable ? false : true,
+    error: null,
     timeline: [],
     entityHistory: [],
     coordinates: [],
@@ -77,6 +79,9 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
   ]);
 
   useEffect(() => {
+    subscribed.current = false;
+    setHistoryStates({});
+    setHistory({ loading: !memoizedOptions?.disable && !!connection, error: null, timeline: [], entityHistory: [], coordinates: [] });
     if (!connection || memoizedOptions?.disable) return;
     let isMounted = true; // To check if the component is still mounted
     // Create a local variable to hold the unsubscribe function
@@ -94,11 +99,14 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
       },
     })
       .then((unsubscribe) => {
-        localUnsubscribe = unsubscribe;
+        if (isMounted) localUnsubscribe = unsubscribe;
+        else void unsubscribe();
       })
-      .catch(() => {
-        localUnsubscribe?.();
+      .catch((error: unknown) => {
+        if (!isMounted) return;
+        void localUnsubscribe?.();
         subscribed.current = false;
+        setHistory({ loading: false, error: error instanceof Error ? error : new Error(String(error)), timeline: [], entityHistory: [], coordinates: [] });
       });
     return () => {
       isMounted = false;
@@ -125,8 +133,9 @@ export const useHistory = (entityId: EntityName, options?: HistoryOptions) => {
 
       setHistory({
         loading: false,
+        error: null,
         timeline: matchedHistory.length > 0 ? matchedHistory[0].data : [],
-        entityHistory: historyStates[entityId],
+        entityHistory: historyStates[entityId] ?? [],
         coordinates,
       });
     }
