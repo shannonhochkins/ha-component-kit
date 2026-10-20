@@ -1,3 +1,4 @@
+import { ON, OFF, UNKNOWN, UNAVAILABLE, isUnavailableState } from "../../data/entity";
 import type { HassEntity } from "home-assistant-js-websocket";
 import type { EntityHistoryState } from "../useHistory/history";
 import type { DishwasherCycle, DishwasherDoorState, DishwasherOperationState, UseDishwasherOptions } from "./types";
@@ -15,9 +16,9 @@ const OPERATION_STATES: Readonly<Record<string, DishwasherOperationState>> = {
 };
 const DOOR_STATES: Readonly<Record<string, DishwasherDoorState>> = {
   open: "open",
-  on: "open",
+  [ON]: "open",
   closed: "closed",
-  off: "closed",
+  [OFF]: "closed",
   locked: "locked",
 };
 
@@ -25,20 +26,20 @@ const ownValue = <T>(values: Readonly<Record<string, T>> | undefined, key: strin
   values && Object.prototype.hasOwnProperty.call(values, key) ? values[key] : undefined;
 
 export function operationState(raw: string | undefined, overrides?: UseDishwasherOptions["operationStates"]): DishwasherOperationState {
-  if (raw === "unavailable") return "unavailable";
-  if (!raw || raw === "unknown") return "unknown";
+  if (raw === UNAVAILABLE) return "unavailable";
+  if (!raw || raw === UNKNOWN) return "unknown";
   return ownValue(overrides, raw) ?? ownValue(OPERATION_STATES, raw) ?? "unknown";
 }
 export function doorState(raw: string | undefined, overrides?: UseDishwasherOptions["doorStates"]): DishwasherDoorState {
-  if (raw === "unavailable") return "unavailable";
-  if (!raw || raw === "unknown") return "unknown";
+  if (raw === UNAVAILABLE) return "unavailable";
+  if (!raw || raw === UNKNOWN) return "unknown";
   return ownValue(overrides, raw) ?? ownValue(DOOR_STATES, raw) ?? "unknown";
 }
 export const isActive = (state: DishwasherOperationState) =>
   ["running", "paused", "scheduled", "action-required", "aborting"].includes(state);
-export const available = (entity: HassEntity | null) => entity != null && !["unknown", "unavailable"].includes(entity.state);
+export const available = (entity: HassEntity | null) => entity != null && !isUnavailableState(entity.state);
 export const binaryValue = (entity: HassEntity | null): boolean | null =>
-  entity?.state === "on" ? true : entity?.state === "off" ? false : null;
+  entity?.state === ON ? true : entity?.state === OFF ? false : null;
 
 export function numericValue(entity: HassEntity | null): number | null {
   if (!available(entity) || !entity?.state.trim()) return null;
@@ -57,7 +58,7 @@ export function remainingSeconds(entity: HassEntity | null): number | null {
   return value != null && value >= 0 && factor ? value * factor : null;
 }
 export function programOptions(entity: HassEntity | null): string[] {
-  if (!entity || entity.state === "unavailable") return [];
+  if (!entity || entity.state === UNAVAILABLE) return [];
   const options: unknown = entity.attributes.options;
   return Array.isArray(options)
     ? [...new Set(options.filter((option): option is string => typeof option === "string" && option.length > 0))]

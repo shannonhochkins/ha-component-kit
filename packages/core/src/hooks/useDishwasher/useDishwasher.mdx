@@ -65,6 +65,8 @@ Only `operationState` is required. Omit unsupported roles.
 
 Optional readings are null when missing or unusable. Active-cycle progress requires a reported percentage from 0–100; estimated finish is a timezone-qualified timestamp returned as Unix milliseconds; remaining duration requires `s`, `min` or `h`. Idle readings are suppressed. The selected and active program option lists remain independent.
 
+Shared HA state constants and helpers are available from `@hakit/core/constants`, a browser-independent entry point suitable for pure adapters and Node tools. The same values remain exported from the Core root. Integration-specific operation and door mappings remain explicit.
+
 Defaults normalize HA Home Connect states: inactive, ready, delayedstart, run, pause, actionrequired, finished, error and aborting. Door defaults are open/on, closed/off and locked. Other integrations can supply `operationStates` and `doorStates` maps, merged with defaults. HA unknown/unavailable cannot be overridden. Labels/friendly names and watts are never interpreted as capabilities.
 
 ## Cycle and unloading evidence

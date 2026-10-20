@@ -45,6 +45,11 @@
       "types": "./dist/types/utils/entity_registry_state.d.ts",
       "import": "./dist/es/utils/entity_registry_state.js",
       "require": "./dist/cjs/utils/entity_registry_state.js"
+    },
+    "./constants": {
+      "types": "./dist/types/data/entity.d.ts",
+      "import": "./dist/es/data/entity.js",
+      "require": "./dist/cjs/data/entity.js"
     }
   },
   "author": "Shannon Hochkins <mail@shannonhochkins.com>",
@@ -85,7 +90,7 @@
     "sync-ha-user-types": "npm run build:sync-script && node ./sync-ha-user-types.cjs",
     "sync-locales": "npx tsx ./scripts/sync-locales/index.ts",
     "clean": "rimraf node_modules dist ./scripts/sync-ha-types/.ha-repo-cache",
-    "test:package": "cross-env NODE_ENV=test jest --config jest.package.config.ts --rootDir=src --runInBand"
+    "test:package": "node test-package-constants.mjs && cross-env NODE_ENV=test jest --config jest.package.config.ts --rootDir=src --runInBand"
   },
   "tsup": {
     "entry": [
