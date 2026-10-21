@@ -39,3 +39,6 @@ export { useLocaleData } from "./useLocaleData";
 export { useRegistryData, type RegistryDataKey } from "./useRegistryData";
 export { useFloors, type FloorWithAreas } from "./useFloors";
 export * from "./useCamera/constants";
+
+export { useDishwasher, type UseDishwasherReturn } from "./useDishwasher";
+export type * from "./useDishwasher/types";

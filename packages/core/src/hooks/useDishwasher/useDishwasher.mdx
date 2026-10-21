@@ -1,0 +1,95 @@
+import { Meta, Source, Canvas, Controls, ArgTypes } from "@storybook/addon-docs/blocks";
+import basicExample from "./examples/basic.code?raw";
+import * as Primary from "./examples/primary.stories";
+import {
+  DummyComponentEntities,
+  DummyComponentOptions,
+  DummyComponentReturn,
+  DummyComponentCycle,
+  DummyComponentPrograms,
+  DummyComponentHistory,
+} from "./examples/DummyComponent";
+
+<Meta title="core/hooks/useDishwasher" />
+
+# useDishwasher
+
+`useDishwasher(entities, options?)` combines explicitly selected Home Assistant entities, their native typed services, and streaming Recorder history. It provides an emptying reminder, operation/door state, reported cycle metrics, programs and remote permissions. It sends no commands on mount or state changes.
+
+## Finished but not emptied
+
+Bind both `operationState` and `door`. `needsEmptying` becomes `true` when Recorder shows running → finished and the door has stayed closed. It stays true when operation returns to ready and after browser refresh. Opening the door after completion clears the reminder; closing it again does not bring it back.
+
+- `true`: finished — awaiting emptying.
+- `false`: a post-completion door opening cleared the reminder, or a new cycle is active.
+- `null`: the required history or source readings are missing, loading, unavailable or uncertain.
+
+Door opening is the proxy for emptying, including on appliances that open automatically. Record both entities in HA Recorder and choose a lookback covering the cycle and subsequent opening (default seven days). The hook restores this inference from Recorder without browser storage.
+
+### Example Usage
+
+<Source dark code={basicExample} />
+
+### Interactive Example
+
+Choose a mocked entity/history scenario to inspect the hook's actual output. These examples use a story-only transport and send no appliance commands.
+
+<Canvas of={Primary.PrimaryExample} />
+<Controls of={Primary.PrimaryExample} />
+
+The names above are examples, not entity discovery. Use the actual entity IDs exposed by the installation; generated `EntityName` augmentation validates their domains. There is no guessed suffix, device substitution or bundled house configuration. `deviceId` can constrain bindings to an expected registry device. Otherwise the operation entity's registry device is used when available. Missing, disabled, mismatched or unverifiable constrained bindings are reported in `issues` and excluded. Explicit entities without registry membership remain readable when no device constraint can be established.
+
+## Entity roles
+
+Only `operationState` is required. Omit unsupported roles.
+
+<ArgTypes of={DummyComponentEntities} />
+
+### Options
+
+<ArgTypes of={DummyComponentOptions} />
+
+## Returned data
+
+<ArgTypes of={DummyComponentReturn} />
+
+### Program values and options
+
+<ArgTypes of={DummyComponentPrograms} />
+
+### History status
+
+<ArgTypes of={DummyComponentHistory} />
+
+`estimatedFinishAt` is an absolute time in Unix milliseconds, suitable for `new Date(estimatedFinishAt).toLocaleString()`. `remainingSeconds` is a duration in seconds. Neither value is a browser countdown or proof that the cycle completed.
+
+Optional readings are null when missing or unusable. Active-cycle progress requires a reported percentage from 0–100; estimated finish is a timezone-qualified timestamp returned as Unix milliseconds; remaining duration requires `s`, `min` or `h`. Idle readings are suppressed. The selected and active program option lists remain independent.
+
+Shared HA state constants and helpers are available from `@hakit/core/constants`, a browser-independent entry point suitable for pure adapters and Node tools. The same values remain exported from the Core root. Integration-specific operation and door mappings remain explicit.
+
+Defaults normalize HA Home Connect states: inactive, ready, delayedstart, run, pause, actionrequired, finished, error and aborting. Door defaults are open/on, closed/off and locked. Other integrations can supply `operationStates` and `doorStates` maps, merged with defaults. HA unknown/unavailable cannot be overridden. Labels/friendly names and watts are never interpreted as capabilities.
+
+## Cycle and unloading evidence
+
+<ArgTypes of={DummyComponentCycle} />
+
+All cycle timestamps are Unix milliseconds.
+
+A completion requires an observed running → finished sequence. Pauses preserve that sequence; a fault, abort, unavailable gap or ready-without-finished transition does not complete it. A history window already beginning in finished state proves no completion time. Duration/start are null when only an already-running baseline was recorded. A new active cycle supersedes old unloading evidence.
+
+`doorAccessStatus` is:
+
+- `cycle-active`: currently running, paused, scheduled, requiring action or aborting.
+- `awaiting-door-opening`: a completed cycle and continuously known closed/locked door history, with no observed subsequent opening.
+- `door-opened`: a recorded closed/locked → open transition after completion, retained when the door closes again.
+- `unknown`: insufficient, loading, disabled or failed history, uncertain intervals, or unavailable inputs.
+
+`needsEmptying` derives from this status: `awaiting-door-opening` gives true, `door-opened` or `cycle-active` gives false, and `unknown` gives null. Purged/excluded data cannot be recovered by this hook. A current closed door alone is insufficient. Live entity updates bridge streaming latency but never invent a historical baseline.
+
+## Commands
+
+The hook does not manufacture generic Start/Stop actions: service semantics vary by integration. For example, HA Home Connect's active-program select can **start a program**. A selected-program select has a different purpose. Native `.service` methods retain generated payload/response types and resolve only after acknowledgement; failures reject. Acknowledgement never changes reported operation state optimistically.
+
+Before an explicitly confirmed command, the host UI must revalidate current connection, entity/device identity, availability, advertised option and the integration's door/power/remote-control/remote-start gates. Recheck with `useHass.getState()` at confirmation time rather than a stale render closure. This hook exposes facts and native services, not a universal appliance authorization policy. No retries, queues or automatic power writes are added.
+
+References: [HA Home Connect](https://www.home-assistant.io/integrations/home_connect/), [operation/door sensors](https://github.com/home-assistant/core/blob/dev/homeassistant/components/home_connect/sensor.py), [program select behavior](https://github.com/home-assistant/core/blob/dev/homeassistant/components/home_connect/select.py), [Recorder history stream](https://github.com/home-assistant/core/blob/dev/homeassistant/components/history/websocket_api.py).

@@ -22,3 +22,5 @@ export * from "./time/time-ago";
 export * from "./computeAttributeDisplay";
 export * from "./computeStateDisplay";
 export * from "./stripPrefixFromEntityName";
+
+export { isEntityRegistryEntryDisabled } from "./entity_registry_state";

@@ -19,9 +19,9 @@ export type SupportedServices<T extends ServiceFunctionTypes = "target"> = [keyo
 
 export type FilterByDomain<
   T,
-  Prefix extends AllDomains,
+  Prefix extends string,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-> = T extends `${Prefix}${infer _Rest}` ? T : never;
+> = T extends `${Prefix}.${infer _Rest}` ? T : never;
 
 export type DefaultEntityName = `${AllDomains}.${string}`;
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -69,6 +69,7 @@ export type HassEntityWithService<T extends AllDomains> = HassEntityCustom &
       entityHistory: EntityHistoryState[];
       coordinates: number[][];
       loading: boolean;
+      error: Error | null;
     };
     service: SnakeToCamel<T> extends keyof SupportedServices<"no-target"> ? SupportedServices<"no-target">[SnakeToCamel<T>] : never;
   };
@@ -95,7 +96,7 @@ export type ServiceFunctionWithEntity<ResponseData extends object, Data = object
     target: Target;
     /** the data to send to the service */
     serviceData?: Data;
-  }): void;
+  }): Promise<void>;
   // @ts-expect-error - It's needed for the overloads
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   <CustomResponseData extends ResponseData = ResponseData>({
@@ -108,11 +109,11 @@ export type ServiceFunctionWithEntity<ResponseData extends object, Data = object
     serviceData?: Data;
     /** whether to return the response object */
     returnResponse: false;
-  }): void;
+  }): Promise<void>;
 };
 
 export type ServiceFunctionWithoutEntity<ResponseData extends object, Data = object> = {
-  <CustomResponseData extends ResponseData = ResponseData>(args?: {
+  <CustomResponseData extends ResponseData = ResponseData>(args: {
     /** the data to send to the service */
     serviceData?: Data;
     /** whether to return the response object */
@@ -122,7 +123,7 @@ export type ServiceFunctionWithoutEntity<ResponseData extends object, Data = obj
   <CustomResponseData extends ResponseData = ResponseData>(args?: {
     /** the data to send to the service */
     serviceData?: Data;
-  }): void;
+  }): Promise<void>;
   // @ts-expect-error - It's needed for the overloads
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   <CustomResponseData extends ResponseData = ResponseData>(args?: {
@@ -130,7 +131,7 @@ export type ServiceFunctionWithoutEntity<ResponseData extends object, Data = obj
     serviceData?: Data;
     /** whether to return the response object */
     returnResponse: false;
-  }): void;
+  }): Promise<void>;
 };
 
 export type ServiceFunction<ResponseData extends object, T extends ServiceFunctionTypes = "target", Data = object> = T extends "target"

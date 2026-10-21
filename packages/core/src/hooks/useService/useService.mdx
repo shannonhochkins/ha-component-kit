@@ -1,4 +1,5 @@
 import { Source, Meta } from '@storybook/addon-docs/blocks';
+import acknowledgementExample from './examples/acknowledgement.code?raw';
 import responseExample from './examples/response.code?raw';
 import preferredExample from './examples/preferred.code?raw';
 import serviceLevel from './examples/serviceLevel.code?raw';
@@ -37,6 +38,12 @@ We can also use the hook to retrieve all the available services and use them as 
 ## Attach entity to root hook
 We can use the `rootTarget` param to tell the hook that every call will be bound to one particular entity.
 <Source dark code={rootTarget} />
+
+## Acknowledged calls
+
+Ordinary calls return `Promise<void>` after Home Assistant acknowledges the request. They do not request service response data. Await the promise or handle its rejection: disconnected/not-ready calls and transport failures reject. An acknowledgement confirms request acceptance, not that a device completed the requested operation. Root-target hooks and `useEntity(...).service` expose the same promise contract.
+
+<Source dark code={acknowledgementExample} />
 
 ## Returning a response
 Some services return a response, like the calendar `getEvents` service, you can access this response value by adding `returnResponse` to the service call.

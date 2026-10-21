@@ -552,6 +552,7 @@ useHass.setState({
     },
   },
   entitiesRegistryDisplay,
+  entitiesRegistry: entitiesRegistryDisplay,
   connection: new MockConnection(),
   auth: fakeAuth,
   user: {

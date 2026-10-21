@@ -1,13 +1,15 @@
-import type { FloorRegistryEntry, AreaRegistryEntry, DeviceRegistryEntry, EntityRegistryDisplayEntry } from "@hakit/core";
-import type { HassServices, HassService } from "home-assistant-js-websocket";
+import type {
+  FloorRegistryEntry,
+  AreaRegistryEntry,
+  DeviceRegistryEntry,
+  EntityRegistryDisplayEntry,
+  EntityRegistryEntry,
+  HassStore,
+  RegistryDataKey,
+} from "@hakit/core";
+import type { HassService } from "home-assistant-js-websocket";
 
-export function DummyComponentReturn(props: {
-  floors: Record<string, FloorRegistryEntry>;
-  areas: Record<string, AreaRegistryEntry>;
-  devices: DeviceRegistryEntry;
-  services: HassServices;
-  entitiesRegistryDisplay: EntityRegistryDisplayEntry;
-}) {
+export function DummyComponentReturn(props: Partial<Pick<HassStore, RegistryDataKey>>) {
   return props;
 }
 
@@ -28,5 +30,9 @@ export function DummyComponentServices(props: Partial<HassService>) {
 }
 
 export function DummyComponentEntitiesRegistryDisplay(props: Partial<EntityRegistryDisplayEntry>) {
+  return props;
+}
+
+export function DummyComponentEntitiesRegistry(props: Partial<EntityRegistryEntry>) {
   return props;
 }
